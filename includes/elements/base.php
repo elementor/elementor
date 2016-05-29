@@ -198,7 +198,7 @@ abstract class Element_Base {
 		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
-			preg_match( '/([a-z_]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
+			preg_match( '/([a-z_0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
 
 			$pure_condition_key = $condition_key_parts[1];
 			$condition_sub_key = $condition_key_parts[2];
