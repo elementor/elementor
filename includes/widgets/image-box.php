@@ -250,7 +250,7 @@ class Widget_Image_box extends Widget_Base {
 		}
 		$image_html = '<div class="elementor-image-box-wrapper' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
 
-		$image_html .= sprintf( '<div class="elementor-image-box %s"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['position'] ), esc_attr( $instance['image'] ), esc_attr( $instance['alt_text'] ) );
+		$image_html .= sprintf( '<div class="elementor-image-box %s"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['position'] ), esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -278,7 +278,7 @@ class Widget_Image_box extends Widget_Base {
 		<% if ( '' !== settings.image ) { %>
 		<div class="elementor-image-box-wrapper">
 			<%
-			image_html = '<div class="elementor-image-box ' + settings.position + '"><figure><img src="' + settings.image + '" alt="' + settings.alt_text + '" /></figure></div>';
+			image_html = '<div class="elementor-image-box ' + settings.position + '"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
 	
 			if ( settings.link.url ) {
 				var link = settings.link;
