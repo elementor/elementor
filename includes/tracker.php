@@ -63,6 +63,8 @@ class Tracker {
 		// Send here..
 		$params = [
 			'system' => self::_get_system_reports_data(),
+			'site_lang' => get_bloginfo( 'language' ),
+			'email' => get_option( 'admin_email' ),
 			'usages' => [],
 		];
 
