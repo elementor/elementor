@@ -2461,7 +2461,7 @@ helpers = {
 		}
 
 		var hasFields = _.filter( condition, function( conditionValue, conditionName ) {
-			var conditionNameParts = conditionName.match( /([a-z_]+)(?:\[([a-z_]+)])?(!?)$/i ),
+			var conditionNameParts = conditionName.match( /([a-z_0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
 				conditionRealName = conditionNameParts[1],
 				conditionSubKey = conditionNameParts[2],
 				isNegativeCondition = !! conditionNameParts[3],
