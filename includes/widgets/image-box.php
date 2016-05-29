@@ -265,7 +265,7 @@ class Widget_Image_box extends Widget_Base {
 		}
 
 		if ( ! empty( $instance['text'] ) ) {
-			$image_html .= sprintf( "%s", $instance['text'] );
+			$image_html .= sprintf( '%s', $instance['text'] );
 		}
 
 		$image_html .= '</div></div>';
