@@ -169,7 +169,7 @@ class Widget_Image_box extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_image',
+				'section' => 'section_content',
 			]
 		);
 

@@ -1,8 +1,6 @@
-// Admin Bar - Icon
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-	content: "\f489";
-	top: 2px;
-}
+//
+// Global selectors for Elementor Front-End
+//
 
 .elementor {
 	* {
@@ -13,7 +11,7 @@
 		@include box-sizing(border-box);
 	}
 
-	// Reset Style for some themes
+	// Reset Style for some themes and browsers
 	hyphens: manual;
 
 	a {
@@ -30,6 +28,9 @@
 		border: none;
 		@include border-radius(0);
 		@include box-shadow(0);
+	}
+	figure {
+		margin: 0;
 	}
 
 	// Responsive Embed
@@ -71,6 +72,7 @@
 		background-size: cover;
 		background-position: 50% 50%;
 	}
+
 	// End Background Video
 }
 

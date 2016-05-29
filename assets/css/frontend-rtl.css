@@ -1,11 +1,5 @@
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-  content: "\f489";
-  top: 2px; }
-
 .elementor {
-  -webkit-hyphens: manual;
-      -ms-hyphens: manual;
-          hyphens: manual; }
+  hyphens: manual; }
   .elementor * {
     box-sizing: border-box; }
   .elementor *:before,
@@ -23,6 +17,8 @@
     border: none;
     border-radius: 0;
     box-shadow: 0; }
+  .elementor figure {
+    margin: 0; }
   .elementor embed,
   .elementor iframe,
   .elementor object,
@@ -71,36 +67,22 @@
     height: 100%; }
   @media (min-width: 768px) {
     .elementor-section > .elementor-container {
-      display: -ms-flexbox;
       display: flex; }
     .elementor-section.elementor-section-items-top > .elementor-container {
-      -ms-flex-align: start;
-          -ms-grid-row-align: flex-start;
-          align-items: flex-start; }
+      align-items: flex-start; }
     .elementor-section.elementor-section-items-middle > .elementor-container {
-      -ms-flex-align: center;
-          -ms-grid-row-align: center;
-          align-items: center; }
+      align-items: center; }
     .elementor-section.elementor-section-items-bottom > .elementor-container {
-      -ms-flex-align: end;
-          -ms-grid-row-align: flex-end;
-          align-items: flex-end; }
+      align-items: flex-end; }
     .elementor-section.elementor-section-content-top .elementor-column-wrap {
-      -ms-flex-align: start;
-          -ms-grid-row-align: flex-start;
-          align-items: flex-start; }
+      align-items: flex-start; }
     .elementor-section.elementor-section-content-middle .elementor-column-wrap {
-      -ms-flex-align: center;
-          -ms-grid-row-align: center;
-          align-items: center; }
+      align-items: center; }
     .elementor-section.elementor-section-content-bottom .elementor-column-wrap {
-      -ms-flex-align: end;
-          -ms-grid-row-align: flex-end;
-          align-items: flex-end; } }
+      align-items: flex-end; } }
 
 .elementor-row {
   width: 100%;
-  display: -ms-flexbox;
   display: flex;
   /* In dragging mode it's causing a columns fall */
   /* Temp Removing = Wrap in Safari browser
@@ -114,14 +96,12 @@
   }*/ }
   @media (max-width: 767px) {
     .elementor-row {
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap; } }
+      flex-wrap: wrap; } }
 
 .elementor-column-wrap {
   width: 100%; }
   @media (min-width: 768px) {
     .elementor-column-wrap {
-      display: -ms-flexbox;
       display: flex; } }
 
 .elementor-widget-wrap {
@@ -136,7 +116,6 @@
 .elementor-column {
   position: relative;
   min-height: 1px;
-  display: -ms-flexbox;
   display: flex; }
 
 .elementor-column-gap-default .elementor-element-populated {
@@ -698,22 +677,22 @@
 .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
   color: #000000; }
 
-.elementor-featured-image-wrapper {
+.elementor-image-box-wrapper {
   overflow: hidden; }
-  .elementor-featured-image-wrapper .elementor-position-right {
+  .elementor-image-box-wrapper .elementor-position-right {
     float: right; }
-  .elementor-featured-image-wrapper .elementor-position-left {
+  .elementor-image-box-wrapper .elementor-position-left {
     float: left; }
-  .elementor-featured-image-wrapper .elementor-position-center {
+  .elementor-image-box-wrapper .elementor-position-center {
     text-align: center; }
 
-.elementor-featured-icon-wrapper {
+.elementor-icon-box-wrapper {
   overflow: hidden; }
-  .elementor-featured-icon-wrapper .elementor-position-right {
+  .elementor-icon-box-wrapper .elementor-position-right {
     float: right; }
-  .elementor-featured-icon-wrapper .elementor-position-left {
+  .elementor-icon-box-wrapper .elementor-position-left {
     float: left; }
-  .elementor-featured-icon-wrapper .elementor-position-center {
+  .elementor-icon-box-wrapper .elementor-position-center {
     text-align: center; }
 
 @media (max-width: 479px) {
