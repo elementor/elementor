@@ -1,0 +1,13 @@
+.idea/
+node_modules/
+.sass-cache/
+build/
+log/
+vendor/
+composer.lock
+.DS_Store
+.project
+Thumbs.db
+
+*.log
+*.map

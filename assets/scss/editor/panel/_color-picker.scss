@@ -1,0 +1,83 @@
+.wp-picker-container {
+
+	&.wp-picker-active {
+		position: absolute;
+		z-index: 1;
+		left: 0;
+		background-color: #fff;
+		border: solid #fff;
+		border-width: 0 17px 0 12px;
+		padding-top: 10px;
+
+		.wp-color-result {
+			float: right;
+		}
+
+		.wp-picker-input-wrap {
+			padding-left: 10px;
+			float: left;
+		}
+	}
+
+	* {
+		box-sizing: content-box;
+	}
+
+	.iris-picker {
+		border: none;
+	}
+}
+
+.wp-color-result {
+	margin: 0;
+	width: 48px;
+	height: 25px;
+	box-shadow: inset 0 0 0 3px white;
+	transition: border .5s;
+	padding: 0;
+	border-radius: 3px;
+	border: 1px solid $editor-lightest;
+
+	&:after {
+		content: none;
+	}
+
+	&:hover {
+		border: 1px solid $editor-light;
+	}
+
+	&:focus,
+	&:active {
+		outline: 0;
+	}
+}
+
+.wp-picker-clear {
+	height: 24px;
+	width: 48px;
+	padding: 0;
+	background-color: #d5dadf;
+	border-radius: 0 3px 3px 0;
+	margin: 0;
+}
+
+.wp-color-picker {
+	float: left;
+	width: 100px;
+	border-radius: 3px 0 0 3px;
+}
+
+.wp-picker-holder {
+
+	* {
+		box-sizing: content-box;
+	}
+}
+
+.wp-picker-open {
+
+	~ .wp-picker-holder {
+		clear: both;
+		margin-bottom: 15px;
+	}
+}

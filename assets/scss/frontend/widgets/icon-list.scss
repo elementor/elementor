@@ -1,0 +1,28 @@
+//
+// Icon List
+//
+.elementor-widget-icon-list {
+	ul.elementor-icon-list-items {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+
+		li.elementor-icon-list-item {
+			margin: 0;
+			padding: 0;
+
+			a {
+				display: inline-block;
+			}
+
+			.elementor-icon-list-icon,
+			.elementor-icon-list-text {
+				display: inline-block;
+				vertical-align: middle;
+			}
+			.elementor-icon-list-icon {
+				width: 1em;
+			}
+		}
+	}
+}

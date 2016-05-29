@@ -1,0 +1,15 @@
+{
+	"name": "pojome/elementor",
+	"description": "Elementor",
+	"minimum-stability": "dev",
+	"license": "gpl3",
+	"authors": [
+		{
+			"name": "Yakir Sitbon",
+			"email": "yakir@pojo.me"
+		}
+	],
+	"require": {
+		"phpunit/phpunit": "4.8.8"
+	}
+}

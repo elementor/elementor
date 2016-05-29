@@ -1,0 +1,30 @@
+//
+// Heading
+//
+
+.elementor-widget-heading {
+
+	.elementor-heading-title {
+		padding: 0;
+		margin: 0;
+		line-height: 1;
+
+		&.elementor-size- {
+			&small {
+				font-size: 15px;
+			}
+			&medium {
+				font-size: 19px;
+			}
+			&large {
+				font-size: 29px;
+			}
+			&xl {
+				font-size: 39px;
+			}
+			&xxl {
+				font-size: 59px;
+			}
+		}
+	}
+}

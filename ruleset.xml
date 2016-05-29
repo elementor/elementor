@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress.Pojo">
+	<description>
+		Elementor Coding Standard
+	</description>
+
+	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>tests/*.php</exclude-pattern>
+
+	<rule ref="WordPress-Core">
+		<exclude name="Generic.ControlStructures.InlineControlStructure" />
+	</rule>
+
+	<!-- Extras -->
+	<rule ref="WordPress.PHP.DiscouragedFunctions" />
+
+	<!-- VIP -->
+	<rule ref="WordPress.Arrays.ArrayAssignmentRestrictions" />
+	<rule ref="WordPress.Functions.FunctionRestrictions" />
+	<rule ref="WordPress.Variables.VariableRestrictions" />
+</ruleset>

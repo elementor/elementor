@@ -1,0 +1,81 @@
+// Admin Bar - Icon
+#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
+	content: "\f489";
+	top: 2px;
+}
+
+.elementor {
+	* {
+		@include box-sizing(border-box);
+	}
+	*:before,
+	*:after {
+		@include box-sizing(border-box);
+	}
+
+	// Reset Style for some themes
+	hyphens: manual;
+
+	a {
+		box-shadow: none;
+		text-decoration: none;
+	}
+	hr {
+		margin: 0;
+		background-color: transparent;
+	}
+	img {
+		height: auto;
+		max-width: 100%;
+		border: none;
+		@include border-radius(0);
+		@include box-shadow(0);
+	}
+
+	// Responsive Embed
+	embed,
+	iframe,
+	object,
+	video {
+		max-width: 100%;
+		width: 100%;
+		margin: 0;
+		line-height: 1;
+	}
+
+	// Background Video
+	.elementor-background-video-container {
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		position: absolute;
+		overflow: hidden;
+		z-index: $ground-layer;
+	}
+
+	.elementor-background-video {
+		position: absolute;
+		max-width: none;
+		top: 50%;
+		left: 50%;
+		transform: translateY(-50%) translateX(-50%);
+	}
+
+	.elementor-background-video-fallback {
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		background-size: cover;
+		background-position: 50% 50%;
+	}
+	// End Background Video
+}
+
+// TEMP CODE
+
+#elementor-select-preset {
+	 display: none;
+}

@@ -1,0 +1,30 @@
+<phpunit
+		bootstrap="tests/bootstrap.php"
+		backupGlobals="false"
+		colors="true"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+		>
+	<php>
+		<env name="PLUGIN_FILE" value="elementor.php" />
+	</php>
+	
+	<testsuites>
+		<testsuite>
+			<directory prefix="test-" suffix=".php">./tests/</directory>
+		</testsuite>
+	</testsuites>
+
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="false">
+			<directory suffix=".php">./</directory>
+			<exclude>
+				<directory suffix=".php">tests</directory>
+				<directory suffix=".php">vendor</directory>
+				<directory suffix=".php">node_modules</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	
+</phpunit>

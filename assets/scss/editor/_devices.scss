@@ -1,0 +1,56 @@
+//
+// Switcher Preview by Devices
+//
+#elementor-preview-responsive-wrapper {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	transition: all .5s ease 0s;
+
+	&.elementor-device- {
+
+		&desktop {
+			min-width: map_get($breakpoints, lg);
+			width: 100%;
+			height: 100%;
+		}
+
+		&mobile, &tablet, &laptop, &mobile-landscape {
+			border-radius: 30px;
+			background-color: #111;
+			margin: 30px auto 80px;
+		}
+
+		&laptop {
+			width: $screen-lg-min;
+			height: $screen-md-min;
+			padding: 10px 70px 10px 40px;
+		}
+
+		&tablet {
+			width: $screen-md-min;
+			height: $screen-lg-min;
+			padding: 40px 10px 70px;
+		}
+
+		&mobile-landscape {
+			width: 640px;
+			height: 360px;
+			padding: 10px 70px 10px 40px;
+		}
+
+		&mobile {
+			width: 360px;
+			height: 640px;
+			padding: 40px 10px 70px;
+		}
+	}
+}
+
+#elementor-preview-iframe {
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+}

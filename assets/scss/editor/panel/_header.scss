@@ -1,0 +1,40 @@
+//
+// Panel Header
+//
+
+#elementor-panel-header {
+    display: table;
+    height: 40px;
+    width: 100%;
+	background-color: $editor-accent;
+	color: #fff;
+
+    > * {
+		display: table-cell;
+		vertical-align: middle;
+		text-align: center;
+    }
+
+
+}
+
+.elementor-header-button {
+	width: 40px;
+
+	.elementor-icon {
+		cursor: pointer;
+		display: block;
+		font-size: 19px;
+		height: 40px;
+		line-height: 40px;
+		transition: $transition-hover;
+
+		&:hover {
+			color: $editor-lightest;
+		}
+	}
+}
+
+#elementor-panel-header-title {
+	font-size: 15px;
+}

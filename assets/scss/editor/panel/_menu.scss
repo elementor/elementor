@@ -1,0 +1,39 @@
+//
+// Menu Panel
+//
+
+#elementor-panel-page-menu {
+	box-shadow: $panel-bottom-shadow;
+}
+
+.elementor-panel-menu-item {
+	display: table;
+	width: 100%;
+	height: 50px;
+	cursor: pointer;
+	margin-bottom: 1px;
+
+	&:not(:hover) {
+		background-color: #fff;
+	}
+
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+	}
+}
+
+.elementor-panel-menu-item-icon {
+	text-align: center;
+	color: $editor-dark;
+	width: 55px;
+}
+
+.elementor-panel-menu-item-title {
+	color: $editor-dark;
+	font-weight: 500;
+
+	> span {
+		color: $editor-success;
+	}
+}

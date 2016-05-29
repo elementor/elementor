@@ -1,0 +1,106 @@
+
+// Loading Builder
+
+#elementor-loading {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background: $editor-dark;
+	z-index: $editor-layer;
+}
+
+#elementor-loader-wrapper {
+	$animation-time: 1.8s;
+	$size: 100px;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	width: $size;
+
+	#elementor-loader {
+		height: $size;
+		position: relative;
+	}
+
+	.elementor-loader-box {
+		position: absolute;
+		background-color: $editor-background;
+		opacity: 0;
+		animation: load $animation-time linear infinite;
+
+		&:nth-of-type(1) {
+			width: 20%;
+			height: 100%;
+			left: 0;
+			top: 0;
+		}
+
+		&:not(:nth-of-type(1)) {
+			right: 0;
+			height: 20%;
+			width: 60%;
+		}
+
+		&:nth-of-type(2) {
+			top: 0;
+			animation-delay: -($animation-time / 4 );
+		}
+
+		&:nth-of-type(3) {
+			top: 40%;
+			animation-delay: -($animation-time / 4 )*2;
+		}
+
+		&:nth-of-type(4) {
+			bottom: 0;
+			animation-delay: -($animation-time / 4 )*3;
+		}
+	}
+
+	@keyframes load {
+		0% {
+			opacity: .3;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: .3;
+		}
+	}
+
+	@keyframes load-title {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: .6;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+}
+
+#elementor-loading-title {
+	color: #fff;
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 30px;
+	letter-spacing: 7px;
+	font-size: 10px;
+	animation: load-title 1.5s linear infinite;
+}
+
+// Select2
+.select2-dropdown {
+	border-color: $editor-light;
+
+	.select2-search__field {
+		outline: none;
+	}
+}

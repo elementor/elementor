@@ -1,0 +1,17 @@
+//
+// Image
+//
+
+.elementor-widget-image {
+
+	.elementor-image {
+		overflow: hidden;
+
+		&.elementor-image-shape- {
+
+			&circle {
+				border-radius: 50%;
+			}
+		}
+	}
+}
