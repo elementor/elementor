@@ -44,8 +44,7 @@
     max-width: none;
     top: 50%;
     left: 50%;
-    -webkit-transform: translateY(-50%) translateX(-50%);
-            transform: translateY(-50%) translateX(-50%); }
+    transform: translateY(-50%) translateX(-50%); }
   .elementor .elementor-background-video-fallback {
     position: absolute;
     height: 100%;
@@ -72,43 +71,35 @@
     height: 100%; }
   @media (min-width: 768px) {
     .elementor-section > .elementor-container {
-      display: -webkit-flex;
       display: -ms-flexbox;
       display: flex; }
     .elementor-section.elementor-section-items-top > .elementor-container {
-      -webkit-align-items: flex-start;
-          -ms-flex-align: start;
-                  -ms-grid-row-align: flex-start;
-              align-items: flex-start; }
+      -ms-flex-align: start;
+          -ms-grid-row-align: flex-start;
+          align-items: flex-start; }
     .elementor-section.elementor-section-items-middle > .elementor-container {
-      -webkit-align-items: center;
-          -ms-flex-align: center;
-                  -ms-grid-row-align: center;
-              align-items: center; }
+      -ms-flex-align: center;
+          -ms-grid-row-align: center;
+          align-items: center; }
     .elementor-section.elementor-section-items-bottom > .elementor-container {
-      -webkit-align-items: flex-end;
-          -ms-flex-align: end;
-                  -ms-grid-row-align: flex-end;
-              align-items: flex-end; }
+      -ms-flex-align: end;
+          -ms-grid-row-align: flex-end;
+          align-items: flex-end; }
     .elementor-section.elementor-section-content-top .elementor-column-wrap {
-      -webkit-align-items: flex-start;
-          -ms-flex-align: start;
-                  -ms-grid-row-align: flex-start;
-              align-items: flex-start; }
+      -ms-flex-align: start;
+          -ms-grid-row-align: flex-start;
+          align-items: flex-start; }
     .elementor-section.elementor-section-content-middle .elementor-column-wrap {
-      -webkit-align-items: center;
-          -ms-flex-align: center;
-                  -ms-grid-row-align: center;
-              align-items: center; }
+      -ms-flex-align: center;
+          -ms-grid-row-align: center;
+          align-items: center; }
     .elementor-section.elementor-section-content-bottom .elementor-column-wrap {
-      -webkit-align-items: flex-end;
-          -ms-flex-align: end;
-                  -ms-grid-row-align: flex-end;
-              align-items: flex-end; } }
+      -ms-flex-align: end;
+          -ms-grid-row-align: flex-end;
+          align-items: flex-end; } }
 
 .elementor-row {
   width: 100%;
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   /* In dragging mode it's causing a columns fall */
@@ -123,15 +114,13 @@
   }*/ }
   @media (max-width: 767px) {
     .elementor-row {
-      -webkit-flex-wrap: wrap;
-          -ms-flex-wrap: wrap;
-              flex-wrap: wrap; } }
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; } }
 
 .elementor-column-wrap {
   width: 100%; }
   @media (min-width: 768px) {
     .elementor-column-wrap {
-      display: -webkit-flex;
       display: -ms-flexbox;
       display: flex; } }
 
@@ -147,7 +136,6 @@
 .elementor-column {
   position: relative;
   min-height: 1px;
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex; }
 
@@ -699,8 +687,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  -webkit-transform: translateX(-50%) translateY(-50%);
-          transform: translateX(-50%) translateY(-50%); }
+  transform: translateX(-50%) translateY(-50%); }
   .elementor-widget-video .elementor-custom-embed-play i {
     font-size: 100px;
     color: #fff;
