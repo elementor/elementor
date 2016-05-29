@@ -245,7 +245,7 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['image'] ) ) {
+		if ( empty( $instance['image']['url'] ) ) {
 			return;
 		}
 		$image_html = '<div class="elementor-image-box-wrapper' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
@@ -275,7 +275,7 @@ class Widget_Image_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( '' !== settings.image ) { %>
+		<% if ( '' !== settings.image.url ) { %>
 		<div class="elementor-image-box-wrapper">
 			<%
 			image_html = '<div class="elementor-image-box ' + settings.position + '"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
