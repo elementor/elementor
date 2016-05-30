@@ -306,6 +306,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'alpha' => true,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
