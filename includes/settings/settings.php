@@ -65,7 +65,7 @@ class Settings {
 				'type' => 'checkbox',
 				'value' => 'yes',
 				'default' => '',
-				'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to our newsletter. We guarantee no sensitive data will ever be tracked.', 'elementor' ),
+				'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data will ever be tracked.', 'elementor' ),
 			]
 		);
 
