@@ -1,6 +1,6 @@
 {
 	"name": "elementor",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"author": "Pojo Team",
 	"homepage": "http://pojo.me/",
 	"devDependencies": {
@@ -18,6 +18,14 @@
 		"cssnano": "~3.5.2",
 		"grunt-checktextdomain": "~1.0.0",
 		"grunt-pot": "~0.2.1",
+		"grunt-bumpup": "~0.6.3",
+		"grunt-shell": "~1.2.1",
+		"grunt-text-replace": "~0.4.0",
+		"grunt-release": "~0.13.0",
+		"grunt-banner": "~0.6.0",
+		"grunt-contrib-copy": "~1.0.0",
+		"grunt-contrib-clean": "~1.0.0",
+		"grunt-wp-deploy": "~1.1.0",
 		"remapify": "2.1.0",
 		"matchdep": "~1.0.1"
 	},
