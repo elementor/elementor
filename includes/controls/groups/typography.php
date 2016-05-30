@@ -61,10 +61,10 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => __( 'Default', 'elementor' ),
-				'uppercase' => __( 'Uppercase', 'elementor', 'elementor' ),
-				'lowercase' => __( 'Lowercase', 'elementor', 'elementor' ),
-				'capitalize' => __( 'Capitalize', 'elementor', 'elementor' ),
+				'' => _x( 'Default', 'elementor' ),
+				'uppercase' => _x( 'Uppercase', 'Typography Control', 'elementor' ),
+				'lowercase' => _x( 'Lowercase', 'Typography Control', 'elementor' ),
+				'capitalize' => _x( 'Capitalize', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -73,10 +73,10 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => __( 'Default', 'elementor', 'elementor' ),
-				'normal' => __( 'Normal', 'elementor', 'elementor' ),
-				'italic' => __( 'Italic', 'elementor', 'elementor' ),
-				'oblique' => __( 'Oblique', 'elementor', 'elementor' ),
+				'' => __( 'Default', 'elementor' ),
+				'normal' => _x( 'Normal', 'Typography Control', 'elementor' ),
+				'italic' => _x( 'Italic', 'Typography Control', 'elementor' ),
+				'oblique' => _x( 'Oblique', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -126,8 +126,8 @@ class Group_Control_Typography extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			],
 		];
