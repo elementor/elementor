@@ -8,19 +8,19 @@ language: php
 # PHP version used in first build configuration.
 php:
     - 5.4
-#    - 5.5
-#    - 5.6
-#    - 7.0
+    - 5.5
+    - 5.6
+    - 7.0
 
 # WordPress version used in first build configuration.
 env:
-#    - WP_VERSION=latest WP_MULTISITE=0
-#    - WP_VERSION=latest WP_MULTISITE=1
-#    - WP_VERSION=4.3 WP_MULTISITE=0
-#    - WP_VERSION=4.3 WP_MULTISITE=1
-#    - WP_VERSION=4.4 WP_MULTISITE=0
-#    - WP_VERSION=4.4 WP_MULTISITE=1
-#    - WP_VERSION=4.5 WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=4.3 WP_MULTISITE=0
+    - WP_VERSION=4.3 WP_MULTISITE=1
+    - WP_VERSION=4.4 WP_MULTISITE=0
+    - WP_VERSION=4.4 WP_MULTISITE=1
+    - WP_VERSION=4.5 WP_MULTISITE=0
     - WP_VERSION=4.5 WP_MULTISITE=1
     
 install:
