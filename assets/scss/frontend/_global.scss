@@ -44,6 +44,10 @@
 		line-height: 1;
 	}
 
+	.elementor-custom-embed {
+		line-height: 0; //for google maps margin bottom
+	}
+
 	// Background Video
 	.elementor-background-video-container {
 		height: 100%;

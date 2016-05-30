@@ -568,6 +568,8 @@ body.elementor-editor-active #elementor-select-preset-close {
   line-height: 1;
   color: #d5dadf; }
 body.elementor-editor-active #elementor-select-preset-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
   font-weight: 500;
   color: #556068; }
 body.elementor-editor-active ul#elementor-select-preset-list {

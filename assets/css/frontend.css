@@ -29,6 +29,8 @@
     width: 100%;
     margin: 0;
     line-height: 1; }
+  .elementor .elementor-custom-embed {
+    line-height: 0; }
   .elementor .elementor-background-video-container {
     height: 100%;
     width: 100%;
@@ -65,8 +67,8 @@
       max-width: 100%; }
   .elementor-section.elementor-section-height-full {
     height: 100vh; }
-  .elementor-section:not(.elementor-section-height-default) > .elementor-container {
-    height: 100%; }
+    .elementor-section.elementor-section-height-full > .elementor-container {
+      height: 100%; }
   @media (min-width: 768px) {
     .elementor-section > .elementor-container {
       display: -ms-flexbox;
