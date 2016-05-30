@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Elementor
- * Description: A drag and drop page builder for designers that want to create high-end, pixel perfect pages at record speeds. No more drag & drop loading lags. No more click for preview mode.
+ * Description: The most advanced frontend drag & drop page builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
  * Plugin URI: https://elementor.com/
  * Author: Elementor.com
  * Version: 0.1.0
