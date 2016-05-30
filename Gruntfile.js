@@ -10,6 +10,9 @@ module.exports = function( grunt ) {
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
+		banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+				'<%= grunt.template.today("dd-mm-yyyy") %> */',
+
 		checktextdomain: {
 			standard: {
 				options:{
@@ -168,6 +171,21 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		usebanner: {
+			dist: {
+				options: {
+					banner: '<%= banner %>'
+				},
+				files: {
+					src: [
+						'assets/admin/js/app.min.js',
+						'assets/js/admin.min.js',
+						'assets/js/frontend.min.js'
+					]
+				}
+			}
+		},
+
 		jshint: {
 			options: {
 				jshintrc: '.jshintrc'
@@ -248,6 +266,115 @@ module.exports = function( grunt ) {
 				],
 				tasks: [ 'scripts' ]
 			}
+		},
+
+		bumpup: {
+			options: {
+				updateProps: {
+					pkg: 'package.json'
+				}
+			},
+			file: 'package.json'
+		},
+
+		replace: {
+			plugin_main: {
+				src: [ 'elementor.php' ],
+				overwrite: true,
+				replacements: [
+					{
+						from: /Version: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
+						to: 'Version: <%= pkg.version %>'
+					},
+					{
+						from: /ELEMENTOR_VERSION', '.*?'/g,
+						to: 'ELEMENTOR_VERSION\', \'<%= pkg.version %>\''
+					}
+				]
+			},
+
+			readme: {
+				src: [ 'readme.txt' ],
+				overwrite: true,
+				replacements: [
+					{
+						from: /Stable tag: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
+						to: 'Stable tag: <%= pkg.version %>'
+					}
+				]
+			}
+		},
+
+		shell: {
+			git_add_all: {
+				command: [
+					'git add --all',
+					'git commit -m "Bump to <%= pkg.version %>"'
+				].join( '&&' )
+			}
+		},
+
+		release: {
+			options: {
+				bump: false,
+				npm: false,
+				commit: false,
+				tagName: 'v<%= version %>',
+				commitMessage: 'released v<%= version %>',
+				tagMessage: 'Tagged as v<%= version %>'
+			}
+		},
+
+		copy: {
+			main: {
+				src: [
+					'**',
+					'!node_modules/**',
+					'!build/**',
+					'!bin/**',
+					'!.git/**',
+					'!tests/**',
+					'!.travis.yml',
+					'!.jscsrc',
+					'!.jshintrc',
+					'!ruleset.xml',
+					'!README.md',
+					'!phpunit.xml',
+					'!vendor/**',
+					'!Gruntfile.js',
+					'!package.json',
+					'!npm-debug.log',
+					'!composer.json',
+					'!composer.lock',
+					'!wp-assets/**',
+					'!.gitignore',
+					'!.gitmodules',
+
+					'!assets/admin/js/dev/**',
+					'!assets/scss/**',
+					'!*~'
+				],
+				expand: true,
+				dest: 'build/'
+			}
+		},
+
+		clean: {
+			//Clean up build folder
+			main: [
+				'build'
+			]
+		},
+
+		wp_deploy: {
+			deploy:{
+				options: {
+					plugin_slug: '<%= pkg.slug %>',
+					svn_user: 'KingYes',
+					build_dir: 'build/',
+					assets_dir: 'wp-assets/'
+				}
+			}
 		}
 	} );
 
@@ -267,11 +394,26 @@ module.exports = function( grunt ) {
 		'jshint',
 		'browserify',
 		'exorcise',
-		'uglify'
+		'uglify',
+		'usebanner'
 	] );
 
 	grunt.registerTask( 'styles', [
 		'sass',
 		'postcss'
+	] );
+
+	grunt.registerTask( 'build', [
+		'default',
+		'clean',
+		'copy'
+	] );
+
+	grunt.registerTask( 'publish', [
+		'default',
+		'bumpup',
+		'replace',
+		'shell:git_add_all',
+		'release'
 	] );
 };
