@@ -162,7 +162,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'default' => [],
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
 				'section' => 'section_image_overlay',
 				'condition' => [
 					'show_image_overlay' => 'yes',
