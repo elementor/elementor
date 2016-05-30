@@ -95,7 +95,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		dimensions.forEach( _.bind( function( dimension ) {
-			var $element = $controls.filter( '[name="' + dimension + '"]' ),
+			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
 				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
 
 			if ( isAllowedDimension && $element.length && _.isEmpty( $element.val() ) ) {
