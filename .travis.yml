@@ -33,4 +33,4 @@ before_script:
 after_success:
   - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt
 
-script: phpunit --coverage-clover=/tmp/coverage.xml
+script: phpunit --coverage-clover=build/logs/clover.xml
