@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicon/eicon.eot?0.8");
-  src: url("../fonts/eicon/eicon.eot?0.8#iefix") format("embedded-opentype"), url("../fonts/eicon/eicon.woff2?0.8") format("woff2"), url("../fonts/eicon/eicon.woff?0.8") format("woff"), url("../fonts/eicon/eicon.ttf?0.8") format("truetype"), url("../fonts/eicon/eicon.svg?0.8#eicon") format("svg");
+  src: url("../fonts/eicon/eicon.eot?0.11");
+  src: url("../fonts/eicon/eicon.eot?0.11#iefix") format("embedded-opentype"), url("../fonts/eicon/eicon.woff2?0.11") format("woff2"), url("../fonts/eicon/eicon.woff?0.11") format("woff"), url("../fonts/eicon/eicon.ttf?0.11") format("truetype"), url("../fonts/eicon/eicon.svg?0.11#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -66,7 +66,7 @@
   content: '\e80f'; }
 
 .eicon-c3-7:before {
-  content: '\e810'; }
+  content: '\e811'; }
 
 .eicon-c3-8:before {
   content: '\e811'; }
@@ -101,7 +101,7 @@
 .eicon-c4-9:before {
   content: '\e81b'; }
 
-.eicon-c4-10:before {
+.eicon-c4-11:before {
   content: '\e81c'; }
 
 .eicon-c4-11:before {
@@ -134,7 +134,7 @@
 .eicon-c5-9:before {
   content: '\e826'; }
 
-.eicon-c5-10:before {
+.eicon-c5-11:before {
   content: '\e827'; }
 
 .eicon-c6-1:before {
@@ -164,7 +164,7 @@
 .eicon-c6-9:before {
   content: '\e830'; }
 
-.eicon-c6-10:before {
+.eicon-c6-11:before {
   content: '\e831'; }
 
 .eicon-c6-11:before {
@@ -179,7 +179,7 @@
 .eicon-c9-1:before {
   content: '\e835'; }
 
-.eicon-c10-1:before {
+.eicon-c11-1:before {
   content: '\e836'; }
 
 .eicon-anchor:before {
@@ -206,59 +206,62 @@
 .eicon-google-maps:before {
   content: '\e83e'; }
 
-.eicon-photo-library:before {
+.eicon-text-size:before {
   content: '\e83f'; }
 
-.eicon-text-size:before {
+.eicon-youtube:before {
   content: '\e840'; }
 
-.eicon-youtube:before {
+.eicon-success-chart:before {
   content: '\e841'; }
 
-.eicon-success-chart:before {
+.eicon-type-tool:before {
   content: '\e842'; }
 
-.eicon-type-tool:before {
+.eicon-bullet-list:before {
   content: '\e843'; }
 
-.eicon-bullet-list:before {
+.eicon-click:before {
   content: '\e844'; }
 
-.eicon-click:before {
+.eicon-coding:before {
   content: '\e845'; }
 
-.eicon-coding:before {
+.eicon-accordion:before {
   content: '\e846'; }
 
-.eicon-accordion:before {
+.eicon-divider:before {
   content: '\e847'; }
 
-.eicon-section:before {
+.eicon-toggle:before {
   content: '\e848'; }
 
-.eicon-tabs:before {
+.eicon-settings:before {
   content: '\e849'; }
 
-.eicon-divider:before {
+.eicon-section:before {
   content: '\e84a'; }
 
-.eicon-toggle:before {
+.eicon-photo-library:before {
   content: '\e84b'; }
 
-.eicon-settings:before {
+.eicon-elementor:before {
   content: '\e84c'; }
 
-.eicon-apps:before {
+.eicon-menu:before {
   content: '\e84d'; }
 
-.eicon-menu:before {
+.eicon-plus:before {
   content: '\e84e'; }
 
-.eicon-plus:before {
+.eicon-apps:before {
   content: '\e84f'; }
 
-.eicon-elementor:before {
+.eicon-tabs:before {
   content: '\e850'; }
+
+.eicon-elementor-square:before {
+  content: '\e851'; }
 
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
   content: "\e850";
