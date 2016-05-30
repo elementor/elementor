@@ -3314,7 +3314,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		if ( 'checkbox' === inputType ) {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
-			$input.filter( '[value=' + value + ']' ).prop( 'checked', true );
+			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
 		} else {
 			$input.val( value );
 		}
