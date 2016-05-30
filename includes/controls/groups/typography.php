@@ -61,7 +61,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => _x( 'Default', 'elementor' ),
+				'' => __( 'Default', 'elementor' ),
 				'uppercase' => _x( 'Uppercase', 'Typography Control', 'elementor' ),
 				'lowercase' => _x( 'Lowercase', 'Typography Control', 'elementor' ),
 				'capitalize' => _x( 'Capitalize', 'Typography Control', 'elementor' ),
