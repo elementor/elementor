@@ -268,6 +268,10 @@ App = Marionette.Application.extend( {
 	translate: function( stringKey, templateArgs ) {
 		var string = this.config.i18n[ stringKey ];
 
+		if ( undefined === string ) {
+			string = stringKey;
+		}
+
 		if ( templateArgs ) {
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
