@@ -63,7 +63,7 @@ class Widget_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_link',
 			[
-				'label' => __( 'link to', 'elementor' ),
+				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'file',
 				'section' => 'section_gallery_name',

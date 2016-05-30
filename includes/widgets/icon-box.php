@@ -85,7 +85,7 @@ class Widget_Icon_box extends Widget_Base {
 		$this->add_control(
 			'position',
 			[
-				'label' => __( 'Icon Postion', 'elementor' ),
+				'label' => __( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'elementor-position-left' => [
@@ -101,18 +101,6 @@ class Widget_Icon_box extends Widget_Base {
 						'icon' => 'align-right',
 					],
 				],
-				'section' => 'section_icon',
-			]
-		);
-
-		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => __( 'Sample Icon', 'elementor' ),
-				'title' => __( 'Input an alternative text when the icon can\'t to be displayed', 'elementor' ),
 				'section' => 'section_icon',
 			]
 		);
