@@ -531,7 +531,7 @@ body.elementor-editor-active #elementor-add-section {
 body.elementor-editor-active #elementor-add-section-inner {
   text-align: center;
   margin-top: 10px; }
-body.elementor-editor-active .elementor-button.elementor-add-section-button {
+body.elementor-editor-active #elementor-add-section-button {
   background-color: #9b0a46;
   background-image: none;
   color: #fff;
@@ -546,10 +546,10 @@ body.elementor-editor-active .elementor-button.elementor-add-section-button {
   border: none;
   border-radius: 3px;
   cursor: pointer; }
-  body.elementor-editor-active .elementor-button.elementor-add-section-button:hover {
+  body.elementor-editor-active #elementor-add-section-button:hover {
     opacity: 0.85;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2); }
-  body.elementor-editor-active .elementor-button.elementor-add-section-button:active {
+  body.elementor-editor-active #elementor-add-section-button:active {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.1); }
 body.elementor-editor-active #elementor-add-section-drag-title {
   font-family: Arial, Helvetica, sans-serif;

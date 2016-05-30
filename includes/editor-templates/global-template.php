@@ -16,7 +16,7 @@ $structures = [ 10, 20, 21, 22, 30, 40 ,50, 60, 70, 80, 90, 100 ];
 	<div id="elementor-add-section" class="elementor-visible-desktop">
 		<div id="elementor-add-section-inner">
 			<div id="elementor-add-new-section">
-				<button class="elementor-button elementor-add-section-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>
+				<button id="elementor-add-section-button" class="elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>
 				<div id="elementor-add-section-drag-title"><?php _e( 'Or drag widget here', 'elementor' ); ?></div>
 			</div>
 			<div id="elementor-select-preset">

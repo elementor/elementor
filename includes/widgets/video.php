@@ -144,12 +144,31 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'show_image_overlay',
+			[
+				'label' => __( 'Image Overlay', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'no',
+				'options' => [
+					'no' => __( 'Hide', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
+				],
+				'section' => 'section_image_overlay',
+			]
+		);
+
+		$this->add_control(
 			'image_overlay',
 			[
 				'label' => __( 'Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'default' => [],
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
 				'section' => 'section_image_overlay',
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
 			]
 		);
 
@@ -165,6 +184,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'section' => 'section_image_overlay',
 				'condition' => [
+					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
 				],
 			]
@@ -186,7 +206,7 @@ class Widget_Video extends Widget_Base {
 				<?php
 				echo $video_embed;
 
-				if ( ! empty( $this->_current_instance['image_overlay']['url'] ) ) : ?>
+				if ( ! empty( $this->_current_instance['image_overlay']['url'] )  && 'yes' === $this->_current_instance['show_image_overlay'] ) : ?>
 					<div class="elementor-custom-embed-image-overlay" style="background-image: url(<?php echo $this->_current_instance['image_overlay']['url']; ?>);">
 						<?php if ( 'yes' === $this->_current_instance['show_play_icon'] ) : ?>
 							<div class="elementor-custom-embed-play">

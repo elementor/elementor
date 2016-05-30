@@ -268,6 +268,10 @@ App = Marionette.Application.extend( {
 	translate: function( stringKey, templateArgs ) {
 		var string = this.config.i18n[ stringKey ];
 
+		if ( undefined === string ) {
+			string = stringKey;
+		}
+
 		if ( templateArgs ) {
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
@@ -4757,7 +4761,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		addSectionArea: '#elementor-add-section',
 		addNewSection: '#elementor-add-new-section',
 		closePresetsIcon: '#elementor-select-preset-close',
-		addIcon: '#elementor-add-section .elementor-add-section-button',
+		addIcon: '#elementor-add-section-button',
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},

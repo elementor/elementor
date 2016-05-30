@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementor 0.0.3\n"
 "Report-Msgid-Bugs-To: team@pojo.me\n"
-"POT-Creation-Date: 2016-05-30 14:53+0300\n"
+"POT-Creation-Date: 2016-05-30 15:14+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1031,7 +1031,7 @@ msgstr ""
 #: includes/widgets/carousel.php:103 includes/widgets/gallery.php:87
 #: includes/widgets/slider.php:118 includes/widgets/video.php:80
 #: includes/widgets/video.php:93 includes/widgets/video.php:107
-#: includes/widgets/video.php:121 includes/widgets/video.php:163
+#: includes/widgets/video.php:121 includes/widgets/video.php:182
 msgid "Yes"
 msgstr ""
 
@@ -1041,7 +1041,7 @@ msgstr ""
 #: includes/widgets/carousel.php:104 includes/widgets/gallery.php:86
 #: includes/widgets/slider.php:119 includes/widgets/video.php:79
 #: includes/widgets/video.php:94 includes/widgets/video.php:108
-#: includes/widgets/video.php:122 includes/widgets/video.php:164
+#: includes/widgets/video.php:122 includes/widgets/video.php:183
 msgid "No"
 msgstr ""
 
@@ -1336,13 +1336,13 @@ msgstr ""
 
 #: includes/widgets/alert.php:81 includes/widgets/base.php:126
 #: includes/widgets/base.php:142 includes/widgets/base.php:158
-#: includes/widgets/progress.php:84
+#: includes/widgets/progress.php:84 includes/widgets/video.php:154
 msgid "Show"
 msgstr ""
 
 #: includes/widgets/alert.php:82 includes/widgets/base.php:127
 #: includes/widgets/base.php:143 includes/widgets/base.php:159
-#: includes/widgets/progress.php:85
+#: includes/widgets/progress.php:85 includes/widgets/video.php:153
 msgid "Hide"
 msgstr ""
 
@@ -1480,7 +1480,7 @@ msgstr ""
 
 #: includes/widgets/carousel.php:39 includes/widgets/image-box.php:28
 #: includes/widgets/image.php:13 includes/widgets/image.php:28
-#: includes/widgets/slider.php:73 includes/widgets/video.php:149
+#: includes/widgets/slider.php:73 includes/widgets/video.php:163
 msgid "Image"
 msgstr ""
 
@@ -2066,10 +2066,10 @@ msgstr ""
 msgid "Player Title & Actions"
 msgstr ""
 
-#: includes/widgets/video.php:141
+#: includes/widgets/video.php:141 includes/widgets/video.php:149
 msgid "Image Overlay"
 msgstr ""
 
-#: includes/widgets/video.php:159
+#: includes/widgets/video.php:178
 msgid "Play Icon"
 msgstr ""

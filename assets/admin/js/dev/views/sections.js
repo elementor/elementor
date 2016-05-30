@@ -14,7 +14,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		addSectionArea: '#elementor-add-section',
 		addNewSection: '#elementor-add-new-section',
 		closePresetsIcon: '#elementor-select-preset-close',
-		addIcon: '#elementor-add-section .elementor-add-section-button',
+		addIcon: '#elementor-add-section-button',
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},
