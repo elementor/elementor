@@ -43,18 +43,20 @@ class Widget_Google_maps extends Widget_Base {
 			]
 		);
 
-		$zoom_options = [];
-		foreach ( range( 3, 19 ) as $val ) {
-			$zoom_options[ $val ] = $val;
-		}
-
 		$this->add_control(
 			'zoom',
 			[
 				'label' => __( 'Zoom Level', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => $zoom_options,
-				'default' => '10',
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 10,
+				],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 20,
+					],
+				],
 				'section' => 'section_map',
 			]
 		);
@@ -95,13 +97,13 @@ class Widget_Google_maps extends Widget_Base {
 		if ( empty( $instance['address'] ) )
 			return;
 
-		if ( 0 === absint( $instance['zoom'] ) )
-			$instance['zoom'] = 10;
+		if ( 0 === absint( $instance['zoom']['size'] ) )
+			$instance['zoom']['size'] = 10;
 
 		printf(
 			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near"></iframe></div>',
 			urlencode( $instance['address'] ),
-			absint( $instance['zoom'] )
+			absint( $instance['zoom']['size'] )
 		);
 	}
 
