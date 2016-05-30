@@ -106,18 +106,6 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => __( 'Sample Icon', 'elementor' ),
-				'title' => __( 'Input an alternative text when the icon can\'t to be displayed', 'elementor' ),
-				'section' => 'section_icon',
-			]
-		);
-
-		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
