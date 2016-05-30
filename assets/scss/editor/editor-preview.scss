@@ -4,6 +4,9 @@
 @import "../helpers/variables";
 @import "../helpers/mixins";
 
+// Elementor icon font
+@import "../admin/_eicon";
+
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;

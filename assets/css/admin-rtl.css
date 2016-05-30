@@ -264,13 +264,13 @@
   content: '\e851'; }
 
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-  content: "\e850";
+  content: "\e84c";
   font-family: eicon;
   font-size: 14px;
-  margin-top: 3px; }
+  margin-top: 5px; }
 
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
-  content: "\e850";
+  content: "\e84c";
   font-family: eicon;
   font-size: 14px;
   margin-top: 3px; }
