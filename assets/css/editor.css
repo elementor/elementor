@@ -1451,8 +1451,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicon/eicon.eot?0.7");
-  src: url("../fonts/eicon/eicon.eot?0.7#iefix") format("embedded-opentype"), url("../fonts/eicon/eicon.woff2?0.7") format("woff2"), url("../fonts/eicon/eicon.woff?0.7") format("woff"), url("../fonts/eicon/eicon.ttf?0.7") format("truetype"), url("../fonts/eicon/eicon.svg?0.7#eicon") format("svg");
+  src: url("../fonts/eicon/eicon.eot?0.8");
+  src: url("../fonts/eicon/eicon.eot?0.8#iefix") format("embedded-opentype"), url("../fonts/eicon/eicon.woff2?0.8") format("woff2"), url("../fonts/eicon/eicon.woff?0.8") format("woff"), url("../fonts/eicon/eicon.ttf?0.8") format("truetype"), url("../fonts/eicon/eicon.svg?0.8#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -1707,5 +1707,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .eicon-plus:before {
   content: '\e84f'; }
+
+.eicon-elementor:before {
+  content: '\e850'; }
 
 /*# sourceMappingURL=editor.css.map */

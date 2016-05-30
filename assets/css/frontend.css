@@ -1,7 +1,3 @@
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-  content: "\f489";
-  top: 2px; }
-
 .elementor {
   -webkit-hyphens: manual;
       -ms-hyphens: manual;
@@ -23,6 +19,8 @@
     border: none;
     border-radius: 0;
     box-shadow: 0; }
+  .elementor figure {
+    margin: 0; }
   .elementor embed,
   .elementor iframe,
   .elementor object,
@@ -698,22 +696,22 @@
 .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
   color: #000000; }
 
-.elementor-featured-image-wrapper {
+.elementor-image-box-wrapper {
   overflow: hidden; }
-  .elementor-featured-image-wrapper .elementor-position-right {
+  .elementor-image-box-wrapper .elementor-position-right {
     float: right; }
-  .elementor-featured-image-wrapper .elementor-position-left {
+  .elementor-image-box-wrapper .elementor-position-left {
     float: left; }
-  .elementor-featured-image-wrapper .elementor-position-center {
+  .elementor-image-box-wrapper .elementor-position-center {
     text-align: center; }
 
-.elementor-featured-icon-wrapper {
+.elementor-icon-box-wrapper {
   overflow: hidden; }
-  .elementor-featured-icon-wrapper .elementor-position-right {
+  .elementor-icon-box-wrapper .elementor-position-right {
     float: right; }
-  .elementor-featured-icon-wrapper .elementor-position-left {
+  .elementor-icon-box-wrapper .elementor-position-left {
     float: left; }
-  .elementor-featured-icon-wrapper .elementor-position-center {
+  .elementor-icon-box-wrapper .elementor-position-center {
     text-align: center; }
 
 @media (max-width: 479px) {
