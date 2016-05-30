@@ -4,7 +4,7 @@
  * Description: A drag and drop page builder for designers that want to create high-end, pixel perfect pages at record speeds. No more drag & drop loading lags. No more click for preview mode.
  * Plugin URI: https://elementor.com/
  * Author: Elementor.com
- * Version: 0.0.3
+ * Version: 0.1.0
  * Author URI: https://elementor.com/
  *
  * Text Domain: elementor
@@ -23,7 +23,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-define( 'ELEMENTOR_VERSION', '0.0.3' );
+define( 'ELEMENTOR_VERSION', '0.1.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );

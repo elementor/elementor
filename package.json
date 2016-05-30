@@ -1,6 +1,6 @@
 {
 	"name": "elementor",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"author": "Pojo Team",
 	"homepage": "http://pojo.me/",
 	"devDependencies": {
