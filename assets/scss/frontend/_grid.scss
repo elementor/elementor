@@ -19,9 +19,6 @@
 	// Section Full Height
 	&.elementor-section-height-full {
 		height: 100vh;
-	}
-
-	&:not(.elementor-section-height-default) {
 
 		> .elementor-container {
 			height: 100%;
