@@ -8,7 +8,6 @@
  * Author URI: https://elementor.com/
  *
  * Text Domain: elementor
- * Domain Path: /languages/
  *
  * Elementor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +46,7 @@ if ( version_compare( PHP_VERSION, '5.4', '>=' ) ) {
  * @return void
  */
 function elementor_load_plugin_textdomain() {
-	load_plugin_textdomain( 'elementor', false, basename( dirname( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'elementor' );
 }
 
 /**
