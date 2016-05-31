@@ -183,6 +183,9 @@ body {
 					margin: 0;
 					padding: 0;
 					font-family: Arial, Helvetica, sans-serif;
+					font-size: 13px;
+					font-weight: normal;
+					font-style: normal;
 					line-height: 1;
 
 					&:not(.elementor-editor-section-settings-list) {
@@ -340,6 +343,8 @@ body {
 				background-color: $editor-info;
 				color: #fff;
 				font-family: Arial, Helvetica, sans-serif;
+				font-weight: normal;
+				font-style: normal;
 				font-size: 9px;
 				line-height: 1;
 				padding: 3px 6px;
@@ -415,6 +420,7 @@ body {
 					@include end(0);
 					color: #999;
 					font-family: Arial, Helvetica, sans-serif;
+					font-weight: normal;
 					line-height: 1;
 					font-size: 12px;
 					font-style: italic;
@@ -511,6 +517,10 @@ body {
 			display: table;
 			table-layout: fixed;
 			color: #fff;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 13px;
+			font-weight: normal;
+			font-style: normal;
 			line-height: 50px;
 			border-radius: 3px;
 
@@ -576,9 +586,10 @@ body {
 			color: #fff;
 			font-size: 13px;
 			font-family: Arial, Helvetica, sans-serif;
+			font-weight: normal;
+			font-style: normal;
 			line-height: 1;
 			text-transform: uppercase;
-			font-weight: normal;
 			height: 40px;
 			width: 170px;
 			padding: 0;
@@ -620,6 +631,7 @@ body {
 			font-family: Arial, Helvetica, sans-serif;
 			font-size: 13px;
 			font-weight: 500;
+			font-style: normal;
 			color: $editor-darker;
 		}
 

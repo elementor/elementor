@@ -350,6 +350,9 @@ body.elementor-editor-active #elementor {
       margin: 0;
       padding: 0;
       font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      font-weight: normal;
+      font-style: normal;
       line-height: 1; }
       body.elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-settings-list:not(.elementor-editor-section-settings-list) {
         background-color: #495157; }
@@ -422,6 +425,8 @@ body.elementor-editor-active #elementor {
     background-color: #71d7f7;
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-style: normal;
     font-size: 9px;
     line-height: 1;
     padding: 3px 6px; }
@@ -455,6 +460,7 @@ body.elementor-editor-active #elementor {
     right: 0;
     color: #999;
     font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
     line-height: 1;
     font-size: 12px;
     font-style: italic; }
@@ -498,6 +504,10 @@ body.elementor-editor-active .elementor-sortable-helper {
   display: table;
   table-layout: fixed;
   color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  font-style: normal;
   line-height: 50px;
   border-radius: 3px; }
   body.elementor-editor-active .elementor-sortable-helper .fa {
@@ -537,9 +547,10 @@ body.elementor-editor-active #elementor-add-section-button {
   color: #fff;
   font-size: 13px;
   font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  font-style: normal;
   line-height: 1;
   text-transform: uppercase;
-  font-weight: normal;
   height: 40px;
   width: 170px;
   padding: 0;
@@ -571,6 +582,7 @@ body.elementor-editor-active #elementor-select-preset-title {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: 500;
+  font-style: normal;
   color: #556068; }
 body.elementor-editor-active ul#elementor-select-preset-list {
   list-style: none;
