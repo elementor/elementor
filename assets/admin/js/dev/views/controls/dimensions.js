@@ -60,11 +60,13 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			this.ui.link.addClass( 'unlinked' );
 
 			this.ui.controls.each( _.bind( function( index, element ) {
-				if ( _.isEmpty( currentValue[ element.name ] ) ) {
-					currentValue[ element.name ] = this.defaultDimensionValue;
+				var value = currentValue[ element.dataset.setting ];
+
+				if ( _.isEmpty( value ) ) {
+					value = this.defaultDimensionValue;
 				}
 
-				this.$( element ).val( currentValue[ element.name ] );
+				this.$( element ).val( value );
 			}, this ) );
 		}
 
