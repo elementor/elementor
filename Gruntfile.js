@@ -50,45 +50,6 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		pot: {
-			options:{
-				text_domain: 'elementor',
-				dest: 'languages/',
-				encoding: 'UTF-8',
-				package_name: '<%= pkg.name %>',
-				package_version: '<%= pkg.version %>',
-				msgid_bugs_address: 'team@pojo.me',
-				keywords: [
-					// WordPress keywords
-					'__:1',
-					'_e:1',
-					'_x:1,2c',
-					'esc_html__:1',
-					'esc_html_e:1',
-					'esc_html_x:1,2c',
-					'esc_attr__:1',
-					'esc_attr_e:1',
-					'esc_attr_x:1,2c',
-					'_ex:1,2c',
-					'_n:1,2',
-					'_nx:1,2,4c',
-					'_n_noop:1,2',
-					'_nx_noop:1,2,3c'
-				]
-			},
-			files:{
-				src: [
-					'**/*.php',
-					'!node_modules/**',
-					'!build/**',
-					'!tests/**',
-					'!vendor/**',
-					'!*~'
-				],
-				expand: true
-			}
-		},
-
 		sass: {
 			dist: {
 				files: [ {
@@ -386,8 +347,7 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'i18n', [
-		'checktextdomain',
-		'pot'
+		'checktextdomain'
 	] );
 
 	grunt.registerTask( 'scripts', [

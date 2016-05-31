@@ -131,7 +131,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		this.closeSelectPresets();
 
 		var selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = SectionView.getParsedStructure( selectedStructure ),
+			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure ),
 			elements = [],
 			loopIndex;
 
@@ -147,6 +147,8 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
+
+		newSection.redefineLayout();
 	}
 } );
 

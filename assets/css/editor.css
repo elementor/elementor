@@ -57,7 +57,6 @@ img {
 #elementor-preview {
   background-color: #333;
   position: absolute;
-  overflow: auto;
   height: 100%;
   top: 0;
   right: 0;
@@ -663,9 +662,9 @@ select {
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
           content: '\f10a'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-structure a:before {
-          content: '\f00a'; }
-        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-section a:before {
-          content: '\f147'; }
+          content: '\f0db'; }
+        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-settings a:before {
+          content: '\f013'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
           content: '\f0db'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.active {
@@ -995,13 +994,14 @@ select {
     border-radius: 3px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) {
       display: inline-block;
-      cursor: pointer; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) i {
-        font-size: 50px; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset i {
-      color: #e6e9ec; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset i {
-    font-size: 116px; }
+      cursor: pointer;
+      height: 60px; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) svg {
+        height: 100%; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset path {
+      fill: #e6e9ec; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
+    height: 85px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     color: #495157;
     font-weight: bold;
@@ -1017,10 +1017,10 @@ select {
         justify-content: space-between; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input {
       display: none; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset i {
-        color: #a4afb7; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset path {
+        fill: #a4afb7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset-wrapper {
-    width: 45%;
+    width: 47%;
     margin-top: 15px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset-title {
     text-align: center;
@@ -1448,270 +1448,5 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-dialog-message-text {
   text-transform: uppercase; }
-
-@font-face {
-  font-family: 'eicon';
-  src: url("../fonts/eicon/eicon.eot?0.11");
-  src: url("../fonts/eicon/eicon.eot?0.11#iefix") format("embedded-opentype"), url("../fonts/eicon/eicon.woff2?0.11") format("woff2"), url("../fonts/eicon/eicon.woff?0.11") format("woff"), url("../fonts/eicon/eicon.ttf?0.11") format("truetype"), url("../fonts/eicon/eicon.svg?0.11#eicon") format("svg");
-  font-weight: normal;
-  font-style: normal; }
-[class^="eicon-"],
-[class*=" eicon-"] {
-  display: inline-block;
-  font-family: eicon;
-  font-size: inherit;
-  font-weight: normal;
-  font-style: normal;
-  font-variant: normal;
-  line-height: 1;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; }
-
-.eicon-c1-1:before {
-  content: '\e800'; }
-
-.eicon-c2-1:before {
-  content: '\e801'; }
-
-.eicon-c2-2:before {
-  content: '\e802'; }
-
-.eicon-c2-3:before {
-  content: '\e803'; }
-
-.eicon-c2-4:before {
-  content: '\e804'; }
-
-.eicon-c2-5:before {
-  content: '\e805'; }
-
-.eicon-c2-6:before {
-  content: '\e806'; }
-
-.eicon-c2-7:before {
-  content: '\e807'; }
-
-.eicon-c2-8:before {
-  content: '\e808'; }
-
-.eicon-c2-9:before {
-  content: '\e809'; }
-
-.eicon-c3-1:before {
-  content: '\e80a'; }
-
-.eicon-c3-2:before {
-  content: '\e80b'; }
-
-.eicon-c3-3:before {
-  content: '\e80c'; }
-
-.eicon-c3-4:before {
-  content: '\e80d'; }
-
-.eicon-c3-5:before {
-  content: '\e80e'; }
-
-.eicon-c3-6:before {
-  content: '\e80f'; }
-
-.eicon-c3-7:before {
-  content: '\e811'; }
-
-.eicon-c3-8:before {
-  content: '\e811'; }
-
-.eicon-c3-9:before {
-  content: '\e812'; }
-
-.eicon-c4-1:before {
-  content: '\e813'; }
-
-.eicon-c4-2:before {
-  content: '\e814'; }
-
-.eicon-c4-3:before {
-  content: '\e815'; }
-
-.eicon-c4-4:before {
-  content: '\e816'; }
-
-.eicon-c4-5:before {
-  content: '\e817'; }
-
-.eicon-c4-6:before {
-  content: '\e818'; }
-
-.eicon-c4-7:before {
-  content: '\e819'; }
-
-.eicon-c4-8:before {
-  content: '\e81a'; }
-
-.eicon-c4-9:before {
-  content: '\e81b'; }
-
-.eicon-c4-11:before {
-  content: '\e81c'; }
-
-.eicon-c4-11:before {
-  content: '\e81d'; }
-
-.eicon-c5-1:before {
-  content: '\e81e'; }
-
-.eicon-c5-2:before {
-  content: '\e81f'; }
-
-.eicon-c5-3:before {
-  content: '\e820'; }
-
-.eicon-c5-4:before {
-  content: '\e821'; }
-
-.eicon-c5-5:before {
-  content: '\e822'; }
-
-.eicon-c5-6:before {
-  content: '\e823'; }
-
-.eicon-c5-7:before {
-  content: '\e824'; }
-
-.eicon-c5-8:before {
-  content: '\e825'; }
-
-.eicon-c5-9:before {
-  content: '\e826'; }
-
-.eicon-c5-11:before {
-  content: '\e827'; }
-
-.eicon-c6-1:before {
-  content: '\e828'; }
-
-.eicon-c6-2:before {
-  content: '\e829'; }
-
-.eicon-c6-3:before {
-  content: '\e82a'; }
-
-.eicon-c6-4:before {
-  content: '\e82b'; }
-
-.eicon-c6-5:before {
-  content: '\e82c'; }
-
-.eicon-c6-6:before {
-  content: '\e82d'; }
-
-.eicon-c6-7:before {
-  content: '\e82e'; }
-
-.eicon-c6-8:before {
-  content: '\e82f'; }
-
-.eicon-c6-9:before {
-  content: '\e830'; }
-
-.eicon-c6-11:before {
-  content: '\e831'; }
-
-.eicon-c6-11:before {
-  content: '\e832'; }
-
-.eicon-c7-1:before {
-  content: '\e833'; }
-
-.eicon-c8-1:before {
-  content: '\e834'; }
-
-.eicon-c9-1:before {
-  content: '\e835'; }
-
-.eicon-c11-1:before {
-  content: '\e836'; }
-
-.eicon-anchor:before {
-  content: '\e837'; }
-
-.eicon-wordpress:before {
-  content: '\e838'; }
-
-.eicon-insert-image:before {
-  content: '\e839'; }
-
-.eicon-align-left:before {
-  content: '\e83a'; }
-
-.eicon-digital-alarm-clock:before {
-  content: '\e83b'; }
-
-.eicon-favorite:before {
-  content: '\e83c'; }
-
-.eicon-firewall-on:before {
-  content: '\e83d'; }
-
-.eicon-google-maps:before {
-  content: '\e83e'; }
-
-.eicon-text-size:before {
-  content: '\e83f'; }
-
-.eicon-youtube:before {
-  content: '\e840'; }
-
-.eicon-success-chart:before {
-  content: '\e841'; }
-
-.eicon-type-tool:before {
-  content: '\e842'; }
-
-.eicon-bullet-list:before {
-  content: '\e843'; }
-
-.eicon-click:before {
-  content: '\e844'; }
-
-.eicon-coding:before {
-  content: '\e845'; }
-
-.eicon-accordion:before {
-  content: '\e846'; }
-
-.eicon-divider:before {
-  content: '\e847'; }
-
-.eicon-toggle:before {
-  content: '\e848'; }
-
-.eicon-settings:before {
-  content: '\e849'; }
-
-.eicon-section:before {
-  content: '\e84a'; }
-
-.eicon-photo-library:before {
-  content: '\e84b'; }
-
-.eicon-elementor:before {
-  content: '\e84c'; }
-
-.eicon-menu:before {
-  content: '\e84d'; }
-
-.eicon-plus:before {
-  content: '\e84e'; }
-
-.eicon-apps:before {
-  content: '\e84f'; }
-
-.eicon-tabs:before {
-  content: '\e850'; }
-
-.eicon-elementor-square:before {
-  content: '\e851'; }
 
 /*# sourceMappingURL=editor.css.map */

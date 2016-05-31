@@ -86,7 +86,14 @@ class Preview {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style( 'editor-preview', ELEMENTOR_ASSETS_URL . 'css/editor-preview' .$direction_suffix . $suffix . '.css', false, Plugin::instance()->get_version() );
+		wp_register_style(
+			'editor-preview',
+			ELEMENTOR_ASSETS_URL . 'css/editor-preview' . $direction_suffix . $suffix . '.css',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_enqueue_style( 'editor-preview' );
 	}
 
 	/**

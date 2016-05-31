@@ -4,9 +4,6 @@
 @import "../helpers/variables";
 @import "../helpers/mixins";
 
-// Elementor icon font
-@import "../admin/_eicon";
-
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;
@@ -649,15 +646,21 @@ body {
 				float: getStartDirection();
 
 				&:hover {
-					color: $editor-dark;
+
+					path {
+						fill: $editor-dark;
+					}
 				}
 
 				&:not(:hover) {
-					color: $editor-lightest;
+
+					path {
+						fill: $editor-lightest;
+					}
 				}
 
-				[class^="eicon-"] {
-					font-size: 40px;
+				svg {
+					height: 50px;
 				}
 			}
 		}
