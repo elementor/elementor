@@ -16,7 +16,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'digital-alarm-clock';
+		return 'counter';
 	}
 
 	protected function _register_controls() {
