@@ -152,8 +152,6 @@ SectionView = BaseElementView.extend( {
 
 	onRender: function() {
 		this._checkIsFull();
-
-		this.redefineLayout();
 	},
 
 	onAddChild: function() {
