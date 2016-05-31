@@ -581,12 +581,12 @@ body.elementor-editor-active ul#elementor-select-preset-list {
     margin: 0;
     padding: 10px;
     float: right; }
-    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset:hover {
-      color: #6d7882; }
-    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset:not(:hover) {
-      color: #d5dadf; }
-    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset [class^="eicon-"] {
-      font-size: 40px; }
+    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset:hover path {
+      fill: #6d7882; }
+    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset:not(:hover) path {
+      fill: #d5dadf; }
+    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset svg {
+      height: 50px; }
 body.elementor-editor-preview .elementor-element-overlay,
 body.elementor-editor-preview .column-title,
 body.elementor-editor-preview .elementor-empty,

@@ -995,13 +995,14 @@ select {
     border-radius: 3px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) {
       display: inline-block;
-      cursor: pointer; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) i {
-        font-size: 50px; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset i {
-      color: #e6e9ec; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset i {
-    font-size: 116px; }
+      cursor: pointer;
+      height: 60px; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) svg {
+        height: 100%; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset path {
+      fill: #e6e9ec; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
+    height: 85px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     color: #495157;
     font-weight: bold;
@@ -1017,10 +1018,10 @@ select {
         justify-content: space-between; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input {
       display: none; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset i {
-        color: #a4afb7; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset path {
+        fill: #a4afb7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset-wrapper {
-    width: 45%;
+    width: 47%;
     margin-top: 15px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset-title {
     text-align: center;
