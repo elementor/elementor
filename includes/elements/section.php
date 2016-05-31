@@ -253,27 +253,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		// Section structure
-		$this->add_control(
-			'section_structure',
-			[
-				'label' => __( 'Structure', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_SECTION,
-			]
-		);
-
-		$this->add_control(
-			'structure',
-			[
-				'label' => __( 'Structure', 'elementor' ),
-				'type' => Controls_Manager::STRUCTURE,
-				'default' => '10',
-				'tab' => self::TAB_SECTION,
-				'section' => 'section_structure',
-			]
-		);
-
 		// Section style
 		$this->add_control(
 			'section_style',
@@ -519,6 +498,27 @@ class Element_Section extends Element_Base {
 				],
 				'default' => '',
 				'prefix_class' => 'elementor-',
+			]
+		);
+
+		// Section structure
+		$this->add_control(
+			'section_structure',
+			[
+				'label' => __( 'Structure', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_STRUCTURE,
+			]
+		);
+
+		$this->add_control(
+			'structure',
+			[
+				'label' => __( 'Structure', 'elementor' ),
+				'type' => Controls_Manager::STRUCTURE,
+				'default' => '10',
+				'tab' => self::TAB_STRUCTURE,
+				'section' => 'section_structure',
 			]
 		);
 	}
