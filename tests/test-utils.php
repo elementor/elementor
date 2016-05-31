@@ -13,5 +13,7 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 		foreach ( $youtube_urls as $youtube_url ) {
 			$this->assertEquals( $youtube_id, \Elementor\Utils::get_youtube_id_from_url( $youtube_url ) );
 		}
+		
+		$this->assertFalse( \Elementor\Utils::get_youtube_id_from_url( 'https://www.youtube.com/' ) );
 	}
 }
