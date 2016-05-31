@@ -662,9 +662,9 @@ select {
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
           content: '\f10a'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-structure a:before {
-          content: '\f00a'; }
-        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-section a:before {
-          content: '\f147'; }
+          content: '\f0db'; }
+        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-settings a:before {
+          content: '\f013'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
           content: '\f0db'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.active {
