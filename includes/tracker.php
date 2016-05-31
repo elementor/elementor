@@ -124,7 +124,7 @@ class Tracker {
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 		?>
 		<div class="updated">
-			<p><?php _e( 'Love using Elementor? Be a super contributor by opting in to our anonymous plugin data collection and to our newsletter. We guarantee no sensitive data will ever be tracked.', 'elementor' ); ?></p>
+			<p><?php _e( 'Love using Elementor? Be a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data will ever be tracked.', 'elementor' ); ?></p>
 			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'I won\'t help', 'elementor' ); ?></a></p>
 		</div>
 		<?php
