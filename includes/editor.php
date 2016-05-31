@@ -326,17 +326,40 @@ class Editor {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style( 'font-awesome', ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css', false, '4.6.1' );
-		wp_enqueue_style( 'select2', ELEMENTOR_ASSETS_URL . 'lib/select2/css/select2' . $suffix . '.css', [], '4.0.2' );
+		wp_register_style(
+			'font-awesome',
+			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
+			[],
+			'4.6.1'
+		);
 
-		wp_enqueue_style(
+		wp_register_style(
+			'select2',
+			ELEMENTOR_ASSETS_URL . 'lib/select2/css/select2' . $suffix . '.css',
+			[],
+			'4.0.2'
+		);
+
+		wp_register_style(
+			'elementor-icons',
+			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_register_style(
 			'elementor-admin',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
+				'font-awesome',
+				'select2',
+				'elementor-icons',
 				'wp-auth-check',
 			],
 			Plugin::instance()->get_version()
 		);
+
+		wp_enqueue_style( 'elementor-admin' );
 	}
 
 	protected function _get_wp_editor_config() {

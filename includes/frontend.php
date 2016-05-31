@@ -124,15 +124,49 @@ class Frontend {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style( 'slick-style', ELEMENTOR_ASSETS_URL . 'lib/slick/slick.css', false, '1.6.0' );
-		wp_enqueue_style( 'slick-theme', ELEMENTOR_ASSETS_URL . 'lib/slick/slick-theme.css', false, '1.6.0' );
+		wp_register_style(
+			'slick-style',
+			ELEMENTOR_ASSETS_URL . 'lib/slick/slick.css',
+			[],
+			'1.6.0'
+		);
+		wp_register_style(
+			'slick-theme',
+			ELEMENTOR_ASSETS_URL . 'lib/slick/slick-theme.css',
+			[
+				'slick-style',
+			],
+			'1.6.0'
+		);
 
 		if ( is_admin_bar_showing() ) {
-			wp_enqueue_style( 'elementor-admin-app', ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css', [], Plugin::instance()->get_version() );
+			wp_register_style(
+				'elementor-icons',
+				ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
+				[],
+				Plugin::instance()->get_version()
+			);
 		}
 
-		wp_enqueue_style( 'font-awesome', ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css', false, '4.6.1' );
-		wp_enqueue_style( 'elementor-frontend', ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css', [], Plugin::instance()->get_version() );
+		wp_register_style(
+			'font-awesome',
+			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
+			[],
+			'4.6.1'
+		);
+
+		wp_register_style(
+			'elementor-frontend',
+			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
+			[
+				'slick-theme',
+				'elementor-icons',
+				'font-awesome',
+			],
+			Plugin::instance()->get_version()
+		);
+
+		wp_enqueue_style( 'elementor-frontend' );
 	}
 
 	public function print_css() {

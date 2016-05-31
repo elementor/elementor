@@ -36,7 +36,23 @@ class Admin {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style( 'elementor-admin-app', ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css', [], Plugin::instance()->get_version() );
+		wp_register_style(
+			'elementor-icons',
+			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_register_style(
+			'elementor-admin-app',
+			ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css',
+			[
+				'elementor-icons',
+			],
+			Plugin::instance()->get_version()
+		);
+
+		wp_enqueue_style( 'elementor-admin-app' );
 	}
 
 	/**
