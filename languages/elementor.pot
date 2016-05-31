@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementor 0.1.1\n"
 "Report-Msgid-Bugs-To: team@pojo.me\n"
-"POT-Creation-Date: 2016-05-31 16:02+0300\n"
+"POT-Creation-Date: 2016-05-31 16:03+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,8 +43,8 @@ msgstr ""
 #: includes/controls/groups/typography.php:76
 #: includes/controls/groups/typography.php:129
 #: includes/editor-templates/panel.php:239 includes/elements/column.php:227
-#: includes/elements/section.php:151 includes/elements/section.php:168
-#: includes/elements/section.php:186 includes/elements/section.php:249
+#: includes/elements/section.php:147 includes/elements/section.php:164
+#: includes/elements/section.php:182 includes/elements/section.php:245
 #: includes/widgets/button.php:51 includes/widgets/icon.php:40
 #: includes/widgets/progress.php:53
 msgid "Default"
@@ -62,13 +62,13 @@ msgstr ""
 msgid "Hex Value"
 msgstr ""
 
-#: includes/controls/dimensions.php:32 includes/elements/section.php:229
-#: includes/elements/section.php:250
+#: includes/controls/dimensions.php:32 includes/elements/section.php:225
+#: includes/elements/section.php:246
 msgid "Top"
 msgstr ""
 
 #: includes/controls/dimensions.php:33 includes/elements/column.php:137
-#: includes/elements/section.php:430 includes/widgets/accordion.php:97
+#: includes/elements/section.php:405 includes/widgets/accordion.php:97
 #: includes/widgets/button.php:100 includes/widgets/divider.php:123
 #: includes/widgets/gallery.php:190 includes/widgets/heading.php:111
 #: includes/widgets/icon-box.php:100 includes/widgets/icon-box.php:185
@@ -78,13 +78,13 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-#: includes/controls/dimensions.php:34 includes/elements/section.php:231
-#: includes/elements/section.php:252
+#: includes/controls/dimensions.php:34 includes/elements/section.php:227
+#: includes/elements/section.php:248
 msgid "Bottom"
 msgstr ""
 
 #: includes/controls/dimensions.php:35 includes/elements/column.php:129
-#: includes/elements/section.php:422 includes/widgets/accordion.php:96
+#: includes/elements/section.php:397 includes/widgets/accordion.php:96
 #: includes/widgets/button.php:92 includes/widgets/divider.php:115
 #: includes/widgets/gallery.php:186 includes/widgets/heading.php:103
 #: includes/widgets/icon-box.php:92 includes/widgets/icon-box.php:177
@@ -600,7 +600,7 @@ msgstr ""
 msgid "Columns"
 msgstr ""
 
-#: includes/elements-manager.php:28 includes/elements/section.php:98
+#: includes/elements-manager.php:28 includes/elements/section.php:94
 msgid "Layout"
 msgstr ""
 
@@ -652,23 +652,22 @@ msgid "Style"
 msgstr ""
 
 #: includes/elements/base.php:46 includes/elements/column.php:151
-#: includes/elements/section.php:444
+#: includes/elements/section.php:419
 msgid "Advanced"
 msgstr ""
 
 #: includes/elements/base.php:47 includes/elements/column.php:201
-#: includes/elements/section.php:501 includes/widgets/base.php:110
+#: includes/elements/section.php:476 includes/widgets/base.php:110
 msgid "Responsive"
 msgstr ""
 
-#: includes/elements/base.php:48 includes/elements/section.php:264
-#: includes/elements/section.php:273
+#: includes/elements/base.php:48 includes/elements/section.php:508
+#: includes/elements/section.php:517
 msgid "Structure"
 msgstr ""
 
-#: includes/elements/base.php:49 includes/elements/column.php:297
-#: includes/elements/section.php:15
-msgid "Section"
+#: includes/elements/base.php:49
+msgid "Settings"
 msgstr ""
 
 #: includes/elements/base.php:50 includes/elements/column.php:13
@@ -708,17 +707,17 @@ msgstr ""
 msgid "Cannot redeclare control with same name."
 msgstr ""
 
-#: includes/elements/column.php:28 includes/elements/section.php:285
+#: includes/elements/column.php:28 includes/elements/section.php:260
 msgid "Background & Border"
 msgstr ""
 
-#: includes/elements/column.php:58 includes/elements/section.php:351
+#: includes/elements/column.php:58 includes/elements/section.php:326
 #: includes/schemes/typography.php:18 includes/widgets/button.php:215
 #: includes/widgets/gallery.php:227 includes/widgets/icon-list.php:185
 msgid "Typography"
 msgstr ""
 
-#: includes/elements/column.php:67 includes/elements/section.php:360
+#: includes/elements/column.php:67 includes/elements/section.php:335
 #: includes/widgets/alert.php:144 includes/widgets/alert.php:176
 #: includes/widgets/button.php:200 includes/widgets/button.php:294
 #: includes/widgets/counter.php:121 includes/widgets/counter.php:158
@@ -730,24 +729,24 @@ msgstr ""
 msgid "Text Color"
 msgstr ""
 
-#: includes/elements/column.php:81 includes/elements/section.php:374
+#: includes/elements/column.php:81 includes/elements/section.php:349
 msgid "Heading Color"
 msgstr ""
 
-#: includes/elements/column.php:95 includes/elements/section.php:388
+#: includes/elements/column.php:95 includes/elements/section.php:363
 msgid "Link Color"
 msgstr ""
 
-#: includes/elements/column.php:109 includes/elements/section.php:402
+#: includes/elements/column.php:109 includes/elements/section.php:377
 msgid "Link Hover Color"
 msgstr ""
 
-#: includes/elements/column.php:123 includes/elements/section.php:416
+#: includes/elements/column.php:123 includes/elements/section.php:391
 #: includes/widgets/icon-box.php:173 includes/widgets/image-box.php:188
 msgid "Text Align"
 msgstr ""
 
-#: includes/elements/column.php:133 includes/elements/section.php:426
+#: includes/elements/column.php:133 includes/elements/section.php:401
 #: includes/widgets/button.php:96 includes/widgets/divider.php:119
 #: includes/widgets/gallery.php:194 includes/widgets/heading.php:107
 #: includes/widgets/icon-box.php:96 includes/widgets/icon-box.php:181
@@ -757,17 +756,17 @@ msgstr ""
 msgid "Center"
 msgstr ""
 
-#: includes/elements/column.php:160 includes/elements/section.php:453
+#: includes/elements/column.php:160 includes/elements/section.php:428
 #: includes/widgets/base.php:35
 msgid "Margin"
 msgstr ""
 
-#: includes/elements/column.php:174 includes/elements/section.php:474
+#: includes/elements/column.php:174 includes/elements/section.php:449
 #: includes/widgets/base.php:49
 msgid "Padding"
 msgstr ""
 
-#: includes/elements/column.php:188 includes/elements/section.php:488
+#: includes/elements/column.php:188 includes/elements/section.php:463
 #: includes/widgets/base.php:97
 msgid "CSS Classes"
 msgstr ""
@@ -796,6 +795,10 @@ msgstr ""
 msgid "Drag Section"
 msgstr ""
 
+#: includes/elements/column.php:297 includes/elements/section.php:15
+msgid "Section"
+msgstr ""
+
 #: includes/elements/column.php:309
 msgid "Duplicate Section"
 msgstr ""
@@ -804,104 +807,104 @@ msgstr ""
 msgid "Remove Section"
 msgstr ""
 
-#: includes/elements/section.php:107 includes/widgets/divider.php:94
+#: includes/elements/section.php:103 includes/widgets/divider.php:94
 msgid "Width"
 msgstr ""
 
-#: includes/elements/section.php:111
+#: includes/elements/section.php:107
 msgid "Boxed"
 msgstr ""
 
-#: includes/elements/section.php:112
+#: includes/elements/section.php:108
 msgid "Full Width"
 msgstr ""
 
-#: includes/elements/section.php:122
+#: includes/elements/section.php:118
 msgid "Content Width"
 msgstr ""
 
-#: includes/elements/section.php:147
+#: includes/elements/section.php:143
 msgid "Columns Gap"
 msgstr ""
 
-#: includes/elements/section.php:152
+#: includes/elements/section.php:148
 msgid "No Gap"
 msgstr ""
 
-#: includes/elements/section.php:153
+#: includes/elements/section.php:149
 msgid "Narrow"
 msgstr ""
 
-#: includes/elements/section.php:154
+#: includes/elements/section.php:150
 msgid "Wide"
 msgstr ""
 
-#: includes/elements/section.php:164 includes/elements/section.php:182
+#: includes/elements/section.php:160 includes/elements/section.php:178
 #: includes/widgets/google-maps.php:67
 msgid "Height"
 msgstr ""
 
-#: includes/elements/section.php:169
+#: includes/elements/section.php:165
 msgid "Fit To Screen"
 msgstr ""
 
-#: includes/elements/section.php:170 includes/elements/section.php:187
+#: includes/elements/section.php:166 includes/elements/section.php:183
 msgid "Min Height"
 msgstr ""
 
-#: includes/elements/section.php:199
+#: includes/elements/section.php:195
 msgid "Minimum Height"
 msgstr ""
 
-#: includes/elements/section.php:224
+#: includes/elements/section.php:220
 msgid "Column Position"
 msgstr ""
 
-#: includes/elements/section.php:228
+#: includes/elements/section.php:224
 msgid "Stretch"
 msgstr ""
 
-#: includes/elements/section.php:230 includes/elements/section.php:251
+#: includes/elements/section.php:226 includes/elements/section.php:247
 msgid "Middle"
 msgstr ""
 
-#: includes/elements/section.php:245
+#: includes/elements/section.php:241
 msgid "Content Position"
 msgstr ""
 
-#: includes/elements/section.php:510
+#: includes/elements/section.php:485
 msgid "Visibility"
 msgstr ""
 
-#: includes/elements/section.php:515
+#: includes/elements/section.php:490
 msgid "Show on all devices"
 msgstr ""
 
-#: includes/elements/section.php:516
+#: includes/elements/section.php:491
 msgid "Visible Desktop"
 msgstr ""
 
-#: includes/elements/section.php:517
+#: includes/elements/section.php:492
 msgid "Visible Tablet"
 msgstr ""
 
-#: includes/elements/section.php:518
+#: includes/elements/section.php:493
 msgid "Visible Phone"
 msgstr ""
 
-#: includes/elements/section.php:519
+#: includes/elements/section.php:494
 msgid "Hidden Desktop"
 msgstr ""
 
-#: includes/elements/section.php:520
+#: includes/elements/section.php:495
 msgid "Hidden Tablet"
 msgstr ""
 
-#: includes/elements/section.php:521
+#: includes/elements/section.php:496
 msgid "Hidden Phone"
 msgstr ""
 
-#: includes/elements/section.php:522
+#: includes/elements/section.php:497
 msgid "Always Hidden"
 msgstr ""
 

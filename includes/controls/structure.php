@@ -13,9 +13,9 @@ class Control_Structure extends Control_Base {
 		?>
 		<div class="elementor-control-field">
 			<div class="elementor-control-input-wrapper">
-				<% var currentPreset = getPresetByStructure( data.controlValue ); %>
+				<% var currentPreset = elementor.presetsFactory.getPresetByStructure( data.controlValue ); %>
 				<div class="elementor-control-structure-preset elementor-control-structure-current-preset">
-					<i class="eicon-<%- currentPreset.icon %>"></i>
+					<%= elementor.presetsFactory.getPresetSVG( currentPreset.preset, 240, 80, 5 ).outerHTML %>
 				</div>
 				<%
 				var morePresets = getMorePresets();
@@ -27,7 +27,7 @@ class Control_Structure extends Control_Base {
 							<div class="elementor-control-structure-preset-wrapper">
 								<input id="elementor-control-structure-preset-<%- data._cid %>-<%- preset.key %>" type="radio" name="elementor-control-structure-preset-<%- data._cid %>" data-setting="structure" value="<%- preset.key %>">
 								<label class="elementor-control-structure-preset" for="elementor-control-structure-preset-<%- data._cid %>-<%- preset.key %>">
-									<i class="eicon-<%- preset.icon %>"></i>
+									<%= elementor.presetsFactory.getPresetSVG( preset.preset ).outerHTML %>
 								</label>
 								<div class="elementor-control-structure-preset-title"><%= preset.preset.join( ', ' ) %></div>
 							</div>

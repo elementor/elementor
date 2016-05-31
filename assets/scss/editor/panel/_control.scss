@@ -623,22 +623,20 @@
 			&:not(.elementor-control-structure-current-preset) {
 				display: inline-block;
 				cursor: pointer;
+				height: 60px;
 
-				i {
-					font-size: 50px;
+				svg {
+					height: 100%;
 				}
 			}
 
-			i {
-				color: $editor-background;
+			path {
+				fill: $editor-background;
 			}
 		}
 
 		.elementor-control-structure-current-preset {
-
-			i {
-				font-size: 116px;
-			}
+			height: 85px;
 		}
 
 		.elementor-control-structure-more-presets-title {
@@ -659,15 +657,15 @@
 
 				&:checked + .elementor-control-structure-preset {
 
-					i {
-						color: $editor-light;
+					path {
+						fill: $editor-light;
 					}
 				}
 			}
 		}
 
 		.elementor-control-structure-preset-wrapper {
-			width: 45%;
+			width: 47%;
 			margin-top: 15px;
 		}
 

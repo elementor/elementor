@@ -5,6 +5,7 @@ App = Marionette.Application.extend( {
 	helpers: require( 'elementor-utils/helpers' ),
 	heartbeat: require( 'elementor-utils/heartbeat' ),
 	schemes: require( 'elementor-utils/schemes' ),
+	presetsFactory: require( 'elementor-utils/presets-factory' ),
 
 	// Channels
 	editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
