@@ -131,7 +131,6 @@
 
 }
 
-// Need to move for another file (_grid-mixin.scss for example)
 @mixin elementor-grid-classes {
 
 	@each $sizeKey, $size in $column-sizes {
@@ -176,7 +175,6 @@
 }
 
 // Responsive Grid
-
 .elementor-column {
 
 	@media (max-width: $screen-xs-max) {
