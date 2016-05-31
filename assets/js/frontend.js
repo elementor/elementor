@@ -49,7 +49,7 @@
 	} )();
 
 	var onYoutubeApiReady = function( callback ) {
-		if ( window.YT ) {
+		if ( window.YT && YT.loaded ) {
 			callback( window.YT );
 		} else {
 			// If not ready check again by timeout..

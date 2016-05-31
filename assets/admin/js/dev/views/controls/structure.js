@@ -18,6 +18,11 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 	},
 
 	onInputChange: function() {
+		var editor = elementor.getPanelView().getCurrentPageView(),
+			currentEditedSection = editor.getOption( 'editedElementView' );
+
+		currentEditedSection.redefineLayout();
+
 		this.render();
 	}
 } );

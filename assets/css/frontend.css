@@ -45,14 +45,6 @@
     top: 50%;
     left: 50%;
     transform: translateY(-50%) translateX(-50%); }
-  .elementor .elementor-background-video-fallback {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-size: cover;
-    background-position: 50% 50%; }
 
 #elementor-select-preset {
   display: none; }

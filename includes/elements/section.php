@@ -582,10 +582,6 @@ class Element_Section extends Element_Base {
 					</div>
 				<?php endif;
 
-				if ( ! empty( $instance['background_video_fallback']['url'] ) ) : ?>
-					<div class="elementor-background-video-fallback" style="background-image: url(<?php echo $instance['background_video_fallback']['url']; ?>)"></div>
-				<?php endif;
-
 			endif; ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $instance['gap'] ); ?>">
 				<div class="elementor-row">
