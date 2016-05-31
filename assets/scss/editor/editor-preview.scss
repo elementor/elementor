@@ -635,15 +635,21 @@ body {
 				float: getStartDirection();
 
 				&:hover {
-					color: $editor-dark;
+
+					path {
+						fill: $editor-dark;
+					}
 				}
 
 				&:not(:hover) {
-					color: $editor-lightest;
+
+					path {
+						fill: $editor-lightest;
+					}
 				}
 
-				[class^="eicon-"] {
-					font-size: 40px;
+				svg {
+					height: 50px;
 				}
 			}
 		}

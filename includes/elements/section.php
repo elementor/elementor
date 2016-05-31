@@ -41,10 +41,6 @@ class Element_Section extends Element_Base {
 		return $presets;
 	}
 
-	public static function get_preset_by_structure( $structure ) {
-		return self::get_presets( substr( $structure, 0, -1 ), substr( $structure, -1 ) );
-	}
-
 	public static function init_presets() {
 		$additional_presets = [
 			2 => [
