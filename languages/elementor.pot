@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementor 0.1.1\n"
 "Report-Msgid-Bugs-To: team@pojo.me\n"
-"POT-Creation-Date: 2016-05-30 20:03+0300\n"
+"POT-Creation-Date: 2016-05-31 16:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -973,8 +973,8 @@ msgstr ""
 
 #: includes/settings/settings.php:68
 msgid ""
-"Opt-in to our anonymous plugin data collection and to our newsletter. We "
-"guarantee no sensitive data will ever be tracked."
+"Opt-in to our anonymous plugin data collection and to updates. We guarantee "
+"no sensitive data is collected."
 msgstr ""
 
 #: includes/settings/system-info/classes/mu-plugins.php:25
@@ -1180,9 +1180,9 @@ msgstr ""
 
 #: includes/tracker.php:127
 msgid ""
-"Love using Elementor? Be a super contributor by opting in to our anonymous "
-"plugin data collection and to our updates. We guarantee no sensitive data "
-"will ever be tracked."
+"Love using Elementor? Become a super contributor by opting in to our "
+"anonymous plugin data collection and to our updates. We guarantee no "
+"sensitive data is collected."
 msgstr ""
 
 #: includes/tracker.php:128
