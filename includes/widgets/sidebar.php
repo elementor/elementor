@@ -18,7 +18,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'settings';
+		return 'sidebar';
 	}
 
 	protected function _register_controls() {

@@ -18,7 +18,7 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'success-chart';
+		return 'skill-bar';
 	}
 
 	protected function _register_controls() {

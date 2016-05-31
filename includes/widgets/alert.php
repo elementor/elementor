@@ -18,7 +18,7 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'firewall-on';
+		return 'alert';
 	}
 
 	protected function _register_controls() {
