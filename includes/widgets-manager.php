@@ -63,10 +63,17 @@ class Widgets_Manager {
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 			// Skip Pojo widgets
-			if ( ! defined( 'WP_DEBUG' ) ) {
-				if ( $widget_obj instanceof \Pojo_Widget_Base ) {
-					continue;
-				}
+			$allowed_widgets = [
+				'Pojo_Widget_Recent_Posts',
+				'Pojo_Widget_Gallery',
+				'Pojo_Widget_Recent_Galleries',
+				'Pojo_Slideshow_Widget',
+				'Pojo_Forms_Widget',
+				'Pojo_Widget_News_Ticker',
+			];
+
+			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $allowed_widgets ) ) {
+				continue;
 			}
 
 			$this->register_widget( __NAMESPACE__ . '\Widget_WordPress', [ 'widget_name' => $widget_class ] );
