@@ -77,7 +77,7 @@ class Widget_WordPress extends Widget_Base {
 		$this->add_control(
 			'wp',
 			[
-				'label' => 'Form',
+				'label' => __( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
 				'widget' => $this->get_id(),
 				'id_base' => $this->_get_widget_instance()->id_base,
