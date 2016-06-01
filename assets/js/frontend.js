@@ -243,7 +243,7 @@
 		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
 
 		var changeVideoSize = function() {
-			var $video = isYTVideo ? player.getIframe() : ui.backgroundVideo,
+			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
 				size = calcVideosSize();
 
 			$video.width( size.width ).height( size.height );
