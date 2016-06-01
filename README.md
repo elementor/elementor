@@ -51,6 +51,14 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 ## Changelog ##
 
+### 0.1.3 - 01.06.2016 ###
+* New! - Added background video for all formats
+* Tweak! - Pojo Framework & Themes supported
+* Tweak! - Updated Elementor Icons v1.1
+* Tweak! - Added elements categories in the panel
+* Fixed! - UI bug with WordPress widgets (panel)
+* Fixed! - Remove fallback image placeholder in background video
+
 ### 0.1.2 - 31.05.2016 ###
 * Tweak! - Added structure control for section element
 * Tweak! - Elementor Icons moved to lib (standalone)
