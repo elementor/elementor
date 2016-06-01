@@ -5,10 +5,6 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 
 	className: 'elementor-element-wrapper',
 
-	events: {
-		click: 'onClick'
-	},
-
 	triggers: {
 		dragend: 'drag:end'
 	},
