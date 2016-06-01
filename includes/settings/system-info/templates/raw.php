@@ -41,7 +41,7 @@ foreach ( $reports as $report_name => $report ) :
 				foreach ( $plugin_properties as $property_name => $property ) :
 					echo PHP_EOL . "{$sub_indent}\t{$property_name}: {$property}";
 				endforeach;
-				
+
 				echo PHP_EOL . PHP_EOL;
 			endforeach;
 		else :

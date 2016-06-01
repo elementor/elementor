@@ -8,13 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class User_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return __( 'User', 'elementor' );
+		return _x( 'User', 'System Info', 'elementor' );
 	}
 
 	public function get_fields() {
 		return [
-			'locale' => __( 'WP Profile lang', 'elementor' ),
-			'agent' => __( 'User Agent', 'elementor' ),
+			'locale' => _x( 'WP Profile lang', 'System Info', 'elementor' ),
+			'agent' => _x( 'User Agent', 'System Info', 'elementor' ),
 		];
 	}
 

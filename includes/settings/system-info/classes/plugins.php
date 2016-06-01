@@ -24,7 +24,7 @@ class Plugins_Reporter extends Base_Reporter {
 	}
 
 	public function get_title() {
-		return __( 'Active Plugins', 'elementor' );
+		return _x( 'Active Plugins', 'System Info', 'elementor' );
 	}
 
 	public function is_enabled() {
@@ -33,7 +33,7 @@ class Plugins_Reporter extends Base_Reporter {
 
 	public function get_fields() {
 		return [
-			'active_plugins' => __( 'Active Plugins', 'elementor' ),
+			'active_plugins' => _x( 'Active Plugins', 'System Info', 'elementor' ),
 		];
 	}
 

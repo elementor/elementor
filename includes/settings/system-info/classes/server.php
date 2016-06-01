@@ -8,18 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Server_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return __( 'Server Environment', 'elementor' );
+		return _x( 'Server Environment', 'System Info', 'elementor' );
 	}
 
 	public function get_fields() {
 		return [
-			'os' => __( 'Operating System', 'elementor' ),
-			'software' => __( 'Software', 'elementor' ),
-			'mysql_version' => __( 'MySQL version', 'elementor' ),
-			'php_version' => __( 'PHP Version', 'elementor' ),
-			'php_max_input_vars' => __( 'PHP Max Input Vars', 'elementor' ),
-			'php_max_post_size' => __( 'PHP Max Post Size', 'elementor' ),
-			'gd_installed' => __( 'GD Installed', 'elementor' ),
+			'os' => _x( 'Operating System', 'System Info', 'elementor' ),
+			'software' => _x( 'Software', 'System Info', 'elementor' ),
+			'mysql_version' => _x( 'MySQL version', 'System Info', 'elementor' ),
+			'php_version' => _x( 'PHP Version', 'System Info', 'elementor' ),
+			'php_max_input_vars' => _x( 'PHP Max Input Vars', 'System Info', 'elementor' ),
+			'php_max_post_size' => _x( 'PHP Max Post Size', 'System Info', 'elementor' ),
+			'gd_installed' => _x( 'GD Installed', 'System Info', 'elementor' ),
 		];
 	}
 
@@ -41,7 +41,7 @@ class Server_Reporter extends Base_Reporter {
 		];
 
 		if ( version_compare( $result['value'], '5.4', '<' ) ) {
-			$result['recommendation'] = __( 'We recommend to use php 5.4 or higher', 'elementor' );
+			$result['recommendation'] = _x( 'We recommend to use php 5.4 or higher', 'System Info', 'elementor' );
 		}
 
 		return $result;
@@ -61,7 +61,7 @@ class Server_Reporter extends Base_Reporter {
 
 	public function get_gd_installed() {
 		return [
-			'value' => extension_loaded( 'gd' ) ? __( 'Yes', 'elementor' ) : __( 'No', 'elementor' ),
+			'value' => extension_loaded( 'gd' ) ? 'Yes' : 'No',
 		];
 	}
 

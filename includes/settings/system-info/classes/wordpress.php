@@ -8,22 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WordPress_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return __( 'WordPress Environment', 'elementor' );
+		return _x( 'WordPress Environment', 'System Info', 'elementor' );
 	}
 
 	public function get_fields() {
 		return [
-			'version' => __( 'Version', 'elementor' ),
-			'site_url' => __( 'Site URL', 'elementor' ),
-			'home_url' => __( 'Home URL', 'elementor' ),
-			'is_multisite' => __( 'WP Multisite', 'elementor' ),
-			'max_upload_size' => __( 'Max Upload Size', 'elementor' ),
-			'memory_limit' => __( 'Memory limit', 'elementor' ),
-			'permalink_structure' => __( 'Permalink Structure', 'elementor' ),
-			'language' => __( 'Language', 'elementor' ),
-			'timezone' => __( 'Timezone', 'elementor' ),
-			'admin_email' => __( 'Admin Email', 'elementor' ),
-			'debug_mode' => __( 'Debug Mode', 'elementor' ),
+			'version' => _x( 'Version', 'System Info', 'elementor' ),
+			'site_url' => _x( 'Site URL', 'System Info', 'elementor' ),
+			'home_url' => _x( 'Home URL', 'System Info', 'elementor' ),
+			'is_multisite' => _x( 'WP Multisite', 'System Info', 'elementor' ),
+			'max_upload_size' => _x( 'Max Upload Size', 'System Info', 'elementor' ),
+			'memory_limit' => _x( 'Memory limit', 'System Info', 'elementor' ),
+			'permalink_structure' => _x( 'Permalink Structure', 'System Info', 'elementor' ),
+			'language' => _x( 'Language', 'System Info', 'elementor' ),
+			'timezone' => _x( 'Timezone', 'System Info', 'elementor' ),
+			'admin_email' => _x( 'Admin Email', 'System Info', 'elementor' ),
+			'debug_mode' => _x( 'Debug Mode', 'System Info', 'elementor' ),
 		];
 	}
 
@@ -41,7 +41,7 @@ class WordPress_Reporter extends Base_Reporter {
 
 	public function get_is_multisite() {
 		return [
-			'value' => is_multisite()? __( 'Yes', 'elementor' ) : __( 'No', 'elementor' ),
+			'value' => is_multisite() ? 'Yes' : 'No',
 		];
 	}
 
@@ -96,7 +96,7 @@ class WordPress_Reporter extends Base_Reporter {
 
 	public function get_debug_mode() {
 		return [
-			'value' => WP_DEBUG ? __( 'Active', 'elementor' ) : __( 'Inactive', 'elementor' ),
+			'value' => WP_DEBUG ? 'Active' : 'Inactive',
 		];
 	}
 }
