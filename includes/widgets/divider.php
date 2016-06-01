@@ -14,7 +14,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'layout' ];
+		return [ 'basic' ];
 	}
 
 	public function get_icon() {

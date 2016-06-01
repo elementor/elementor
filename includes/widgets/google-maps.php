@@ -14,7 +14,7 @@ class Widget_Google_maps extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'media' ];
+		return [ 'basic' ];
 	}
 
 	public function get_icon() {

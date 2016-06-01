@@ -16,7 +16,7 @@ class Element_Section extends Element_Base {
 	}
 
 	public function get_categories() {
-		return [ 'layout' ];
+		return [ 'basic' ];
 	}
 
 	public function get_icon() {

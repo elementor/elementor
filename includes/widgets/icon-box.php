@@ -14,7 +14,7 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'media' ];
+		return [ 'basic' ];
 	}
 
 	public function get_icon() {

@@ -24,49 +24,17 @@ class Elements_Manager {
 	public function get_categories() {
 		// TODO: Need to filter
 		return [
-			'layout' => [
-				'title' => __( 'Layout', 'elementor' ),
-				'icon' => 'columns',
-			],
 			'basic' => [
-				'title' => __( 'Basic', 'elementor' ),
+				'title' => __( 'Elements', 'elementor' ),
 				'icon' => 'font',
 			],
-			'media' => [
-				'title' => __( 'Media', 'elementor' ),
-				'icon' => 'picture-o',
-			],
-			'navigation' => [
-				'title' => __( 'Navigation', 'elementor' ),
-				'icon' => 'bars',
-			],
-			'social' => [
-				'title' => __( 'Social', 'elementor' ),
-				'icon' => 'share-alt',
-			],
-			'posts' => [
-				'title' => __( 'Posts', 'elementor' ),
-				'icon' => 'file-text-o',
-			],
-			'commerce' => [
-				'title' => __( 'Commerce', 'elementor' ),
-				'icon' => 'shopping-cart',
-			],
-			'marketing' => [
-				'title' => __( 'Marketing', 'elementor' ),
-				'icon' => 'briefcase',
+			'pojo' => [
+				'title' => __( 'Pojo Themes', 'elementor' ),
+				'icon' => 'pojome',
 			],
 			'wordpress' => [
 				'title' => __( 'WordPress', 'elementor' ),
 				'icon' => 'wordpress',
-			],
-			'pojo' => [
-				'title' => __( 'Pojo', 'elementor' ),
-				'icon' => 'pojome',
-			],
-			'miscellaneous' => [
-				'title' => __( 'Miscellaneous', 'elementor' ),
-				'icon' => 'diamond',
 			],
 		];
 	}
