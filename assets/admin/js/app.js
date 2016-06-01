@@ -2489,9 +2489,9 @@ helpers = {
 	},
 
 	getYoutubeIDFromURL: function( url ) {
-		var videoIDParts = url.match( /^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/ );
+		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/ );
 
-		return videoIDParts && videoIDParts[2];
+		return videoIDParts && videoIDParts[1];
 	}
 };
 
