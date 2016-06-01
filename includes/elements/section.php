@@ -532,12 +532,17 @@ class Element_Section extends Element_Base {
 	protected function content_template() {
 		?>
 		<% if ( 'video' === settings.background_background ) {
-			var videoLink = settings.background_video_link,
-				videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link );
+			var videoLink = settings.background_video_link;
 
-			if ( videoID ) { %>
+			if ( videoLink ) {
+				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); %>
+
 				<div class="elementor-background-video-container elementor-hidden-phone">
-					<div class="elementor-background-video" data-video-id="<%= videoID %>"></div>
+					<% if ( videoID ) { %>
+						<div class="elementor-background-video" data-video-id="<%= videoID %>"></div>
+					<% } else { %>
+						<video class="elementor-background-video" src="<%= videoLink %>" autoplay loop muted></video>
+					<% } %>
 				</div>
 			<% }
 
@@ -574,14 +579,17 @@ class Element_Section extends Element_Base {
 		?>
 		<section class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
 			<?php if ( 'video' === $instance['background_background'] ) :
-				$video_id = Utils::get_youtube_id_from_url( $instance['background_video_link'] );
-
-				if ( $video_id ) : ?>
+				if ( $instance['background_video_link'] ) :
+					$video_id = Utils::get_youtube_id_from_url( $instance['background_video_link'] );
+					?>
 					<div class="elementor-background-video-container elementor-hidden-phone">
-						<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
+						<?php if ( $video_id ) : ?>
+							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
+						<?php else : ?>
+							<video class="elementor-background-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
+						<?php endif; ?>
 					</div>
 				<?php endif;
-
 			endif; ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $instance['gap'] ); ?>">
 				<div class="elementor-row">

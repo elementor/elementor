@@ -44,7 +44,8 @@
     max-width: none;
     top: 50%;
     left: 50%;
-    transform: translateY(-50%) translateX(-50%); }
+    transform: translateY(-50%) translateX(-50%);
+    object-fit: cover; }
 
 #elementor-select-preset {
   display: none; }
