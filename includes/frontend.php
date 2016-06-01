@@ -140,7 +140,7 @@ class Frontend {
 		);
 
 		if ( is_admin_bar_showing() ) {
-			wp_register_style(
+			wp_enqueue_style(
 				'elementor-icons',
 				ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 				[],
@@ -160,7 +160,6 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[
 				'slick-theme',
-				'elementor-icons',
 				'font-awesome',
 			],
 			Plugin::instance()->get_version()

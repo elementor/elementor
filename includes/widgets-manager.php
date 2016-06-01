@@ -63,8 +63,11 @@ class Widgets_Manager {
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 			// Skip Pojo widgets
-			if ( $widget_obj instanceof \Pojo_Widget_Base )
-				continue;
+			if ( ! defined( 'WP_DEBUG' ) ) {
+				if ( $widget_obj instanceof \Pojo_Widget_Base ) {
+					continue;
+				}
+			}
 
 			$this->register_widget( __NAMESPACE__ . '\Widget_WordPress', [ 'widget_name' => $widget_class ] );
 		}
