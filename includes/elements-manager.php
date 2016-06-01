@@ -60,6 +60,10 @@ class Elements_Manager {
 				'title' => __( 'WordPress', 'elementor' ),
 				'icon' => 'wordpress',
 			],
+			'pojo' => [
+				'title' => __( 'Pojo', 'elementor' ),
+				'icon' => 'pojome',
+			],
 			'miscellaneous' => [
 				'title' => __( 'Miscellaneous', 'elementor' ),
 				'icon' => 'diamond',
