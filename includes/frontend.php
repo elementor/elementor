@@ -139,14 +139,12 @@ class Frontend {
 			'1.6.0'
 		);
 
-		if ( is_admin_bar_showing() ) {
-			wp_enqueue_style(
-				'elementor-icons',
-				ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
-				[],
-				Plugin::instance()->get_version()
-			);
-		}
+		wp_enqueue_style(
+			'elementor-icons',
+			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
+			[],
+			Plugin::instance()->get_version()
+		);
 
 		wp_register_style(
 			'font-awesome',
@@ -159,6 +157,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[
+				'elementor-icons',
 				'slick-theme',
 				'font-awesome',
 			],
