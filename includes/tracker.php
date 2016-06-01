@@ -110,6 +110,10 @@ class Tracker {
 	}
 
 	public static function admin_notices() {
+		// Show tracker notice after one day from installed time.
+		if ( self::_get_installed_time() > strtotime( '-1 day' ) )
+			return;
+
 		if ( '1' === get_option( 'elementor_tracker_notice' ) )
 			return;
 
@@ -128,6 +132,15 @@ class Tracker {
 			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'I won\'t help', 'elementor' ); ?></a></p>
 		</div>
 		<?php
+	}
+
+	private static function _get_installed_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+		if ( ! $installed_time ) {
+			$installed_time = time();
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+		return $installed_time;
 	}
 
 	private static function _get_system_reports_data() {
