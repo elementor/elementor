@@ -30,6 +30,14 @@
 					margin-bottom: 15px;
 					background-color: $editor-background;
 				}
+
+				&.elementor-control-wp {
+					margin-top: 15px;
+
+					&:before {
+						background-color: transparent;
+					}
+				}
 			}
 
 			&before {
