@@ -550,6 +550,17 @@ select {
     border: none;
     border-radius: 0;
     margin: 0; }
+  #elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
+    padding-top: 14px; }
+  #elementor-panel .panel-elements-category-title {
+    color: #6d7882;
+    padding: 7px 15px;
+    text-transform: uppercase;
+    font-size: 11px;
+    line-height: 1; }
+  #elementor-panel .panel-elements-category-items {
+    overflow: hidden;
+    padding: 5px; }
   #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-title {
     padding: 10px 20px;
     margin-top: 10px; }
