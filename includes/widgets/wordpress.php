@@ -30,6 +30,10 @@ class Widget_WordPress extends Widget_Base {
 		return $this->_widget_instance;
 	}
 
+	private function _is_pojo_widget() {
+		return $this->_get_widget_instance() instanceof \Pojo_Widget_Base;
+	}
+
 	public function get_id() {
 		return 'wp-widget-' . $this->_get_widget_instance()->id_base;
 	}
@@ -39,10 +43,18 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		if ( $this->_is_pojo_widget() ) {
+			$category = 'pojo';
+		} else {
+			$category = 'wordpress';
+		}
+		return [ $category ];
 	}
 
 	public function get_icon() {
+		if ( $this->_is_pojo_widget() ) {
+			return 'pojome';
+		}
 		return 'wordpress';
 	}
 
