@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?1.0");
-  src: url("../fonts/eicons.eot?1.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.0") format("woff2"), url("../fonts/eicons.woff?1.0") format("woff"), url("../fonts/eicons.ttf?1.0") format("truetype"), url("../fonts/eicons.svg?1.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?1.1");
+  src: url("../fonts/eicons.eot?1.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.1") format("woff2"), url("../fonts/eicons.woff?1.1") format("woff"), url("../fonts/eicons.ttf?1.1") format("truetype"), url("../fonts/eicons.svg?1.1#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -17,310 +17,310 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.eicon-coding:before {
+.eicon-elementor:before {
   content: '\e800'; }
 
-.eicon-align-left:before {
+.eicon-elementor-square:before {
   content: '\e801'; }
 
-.eicon-anchor:before {
+.eicon-plus:before {
   content: '\e802'; }
 
-.eicon-favorite:before {
+.eicon-menu:before {
   content: '\e803'; }
 
-.eicon-google-maps:before {
+.eicon-settings:before {
   content: '\e804'; }
 
-.eicon-insert-image:before {
+.eicon-apps:before {
   content: '\e805'; }
 
-.eicon-photo-library:before {
+.eicon-accordion:before {
   content: '\e806'; }
 
-.eicon-type-tool:before {
+.eicon-alert:before {
   content: '\e807'; }
 
-.eicon-youtube:before {
+.eicon-animation-text:before {
   content: '\e808'; }
 
-.eicon-settings:before {
+.eicon-animation:before {
   content: '\e809'; }
 
-.eicon-apps:before {
-  content: '\e80a'; }
-
-.eicon-menu:before {
-  content: '\e80b'; }
-
-.eicon-plus:before {
-  content: '\e80c'; }
-
-.eicon-elementor:before {
-  content: '\e80d'; }
-
-.eicon-elementor-square:before {
-  content: '\e80e'; }
-
-.eicon-accordion:before {
-  content: '\e80f'; }
-
-.eicon-alert:before {
+.eicon-banner:before {
   content: '\e810'; }
 
-.eicon-animation-text:before {
+.eicon-blockquote:before {
   content: '\e811'; }
 
-.eicon-animation:before {
+.eicon-button:before {
   content: '\e812'; }
 
-.eicon-banner:before {
+.eicon-call-to-action:before {
   content: '\e813'; }
 
-.eicon-blockquote:before {
+.eicon-captcha:before {
   content: '\e814'; }
 
-.eicon-button:before {
+.eicon-carrousel:before {
   content: '\e815'; }
 
-.eicon-call-to-action:before {
+.eicon-checkbox:before {
   content: '\e816'; }
 
-.eicon-captcha:before {
+.eicon-columns:before {
   content: '\e817'; }
 
-.eicon-carrousel:before {
+.eicon-countdown:before {
   content: '\e818'; }
 
-.eicon-checkbox:before {
+.eicon-counter:before {
   content: '\e819'; }
 
-.eicon-columns:before {
-  content: '\e81a'; }
-
-.eicon-countdown:before {
-  content: '\e81b'; }
-
-.eicon-counter:before {
-  content: '\e81c'; }
-
 .eicon-date:before {
-  content: '\e81d'; }
-
-.eicon-divider-shape:before {
-  content: '\e81e'; }
-
-.eicon-divider:before {
-  content: '\e81f'; }
-
-.eicon-download-button:before {
   content: '\e820'; }
 
-.eicon-dual-button:before {
+.eicon-divider-shape:before {
   content: '\e821'; }
 
-.eicon-email-field:before {
+.eicon-divider:before {
   content: '\e822'; }
 
-.eicon-facebook-comments:before {
+.eicon-download-button:before {
   content: '\e823'; }
 
-.eicon-facebook-like-box:before {
+.eicon-dual-button:before {
   content: '\e824'; }
 
-.eicon-flip-box:before {
+.eicon-email-field:before {
   content: '\e825'; }
 
-.eicon-form-horizontal:before {
+.eicon-facebook-comments:before {
   content: '\e826'; }
 
-.eicon-form-vertical:before {
+.eicon-facebook-like-box:before {
   content: '\e827'; }
 
-.eicon-gallery-grid:before {
+.eicon-form-horizontal:before {
   content: '\e828'; }
 
-.eicon-gallery-group:before {
+.eicon-form-vertical:before {
   content: '\e829'; }
 
-.eicon-gallery-justified:before {
-  content: '\e82a'; }
-
-.eicon-gallery-masonry:before {
-  content: '\e82b'; }
-
-.eicon-icon-box:before {
-  content: '\e82c'; }
-
-.eicon-image-before-after:before {
-  content: '\e82d'; }
-
-.eicon-image-box:before {
-  content: '\e82e'; }
-
-.eicon-image-hotspot:before {
-  content: '\e82f'; }
-
-.eicon-image-rollover:before {
+.eicon-gallery-grid:before {
   content: '\e830'; }
 
-.eicon-info-box:before {
+.eicon-gallery-group:before {
   content: '\e831'; }
 
-.eicon-inner-section:before {
+.eicon-gallery-justified:before {
   content: '\e832'; }
 
-.eicon-mailchimp:before {
+.eicon-gallery-masonry:before {
   content: '\e833'; }
 
-.eicon-menu-card:before {
+.eicon-icon-box:before {
   content: '\e834'; }
 
-.eicon-navigation-horizontal:before {
+.eicon-image-before-after:before {
   content: '\e835'; }
 
-.eicon-navigation-menu:before {
+.eicon-image-box:before {
   content: '\e836'; }
 
-.eicon-navigation-vertical:before {
+.eicon-image-hotspot:before {
   content: '\e837'; }
 
-.eicon-number-field:before {
+.eicon-image-rollover:before {
   content: '\e838'; }
 
-.eicon-parallax:before {
+.eicon-info-box:before {
   content: '\e839'; }
 
-.eicon-php7:before {
-  content: '\e83a'; }
-
-.eicon-post-list:before {
-  content: '\e83b'; }
-
-.eicon-post-slider:before {
-  content: '\e83c'; }
-
-.eicon-post:before {
-  content: '\e83d'; }
-
-.eicon-posts-carousel:before {
-  content: '\e83e'; }
-
-.eicon-posts-grid:before {
-  content: '\e83f'; }
-
-.eicon-posts-group:before {
+.eicon-inner-section:before {
   content: '\e840'; }
 
-.eicon-posts-justified:before {
+.eicon-mailchimp:before {
   content: '\e841'; }
 
-.eicon-posts-masonry:before {
+.eicon-menu-card:before {
   content: '\e842'; }
 
-.eicon-posts-ticker:before {
+.eicon-navigation-horizontal:before {
   content: '\e843'; }
 
-.eicon-price-list:before {
+.eicon-navigation-menu:before {
   content: '\e844'; }
 
-.eicon-price-table:before {
+.eicon-navigation-vertical:before {
   content: '\e845'; }
 
-.eicon-radio:before {
+.eicon-number-field:before {
   content: '\e846'; }
 
-.eicon-rtl:before {
+.eicon-parallax:before {
   content: '\e847'; }
 
-.eicon-scroll:before {
+.eicon-php7:before {
   content: '\e848'; }
 
-.eicon-search:before {
+.eicon-post-list:before {
   content: '\e849'; }
 
-.eicon-selec:before {
-  content: '\e84a'; }
-
-.eicon-share:before {
-  content: '\e84b'; }
-
-.eicon-sidebar:before {
-  content: '\e84c'; }
-
-.eicon-skill-bar:before {
-  content: '\e84d'; }
-
-.eicon-slider-3d:before {
-  content: '\e84e'; }
-
-.eicon-slider-album:before {
-  content: '\e84f'; }
-
-.eicon-slider-device:before {
+.eicon-post-slider:before {
   content: '\e850'; }
 
-.eicon-slider-full-screen:before {
+.eicon-post:before {
   content: '\e851'; }
 
-.eicon-slider-push:before {
+.eicon-posts-carousel:before {
   content: '\e852'; }
 
-.eicon-slider-vertical:before {
+.eicon-posts-grid:before {
   content: '\e853'; }
 
-.eicon-slider-video:before {
+.eicon-posts-group:before {
   content: '\e854'; }
 
-.eicon-slideshow:before {
+.eicon-posts-justified:before {
   content: '\e855'; }
 
-.eicon-social-icons:before {
+.eicon-posts-masonry:before {
   content: '\e856'; }
 
-.eicon-spacer:before {
+.eicon-posts-ticker:before {
   content: '\e857'; }
 
-.eicon-table:before {
+.eicon-price-list:before {
   content: '\e858'; }
 
-.eicon-tabs:before {
+.eicon-price-table:before {
   content: '\e859'; }
 
-.eicon-tel-field:before {
-  content: '\e85a'; }
-
-.eicon-text-area:before {
-  content: '\e85b'; }
-
-.eicon-text-field:before {
-  content: '\e85c'; }
-
-.eicon-thumbnails-down:before {
-  content: '\e85d'; }
-
-.eicon-thumbnails-half:before {
-  content: '\e85e'; }
-
-.eicon-thumbnails-right:before {
-  content: '\e85f'; }
-
-.eicon-time-line:before {
+.eicon-radio:before {
   content: '\e860'; }
 
-.eicon-toogle:before {
+.eicon-rtl:before {
   content: '\e861'; }
 
-.eicon-url:before {
+.eicon-scroll:before {
   content: '\e862'; }
 
-.eicon-woocommerce:before {
+.eicon-search:before {
   content: '\e863'; }
 
-.eicon-wordpress:before {
+.eicon-selec:before {
   content: '\e864'; }
 
-.eicon-bullet-list:before {
+.eicon-share:before {
   content: '\e865'; }
+
+.eicon-sidebar:before {
+  content: '\e866'; }
+
+.eicon-skill-bar:before {
+  content: '\e867'; }
+
+.eicon-slider-3d:before {
+  content: '\e868'; }
+
+.eicon-slider-album:before {
+  content: '\e869'; }
+
+.eicon-slider-device:before {
+  content: '\e870'; }
+
+.eicon-slider-full-screen:before {
+  content: '\e871'; }
+
+.eicon-slider-push:before {
+  content: '\e872'; }
+
+.eicon-slider-vertical:before {
+  content: '\e873'; }
+
+.eicon-slider-video:before {
+  content: '\e874'; }
+
+.eicon-slideshow:before {
+  content: '\e875'; }
+
+.eicon-social-icons:before {
+  content: '\e876'; }
+
+.eicon-spacer:before {
+  content: '\e877'; }
+
+.eicon-table:before {
+  content: '\e878'; }
+
+.eicon-tabs:before {
+  content: '\e879'; }
+
+.eicon-tel-field:before {
+  content: '\e880'; }
+
+.eicon-text-area:before {
+  content: '\e881'; }
+
+.eicon-text-field:before {
+  content: '\e882'; }
+
+.eicon-thumbnails-down:before {
+  content: '\e883'; }
+
+.eicon-thumbnails-half:before {
+  content: '\e884'; }
+
+.eicon-thumbnails-right:before {
+  content: '\e885'; }
+
+.eicon-time-line:before {
+  content: '\e886'; }
+
+.eicon-toggle:before {
+  content: '\e887'; }
+
+.eicon-url:before {
+  content: '\e888'; }
+
+.eicon-woocommerce:before {
+  content: '\e889'; }
+
+.eicon-wordpress:before {
+  content: '\e890'; }
+
+.eicon-align-left:before {
+  content: '\e891'; }
+
+.eicon-anchor:before {
+  content: '\e892'; }
+
+.eicon-bullet-list:before {
+  content: '\e893'; }
+
+.eicon-coding:before {
+  content: '\e894'; }
+
+.eicon-favorite:before {
+  content: '\e895'; }
+
+.eicon-google-maps:before {
+  content: '\e896'; }
+
+.eicon-insert-image:before {
+  content: '\e897'; }
+
+.eicon-photo-library:before {
+  content: '\e898'; }
+
+.eicon-type-tool:before {
+  content: '\e899'; }
+
+.eicon-youtube:before {
+  content: '\e900'; }
+
+.eicon-flip-box:before {
+  content: '\e901'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */
