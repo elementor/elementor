@@ -232,7 +232,7 @@ module.exports = function( grunt ) {
 		wp_readme_to_markdown: {
 			github: {
 				options: {
-					//wordpressPluginSlug: 'elementor',
+					wordpressPluginSlug: 'elementor',
 					travisUrlRepo: 'https://travis-ci.org/pojome/elementor',
 					gruntDependencyStatusUrl: 'https://david-dm.org/pojome/elementor',
 					coverallsRepo: 'pojome/elementor',
