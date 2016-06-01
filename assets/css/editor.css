@@ -695,6 +695,10 @@ select {
       display: block;
       margin-bottom: 15px;
       background-color: #e6e9ec; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-default.elementor-control-wp {
+      margin-top: 15px; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-default.elementor-control-wp:before {
+        background-color: transparent; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-before {
       padding-top: 15px; }
       #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-before:before {
