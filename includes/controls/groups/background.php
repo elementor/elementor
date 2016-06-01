@@ -180,9 +180,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'label_block' => true,
-			'default' => [
-				'url' => Utils::get_placeholder_image_src(),
-			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],

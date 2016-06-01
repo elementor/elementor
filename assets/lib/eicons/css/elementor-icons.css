@@ -23,13 +23,13 @@
 .eicon-elementor-square:before {
   content: '\e801'; }
 
-.eicon-plus:before {
+.eicon-pojome:before {
   content: '\e802'; }
 
-.eicon-menu:before {
+.eicon-plus:before {
   content: '\e803'; }
 
-.eicon-settings:before {
+.eicon-menu:before {
   content: '\e804'; }
 
 .eicon-apps:before {
@@ -284,7 +284,7 @@
 .eicon-url:before {
   content: '\e888'; }
 
-.eicon-woocommerce:before {
+.eicon-type-tool:before {
   content: '\e889'; }
 
 .eicon-wordpress:before {
@@ -314,7 +314,7 @@
 .eicon-photo-library:before {
   content: '\e898'; }
 
-.eicon-type-tool:before {
+.eicon-woocommerce:before {
   content: '\e899'; }
 
 .eicon-youtube:before {
@@ -322,5 +322,8 @@
 
 .eicon-flip-box:before {
   content: '\e901'; }
+
+.eicon-settings:before {
+  content: '\e902'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */
