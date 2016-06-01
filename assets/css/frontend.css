@@ -1,3 +1,9 @@
+#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
+  content: "\e800";
+  font-family: eicon;
+  font-size: 12px;
+  margin-top: 5px; }
+
 .elementor {
   -webkit-hyphens: manual;
       -ms-hyphens: manual;

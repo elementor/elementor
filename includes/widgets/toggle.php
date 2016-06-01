@@ -18,7 +18,7 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'toogle';
+		return 'toggle';
 	}
 
 	protected function _register_controls() {
