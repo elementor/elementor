@@ -54,12 +54,12 @@ class Utils {
 	}
 
 	public static function get_youtube_id_from_url( $url ) {
-		preg_match( '/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/', $url, $video_id_parts );
+		preg_match( '/^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/', $url, $video_id_parts );
 
-		if ( empty( $video_id_parts[2] ) ) {
+		if ( empty( $video_id_parts[1] ) ) {
 			return false;
 		}
 
-		return $video_id_parts[2];
+		return $video_id_parts[1];
 	}
 }
