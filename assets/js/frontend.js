@@ -50,7 +50,7 @@
 
 	var onYoutubeApiReady = function( callback ) {
 		if ( window.YT && YT.loaded ) {
-			callback( window.YT );
+			callback( YT );
 		} else {
 			// If not ready check again by timeout..
 			setTimeout( function() {
@@ -233,15 +233,20 @@
 		var player,
 			ui = {
 				backgroundVideoContainer: this.find( '.elementor-background-video-container' )
-			};
+			},
+			isYTVideo = false;
 
-		ui.backgroundVideoFrame = ui.backgroundVideoContainer.children( '.elementor-background-video' );
+		if ( ! ui.backgroundVideoContainer.length ) {
+			return;
+		}
+
+		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
 
 		var changeVideoSize = function() {
-			var $videoFrame = $( player.getIframe() ),
+			var $video = isYTVideo ? player.getIframe() : ui.backgroundVideo,
 				size = calcVideosSize();
 
-			$videoFrame.width( size.width ).height( size.height );
+			$video.width( size.width ).height( size.height );
 		};
 
 		var calcVideosSize = function() {
@@ -260,17 +265,10 @@
 			};
 		};
 
-		var prepareVideo = function( YT ) {
-			var $backgroundVideo = ui.backgroundVideoFrame,
-				videoData = $backgroundVideo.data(),
-				videoId = videoData.videoId;
+		var prepareYTVideo = function( YT, videoID ) {
 
-			if ( ! videoId ) {
-				return;
-			}
-
-			player = new YT.Player( $backgroundVideo[0], {
-				videoId: videoId,
+			player = new YT.Player( ui.backgroundVideo[0], {
+				videoId: videoID,
 				events: {
 					onReady: function() {
 						player.mute();
@@ -291,16 +289,23 @@
 				}
 			} );
 
-			$( scopeWindow ).on( 'resize', changeVideoSize );
 		};
 
-		if ( ui.backgroundVideoContainer.length ) {
+		var videoID = ui.backgroundVideo.data( 'video-id' );
+
+		if ( videoID ) {
+			isYTVideo = true;
+
 			onYoutubeApiReady( function( YT ) {
 				setTimeout( function() {
-					prepareVideo( YT );
+					prepareYTVideo( YT, videoID );
 				}, 1 );
 			} );
+		} else {
+			ui.backgroundVideo.one( 'canplay', changeVideoSize );
 		}
+
+		$( scopeWindow ).on( 'resize', changeVideoSize );
 	} );
 
 	// Video Widget
