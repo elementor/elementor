@@ -13,10 +13,6 @@ class Widget_Gallery extends Widget_Base {
 		return __( 'Gallery', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'photo-library';
 	}

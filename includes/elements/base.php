@@ -22,8 +22,6 @@ abstract class Element_Base {
 
 	abstract public function get_title();
 
-	abstract public function get_categories();
-
 	abstract protected function _register_controls();
 
 	// TODO: Need to change this to abstract type
@@ -36,6 +34,10 @@ abstract class Element_Base {
 
 	public function get_keywords() {
 		return '';
+	}
+
+	public function get_categories() {
+		return [ 'basic' ];
 	}
 
 	protected function _get_available_tabs_controls() {

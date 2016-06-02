@@ -13,10 +13,6 @@ class Widget_Accordion extends Widget_Base {
 		return __( 'Accordion', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'accordion';
 	}

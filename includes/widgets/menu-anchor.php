@@ -13,10 +13,6 @@ class Widget_Menu_anchor extends Widget_Base {
 		return __( 'Menu Anchor', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'anchor';
 	}

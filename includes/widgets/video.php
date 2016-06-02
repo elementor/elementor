@@ -15,10 +15,6 @@ class Widget_Video extends Widget_Base {
 		return __( 'YouTube', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'youtube';
 	}

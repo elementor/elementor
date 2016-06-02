@@ -14,10 +14,6 @@ class Widget_Slider extends Widget_Base {
 		return __( 'Slider', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'insert-image';
 	}

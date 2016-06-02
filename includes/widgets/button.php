@@ -13,10 +13,6 @@ class Widget_Button extends Widget_Base {
 		return __( 'Button', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'button';
 	}

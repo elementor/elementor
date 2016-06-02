@@ -13,10 +13,6 @@ class Widget_Google_maps extends Widget_Base {
 		return __( 'Google Maps', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'google-maps';
 	}

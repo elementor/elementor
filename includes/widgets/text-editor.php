@@ -13,10 +13,6 @@ class Widget_Text_editor extends Widget_Base {
 		return __( 'Text Editor', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'align-left';
 	}

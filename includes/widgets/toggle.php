@@ -13,10 +13,6 @@ class Widget_Toggle extends Widget_Base {
 		return __( 'Toggle', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'toggle';
 	}

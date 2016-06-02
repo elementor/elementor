@@ -13,10 +13,6 @@ class Widget_Divider extends Widget_Base {
 		return __( 'Divider', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'divider';
 	}

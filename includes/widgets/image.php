@@ -13,10 +13,6 @@ class Widget_Image extends Widget_Base {
 		return __( 'Image', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'insert-image';
 	}

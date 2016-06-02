@@ -13,10 +13,6 @@ class Widget_Icon_box extends Widget_Base {
 		return __( 'Icon Box', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'favorite';
 	}
