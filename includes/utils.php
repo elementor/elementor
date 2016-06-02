@@ -5,6 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Utils {
 
+	public static function is_development_mode() {
+		return apply_filters( 'elementor/utils/is_development_mode', false );
+	}
+
 	public static function get_edit_link( $post_id = 0 ) {
 		return add_query_arg( 'elementor', '', get_permalink( $post_id ) );
 	}
