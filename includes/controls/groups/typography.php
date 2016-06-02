@@ -42,6 +42,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
+			'selector_value' => 'font-family: {{VALUE}}, sans-serif',
 		];
 
 		$typo_weight_options = [ '' => __( 'Default', 'elementor' ) ];
