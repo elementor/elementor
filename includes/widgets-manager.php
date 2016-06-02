@@ -35,13 +35,13 @@ class Widgets_Manager {
 			'sidebar',
 		];
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			/*$build_widgets_filename[] = 'gallery';
-			$build_widgets_filename[] = 'carousel';
-			$build_widgets_filename[] = 'slider';
-			$build_widgets_filename[] = 'image-box';
-			$build_widgets_filename[] = 'icon-box';*/
-		}
+		//if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		//	$build_widgets_filename[] = 'gallery';
+		//	$build_widgets_filename[] = 'carousel';
+		//	$build_widgets_filename[] = 'slider';
+		//	$build_widgets_filename[] = 'image-box';
+		//	$build_widgets_filename[] = 'icon-box';
+		//}
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
