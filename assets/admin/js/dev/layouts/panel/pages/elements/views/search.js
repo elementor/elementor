@@ -14,7 +14,9 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 	},
 
 	onInputChanged: function( event ) {
-		if ( 27 === event.keyCode ) {
+		var ESC_KEY = 27;
+
+		if ( ESC_KEY === event.keyCode ) {
 			this.clearInput();
 		}
 
