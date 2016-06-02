@@ -20,6 +20,7 @@ class Widgets_Manager {
 			'video',
 			'button',
 			'divider',
+			'spacer',
 			'google-maps',
 			'counter',
 			'progress',

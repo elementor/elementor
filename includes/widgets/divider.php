@@ -33,7 +33,6 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_divider',
 				'options' => [
-					'' => __( 'Space', 'elementor' ),
 					'solid' => __( 'Solid', 'elementor' ),
 					'double' => __( 'Double', 'elementor' ),
 					'dotted' => __( 'Dotted', 'elementor' ),
