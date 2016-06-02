@@ -38,10 +38,17 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
+		$default_fonts = get_option( 'elementor_default_generic_fonts', 'Sans-serif' );
+
+		if ( $default_fonts ) {
+			$default_fonts = ', ' . $default_fonts;
+		}
+
 		$fields['font_family'] = [
 			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
+			'selector_value' => 'font-family: {{VALUE}}' . $default_fonts . ';',
 		];
 
 		$typo_weight_options = [ '' => __( 'Default', 'elementor' ) ];
