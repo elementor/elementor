@@ -29,7 +29,7 @@ class Elements_Manager {
 				'icon' => 'font',
 			],
 			'pojo' => [
-				'title' => __( 'Pojo Framework', 'elementor' ),
+				'title' => __( 'Pojo Themes', 'elementor' ),
 				'icon' => 'pojome',
 			],
 			'wordpress' => [
