@@ -1272,7 +1272,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	clearSearchInput: function() {
-		this.getChildView( 'search' ).triggerMethod( 'clear:filter' );
+		this.getChildView( 'search' ).clearInput();
 	},
 
 	changeFilter: function( filterValue ) {
@@ -1453,11 +1453,19 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		input: 'input'
 	},
 
-	triggers: {
-		'keyup @ui.input': 'search:change:input'
+	events: {
+		'keyup @ui.input': 'onInputChanged'
 	},
 
-	onClearFilter: function() {
+	onInputChanged: function( event ) {
+		if ( 27 === event.keyCode ) {
+			this.clearInput();
+		}
+
+		this.triggerMethod( 'search:change:input' );
+	},
+
+	clearInput: function() {
 		this.ui.input.val( '' );
 	}
 } );
