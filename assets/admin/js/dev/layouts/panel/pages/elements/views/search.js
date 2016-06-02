@@ -13,7 +13,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		'keyup @ui.input': 'search:change:input'
 	},
 
-	onClearFilter: function() {
+	clearInput: function() {
 		this.ui.input.val( '' );
 	}
 } );

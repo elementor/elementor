@@ -86,7 +86,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	clearSearchInput: function() {
-		this.getChildView( 'search' ).triggerMethod( 'clear:filter' );
+		this.getChildView( 'search' ).clearInput();
 	},
 
 	changeFilter: function( filterValue ) {
