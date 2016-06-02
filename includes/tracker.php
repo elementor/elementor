@@ -16,7 +16,7 @@ class Tracker {
 		add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
 	}
 
-	public static function check_for_settings_option( $new_value ) {
+	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
 			self::send_tracking_data( true );
