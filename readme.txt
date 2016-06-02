@@ -49,6 +49,14 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 == Changelog ==
 
+= 0.1.4 - 02.06.2016 =
+* New! - Added new widget: Spacer
+* Tweak! - Added default category for widgets
+* Tweak! - Added size and opacity controls for Image widget
+* Tweak! - Added fallback font for custom fonts
+* Fixed! - Issue with duplicate after element sort
+* Tweak! - Added development mode flag (filter `elementor/utils/is_development_mode`)
+
 = 0.1.3 - 01.06.2016 =
 * New! - Added background video for all formats
 * Tweak! - Pojo Framework & Themes supported
