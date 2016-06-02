@@ -3896,7 +3896,7 @@ ControlFontItemView = ControlBaseItemView.extend( {
 		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
 
 		helpers.getFontsByGroups = _.bind( function( groups ) {
-			return _.pick( this.model.get( 'fonts' ), function( fontType, fontName ) {
+			return _.pick( this.model.get( 'fonts' ), function( fontType ) {
 				return _.isArray( groups ) ? _.contains( groups, fontType ) : fontType === groups;
 			} );
 		}, this );
