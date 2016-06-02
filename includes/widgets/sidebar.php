@@ -13,10 +13,6 @@ class Widget_Sidebar extends Widget_Base {
 		return __( 'Sidebar', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'sidebar';
 	}

@@ -109,6 +109,26 @@
 	}
 }
 
+#elementor-panel-footer-help-title {
+	text-align: getStartDirection();
+	padding: 10px 0;
+}
+
+#elementor-panel-footer-help-link {
+
+	.elementor-button {
+		width: 100%;
+		padding: 10px 0;
+		background-color: $editor-dark;
+		color: #fff;
+
+		&:hover {
+			background-color: #fff;
+			color: $editor-dark;
+		}
+	}
+}
+
 #elementor-panel-footer-save {
 	width: 90px;
 	padding: 0 10px;

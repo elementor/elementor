@@ -13,10 +13,6 @@ class Widget_Alert extends Widget_Base {
 		return __( 'Alert', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'alert';
 	}

@@ -13,10 +13,6 @@ class Widget_Progress extends Widget_Base {
 		return __( 'Progress Bar', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'skill-bar';
 	}

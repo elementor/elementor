@@ -81,6 +81,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div id="elementor-panel-footer-help" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Help', 'elementor' ); ?>">
 		<span class="elementor-screen-only"><?php _e( 'Help', 'elementor' ); ?></span>
 		<i class="fa fa-question-circle"></i>
+		<div class="elementor-panel-footer-sub-menu-wrapper">
+			<div class="elementor-panel-footer-sub-menu">
+				<div id="elementor-panel-footer-help-title"><?php _e( 'Need help?', 'elementor' ); ?></div>
+				<div id="elementor-panel-footer-help-link">
+					<a href="https://go.elementor.com/docs" target="_blank">
+						<button class="elementor-button"><?php _e( 'Go to the Documentation', 'elementor' ); ?></button>
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div id="elementor-panel-footer-save" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">
 		<button class="elementor-button">

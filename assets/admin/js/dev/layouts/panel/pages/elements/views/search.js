@@ -9,11 +9,19 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		input: 'input'
 	},
 
-	triggers: {
-		'keyup @ui.input': 'search:change:input'
+	events: {
+		'keyup @ui.input': 'onInputChanged'
 	},
 
-	onClearFilter: function() {
+	onInputChanged: function( event ) {
+		if ( 27 === event.keyCode ) {
+			this.clearInput();
+		}
+
+		this.triggerMethod( 'search:change:input' );
+	},
+
+	clearInput: function() {
 		this.ui.input.val( '' );
 	}
 } );

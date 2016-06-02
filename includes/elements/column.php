@@ -13,10 +13,6 @@ class Element_Column extends Element_Base {
 		return __( 'Column', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'columns';
 	}

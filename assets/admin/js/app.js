@@ -371,7 +371,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var currentIndex = childView.$el.index() + 1,
+		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
 		this.view.addChildModel( newModel, { at: currentIndex } );
@@ -1249,14 +1249,16 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		_.each( categories, function( categoryItems, categoryName ) {
-			var categoryConfig = elementor.config.elements_categories[ categoryName ];
+		_.each( elementor.config.elements_categories, function( categoryConfig, categoryName ) {
+			if ( ! categories[ categoryName ] ) {
+				return;
+			}
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
-				items: categoryItems
+				items: categories[ categoryName ]
 			} );
 		} );
 
@@ -1272,7 +1274,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	clearSearchInput: function() {
-		this.getChildView( 'search' ).triggerMethod( 'clear:filter' );
+		this.getChildView( 'search' ).clearInput();
 	},
 
 	changeFilter: function( filterValue ) {
@@ -1453,11 +1455,19 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		input: 'input'
 	},
 
-	triggers: {
-		'keyup @ui.input': 'search:change:input'
+	events: {
+		'keyup @ui.input': 'onInputChanged'
 	},
 
-	onClearFilter: function() {
+	onInputChanged: function( event ) {
+		if ( 27 === event.keyCode ) {
+			this.clearInput();
+		}
+
+		this.triggerMethod( 'search:change:input' );
+	},
+
+	clearInput: function() {
 		this.ui.input.val( '' );
 	}
 } );

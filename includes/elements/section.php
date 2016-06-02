@@ -15,10 +15,6 @@ class Element_Section extends Element_Base {
 		return __( 'Section', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'columns';
 	}

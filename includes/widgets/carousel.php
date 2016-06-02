@@ -13,10 +13,6 @@ class Widget_Carousel extends Widget_Base {
 		return __( 'Carousel', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'insert-image';
 	}

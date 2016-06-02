@@ -11,10 +11,6 @@ class Widget_Counter extends Widget_Base {
 		return __( 'Counter', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'counter';
 	}

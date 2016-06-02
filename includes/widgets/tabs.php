@@ -13,10 +13,6 @@ class Widget_Tabs extends Widget_Base {
 		return __( 'Tabs', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'tabs';
 	}

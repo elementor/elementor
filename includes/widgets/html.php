@@ -12,11 +12,7 @@ class Widget_Html extends Widget_Base {
 	public function get_title() {
 		return __( 'HTML', 'elementor' );
 	}
-
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
+	
 	public function get_icon() {
 		return 'coding';
 	}

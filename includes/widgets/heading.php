@@ -13,10 +13,6 @@ class Widget_Heading extends Widget_Base {
 		return __( 'Heading', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'type-tool';
 	}

@@ -13,10 +13,6 @@ class Widget_Icon_list extends Widget_Base {
 		return __( 'Icon List', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'bullet-list';
 	}

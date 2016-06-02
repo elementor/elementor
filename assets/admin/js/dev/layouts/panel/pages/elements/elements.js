@@ -63,14 +63,16 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		_.each( categories, function( categoryItems, categoryName ) {
-			var categoryConfig = elementor.config.elements_categories[ categoryName ];
+		_.each( elementor.config.elements_categories, function( categoryConfig, categoryName ) {
+			if ( ! categories[ categoryName ] ) {
+				return;
+			}
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
-				items: categoryItems
+				items: categories[ categoryName ]
 			} );
 		} );
 
@@ -86,7 +88,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	clearSearchInput: function() {
-		this.getChildView( 'search' ).triggerMethod( 'clear:filter' );
+		this.getChildView( 'search' ).clearInput();
 	},
 
 	changeFilter: function( filterValue ) {
