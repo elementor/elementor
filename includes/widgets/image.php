@@ -188,6 +188,29 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'section_style_caption',
 			[
 				'type'  => Controls_Manager::SECTION,
