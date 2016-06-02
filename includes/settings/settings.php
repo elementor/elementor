@@ -69,7 +69,7 @@ class Settings {
 			]
 		);
 
-		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
+		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_option' ] );
 	}
 
 	public function register_admin_menu() {
