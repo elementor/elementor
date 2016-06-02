@@ -53,6 +53,23 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
+		$field_id = 'elementor_default_generic_fonts';
+		add_settings_field(
+			$field_id,
+			__( 'Default Generic Fonts', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$main_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'std' => 'Sans-serif',
+				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
 		$field_id = 'elementor_allow_tracking';
 		add_settings_field(
 			$field_id,
