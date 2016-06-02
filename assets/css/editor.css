@@ -481,6 +481,8 @@ select {
   #elementor-panel .select2-selection__arrow {
     height: 27px;
     top: 0; }
+  #elementor-panel #elementor-panel #elementor-panel-page-editor .elementor-controls .pojo-widget-button-collapse {
+    display: none; }
   #elementor-panel #elementor-panel-header {
     display: table;
     height: 40px;

@@ -100,3 +100,14 @@
 	height: 27px;
 	top: 0;
 }
+
+// Pojo Theme Support
+#elementor-panel {
+	#elementor-panel-page-editor {
+		.elementor-controls {
+			.pojo-widget-button-collapse {
+				display: none;
+			}
+		}
+	}
+}
