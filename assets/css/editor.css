@@ -1209,6 +1209,17 @@ select {
       font-size: 11px;
       font-style: italic;
       color: #a4afb7; }
+  #elementor-panel #elementor-panel-footer-help-title {
+    text-align: left;
+    padding: 10px 0; }
+  #elementor-panel #elementor-panel-footer-help-link .elementor-button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #6d7882;
+    color: #fff; }
+    #elementor-panel #elementor-panel-footer-help-link .elementor-button:hover {
+      background-color: #fff;
+      color: #6d7882; }
   #elementor-panel #elementor-panel-footer-save {
     width: 90px;
     padding: 0 10px; }
