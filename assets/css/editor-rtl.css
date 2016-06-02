@@ -512,7 +512,7 @@ select {
     overflow: hidden;
     padding: 5px; }
   #elementor-panel .elementor-element-wrapper {
-    float: left;
+    float: right;
     width: 50%;
     padding: 5px;
     text-align: center;
