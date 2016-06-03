@@ -49,6 +49,9 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 == Changelog ==
 
+= 0.1.5 - 03.06.2016 =
+* Tweak! - Add check for `asp_tags` php config
+
 = 0.1.4 - 02.06.2016 =
 * New! - Added new widget: Spacer
 * Tweak! - Added default category for widgets
