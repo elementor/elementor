@@ -339,7 +339,7 @@ class Frontend {
 			</div>
 		</div>
 		<?php
-		return ob_get_clean();
+		return apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
 	}
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
