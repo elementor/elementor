@@ -519,7 +519,6 @@ select {
     box-sizing: border-box; }
   #elementor-panel .elementor-element {
     border-radius: 3px;
-    padding-bottom: 10px;
     background-color: #fff;
     cursor: move; }
     #elementor-panel .elementor-element:hover {
@@ -528,12 +527,18 @@ select {
         color: #9b0a46; }
     #elementor-panel .elementor-element .icon {
       font-size: 28px;
-      padding: 15px 0;
+      padding-top: 15px;
       line-height: 1;
       color: #556068; }
+    #elementor-panel .elementor-element .elementor-element-title-wrapper {
+      display: table;
+      width: 100%; }
     #elementor-panel .elementor-element .title {
       font-size: 11px;
-      color: #556068; }
+      color: #556068;
+      display: table-cell;
+      vertical-align: middle;
+      height: 40px; }
   #elementor-panel #elementor-panel-elements-search-wrapper {
     position: relative; }
     #elementor-panel #elementor-panel-elements-search-wrapper .fa {
