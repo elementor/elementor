@@ -228,16 +228,6 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_content',
 			]
 		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'content_typography',
-				'selector' => '{{WRAPPER}} .widget-image-text p',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_content',
-			]
-		);
 	}
 
 	protected function render( $instance = [] ) {
