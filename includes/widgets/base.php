@@ -120,6 +120,7 @@ abstract class Widget_Base extends Element_Base {
 				'type' => Controls_Manager::RAW_HTML,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
+				'classes' => 'elementor-control-descriptor',
 			]
 		);
 

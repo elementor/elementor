@@ -482,6 +482,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::RAW_HTML,
 				'tab' => self::TAB_SETTINGS,
 				'section' => '_section_responsive',
+				'classes' => 'elementor-control-descriptor',
 			]
 		);
 
