@@ -52,7 +52,7 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 ### Minimum Requirements ###
 
-* WordPress 4.5 or greater
+* WordPress 4.4 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
