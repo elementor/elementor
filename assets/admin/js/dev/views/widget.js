@@ -91,6 +91,18 @@ var WidgetView = BaseElementView.extend( {
 	onSettingsChanged: function( settings ) {
 		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
 
+		var isContentChanged = false;
+
+		_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+			if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+				isContentChanged = true;
+			}
+		} );
+
+		if ( ! isContentChanged ) {
+			return;
+		}
+
 		switch ( this.getTemplateType() ) {
 			case 'js' :
 				this.model.setHtmlCache();
