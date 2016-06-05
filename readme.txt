@@ -66,7 +66,7 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.5 and above, and is compatible with PHP 5.4 and above.
+No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater.
 
 **With Elementor, do I still need a theme?**
 
