@@ -68,7 +68,7 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 No. Elementor supports WordPress 4.5 and above, and is compatible with PHP 5.4 and above.
 
-**With Elementor, do I still need a theme? **
+**With Elementor, do I still need a theme?**
 
 Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame. You still need a theme to design a nice header and footer.
 
