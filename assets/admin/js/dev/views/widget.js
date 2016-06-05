@@ -1,6 +1,8 @@
-var BaseElementView = require( 'elementor-views/base-element' );
+var BaseElementView = require( 'elementor-views/base-element' ),
+	BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	WidgetView;
 
-var WidgetView = BaseElementView.extend( {
+WidgetView = BaseElementView.extend( {
 	_templateType: null,
 
 	getTemplate: function() {
@@ -90,17 +92,20 @@ var WidgetView = BaseElementView.extend( {
 
 	onSettingsChanged: function( settings ) {
 		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+		
+		// Make sure is correct model
+		if ( settings instanceof BaseSettingsModel ) {
+			var isContentChanged = false;
 
-		var isContentChanged = false;
+			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+					isContentChanged = true;
+				}
+			} );
 
-		_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-			if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-				isContentChanged = true;
+			if ( ! isContentChanged ) {
+				return;
 			}
-		} );
-
-		if ( ! isContentChanged ) {
-			return;
 		}
 
 		switch ( this.getTemplateType() ) {
