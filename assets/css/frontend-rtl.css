@@ -716,15 +716,15 @@
     text-align: center; }
 
 @media (max-width: 479px) {
-  body.elementor-editor-preview .elementor-hidden-phone, body.elementor-editor-preview .elementor-visible-tablet, body.elementor-editor-preview .elementor-visible-desktop {
+  body:not(.elementor-editor-active) .elementor-hidden-phone, body:not(.elementor-editor-active) .elementor-visible-tablet, body:not(.elementor-editor-active) .elementor-visible-desktop {
     display: none; } }
 @media (min-width: 480px) and (max-width: 1023px) {
-  body.elementor-editor-preview .elementor-hidden-tablet, body.elementor-editor-preview .elementor-visible-phone, body.elementor-editor-preview .elementor-visible-desktop {
+  body:not(.elementor-editor-active) .elementor-hidden-tablet, body:not(.elementor-editor-active) .elementor-visible-phone, body:not(.elementor-editor-active) .elementor-visible-desktop {
     display: none; } }
 @media (min-width: 1024px) {
-  body.elementor-editor-preview .elementor-hidden-desktop, body.elementor-editor-preview .elementor-visible-phone, body.elementor-editor-preview .elementor-visible-tablet {
+  body:not(.elementor-editor-active) .elementor-hidden-desktop, body:not(.elementor-editor-active) .elementor-visible-phone, body:not(.elementor-editor-active) .elementor-visible-tablet {
     display: none; } }
-body.elementor-editor-preview .elementor-hidden {
+body:not(.elementor-editor-active) .elementor-hidden {
   display: none; }
 
 /*# sourceMappingURL=frontend-rtl.css.map */

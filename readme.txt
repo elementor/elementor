@@ -26,19 +26,67 @@ Elementor is a drag and drop frontend page builder that gives you the power to d
 * Compatible to any design element. Include any element in your page: HTML, images, videos, forms, tabs, sliders, pricing tables, maps, blog posts, social icons, etc.
 * Works on every theme. Elementor works on any old or new theme. Switching between themes is no problem.
 * Plugin Compatibility. Compatibility with popular plugins like Yoast, WooCommerce & WPML.
-* No coding. You no longer need to use code, HTML, CSS, shortcode or PSD.
+* No coding. You no longer need to use code, HTML, CSS or shortcode.
+
+**RTL supported, multilingual and translatable**
+
+We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
+
+Check out our recently featured page on Product Hunt: https://www.producthunt.com/tech/elementor
+
+= Be a contributer =
+
+If you want to contribute, go to our [Elementor GitHub Repository][3] and see where you can help.
+
+You can also add a new language via [translate.wordpress.org][2].
 
 For more information about features, FAQs and documentation, check out [Elementor.com][1].
 
 [1]: https://elementor.com/
+[2]: https://translate.wordpress.org/projects/wp-plugins/elementor
+[3]: https://github.com/pojome/elementor
 
 == Installation ==
+
+= Minimum Requirements =
+
+* WordPress 4.5 or greater
+* PHP version 5.4 or greater
+* MySQL version 5.0 or greater
+
+= Installation =
 
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the wp-content/plugins/ directory of your WordPress installation.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Go to Pages > Add New
 4. Press the 'Edit with Elementor' button.
 5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
+
+== Frequently Asked Questions ==
+
+**My site is working with WordPress 2.6, will Elementor work for me?**
+
+No. Elementor supports WordPress 4.5 and above, and is compatible with PHP 5.4 and above.
+
+**With Elementor, do I still need a theme?**
+
+Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame. You still need a theme to design a nice header and footer.
+
+**Is Elementor compatible with Posts and Custom Post Types?**
+
+It sure is! You can set which post types will enable Elementor in the settings page.
+
+**Can I use other plugin widgets inside Elementor?**
+
+Sure can! Plugin widgets that appear in the WordPress widgets menu will also appear inside Elementor automatically. Just drag and drop them onto the page.
+
+**Do I need to know how to code to use Elementor?**
+
+Absolutly not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
+
+**Will Elementor work with RTL or other languages?**
+
+Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language.
 
 == Screenshots ==
 
