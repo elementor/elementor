@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.1.3
+Stable tag: 0.1.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -48,6 +48,17 @@ For more information about features, FAQs and documentation, check out [Elemento
 4. Settings page.
 
 == Changelog ==
+
+= 0.1.5 - 03.06.2016 =
+* Tweak! - Add check for `asp_tags` php config
+
+= 0.1.4 - 02.06.2016 =
+* New! - Added new widget: Spacer
+* Tweak! - Added default category for widgets
+* Tweak! - Added size and opacity controls for Image widget
+* Tweak! - Added fallback font for custom fonts
+* Tweak! - Added development mode flag (filter `elementor/utils/is_development_mode`)
+* Fixed! - Issue with duplicate after element sort
 
 = 0.1.3 - 01.06.2016 =
 * New! - Added background video for all formats
