@@ -245,7 +245,7 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0 %>">
+		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
 			<%
 			if ( settings.tabs ) {
 				var counter = 1;

@@ -135,7 +135,7 @@
 			$activeTitle = $accordionTitles.filter( '.active' );
 
 		var activateSection = function( sectionIndex ) {
-			var $requestedTitle = $accordionTitles.eq( sectionIndex ),
+			var $requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
 				isRequestedActive = $requestedTitle.hasClass( 'active' );
 
 			$activeTitle
@@ -154,15 +154,13 @@
 		};
 
 		if ( ! defaultActiveSection ) {
-			defaultActiveSection = 0;
+			defaultActiveSection = 1;
 		}
 
 		activateSection( defaultActiveSection );
 
 		$accordionTitles.on( 'click', function() {
-			var clickedTitleIndex = $( this ).index( $accordionTitles );
-
-			activateSection( clickedTitleIndex );
+			activateSection( this.dataset.section );
 		} );
 	} );
 
