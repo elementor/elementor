@@ -101,7 +101,7 @@
 			$content;
 
 		if ( ! defaultActiveTab ) {
-			defaultActiveTab = 0;
+			defaultActiveTab = 1;
 		}
 
 		var activateTab = function( tabIndex ) {
@@ -111,11 +111,11 @@
 				$content.hide();
 			}
 
-			$active = $tabsTitles.eq( tabIndex );
+			$active = $tabsTitles.filter( '[data-tab="' + tabIndex + '"]' );
 
 			$active.addClass( 'active' );
 
-			$content = $tabs.filter( '[data-tab="' + $active.data( 'tab' ) + '"]' );
+			$content = $tabs.filter( '[data-tab="' + tabIndex + '"]' );
 
 			$content.show();
 		};
@@ -123,9 +123,7 @@
 		activateTab( defaultActiveTab );
 
 		$tabsTitles.on( 'click', function() {
-			var clickedTabIndex = $( this ).index( $tabsTitles );
-
-			activateTab( clickedTabIndex );
+			activateTab( this.dataset.tab );
 		} );
 	} );
 
