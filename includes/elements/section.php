@@ -476,6 +476,16 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'tab' => self::TAB_SETTINGS,
+				'section' => '_section_responsive',
+			]
+		);
+
+		$this->add_control(
 			'hide_desktop',
 			[
 				'label' => __( 'Hide On Desktop', 'elementor' ),
