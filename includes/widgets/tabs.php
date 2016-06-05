@@ -215,7 +215,7 @@ class Widget_Tabs extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-tabs" data-active-tab="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0 %>">
+		<div class="elementor-tabs" data-active-tab="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
 			<%
 			if ( settings.tabs ) {
 				var counter = 1; %>
