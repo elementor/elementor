@@ -5105,9 +5105,11 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 module.exports = SectionsCollectionView;
 
 },{"elementor-behaviors/duplicate":2,"elementor-behaviors/elements-relation":3,"elementor-behaviors/handle-duplicate":4,"elementor-behaviors/sortable":8,"elementor-views/section":63}],65:[function(require,module,exports){
-var BaseElementView = require( 'elementor-views/base-element' );
+var BaseElementView = require( 'elementor-views/base-element' ),
+	BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	WidgetView;
 
-var WidgetView = BaseElementView.extend( {
+WidgetView = BaseElementView.extend( {
 	_templateType: null,
 
 	getTemplate: function() {
@@ -5197,17 +5199,20 @@ var WidgetView = BaseElementView.extend( {
 
 	onSettingsChanged: function( settings ) {
 		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+		
+		// Make sure is correct model
+		if ( settings instanceof BaseSettingsModel ) {
+			var isContentChanged = false;
 
-		var isContentChanged = false;
+			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+					isContentChanged = true;
+				}
+			} );
 
-		_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-			if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-				isContentChanged = true;
+			if ( ! isContentChanged ) {
+				return;
 			}
-		} );
-
-		if ( ! isContentChanged ) {
-			return;
 		}
 
 		switch ( this.getTemplateType() ) {
@@ -5268,5 +5273,5 @@ var WidgetView = BaseElementView.extend( {
 
 module.exports = WidgetView;
 
-},{"elementor-behaviors/handle-edit-mode":5,"elementor-behaviors/handle-editor":6,"elementor-views/base-element":41}]},{},[1])
+},{"elementor-behaviors/handle-edit-mode":5,"elementor-behaviors/handle-editor":6,"elementor-models/base-settings":31,"elementor-views/base-element":41}]},{},[1])
 //# sourceMappingURL=app.js.map
