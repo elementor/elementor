@@ -69,9 +69,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'label' => _x( 'Image', 'Background Control', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'title' => _x( 'Background Image', 'Background Control', 'elementor' ),
-				'default' => [
-					'url' => Utils::get_placeholder_image_src(),
-				],
 				'selectors' => [
 					$args['selector'] => 'background-image: url("{{URL}}");',
 				],
