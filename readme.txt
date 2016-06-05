@@ -102,6 +102,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 * Tweak! - Background Control: Removed default image
 * Tweak! - Add responsive tab on section element
 * Tweak! - Responsive mode: fixed included visibility style
+* Fixed! - Tabs & Accordion Widgets: indexes detection fixed
 
 = 0.1.5 - 03.06.2016 =
 * Tweak! - Add check for `asp_tags` php config
