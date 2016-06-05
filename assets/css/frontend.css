@@ -716,15 +716,15 @@
     text-align: center; }
 
 @media (max-width: 479px) {
-  .elementor-hidden-phone, .elementor-visible-tablet, .elementor-visible-desktop {
+  body:not(.elementor-editor-active) .elementor-hidden-phone, body:not(.elementor-editor-active) .elementor-visible-tablet, body:not(.elementor-editor-active) .elementor-visible-desktop {
     display: none; } }
 @media (min-width: 480px) and (max-width: 1023px) {
-  .elementor-hidden-tablet, .elementor-visible-phone, .elementor-visible-desktop {
+  body:not(.elementor-editor-active) .elementor-hidden-tablet, body:not(.elementor-editor-active) .elementor-visible-phone, body:not(.elementor-editor-active) .elementor-visible-desktop {
     display: none; } }
 @media (min-width: 1024px) {
-  .elementor-hidden-desktop, .elementor-visible-phone, .elementor-visible-tablet {
+  body:not(.elementor-editor-active) .elementor-hidden-desktop, body:not(.elementor-editor-active) .elementor-visible-phone, body:not(.elementor-editor-active) .elementor-visible-tablet {
     display: none; } }
-.elementor-hidden {
+body:not(.elementor-editor-active) .elementor-hidden {
   display: none; }
 
 /*# sourceMappingURL=frontend.css.map */

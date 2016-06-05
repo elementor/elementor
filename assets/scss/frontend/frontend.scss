@@ -12,5 +12,7 @@
 // Widgets
 @import "_widgets";
 
-// Visibility
-@import "_visibility";
+// Visibility (for preview mode or front-end)
+body:not(.elementor-editor-active) {
+	@import "_visibility";
+}
