@@ -185,27 +185,21 @@
 	// Carousel Widget
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$forNav = $wrapper.children( '.elementor-carousel-for' ),
-			$nav = $wrapper.children( '.elementor-carousel-nav' ),
+			$nav = $wrapper.children( '.elementor-carousel' ),
 			data = $nav.data();
 
-		$forNav.slick( {
-			slidesToShow: 1,
-			slidesToScroll: 1,
-			arrows: false,
-			fade: true,
-			asNavFor: $nav
-		} );
-
-		$nav.slick( {
-			slidesToShow: data.slideToShow,
-			slidesToScroll: data.slideToScroll,
-			asNavFor: $forNav,
+		var options = {
 			dots: true,
-			arrows: true,
-			focusOnSelect: true,
-			autoplay: data.autoPlay
-		} );
+			arrows: true
+		}
+
+		if ( data ) {
+			$.each( data, function( key, value ) {
+				options[ key ] = value;
+			} );
+		}
+
+		$nav.slick( options );
 	} );
 
 	// Slider Widget
