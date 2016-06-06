@@ -100,7 +100,7 @@ class Widget_Carousel extends Widget_Base {
 				$ids = explode( ',', $instance['carousel'] );
 
 				foreach ( $ids as $attach_id ) :
-					$image = wp_get_attachment_image_src( $attach_id, $instance['size'] );
+					$image = wp_get_attachment_image_src( $attach_id, $instance['thumbnail_size'] );
 					$slides .= '<div><img src="' . $image[0] . '" /></div>';
 				endforeach;
 
