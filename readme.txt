@@ -97,7 +97,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 == Changelog ==
 
-= 0.1.6 - 06.06.2016 =
+= 0.1.7 - 06.06.2016 =
 * Tweak! - Changed default image size control
 * Fixed! - Custom CSS Classes in frontend
 
