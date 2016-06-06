@@ -14,6 +14,8 @@
 
 			this.cache.$builderEditor = $( '#elementor-editor' );
 			this.cache.$wpEditor = $( '#postdivrich' );
+
+			this.cache.$pageTemplateSelect = $( '#page_template' );
 		},
 
 		buildElements: function() {
@@ -79,6 +81,22 @@
 
 				$self.toggleStatus( $self );
 			} );
+
+			$self.cache.$pageTemplateSelect.on('change',function() {
+				// validPageTemplates will be generated on an edit page for a page.
+				if (typeof validPageTemplates != 'undefined') {
+					var template = $self.cache.$pageTemplateSelect.val();
+					if (validPageTemplates.indexOf(template) >= 0) {
+						$self.cache.$switchMode.css({display: "block"});
+						$self.cache.$builderEditor.addClass('elementor-editor-active').removeClass('elementor-editor-inactive');
+						$self.cache.$wpEditor.hide();
+					} else {
+						$self.cache.$switchMode.css({display: "none"});
+						$self.cache.$builderEditor.removeClass('elementor-editor-active').addClass('elementor-editor-inactive');
+						$self.cache.$wpEditor.show();
+					}
+				}
+			});
 		},
 
 		init: function() {
