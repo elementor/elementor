@@ -309,7 +309,6 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-
 		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
 		if ( empty( $instance['image']['url'] ) ) {
