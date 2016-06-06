@@ -1420,9 +1420,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .dialog-widget-content {
   background-color: #fff;
   position: absolute;
-  width: 350px;
-  height: 150px;
-  margin: auto;
   border-radius: 3px;
   box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
   overflow: hidden; }
@@ -1430,16 +1427,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .dialog-widget-header, .dialog-message {
   text-align: center; }
 
-.dialog-widget-header {
-  font-size: 15px;
-  line-height: 1;
-  padding: 20px 0;
-  font-weight: 500;
-  color: #495157; }
-
 .dialog-message {
   color: #6d7882;
-  padding: 0 20px;
   font-size: 12px; }
 
 .dialog-buttons-wrapper {
@@ -1468,6 +1457,21 @@ body.elementor-editor-preview #elementor-mode-switcher {
     .dialog-buttons-wrapper > button:active {
       background-color: rgba(230, 233, 236, 0.5); }
 
+.dialog-widget-header {
+  line-height: 1;
+  padding: 20px 0;
+  font-weight: 500; }
+
+.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content {
+  margin: auto;
+  width: 350px;
+  height: 150px; }
+.dialog-options-widget .dialog-widget-header, .dialog-confirm-widget .dialog-widget-header {
+  font-size: 15px;
+  color: #495157; }
+.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message {
+  padding: 0 20px; }
+
 .dialog-popup-message {
   height: 155px;
   width: 155px;
@@ -1482,5 +1486,17 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-dialog-message-text {
   text-transform: uppercase; }
+
+.dialog-elementor-modal-widget-header {
+  border-bottom: 1px solid #d5dadf; }
+
+.dialog-elementor-modal-close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px; }
+
+.dialog-elementor-modal-message {
+  padding: 20px; }
 
 /*# sourceMappingURL=editor.css.map */
