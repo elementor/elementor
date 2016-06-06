@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v1.0.2
+ * Dialogs Manager v1.1.1
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -10,8 +10,11 @@
 (function ($, global) {
 	'use strict';
 
+	/*
+	 * Dialog Manager
+	 */
 	var DialogsManager = {
-		widgets: {},
+		widgetsTypes: {},
 		createWidgetType: function (typeName, properties, Parent) {
 			if (!Parent) {
 				Parent = this.Widget;
@@ -19,7 +22,7 @@
 
 			var WidgetType = function () {
 
-				Parent.call(this, typeName);
+				Parent.apply(this, arguments);
 			};
 
 			var prototype = WidgetType.prototype = new Parent(typeName);
@@ -38,13 +41,20 @@
 		addWidgetType: function (typeName, properties, Parent) {
 
 			if (properties && properties.prototype instanceof this.Widget) {
-				return this.widgets[typeName] = properties;
+				return this.widgetsTypes[typeName] = properties;
 			}
 
-			return this.widgets[typeName] = this.createWidgetType(typeName, properties, Parent);
+			return this.widgetsTypes[typeName] = this.createWidgetType(typeName, properties, Parent);
+		},
+		getWidgetType: function (widgetType) {
+
+			return this.widgetsTypes[widgetType];
 		}
 	};
 
+	/*
+	 * Dialog Manager instances constructor
+	 */
 	DialogsManager.Instance = function () {
 
 		var self = this,
@@ -71,7 +81,8 @@
 
 		this.createWidget = function (widgetType, properties) {
 
-			var widget = new DialogsManager.widgets[widgetType]();
+			var WidgetTypeConstructor = DialogsManager.getWidgetType(widgetType),
+				widget = new WidgetTypeConstructor(widgetType);
 
 			properties = properties || {};
 
@@ -112,6 +123,9 @@
 		self.init();
 	};
 
+	/*
+	 * Widget types constructor
+	 */
 	DialogsManager.Widget = function (widgetName) {
 
 		var self = this,
@@ -280,6 +294,7 @@
 
 	};
 
+	// Inheritable widget methods
 	DialogsManager.Widget.prototype.buildWidget = function () {
 
 		var components = this.getComponents();
@@ -304,6 +319,9 @@
 	DialogsManager.Widget.prototype.onReady = function () {
 	};
 
+	/*
+	 * Default basic widget types
+	 */
 	DialogsManager.addWidgetType('tool-tip', {
 		onShow: function () {
 
@@ -493,10 +511,10 @@
 		}
 	});
 
-	DialogsManager.addWidgetType('confirm', DialogsManager.widgets.options.extend('confirm', {
+	DialogsManager.addWidgetType('confirm', DialogsManager.getWidgetType('options').extend('confirm', {
 		onReady: function () {
 
-			DialogsManager.widgets.options.prototype.onReady.apply(this, arguments);
+			DialogsManager.getWidgetType('options').prototype.onReady.apply(this, arguments);
 
 			var strings = this.getSettings('strings'),
 				ESC_KEY = 27,
@@ -519,7 +537,7 @@
 		},
 		getDefaultSettings: function () {
 
-			var settings = DialogsManager.widgets.options.prototype.getDefaultSettings.apply(this, arguments);
+			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {
 				confirm: 'Ok',
@@ -532,7 +550,7 @@
 		}
 	}));
 
-	DialogsManager.addWidgetType('alert', DialogsManager.widgets.options.extend('alert', {
+	DialogsManager.addWidgetType('alert', DialogsManager.getWidgetType('options').extend('alert', {
 		onReady: function () {
 			var strings = this.getSettings('strings');
 
@@ -543,7 +561,7 @@
 			});
 		},
 		getDefaultSettings: function () {
-			var settings = DialogsManager.widgets.options.prototype.getDefaultSettings.apply(this, arguments);
+			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {
 				confirm: 'Ok'
@@ -577,5 +595,6 @@
 		}
 	});
 
+	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
 })('function' === typeof require ? require('jquery') : jQuery, 'undefined' !== typeof module && module.exports || window);

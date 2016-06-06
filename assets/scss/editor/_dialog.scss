@@ -20,9 +20,6 @@
 .dialog-widget-content {
 	background-color: #fff;
 	position: absolute;
-	width: 350px;
-	height: 150px;
-	margin: auto;
 	border-radius: 3px;
 	box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
 	overflow: hidden;
@@ -32,17 +29,8 @@
 	text-align: center;
 }
 
-.dialog-widget-header {
-	font-size: 15px;
-	line-height: 1;
-	padding: 20px 0;
-	font-weight: 500;
-	color: $editor-darkest;
-}
-
 .dialog-message {
 	color: $editor-dark;
-	padding: 0 20px;
 	font-size: 12px;
 }
 
@@ -85,6 +73,30 @@
 	}
 }
 
+.dialog-widget-header {
+	line-height: 1;
+	padding: 20px 0;
+	font-weight: 500;
+}
+
+.dialog-options-widget, .dialog-confirm-widget {
+
+	.dialog-widget-content {
+		margin: auto;
+		width: 350px;
+		height: 150px;
+	}
+
+	.dialog-widget-header {
+		font-size: 15px;
+		color: $editor-darkest;
+	}
+
+	.dialog-message {
+		padding: 0 20px;
+	}
+}
+
 // Popup widget
 .dialog-popup-message {
 	height: 155px;
@@ -104,4 +116,20 @@
 
 .elementor-dialog-message-text {
 	text-transform: uppercase;
+}
+
+// Modal widget
+.dialog-elementor-modal-widget-header {
+	border-bottom: 1px solid $editor-lightest;
+}
+
+.dialog-elementor-modal-close-button {
+	cursor: pointer;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+.dialog-elementor-modal-message {
+	padding: 20px;
 }
