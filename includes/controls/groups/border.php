@@ -17,10 +17,10 @@ class Group_Control_Border extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'options' => [
 				'' => __( 'None', 'elementor' ),
-				'solid' => __( 'Solid', 'elementor', 'elementor' ),
-				'double' => __( 'Double', 'elementor', 'elementor' ),
-				'dotted' => __( 'Dotted', 'elementor', 'elementor' ),
-				'dashed' => __( 'Dashed', 'elementor', 'elementor' ),
+				'solid' => _x( 'Solid', 'Typography Control', 'elementor' ),
+				'double' => _x( 'Double', 'Typography Control', 'elementor' ),
+				'dotted' => _x( 'Dotted', 'Typography Control', 'elementor' ),
+				'dashed' => _x( 'Dashed', 'Typography Control', 'elementor' ),
 			],
 			'selectors' => [
 				$args['selector'] => 'border-style: {{VALUE}};',
