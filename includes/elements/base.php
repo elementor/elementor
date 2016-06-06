@@ -190,7 +190,7 @@ abstract class Element_Base {
 
 	public function get_class_controls() {
 		return array_filter( $this->get_controls(), function( $control ) {
-			return ( ! empty( $control['prefix_class'] ) );
+			return ( isset( $control['prefix_class'] ) );
 		} );
 	}
 
