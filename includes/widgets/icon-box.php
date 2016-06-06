@@ -305,12 +305,11 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['icon'] ) ) {
-			return;
-		}
-		$icon_html = sprintf( '<div class="elementor-icon-box-wrapper %s">', $instance['position'] );
 
-		$icon_html .= sprintf( '<div class="elementor-icon-box"><i class="%s"></i></div>', esc_attr( $instance['icon'] ) );
+		$icon_html = sprintf( '<div class="elementor-icon-box-wrapper %s">', $instance['position'] );
+		if ( ! empty( $instance['icon'] ) ) {
+			$icon_html .= sprintf( '<div class="elementor-icon-box"><i class="%s"></i></div>', esc_attr( $instance['icon'] ) );
+		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -336,9 +335,12 @@ class Widget_Icon_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-		if ( '' !== settings.icon ) {
+
 			icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
-			icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
+
+			if ( '' !== settings.icon ) {
+				icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
+			}
 
 			if ( settings.link.url ) {
 				var link = settings.link;
@@ -356,7 +358,7 @@ class Widget_Icon_box extends Widget_Base {
 			icon_html += '</div></div>';
 
 			print( icon_html );
-		}
+
 		%>
 		<?php
 	}

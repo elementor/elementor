@@ -309,12 +309,12 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['image']['url'] ) ) {
-			return;
-		}
+
 		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
-		$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+		if ( empty( $instance['image']['url'] ) ) {
+			$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -339,10 +339,11 @@ class Widget_Image_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( '' !== settings.image.url ) {
-
+		<%
 		    image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
-			image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+			if ( '' !== settings.image.url ) {
+				image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+			}
 	
 			if ( settings.link.url ) {
 				var link = settings.link;
@@ -361,7 +362,6 @@ class Widget_Image_box extends Widget_Base {
 
 			print( image_html );
 			%>
-		<% } %>
 		<?php
 	}
 }
