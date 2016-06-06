@@ -337,7 +337,7 @@ class Widget_Icon_box extends Widget_Base {
 		?>
 		<%
 		if ( '' !== settings.icon ) {
-			icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
+			var icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
 			icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
 
 			if ( settings.link.url ) {

@@ -340,8 +340,7 @@ class Widget_Image_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<% if ( '' !== settings.image.url ) {
-
-		    image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+		    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
 			image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
 	
 			if ( settings.link.url ) {
