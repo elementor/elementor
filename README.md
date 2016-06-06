@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.1.5  
+**Stable tag:** 0.1.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -68,7 +68,7 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.5 and above, and is compatible with PHP 5.4 and above.
+No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater.
 
 **With Elementor, do I still need a theme?**
 
@@ -104,6 +104,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 * Tweak! - Background Control: Removed default image
 * Tweak! - Add responsive tab on section element
 * Tweak! - Responsive mode: fixed included visibility style
+* Fixed! - Tabs & Accordion Widgets: indexes detection fixed
 
 ### 0.1.5 - 03.06.2016 ###
 * Tweak! - Add check for `asp_tags` php config

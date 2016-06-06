@@ -21,7 +21,7 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'section_image',
 			[
-				'label' => __( 'Image', 'elementor' ),
+				'label' => __( 'Image Box', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -39,45 +39,28 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'image_size',
+			'text_title',
 			[
-				'label' => __( 'Image Size', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 150,
-				],
-				'range' => [
-					'px' => [
-						'min' => 10,
-						'max' => 1000,
-					],
-				],
+				'label' => __( 'Title & Description', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'This is the heading', 'elementor' ),
+				'placeholder' => __( 'Your Title', 'elementor' ),
 				'section' => 'section_image',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box img' => 'width: {{SIZE}}{{UNIT}};',
-				],
+				'label_block' => true,
 			]
 		);
 
 		$this->add_control(
-			'image_space',
+			'text',
 			[
-				'label' => __( 'Image Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 15,
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 1000,
-					],
-				],
+				'label' => '',
+				'type' => Controls_Manager::TEXTAREA,
+				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+				'placeholder' => __( 'Your Description', 'elementor' ),
+				'title' => __( 'Input image text here', 'elementor' ),
 				'section' => 'section_image',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .widget-image-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper .widget-image-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
-				],
+				'label_block' => true,
+				'rows' => 10,
 			]
 		);
 
@@ -86,13 +69,14 @@ class Widget_Image_box extends Widget_Base {
 			[
 				'label' => __( 'Image Postion', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'default' => 'elementor-position-top',
 				'options' => [
 					'elementor-position-left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
 					],
-					'elementor-position-center' => [
-						'title' => __( 'Center', 'elementor' ),
+					'elementor-position-top' => [
+						'title' => __( 'Top', 'elementor' ),
 						'icon' => 'align-center',
 					],
 					'elementor-position-right' => [
@@ -100,6 +84,16 @@ class Widget_Image_box extends Widget_Base {
 						'icon' => 'align-right',
 					],
 				],
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
 			]
 		);
@@ -117,55 +111,91 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'link',
-			[
-				'label' => __( 'Link to', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'section_content',
-			[
-				'label' => __( 'Content', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-			]
-		);
-
-		$this->add_control(
-			'title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'placeholder' => __( 'Enter your title text', 'elementor' ),
-				'section' => 'section_content',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'text',
-			[
-				'label' => __( 'Text', 'elementor' ),
-				'type' => Controls_Manager::WYSIWYG,
-				'default' => '',
-				'placeholder' => __( 'Enter your text about the image', 'elementor' ),
-				'title' => __( 'Input image text here', 'elementor' ),
-				'section' => 'section_content',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 				'section' => 'section_content',
+			]
+		);
+
+		$this->add_control(
+			'section_style_image',
+			[
+				'type'  => Controls_Manager::SECTION,
+				'label' => __( 'Image', 'elementor' ),
+				'tab'   => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'image_space',
+			[
+				'label' => __( 'Image Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 15,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1000,
+					],
+				],
+				'section' => 'section_style_image',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_size',
+			[
+				'label' => __( 'Image Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 100,
+					'unit' => '%',
+				],
+				'size_units' => [ '%' ],
+				'range' => [
+					'%' => [
+						'min' => 5,
+						'max' => 100,
+					],
+				],
+				'section' => 'section_style_image',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box img' => 'max-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'section' => 'section_style_image',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper' => 'opacity: {{SIZE}};',
+				],
 			]
 		);
 
@@ -181,7 +211,7 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'text_align',
 			[
-				'label' => __( 'Text Align', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -196,24 +226,38 @@ class Widget_Image_box extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
+					'block' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'align-justify',
+					],
 				],
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .widget-image-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
 
 		$this->add_control(
-			'text_color',
+			'title',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-text h3' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -223,7 +267,41 @@ class Widget_Image_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .widget-image-text h3',
+				'selector' => '{{WRAPPER}} .elementor-image-text h3',
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_content',
+			]
+		);
+
+		$this->add_control(
+			'description',
+			[
+				'label' => __( 'Description', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'description_color',
+			[
+				'label' => __( 'Description Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-text p' => 'color: {{VALUE}};',
+				],
+				'section' => 'section_style_content',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'description_typography',
+				'selector' => '{{WRAPPER}} .elementor-image-text p',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
@@ -234,9 +312,9 @@ class Widget_Image_box extends Widget_Base {
 		if ( empty( $instance['image']['url'] ) ) {
 			return;
 		}
-		$image_html = '<div class="elementor-image-box-wrapper' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
+		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
-		$image_html .= sprintf( '<div class="elementor-image-box %s"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['position'] ), esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+		$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -246,12 +324,12 @@ class Widget_Image_box extends Widget_Base {
 			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
 		}
 
-		if ( ! empty( $instance['title'] ) ) {
-			$image_html .= sprintf( '<div class="widget-image-text %s"><h3>%s</h3>', $instance['position'], $instance['title'] );
+		if ( ! empty( $instance['text_title'] ) ) {
+			$image_html .= sprintf( '<div class="elementor-image-text"><h3>%s</h3>', $instance['text_title'] );
 		}
 
 		if ( ! empty( $instance['text'] ) ) {
-			$image_html .= sprintf( '%s', $instance['text'] );
+			$image_html .= sprintf( '<p>%s</p>', $instance['text'] );
 		}
 
 		$image_html .= '</div></div>';
@@ -261,22 +339,21 @@ class Widget_Image_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( '' !== settings.image.url ) { %>
-		<div class="elementor-image-box-wrapper">
-			<%
-			image_html = '<div class="elementor-image-box ' + settings.position + '"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+		<% if ( '' !== settings.image.url ) {
+		    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+			image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
 	
 			if ( settings.link.url ) {
 				var link = settings.link;
 				image_html = '<a href="' + link.url + '">' + image_html + '</a>';
 			}
 
-			if ( '' !== settings.title ) {
-			image_html += '<div class="widget-image-text ' + settings.position + '"><h3>' + settings.title + '</h3>';
+			if ( '' !== settings.text_title ) {
+			image_html += '<div class="elementor-image-text"><h3>' + settings.text_title + '</h3>';
 			}
 			
 			if ( '' !== settings.text ) {
-				image_html += settings.text;
+				image_html += '<p>' + settings.text + '</p>';
 			}
 
 			image_html += '</div></div>';
