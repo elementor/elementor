@@ -699,12 +699,23 @@
 
 .elementor-image-box-wrapper {
   overflow: hidden; }
+  .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img,
+  .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-content, .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img,
+  .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-content {
+    display: table-cell;
+    vertical-align: top; }
   .elementor-image-box-wrapper.elementor-position-right {
     text-align: right; }
+    .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img {
+      float: right; }
   .elementor-image-box-wrapper.elementor-position-left {
     text-align: left; }
-  .elementor-image-box-wrapper.elementor-position-center {
+    .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img {
+      float: right; }
+  .elementor-image-box-wrapper.elementor-position-top {
     text-align: center; }
+  .elementor-image-box-wrapper p.elementor-image-box-description {
+    margin: 0; }
 
 .elementor-icon-box-wrapper {
   overflow: hidden; }

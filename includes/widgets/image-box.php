@@ -161,14 +161,15 @@ class Widget_Image_box extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1000,
+						'max' => 100,
 					],
 				],
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img figure' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img figure' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img figure' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -192,7 +193,9 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img img' => 'max-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
