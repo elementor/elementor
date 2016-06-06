@@ -171,7 +171,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'max-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -234,7 +234,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-content' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -257,7 +257,7 @@ class Widget_Image_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-text h3' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -267,7 +267,7 @@ class Widget_Image_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-image-text h3',
+				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
@@ -291,7 +291,7 @@ class Widget_Image_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-text p' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -301,7 +301,7 @@ class Widget_Image_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'selector' => '{{WRAPPER}} .elementor-image-text p',
+				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
@@ -312,7 +312,7 @@ class Widget_Image_box extends Widget_Base {
 		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
 		if ( empty( $instance['image']['url'] ) ) {
-			$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+			$image_html .= sprintf( '<div class="elementor-image-box-img"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
 		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
@@ -324,11 +324,11 @@ class Widget_Image_box extends Widget_Base {
 		}
 
 		if ( ! empty( $instance['text_title'] ) ) {
-			$image_html .= sprintf( '<div class="elementor-image-text"><h3>%s</h3>', $instance['text_title'] );
+			$image_html .= sprintf( '<div class="elementor-image-box-content"><h3 class="elementor-image-box-title">%s</h3>', $instance['text_title'] );
 		}
 
 		if ( ! empty( $instance['text'] ) ) {
-			$image_html .= sprintf( '<p>%s</p>', $instance['text'] );
+			$image_html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['text'] );
 		}
 
 		$image_html .= '</div></div>';
@@ -341,7 +341,7 @@ class Widget_Image_box extends Widget_Base {
 		<%
 	    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
 		if ( '' !== settings.image.url ) {
-			image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+			image_html += '<div class="elementor-image-box-img"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
 		}
 
 		if ( settings.link.url ) {
@@ -350,11 +350,11 @@ class Widget_Image_box extends Widget_Base {
 		}
 
 		if ( '' !== settings.text_title ) {
-		image_html += '<div class="elementor-image-text"><h3>' + settings.text_title + '</h3>';
+		image_html += '<div class="elementor-image-box-content"><h3 class="elementor-image-box-title">' + settings.text_title + '</h3>';
 		}
 		
 		if ( '' !== settings.text ) {
-			image_html += '<p>' + settings.text + '</p>';
+			image_html += '<p class="elementor-image-box-description">' + settings.text + '</p>';
 		}
 
 		image_html += '</div></div>';

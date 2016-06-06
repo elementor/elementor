@@ -4,15 +4,15 @@
 .elementor-image-box-wrapper {
 	overflow: hidden;
 
-	.elementor-position-right {
-		float: right;
+	&.elementor-position-right {
+		text-align: getEndDirection();
 	}
 
-	.elementor-position-left {
-		float: left;
+	&.elementor-position-left {
+		text-align: getStartDirection();
 	}
 
-	.elementor-position-center {
+	&.elementor-position-center {
 		text-align: center;
 	}
 }
