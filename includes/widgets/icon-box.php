@@ -336,28 +336,28 @@ class Widget_Icon_box extends Widget_Base {
 		?>
 		<%
 
-			icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
+		var icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
 
-			if ( '' !== settings.icon ) {
-				icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
-			}
+		if ( '' !== settings.icon ) {
+			icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
+		}
 
-			if ( settings.link.url ) {
-				var link = settings.link;
-				icon_html = '<a href="' + link.url + '">' + icon_html + '</a>';
-			}
+		if ( settings.link.url ) {
+			var link = settings.link;
+			icon_html = '<a href="' + link.url + '">' + icon_html + '</a>';
+		}
 
-			if ( '' !== settings.text_title ) {
-				icon_html += '<div class="elementor-icon-text"><h3>' + settings.text_title + '</h3>';
-			}
+		if ( '' !== settings.text_title ) {
+			icon_html += '<div class="elementor-icon-text"><h3>' + settings.text_title + '</h3>';
+		}
 
-			if ( '' !== settings.text ) {
-				icon_html += '<p>' + settings.text + '</p>';
-			}
+		if ( '' !== settings.text ) {
+			icon_html += '<p>' + settings.text + '</p>';
+		}
 
-			icon_html += '</div></div>';
+		icon_html += '</div></div>';
 
-			print( icon_html );
+		print( icon_html );
 
 		%>
 		<?php
