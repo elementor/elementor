@@ -51,7 +51,7 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'content_text',
+			'description_text',
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
@@ -330,7 +330,7 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['content_text'] );
+		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
 
 		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
@@ -353,8 +353,8 @@ class Widget_Image_box extends Widget_Base {
 				$image_html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $instance['title_text'] );
 			}
 
-			if ( ! empty( $instance['content_text'] ) ) {
-				$image_html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['content_text'] );
+			if ( ! empty( $instance['description_text'] ) ) {
+				$image_html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['description_text'] );
 			}
 
 			$image_html .= '</div>';
@@ -377,7 +377,7 @@ class Widget_Image_box extends Widget_Base {
 			image_html = '<a href="' + link.url + '">' + image_html + '</a>';
 		}
 			
-		var hasContent = '' !== settings.title_text || '' !== settings.content_text;
+		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
 		if ( hasContent ) {
 			image_html += '<div class="elementor-image-box-content">';
 
@@ -385,8 +385,8 @@ class Widget_Image_box extends Widget_Base {
 				image_html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + settings.title_text + '</' + settings.title_size  + '>';
 			}
 			
-			if ( '' !== settings.content_text ) {
-				image_html += '<p class="elementor-image-box-description">' + settings.content_text + '</p>';
+			if ( '' !== settings.description_text ) {
+				image_html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
 			}
 	
 			image_html += '</div>';
