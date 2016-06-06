@@ -1219,15 +1219,15 @@ select {
       color: #a4afb7; }
   #elementor-panel #elementor-panel-footer-help-title {
     text-align: right;
-    padding: 10px 0; }
+    padding: 10px 0;
+    color: #d5dadf; }
   #elementor-panel #elementor-panel-footer-help-link .elementor-button {
     width: 100%;
     padding: 10px 0;
-    background-color: #6d7882;
-    color: #fff; }
+    background-color: #495157;
+    color: #d5dadf; }
     #elementor-panel #elementor-panel-footer-help-link .elementor-button:hover {
-      background-color: #fff;
-      color: #6d7882; }
+      background-color: rgba(0, 0, 0, 0.2); }
   #elementor-panel #elementor-panel-footer-save {
     width: 90px;
     padding: 0 10px; }
