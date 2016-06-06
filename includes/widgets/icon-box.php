@@ -21,7 +21,7 @@ class Widget_Icon_box extends Widget_Base {
 		$this->add_control(
 			'section_icon',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => __( 'Icon Box', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -31,65 +31,50 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Choose Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-bullhorn',
 				'section' => 'section_icon',
 			]
 		);
 
 		$this->add_control(
-			'icon_size',
+			'text_title',
 			[
-				'label' => __( 'Icon Size', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 150,
-				],
-				'range' => [
-					'px' => [
-						'min' => 10,
-						'max' => 1000,
-					],
-				],
+				'label' => __( 'Title & Description', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'This is the heading', 'elementor' ),
+				'placeholder' => __( 'Your Title', 'elementor' ),
 				'section' => 'section_icon',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box i' => 'font-size: {{SIZE}}{{UNIT}};',
-				],
+				'label_block' => true,
 			]
 		);
 
 		$this->add_control(
-			'icon_space',
+			'text',
 			[
-				'label' => __( 'Icon Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 15,
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 1000,
-					],
-				],
+				'label' => '',
+				'type' => Controls_Manager::TEXTAREA,
+				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+				'placeholder' => __( 'Your Description', 'elementor' ),
+				'title' => __( 'Input icon text here', 'elementor' ),
 				'section' => 'section_icon',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper .widget-icon-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-icon-box-wrapper .widget-icon-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
-				],
+				'label_block' => true,
+				'rows' => 10,
 			]
 		);
 
 		$this->add_control(
 			'position',
 			[
-				'label' => __( 'Icon Position', 'elementor' ),
+				'label' => __( 'Icon Postion', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'default' => 'elementor-position-top',
 				'options' => [
 					'elementor-position-left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
 					],
-					'elementor-position-center' => [
-						'title' => __( 'Center', 'elementor' ),
+					'elementor-position-top' => [
+						'title' => __( 'Top', 'elementor' ),
 						'icon' => 'align-center',
 					],
 					'elementor-position-right' => [
@@ -112,35 +97,14 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'section_content',
+			'alt_text',
 			[
-				'label' => __( 'Content', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-			]
-		);
-
-		$this->add_control(
-			'title',
-			[
-				'label' => __( 'Title', 'elementor' ),
+				'label' => __( 'Alt Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'placeholder' => __( 'Enter your title text', 'elementor' ),
-				'section' => 'section_content',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'text',
-			[
-				'label' => __( 'Text', 'elementor' ),
-				'type' => Controls_Manager::WYSIWYG,
-				'default' => '',
-				'placeholder' => __( 'Enter your text about the icon', 'elementor' ),
-				'title' => __( 'Input icon text here', 'elementor' ),
-				'section' => 'section_content',
-				'label_block' => true,
+				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
+				'default' => __( 'Sample Icon', 'elementor' ),
+				'title' => __( 'Input an alternative text when the icon can\'t to be displayed', 'elementor' ),
+				'section' => 'section_icon',
 			]
 		);
 
@@ -150,7 +114,84 @@ class Widget_Icon_box extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_icon',
+				'section' => 'section_content',
+			]
+		);
+
+		$this->add_control(
+			'section_style_icon',
+			[
+				'type'  => Controls_Manager::SECTION,
+				'label' => __( 'Icon', 'elementor' ),
+				'tab'   => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'icon_space',
+			[
+				'label' => __( 'Icon Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 15,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1000,
+					],
+				],
+				'section' => 'section_style_icon',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_size',
+			[
+				'label' => __( 'Icon Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 50,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1000,
+					],
+				],
+				'section' => 'section_style_icon',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box i' => 'font-size: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'section' => 'section_style_icon',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'opacity: {{SIZE}};',
+				],
 			]
 		);
 
@@ -166,7 +207,7 @@ class Widget_Icon_box extends Widget_Base {
 		$this->add_control(
 			'text_align',
 			[
-				'label' => __( 'Text Align', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -181,24 +222,38 @@ class Widget_Icon_box extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
+					'block' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'align-justify',
+					],
 				],
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper .widget-icon-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-text' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
 
 		$this->add_control(
-			'text_color',
+			'title',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-icon-text' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-text h3' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -208,7 +263,41 @@ class Widget_Icon_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .widget-icon-text h3',
+				'selector' => '{{WRAPPER}} .elementor-icon-text h3',
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_content',
+			]
+		);
+
+		$this->add_control(
+			'description',
+			[
+				'label' => __( 'Description', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'description_color',
+			[
+				'label' => __( 'Description Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-text p' => 'color: {{VALUE}};',
+				],
+				'section' => 'section_style_content',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'description_typography',
+				'selector' => '{{WRAPPER}} .elementor-icon-text p',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
@@ -216,12 +305,10 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['icon'] ) ) {
-			return;
+		$icon_html = sprintf( '<div class="elementor-icon-box-wrapper %s">', $instance['position'] );
+		if ( ! empty( $instance['icon'] ) ) {
+			$icon_html .= sprintf( '<div class="elementor-icon-box"><i class="%s"></i></div>', esc_attr( $instance['icon'] ) );
 		}
-		$icon_html = '<div class="elementor-icon-box-wrapper' . ( ! empty( $instance['shape'] ) ? ' elementor-icon-shape-' . $instance['shape'] : '' ) . '">';
-
-		$icon_html .= sprintf( '<div class="elementor-icon-box %s"><i class="%s" aria-hidden="%s"></i></div>', esc_attr( $instance['position'] ), esc_attr( $instance['icon'] ), esc_attr( $instance['alt_text'] ) );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -231,12 +318,12 @@ class Widget_Icon_box extends Widget_Base {
 			$icon_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $icon_html );
 		}
 
-		if ( ! empty( $instance['title'] ) ) {
-			$icon_html .= sprintf( '<div class="widget-icon-text %s"><h3>%s</h3>', $instance['position'], $instance['title'] );
+		if ( ! empty( $instance['text_title'] ) ) {
+			$icon_html .= sprintf( '<div class="elementor-icon-text"><h3>%s</h3>', $instance['text_title'] );
 		}
 
 		if ( ! empty( $instance['text'] ) ) {
-			$icon_html .= sprintf( "%s", $instance['text'] );
+			$icon_html .= sprintf( '<p>%s</p>', $instance['text'] );
 		}
 
 		$icon_html .= '</div></div>';
@@ -246,29 +333,29 @@ class Widget_Icon_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( '' !== settings.icon ) { %>
-		<div class="elementor-icon-box-wrapper">
-			<%
-			icon_html = '<div class="elementor-icon-box ' + settings.position + '"><i class="' + settings.icon + '" aria-hidden=="' + settings.alt_text + '"></i></div>';
+		<%
+		var icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
+		if ( '' !== settings.icon ) {
+			icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
+		}
 
-			if ( settings.link.url ) {
+		if ( settings.link.url ) {
 			var link = settings.link;
 			icon_html = '<a href="' + link.url + '">' + icon_html + '</a>';
-			}
+		}
 
-			if ( '' !== settings.title ) {
-			icon_html += '<div class="widget-icon-text ' + settings.position + '"><h3>' + settings.title + '</h3>';
-				}
+		if ( '' !== settings.text_title ) {
+			icon_html += '<div class="elementor-icon-text"><h3>' + settings.text_title + '</h3>';
+		}
 
-				if ( '' !== settings.text ) {
-				icon_html += settings.text;
-				}
-
-				icon_html += '</div></div>';
+		if ( '' !== settings.text ) {
+			icon_html += '<p>' + settings.text + '</p>';
+		}
+				
+		icon_html += '</div></div>';
 
 		print( icon_html );
 		%>
-		<% } %>
 		<?php
 	}
 }
