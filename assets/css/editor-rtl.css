@@ -738,7 +738,7 @@ select {
         display: block; }
         #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section.elementor-open.elementor-hidden-control {
           display: none; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-block:not(.elementor-control-hidden-label) .elementor-control-title {
+    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-block:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) .elementor-control-title {
       display: block;
       margin-bottom: 10px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-field {

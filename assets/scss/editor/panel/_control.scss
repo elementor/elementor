@@ -84,7 +84,7 @@
 
 		&.elementor-label-block {
 
-			&:not(.elementor-control-hidden-label) {
+			&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
 
 				.elementor-control-title {
 					display: block;

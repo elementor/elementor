@@ -4,15 +4,37 @@
 .elementor-image-box-wrapper {
 	overflow: hidden;
 
+	&.elementor-position-left,
+	&.elementor-position-right {
+
+		.elementor-image-box-img,
+		.elementor-image-box-content {
+			display: table-cell;
+			vertical-align: top;
+		}
+	}
+
 	&.elementor-position-right {
 		text-align: getEndDirection();
+
+		.elementor-image-box-img {
+			float: getEndDirection();
+		}
 	}
 
 	&.elementor-position-left {
 		text-align: getStartDirection();
+
+		.elementor-image-box-img {
+			float: getEndDirection();
+		}
 	}
 
-	&.elementor-position-center {
+	&.elementor-position-top {
 		text-align: center;
+	}
+
+	p.elementor-image-box-description {
+		margin: 0;
 	}
 }
