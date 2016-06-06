@@ -37,7 +37,7 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text_title',
+			'title_text',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -49,7 +49,7 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text',
+			'description_text',
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
@@ -83,6 +83,27 @@ class Widget_Icon_box extends Widget_Base {
 					],
 				],
 				'section' => 'section_icon',
+			]
+		);
+
+		$this->add_control(
+			'title_size',
+			[
+				'label' => __( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => __( 'H1', 'elementor' ),
+					'h2' => __( 'H2', 'elementor' ),
+					'h3' => __( 'H3', 'elementor' ),
+					'h4' => __( 'H4', 'elementor' ),
+					'h5' => __( 'H5', 'elementor' ),
+					'h6' => __( 'H6', 'elementor' ),
+					'div' => __( 'div', 'elementor' ),
+					'span' => __( 'span', 'elementor' ),
+					'p' => __( 'p', 'elementor' ),
+				],
+				'default' => 'h3',
+				'section' => 'section_image',
 			]
 		);
 
@@ -224,7 +245,7 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'title',
+			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -258,7 +279,7 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'description',
+			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -306,15 +327,21 @@ class Widget_Icon_box extends Widget_Base {
 			$icon_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $icon_html );
 		}
 
-		if ( ! empty( $instance['text_title'] ) ) {
-			$icon_html .= sprintf( '<div class="elementor-icon-box-content"><h3 class="elementor-icon-box-title">%s</h3>', $instance['text_title'] );
-		}
+		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
+		if ( $has_content ) {
+			$icon_html .= '<div class="elementor-icon-box-content">';
 
-		if ( ! empty( $instance['text'] ) ) {
-			$icon_html .= sprintf( '<p class="elementor-icon-box-description">%s</p>', $instance['text'] );
-		}
+			if ( ! empty( $instance['title_text'] ) ) {
+				$icon_html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $instance['title_text'] );
+			}
 
-		$icon_html .= '</div></div>';
+			if ( ! empty( $instance['description_text'] ) ) {
+				$icon_html .= sprintf( '<p class="elementor-icon-box-description">%s</p>', $instance['description_text'] );
+			}
+
+			$icon_html .= '</div>';
+		}
+		$icon_html .= '</div>';
 
 		echo $icon_html;
 	}
@@ -327,20 +354,26 @@ class Widget_Icon_box extends Widget_Base {
 			icon_html += '<div class="elementor-icon-box-icon"><i class="' + settings.icon + '"></i></div>';
 		}
 
-		if ( settings.link.url ) {
+		if ( '' !== settings.link.url ) {
 			var link = settings.link;
 			icon_html = '<a href="' + link.url + '">' + icon_html + '</a>';
 		}
 
-		if ( '' !== settings.text_title ) {
-			icon_html += '<div class="elementor-icon-box-content"><h3 class="elementor-icon-box-title">' + settings.text_title + '</h3>';
-		}
+		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
+		if ( hasContent ) {
+			icon_html += '<div class="elementor-icon-box-content">';
 
-		if ( '' !== settings.text ) {
-			icon_html += '<p class="elementor-icon-box-description">' + settings.text + '</p>';
+			if ( '' !== settings.title_text ) {
+				icon_html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + settings.title_text + '</' + settings.title_size  + '>';
+			}
+	
+			if ( '' !== settings.description_text ) {
+				icon_html += '<p class="elementor-icon-box-description">' + settings.description_text + '</p>';
+			}
+
+			icon_html += '</div>';
 		}
-				
-		icon_html += '</div></div>';
+		icon_html += '</div>';
 
 		print( icon_html );
 		%>

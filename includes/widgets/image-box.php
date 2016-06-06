@@ -261,7 +261,7 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'title',
+			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -295,7 +295,7 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'description',
+			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
