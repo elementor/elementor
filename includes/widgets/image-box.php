@@ -309,12 +309,12 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['image']['url'] ) ) {
-			return;
-		}
+
 		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
-		$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+		if ( empty( $instance['image']['url'] ) ) {
+			$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -339,28 +339,29 @@ class Widget_Image_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( '' !== settings.image.url ) {
-		    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+		<%
+	    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+		if ( '' !== settings.image.url ) {
 			image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
-	
-			if ( settings.link.url ) {
-				var link = settings.link;
-				image_html = '<a href="' + link.url + '">' + image_html + '</a>';
-			}
+		}
 
-			if ( '' !== settings.text_title ) {
-			image_html += '<div class="elementor-image-text"><h3>' + settings.text_title + '</h3>';
-			}
-			
-			if ( '' !== settings.text ) {
-				image_html += '<p>' + settings.text + '</p>';
-			}
+		if ( settings.link.url ) {
+			var link = settings.link;
+			image_html = '<a href="' + link.url + '">' + image_html + '</a>';
+		}
 
-			image_html += '</div></div>';
+		if ( '' !== settings.text_title ) {
+		image_html += '<div class="elementor-image-text"><h3>' + settings.text_title + '</h3>';
+		}
+		
+		if ( '' !== settings.text ) {
+			image_html += '<p>' + settings.text + '</p>';
+		}
 
-			print( image_html );
-			%>
-		<% } %>
+		image_html += '</div></div>';
+
+		print( image_html );
+		%>
 		<?php
 	}
 }
