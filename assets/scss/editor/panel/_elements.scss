@@ -22,7 +22,6 @@
 
 .elementor-element {
 	border-radius: 3px;
-	padding-bottom: 10px;
 	background-color: #fff;
 	cursor: move;
 
@@ -36,14 +35,22 @@
 
 	.icon {
 		font-size: 28px;
-		padding: 15px 0;
+		padding-top: 15px;
 		line-height: 1;
 		color: $editor-darker;
+	}
+
+	.elementor-element-title-wrapper {
+		display: table;
+		width: 100%;
 	}
 
 	.title {
 		font-size: 11px;
 		color: $editor-darker;
+		display: table-cell;
+		vertical-align: middle;
+		height: 40px;
 	}
 }
 

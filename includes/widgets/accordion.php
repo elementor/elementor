@@ -228,13 +228,13 @@ class Widget_Accordion extends Widget_Base {
 			<?php $counter = 1; ?>
 			<?php foreach ( $instance['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-tab="<?php echo $counter; ?>">
+					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $instance['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
-					<div class="elementor-accordion-content" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_content']; ?></div>
+					<div class="elementor-accordion-content" data-section="<?php echo $counter; ?>"><?php echo $item['tab_content']; ?></div>
 				</div>
 			<?php
 				$counter++;
@@ -245,19 +245,19 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0 %>">
+		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
 			<%
 			if ( settings.tabs ) {
 				var counter = 1;
 				_.each( settings.tabs, function( item ) { %>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-tab="<%- counter %>">
+						<div class="elementor-accordion-title" data-section="<%- counter %>">
 							<span class="elementor-accordion-icon elementor-accordion-icon-<%- settings.icon_align %>">
 								<i class="fa"></i>
 							</span>
 							<%= item.tab_title %>
 						</div>
-						<div class="elementor-accordion-content" data-tab="<%- counter %>"><%= item.tab_content %></div>
+						<div class="elementor-accordion-content" data-section="<%- counter %>"><%= item.tab_content %></div>
 					</div>
 				<%
 					counter++;

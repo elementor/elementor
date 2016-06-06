@@ -467,7 +467,7 @@ class Element_Section extends Element_Base {
 
 		// Section Responsive
 		$this->add_control(
-			'section_responsive',
+			'_section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
@@ -476,24 +476,61 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'_visible',
+			'responsive_description',
 			[
-				'label' => __( 'Visibility', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_responsive',
+				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
 				'tab' => self::TAB_SETTINGS,
-				'options' => [
-					'' => __( 'Show on all devices', 'elementor' ),
-					'visible-desktop' => __( 'Visible Desktop', 'elementor' ),
-					'visible-tablet' => __( 'Visible Tablet', 'elementor' ),
-					'visible-phone' => __( 'Visible Phone', 'elementor' ),
-					'hidden-desktop' => __( 'Hidden Desktop', 'elementor' ),
-					'hidden-tablet' => __( 'Hidden Tablet', 'elementor' ),
-					'hidden-phone' => __( 'Hidden Phone', 'elementor' ),
-					'hidden' => __( 'Always Hidden', 'elementor' ),
-				],
+				'section' => '_section_responsive',
+				'classes' => 'elementor-control-descriptor',
+			]
+		);
+
+		$this->add_control(
+			'hide_desktop',
+			[
+				'label' => __( 'Hide On Desktop', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_SETTINGS,
+				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
+				'options' => [
+					'' =>  __( 'Show', 'elementor' ),
+					'hidden-desktop' =>  __( 'Hide', 'elementor' ),
+				]
+			]
+		);
+
+		$this->add_control(
+			'hide_tablet',
+			[
+				'label' => __( 'Hide On Tablet', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_SETTINGS,
+				'section' => '_section_responsive',
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'options' => [
+					'' =>  __( 'Show', 'elementor' ),
+					'hidden-tablet' =>  __( 'Hide', 'elementor' ),
+				]
+			]
+		);
+
+		$this->add_control(
+			'hide_mobile',
+			[
+				'label' => __( 'Hide On Mobile', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_SETTINGS,
+				'section' => '_section_responsive',
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'options' => [
+					'' =>  __( 'Show', 'elementor' ),
+					'hidden-phone' =>  __( 'Hide', 'elementor' ),
+				]
 			]
 		);
 

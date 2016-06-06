@@ -165,6 +165,13 @@ class Admin {
 		return $actions;
 	}
 
+	public function plugin_action_links( $links ) {
+		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
+		array_unshift( $links, $settings_link );
+
+		return $links;
+	}
+
 	/**
 	 * Add edit link in outside edit page.
 	 *
@@ -196,5 +203,7 @@ class Admin {
 
 		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard_for_pages' ], 10, 2 );
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
+
+		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 	}
 }

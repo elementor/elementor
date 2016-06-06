@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="icon">
 			<i class="eicon-<%= icon %>"></i>
 		</div>
-		<div class="title"><%= title %></div>
+		<div class="elementor-element-title-wrapper">
+			<div class="title"><%= title %></div>
+		</div>
 	</div>
 </script>
