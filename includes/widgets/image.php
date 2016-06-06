@@ -173,7 +173,7 @@ class Widget_Image extends Widget_Base {
 				'size_units' => [ '%' ],
 				'range' => [
 					'%' => [
-						'min' => 5,
+						'min' => 1,
 						'max' => 100,
 					],
 				],

@@ -699,11 +699,11 @@
 
 .elementor-image-box-wrapper {
   overflow: hidden; }
-  .elementor-image-box-wrapper .elementor-position-right {
-    float: right; }
-  .elementor-image-box-wrapper .elementor-position-left {
-    float: left; }
-  .elementor-image-box-wrapper .elementor-position-center {
+  .elementor-image-box-wrapper.elementor-position-right {
+    text-align: left; }
+  .elementor-image-box-wrapper.elementor-position-left {
+    text-align: right; }
+  .elementor-image-box-wrapper.elementor-position-center {
     text-align: center; }
 
 .elementor-icon-box-wrapper {
