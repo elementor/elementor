@@ -494,7 +494,15 @@ class Widget_Icon_box extends Widget_Base {
 			$icon_html .= '<div class="elementor-icon-box-content">';
 
 			if ( ! empty( $instance['title_text'] ) ) {
-				$icon_html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $instance['title_text'] );
+				$title_html = $instance['title_text'];
+				if ( ! empty( $instance['link']['url'] ) ) {
+					$target = '';
+					if ( ! empty( $instance['link']['is_external'] ) ) {
+						$target = ' target="_blank"';
+					}
+					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
+				}
+				$icon_html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
 			}
 
 			if ( ! empty( $instance['description_text'] ) ) {
