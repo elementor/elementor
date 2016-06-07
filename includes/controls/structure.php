@@ -17,7 +17,7 @@ class Control_Structure extends Control_Base {
 				<div class="elementor-control-structure-preset elementor-control-structure-current-preset">
 					<%= elementor.presetsFactory.getPresetSVG( currentPreset.preset, 240, 80, 5 ).outerHTML %>
 				</div>
-				<div class="elementor-control-structure-reset"><i class="fa fa-repeat"></i> <?php _e( 'Reset Structure' ); ?></div>
+				<div class="elementor-control-structure-reset"><i class="fa fa-repeat"></i> <?php _e( 'Reset Structure', 'elementor' ); ?></div>
 				<%
 				var morePresets = getMorePresets();
 
