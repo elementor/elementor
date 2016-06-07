@@ -15,7 +15,7 @@ The most advanced frontend drag & drop page builder. Create high-end, pixel perf
 
 Elementor is the fastest free page builder, that enables you to design pages like never before possible.
 
-[youtube https://www.youtube.com/watch?v=kB4U67tiQLA]
+https://www.youtube.com/watch?v=kB4U67tiQLA
 
 With Elementor, we set out to create a unique page builder, with various advantages that set it apart.
 
