@@ -94,6 +94,7 @@ class Widget_Image_box extends Widget_Base {
 						'icon' => 'align-right',
 					],
 				],
+				'toggle' => false,
 				'section' => 'section_image',
 			]
 		);
@@ -370,28 +371,28 @@ class Widget_Image_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-	    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
-		if ( '' !== settings.image.url ) {
+		var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+			if ( '' !== settings.image.url ) {
 			image_html += '<div class="elementor-image-box-img"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
-		}
+			}
 
-		if ( settings.link.url ) {
+			if ( settings.link.url ) {
 			var link = settings.link;
 			image_html = '<a href="' + link.url + '">' + image_html + '</a>';
-		}
-			
-		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
-		if ( hasContent ) {
+			}
+
+			var hasContent = '' !== settings.title_text || '' !== settings.description_text;
+			if ( hasContent ) {
 			image_html += '<div class="elementor-image-box-content">';
 
-			if ( '' !== settings.title_text ) {
+				if ( '' !== settings.title_text ) {
 				image_html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + settings.title_text + '</' + settings.title_size  + '>';
 			}
-			
+
 			if ( '' !== settings.description_text ) {
-				image_html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
+			image_html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
 			}
-	
+
 			image_html += '</div>';
 		}
 		image_html += '</div>';
