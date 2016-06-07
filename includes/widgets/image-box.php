@@ -14,7 +14,7 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'insert-image';
+		return 'image-box';
 	}
 
 	protected function _register_controls() {
