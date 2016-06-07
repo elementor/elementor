@@ -112,6 +112,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 ## Changelog ##
 
 ### 0.2.0 - 07.06.2016 ###
+* New! - Image Box widget
 * Tweak! - Added reset preset section structure
 * Tweak! - Fixed visibility mobile for small-screen 
 
