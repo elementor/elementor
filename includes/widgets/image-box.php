@@ -77,23 +77,24 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'position',
 			[
-				'label' => __( 'Image Postion', 'elementor' ),
+				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'elementor-position-top',
+				'default' => 'top',
 				'options' => [
-					'elementor-position-left' => [
+					'left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
 					],
-					'elementor-position-top' => [
+					'top' => [
 						'title' => __( 'Top', 'elementor' ),
 						'icon' => 'align-center',
 					],
-					'elementor-position-right' => [
+					'right' => [
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
 				],
+				'prefix_class' => 'elementor-position-',
 				'toggle' => false,
 				'section' => 'section_image',
 			]
@@ -168,9 +169,9 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img figure' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img figure' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img figure' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-right .elementor-image-box-img' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-top .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -181,7 +182,7 @@ class Widget_Image_box extends Widget_Base {
 				'label' => __( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 100,
+					'size' => 30,
 					'unit' => '%',
 				],
 				'size_units' => [ '%' ],
@@ -194,9 +195,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -221,6 +220,23 @@ class Widget_Image_box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'opacity: {{SIZE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'content_vertical_alignment',
+			[
+				'label' => __( 'Content Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'top' => __( 'Top', 'elementor' ),
+					'middle' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'default' => 'top',
+				'section' => 'section_style_image',
+				'tab' => self::TAB_STYLE,
+				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
 
@@ -336,10 +352,10 @@ class Widget_Image_box extends Widget_Base {
 	protected function render( $instance = [] ) {
 		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
 
-		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
+		$image_html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $instance['image']['url'] ) ) {
-			$image_html .= sprintf( '<div class="elementor-image-box-img"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+			$image_html .= sprintf( '<figure class="elementor-image-box-img"><img src="%s" alt="%s" /></figure>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
 		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
@@ -379,9 +395,9 @@ class Widget_Image_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-		var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+		var image_html = '<div class="elementor-image-box-wrapper">';
 		if ( '' !== settings.image.url ) {
-			image_html += '<div class="elementor-image-box-img"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+			image_html += '<figure class="elementor-image-box-img"><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure>';
 		}
 
 		if ( '' !== settings.link.url ) {
