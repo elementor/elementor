@@ -219,7 +219,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'opacity: {{SIZE}};',
 				],
 			]
 		);

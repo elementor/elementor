@@ -13,40 +13,51 @@ The most advanced frontend drag & drop page builder. Create high-end, pixel perf
 
 ## Description ##
 
-Elementor is a drag and drop frontend page builder that gives you the power to design stunning page designs in an intuitive & lightweight interface. With Elementor, we set out to create a unique page builder, that offers 3 features we consider crucial, and which no other page builder has:
+Elementor is the fastest free page builder, that enables you to design pages like never before possible.
 
-**Instant drag and drop.** The most frustrating thing about drag and drop, is the lag that occurs after the drop. We created the elementor so all dragging and dropping is perfect. No lags. No Jumps.
+[youtube https://www.youtube.com/watch?v=kB4U67tiQLA]
 
-**Advanced design effects.** Create pages that have "the designer touch", by including features like parallax scroll, full width background images, advanced buttons, custom headers, slide in forms and more.
+With Elementor, we set out to create a unique page builder, with various advantages that set it apart.
 
-**Responsive design.** No designer should work twice on the same page. With Elementor, there's no need to create a separate version for mobile. This saves half the work and still results in 100% responsive design.
+### Instant drag and drop ###
+The most frustrating thing about drag and drop, is the lag that occurs after the drop. We created the elementor so all dragging and dropping is perfect. No lags. No Jumps.
 
-**Other features**
+### Advanced design capabilities ###
+Create pages that have "the designer touch", by including features like parallax scroll, full width background images, advanced buttons, custom headers, slide in forms and more.
 
-* Works on the Frontend. Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the site and simultaneously see how the exact site looks like.
-* Gives total control with no hassle. We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface.
-* Compatible to any design element. Include any element in your page: HTML, images, videos, forms, tabs, sliders, pricing tables, maps, blog posts, social icons, etc.
-* Works on every theme. Elementor works on any old or new theme. Switching between themes is no problem.
-* Plugin Compatibility. Compatibility with popular plugins like Yoast, WooCommerce & WPML.
-* No coding. You no longer need to use code, HTML, CSS or shortcode.
+### Responsive design ###
+No designer should work twice on the same page. With Elementor, there's no need to create a separate version for mobile. This saves half the work and still results in 100% responsive design.
 
-**RTL supported, multilingual and translatable**
+### Works on the Frontend ###
+Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the site and simultaneously see how the exact site looks like.
 
+### Gives total control with no hassle ###
+We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface. You no longer need to use code, HTML, CSS or shortcode.
+
+### Works on any theme ###
+Elementor works on any old or new theme. Switching between themes is no problem.
+
+### RTL supported, multilingual and translatable ###
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
-Check out our recently featured page on Product Hunt: https://www.producthunt.com/tech/elementor
+### Translators: ###
+- [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
+- [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 
 ### Be a contributer ###
+If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
 
-If you want to contribute, go to our [Elementor GitHub Repository][3] and see where you can help.
+You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
-You can also add a new language via [translate.wordpress.org][2].
+### Documentation and Support ###
 
-For more information about features, FAQs and documentation, check out [Elementor.com][1].
+- For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/).
+- If you have any more questions, visit our support at [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
+- For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/).
 
-[1]: https://elementor.com/
-[2]: https://translate.wordpress.org/projects/wp-plugins/elementor
-[3]: https://github.com/pojome/elementor
+### Liked Elementor? ###
+- Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
+- Or rate us on [WordPress](https://wordpress.org/support/view/plugin-reviews/elementor?rate=5#postform) :)
 
 ## Installation ##
 
