@@ -1,41 +1,72 @@
 //
 // Image Box
 //
-.elementor-image-box-wrapper {
-	overflow: hidden;
+.elementor-widget-image-box {
+
+	.elementor-image-box-wrapper {
+		overflow: hidden;
+	}
 
 	&.elementor-position-left,
 	&.elementor-position-right {
-		display: flex;
+
+		.elementor-image-box-wrapper {
+			display: flex;
+		}
 	}
 
 	&.elementor-position-right {
-		text-align: getEndDirection();
 
-		.elementor-image-box-img {
-			order: 2;
-		}
-		.elementor-image-box-content {
-			order: 1;
+		.elementor-image-box-wrapper {
+			text-align: getEndDirection();
+			flex-direction: getValueByDirection(row-reverse, row);
 		}
 	}
 
 	&.elementor-position-left {
-		text-align: getStartDirection();
 
-		.elementor-image-box-img {
-			order: 1;
-		}
-		.elementor-image-box-content {
-			order: 2;
+		.elementor-image-box-wrapper {
+			text-align: getStartDirection();
+			flex-direction: getValueByDirection(row, row-reverse);
 		}
 	}
 
 	&.elementor-position-top {
-		text-align: center;
+
+		.elementor-image-box-wrapper {
+			text-align: center;
+		}
+
+		.elementor-image-box-img {
+			margin: auto;
+		}
 	}
 
-	p.elementor-image-box-description {
+	&.elementor-vertical-align- {
+
+		&top {
+
+			.elementor-image-box-wrapper {
+				align-items: flex-start;
+			}
+		}
+
+		&middle {
+
+			.elementor-image-box-wrapper {
+				align-items: center;
+			}
+		}
+
+		&bottom {
+
+			.elementor-image-box-wrapper {
+				align-items: flex-end;
+			}
+		}
+	}
+
+	.elementor-image-box-description {
 		margin: 0;
 	}
 }
