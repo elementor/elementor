@@ -27,12 +27,46 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'view',
+			[
+				'label' => __( 'View', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_icon',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'stacked' => __( 'Stacked', 'elementor' ),
+					'framed' => __( 'Framed', 'elementor' ),
+				],
+				'default' => 'default',
+				'prefix_class' => 'elementor-view-',
+			]
+		);
+
+		$this->add_control(
 			'icon',
 			[
 				'label' => __( 'Choose Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'default' => 'fa fa-bullhorn',
 				'section' => 'section_icon',
+			]
+		);
+
+		$this->add_control(
+			'shape',
+			[
+				'label' => __( 'Shape', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_icon',
+				'options' => [
+					'circle' => __( 'Circle', 'elementor' ),
+					'square' => __( 'Square', 'elementor' ),
+				],
+				'default' => 'circle',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'prefix_class' => 'elementor-shape-',
 			]
 		);
 
@@ -83,6 +117,7 @@ class Widget_Icon_box extends Widget_Base {
 					],
 				],
 				'section' => 'section_icon',
+				'toggle' => false,
 			]
 		);
 
@@ -118,16 +153,6 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-				'section' => 'section_content',
-			]
-		);
-
-		$this->add_control(
 			'section_style_icon',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -153,8 +178,12 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-box-content.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-box-content.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper.elementor-position-right .elementor-icon-box-icon' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper.elementor-position-left .elementor-icon-box-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper.elementor-position-top .elementor-icon-box-icon' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'view!' => 'default',
 				],
 			]
 		);
@@ -176,7 +205,7 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box .elementor-icon-box-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -200,6 +229,97 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_padding',
+			[
+				'label' => __( 'Icon Padding', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'default' => [
+					'size' => 1.5,
+					'unit' => 'em',
+				],
+				'range' => [
+					'em' => [
+						'min' => 0,
+					],
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'border_width',
+			[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'view' => 'framed',
+				],
+			]
+		);
+
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -309,6 +429,48 @@ class Widget_Icon_box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
+			]
+		);
+
+		$this->add_control(
+			'section_hover',
+			[
+				'label' => __( 'Icon Hover', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'hover_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'color: {{VALUE}};',
+				],
 			]
 		);
 	}
