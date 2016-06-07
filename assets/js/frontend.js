@@ -232,13 +232,6 @@
 
 		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
 
-		var changeVideoSize = function() {
-			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
-				size = calcVideosSize();
-
-			$video.width( size.width ).height( size.height );
-		};
-
 		var calcVideosSize = function() {
 			var containerWidth = ui.backgroundVideoContainer.outerWidth(),
 				containerHeight = ui.backgroundVideoContainer.outerHeight(),
@@ -253,6 +246,13 @@
 				width: isWidthFixed ? containerWidth : ratioHeight,
 				height: isWidthFixed ? ratioWidth : containerHeight
 			};
+		};
+
+		var changeVideoSize = function() {
+			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
+				size = calcVideosSize();
+
+			$video.width( size.width ).height( size.height );
 		};
 
 		var prepareYTVideo = function( YT, videoID ) {
