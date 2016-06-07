@@ -28,7 +28,7 @@ html {
   background-color: #F1F1F1; }
 
 body {
-  color: #373a3c;
+  color: #6d7882;
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -372,7 +372,6 @@ select {
   z-index: 100000; }
 
 #elementor-panel {
-  color: #373a3c;
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -466,7 +465,6 @@ select {
   #elementor-panel .elementor-panel-box-content {
     padding: 20px 20px 10px; }
   #elementor-panel .elementor-control-title {
-    color: #6d7882;
     font-size: 12px; }
   #elementor-panel .select2-container {
     width: 100% !important; }
@@ -561,7 +559,6 @@ select {
   #elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
     padding-top: 14px; }
   #elementor-panel .panel-elements-category-title {
-    color: #6d7882;
     padding: 7px 15px;
     text-transform: uppercase;
     font-size: 11px;
@@ -656,10 +653,8 @@ select {
       vertical-align: middle; }
   #elementor-panel .elementor-panel-menu-item-icon {
     text-align: center;
-    color: #6d7882;
     width: 55px; }
   #elementor-panel .elementor-panel-menu-item-title {
-    color: #6d7882;
     font-weight: 500; }
     #elementor-panel .elementor-panel-menu-item-title > span {
       color: #39b54a; }
@@ -1025,6 +1020,10 @@ select {
       fill: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
     height: 85px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset {
+    padding: 5px 0 0 10px;
+    font-size: 11px;
+    cursor: pointer; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     color: #495157;
     font-weight: bold;
@@ -1428,7 +1427,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   text-align: center; }
 
 .dialog-message {
-  color: #6d7882;
   font-size: 12px; }
 
 .dialog-buttons-wrapper {

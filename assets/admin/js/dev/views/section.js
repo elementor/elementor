@@ -129,6 +129,14 @@ SectionView = BaseElementView.extend( {
 		this.setStructure( this.getDefaultStructure() );
 	},
 
+	resetColumnsCustomSize: function() {
+		this.collection.each( function( model ) {
+			model.setSetting( '_inline_size', null );
+		} );
+
+		this.children.invoke( 'changeSizeUI' );
+	},
+
 	isCollectionFilled: function() {
 		var MAX_SIZE = 10,
 			columnsCount = this.collection.length;

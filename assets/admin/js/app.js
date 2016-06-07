@@ -3533,7 +3533,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel = options.elementSettingsModel;
 
 		var controlType = this.model.get( 'type' ),
-			controlSettings = _.extend( {}, elementor.config.controls[ controlType ], this.model.attributes );
+			controlSettings = Backbone.$.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
@@ -4538,6 +4538,17 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlStructureItemView;
 
 ControlStructureItemView = ControlBaseItemView.extend( {
+	ui: function() {
+		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+
+		ui.resetStructure = '.elementor-control-structure-reset';
+
+		return ui;
+	},
+
+	childEvents: {
+		'click @ui.resetStructure': 'onResetStructureClick'
+	},
 
 	templateHelpers: function() {
 		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
@@ -4547,6 +4558,12 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 		return helpers;
 	},
 
+	getCurrentEditedSection: function() {
+		var editor = elementor.getPanelView().getCurrentPageView();
+
+		return editor.getOption( 'editedElementView' );
+	},
+
 	getMorePresets: function() {
 		var parsedStructure = elementor.presetsFactory.getParsedStructure( this.getControlValue() );
 
@@ -4554,12 +4571,13 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 	},
 
 	onInputChange: function() {
-		var editor = elementor.getPanelView().getCurrentPageView(),
-			currentEditedSection = editor.getOption( 'editedElementView' );
-
-		currentEditedSection.redefineLayout();
+		this.getCurrentEditedSection().redefineLayout();
 
 		this.render();
+	},
+
+	onResetStructureClick: function() {
+		this.getCurrentEditedSection().resetColumnsCustomSize();
 	}
 } );
 
@@ -4911,6 +4929,14 @@ SectionView = BaseElementView.extend( {
 
 	resetLayout: function() {
 		this.setStructure( this.getDefaultStructure() );
+	},
+
+	resetColumnsCustomSize: function() {
+		this.collection.each( function( model ) {
+			model.setSetting( '_inline_size', null );
+		} );
+
+		this.children.invoke( 'changeSizeUI' );
 	},
 
 	isCollectionFilled: function() {
