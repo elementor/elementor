@@ -43,6 +43,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 ### Translators: ###
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
 
 ### Be a contributer ###
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
