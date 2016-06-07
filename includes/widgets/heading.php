@@ -144,10 +144,10 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-                'scheme' => [
-                    'type' => Scheme_Color::get_type(),
-                    'value' => Scheme_Color::COLOR_1,
-                ],
+				'scheme' => [
+				    'type' => Scheme_Color::get_type(),
+				    'value' => Scheme_Color::COLOR_1,
+				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
@@ -160,7 +160,7 @@ class Widget_Heading extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-                'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',

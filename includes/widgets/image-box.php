@@ -39,7 +39,7 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text_title',
+			'title_text',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -51,7 +51,7 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text',
+			'description_text',
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
@@ -61,6 +61,16 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_image',
 				'label_block' => true,
 				'rows' => 10,
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'section' => 'section_image',
 			]
 		);
 
@@ -84,16 +94,7 @@ class Widget_Image_box extends Widget_Base {
 						'icon' => 'align-right',
 					],
 				],
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'link',
-			[
-				'label' => __( 'Link to', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'toggle' => false,
 				'section' => 'section_image',
 			]
 		);
@@ -101,11 +102,32 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'alt_text',
 			[
-				'label' => __( 'Alt Text', 'elementor' ),
+				'label' => __( 'Image Alt Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
 				'default' => __( 'Sample Image', 'elementor' ),
 				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
+			'title_size',
+			[
+				'label' => __( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => __( 'H1', 'elementor' ),
+					'h2' => __( 'H2', 'elementor' ),
+					'h3' => __( 'H3', 'elementor' ),
+					'h4' => __( 'H4', 'elementor' ),
+					'h5' => __( 'H5', 'elementor' ),
+					'h6' => __( 'H6', 'elementor' ),
+					'div' => __( 'div', 'elementor' ),
+					'span' => __( 'span', 'elementor' ),
+					'p' => __( 'p', 'elementor' ),
+				],
+				'default' => 'h3',
 				'section' => 'section_image',
 			]
 		);
@@ -140,14 +162,15 @@ class Widget_Image_box extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1000,
+						'max' => 100,
 					],
 				],
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img figure' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img figure' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img figure' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -171,7 +194,9 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img img' => 'max-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -234,13 +259,13 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-content' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
 
 		$this->add_control(
-			'title',
+			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -257,7 +282,7 @@ class Widget_Image_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-text h3' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -267,14 +292,14 @@ class Widget_Image_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-image-text h3',
+				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
 		);
 
 		$this->add_control(
-			'description',
+			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -291,7 +316,7 @@ class Widget_Image_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-text p' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -301,7 +326,7 @@ class Widget_Image_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'selector' => '{{WRAPPER}} .elementor-image-text p',
+				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
@@ -309,10 +334,12 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
+		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
+
 		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
 
-		if ( empty( $instance['image']['url'] ) ) {
-			$image_html .= sprintf( '<div class="elementor-image-box"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
+		if ( ! empty( $instance['image']['url'] ) ) {
+			$image_html .= sprintf( '<div class="elementor-image-box-img"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
 		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
@@ -323,15 +350,28 @@ class Widget_Image_box extends Widget_Base {
 			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
 		}
 
-		if ( ! empty( $instance['text_title'] ) ) {
-			$image_html .= sprintf( '<div class="elementor-image-text"><h3>%s</h3>', $instance['text_title'] );
-		}
+		if ( $has_content ) {
+			$image_html .= '<div class="elementor-image-box-content">';
 
-		if ( ! empty( $instance['text'] ) ) {
-			$image_html .= sprintf( '<p>%s</p>', $instance['text'] );
-		}
+			if ( ! empty( $instance['title_text'] ) ) {
+				$title_html = $instance['title_text'];
+				if ( ! empty( $instance['link']['url'] ) ) {
+					$target = '';
+					if ( ! empty( $instance['link']['is_external'] ) ) {
+						$target = ' target="_blank"';
+					}
+					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
+				}
+				$image_html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
+			}
 
-		$image_html .= '</div></div>';
+			if ( ! empty( $instance['description_text'] ) ) {
+				$image_html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['description_text'] );
+			}
+
+			$image_html .= '</div>';
+		}
+		$image_html .= '</div>';
 
 		echo $image_html;
 	}
@@ -339,25 +379,35 @@ class Widget_Image_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-	    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+		var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
 		if ( '' !== settings.image.url ) {
-			image_html += '<div class="elementor-image-box"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+			image_html += '<div class="elementor-image-box-img"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
 		}
 
-		if ( settings.link.url ) {
-			var link = settings.link;
-			image_html = '<a href="' + link.url + '">' + image_html + '</a>';
+		if ( '' !== settings.link.url ) {
+			image_html = '<a href="' + settings.link.url + '">' + image_html + '</a>';
 		}
 
-		if ( '' !== settings.text_title ) {
-		image_html += '<div class="elementor-image-text"><h3>' + settings.text_title + '</h3>';
-		}
-		
-		if ( '' !== settings.text ) {
-			image_html += '<p>' + settings.text + '</p>';
-		}
+		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
+		if ( hasContent ) {
+			image_html += '<div class="elementor-image-box-content">';
 
-		image_html += '</div></div>';
+			if ( '' !== settings.title_text ) {
+				var title_html = settings.title_text;
+
+				if ( '' !== settings.link.url ) {
+					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
+				}
+				image_html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + title_html + '</' + settings.title_size  + '>';
+			}
+
+			if ( '' !== settings.description_text ) {
+				image_html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
+			}
+
+			image_html += '</div>';
+		}
+		image_html += '</div>';
 
 		print( image_html );
 		%>

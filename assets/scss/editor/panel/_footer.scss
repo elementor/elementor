@@ -112,6 +112,7 @@
 #elementor-panel-footer-help-title {
 	text-align: getStartDirection();
 	padding: 10px 0;
+	color: $editor-lightest;
 }
 
 #elementor-panel-footer-help-link {
@@ -119,12 +120,11 @@
 	.elementor-button {
 		width: 100%;
 		padding: 10px 0;
-		background-color: $editor-dark;
-		color: #fff;
+		background-color: $editor-darkest;
+		color: $editor-lightest;
 
 		&:hover {
-			background-color: #fff;
-			color: $editor-dark;
+			background-color: rgba(0,0,0,.2);
 		}
 	}
 }

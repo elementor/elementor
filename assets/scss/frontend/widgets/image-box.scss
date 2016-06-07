@@ -4,15 +4,38 @@
 .elementor-image-box-wrapper {
 	overflow: hidden;
 
-	.elementor-position-right {
-		float: right;
+	&.elementor-position-left,
+	&.elementor-position-right {
+		display: flex;
 	}
 
-	.elementor-position-left {
-		float: left;
+	&.elementor-position-right {
+		text-align: getEndDirection();
+
+		.elementor-image-box-img {
+			order: 2;
+		}
+		.elementor-image-box-content {
+			order: 1;
+		}
 	}
 
-	.elementor-position-center {
+	&.elementor-position-left {
+		text-align: getStartDirection();
+
+		.elementor-image-box-img {
+			order: 1;
+		}
+		.elementor-image-box-content {
+			order: 2;
+		}
+	}
+
+	&.elementor-position-top {
 		text-align: center;
+	}
+
+	p.elementor-image-box-description {
+		margin: 0;
 	}
 }
