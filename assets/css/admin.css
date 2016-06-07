@@ -10,8 +10,8 @@
     display: none; }
     #elementor-switch-mode button.elementor-switch-mode-button {
       padding: 0 30px;
-      height: 50px;
-      line-height: 50px; }
+      height: 40px;
+      line-height: 1; }
       #elementor-switch-mode button.elementor-switch-mode-button span {
         display: none; }
   #elementor-switch-mode.elementor-editor-inactive button.elementor-switch-mode-button {
