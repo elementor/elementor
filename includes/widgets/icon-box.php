@@ -525,7 +525,12 @@ class Widget_Icon_box extends Widget_Base {
 			icon_html += '<div class="elementor-icon-box-content">';
 
 			if ( '' !== settings.title_text ) {
-				icon_html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + settings.title_text + '</' + settings.title_size  + '>';
+				var title_html = settings.title_text;
+
+				if ( '' !== settings.link.url ) {
+					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
+				}
+				icon_html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + title_html + '</' + settings.title_size  + '>';
 			}
 	
 			if ( '' !== settings.description_text ) {
