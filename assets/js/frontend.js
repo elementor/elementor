@@ -186,12 +186,12 @@
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
 			$nav = $wrapper.children( '.elementor-carousel' ),
-			data = $nav.data();
+			data = $nav.data(),
 
-		var options = {
-			dots: true,
-			arrows: true
-		}
+			options = {
+				dots: true,
+				arrows: true
+			};
 
 		if ( data ) {
 			$.each( data, function( key, value ) {

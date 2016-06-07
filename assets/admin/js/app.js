@@ -2382,6 +2382,7 @@ RowSettingsModel = BaseSettingsModel.extend( {
 } );
 
 module.exports = RowSettingsModel;
+
 },{"elementor-models/base-settings":31}],35:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	SectionSettingsModel;
@@ -2391,15 +2392,17 @@ SectionSettingsModel = BaseSettingsModel.extend( {
 } );
 
 module.exports = SectionSettingsModel;
+
 },{"elementor-models/base-settings":31}],36:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetSettingsModel;
 
 WidgetSettingsModel = BaseSettingsModel.extend( {
-	
+
 } );
 
 module.exports = WidgetSettingsModel;
+
 },{"elementor-models/base-settings":31}],37:[function(require,module,exports){
 var heartbeat;
 
@@ -4020,7 +4023,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 			},
 			state: 'gallery'
 		};
-		
+
 		if ( 0 < ids.length ) {
 			options.selection = this.fetchSelection( ids );
 			options.state = 'gallery-edit';
@@ -5286,7 +5289,7 @@ WidgetView = BaseElementView.extend( {
 
 	onSettingsChanged: function( settings ) {
 		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-		
+
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
