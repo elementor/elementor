@@ -312,6 +312,7 @@ module.exports = function( grunt ) {
 					'!tests/**',
 					'!.travis.yml',
 					'!.jscsrc',
+					'!.jshintignore',
 					'!.jshintrc',
 					'!ruleset.xml',
 					'!README.md',
