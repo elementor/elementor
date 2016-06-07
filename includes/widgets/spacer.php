@@ -29,7 +29,7 @@ class Widget_Spacer extends Widget_Base {
 				'type' => Controls_Manager::SECTION,
 			]
 		);
-		
+
 		$this->add_control(
 			'space',
 			[

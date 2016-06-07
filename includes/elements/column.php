@@ -261,7 +261,7 @@ class Element_Column extends Element_Base {
 					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
 						<a href="#" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><?php _e( 'Column', 'elementor' ); ?></a>
 					</li>
-					<?php /* Temp removing for better UI 
+					<?php /* Temp removing for better UI
 					<li class="elementor-editor-element-setting elementor-editor-element-edit">
 						<a href="#" title="<?php _e( 'Edit Column', 'elementor' ); ?>">
 							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
@@ -292,7 +292,7 @@ class Element_Column extends Element_Base {
 					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
 						<a href="#" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><?php _e( 'Section', 'elementor' ); ?></a>
 					</li>
-					<?php /* Temp removing for better UI 
+					<?php /* Temp removing for better UI
 					<li class="elementor-editor-element-setting elementor-editor-element-edit">
 						<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
 							<span class="elementor-screen-only"><?php _e( 'Edit Section', 'elementor' ); ?></span>
