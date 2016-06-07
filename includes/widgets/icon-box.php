@@ -517,8 +517,7 @@ class Widget_Icon_box extends Widget_Base {
 		}
 
 		if ( '' !== settings.link.url ) {
-			var link = settings.link;
-			icon_html = '<a href="' + link.url + '">' + icon_html + '</a>';
+			icon_html = '<a href="' + settings.link.url + '">' + icon_html + '</a>';
 		}
 
 		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
