@@ -2382,6 +2382,7 @@ RowSettingsModel = BaseSettingsModel.extend( {
 } );
 
 module.exports = RowSettingsModel;
+
 },{"elementor-models/base-settings":31}],35:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	SectionSettingsModel;

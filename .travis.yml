@@ -37,4 +37,3 @@ script:
   - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
   - jscs -c .jscsrc .
   - jshint .
-
