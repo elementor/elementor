@@ -97,6 +97,16 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'section' => 'section_icon',
+			]
+		);
+
+		$this->add_control(
 			'position',
 			[
 				'label' => __( 'Icon Postion', 'elementor' ),
@@ -139,16 +149,6 @@ class Widget_Icon_box extends Widget_Base {
 					'p' => __( 'p', 'elementor' ),
 				],
 				'default' => 'h3',
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'link',
-			[
-				'label' => __( 'Link to', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_icon',
 			]
 		);
@@ -229,8 +229,8 @@ class Widget_Icon_box extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 5,
-						'max' => 1000,
+						'min' => 6,
+						'max' => 300,
 					],
 				],
 				'section' => 'section_style_icon',
@@ -254,29 +254,6 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
-				],
-			]
-		);
-
-		$this->add_control(
-			'icon_opacity',
-			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1,
-				],
-				'range' => [
-					'px' => [
-						'max' => 1,
-						'min' => 0.10,
-						'step' => 0.01,
-					],
-				],
-				'section' => 'section_style_icon',
-				'tab' => self::TAB_STYLE,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
