@@ -97,6 +97,16 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'section' => 'section_icon',
+			]
+		);
+
+		$this->add_control(
 			'position',
 			[
 				'label' => __( 'Icon Postion', 'elementor' ),
@@ -139,16 +149,6 @@ class Widget_Icon_box extends Widget_Base {
 					'p' => __( 'p', 'elementor' ),
 				],
 				'default' => 'h3',
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'link',
-			[
-				'label' => __( 'Link to', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_icon',
 			]
 		);
