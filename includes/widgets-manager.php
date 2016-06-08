@@ -39,7 +39,7 @@ class Widgets_Manager {
 		if ( Utils::is_development_mode() ) {
 			$build_widgets_filename[] = 'gallery';
 			$build_widgets_filename[] = 'carousel';
-			$build_widgets_filename[] = 'slider';
+			$build_widgets_filename[] = 'slideshow';
 			$build_widgets_filename[] = 'icon-box';
 		}
 
