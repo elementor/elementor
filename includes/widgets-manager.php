@@ -25,6 +25,7 @@ class Widgets_Manager {
 			'google-maps',
 			'icon',
 			'icon-list',
+			'icon-box',
 			'counter',
 			'progress',
 			'tabs',
@@ -40,7 +41,6 @@ class Widgets_Manager {
 			$build_widgets_filename[] = 'gallery';
 			$build_widgets_filename[] = 'carousel';
 			$build_widgets_filename[] = 'slideshow';
-			$build_widgets_filename[] = 'icon-box';
 		}
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
