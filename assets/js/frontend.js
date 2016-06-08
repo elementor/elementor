@@ -186,12 +186,12 @@
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
 			$nav = $wrapper.children( '.elementor-carousel' ),
-			data = $nav.data();
+			data = $nav.data(),
 
-		var options = {
-			dots: true,
-			arrows: true
-		}
+			options = {
+				dots: true,
+				arrows: true
+			};
 
 		if ( data ) {
 			$.each( data, function( key, value ) {
@@ -232,13 +232,6 @@
 
 		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
 
-		var changeVideoSize = function() {
-			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
-				size = calcVideosSize();
-
-			$video.width( size.width ).height( size.height );
-		};
-
 		var calcVideosSize = function() {
 			var containerWidth = ui.backgroundVideoContainer.outerWidth(),
 				containerHeight = ui.backgroundVideoContainer.outerHeight(),
@@ -253,6 +246,13 @@
 				width: isWidthFixed ? containerWidth : ratioHeight,
 				height: isWidthFixed ? ratioWidth : containerHeight
 			};
+		};
+
+		var changeVideoSize = function() {
+			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
+				size = calcVideosSize();
+
+			$video.width( size.width ).height( size.height );
 		};
 
 		var prepareYTVideo = function( YT, videoID ) {

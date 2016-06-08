@@ -101,10 +101,12 @@ class Controls_Manager {
 		include( 'controls/groups/background.php' );
 		include( 'controls/groups/border.php' );
 		include( 'controls/groups/typography.php' );
+		include( 'controls/groups/image-size.php' );
 
 		$this->_group_controls['background'] = new Group_Control_Background();
 		$this->_group_controls['border'] = new Group_Control_Border();
 		$this->_group_controls['typography'] = new Group_Control_Typography();
+		$this->_group_controls['image-size'] = new Group_Control_Image_size();
 	}
 
 	/**

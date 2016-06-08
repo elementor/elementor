@@ -83,13 +83,13 @@ class Admin {
 			</button>
 		</div>
 		<div id="elementor-editor">
-            <div class="elementor-go-to-edit-page">
-                <a href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
-                    <span class="elementor-go-to-edit-text">
-                        <?php _e( 'Edit with Elementor', 'elementor' ); ?>
-                    </span>
-                </a>
-            </div>
+		    <div class="elementor-go-to-edit-page">
+		        <a href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+		            <span class="elementor-go-to-edit-text">
+		                <?php _e( 'Edit with Elementor', 'elementor' ); ?>
+		            </span>
+		        </a>
+		    </div>
 		</div>
 		<?php
 	}

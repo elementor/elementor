@@ -35,6 +35,11 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => [
 				'size' => 15,
 			],
+			'range' => [
+				'px' => [
+					'min' => 1,
+				],
+			],
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
@@ -92,6 +97,11 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'default' => [
 				'unit' => 'em',
+			],
+			'range' => [
+				'px' => [
+					'min' => 1,
+				],
 			],
 			'size_units' => [ 'px', 'em' ],
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',

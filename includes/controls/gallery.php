@@ -8,7 +8,7 @@ class Control_Gallery extends Control_Base {
 	public function get_type() {
 		return 'gallery';
 	}
-	
+
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">

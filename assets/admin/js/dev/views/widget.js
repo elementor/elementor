@@ -92,7 +92,7 @@ WidgetView = BaseElementView.extend( {
 
 	onSettingsChanged: function( settings ) {
 		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-		
+
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;

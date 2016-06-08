@@ -1,18 +1,88 @@
 //
 // Icon Box
 //
-.elementor-icon-box-wrapper {
-	overflow: hidden;
+.elementor-widget-icon-box {
+	&.elementor-view-stacked {
 
-	.elementor-position-right {
-		float: right;
+		.elementor-icon-box-icon {
+			background-color: #000;
+			color: #fff;
+		}
 	}
 
-	.elementor-position-left {
-		float: left;
+	&.elementor-view-framed {
+
+		.elementor-icon-box-icon {
+			color: #000;
+			border: 3px solid #000;
+		}
 	}
 
-	.elementor-position-center {
-		text-align: center;
+	&.elementor-shape- {
+
+		&circle {
+
+			.elementor-icon-box-icon {
+				border-radius: 50%;
+			}
+		}
+	}
+
+	.elementor-icon-box-wrapper {
+		overflow: hidden;
+
+		&.elementor-position-left,
+		&.elementor-position-right {
+			display: flex;
+		}
+
+		&.elementor-position-right {
+			text-align: getEndDirection();
+
+			.elementor-icon-box-icon {
+				order: 2;
+			}
+			.elementor-icon-box-content {
+				order: 1;
+			}
+		}
+
+		&.elementor-position-left {
+			text-align: getStartDirection();
+
+			.elementor-icon-box-icon {
+				order: 1;
+			}
+			.elementor-icon-box-content {
+				order: 2;
+			}
+		}
+
+		&.elementor-position-top {
+			text-align: center;
+		}
+
+		.elementor-icon-box-icon {
+			display: inline-block;
+			line-height: 1;
+			transition: $transition-hover;
+
+			a {
+				color: inherit;
+
+				&:hover {
+					color: inherit;
+				}
+			}
+
+			i {
+				width: 1em;
+				height: 1em;
+			}
+		}
+
+		p.elementor-icon-box-description {
+			margin: 0;
+		}
 	}
 }

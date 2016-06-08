@@ -14,7 +14,7 @@ class Widget_Image_box extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'insert-image';
+		return 'image-box';
 	}
 
 	protected function _register_controls() {
@@ -77,23 +77,25 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'position',
 			[
-				'label' => __( 'Image Postion', 'elementor' ),
+				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'elementor-position-top',
+				'default' => 'top',
 				'options' => [
-					'elementor-position-left' => [
+					'left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
 					],
-					'elementor-position-top' => [
+					'top' => [
 						'title' => __( 'Top', 'elementor' ),
 						'icon' => 'align-center',
 					],
-					'elementor-position-right' => [
+					'right' => [
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
 				],
+				'prefix_class' => 'elementor-position-',
+				'toggle' => false,
 				'section' => 'section_image',
 			]
 		);
@@ -167,9 +169,9 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img figure' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img figure' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img figure' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-right .elementor-image-box-img' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-top .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -180,7 +182,7 @@ class Widget_Image_box extends Widget_Base {
 				'label' => __( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 100,
+					'size' => 30,
 					'unit' => '%',
 				],
 				'size_units' => [ '%' ],
@@ -193,9 +195,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-right .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-left .elementor-image-box-img' => 'max-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-image-box-wrapper.elementor-position-top .elementor-image-box-img img' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -220,6 +220,23 @@ class Widget_Image_box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'opacity: {{SIZE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'content_vertical_alignment',
+			[
+				'label' => __( 'Content Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'top' => __( 'Top', 'elementor' ),
+					'middle' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'default' => 'top',
+				'section' => 'section_style_image',
+				'tab' => self::TAB_STYLE,
+				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
 
@@ -335,68 +352,83 @@ class Widget_Image_box extends Widget_Base {
 	protected function render( $instance = [] ) {
 		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
 
-		$image_html = sprintf( '<div class="elementor-image-box-wrapper %s">', $instance['position'] );
+		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $instance['image']['url'] ) ) {
-			$image_html .= sprintf( '<div class="elementor-image-box-img"><figure><img src="%s" alt="%s" /></figure></div>', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
-		}
+			$image_html = sprintf( '<img src="%s" alt="%s" />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ) );
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$target = '';
-			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$target = ' target="_blank"';
+			if ( ! empty( $instance['link']['url'] ) ) {
+				$target = '';
+				if ( ! empty( $instance['link']['is_external'] ) ) {
+					$target = ' target="_blank"';
+				}
+				$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
 			}
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
+
+			$html .= '<figure class="elementor-image-box-img">' . $image_html . '</figure>';
 		}
 
 		if ( $has_content ) {
-			$image_html .= '<div class="elementor-image-box-content">';
+			$html .= '<div class="elementor-image-box-content">';
 
 			if ( ! empty( $instance['title_text'] ) ) {
-				$image_html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $instance['title_text'] );
+				$title_html = $instance['title_text'];
+				if ( ! empty( $instance['link']['url'] ) ) {
+					$target = '';
+					if ( ! empty( $instance['link']['is_external'] ) ) {
+						$target = ' target="_blank"';
+					}
+					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
+				}
+				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
 			}
 
 			if ( ! empty( $instance['description_text'] ) ) {
-				$image_html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['description_text'] );
+				$html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['description_text'] );
 			}
 
-			$image_html .= '</div>';
+			$html .= '</div>';
 		}
-		$image_html .= '</div>';
+		$html .= '</div>';
 
-		echo $image_html;
+		echo $html;
 	}
 
 	protected function content_template() {
 		?>
 		<%
-	    var image_html = '<div class="elementor-image-box-wrapper ' + settings.position + '">';
+		var html = '<div class="elementor-image-box-wrapper">';
 		if ( '' !== settings.image.url ) {
-			image_html += '<div class="elementor-image-box-img"><figure><img src="' + settings.image.url + '" alt="' + settings.alt_text + '" /></figure></div>';
+			var imageHtml = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" />';
+
+			if ( '' !== settings.link.url ) {
+				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
+			}
+			html += '<figure class="elementor-image-box-img">' + imageHtml + '</figure>';
 		}
 
-		if ( settings.link.url ) {
-			var link = settings.link;
-			image_html = '<a href="' + link.url + '">' + image_html + '</a>';
-		}
-			
 		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
 		if ( hasContent ) {
-			image_html += '<div class="elementor-image-box-content">';
+			html += '<div class="elementor-image-box-content">';
 
 			if ( '' !== settings.title_text ) {
-				image_html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + settings.title_text + '</' + settings.title_size  + '>';
-			}
-			
-			if ( '' !== settings.description_text ) {
-				image_html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
-			}
-	
-			image_html += '</div>';
-		}
-		image_html += '</div>';
+				var title_html = settings.title_text;
 
-		print( image_html );
+				if ( '' !== settings.link.url ) {
+					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
+				}
+				html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + title_html + '</' + settings.title_size  + '>';
+			}
+
+			if ( '' !== settings.description_text ) {
+				html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
+			}
+
+			html += '</div>';
+		}
+		html += '</div>';
+
+		print( html );
 		%>
 		<?php
 	}

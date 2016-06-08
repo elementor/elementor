@@ -17,17 +17,6 @@ class Widget_Carousel extends Widget_Base {
 		return 'insert-image';
 	}
 
-	private function _get_image_sizes() {
-		$wp_image_sizes = get_intermediate_image_sizes();
-
-		$image_sizes = [];
-		foreach ( $wp_image_sizes as $image_size ) {
-			$image_sizes[ $image_size ] = ucwords( str_replace( '_', ' ', $image_size ) );
-		}
-
-		return $image_sizes;
-	}
-
 	protected function _register_controls() {
 		$this->add_control(
 			'section_image',
@@ -57,14 +46,10 @@ class Widget_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'size',
+		$this->add_group_control(
+			Group_Control_Image_size::get_type(),
 			[
-				'label' => __( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'thumbnail',
-				'section' => 'section_image',
-				'options' => $this->_get_image_sizes(),
+				'name' => 'thumbnail',
 			]
 		);
 
@@ -104,10 +89,10 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['carousel'] ) ) {
+		if ( empty( $instance['carousel'] ) )
 			return;
-		} ?>
 
+		?>
 		<div class="elementor-carousel-wrapper">
 			<div class="elementor-carousel" data-autoplay="<?php echo $instance['autoplay']; ?>" data-slide-to-show="<?php echo $instance['slides_to_show']; ?>" data-slide-to-scroll="<?php echo $instance['slides_to_scroll']; ?>">
 				<?php
@@ -115,7 +100,7 @@ class Widget_Carousel extends Widget_Base {
 				$ids = explode( ',', $instance['carousel'] );
 
 				foreach ( $ids as $attach_id ) :
-					$image = wp_get_attachment_image_src( $attach_id, $instance['size'] );
+					$image = wp_get_attachment_image_src( $attach_id, $instance['thumbnail_size'] );
 					$slides .= '<div><img src="' . $image[0] . '" /></div>';
 				endforeach;
 
