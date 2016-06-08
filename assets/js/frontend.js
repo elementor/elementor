@@ -187,7 +187,7 @@
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
 			$carousel = $wrapper.children( '.elementor-carousel' );
 
-		var	slideToShow = $carousel.data( 'slidestoshow' ),
+		var slideToShow = $carousel.data( 'slidestoshow' ),
 			slideToScroll = $carousel.data( 'slidestoscroll' ),
 			autoPlay = $carousel.data( 'autoplay' ),
 			autoplaySpeed = $carousel.data( 'autoplayspeed' ),
@@ -233,7 +233,7 @@
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
 			$slider = $wrapper.children( '.elementor-slider' );
 
-		var	autoPlay = $slider.data( 'autoplay' ),
+		var autoPlay = $slider.data( 'autoplay' ),
 			autoplaySpeed = $slider.data( 'autoplayspeed' ),
 			dots = $slider.data( 'dots' ),
 			arrows = $slider.data( 'arrows' ),
