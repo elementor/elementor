@@ -508,26 +508,28 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$icon_html = '<div class="elementor-icon-box-wrapper">';
+		$html = '<div class="elementor-icon-box-wrapper">';
 
 		if ( ! empty( $instance['icon'] ) ) {
-			$icon_html .= sprintf( '<div class="elementor-icon-box-icon"><div class="elementor-icon"><i class="%s"></i></div></div>', esc_attr( $instance['icon'] ) );
-		}
+			$icon_html = sprintf( '<i class="%s"></i>', esc_attr( $instance['icon'] ) );
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$target = '';
+			if ( ! empty( $instance['link']['url'] ) ) {
+				$target = '';
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$target = ' target="_blank"';
+				if ( ! empty( $instance['link']['is_external'] ) ) {
+					$target = ' target="_blank"';
+				}
+
+				$icon_html = sprintf( '<a href="%s"%s>%s</a>', esc_attr( $instance['link']['url'] ), $target, $icon_html );
 			}
 
-			$icon_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $icon_html );
+			$html .= '<div class="elementor-icon-box-icon"><div class="elementor-icon">' . $icon_html . '</div></div>';
 		}
 
 		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
 
 		if ( $has_content ) {
-			$icon_html .= '<div class="elementor-icon-box-content">';
+			$html .= '<div class="elementor-icon-box-content">';
 
 			if ( ! empty( $instance['title_text'] ) ) {
 				$title_html = $instance['title_text'];
@@ -542,38 +544,40 @@ class Widget_Icon_box extends Widget_Base {
 					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
 				}
 
-				$icon_html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
+				$html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
 			}
 
 			if ( ! empty( $instance['description_text'] ) ) {
-				$icon_html .= sprintf( '<p class="elementor-icon-box-description">%s</p>', $instance['description_text'] );
+				$html .= sprintf( '<p class="elementor-icon-box-description">%s</p>', $instance['description_text'] );
 			}
 
-			$icon_html .= '</div>';
+			$html .= '</div>';
 		}
 
-		$icon_html .= '</div>';
+		$html .= '</div>';
 
-		echo $icon_html;
+		echo $html;
 	}
 
 	protected function content_template() {
 		?>
 		<%
-		var icon_html = '<div class="elementor-icon-box-wrapper">';
+		var html = '<div class="elementor-icon-box-wrapper">';
 
 		if ( settings.icon ) {
-			icon_html += '<div class="elementor-icon-box-icon"><div class="elementor-icon"><i class="' + settings.icon + '"></i></div></div>';
-		}
+			var icon_html = '<i class="' + settings.icon + '"></i>';
 
-		if ( settings.link.url ) {
-			icon_html = '<a href="' + settings.link.url + '">' + icon_html + '</a>';
+			if ( settings.link.url ) {
+				icon_html = '<a href="' + settings.link.url + '">' + icon_html + '</a>';
+			}
+			
+			html += '<div class="elementor-icon-box-icon"><div class="elementor-icon">' + icon_html + '</div></div>';
 		}
 
 		var hasContent = !! ( settings.title_text || settings.description_text );
 
 		if ( hasContent ) {
-			icon_html += '<div class="elementor-icon-box-content">';
+			html += '<div class="elementor-icon-box-content">';
 
 			if ( settings.title_text ) {
 				var title_html = settings.title_text;
@@ -582,19 +586,19 @@ class Widget_Icon_box extends Widget_Base {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 
-				icon_html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + title_html + '</' + settings.title_size  + '>';
+				html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + title_html + '</' + settings.title_size  + '>';
 			}
 	
 			if ( settings.description_text ) {
-				icon_html += '<p class="elementor-icon-box-description">' + settings.description_text + '</p>';
+				html += '<p class="elementor-icon-box-description">' + settings.description_text + '</p>';
 			}
 
-			icon_html += '</div>';
+			html += '</div>';
 		}
 
-		icon_html += '</div>';
+		html += '</div>';
 
-		print( icon_html );
+		print( html );
 		%>
 		<?php
 	}
