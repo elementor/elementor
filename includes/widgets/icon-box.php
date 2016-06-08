@@ -196,7 +196,7 @@ class Widget_Icon_box extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => 5,
 						'max' => 1000,
 					],
 				],
