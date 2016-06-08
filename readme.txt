@@ -109,6 +109,9 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 == Changelog ==
 
+= 0.2.3 - 08.06.2016 =
+* Tweak! - Added HTML tag control for icon box title
+
 = 0.2.2 - 08.06.2016 =
 * Tweak! - Minor change from the last release
 
