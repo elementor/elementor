@@ -163,6 +163,39 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'icon_space',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
@@ -307,39 +340,6 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'primary_color',
-			[
-				'label' => __( 'Primary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'secondary_color',
-			[
-				'label' => __( 'Secondary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
-				'default' => '',
-				'condition' => [
-					'view!' => 'default',
-				],
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
 			'content_vertical_alignment',
 			[
 				'label' => __( 'Content Vertical Alignment', 'elementor' ),
@@ -353,6 +353,48 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'tab' => self::TAB_STYLE,
 				'prefix_class' => 'elementor-vertical-align-',
+			]
+		);
+
+		$this->add_control(
+			'section_hover',
+			[
+				'label' => __( 'Icon Hover', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'hover_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'color: {{VALUE}};',
+				],
 			]
 		);
 
@@ -461,48 +503,6 @@ class Widget_Icon_box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
-			]
-		);
-
-		$this->add_control(
-			'section_hover',
-			[
-				'label' => __( 'Icon Hover', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'hover_primary_color',
-			[
-				'label' => __( 'Primary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hover_secondary_color',
-			[
-				'label' => __( 'Secondary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
-				'default' => '',
-				'condition' => [
-					'view!' => 'default',
-				],
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'color: {{VALUE}};',
-				],
 			]
 		);
 	}
