@@ -3,32 +3,6 @@
 //
 .elementor-widget-icon-box {
 
-	&.elementor-view-stacked {
-
-		.elementor-icon-box-icon {
-			background-color: #000;
-			color: #fff;
-		}
-	}
-
-	&.elementor-view-framed {
-
-		.elementor-icon-box-icon {
-			color: #000;
-			border: 3px solid #000;
-		}
-	}
-
-	&.elementor-shape- {
-
-		&circle {
-
-			.elementor-icon-box-icon {
-				border-radius: 50%;
-			}
-		}
-	}
-
 	.elementor-icon-box-wrapper {
 		overflow: hidden;
 	}
@@ -103,24 +77,5 @@
 
 	.elementor-icon-box-description {
 		margin: 0;
-	}
-
-	.elementor-icon-box-icon {
-		display: inline-block;
-		line-height: 1;
-		transition: $transition-hover;
-
-		a {
-			color: inherit;
-
-			&:hover {
-				color: inherit;
-			}
-		}
-
-		i {
-			width: 1em;
-			height: 1em;
-		}
 	}
 }

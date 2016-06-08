@@ -171,8 +171,8 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -189,8 +189,8 @@ class Widget_Icon_box extends Widget_Base {
 					'view!' => 'default',
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -236,7 +236,7 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -253,7 +253,7 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
+					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
@@ -289,7 +289,7 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-icon' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'default' => [
 					'size' => 1.5,
@@ -314,7 +314,7 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'condition' => [
 					'view' => 'framed',
@@ -331,7 +331,7 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'condition' => [
 					'view!' => 'default',
@@ -374,8 +374,8 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_hover',
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -392,8 +392,8 @@ class Widget_Icon_box extends Widget_Base {
 					'view!' => 'default',
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -511,7 +511,7 @@ class Widget_Icon_box extends Widget_Base {
 		$icon_html = '<div class="elementor-icon-box-wrapper">';
 
 		if ( ! empty( $instance['icon'] ) ) {
-			$icon_html .= sprintf( '<div class="elementor-icon-box-icon"><i class="%s"></i></div>', esc_attr( $instance['icon'] ) );
+			$icon_html .= sprintf( '<div class="elementor-icon-box-icon"><div class="elementor-icon"><i class="%s"></i></div></div>', esc_attr( $instance['icon'] ) );
 		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
@@ -563,7 +563,7 @@ class Widget_Icon_box extends Widget_Base {
 		var icon_html = '<div class="elementor-icon-box-wrapper">';
 
 		if ( settings.icon ) {
-			icon_html += '<div class="elementor-icon-box-icon"><i class="' + settings.icon + '"></i></div>';
+			icon_html += '<div class="elementor-icon-box-icon"><div class="elementor-icon"><i class="' + settings.icon + '"></i></div></div>';
 		}
 
 		if ( settings.link.url ) {
