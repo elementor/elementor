@@ -183,9 +183,6 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-position-left .elementor-icon-box-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-top .elementor-icon-box-icon' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => [
-					'view!' => 'default',
-				],
 			]
 		);
 
