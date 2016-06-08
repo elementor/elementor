@@ -60,7 +60,8 @@ img {
   height: 100%;
   top: 0;
   right: 0;
-  border: 0; }
+  border: 0;
+  overflow: auto; }
 
 #elementor-preview, #elementor-panel {
   transition: left 0.5s; }
@@ -914,7 +915,7 @@ select {
       border-color: #a4afb7; }
       #elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:focus + .elementor-control-url-target.active {
         background-color: #a4afb7; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-control-type-choose .elementor-choices {
+  #elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-choices, #elementor-panel #elementor-panel-page-editor .elementor-control-align .elementor-choices, #elementor-panel #elementor-panel-page-editor .elementor-control-position .elementor-choices {
     direction: ltr; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider input {
     width: 80%;
