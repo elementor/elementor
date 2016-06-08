@@ -2,6 +2,7 @@
 // Icon Box
 //
 .elementor-widget-icon-box {
+
 	&.elementor-view-stacked {
 
 		.elementor-icon-box-icon {
@@ -30,59 +31,96 @@
 
 	.elementor-icon-box-wrapper {
 		overflow: hidden;
+	}
+
+	@media (min-width: $screen-md-min) {
 
 		&.elementor-position-left,
 		&.elementor-position-right {
-			display: flex;
+
+			.elementor-icon-box-wrapper {
+				display: flex;
+			}
 		}
 
 		&.elementor-position-right {
-			text-align: getEndDirection();
 
-			.elementor-icon-box-icon {
-				order: 2;
-			}
-			.elementor-icon-box-content {
-				order: 1;
+			.elementor-icon-box-wrapper {
+				text-align: getEndDirection();
+				flex-direction: getValueByDirection(row-reverse, row);
 			}
 		}
 
 		&.elementor-position-left {
-			text-align: getStartDirection();
 
-			.elementor-icon-box-icon {
-				order: 1;
-			}
-			.elementor-icon-box-content {
-				order: 2;
+			.elementor-icon-box-wrapper {
+				text-align: getStartDirection();
+				flex-direction: getValueByDirection(row, row-reverse);
 			}
 		}
 
-		&.elementor-position-top {
-			text-align: center;
+		.elementor-icon-box-img {
+			margin: auto;
 		}
 
-		.elementor-icon-box-icon {
-			display: inline-block;
-			line-height: 1;
-			transition: $transition-hover;
+		&.elementor-vertical-align- {
 
-			a {
-				color: inherit;
+			&top {
 
-				&:hover {
-					color: inherit;
+				.elementor-icon-box-wrapper {
+					align-items: flex-start;
 				}
 			}
 
-			i {
-				width: 1em;
-				height: 1em;
+			&middle {
+
+				.elementor-icon-box-wrapper {
+					align-items: center;
+				}
+			}
+
+			&bottom {
+
+				.elementor-icon-box-wrapper {
+					align-items: flex-end;
+				}
+			}
+		}
+	}
+
+	@media (max-width: $screen-sm-max) {
+
+		// TEMP code to override the icon spacing
+		.elementor-icon-box-icon {
+			margin-left: auto !important;
+			margin-right: auto !important;
+		}
+	}
+
+	.elementor-icon-box-wrapper {
+		text-align: center;
+	}
+
+	.elementor-icon-box-description {
+		margin: 0;
+	}
+
+	.elementor-icon-box-icon {
+		display: inline-block;
+		line-height: 1;
+		transition: $transition-hover;
+
+		a {
+			color: inherit;
+
+			&:hover {
+				color: inherit;
 			}
 		}
 
-		p.elementor-icon-box-description {
-			margin: 0;
+		i {
+			width: 1em;
+			height: 1em;
 		}
 	}
 }
