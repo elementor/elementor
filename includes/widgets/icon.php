@@ -173,7 +173,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'rotate',
 			[
-				'label' => __( 'Rotate', 'elementor' ),
+				'label' => __( 'Icon Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0,
