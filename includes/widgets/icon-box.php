@@ -209,6 +209,23 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'rotate',
+			[
+				'label' => __( 'Icon Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+					'unit' => 'deg',
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
+				],
+			]
+		);
+
+		$this->add_control(
 			'icon_opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
