@@ -424,7 +424,7 @@ class Widget_Icon_box extends Widget_Base {
 		$this->add_control(
 			'content_vertical_alignment',
 			[
-				'label' => __( 'Content Vertical Alignment', 'elementor' ),
+				'label' => __( 'Vertical Alignment', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'top' => __( 'Top', 'elementor' ),
