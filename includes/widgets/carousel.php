@@ -161,7 +161,6 @@ class Widget_Carousel extends Widget_Base {
 		if ( empty( $instance['carousel'] ) )
 			return;
 
-
 		foreach ( $this->_carusel_options as $option_name ) {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}

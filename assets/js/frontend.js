@@ -223,7 +223,7 @@
 					}
 				}
 			]
-		}
+		};
 
 		$carousel.slick( options );
 	} );
@@ -266,7 +266,7 @@
 					}
 				}
 			]
-		}
+		};
 
 		$slider.slick( options );
 	} );
