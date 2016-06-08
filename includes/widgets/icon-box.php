@@ -340,23 +340,6 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'content_vertical_alignment',
-			[
-				'label' => __( 'Content Vertical Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'top' => __( 'Top', 'elementor' ),
-					'middle' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-				],
-				'default' => 'top',
-				'section' => 'section_style_icon',
-				'tab' => self::TAB_STYLE,
-				'prefix_class' => 'elementor-vertical-align-',
-			]
-		);
-
-		$this->add_control(
 			'section_hover',
 			[
 				'label' => __( 'Icon Hover', 'elementor' ),
@@ -435,6 +418,23 @@ class Widget_Icon_box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-box-content' => 'text-align: {{VALUE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'content_vertical_alignment',
+			[
+				'label' => __( 'Content Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'top' => __( 'Top', 'elementor' ),
+					'middle' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'default' => 'top',
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
 
