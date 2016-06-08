@@ -7,63 +7,72 @@
 		overflow: hidden;
 	}
 
-	&.elementor-position-left,
-	&.elementor-position-right {
+	@media (min-width: $screen-md-min) {
 
-		.elementor-image-box-wrapper {
-			display: flex;
+		&.elementor-position-left,
+		&.elementor-position-right {
+
+			.elementor-image-box-wrapper {
+				display: flex;
+			}
+		}
+
+		&.elementor-position-right {
+
+			.elementor-image-box-wrapper {
+				text-align: getEndDirection();
+				flex-direction: getValueByDirection(row-reverse, row);
+			}
+		}
+
+		&.elementor-position-left {
+
+			.elementor-image-box-wrapper {
+				text-align: getStartDirection();
+				flex-direction: getValueByDirection(row, row-reverse);
+			}
+		}
+
+		&.elementor-vertical-align- {
+
+			&top {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-start;
+				}
+			}
+
+			&middle {
+
+				.elementor-image-box-wrapper {
+					align-items: center;
+				}
+			}
+
+			&bottom {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-end;
+				}
+			}
 		}
 	}
 
-	&.elementor-position-right {
+	@media (max-width: $screen-sm-max) {
 
-		.elementor-image-box-wrapper {
-			text-align: getEndDirection();
-			flex-direction: getValueByDirection(row-reverse, row);
-		}
-	}
-
-	&.elementor-position-left {
-
-		.elementor-image-box-wrapper {
-			text-align: getStartDirection();
-			flex-direction: getValueByDirection(row, row-reverse);
-		}
-	}
-
-	&.elementor-position-top {
-
-		.elementor-image-box-wrapper {
-			text-align: center;
-		}
-
+		// TEMP code to override the image spacing
 		.elementor-image-box-img {
-			margin: auto;
+			margin-left: auto !important;
+			margin-right: auto !important;
 		}
 	}
 
-	&.elementor-vertical-align- {
+	.elementor-image-box-wrapper {
+		text-align: center;
+	}
 
-		&top {
-
-			.elementor-image-box-wrapper {
-				align-items: flex-start;
-			}
-		}
-
-		&middle {
-
-			.elementor-image-box-wrapper {
-				align-items: center;
-			}
-		}
-
-		&bottom {
-
-			.elementor-image-box-wrapper {
-				align-items: flex-end;
-			}
-		}
+	.elementor-image-box-img {
+		margin: auto;
 	}
 
 	.elementor-image-box-description {
