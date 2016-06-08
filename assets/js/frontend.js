@@ -185,30 +185,67 @@
 	// Carousel Widget
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$nav = $wrapper.children( '.elementor-carousel' ),
-			data = $nav.data(),
+			$carousel = $wrapper.children( '.elementor-carousel' );
 
-			options = {
-				dots: true,
-				arrows: true
-			};
+		var	slideToShow = $carousel.data( 'slidestoshow' ),
+			slideToScroll = $carousel.data( 'slidestoscroll' ),
+			autoPlay = $carousel.data( 'autoplay' ),
+			autoplaySpeed = $carousel.data( 'autoplayspeed' ),
+			dots = $carousel.data( 'dots' ),
+			arrows = $carousel.data( 'arrows' ),
+			infinite = $carousel.data( 'infinite' ),
+			pauseOnHover = $carousel.data( 'pauseonhover' ),
+			rtl = $carousel.data( 'rtl' );
 
-		if ( data ) {
-			$.each( data, function( key, value ) {
-				options[ key ] = value;
-			} );
+		var options =  {
+			slidesToShow: slideToShow,
+			slidesToScroll: slideToScroll,
+			autoplay: autoPlay,
+			autoplaySpeed: autoplaySpeed,
+			dots: dots,
+			arrows: arrows,
+			infinite: infinite,
+			pauseOnHover: pauseOnHover,
+			rtl: rtl,
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: 2,
+						slidesToScroll: 2
+					}
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}
+				// You can unslick at a given breakpoint now by adding:
+				// settings: "unslick"
+				// instead of a settings object
+			]
 		}
 
-		$nav.slick( options );
+		$carousel.slick( options );
 	} );
 
 	// Slider Widget
 	elementorBindUI.addBindEvent( 'slider', function() {
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
-			$slider = $wrapper.children( '.elementor-slider' ),
-			$data = $slider.data();
+			$slider = $wrapper.children( '.elementor-slider' );
 
-		$slider.slick( $data );
+		var options =  {
+			slidesToShow: 1,
+			arrows: ( undefined !== $slider.data( 'arrows' ) ) ? $slider.data( 'arrows' ) : true,
+			dots: ( undefined !== $slider.data( 'dots' ) ) ? $slider.data( 'dots' ) : true,
+			autoPlay: ( undefined !== $slider.data( 'autoPlay' ) ) ? $slider.data( 'autoPlay' ) : true,
+			pauseOnHover: ( undefined !== $slider.data( 'pauseOnHover' ) ) ? $slider.data( 'pauseOnHover' ) : true,
+			rtl: ( undefined !== $slider.data( 'rtl' ) ) ? $slider.data( 'rtl' ) : false
+		}
+
+		$slider.slick( options );
 	} );
 
 	// Alert Widget

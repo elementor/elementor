@@ -4,6 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Carousel extends Widget_Base {
+	private $_carusel_options = [];
 
 	public function get_id() {
 		return 'carousel';
@@ -18,6 +19,8 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
+		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover' ];
+
 		$this->add_control(
 			'section_image',
 			[
@@ -54,7 +57,7 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'slides_to_show',
+			'slidesToShow',
 			[
 				'label' => __( 'Slides to show', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
@@ -64,7 +67,7 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'slides_to_scroll',
+			'slidesToScroll',
 			[
 				'label' => __( 'Slides to scroll', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
@@ -86,15 +89,85 @@ class Widget_Carousel extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'autoplaySpeed',
+			[
+				'label' => __( 'Autoplay Speed', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => 3000,
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
+			'dots',
+			[
+				'label' => __( 'Dots', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'false',
+				'section' => 'section_image',
+				'options' => [
+					'true' => __( 'Yes', 'elementor' ),
+					'false' => __( 'No', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'arrows',
+			[
+				'label' => __( 'Arrows', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_image',
+				'options' => [
+					'true' => __( 'Yes', 'elementor' ),
+					'false' => __( 'No', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'infinite',
+			[
+				'label' => __( 'Infinite Loop', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_image',
+				'options' => [
+					'true' => __( 'Yes', 'elementor' ),
+					'false' => __( 'No', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'pauseOnHover',
+			[
+				'label' => __( 'Pause On Hover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_image',
+				'options' => [
+					'true' => __( 'Yes', 'elementor' ),
+					'false' => __( 'No', 'elementor' ),
+				],
+			]
+		);
 	}
 
 	protected function render( $instance = [] ) {
 		if ( empty( $instance['carousel'] ) )
 			return;
 
+
+		foreach ( $this->_carusel_options as $option_name ) {
+			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
+		}
 		?>
 		<div class="elementor-carousel-wrapper">
-			<div class="elementor-carousel" data-autoplay="<?php echo $instance['autoplay']; ?>" data-slide-to-show="<?php echo $instance['slides_to_show']; ?>" data-slide-to-scroll="<?php echo $instance['slides_to_scroll']; ?>">
+			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
 				<?php
 				$slides = '';
 				$ids = explode( ',', $instance['carousel'] );
