@@ -109,6 +109,9 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 == Changelog ==
 
+= 0.2.1.1 - 08.06.2016 =
+* Tweak! - Minor change from the last release
+
 = 0.2.1 - 08.06.2016 =
 * New! - Icon Box widget
 
