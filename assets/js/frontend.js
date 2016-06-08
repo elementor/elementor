@@ -185,30 +185,90 @@
 	// Carousel Widget
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$nav = $wrapper.children( '.elementor-carousel' ),
-			data = $nav.data(),
+			$carousel = $wrapper.children( '.elementor-carousel' );
 
-			options = {
-				dots: true,
-				arrows: true
-			};
+		var slideToShow = $carousel.data( 'slidestoshow' ),
+			slideToScroll = $carousel.data( 'slidestoscroll' ),
+			autoPlay = $carousel.data( 'autoplay' ),
+			autoplaySpeed = $carousel.data( 'autoplayspeed' ),
+			dots = $carousel.data( 'dots' ),
+			arrows = $carousel.data( 'arrows' ),
+			infinite = $carousel.data( 'infinite' ),
+			pauseOnHover = $carousel.data( 'pauseonhover' ),
+			rtl = $carousel.data( 'rtl' );
 
-		if ( data ) {
-			$.each( data, function( key, value ) {
-				options[ key ] = value;
-			} );
-		}
+		var options =  {
+			slidesToShow: slideToShow,
+			slidesToScroll: slideToScroll,
+			autoplay: autoPlay,
+			autoplaySpeed: autoplaySpeed,
+			dots: dots,
+			arrows: arrows,
+			infinite: infinite,
+			pauseOnHover: pauseOnHover,
+			rtl: rtl,
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: 2,
+						slidesToScroll: 2
+					}
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}
+			]
+		};
 
-		$nav.slick( options );
+		$carousel.slick( options );
 	} );
 
 	// Slider Widget
-	elementorBindUI.addBindEvent( 'slider', function() {
+	elementorBindUI.addBindEvent( 'slideshow', function() {
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
-			$slider = $wrapper.children( '.elementor-slider' ),
-			$data = $slider.data();
+			$slider = $wrapper.children( '.elementor-slider' );
 
-		$slider.slick( $data );
+		var autoPlay = $slider.data( 'autoplay' ),
+			autoplaySpeed = $slider.data( 'autoplayspeed' ),
+			dots = $slider.data( 'dots' ),
+			arrows = $slider.data( 'arrows' ),
+			infinite = $slider.data( 'infinite' ),
+			pauseOnHover = $slider.data( 'pauseonhover' ),
+			rtl = $slider.data( 'rtl' );
+
+		var options =  {
+			slidesToShow: 1,
+			autoplay: autoPlay,
+			autoplaySpeed: autoplaySpeed,
+			dots: dots,
+			arrows: arrows,
+			infinite: infinite,
+			pauseOnHover: pauseOnHover,
+			rtl: rtl,
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: 2,
+						slidesToScroll: 2
+					}
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}
+			]
+		};
+
+		$slider.slick( options );
 	} );
 
 	// Alert Widget

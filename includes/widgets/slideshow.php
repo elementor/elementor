@@ -3,15 +3,15 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Carousel extends Widget_Base {
-	private $_carusel_options = [];
+class Widget_SlideShow extends Widget_Base {
+	private $_slider_options = [];
 
 	public function get_id() {
-		return 'carousel';
+		return 'slideshow';
 	}
 
 	public function get_title() {
-		return __( 'Carousel', 'elementor' );
+		return __( 'SlideShow', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -19,7 +19,7 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover' ];
+		$this->_slider_options = [ 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover' ];
 
 		$this->add_control(
 			'section_image',
@@ -40,7 +40,7 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'carousel',
+			'slider',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
@@ -53,26 +53,6 @@ class Widget_Carousel extends Widget_Base {
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
-			]
-		);
-
-		$this->add_control(
-			'slidesToShow',
-			[
-				'label' => __( 'Slides to show', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'default' => '3',
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'slidesToScroll',
-			[
-				'label' => __( 'Slides to scroll', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'default' => '3',
-				'section' => 'section_image',
 			]
 		);
 
@@ -158,18 +138,20 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['carousel'] ) )
+		if ( empty( $instance['slider'] ) ) {
 			return;
+		}
 
-		foreach ( $this->_carusel_options as $option_name ) {
+		foreach ( $this->_slider_options as $option_name ) {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
 		?>
-		<div class="elementor-carousel-wrapper">
-			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
+
+		<div class="elementor-slider-wrapper">
+			<div class="elementor-slider" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
 				<?php
 				$slides = '';
-				$ids = explode( ',', $instance['carousel'] );
+				$ids = explode( ',', $instance['slider'] );
 
 				foreach ( $ids as $attach_id ) :
 					$image = wp_get_attachment_image_src( $attach_id, $instance['thumbnail_size'] );

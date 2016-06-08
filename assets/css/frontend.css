@@ -613,30 +613,30 @@
     padding: 12px; }
   .elementor-toggle .elementor-toggle-content {
     padding: 0 12px 10px; } }
-.elementor-widget-icon .elementor-icon {
+.elementor-widget .elementor-icon {
   display: inline-block;
   line-height: 1;
   transition: all 0.5s; }
-  .elementor-widget-icon .elementor-icon a {
+  .elementor-widget .elementor-icon a {
     color: inherit; }
-    .elementor-widget-icon .elementor-icon a:hover {
+    .elementor-widget .elementor-icon a:hover {
       color: inherit; }
-  .elementor-widget-icon .elementor-icon i {
+  .elementor-widget .elementor-icon i {
     width: 1em;
     height: 1em; }
-.elementor-widget-icon.elementor-view-stacked .elementor-icon {
+.elementor-widget.elementor-view-stacked .elementor-icon {
   background-color: #000;
   color: #fff; }
-.elementor-widget-icon.elementor-view-framed .elementor-icon {
+.elementor-widget.elementor-view-framed .elementor-icon {
   color: #000;
   border: 3px solid #000; }
-.elementor-widget-icon.elementor-align-right .elementor-icon-wrapper {
+.elementor-widget.elementor-align-right .elementor-icon-wrapper {
   text-align: right; }
-.elementor-widget-icon.elementor-align-left .elementor-icon-wrapper {
+.elementor-widget.elementor-align-left .elementor-icon-wrapper {
   text-align: left; }
-.elementor-widget-icon.elementor-align-center .elementor-icon-wrapper {
+.elementor-widget.elementor-align-center .elementor-icon-wrapper {
   text-align: center; }
-.elementor-widget-icon.elementor-shape-circle .elementor-icon {
+.elementor-widget.elementor-shape-circle .elementor-icon {
   border-radius: 50%; }
 
 .elementor-widget-icon-list ul.elementor-icon-list-items {
@@ -697,6 +697,9 @@
 .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
   color: #000000; }
 
+.elementor-slider-wrapper .slick-slider .slick-prev:before, .elementor-slider-wrapper .slick-slider .slick-next:before {
+  color: #000000; }
+
 .elementor-widget-image-box .elementor-image-box-wrapper {
   overflow: hidden; }
 @media (min-width: 768px) {
@@ -711,6 +714,8 @@
     text-align: left;
     -ms-flex-direction: row;
         flex-direction: row; }
+  .elementor-widget-image-box.elementor-position-top .elementor-image-box-img {
+    margin: auto; }
   .elementor-widget-image-box.elementor-vertical-align-top .elementor-image-box-wrapper {
     -ms-flex-align: start;
         -ms-grid-row-align: flex-start;
@@ -729,19 +734,9 @@
     margin-right: auto !important; } }
 .elementor-widget-image-box .elementor-image-box-wrapper {
   text-align: center; }
-.elementor-widget-image-box .elementor-image-box-img {
-  margin: auto; }
 .elementor-widget-image-box .elementor-image-box-description {
   margin: 0; }
 
-.elementor-widget-icon-box.elementor-view-stacked .elementor-icon-box-icon {
-  background-color: #000;
-  color: #fff; }
-.elementor-widget-icon-box.elementor-view-framed .elementor-icon-box-icon {
-  color: #000;
-  border: 3px solid #000; }
-.elementor-widget-icon-box.elementor-shape-circle .elementor-icon-box-icon {
-  border-radius: 50%; }
 .elementor-widget-icon-box .elementor-icon-box-wrapper {
   overflow: hidden; }
 @media (min-width: 768px) {
@@ -756,7 +751,7 @@
     text-align: left;
     -ms-flex-direction: row;
         flex-direction: row; }
-  .elementor-widget-icon-box .elementor-icon-box-img {
+  .elementor-widget-icon-box.elementor-position-top .elementor-icon-box-img {
     margin: auto; }
   .elementor-widget-icon-box.elementor-vertical-align-top .elementor-icon-box-wrapper {
     -ms-flex-align: start;
@@ -778,17 +773,6 @@
   text-align: center; }
 .elementor-widget-icon-box .elementor-icon-box-description {
   margin: 0; }
-.elementor-widget-icon-box .elementor-icon-box-icon {
-  display: inline-block;
-  line-height: 1;
-  transition: all 0.5s; }
-  .elementor-widget-icon-box .elementor-icon-box-icon a {
-    color: inherit; }
-    .elementor-widget-icon-box .elementor-icon-box-icon a:hover {
-      color: inherit; }
-  .elementor-widget-icon-box .elementor-icon-box-icon i {
-    width: 1em;
-    height: 1em; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone, body:not(.elementor-editor-active) .elementor-visible-tablet, body:not(.elementor-editor-active) .elementor-visible-desktop {
