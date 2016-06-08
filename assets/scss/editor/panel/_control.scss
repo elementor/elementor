@@ -427,13 +427,11 @@
 		}
 	}
 
-	// = Choices control for Text Align
-	.elementor-control-text_align {
-		.elementor-control-type-choose {
+	// = Choices control for alignment
+	.elementor-control-text_align, .elementor-control-align, .elementor-control-position {
 
-			.elementor-choices {
-				direction: ltr; // Force ltr also in RTL languages
-			}
+		.elementor-choices {
+			direction: ltr; // Force ltr also in RTL languages
 		}
 	}
 

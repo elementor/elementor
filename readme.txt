@@ -94,7 +94,7 @@ Sure can! Plugin widgets that appear in the WordPress widgets menu will also app
 
 **Do I need to know how to code to use Elementor?**
 
-Absolutly not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
+Absolutely not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
 
 **Will Elementor work with RTL or other languages?**
 
