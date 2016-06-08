@@ -206,7 +206,7 @@ class Widget_Icon_box extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1000,
+						'max' => 100,
 					],
 				],
 				'section' => 'section_style_icon',
