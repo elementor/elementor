@@ -43,7 +43,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
 
-= Be a contributer =
+= Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
 
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
@@ -51,7 +51,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 = Documentation and Support =
 
 - For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/).
-- If you have any more questions, visit our support at [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
+- If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
 - For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/).
 
 = Liked Elementor? =
