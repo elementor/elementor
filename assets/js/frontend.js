@@ -222,9 +222,6 @@
 						slidesToScroll: 1
 					}
 				}
-				// You can unslick at a given breakpoint now by adding:
-				// settings: "unslick"
-				// instead of a settings object
 			]
 		}
 
@@ -232,17 +229,43 @@
 	} );
 
 	// Slider Widget
-	elementorBindUI.addBindEvent( 'slider', function() {
+	elementorBindUI.addBindEvent( 'slideshow', function() {
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
 			$slider = $wrapper.children( '.elementor-slider' );
 
+		var	autoPlay = $slider.data( 'autoplay' ),
+			autoplaySpeed = $slider.data( 'autoplayspeed' ),
+			dots = $slider.data( 'dots' ),
+			arrows = $slider.data( 'arrows' ),
+			infinite = $slider.data( 'infinite' ),
+			pauseOnHover = $slider.data( 'pauseonhover' ),
+			rtl = $slider.data( 'rtl' );
+
 		var options =  {
 			slidesToShow: 1,
-			arrows: ( undefined !== $slider.data( 'arrows' ) ) ? $slider.data( 'arrows' ) : true,
-			dots: ( undefined !== $slider.data( 'dots' ) ) ? $slider.data( 'dots' ) : true,
-			autoPlay: ( undefined !== $slider.data( 'autoPlay' ) ) ? $slider.data( 'autoPlay' ) : true,
-			pauseOnHover: ( undefined !== $slider.data( 'pauseOnHover' ) ) ? $slider.data( 'pauseOnHover' ) : true,
-			rtl: ( undefined !== $slider.data( 'rtl' ) ) ? $slider.data( 'rtl' ) : false
+			autoplay: autoPlay,
+			autoplaySpeed: autoplaySpeed,
+			dots: dots,
+			arrows: arrows,
+			infinite: infinite,
+			pauseOnHover: pauseOnHover,
+			rtl: rtl,
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: 2,
+						slidesToScroll: 2
+					}
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}
+			]
 		}
 
 		$slider.slick( options );
