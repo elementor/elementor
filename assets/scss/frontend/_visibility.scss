@@ -2,7 +2,7 @@
 // Visibility by Devices (based on breakpoints)
 //
 
-@media (max-width: $screen-xs-max) {
+@media (max-width: $screen-sm-max) {
 	.elementor-hidden-phone, .elementor-visible-tablet, .elementor-visible-desktop {
 		display: none;
 	}

@@ -216,7 +216,7 @@ class Widget_Counter extends Widget_Base {
 					$prefix = '<span class="elementor-counter-number-prefix">' . $instance['prefix'] . '</span>';
 				}
 
-				$duration = '<span class="elementor-counter-number" data-duration="' . $instance['duration'] . '" data-to_value="' . $instance['ending_number'] . '">' . $instance['starting_number']. '</span>';
+				$duration = '<span class="elementor-counter-number" data-duration="' . $instance['duration'] . '" data-to_value="' . $instance['ending_number'] . '">' . $instance['starting_number'] . '</span>';
 
 				if ( $instance['suffix'] ) {
 					$suffix = '<span class="elementor-counter-number-suffix">' . $instance['suffix'] . '</span>';

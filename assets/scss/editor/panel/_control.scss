@@ -84,7 +84,7 @@
 
 		&.elementor-label-block {
 
-			&:not(.elementor-control-hidden-label) {
+			&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
 
 				.elementor-control-title {
 					display: block;
@@ -645,6 +645,12 @@
 
 		.elementor-control-structure-current-preset {
 			height: 85px;
+		}
+
+		.elementor-control-structure-reset {
+			padding: 5px 0 0 10px;
+			font-size: 11px;
+			cursor: pointer;
 		}
 
 		.elementor-control-structure-more-presets-title {

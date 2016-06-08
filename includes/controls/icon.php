@@ -647,7 +647,7 @@ class Control_Icon extends Control_Base {
 			'icons' => self::get_icons(),
 		];
 	}
-	
+
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">

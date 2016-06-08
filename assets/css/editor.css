@@ -28,7 +28,7 @@ html {
   background-color: #F1F1F1; }
 
 body {
-  color: #373a3c;
+  color: #6d7882;
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -372,7 +372,6 @@ select {
   z-index: 100000; }
 
 #elementor-panel {
-  color: #373a3c;
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -466,7 +465,6 @@ select {
   #elementor-panel .elementor-panel-box-content {
     padding: 20px 20px 10px; }
   #elementor-panel .elementor-control-title {
-    color: #6d7882;
     font-size: 12px; }
   #elementor-panel .select2-container {
     width: 100% !important; }
@@ -561,7 +559,6 @@ select {
   #elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
     padding-top: 14px; }
   #elementor-panel .panel-elements-category-title {
-    color: #6d7882;
     padding: 7px 15px;
     text-transform: uppercase;
     font-size: 11px;
@@ -656,10 +653,8 @@ select {
       vertical-align: middle; }
   #elementor-panel .elementor-panel-menu-item-icon {
     text-align: center;
-    color: #6d7882;
     width: 55px; }
   #elementor-panel .elementor-panel-menu-item-title {
-    color: #6d7882;
     font-weight: 500; }
     #elementor-panel .elementor-panel-menu-item-title > span {
       color: #39b54a; }
@@ -738,7 +733,7 @@ select {
         display: block; }
         #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section.elementor-open.elementor-hidden-control {
           display: none; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-block:not(.elementor-control-hidden-label) .elementor-control-title {
+    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-block:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) .elementor-control-title {
       display: block;
       margin-bottom: 10px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-field {
@@ -1025,6 +1020,10 @@ select {
       fill: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
     height: 85px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset {
+    padding: 5px 0 0 10px;
+    font-size: 11px;
+    cursor: pointer; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     color: #495157;
     font-weight: bold;
@@ -1219,15 +1218,15 @@ select {
       color: #a4afb7; }
   #elementor-panel #elementor-panel-footer-help-title {
     text-align: left;
-    padding: 10px 0; }
+    padding: 10px 0;
+    color: #d5dadf; }
   #elementor-panel #elementor-panel-footer-help-link .elementor-button {
     width: 100%;
     padding: 10px 0;
-    background-color: #6d7882;
-    color: #fff; }
+    background-color: #495157;
+    color: #d5dadf; }
     #elementor-panel #elementor-panel-footer-help-link .elementor-button:hover {
-      background-color: #fff;
-      color: #6d7882; }
+      background-color: rgba(0, 0, 0, 0.2); }
   #elementor-panel #elementor-panel-footer-save {
     width: 90px;
     padding: 0 10px; }
@@ -1420,9 +1419,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .dialog-widget-content {
   background-color: #fff;
   position: absolute;
-  width: 350px;
-  height: 150px;
-  margin: auto;
   border-radius: 3px;
   box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
   overflow: hidden; }
@@ -1430,16 +1426,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .dialog-widget-header, .dialog-message {
   text-align: center; }
 
-.dialog-widget-header {
-  font-size: 15px;
-  line-height: 1;
-  padding: 20px 0;
-  font-weight: 500;
-  color: #495157; }
-
 .dialog-message {
-  color: #6d7882;
-  padding: 0 20px;
   font-size: 12px; }
 
 .dialog-buttons-wrapper {
@@ -1468,6 +1455,21 @@ body.elementor-editor-preview #elementor-mode-switcher {
     .dialog-buttons-wrapper > button:active {
       background-color: rgba(230, 233, 236, 0.5); }
 
+.dialog-widget-header {
+  line-height: 1;
+  padding: 20px 0;
+  font-weight: 500; }
+
+.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content {
+  margin: auto;
+  width: 350px;
+  height: 150px; }
+.dialog-options-widget .dialog-widget-header, .dialog-confirm-widget .dialog-widget-header {
+  font-size: 15px;
+  color: #495157; }
+.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message {
+  padding: 0 20px; }
+
 .dialog-popup-message {
   height: 155px;
   width: 155px;
@@ -1482,5 +1484,17 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-dialog-message-text {
   text-transform: uppercase; }
+
+.dialog-elementor-modal-widget-header {
+  border-bottom: 1px solid #d5dadf; }
+
+.dialog-elementor-modal-close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px; }
+
+.dialog-elementor-modal-message {
+  padding: 20px; }
 
 /*# sourceMappingURL=editor.css.map */

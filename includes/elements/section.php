@@ -496,9 +496,9 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'options' => [
-					'' =>  __( 'Show', 'elementor' ),
-					'hidden-desktop' =>  __( 'Hide', 'elementor' ),
-				]
+					'' => __( 'Show', 'elementor' ),
+					'hidden-desktop' => __( 'Hide', 'elementor' ),
+				],
 			]
 		);
 
@@ -512,9 +512,9 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'options' => [
-					'' =>  __( 'Show', 'elementor' ),
-					'hidden-tablet' =>  __( 'Hide', 'elementor' ),
-				]
+					'' => __( 'Show', 'elementor' ),
+					'hidden-tablet' => __( 'Hide', 'elementor' ),
+				],
 			]
 		);
 
@@ -528,9 +528,9 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'options' => [
-					'' =>  __( 'Show', 'elementor' ),
-					'hidden-phone' =>  __( 'Hide', 'elementor' ),
-				]
+					'' => __( 'Show', 'elementor' ),
+					'hidden-phone' => __( 'Hide', 'elementor' ),
+				],
 			]
 		);
 

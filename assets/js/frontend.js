@@ -185,27 +185,21 @@
 	// Carousel Widget
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$forNav = $wrapper.children( '.elementor-carousel-for' ),
-			$nav = $wrapper.children( '.elementor-carousel-nav' ),
-			data = $nav.data();
+			$nav = $wrapper.children( '.elementor-carousel' ),
+			data = $nav.data(),
 
-		$forNav.slick( {
-			slidesToShow: 1,
-			slidesToScroll: 1,
-			arrows: false,
-			fade: true,
-			asNavFor: $nav
-		} );
+			options = {
+				dots: true,
+				arrows: true
+			};
 
-		$nav.slick( {
-			slidesToShow: data.slideToShow,
-			slidesToScroll: data.slideToScroll,
-			asNavFor: $forNav,
-			dots: true,
-			arrows: true,
-			focusOnSelect: true,
-			autoplay: data.autoPlay
-		} );
+		if ( data ) {
+			$.each( data, function( key, value ) {
+				options[ key ] = value;
+			} );
+		}
+
+		$nav.slick( options );
 	} );
 
 	// Slider Widget
@@ -238,13 +232,6 @@
 
 		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
 
-		var changeVideoSize = function() {
-			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
-				size = calcVideosSize();
-
-			$video.width( size.width ).height( size.height );
-		};
-
 		var calcVideosSize = function() {
 			var containerWidth = ui.backgroundVideoContainer.outerWidth(),
 				containerHeight = ui.backgroundVideoContainer.outerHeight(),
@@ -259,6 +246,13 @@
 				width: isWidthFixed ? containerWidth : ratioHeight,
 				height: isWidthFixed ? ratioWidth : containerHeight
 			};
+		};
+
+		var changeVideoSize = function() {
+			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
+				size = calcVideosSize();
+
+			$video.width( size.width ).height( size.height );
 		};
 
 		var prepareYTVideo = function( YT, videoID ) {

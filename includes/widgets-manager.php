@@ -21,11 +21,12 @@ class Widgets_Manager {
 			'button',
 			'divider',
 			'spacer',
+			'image-box',
 			'google-maps',
-			'counter',
-			'progress',
 			'icon',
 			'icon-list',
+			'counter',
+			'progress',
 			'tabs',
 			'accordion',
 			'toggle',
@@ -39,7 +40,6 @@ class Widgets_Manager {
 			$build_widgets_filename[] = 'gallery';
 			$build_widgets_filename[] = 'carousel';
 			$build_widgets_filename[] = 'slider';
-			$build_widgets_filename[] = 'image-box';
 			$build_widgets_filename[] = 'icon-box';
 		}
 

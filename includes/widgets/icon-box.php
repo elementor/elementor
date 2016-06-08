@@ -27,6 +27,22 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'view',
+			[
+				'label' => __( 'View', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_icon',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'stacked' => __( 'Stacked', 'elementor' ),
+					'framed' => __( 'Framed', 'elementor' ),
+				],
+				'default' => 'default',
+				'prefix_class' => 'elementor-view-',
+			]
+		);
+
+		$this->add_control(
 			'icon',
 			[
 				'label' => __( 'Choose Icon', 'elementor' ),
@@ -37,7 +53,25 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text_title',
+			'shape',
+			[
+				'label' => __( 'Shape', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_icon',
+				'options' => [
+					'circle' => __( 'Circle', 'elementor' ),
+					'square' => __( 'Square', 'elementor' ),
+				],
+				'default' => 'circle',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'prefix_class' => 'elementor-shape-',
+			]
+		);
+
+		$this->add_control(
+			'title_text',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -49,7 +83,7 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text',
+			'description_text',
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
@@ -83,6 +117,28 @@ class Widget_Icon_box extends Widget_Base {
 					],
 				],
 				'section' => 'section_icon',
+				'toggle' => false,
+			]
+		);
+
+		$this->add_control(
+			'title_size',
+			[
+				'label' => __( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => __( 'H1', 'elementor' ),
+					'h2' => __( 'H2', 'elementor' ),
+					'h3' => __( 'H3', 'elementor' ),
+					'h4' => __( 'H4', 'elementor' ),
+					'h5' => __( 'H5', 'elementor' ),
+					'h6' => __( 'H6', 'elementor' ),
+					'div' => __( 'div', 'elementor' ),
+					'span' => __( 'span', 'elementor' ),
+					'p' => __( 'p', 'elementor' ),
+				],
+				'default' => 'h3',
+				'section' => 'section_image',
 			]
 		);
 
@@ -93,28 +149,6 @@ class Widget_Icon_box extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_icon',
-			]
-		);
-
-		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => __( 'Sample Icon', 'elementor' ),
-				'title' => __( 'Input an alternative text when the icon can\'t to be displayed', 'elementor' ),
-				'section' => 'section_icon',
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-				'section' => 'section_content',
 			]
 		);
 
@@ -144,8 +178,12 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-text.elementor-position-right' => 'padding-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-text.elementor-position-left' => 'padding-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper.elementor-position-right .elementor-icon-box-icon' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper.elementor-position-left .elementor-icon-box-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper.elementor-position-top .elementor-icon-box-icon' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'view!' => 'default',
 				],
 			]
 		);
@@ -167,7 +205,7 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_icon',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -191,6 +229,97 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_padding',
+			[
+				'label' => __( 'Icon Padding', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'default' => [
+					'size' => 1.5,
+					'unit' => 'em',
+				],
+				'range' => [
+					'em' => [
+						'min' => 0,
+					],
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'border_width',
+			[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'view' => 'framed',
+				],
+			]
+		);
+
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -230,13 +359,13 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-box-content' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
 
 		$this->add_control(
-			'title',
+			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -253,7 +382,7 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-text h3' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -263,14 +392,14 @@ class Widget_Icon_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-text h3',
+				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
 			]
 		);
 
 		$this->add_control(
-			'description',
+			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -287,7 +416,7 @@ class Widget_Icon_box extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-text p' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
 			]
@@ -297,20 +426,60 @@ class Widget_Icon_box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-text p',
+				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
+			]
+		);
+
+		$this->add_control(
+			'section_hover',
+			[
+				'label' => __( 'Icon Hover', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'hover_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon-box-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon-box-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon-box-icon:hover' => 'color: {{VALUE}};',
+				],
 			]
 		);
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['icon'] ) ) {
-			return;
-		}
 		$icon_html = sprintf( '<div class="elementor-icon-box-wrapper %s">', $instance['position'] );
-
-		$icon_html .= sprintf( '<div class="elementor-icon-box"><i class="%s"></i></div>', esc_attr( $instance['icon'] ) );
+		if ( ! empty( $instance['icon'] ) ) {
+			$icon_html .= sprintf( '<div class="elementor-icon-box-icon"><i class="%s"></i></div>', esc_attr( $instance['icon'] ) );
+		}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -320,15 +489,29 @@ class Widget_Icon_box extends Widget_Base {
 			$icon_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $icon_html );
 		}
 
-		if ( ! empty( $instance['text_title'] ) ) {
-			$icon_html .= sprintf( '<div class="elementor-icon-text"><h3>%s</h3>', $instance['text_title'] );
-		}
+		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
+		if ( $has_content ) {
+			$icon_html .= '<div class="elementor-icon-box-content">';
 
-		if ( ! empty( $instance['text'] ) ) {
-			$icon_html .= sprintf( '<p>%s</p>', $instance['text'] );
-		}
+			if ( ! empty( $instance['title_text'] ) ) {
+				$title_html = $instance['title_text'];
+				if ( ! empty( $instance['link']['url'] ) ) {
+					$target = '';
+					if ( ! empty( $instance['link']['is_external'] ) ) {
+						$target = ' target="_blank"';
+					}
+					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
+				}
+				$icon_html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
+			}
 
-		$icon_html .= '</div></div>';
+			if ( ! empty( $instance['description_text'] ) ) {
+				$icon_html .= sprintf( '<p class="elementor-icon-box-description">%s</p>', $instance['description_text'] );
+			}
+
+			$icon_html .= '</div>';
+		}
+		$icon_html .= '</div>';
 
 		echo $icon_html;
 	}
@@ -336,27 +519,37 @@ class Widget_Icon_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
+		var icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
 		if ( '' !== settings.icon ) {
-			var icon_html = '<div class="elementor-icon-box-wrapper ' + settings.position + '">';
-			icon_html += '<div class="elementor-icon-box"><i class="' + settings.icon + '"></i></div>';
-
-			if ( settings.link.url ) {
-				var link = settings.link;
-				icon_html = '<a href="' + link.url + '">' + icon_html + '</a>';
-			}
-
-			if ( '' !== settings.text_title ) {
-				icon_html += '<div class="elementor-icon-text"><h3>' + settings.text_title + '</h3>';
-			}
-
-			if ( '' !== settings.text ) {
-				icon_html += '<p>' + settings.text + '</p>';
-			}
-
-			icon_html += '</div></div>';
-
-			print( icon_html );
+			icon_html += '<div class="elementor-icon-box-icon"><i class="' + settings.icon + '"></i></div>';
 		}
+
+		if ( '' !== settings.link.url ) {
+			icon_html = '<a href="' + settings.link.url + '">' + icon_html + '</a>';
+		}
+
+		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
+		if ( hasContent ) {
+			icon_html += '<div class="elementor-icon-box-content">';
+
+			if ( '' !== settings.title_text ) {
+				var title_html = settings.title_text;
+
+				if ( '' !== settings.link.url ) {
+					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
+				}
+				icon_html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + title_html + '</' + settings.title_size  + '>';
+			}
+	
+			if ( '' !== settings.description_text ) {
+				icon_html += '<p class="elementor-icon-box-description">' + settings.description_text + '</p>';
+			}
+
+			icon_html += '</div>';
+		}
+		icon_html += '</div>';
+
+		print( icon_html );
 		%>
 		<?php
 	}

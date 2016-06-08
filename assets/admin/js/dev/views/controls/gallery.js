@@ -50,7 +50,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 			state: 'gallery'
 		};
 
-		if ( '' !== ids ) {
+		if ( 0 < ids.length ) {
 			options.selection = this.fetchSelection( ids );
 			options.state = 'gallery-edit';
 		}

@@ -100,7 +100,7 @@ abstract class Widget_Base extends Element_Base {
 				'section' => '_section_style',
 				'default' => '',
 				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class {color: red;}', 'elementor' ),
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -134,9 +134,9 @@ abstract class Widget_Base extends Element_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'options' => [
-					'' =>  __( 'Show', 'elementor' ),
-					'hidden-desktop' =>  __( 'Hide', 'elementor' ),
-				]
+					'' => __( 'Show', 'elementor' ),
+					'hidden-desktop' => __( 'Hide', 'elementor' ),
+				],
 			]
 		);
 
@@ -150,9 +150,9 @@ abstract class Widget_Base extends Element_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'options' => [
-					'' =>  __( 'Show', 'elementor' ),
-					'hidden-tablet' =>  __( 'Hide', 'elementor' ),
-				]
+					'' => __( 'Show', 'elementor' ),
+					'hidden-tablet' => __( 'Hide', 'elementor' ),
+				],
 			]
 		);
 
@@ -166,9 +166,9 @@ abstract class Widget_Base extends Element_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'options' => [
-					'' =>  __( 'Show', 'elementor' ),
-					'hidden-phone' =>  __( 'Hide', 'elementor' ),
-				]
+					'' => __( 'Show', 'elementor' ),
+					'hidden-phone' => __( 'Hide', 'elementor' ),
+				],
 			]
 		);
 	}
