@@ -105,8 +105,8 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 ## Screenshots ##
 
 1. Elementor's intuitive and user friendly page builder panel lets you edit the page live and real time.
-2. Choose which column structure you wish to add to a new section.
-3. Control every element of styling for the Heading widget.
+2. Control every element of styling for the Heading widget.
+3. Choose which column structure you wish to add to a new section.
 4. Settings page.
 
 ## Changelog ##
