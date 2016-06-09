@@ -1018,6 +1018,14 @@ select {
     height: 26px;
     background-color: #556068;
     color: #FFFFFF; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-add-gallery {
+    display: none;
+    display: inline-block;
+    width: 45%; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-edit-gallery {
+    display: none;
+    display: inline-block;
+    width: 45%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset {
     border: 1px solid #e6e9ec;
     padding: 3px;

@@ -3994,8 +3994,20 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		if ( _.isEmpty( this.getControlValue() ) ) {
+		var ids = this.getControlValue();
+
+		if ( _.isEmpty( ids ) ) {
 			this.ui.controlMedia.addClass( 'media-empty' );
+		}
+
+		if ( 0 < ids.length ) {
+			this.ui.createGallery.hide();
+			this.ui.addGallery.show();
+			this.ui.editGallery.show();
+		} else {
+			this.ui.createGallery.show();
+			this.ui.addGallery.hide();
+			this.ui.editGallery.hide();
 		}
 	},
 
@@ -4074,16 +4086,6 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	 */
 	select: function( selection ) {
 		var ids = selection.pluck( 'id' );
-
-		if ( 0 < ids.length ) {
-			this.ui.createGallery.hide();
-			this.ui.addGallery.show();
-			this.ui.editGallery.show();
-		} else {
-			this.ui.createGallery.show();
-			this.ui.addGallery.hide();
-			this.ui.editGallery.hide();
-		}
 
 		this.setValue( ids.toString() );
 		this.render();

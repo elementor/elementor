@@ -19,8 +19,8 @@ class Control_Gallery extends Control_Base {
 				<div class="elementor-control-media">
 					<div class="elementor-control-media-upload-button">
 						<button class="elementor-gallery-create-gallery elementor-button"><?php _e( 'Create A New Gallery', 'elementor' ); ?></button>
-						<button class="elementor-gallery-add-gallery elementor-button" style="display: none;"><?php _e( 'Add To Gallery', 'elementor' ); ?></button>
-						<button class="elementor-gallery-edit-gallery elementor-button" style="display: none;"><?php _e( 'Edit Gallery', 'elementor' ); ?></button>
+						<button class="elementor-gallery-add-gallery elementor-button"><?php _e( 'Add To Gallery', 'elementor' ); ?></button>
+						<button class="elementor-gallery-edit-gallery elementor-button"><?php _e( 'Edit Gallery', 'elementor' ); ?></button>
 					</div>
 					<div class="elementor-control-media-image-area">
 						<div class="elementor-control-media-image"></div>
