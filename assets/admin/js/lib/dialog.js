@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v1.1.1
+ * Dialogs Manager v1.2.0
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -158,6 +158,13 @@
 			self.addComponent('widget');
 
 			self.addComponent('message');
+
+			var id = self.getSettings('id');
+
+			if (id) {
+
+				self.getComponents('widget').attr('id', id);
+			}
 		};
 
 		var initSettings = function (parent, userSettings) {
@@ -173,7 +180,7 @@
 			settings.classes = {
 				globalPrefix: parentSettings.classPrefix,
 				prefix: prefix,
-				Widget: 'dialog-widget',
+				widget: 'dialog-widget',
 				linkedActive: prefix + '-linked-active'
 			};
 
