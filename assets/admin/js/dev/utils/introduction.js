@@ -1,7 +1,8 @@
 var Introduction;
 
 Introduction = function() {
-	var modal;
+	var self = this,
+		modal;
 
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
@@ -10,6 +11,12 @@ Introduction = function() {
 		} );
 
 		modal.getComponents( 'closeButton' ).on( 'click', self.setIntroductionViewed );
+
+		modal.addButton({
+			name: 'show-later',
+			text: elementor.translate( 'Show Me Later' ),
+			callback: modal.hide
+		});
 	};
 
 	this.getModal = function() {
