@@ -233,13 +233,16 @@
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
 			$slider = $wrapper.children( '.elementor-slider' );
 
-		var autoPlay = $slider.data( 'autoplay' ),
+		var type = $slider.data( 'type' ),
+			autoPlay = $slider.data( 'autoplay' ),
 			autoplaySpeed = $slider.data( 'autoplayspeed' ),
 			dots = $slider.data( 'dots' ),
 			arrows = $slider.data( 'arrows' ),
 			infinite = $slider.data( 'infinite' ),
 			pauseOnHover = $slider.data( 'pauseonhover' ),
-			rtl = $slider.data( 'rtl' );
+			rtl = $slider.data( 'rtl' ),
+			speed = $slider.data( 'speed' ),
+			fade = $slider.data( 'fade' );
 
 		var options =  {
 			slidesToShow: 1,
@@ -250,23 +253,24 @@
 			infinite: infinite,
 			pauseOnHover: pauseOnHover,
 			rtl: rtl,
-			responsive: [
-				{
-					breakpoint: 767,
-					settings: {
-						slidesToShow: 2,
-						slidesToScroll: 2
-					}
-				},
-				{
-					breakpoint: 480,
-					settings: {
-						slidesToShow: 1,
-						slidesToScroll: 1
-					}
-				}
-			]
+			speed: speed,
+			fade: fade
 		};
+
+		if ( 'carusel' === type ) {
+			var $sliderCarusel = $slider.clone().attr( 'class', 'elementor-slider-carusel' );
+			$sliderCarusel.insertAfter( $slider );
+			options.arrows = false;
+			options.asNavFor = $sliderCarusel;
+
+			$sliderCarusel.slick({
+				slidesToShow: 3,
+				slidesToScroll: 1,
+				asNavFor: $slider,
+				dots: true,
+				focusOnSelect: true
+			});
+		}
 
 		$slider.slick( options );
 	} );
