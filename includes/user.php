@@ -49,7 +49,7 @@ class User {
 			return false;
 		}
 
-		return self::get_introduction_properties();
+		return self::get_current_introduction();
 	}
 
 	public static function set_introduction_viewed() {
@@ -59,7 +59,9 @@ class User {
 			$user_introduction_meta = [];
 		}
 
-		$user_introduction_meta[ ELEMENTOR_VERSION ] = true;
+		$current_introduction = self::get_current_introduction();
+
+		$user_introduction_meta[ $current_introduction['version'] ] = true;
 
 		$user = wp_get_current_user();
 
@@ -77,13 +79,16 @@ class User {
 	private static function is_user_should_view_introduction() {
 		$user_introduction_meta = self::get_introduction_meta();
 
-		return empty( $user_introduction_meta[ ELEMENTOR_VERSION ] );
+		$current_introduction = self::get_current_introduction();
+
+		return empty( $user_introduction_meta[ $current_introduction['version'] ] );
 	}
 
-	private static function get_introduction_properties() {
+	private static function get_current_introduction() {
 		return [
 			'title' => __( 'Please view our cool video' ),
 			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/embed/QNJL6nfu__Q" frameborder="0" allowfullscreen></iframe></div>',
+			'version' => 1,
 		];
 	}
 }
