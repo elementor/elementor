@@ -2,6 +2,9 @@
 @import "../helpers/variables";
 @import "../helpers/mixins";
 
+// Common
+@import "../common/common";
+
 // Core CSS
 @import "_global";
 @import "_grid";
