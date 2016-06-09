@@ -17,6 +17,8 @@ class Group_Control_Image_size extends Group_Control_Base {
 			$image_sizes[ $image_size ] = ucwords( str_replace( '_', ' ', $image_size ) );
 		}
 
+		$image_sizes['full'] = _x( 'Full', 'Image Size Control', '' );
+
 		return $image_sizes;
 	}
 
