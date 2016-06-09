@@ -2,7 +2,8 @@ var Introduction;
 
 Introduction = function() {
 	var self = this,
-		modal;
+		modal,
+		infoDialog;
 
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
@@ -10,7 +11,11 @@ Introduction = function() {
 			contentWidth: 800
 		} );
 
-		modal.getComponents( 'closeButton' ).on( 'click', self.setIntroductionViewed );
+		modal.getComponents( 'closeButton' ).on( 'click', function() {
+			self.setIntroductionViewed();
+
+			self.getInfoDialog().show();
+		} );
 
 		modal.addButton({
 			name: 'show-later',
@@ -19,12 +24,26 @@ Introduction = function() {
 		});
 	};
 
+	var initInfoDialog = function() {
+		infoDialog = elementor.dialogsManager.createWidget( 'alert' );
+
+		infoDialog.setMessage( elementor.translate( 'You can always show this introduction again' ) );
+	};
+
 	this.getModal = function() {
 		if ( ! modal ) {
 			initModal();
 		}
 
 		return modal;
+	};
+
+	this.getInfoDialog = function() {
+		if ( ! infoDialog ) {
+			initInfoDialog();
+		}
+
+		return infoDialog;
 	};
 
 	this.startIntroduction = function() {
