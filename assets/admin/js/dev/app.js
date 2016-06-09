@@ -194,6 +194,8 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		NProgress.done();
+
+		this.introduction.startIntroduction();
 	},
 
 	onEditModeSwitched: function() {
