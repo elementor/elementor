@@ -3980,15 +3980,17 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
+		ui.buttonContainer = '.elementor-control-media-upload-button';
+		ui.createGallery = '.elementor-gallery-create-gallery';
+		ui.addGallery = '.elementor-gallery-add-gallery';
+		ui.editGallery = '.elementor-gallery-edit-gallery.elementor-button';
 		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
-		ui.deleteButton = '.elementor-control-media-delete';
 
 		return ui;
 	},
 
 	childEvents: {
-		'click @ui.frameOpeners': 'openFrame',
-		'click @ui.deleteButton': 'deleteImage'
+		'click @ui.frameOpeners': 'openFrame'
 	},
 
 	onReady: function() {
@@ -4073,6 +4075,16 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	select: function( selection ) {
 		var ids = selection.pluck( 'id' );
 
+		if ( 0 < ids.length ) {
+			this.ui.createGallery.hide();
+			this.ui.addGallery.show();
+			this.ui.editGallery.show();
+		} else {
+			this.ui.createGallery.show();
+			this.ui.addGallery.hide();
+			this.ui.editGallery.hide();
+		}
+
 		this.setValue( ids.toString() );
 		this.render();
 	},
@@ -4086,6 +4098,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 
 		this.$el.remove();
 	}
+
 } );
 
 module.exports = ControlMediaItemView;
