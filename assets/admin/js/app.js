@@ -176,8 +176,7 @@ App = Marionette.Application.extend( {
 
 		this.addRegions( {
 			sections: iframeRegion,
-			panel: '#elementor-panel',
-			modal: '#elementor-modal-area'
+			panel: '#elementor-panel'
 		} );
 
 		this.getRegion( 'sections' ).show( new SectionsCollectionView( {
