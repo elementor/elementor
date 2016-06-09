@@ -344,7 +344,7 @@ class Frontend {
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
-		if ( ! is_singular() || ! Utils::is_current_user_can_edit( $post_id ) ) {
+		if ( ! is_singular() || ! User::is_current_user_can_edit( $post_id ) ) {
 			return;
 		}
 

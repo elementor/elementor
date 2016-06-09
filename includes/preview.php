@@ -32,7 +32,7 @@ class Preview {
 	 * @return bool
 	 */
 	public function is_preview_mode() {
-		if ( ! Utils::is_current_user_can_edit() ) {
+		if ( ! User::is_current_user_can_edit() ) {
 			return false;
 		}
 

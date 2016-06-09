@@ -58,7 +58,7 @@ class Editor {
 	}
 
 	public function is_edit_mode() {
-		if ( ! Utils::is_current_user_can_edit() ) {
+		if ( ! User::is_current_user_can_edit() ) {
 			return false;
 		}
 
