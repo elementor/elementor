@@ -72,19 +72,9 @@
 
 .dialog-options-widget, .dialog-confirm-widget {
 
-	.dialog-widget-content {
-		margin: auto;
-		width: 350px;
-	}
-
 	.dialog-widget-header {
 		font-size: 15px;
 		color: $editor-darkest;
-	}
-
-	.dialog-message {
-		padding: 0 20px;
-		height: 50px;
 	}
 
 	.dialog-buttons-wrapper {
@@ -99,6 +89,29 @@
 			&:focus {
 				background-color: $editor-background;
 			}
+		}
+	}
+}
+
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+
+	.dialog-widget-content {
+		margin: auto;
+		width: 350px;
+	}
+
+	.dialog-message {
+		padding: 0 20px;
+		height: 50px;
+	}
+}
+
+.dialog-alert-widget {
+
+	.dialog-buttons-wrapper {
+
+		> button {
+			width: 100%;
 		}
 	}
 }
