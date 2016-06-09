@@ -8,6 +8,8 @@ Introduction = function() {
 			id: 'elementor-introduction',
 			contentWidth: 800
 		} );
+
+		modal.getComponents( 'closeButton' ).on( 'click', self.setIntroductionViewed );
 	};
 
 	this.getModal = function() {
@@ -28,8 +30,7 @@ Introduction = function() {
 		this.getModal()
 		    .setHeaderMessage( introductionConfig.title )
 		    .setMessage( introductionConfig.content )
-		    .show()
-		    .on( 'hide', this.setIntroductionViewed );
+		    .show();
 	};
 
 	this.setIntroductionViewed = function() {
