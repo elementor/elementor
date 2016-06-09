@@ -14,7 +14,7 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'favorite';
+		return 'icon-box';
 	}
 
 	protected function _register_controls() {
