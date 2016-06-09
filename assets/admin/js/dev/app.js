@@ -195,7 +195,9 @@ App = Marionette.Application.extend( {
 
 		NProgress.done();
 
-		this.introduction.startIntroduction();
+		setTimeout( _.bind( function() {
+			this.introduction.startIntroduction();
+		}, this ), 2500 );
 	},
 
 	onEditModeSwitched: function() {
