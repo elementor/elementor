@@ -153,8 +153,8 @@ class Widget_SlideShow extends Widget_Base {
 				$slides = '';
 				$ids = explode( ',', $instance['slider'] );
 
-				foreach ( $ids as $attach_id ) :
-					$image = wp_get_attachment_image_src( $attach_id, $instance['thumbnail_size'] );
+				foreach ( $ids as $attachment_id ) :
+					$image = wp_get_attachment_image_src( $attachment_id, $instance['thumbnail_size'] );
 					$slides .= '<div><img src="' . $image[0] . '" /></div>';
 				endforeach;
 
