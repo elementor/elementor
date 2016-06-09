@@ -9,6 +9,12 @@ class Group_Control_Background extends Group_Control_Base {
 		return 'background';
 	}
 
+	protected function _get_child_default_args() {
+		return [
+			'types' => [ 'classic' ],
+		];
+	}
+
 	protected function _get_controls( $args ) {
 		$available_types = [
 			'classic' => [
@@ -187,11 +193,5 @@ class Group_Control_Background extends Group_Control_Base {
 		// End Background:video
 
 		return $controls;
-	}
-
-	protected function _get_child_default_args() {
-		return [
-			'types' => [ 'classic' ],
-		];
 	}
 }
