@@ -1,4 +1,14 @@
 @charset "UTF-8";
+.elementor-video-wrapper {
+  position: relative;
+  height: 0; }
+  .elementor-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%; }
+
 .elementor-clearfix:before, .elementor-clearfix:after {
   content: " ";
   display: table; }
@@ -1432,11 +1442,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .dialog-buttons-wrapper {
   border-top: 1px solid #e6e9ec;
-  position: absolute;
-  bottom: 0;
-  width: 100%; }
+  text-align: center; }
   .dialog-buttons-wrapper > button {
-    width: 50%;
     border: none;
     background: none;
     font-size: 15px;
@@ -1445,14 +1452,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
     outline: none;
     margin: 0; }
     .dialog-buttons-wrapper > button:first-child {
-      border-right: 1px solid #e6e9ec;
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {
       color: #b01b1b; }
     .dialog-buttons-wrapper > button.dialog-take_over {
       color: #39b54a; }
-    .dialog-buttons-wrapper > button:focus {
-      background-color: #e6e9ec; }
     .dialog-buttons-wrapper > button:active {
       background-color: rgba(230, 233, 236, 0.5); }
 
@@ -1461,15 +1465,25 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 20px 0;
   font-weight: 500; }
 
-.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content {
-  margin: auto;
-  width: 350px;
-  height: 150px; }
 .dialog-options-widget .dialog-widget-header, .dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
   color: #495157; }
-.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message {
-  padding: 0 20px; }
+.dialog-options-widget .dialog-buttons-wrapper > button, .dialog-confirm-widget .dialog-buttons-wrapper > button {
+  width: 50%; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:first-child, .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
+    border-left: 1px solid #e6e9ec; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:focus, .dialog-confirm-widget .dialog-buttons-wrapper > button:focus {
+    background-color: #e6e9ec; }
+
+.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+  margin: auto;
+  width: 350px; }
+.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+  padding: 0 20px;
+  height: 50px; }
+
+.dialog-alert-widget .dialog-buttons-wrapper > button {
+  width: 100%; }
 
 .dialog-popup-message {
   height: 155px;
@@ -1497,5 +1511,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .dialog-elementor-modal-message {
   padding: 20px; }
+
+#elementor-introduction .elementor-video-wrapper {
+  padding-bottom: 56.2%; }
+#elementor-introduction .dialog-elementor-modal-show-later {
+  width: 100%; }
 
 /*# sourceMappingURL=editor-rtl.css.map */
