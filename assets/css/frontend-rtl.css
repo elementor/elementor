@@ -352,7 +352,7 @@
   text-align: right; }
 .elementor-button-wrapper.elementor-align-left {
   text-align: left; }
-.elementor-button-wrapper.elementor-align-block .elementor-button {
+.elementor-button-wrapper.elementor-align-justify .elementor-button {
   width: 100%; }
 
 .elementor-button {
