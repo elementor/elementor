@@ -224,23 +224,6 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'content_vertical_alignment',
-			[
-				'label' => __( 'Content Vertical Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'top' => __( 'Top', 'elementor' ),
-					'middle' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-				],
-				'default' => 'top',
-				'section' => 'section_style_image',
-				'tab' => self::TAB_STYLE,
-				'prefix_class' => 'elementor-vertical-align-',
-			]
-		);
-
-		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -277,6 +260,23 @@ class Widget_Image_box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-content' => 'text-align: {{VALUE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'content_vertical_alignment',
+			[
+				'label' => __( 'Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'top' => __( 'Top', 'elementor' ),
+					'middle' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'default' => 'top',
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
 
@@ -373,13 +373,17 @@ class Widget_Image_box extends Widget_Base {
 
 			if ( ! empty( $instance['title_text'] ) ) {
 				$title_html = $instance['title_text'];
+
 				if ( ! empty( $instance['link']['url'] ) ) {
 					$target = '';
+
 					if ( ! empty( $instance['link']['is_external'] ) ) {
 						$target = ' target="_blank"';
 					}
+
 					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
 				}
+
 				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
 			}
 
@@ -389,6 +393,7 @@ class Widget_Image_box extends Widget_Base {
 
 			$html .= '</div>';
 		}
+
 		$html .= '</div>';
 
 		echo $html;
@@ -398,34 +403,39 @@ class Widget_Image_box extends Widget_Base {
 		?>
 		<%
 		var html = '<div class="elementor-image-box-wrapper">';
-		if ( '' !== settings.image.url ) {
+
+		if ( settings.image.url ) {
 			var imageHtml = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" />';
 
-			if ( '' !== settings.link.url ) {
+			if ( settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
 			}
+
 			html += '<figure class="elementor-image-box-img">' + imageHtml + '</figure>';
 		}
 
-		var hasContent = '' !== settings.title_text || '' !== settings.description_text;
+		var hasContent = !! ( settings.title_text || settings.description_text );
+
 		if ( hasContent ) {
 			html += '<div class="elementor-image-box-content">';
 
-			if ( '' !== settings.title_text ) {
+			if ( settings.title_text ) {
 				var title_html = settings.title_text;
 
-				if ( '' !== settings.link.url ) {
+				if ( settings.link.url ) {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
+
 				html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + title_html + '</' + settings.title_size  + '>';
 			}
 
-			if ( '' !== settings.description_text ) {
+			if ( settings.description_text ) {
 				html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
 			}
 
 			html += '</div>';
 		}
+
 		html += '</div>';
 
 		print( html );

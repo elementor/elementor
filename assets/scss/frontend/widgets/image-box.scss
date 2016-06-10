@@ -7,63 +7,77 @@
 		overflow: hidden;
 	}
 
-	&.elementor-position-left,
-	&.elementor-position-right {
+	@media (min-width: $screen-md-min) {
 
-		.elementor-image-box-wrapper {
-			display: flex;
+		&.elementor-position- {
+
+			&left, &right {
+
+				.elementor-image-box-wrapper {
+					display: flex;
+				}
+			}
+
+			&right {
+
+				.elementor-image-box-wrapper {
+					text-align: getEndDirection();
+					flex-direction: getValueByDirection(row-reverse, row);
+				}
+			}
+
+			&left {
+
+				.elementor-image-box-wrapper {
+					text-align: getStartDirection();
+					flex-direction: getValueByDirection(row, row-reverse);
+				}
+			}
+
+			&top {
+
+				.elementor-image-box-img {
+					margin: auto;
+				}
+			}
+		}
+
+		&.elementor-vertical-align- {
+
+			&top {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-start;
+				}
+			}
+
+			&middle {
+
+				.elementor-image-box-wrapper {
+					align-items: center;
+				}
+			}
+
+			&bottom {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-end;
+				}
+			}
 		}
 	}
 
-	&.elementor-position-right {
+	@media (max-width: $screen-sm-max) {
 
-		.elementor-image-box-wrapper {
-			text-align: getEndDirection();
-			flex-direction: getValueByDirection(row-reverse, row);
-		}
-	}
-
-	&.elementor-position-left {
-
-		.elementor-image-box-wrapper {
-			text-align: getStartDirection();
-			flex-direction: getValueByDirection(row, row-reverse);
-		}
-	}
-
-	&.elementor-position-top {
-
-		.elementor-image-box-wrapper {
-			text-align: center;
-		}
-
+		// TEMP code to override the image spacing
 		.elementor-image-box-img {
-			margin: auto;
+			margin-left: auto !important;
+			margin-right: auto !important;
 		}
 	}
 
-	&.elementor-vertical-align- {
-
-		&top {
-
-			.elementor-image-box-wrapper {
-				align-items: flex-start;
-			}
-		}
-
-		&middle {
-
-			.elementor-image-box-wrapper {
-				align-items: center;
-			}
-		}
-
-		&bottom {
-
-			.elementor-image-box-wrapper {
-				align-items: flex-end;
-			}
-		}
+	.elementor-image-box-wrapper {
+		text-align: center;
 	}
 
 	.elementor-image-box-description {

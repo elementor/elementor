@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.2.0  
+**Stable tag:** 0.2.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -40,12 +40,12 @@ Elementor works on any old or new theme. Switching between themes is no problem.
 ### RTL supported, multilingual and translatable ###
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
-### Translators: ###
+### Translations: ###
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
 
-### Be a contributer ###
+### Be a contributor ###
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
 
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
@@ -53,7 +53,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 ### Documentation and Support ###
 
 - For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/).
-- If you have any more questions, visit our support at [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
+- If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
 - For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/).
 
 ### Liked Elementor? ###
@@ -96,7 +96,7 @@ Sure can! Plugin widgets that appear in the WordPress widgets menu will also app
 
 **Do I need to know how to code to use Elementor?**
 
-Absolutly not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
+Absolutely not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
 
 **Will Elementor work with RTL or other languages?**
 
@@ -105,11 +105,20 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 ## Screenshots ##
 
 1. Elementor's intuitive and user friendly page builder panel lets you edit the page live and real time.
-2. Choose which column structure you wish to add to a new section.
-3. Control every element of styling for the Heading widget.
+2. Control every element of styling for the Heading widget.
+3. Choose which column structure you wish to add to a new section.
 4. Settings page.
 
 ## Changelog ##
+
+### 0.2.3 - 08.06.2016 ###
+* Tweak! - Added HTML tag control for icon box title
+
+### 0.2.2 - 08.06.2016 ###
+* Tweak! - Minor change from the last release
+
+### 0.2.1 - 08.06.2016 ###
+* New! - Icon Box widget
 
 ### 0.2.0 - 07.06.2016 ###
 * New! - Image Box widget
