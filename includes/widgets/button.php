@@ -96,7 +96,7 @@ class Widget_Button extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
-					'block' => [
+					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'align-justify',
 					],
