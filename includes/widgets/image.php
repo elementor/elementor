@@ -234,7 +234,7 @@ class Widget_Image extends Widget_Base {
 						'icon' => 'align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justify', 'elementor' ),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'align-justify',
 					],
 				],

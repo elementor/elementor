@@ -385,7 +385,7 @@ class Widget_Icon_box extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
-					'block' => [
+					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'align-justify',
 					],
