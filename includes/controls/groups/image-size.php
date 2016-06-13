@@ -35,6 +35,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 		}
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
+		$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
 
 		return $image_sizes;
 	}
@@ -54,6 +55,39 @@ class Group_Control_Image_size extends Group_Control_Base {
 			'default' => $default_value,
 		];
 
+		$controls['custom_dimension'] = [
+			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
+			'type' => Controls_Manager::TEXT,
+			'condition' => [
+				'size' => [ 'custom' ],
+			],
+		];
+
 		return $controls;
+	}
+
+	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
+		$size = $instance[ $group_name . '_size' ];
+		//$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
+
+		if ( 'custom' !== $size ) {
+			$attachment_size = $size;
+		} else {
+			// Use BFI_Thumb script
+			// TODO: Please rewrite this code
+			if ( ! function_exists( 'bfi_thumb' ) ) {
+				require( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
+			}
+
+			$attachment_size = [
+				400,
+				400,
+				'bfi_thumb' => true,
+				'crop' => true,
+			];
+		}
+
+		$image_src = wp_get_attachment_image_src( $attachment_id, $attachment_size );
+		return ! empty( $image_src[0] ) ? $image_src[0] : '';
 	}
 }
