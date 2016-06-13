@@ -39,7 +39,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 	<div id="elementor-panel"></div>
-	<div id="elementor-modal-area"></div>
 </div>
 <?php wp_footer(); ?>
 </body>

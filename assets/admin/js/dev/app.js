@@ -7,6 +7,7 @@ App = Marionette.Application.extend( {
 	schemes: require( 'elementor-utils/schemes' ),
 	presetsFactory: require( 'elementor-utils/presets-factory' ),
 	modals: require( 'elementor-utils/modals' ),
+	introduction: require( 'elementor-utils/introduction' ),
 
 	// Channels
 	editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -116,6 +117,8 @@ App = Marionette.Application.extend( {
 		// Init Base elements collection from the server
 		this.elements = new ElementModel.Collection( this.config.data );
 
+		this.$previewWrapper = Backbone.$( '#elementor-preview' );
+
 		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
 
 		var previewIframeId = 'elementor-preview-iframe';
@@ -175,8 +178,7 @@ App = Marionette.Application.extend( {
 
 		this.addRegions( {
 			sections: iframeRegion,
-			panel: '#elementor-panel',
-			modal: '#elementor-modal-area'
+			panel: '#elementor-panel'
 		} );
 
 		this.getRegion( 'sections' ).show( new SectionsCollectionView( {
@@ -194,6 +196,10 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		NProgress.done();
+
+		setTimeout( _.bind( function() {
+			this.introduction.startIntroduction();
+		}, this ), 2500 );
 	},
 
 	onEditModeSwitched: function() {
