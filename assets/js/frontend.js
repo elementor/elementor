@@ -85,7 +85,7 @@
 
 			$progressbar.css( 'width', max + '%' );
 			$inner.css( 'width', max + '%' );
-			$inner.prepend( innerText + ' ' );
+			$inner.text( innerText + '' );
 			$percent.html(  max + '%' );
 
 		}, { offset: '90%' } );
