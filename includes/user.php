@@ -49,7 +49,13 @@ class User {
 			return false;
 		}
 
-		return self::get_current_introduction();
+		$introduction = self::get_current_introduction();
+
+		if ( empty( $introduction['active'] ) ) {
+			return false;
+		}
+
+		return $introduction;
 	}
 
 	public static function set_introduction_viewed() {
@@ -86,6 +92,7 @@ class User {
 
 	private static function get_current_introduction() {
 		return [
+			'active' => false,
 			'title' => __( 'Please view our cool video' ),
 			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/embed/QNJL6nfu__Q" frameborder="0" allowfullscreen></iframe></div>',
 			'version' => 1,
