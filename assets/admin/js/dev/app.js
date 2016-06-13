@@ -117,6 +117,8 @@ App = Marionette.Application.extend( {
 		// Init Base elements collection from the server
 		this.elements = new ElementModel.Collection( this.config.data );
 
+		this.$previewWrapper = Backbone.$( '#elementor-preview' );
+
 		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
 
 		var previewIframeId = 'elementor-preview-iframe';
