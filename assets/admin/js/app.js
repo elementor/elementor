@@ -4061,38 +4061,60 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.buttonContainer = '.elementor-control-media-upload-button';
+		ui.createGallery = '.elementor-gallery-create-gallery';
+		ui.addGallery = '.elementor-gallery-add-gallery';
+		ui.editGallery = '.elementor-gallery-edit-gallery';
+		ui.resetGallery = '.elementor-gallery-reset-gallery';
+		ui.galleryCount = '.elementor-gallery-edit-gallery .elementor-gallery-count';
+		ui.frameOpeners = '.elementor-gallery-create-gallery, .elementor-gallery-add-gallery, .elementor-gallery-edit-gallery';
 
 		return ui;
 	},
 
 	childEvents: {
 		'click @ui.frameOpeners': 'openFrame',
-		'click @ui.deleteButton': 'deleteImage'
+		'click @ui.resetGallery': 'resetGallery'
 	},
 
 	onReady: function() {
-		if ( _.isEmpty( this.getControlValue() ) ) {
+		var ids = this.getControlValue(),
+			idsLength = 0;
+
+		if ( _.isEmpty( ids ) ) {
 			this.ui.controlMedia.addClass( 'media-empty' );
 		}
+
+		if ( 0 < ids.length ) {
+			var idsArr = ids.split( ',' );
+			idsLength = idsArr.length;
+		}
+
+		if ( 0 <  idsLength ) {
+			this.ui.createGallery.hide();
+			this.ui.addGallery.show();
+			this.ui.editGallery.show();
+			this.ui.resetGallery.show();
+		} else {
+			this.ui.createGallery.show();
+			this.ui.addGallery.hide();
+			this.ui.editGallery.hide();
+			this.ui.resetGallery.hide();
+		}
+
+		this.ui.galleryCount.html( '(' + idsLength + ')' );
+
+		this.initRemoveDialog();
 	},
 
-	openFrame: function() {
-		this.initFrame();
+	openFrame: function( event ) {
+		var action = this.$( event.currentTarget ).data( 'action' );
+		this.initFrame( action );
 
 		this.frame.open();
 	},
 
-	deleteImage: function() {
-		this.setValue( '' );
-		this.render();
-	},
-
-	/**
-	 * Create a media modal select frame, and store it so the instance can be reused when needed.
-	 */
-	initFrame: function() {
+	initFrame: function( action ) {
 		var options,
 			ids = this.getControlValue();
 
@@ -4101,13 +4123,25 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 			multiple: true,
 			button: {
 				text: 'Insert Media'
-			},
-			state: 'gallery'
+			}
 		};
+
+		switch ( action ) {
+			case 'create':
+				options.state = 'gallery';
+				break;
+			case 'add':
+				options.state = 'gallery-library';
+				break;
+			case 'edit':
+				options.state = 'gallery-edit';
+				break;
+			default:
+				options.state = 'gallery';
+		}
 
 		if ( 0 < ids.length ) {
 			options.selection = this.fetchSelection( ids );
-			options.state = 'gallery-edit';
 		}
 
 		this.frame = wp.media( options );
@@ -4166,7 +4200,36 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		}
 
 		this.$el.remove();
+	},
+
+	resetGallery: function() {
+		this.getRemoveDialog().show();
+	},
+
+	initRemoveDialog: function() {
+		var removeDialog;
+
+		this.getRemoveDialog = function() {
+			if ( ! removeDialog ) {
+				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+					message: elementor.translate( 'dialog_confirm_gallery_delete' ),
+					headerMessage: elementor.translate( 'delete_gallery' ),
+					strings: {
+						confirm: elementor.translate( 'delete' ),
+						cancel: elementor.translate( 'cancel' )
+					},
+					defaultOption: 'confirm',
+					onConfirm: _.bind( function() {
+						this.setValue( '' );
+						this.render();
+					}, this )
+				} );
+			}
+
+			return removeDialog;
+		};
 	}
+
 } );
 
 module.exports = ControlMediaItemView;

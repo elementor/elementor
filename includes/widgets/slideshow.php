@@ -19,7 +19,7 @@ class Widget_SlideShow extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_slider_options = [ 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover' ];
+		$this->_slider_options = [ 'type', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
 
 		$this->add_control(
 			'section_image',
@@ -57,6 +57,20 @@ class Widget_SlideShow extends Widget_Base {
 		);
 
 		$this->add_control(
+			'type',
+			[
+				'label' => __( 'Slider Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'slider',
+				'section' => 'section_image',
+				'options' => [
+					'slider' => __( 'Slider', 'elementor' ),
+					'carusel' => __( 'Slider with preview', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -73,9 +87,19 @@ class Widget_SlideShow extends Widget_Base {
 		$this->add_control(
 			'autoplaySpeed',
 			[
-				'label' => __( 'Autoplay Speed', 'elementor' ),
+				'label' => __( 'Autoplay Speed (ms)', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 3000,
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
+			'speed',
+			[
+				'label' => __( 'Animation Speed (ms)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => 300,
 				'section' => 'section_image',
 			]
 		);
@@ -132,6 +156,20 @@ class Widget_SlideShow extends Widget_Base {
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'fade',
+			[
+				'label' => __( 'Effects', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'false',
+				'section' => 'section_image',
+				'options' => [
+					'false' => __( 'Slide', 'elementor' ),
+					'true' => __( 'Fade', 'elementor' ),
 				],
 			]
 		);

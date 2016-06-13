@@ -618,6 +618,48 @@
 		}
 	}
 
+	// Gallery control
+	.elementor-control-type-gallery {
+		.elementor-button {
+			border: none;
+			cursor: pointer;
+			border-radius: 3px;
+			transition: all 0.5s;
+			font-size: 11px;
+			text-transform: uppercase;
+			width: 100%;
+			height: 26px;
+			background-color: $editor-darker;
+			color: $editor-lightest;
+		}
+
+		.elementor-gallery-create-gallery {
+
+		}
+
+		.elementor-gallery-add-gallery {
+			display: none;
+			display: inline-block;
+			width: 100%;
+		}
+
+		.elementor-gallery-edit-gallery {
+			margin-top: 0.5%;
+			display: none;
+			display: inline-block;
+			width: 100%;
+		}
+
+		.elementor-gallery-reset-gallery {
+			display: none;
+			background-color: transparent;
+			text-transform: capitalize;
+			color: $editor-darker;
+			width: 50%;
+			margin-top: 3%;
+		}
+	}
+
 	// Structure control
 	.elementor-control-type-structure {
 
