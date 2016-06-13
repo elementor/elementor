@@ -84,8 +84,9 @@
 				innerText = $inner.data( 'inner' ) ? $inner.data( 'inner' ) : '';
 
 			$progressbar.css( 'width', max + '%' );
-			$inner.css( 'width', max + '%' );
-			$inner.text( innerText + '' );
+
+			$inner.css( 'width', max + '%' ).text( innerText + '' );
+
 			$percent.html(  max + '%' );
 
 		}, { offset: '90%' } );
