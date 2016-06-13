@@ -7,9 +7,11 @@
 		cacheElements: function() {
 			this.cache.$body = $( 'body' );
 			this.cache.$switchMode = $( '#elementor-switch-mode' );
+			this.cache.$goToEditLink = $( '#elementor-go-to-edit-page-link' );
 			this.cache.$switchModeInput = this.cache.$switchMode.find( '.elementor-switch-mode-input' );
 			this.cache.$switchModeButton = this.cache.$switchMode.find( '.elementor-switch-mode-button' );
 
+			this.cache.$elementorLoader = $( '#elementor-loader' );
 
 			this.cache.$builderEditor = $( '#elementor-editor' );
 		},
@@ -38,17 +40,22 @@
 					if ( ! $wpTitle.val() ) {
 						$wpTitle.val( 'Elementor #' + $( '#post_ID' ).val() );
 					}
+
 					wp.autosave.server.triggerSave();
+
+					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
 						$( window ).off( 'beforeunload.edit-post' );
-						window.location = $self.cache.$builderEditor.find( 'a' ).attr( 'href' );
+						window.location = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
 
 				self.toggleStatus();
 			} );
 
+			self.cache.$goToEditLink.on( 'click', function() {
+				self.animateLoader();
 			} );
 		},
 
@@ -60,6 +67,9 @@
 		getEditMode: function() {
 			return this.cache.$switchModeInput.val();
 		},
+
+		animateLoader: function() {
+			this.cache.$elementorLoader.addClass( 'elementor-animate' );
 		}
 	};
 
