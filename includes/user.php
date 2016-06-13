@@ -93,7 +93,7 @@ class User {
 	private static function get_current_introduction() {
 		return [
 			'active' => false,
-			'title' => __( 'Please view our cool video' ),
+			'title' => __( 'Please view our cool video', 'elementor' ),
 			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/watch?v=kB4U67tiQLA" frameborder="0" allowfullscreen></iframe></div>',
 			'version' => 1,
 		];
