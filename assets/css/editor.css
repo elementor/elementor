@@ -1017,15 +1017,23 @@ select {
     width: 100%;
     height: 26px;
     background-color: #556068;
-    color: #FFFFFF; }
+    color: #d5dadf; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-add-gallery {
     display: none;
     display: inline-block;
-    width: 45%; }
+    width: 100%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-edit-gallery {
+    margin-top: 0.5%;
     display: none;
     display: inline-block;
-    width: 45%; }
+    width: 100%; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-reset-gallery {
+    display: none;
+    background-color: transparent;
+    text-transform: capitalize;
+    color: #556068;
+    width: 50%;
+    margin-top: 3%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset {
     border: 1px solid #e6e9ec;
     padding: 3px;

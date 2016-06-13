@@ -629,8 +629,8 @@
 			text-transform: uppercase;
 			width: 100%;
 			height: 26px;
-			background-color: #556068;
-			color: #FFFFFF;
+			background-color: $editor-darker;
+			color: $editor-lightest;
 		}
 
 		.elementor-gallery-create-gallery {
@@ -640,13 +640,23 @@
 		.elementor-gallery-add-gallery {
 			display: none;
 			display: inline-block;
-			width: 45%;
+			width: 100%;
 		}
 
 		.elementor-gallery-edit-gallery {
+			margin-top: 0.5%;
 			display: none;
 			display: inline-block;
-			width: 45%;
+			width: 100%;
+		}
+
+		.elementor-gallery-reset-gallery {
+			display: none;
+			background-color: transparent;
+			text-transform: capitalize;
+			color: $editor-darker;
+			width: 50%;
+			margin-top: 3%;
 		}
 	}
 
