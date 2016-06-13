@@ -178,17 +178,17 @@ class Widget_Gallery extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_caption',
 				'options' => [
-					'left'    => [
+					'left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-justify',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),

@@ -106,7 +106,7 @@ class Widget_Image_box extends Widget_Base {
 				'label' => __( 'Image Alt Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => __( 'Sample Image', 'elementor' ),
+				'default' => '',
 				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
 				'section' => 'section_image',
 			]
@@ -250,7 +250,7 @@ class Widget_Image_box extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
 					],
-					'block' => [
+					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'align-justify',
 					],
