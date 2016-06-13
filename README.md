@@ -114,7 +114,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 ### 0.2.4 - 13.06.2016 ###
 * Tweak! - Added shortcode support in Text Editor widget
 * Tweak! - Added title attribute for Image and Image Box widgets
-* Fixed! - Scroll issue in Safari browser [topic](https://wordpress.org/support/topic/scroll-issue-in-safri)
+* Fixed! - Scroll issue in Safari browser [[topic](https://wordpress.org/support/topic/scroll-issue-in-safri)]
 
 ### 0.2.3 - 08.06.2016 ###
 * Tweak! - Added HTML tag control for icon box title
