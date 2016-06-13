@@ -169,10 +169,10 @@ class Widget_Carousel extends Widget_Base {
 			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
 				<?php
 				$slides = '';
-				$ids = explode( ',', $instance['carousel'] );
+				$attachment_ids = explode( ',', $instance['carousel'] );
 
-				foreach ( $ids as $attach_id ) :
-					$image = wp_get_attachment_image_src( $attach_id, $instance['thumbnail_size'] );
+				foreach ( $attachment_ids as $attachment_id ) :
+					$image = wp_get_attachment_image_src( $attachment_id, $instance['thumbnail_size'] );
 					$slides .= '<div><img src="' . $image[0] . '" /></div>';
 				endforeach;
 
