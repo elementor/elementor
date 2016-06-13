@@ -64,7 +64,7 @@ class Admin {
 	 * @return void
 	 */
 	public function print_switch_mode_button( $post ) {
-		if ( ! Utils::is_current_user_can_edit( $post->ID ) ) {
+		if ( ! User::is_current_user_can_edit( $post->ID ) ) {
 			return;
 		}
 
@@ -132,7 +132,7 @@ class Admin {
 	 * @return array
 	 */
 	public function add_edit_in_dashboard( $actions, $post ) {
-		if ( Utils::is_current_user_can_edit( $post->ID ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
 				Utils::get_edit_link( $post->ID ),

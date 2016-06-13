@@ -70,16 +70,6 @@ img {
     border: 0 none;
 }
 
-#elementor-preview {
-    background-color: #333;
-    position: absolute;
-    height: 100%;
-    top: 0;
-	right: 0;
-    border: 0;
-	overflow: auto;
-}
-
 #elementor-preview, #elementor-panel {
 	transition: getStartDirection() .5s;
 }

@@ -1,4 +1,14 @@
 @charset "UTF-8";
+.elementor-video-wrapper {
+  position: relative;
+  height: 0; }
+  .elementor-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%; }
+
 .elementor-clearfix:before, .elementor-clearfix:after {
   content: " ";
   display: table; }
@@ -53,15 +63,6 @@ body {
 iframe,
 img {
   border: 0 none; }
-
-#elementor-preview {
-  background-color: #333;
-  position: absolute;
-  height: 100%;
-  top: 0;
-  right: 0;
-  border: 0;
-  overflow: auto; }
 
 #elementor-preview, #elementor-panel {
   transition: right 0.5s; }
@@ -1007,6 +1008,33 @@ select {
     color: #6d7882; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-icon .select2-selection__rendered .fa {
     margin-right: 3px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-button {
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.5s;
+    font-size: 11px;
+    text-transform: uppercase;
+    width: 100%;
+    height: 26px;
+    background-color: #556068;
+    color: #d5dadf; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-add-gallery {
+    display: none;
+    display: inline-block;
+    width: 100%; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-edit-gallery {
+    margin-top: 0.5%;
+    display: none;
+    display: inline-block;
+    width: 100%; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-gallery-reset-gallery {
+    display: none;
+    background-color: transparent;
+    text-transform: capitalize;
+    color: #556068;
+    width: 50%;
+    margin-top: 3%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset {
     border: 1px solid #e6e9ec;
     padding: 3px;
@@ -1280,6 +1308,40 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-mode-switcher-preview-input {
   display: none; }
 
+#elementor-preview {
+  background-color: #333;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 0;
+  border: 0; }
+  #elementor-preview.elementor-device-desktop #elementor-preview-responsive-wrapper {
+    min-width: 1024px;
+    width: 100%;
+    height: 100%; }
+  #elementor-preview.elementor-device-laptop #elementor-preview-responsive-wrapper {
+    width: 1024px;
+    height: 768px;
+    padding: 10px 70px 10px 40px; }
+  #elementor-preview.elementor-device-tablet #elementor-preview-responsive-wrapper {
+    width: 768px;
+    height: 1024px;
+    padding: 40px 10px 70px; }
+  #elementor-preview.elementor-device-mobile-landscape #elementor-preview-responsive-wrapper {
+    width: 640px;
+    height: 360px;
+    padding: 10px 70px 10px 40px; }
+  #elementor-preview.elementor-device-mobile #elementor-preview-responsive-wrapper {
+    width: 360px;
+    height: 640px;
+    padding: 40px 10px 70px; }
+  #elementor-preview:not(.elementor-device-desktop) {
+    overflow: auto; }
+    #elementor-preview:not(.elementor-device-desktop) #elementor-preview-responsive-wrapper {
+      border-radius: 30px;
+      background-color: #111;
+      margin: 30px auto 80px; }
+
 #elementor-preview-responsive-wrapper {
   position: absolute;
   top: 0;
@@ -1287,30 +1349,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   left: 0;
   right: 0;
   transition: all .5s ease 0s; }
-  #elementor-preview-responsive-wrapper.elementor-device-desktop {
-    min-width: 1024px;
-    width: 100%;
-    height: 100%; }
-  #elementor-preview-responsive-wrapper.elementor-device-mobile, #elementor-preview-responsive-wrapper.elementor-device-tablet, #elementor-preview-responsive-wrapper.elementor-device-laptop, #elementor-preview-responsive-wrapper.elementor-device-mobile-landscape {
-    border-radius: 30px;
-    background-color: #111;
-    margin: 30px auto 80px; }
-  #elementor-preview-responsive-wrapper.elementor-device-laptop {
-    width: 1024px;
-    height: 768px;
-    padding: 10px 70px 10px 40px; }
-  #elementor-preview-responsive-wrapper.elementor-device-tablet {
-    width: 768px;
-    height: 1024px;
-    padding: 40px 10px 70px; }
-  #elementor-preview-responsive-wrapper.elementor-device-mobile-landscape {
-    width: 640px;
-    height: 360px;
-    padding: 10px 70px 10px 40px; }
-  #elementor-preview-responsive-wrapper.elementor-device-mobile {
-    width: 360px;
-    height: 640px;
-    padding: 40px 10px 70px; }
 
 #elementor-preview-iframe {
   width: 100%;
@@ -1432,11 +1470,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .dialog-buttons-wrapper {
   border-top: 1px solid #e6e9ec;
-  position: absolute;
-  bottom: 0;
-  width: 100%; }
+  text-align: center; }
   .dialog-buttons-wrapper > button {
-    width: 50%;
     border: none;
     background: none;
     font-size: 15px;
@@ -1445,14 +1480,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
     outline: none;
     margin: 0; }
     .dialog-buttons-wrapper > button:first-child {
-      border-right: 1px solid #e6e9ec;
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {
       color: #b01b1b; }
     .dialog-buttons-wrapper > button.dialog-take_over {
       color: #39b54a; }
-    .dialog-buttons-wrapper > button:focus {
-      background-color: #e6e9ec; }
     .dialog-buttons-wrapper > button:active {
       background-color: rgba(230, 233, 236, 0.5); }
 
@@ -1461,15 +1493,25 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 20px 0;
   font-weight: 500; }
 
-.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content {
-  margin: auto;
-  width: 350px;
-  height: 150px; }
 .dialog-options-widget .dialog-widget-header, .dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
   color: #495157; }
-.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message {
-  padding: 0 20px; }
+.dialog-options-widget .dialog-buttons-wrapper > button, .dialog-confirm-widget .dialog-buttons-wrapper > button {
+  width: 50%; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:first-child, .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
+    border-left: 1px solid #e6e9ec; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:focus, .dialog-confirm-widget .dialog-buttons-wrapper > button:focus {
+    background-color: #e6e9ec; }
+
+.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+  margin: auto;
+  width: 350px; }
+.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+  padding: 0 20px;
+  height: 50px; }
+
+.dialog-alert-widget .dialog-buttons-wrapper > button {
+  width: 100%; }
 
 .dialog-popup-message {
   height: 155px;
@@ -1497,5 +1539,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .dialog-elementor-modal-message {
   padding: 20px; }
+
+#elementor-introduction .elementor-video-wrapper {
+  padding-bottom: 56.2%; }
+#elementor-introduction .dialog-elementor-modal-show-later {
+  width: 100%; }
 
 /*# sourceMappingURL=editor-rtl.css.map */

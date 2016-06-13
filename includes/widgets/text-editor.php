@@ -101,10 +101,18 @@ class Widget_Text_editor extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$instance['editor'] = apply_filters( 'widget_text', empty( $instance['editor'] ) ? '' : $instance['editor'], $instance );
+		$instance['editor'] = apply_filters( 'widget_text', $instance['editor'], $instance );
+
+		$instance['editor'] = shortcode_unautop( $instance['editor'] );
+		$instance['editor'] = do_shortcode( $instance['editor'] );
 		?>
 		<div class="elementor-text-editor"><?php echo $instance['editor']; ?></div>
 		<?php
+	}
+
+	public function render_plain_content( $instance = [] ) {
+		// In plain mode, render without shortcode
+		echo $instance['editor'];
 	}
 
 	protected function content_template() {
