@@ -113,7 +113,7 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'image_title_attr',
+			'image_title',
 			[
 				'label' => __( 'Image Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -365,7 +365,7 @@ class Widget_Image_box extends Widget_Base {
 		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $instance['image']['url'] ) ) {
-			$image_html = sprintf( '<img src="%s" alt="%s" title="%s" />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ), esc_attr( $instance['image_title_attr'] ) );
+			$image_html = sprintf( '<img src="%s" alt="%s" title="%s" />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ), esc_attr( $instance['image_title'] ) );
 
 			if ( ! empty( $instance['link']['url'] ) ) {
 				$target = '';
@@ -415,7 +415,7 @@ class Widget_Image_box extends Widget_Base {
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
-			var imageHtml = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" title="' + settings.image_title_attr + '" />';
+			var imageHtml = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" title="' + settings.image_title + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
