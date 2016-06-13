@@ -110,6 +110,11 @@ class Widget_Text_editor extends Widget_Base {
 		<?php
 	}
 
+	public function render_plain_content( $instance = [] ) {
+		// In plain mode, render without shortcode
+		echo $instance['editor'];
+	}
+
 	protected function content_template() {
 		?>
 		<div class="elementor-text-editor"><%= settings.editor %></div>
