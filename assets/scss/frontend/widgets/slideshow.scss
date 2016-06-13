@@ -1,4 +1,8 @@
 .elementor-slider-wrapper {
+	div.slick-slide img {
+		margin: auto;
+	}
+
 	.slick-slider {
 		.slick-prev:before, .slick-next:before {
 			color: #000000;

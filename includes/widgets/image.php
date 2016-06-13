@@ -78,6 +78,16 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'image_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'placeholder' => __( 'Enter your title text', 'elementor' ),
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -279,7 +289,7 @@ class Widget_Image extends Widget_Base {
 		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
 
 		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
-		$image_html .= sprintf( '<img src="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['image_title'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -307,7 +317,7 @@ class Widget_Image extends Widget_Base {
 					imgClass = 'hover-' + settings.hover_animation;
 				}
 
-				image_html = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
+				image_html = '<img src="' + settings.image.url + '" title="' + settings.image_title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
 
 				if ( settings.link ) {
 					var link = settings.link;
