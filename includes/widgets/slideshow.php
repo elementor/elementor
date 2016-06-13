@@ -3,15 +3,15 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Carousel extends Widget_Base {
-	private $_carusel_options = [];
+class Widget_SlideShow extends Widget_Base {
+	private $_slider_options = [];
 
 	public function get_id() {
-		return 'carousel';
+		return 'slideshow';
 	}
 
 	public function get_title() {
-		return __( 'Carousel', 'elementor' );
+		return __( 'Slideshow', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -19,7 +19,7 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover' ];
+		$this->_slider_options = [ 'type', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
 
 		$this->add_control(
 			'section_image',
@@ -40,7 +40,7 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'carousel',
+			'slider',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
@@ -57,22 +57,16 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'slidesToShow',
+			'type',
 			[
-				'label' => __( 'Slides to show', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'default' => '3',
+				'label' => __( 'Slider Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'slider',
 				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'slidesToScroll',
-			[
-				'label' => __( 'Slides to scroll', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'default' => '3',
-				'section' => 'section_image',
+				'options' => [
+					'slider' => __( 'Slider', 'elementor' ),
+					'carusel' => __( 'Slider with preview', 'elementor' ),
+				],
 			]
 		);
 
@@ -93,9 +87,19 @@ class Widget_Carousel extends Widget_Base {
 		$this->add_control(
 			'autoplaySpeed',
 			[
-				'label' => __( 'Autoplay Speed', 'elementor' ),
+				'label' => __( 'Autoplay Speed (ms)', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 3000,
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
+			'speed',
+			[
+				'label' => __( 'Animation Speed (ms)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => 300,
 				'section' => 'section_image',
 			]
 		);
@@ -155,24 +159,40 @@ class Widget_Carousel extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'fade',
+			[
+				'label' => __( 'Effects', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'false',
+				'section' => 'section_image',
+				'options' => [
+					'false' => __( 'Slide', 'elementor' ),
+					'true' => __( 'Fade', 'elementor' ),
+				],
+			]
+		);
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['carousel'] ) )
+		if ( empty( $instance['slider'] ) ) {
 			return;
+		}
 
-		foreach ( $this->_carusel_options as $option_name ) {
+		foreach ( $this->_slider_options as $option_name ) {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
 		?>
-		<div class="elementor-carousel-wrapper">
-			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
+
+		<div class="elementor-slider-wrapper">
+			<div class="elementor-slider" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
 				<?php
 				$slides = '';
-				$ids = explode( ',', $instance['carousel'] );
+				$ids = explode( ',', $instance['slider'] );
 
-				foreach ( $ids as $attach_id ) :
-					$image = wp_get_attachment_image_src( $attach_id, $instance['thumbnail_size'] );
+				foreach ( $ids as $attachment_id ) :
+					$image = wp_get_attachment_image_src( $attachment_id, $instance['thumbnail_size'] );
 					$slides .= '<div><img src="' . $image[0] . '" /></div>';
 				endforeach;
 

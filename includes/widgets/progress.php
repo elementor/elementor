@@ -215,6 +215,8 @@ class Widget_Progress extends Widget_Base {
 
 		$html .= '<span class="elementor-progress-inner-text"' . $data_inner . '>';
 
+		$html .= '<span class="elementor-progress-text"></span>';
+
 		if ( 'hide' !== $instance['display_percentage'] ) {
 			$html .= '<span class="elementor-progress-percentage"></span>';
 		}
@@ -244,6 +246,7 @@ class Widget_Progress extends Widget_Base {
 		}
 
 		html += '<span class="elementor-progress-inner-text"' + data_inner + '>';
+		html += '<span class="elementor-progress-text"></span>';
 
 		if ( 'hide' !== settings.display_percentage ) {
 			html += '<span class="elementor-progress-percentage"></span>';

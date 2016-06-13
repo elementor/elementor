@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.1.7
+Stable tag: 0.2.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -11,40 +11,52 @@ The most advanced frontend drag & drop page builder. Create high-end, pixel perf
 
 == Description ==
 
-Elementor is a drag and drop frontend page builder that gives you the power to design stunning page designs in an intuitive & lightweight interface. With Elementor, we set out to create a unique page builder, that offers 3 features we consider crucial, and which no other page builder has:
+Elementor is the fastest free page builder, that enables you to design pages like never before possible.
 
-**Instant drag and drop.** The most frustrating thing about drag and drop, is the lag that occurs after the drop. We created the elementor so all dragging and dropping is perfect. No lags. No Jumps.
+https://www.youtube.com/watch?v=kB4U67tiQLA
 
-**Advanced design effects.** Create pages that have "the designer touch", by including features like parallax scroll, full width background images, advanced buttons, custom headers, slide in forms and more.
+With Elementor, we set out to create a unique page builder, with various advantages that set it apart.
 
-**Responsive design.** No designer should work twice on the same page. With Elementor, there's no need to create a separate version for mobile. This saves half the work and still results in 100% responsive design.
+= Instant drag and drop =
+The most frustrating thing about drag and drop, is the lag that occurs after the drop. We created the elementor so all dragging and dropping is perfect. No lags. No Jumps.
 
-**Other features**
+= Advanced design capabilities =
+Create pages that have "the designer touch", by including features like parallax scroll, full width background images, advanced buttons, custom headers, slide in forms and more.
 
-* Works on the Frontend. Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the site and simultaneously see how the exact site looks like.
-* Gives total control with no hassle. We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface.
-* Compatible to any design element. Include any element in your page: HTML, images, videos, forms, tabs, sliders, pricing tables, maps, blog posts, social icons, etc.
-* Works on every theme. Elementor works on any old or new theme. Switching between themes is no problem.
-* Plugin Compatibility. Compatibility with popular plugins like Yoast, WooCommerce & WPML.
-* No coding. You no longer need to use code, HTML, CSS or shortcode.
+= Responsive design =
+No designer should work twice on the same page. With Elementor, there's no need to create a separate version for mobile. This saves half the work and still results in 100% responsive design.
 
-**RTL supported, multilingual and translatable**
+= Works on the Frontend =
+Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the site and simultaneously see how the exact site looks like.
 
+= Gives total control with no hassle =
+We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface. You no longer need to use code, HTML, CSS or shortcode.
+
+= Works on any theme =
+Elementor works on any old or new theme. Switching between themes is no problem.
+
+= RTL supported, multilingual and translatable =
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
-Check out our recently featured page on Product Hunt: https://www.producthunt.com/tech/elementor
+= Translations: =
+- [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
+- [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
 
-= Be a contributer =
+= Be a contributor =
+If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
 
-If you want to contribute, go to our [Elementor GitHub Repository][3] and see where you can help.
+You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
-You can also add a new language via [translate.wordpress.org][2].
+= Documentation and Support =
 
-For more information about features, FAQs and documentation, check out [Elementor.com][1].
+- For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/).
+- If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
+- For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/).
 
-[1]: https://elementor.com/
-[2]: https://translate.wordpress.org/projects/wp-plugins/elementor
-[3]: https://github.com/pojome/elementor
+= Liked Elementor? =
+- Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
+- Or rate us on [WordPress](https://wordpress.org/support/view/plugin-reviews/elementor?rate=5#postform) :)
 
 == Installation ==
 
@@ -56,7 +68,7 @@ For more information about features, FAQs and documentation, check out [Elemento
 
 = Installation =
 
-1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the wp-content/plugins/ directory of your WordPress installation.
+1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Go to Pages > Add New
 4. Press the 'Edit with Elementor' button.
@@ -82,7 +94,7 @@ Sure can! Plugin widgets that appear in the WordPress widgets menu will also app
 
 **Do I need to know how to code to use Elementor?**
 
-Absolutly not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
+Absolutely not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
 
 **Will Elementor work with RTL or other languages?**
 
@@ -91,11 +103,25 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 == Screenshots ==
 
 1. Elementor's intuitive and user friendly page builder panel lets you edit the page live and real time.
-2. Choose which column structure you wish to add to a new section.
-3. Control every element of styling for the Heading widget.
+2. Control every element of styling for the Heading widget.
+3. Choose which column structure you wish to add to a new section.
 4. Settings page.
 
 == Changelog ==
+
+= 0.2.3 - 08.06.2016 =
+* Tweak! - Added HTML tag control for icon box title
+
+= 0.2.2 - 08.06.2016 =
+* Tweak! - Minor change from the last release
+
+= 0.2.1 - 08.06.2016 =
+* New! - Icon Box widget
+
+= 0.2.0 - 07.06.2016 =
+* New! - Image Box widget
+* Tweak! - Added reset preset section structure
+* Tweak! - Fixed visibility mobile for small-screen 
 
 = 0.1.7 - 06.06.2016 =
 * Tweak! - Changed default image size control

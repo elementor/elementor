@@ -1,41 +1,86 @@
 //
 // Image Box
 //
-.elementor-image-box-wrapper {
-	overflow: hidden;
+.elementor-widget-image-box {
 
-	&.elementor-position-left,
-	&.elementor-position-right {
-		display: flex;
+	.elementor-image-box-wrapper {
+		overflow: hidden;
 	}
 
-	&.elementor-position-right {
-		text-align: getEndDirection();
+	@media (min-width: $screen-md-min) {
 
+		&.elementor-position- {
+
+			&left, &right {
+
+				.elementor-image-box-wrapper {
+					display: flex;
+				}
+			}
+
+			&right {
+
+				.elementor-image-box-wrapper {
+					text-align: getEndDirection();
+					flex-direction: getValueByDirection(row-reverse, row);
+				}
+			}
+
+			&left {
+
+				.elementor-image-box-wrapper {
+					text-align: getStartDirection();
+					flex-direction: getValueByDirection(row, row-reverse);
+				}
+			}
+
+			&top {
+
+				.elementor-image-box-img {
+					margin: auto;
+				}
+			}
+		}
+
+		&.elementor-vertical-align- {
+
+			&top {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-start;
+				}
+			}
+
+			&middle {
+
+				.elementor-image-box-wrapper {
+					align-items: center;
+				}
+			}
+
+			&bottom {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-end;
+				}
+			}
+		}
+	}
+
+	@media (max-width: $screen-sm-max) {
+
+		// TEMP code to override the image spacing
 		.elementor-image-box-img {
-			order: 2;
-		}
-		.elementor-image-box-content {
-			order: 1;
+			margin-left: auto !important;
+			margin-right: auto !important;
 		}
 	}
 
-	&.elementor-position-left {
-		text-align: getStartDirection();
-
-		.elementor-image-box-img {
-			order: 1;
-		}
-		.elementor-image-box-content {
-			order: 2;
-		}
-	}
-
-	&.elementor-position-top {
+	.elementor-image-box-wrapper {
 		text-align: center;
 	}
 
-	p.elementor-image-box-description {
+	.elementor-image-box-description {
 		margin: 0;
 	}
 }

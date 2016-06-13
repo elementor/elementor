@@ -21,11 +21,13 @@ class Widgets_Manager {
 			'button',
 			'divider',
 			'spacer',
+			'image-box',
 			'google-maps',
-			'counter',
-			'progress',
 			'icon',
 			'icon-list',
+			'icon-box',
+			'counter',
+			'progress',
 			'tabs',
 			'accordion',
 			'toggle',
@@ -38,9 +40,7 @@ class Widgets_Manager {
 		if ( Utils::is_development_mode() ) {
 			$build_widgets_filename[] = 'gallery';
 			$build_widgets_filename[] = 'carousel';
-			$build_widgets_filename[] = 'slider';
-			$build_widgets_filename[] = 'image-box';
-			$build_widgets_filename[] = 'icon-box';
+			$build_widgets_filename[] = 'slideshow';
 		}
 
 		foreach ( $build_widgets_filename as $widget_filename ) {

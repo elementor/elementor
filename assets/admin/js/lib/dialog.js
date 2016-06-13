@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v1.1.1
+ * Dialogs Manager v2.0.0
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -130,6 +130,7 @@
 
 		var self = this,
 			settings = {},
+			events = {},
 			components = {
 				$element: 0
 			};
@@ -158,6 +159,13 @@
 			self.addComponent('widget');
 
 			self.addComponent('message');
+
+			var id = self.getSettings('id');
+
+			if (id) {
+
+				self.getComponents('widget').attr('id', id);
+			}
 		};
 
 		var initSettings = function (parent, userSettings) {
@@ -173,7 +181,7 @@
 			settings.classes = {
 				globalPrefix: parentSettings.classPrefix,
 				prefix: prefix,
-				Widget: 'dialog-widget',
+				widget: 'dialog-widget',
 				linkedActive: prefix + '-linked-active'
 			};
 
@@ -224,7 +232,7 @@
 				throw 'The ' + self.widgetName + ' must to be initialized from an instance of DialogsManager.Instance';
 			}
 
-			self.onInit(properties);
+			self.trigger('init', properties);
 
 			initSettings(parent, properties);
 
@@ -236,7 +244,7 @@
 				self.attachEvents();
 			}
 
-			self.onReady();
+			self.trigger('ready');
 
 			return self;
 		};
@@ -254,7 +262,7 @@
 				components.$element.removeClass(settings.classes.linkedActive);
 			}
 
-			self.onHide();
+			self.trigger('hide');
 
 			return self;
 		};
@@ -262,6 +270,16 @@
 		this.linkElement = function (element) {
 
 			this.addComponent('element', element);
+
+			return self;
+		};
+
+		this.on = function (eventName, callback) {
+			if (!events[eventName]) {
+				events[eventName] = [];
+			}
+
+			events[eventName].push(callback);
 
 			return self;
 		};
@@ -287,11 +305,29 @@
 				components.$element.addClass(settings.classes.linkedActive);
 			}
 
-			self.onShow(userSettings);
+			self.trigger('show', userSettings);
 
 			return self;
 		};
 
+		this.trigger = function (eventName, params) {
+
+			var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1);
+
+			if (self[methodName]) {
+				self[methodName](params);
+			}
+
+			var callbacks = events[eventName];
+
+			if (!callbacks) {
+				return;
+			}
+
+			$.each(callbacks, function (index, callback) {
+				callback.call(self, params);
+			});
+		};
 	};
 
 	// Inheritable widget methods
@@ -418,6 +454,8 @@
 			if (options.focus) {
 				this.focusedButton = $button;
 			}
+
+			return self;
 		},
 		bindHotKeys: function () {
 			var self = this;
@@ -501,6 +539,8 @@
 		setHeaderMessage: function (message) {
 
 			this.getComponents('widgetHeader').html(message);
+
+			return this;
 		},
 		unbindHotKeys: function () {
 

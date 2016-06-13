@@ -23,6 +23,11 @@ class Preview {
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
+
+		// Tell to WP Cache plugins do not cache this request.
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
 	}
 
 	/**
@@ -32,7 +37,7 @@ class Preview {
 	 * @return bool
 	 */
 	public function is_preview_mode() {
-		if ( ! Utils::is_current_user_can_edit() ) {
+		if ( ! User::is_current_user_can_edit() ) {
 			return false;
 		}
 

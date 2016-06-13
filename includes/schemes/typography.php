@@ -21,7 +21,7 @@ class Scheme_Typography extends Scheme_Base {
 	public function get_scheme_titles() {
 		return [
 			self::TYPOGRAPHY_1 => __( 'Primary Headline', 'elementor' ),
-			self::TYPOGRAPHY_2 => __( 'Secobndary Headline', 'elementor' ),
+			self::TYPOGRAPHY_2 => __( 'Secondary Headline', 'elementor' ),
 			self::TYPOGRAPHY_3 => __( 'Body Text', 'elementor' ),
 			self::TYPOGRAPHY_4 => __( 'Accent Text', 'elementor' ),
 		];

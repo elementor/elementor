@@ -198,7 +198,7 @@ class Widget_Video extends Widget_Base {
 		$video_embed = wp_oembed_get( $instance['link'], wp_embed_defaults() );
 
 		if ( $video_embed ) : ?>
-			<div class="elementor-custom-embed">
+			<div class="elementor-video-wrapper">
 				<?php
 				echo $video_embed;
 

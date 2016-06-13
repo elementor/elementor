@@ -2,6 +2,9 @@
 @import "../helpers/variables";
 @import "../helpers/mixins";
 
+// Common
+@import "../common/common";
+
 // Utility classes
 @import "../helpers/utilities";
 
@@ -17,7 +20,7 @@
 @import "panel/_panel";
 @import "_mode-switcher";
 
-//@import "_modal";
 @import "_devices";
 @import "_tipsy";
 @import "_dialog";
+@import "_introduction";
