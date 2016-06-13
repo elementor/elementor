@@ -1,3 +1,20 @@
+body.elementor-editor-active .elementor-switch-mode-off {
+  display: none; }
+body.elementor-editor-active #elementor-editor {
+  display: table; }
+body.elementor-editor-active #postdivrich {
+  display: none; }
+body.elementor-editor-inactive .elementor-switch-mode-on {
+  display: none; }
+body.elementor-editor-inactive .elementor-switch-mode-button {
+  background-color: #B40B51;
+  color: #ffffff;
+  border-color: #7D1036;
+  box-shadow: 0 2px 0 #7D1036;
+  text-shadow: none; }
+body.elementor-editor-inactive #elementor-editor {
+  display: none; }
+
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
   content: "\e800";
   font-family: eicon;
@@ -6,50 +23,73 @@
 
 #elementor-switch-mode {
   margin: 15px 0; }
-  #elementor-switch-mode button {
-    display: none; }
-    #elementor-switch-mode button.elementor-switch-mode-button {
-      padding: 0 30px;
-      height: 40px;
-      line-height: 1; }
-      #elementor-switch-mode button.elementor-switch-mode-button span {
-        display: none; }
-  #elementor-switch-mode.elementor-editor-inactive button.elementor-switch-mode-button {
-    display: none;
-    background-color: #B40B51;
-    color: #ffffff;
-    border-color: #7D1036;
-    box-shadow: 0 2px 0 #7D1036;
-    text-shadow: none; }
+  #elementor-switch-mode .elementor-switch-mode-button {
+    padding: 0 30px;
+    height: 40px;
+    line-height: 1; }
 
 #elementor-editor {
   background-color: #F7F7F7;
   border: 1px solid #DDD;
   height: auto;
   width: 100%;
-  display: none;
   transition: all 0.5s ease; }
-  #elementor-editor.elementor-editor-active {
-    display: table; }
   #elementor-editor:hover {
     background-color: #ffffff; }
-  #elementor-editor .elementor-go-to-edit-page {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center; }
-    #elementor-editor .elementor-go-to-edit-page > a {
-      padding: 70px 0;
-      display: block;
-      text-decoration: none; }
-      #elementor-editor .elementor-go-to-edit-page > a span.elementor-go-to-edit-text {
-        background-image: url(../images/go-to-edit.png);
-        background-position: top center;
-        background-repeat: no-repeat;
-        padding-top: 135px;
-        font-size: 20px;
-        text-transform: uppercase;
-        color: #B40B51;
-        display: block; }
+  #elementor-editor .elementor-loader-box {
+    position: absolute;
+    animation: load 1.8s linear infinite; }
+    #elementor-editor .elementor-loader-box:nth-of-type(1) {
+      width: 20%;
+      height: 100%;
+      left: 0;
+      top: 0; }
+    #elementor-editor .elementor-loader-box:not(:nth-of-type(1)) {
+      right: 0;
+      height: 20%;
+      width: 60%; }
+    #elementor-editor .elementor-loader-box:nth-of-type(2) {
+      top: 0;
+      animation-delay: -0.45s; }
+    #elementor-editor .elementor-loader-box:nth-of-type(3) {
+      top: 40%;
+      animation-delay: -0.9s; }
+    #elementor-editor .elementor-loader-box:nth-of-type(4) {
+      bottom: 0;
+      animation-delay: -1.35s; }
+@keyframes load {
+  0% {
+    opacity: .3; }
+  50% {
+    opacity: 1; }
+  100% {
+    opacity: .3; } }
+  #elementor-editor .elementor-loader-box {
+    background-color: #a4afb7; }
+
+#elementor-go-to-edit-page {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center; }
+
+#elementor-go-to-edit-page-link {
+  padding: 70px 0;
+  display: block;
+  text-decoration: none; }
+
+#elementor-go-to-edit-text {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #B40B51;
+  margin-top: 15px; }
+
+#elementor-loader {
+  height: 100px;
+  width: 100px;
+  position: relative;
+  margin: auto; }
+  #elementor-loader:not(.elementor-animate) .elementor-loader-box {
+    animation: none; }
 
 /*= Elementor System Info
 ---------------------------------------*/
