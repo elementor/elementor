@@ -2641,11 +2641,11 @@ Introduction = function() {
 			self.getInfoDialog().show();
 		} );
 
-		modal.addButton({
+		modal.addButton( {
 			name: 'show-later',
 			text: elementor.translate( 'Show Me Later' ),
 			callback: modal.hide
-		});
+		} );
 	};
 
 	var initInfoDialog = function() {
