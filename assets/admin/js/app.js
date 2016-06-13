@@ -2671,7 +2671,7 @@ Introduction = function() {
 	};
 
 	this.startIntroduction = function() {
-		var introductionConfig = elementor.config.introduction_video;
+		var introductionConfig = elementor.config.introduction;
 
 		if ( ! introductionConfig ) {
 			return;

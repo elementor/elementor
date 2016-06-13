@@ -294,7 +294,7 @@ class Editor {
 				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
 				'locked_user' => $locked_user,
 				'is_rtl' => is_rtl(),
-				'introduction_video' => User::get_introduction(),
+				'introduction' => User::get_introduction(),
 				'i18n' => [
 					'elementor' => __( 'Elementor', 'elementor' ),
 					'dialog_confirm_delete' => __( 'Are you sure you want to remove this item?', 'elementor' ),
