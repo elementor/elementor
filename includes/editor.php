@@ -52,6 +52,11 @@ class Editor {
 		// Set the headers to prevent caching for the different browsers
 		nocache_headers();
 
+		// Tell to WP Cache plugins do not cache this request.
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+
 		// Print the panel
 		$this->print_panel_html();
 		die;
