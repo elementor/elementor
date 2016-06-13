@@ -82,6 +82,27 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
+	private static function _page_templates( $field = [] ) {
+		$defaults = [
+			'exclude' => [],
+		];
+		$field = wp_parse_args( $field, $defaults );
+		$field['options'] = [
+			'default' => 'Default Template'
+		];
+
+		$templates = get_page_templates();
+
+		foreach ( $templates as $template => $slug ) {
+			if ( in_array($slug, $field['exclude'] ) )
+				continue;
+
+			$field['options'][$slug] = $template;
+		}
+
+		self::_checkbox_list( $field );
+	}
+
 	private static function _checkbox_list_roles( $field = [] ) {
 		$defaults = [
 			'exclude' => [],

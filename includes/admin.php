@@ -73,9 +73,23 @@ class Admin {
 			$current_mode = 'editor';
 		}
 
+		$switchStyle = "";
+
+		$isPage = ($post->post_type == 'page');
+		if ($isPage) {
+			$validTemplates = get_option('elementor_template_support', null);
+
+			if (($validTemplates != null) && is_array($validTemplates) && !in_array($post->page_template, $validTemplates)) {
+				$switchStyle = "display: none";
+				$current_mode = 'editor';
+			} else if ($validTemplates == null) {
+				$validTemplates = [];
+			}
+		}
+
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 		?>
-		<div id="elementor-switch-mode">
+		<div id="elementor-switch-mode" style="<?php echo $switchStyle; ?>">
 			<input class="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
 			<button class="elementor-switch-mode-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
@@ -92,6 +106,14 @@ class Admin {
 		    </div>
 		</div>
 		<?php
+
+		if ($isPage) {
+			?>
+		<script>
+			var validPageTemplates = <?php echo json_encode($validTemplates, JSON_PRETTY_PRINT) ?>;
+		</script>
+			<?php
+		}
 	}
 
 	/**
@@ -151,6 +173,25 @@ class Admin {
 	}
 
 	/**
+	 * Add edit link in outside edit page.
+	 *
+	 * @since 1.0.0
+	 * @param $actions
+	 * @param $page
+	 *
+	 * @return array
+	 */
+	public function add_edit_in_dashboard_for_pages( $actions, $page ) {
+		$validTemplates = get_option('elementor_template_support', null);
+
+		if (($validTemplates != null) && is_array($validTemplates) && !in_array($page->page_template, $validTemplates)) {
+			return $actions;
+		}
+
+		return $this->add_edit_in_dashboard($actions, $page);
+	}
+
+	/**
 	 * Admin constructor.
 	 */
 	public function __construct() {
@@ -160,7 +201,7 @@ class Admin {
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
-		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
+		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard_for_pages' ], 10, 2 );
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );

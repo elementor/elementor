@@ -37,6 +37,21 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
+		$field_id = 'elementor_template_support';
+		add_settings_field(
+			$field_id,
+			__( 'Page Templates', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$main_section,
+			[
+				'id' => $field_id,
+				'type' => 'page_templates'
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
+
 		$field_id = 'elementor_exclude_user_roles';
 		add_settings_field(
 			$field_id,
