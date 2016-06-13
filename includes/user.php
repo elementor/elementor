@@ -94,7 +94,7 @@ class User {
 		return [
 			'active' => false,
 			'title' => __( 'Please view our cool video' ),
-			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/embed/QNJL6nfu__Q" frameborder="0" allowfullscreen></iframe></div>',
+			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/watch?v=kB4U67tiQLA" frameborder="0" allowfullscreen></iframe></div>',
 			'version' => 1,
 		];
 	}
