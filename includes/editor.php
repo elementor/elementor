@@ -52,6 +52,11 @@ class Editor {
 		// Set the headers to prevent caching for the different browsers
 		nocache_headers();
 
+		// Tell to WP Cache plugins do not cache this request.
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+
 		// Print the panel
 		$this->print_panel_html();
 		die;
@@ -315,8 +320,8 @@ class Editor {
 					'revisions_history' => __( 'Revisions History', 'elementor' ),
 					'about_elementor' => __( 'About Elementor', 'elementor' ),
 					'inner_section' => __( 'Columns', 'elementor' ),
-					'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ), 
-					'delete_gallery' => __( 'Reset Gallery', 'elementor' ), 					
+					'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
+					'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 				],
 			]
 		);

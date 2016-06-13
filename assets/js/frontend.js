@@ -186,17 +186,18 @@
 	// Carousel Widget
 	elementorBindUI.addBindEvent( 'carousel', function() {
 		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$carousel = $wrapper.children( '.elementor-carousel' );
+			$carousel = $wrapper.children( '.elementor-carousel' ),
+			$data = $carousel.data();
 
-		var slideToShow = $carousel.data( 'slidestoshow' ),
-			slideToScroll = $carousel.data( 'slidestoscroll' ),
-			autoPlay = $carousel.data( 'autoplay' ),
-			autoplaySpeed = $carousel.data( 'autoplayspeed' ),
-			dots = $carousel.data( 'dots' ),
-			arrows = $carousel.data( 'arrows' ),
-			infinite = $carousel.data( 'infinite' ),
-			pauseOnHover = $carousel.data( 'pauseonhover' ),
-			rtl = $carousel.data( 'rtl' );
+		var slideToShow = $data.slidestoshow,
+			slideToScroll = $data.slidestoscroll,
+			autoPlay = $data.autoplay,
+			autoplaySpeed = $data.autoplayspeed,
+			dots = $data.dots,
+			arrows = $data.arrows,
+			infinite = $data.infinite,
+			pauseOnHover = $data.pauseonhover,
+			rtl = $data.rtl;
 
 		var options =  {
 			slidesToShow: slideToShow,
@@ -232,18 +233,19 @@
 	// Slider Widget
 	elementorBindUI.addBindEvent( 'slideshow', function() {
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
-			$slider = $wrapper.children( '.elementor-slider' );
+			$slider = $wrapper.children( '.elementor-slider' ),
+			$data  = $slider.data();
 
-		var type = $slider.data( 'type' ),
-			autoPlay = $slider.data( 'autoplay' ),
-			autoplaySpeed = $slider.data( 'autoplayspeed' ),
-			dots = $slider.data( 'dots' ),
-			arrows = $slider.data( 'arrows' ),
-			infinite = $slider.data( 'infinite' ),
-			pauseOnHover = $slider.data( 'pauseonhover' ),
-			rtl = $slider.data( 'rtl' ),
-			speed = $slider.data( 'speed' ),
-			fade = $slider.data( 'fade' );
+		var type = $data.type,
+			autoPlay = $data.autoplay,
+			autoplaySpeed = $data.autoplayspeed,
+			dots = $data.dots,
+			arrows = $data.arrows,
+			infinite = $data.infinite,
+			pauseOnHover = $data.pauseonhover,
+			rtl = $data.rtl,
+			speed = $data.speed,
+			fade = $data.fade;
 
 		var options =  {
 			slidesToShow: 1,
@@ -269,6 +271,7 @@
 				slidesToScroll: 1,
 				asNavFor: $slider,
 				dots: true,
+				centerMode: true,
 				focusOnSelect: true
 			});
 		}
