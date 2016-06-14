@@ -189,6 +189,10 @@
 			$carousel = $wrapper.children( '.elementor-carousel' ),
 			$data = $carousel.data();
 
+		if ( ! $data ) {
+			return;
+		}
+
 		var slideToShow = $data.slidestoshow,
 			slideToScroll = $data.slidestoscroll,
 			autoPlay = $data.autoplay,
@@ -199,7 +203,7 @@
 			pauseOnHover = $data.pauseonhover,
 			rtl = $data.rtl;
 
-		var options =  {
+		var options = {
 			slidesToShow: slideToShow,
 			slidesToScroll: slideToScroll,
 			autoplay: autoPlay,
@@ -228,6 +232,7 @@
 		};
 
 		$carousel.slick( options );
+
 	} );
 
 	// Slider Widget
@@ -235,6 +240,10 @@
 		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
 			$slider = $wrapper.children( '.elementor-slider' ),
 			$data  = $slider.data();
+
+		if ( ! $data ) {
+			return;
+		}
 
 		var type = $data.type,
 			autoPlay = $data.autoplay,
@@ -247,7 +256,7 @@
 			speed = $data.speed,
 			fade = $data.fade;
 
-		var options =  {
+		var options = {
 			slidesToShow: 1,
 			autoplay: autoPlay,
 			autoplaySpeed: autoplaySpeed,
@@ -264,6 +273,7 @@
 			var $sliderCarusel = $slider.clone().attr( 'class', 'elementor-slider-carusel' );
 			$sliderCarusel.insertAfter( $slider );
 			options.arrows = false;
+			options.dots = false;
 			options.asNavFor = $sliderCarusel;
 
 			$sliderCarusel.slick({
@@ -277,6 +287,7 @@
 		}
 
 		$slider.slick( options );
+
 	} );
 
 	// Alert Widget

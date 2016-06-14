@@ -115,6 +115,9 @@ class Widget_SlideShow extends Widget_Base {
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
 				],
+				'condition' => [
+					'type' => 'slider',
+				],
 			]
 		);
 
@@ -128,6 +131,9 @@ class Widget_SlideShow extends Widget_Base {
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'type' => 'slider',
 				],
 			]
 		);

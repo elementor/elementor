@@ -76,20 +76,31 @@ class Admin {
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 		?>
 		<div id="elementor-switch-mode">
-			<input class="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
-			<button class="elementor-switch-mode-button button button-hero">
+			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
+			<button id="elementor-switch-mode-button" class="elementor-button">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
-				<span class="elementor-switch-mode-off"><?php _e( 'Edit with Elementor &#8594;', 'elementor' ); ?></span>
+				<span class="elementor-switch-mode-off">
+					<i class="eicon-elementor"></i>
+					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
+				</span>
 			</button>
 		</div>
 		<div id="elementor-editor">
-		    <div class="elementor-go-to-edit-page">
-		        <a href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
-		            <span class="elementor-go-to-edit-text">
-		                <?php _e( 'Edit with Elementor', 'elementor' ); ?>
-		            </span>
-		        </a>
-		    </div>
+	        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+		        <button id="elementor-editor-button" class="elementor-button">
+			        <i class="eicon-elementor"></i>
+					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
+		        </button>
+		        <div id="elementor-loader-wrapper">
+			        <div id="elementor-loader">
+				        <div class="elementor-loader-box"></div>
+				        <div class="elementor-loader-box"></div>
+				        <div class="elementor-loader-box"></div>
+				        <div class="elementor-loader-box"></div>
+			        </div>
+			        <div id="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+		        </div>
+	        </a>
 		</div>
 		<?php
 	}
@@ -143,6 +154,22 @@ class Admin {
 		return $actions;
 	}
 
+	public function body_status_classes( $classes ) {
+		global $pagenow;
+
+		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
+			$post = get_post();
+
+			$current_mode = Plugin::instance()->db->get_edit_mode( $post->ID );
+
+			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';
+
+			$classes .= ' ' . $mode_class;
+		}
+
+		return $classes;
+	}
+
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
 		array_unshift( $links, $settings_link );
@@ -164,5 +191,7 @@ class Admin {
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
+
+		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 	}
 }
