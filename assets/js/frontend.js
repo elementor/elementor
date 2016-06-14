@@ -189,47 +189,50 @@
 			$carousel = $wrapper.children( '.elementor-carousel' ),
 			$data = $carousel.data();
 
-		if ( $data ) {
-			var slideToShow = $data.slidestoshow,
-				slideToScroll = $data.slidestoscroll,
-				autoPlay = $data.autoplay,
-				autoplaySpeed = $data.autoplayspeed,
-				dots = $data.dots,
-				arrows = $data.arrows,
-				infinite = $data.infinite,
-				pauseOnHover = $data.pauseonhover,
-				rtl = $data.rtl;
-
-			var options = {
-				slidesToShow: slideToShow,
-				slidesToScroll: slideToScroll,
-				autoplay: autoPlay,
-				autoplaySpeed: autoplaySpeed,
-				dots: dots,
-				arrows: arrows,
-				infinite: infinite,
-				pauseOnHover: pauseOnHover,
-				rtl: rtl,
-				responsive: [
-					{
-						breakpoint: 767,
-						settings: {
-							slidesToShow: 2,
-							slidesToScroll: 2
-						}
-					},
-					{
-						breakpoint: 480,
-						settings: {
-							slidesToShow: 1,
-							slidesToScroll: 1
-						}
-					}
-				]
-			};
-
-			$carousel.slick( options );
+		if ( ! $data ) {
+			return;
 		}
+
+		var slideToShow = $data.slidestoshow,
+			slideToScroll = $data.slidestoscroll,
+			autoPlay = $data.autoplay,
+			autoplaySpeed = $data.autoplayspeed,
+			dots = $data.dots,
+			arrows = $data.arrows,
+			infinite = $data.infinite,
+			pauseOnHover = $data.pauseonhover,
+			rtl = $data.rtl;
+
+		var options = {
+			slidesToShow: slideToShow,
+			slidesToScroll: slideToScroll,
+			autoplay: autoPlay,
+			autoplaySpeed: autoplaySpeed,
+			dots: dots,
+			arrows: arrows,
+			infinite: infinite,
+			pauseOnHover: pauseOnHover,
+			rtl: rtl,
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: 2,
+						slidesToScroll: 2
+					}
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}
+			]
+		};
+
+		$carousel.slick( options );
+
 	} );
 
 	// Slider Widget
@@ -238,50 +241,53 @@
 			$slider = $wrapper.children( '.elementor-slider' ),
 			$data  = $slider.data();
 
-		if ( $data ) {
-			var type = $data.type,
-				autoPlay = $data.autoplay,
-				autoplaySpeed = $data.autoplayspeed,
-				dots = $data.dots,
-				arrows = $data.arrows,
-				infinite = $data.infinite,
-				pauseOnHover = $data.pauseonhover,
-				rtl = $data.rtl,
-				speed = $data.speed,
-				fade = $data.fade;
-
-			var options = {
-				slidesToShow: 1,
-				autoplay: autoPlay,
-				autoplaySpeed: autoplaySpeed,
-				dots: dots,
-				arrows: arrows,
-				infinite: infinite,
-				pauseOnHover: pauseOnHover,
-				rtl: rtl,
-				speed: speed,
-				fade: fade
-			};
-
-			if ( type && 'carusel' === type ) {
-				var $sliderCarusel = $slider.clone().attr( 'class', 'elementor-slider-carusel' );
-				$sliderCarusel.insertAfter( $slider );
-				options.arrows = false;
-				options.dots = false;
-				options.asNavFor = $sliderCarusel;
-
-				$sliderCarusel.slick({
-					slidesToShow: 3,
-					slidesToScroll: 1,
-					asNavFor: $slider,
-					dots: true,
-					centerMode: true,
-					focusOnSelect: true
-				});
-			}
-
-			$slider.slick( options );
+		if ( ! $data ) {
+			return;
 		}
+
+		var type = $data.type,
+			autoPlay = $data.autoplay,
+			autoplaySpeed = $data.autoplayspeed,
+			dots = $data.dots,
+			arrows = $data.arrows,
+			infinite = $data.infinite,
+			pauseOnHover = $data.pauseonhover,
+			rtl = $data.rtl,
+			speed = $data.speed,
+			fade = $data.fade;
+
+		var options = {
+			slidesToShow: 1,
+			autoplay: autoPlay,
+			autoplaySpeed: autoplaySpeed,
+			dots: dots,
+			arrows: arrows,
+			infinite: infinite,
+			pauseOnHover: pauseOnHover,
+			rtl: rtl,
+			speed: speed,
+			fade: fade
+		};
+
+		if ( type && 'carusel' === type ) {
+			var $sliderCarusel = $slider.clone().attr( 'class', 'elementor-slider-carusel' );
+			$sliderCarusel.insertAfter( $slider );
+			options.arrows = false;
+			options.dots = false;
+			options.asNavFor = $sliderCarusel;
+
+			$sliderCarusel.slick({
+				slidesToShow: 3,
+				slidesToScroll: 1,
+				asNavFor: $slider,
+				dots: true,
+				centerMode: true,
+				focusOnSelect: true
+			});
+		}
+
+		$slider.slick( options );
+
 	} );
 
 	// Alert Widget
