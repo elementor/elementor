@@ -505,6 +505,8 @@ select {
         color: #d5dadf; }
   #elementor-panel #elementor-panel-header-title {
     font-size: 15px; }
+    #elementor-panel #elementor-panel-header-title img {
+      width: 66px; }
   #elementor-panel #elementor-panel-elements-search-area {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
   #elementor-panel #elementor-panel-elements {
@@ -1048,6 +1050,8 @@ select {
       fill: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
     height: 85px; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset svg {
+      width: 100%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset {
     padding: 5px 0 0 10px;
     font-size: 11px;

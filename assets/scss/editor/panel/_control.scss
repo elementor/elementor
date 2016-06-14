@@ -685,6 +685,10 @@
 
 		.elementor-control-structure-current-preset {
 			height: 85px;
+
+			svg {
+				width: 100%; // For safari
+			}
 		}
 
 		.elementor-control-structure-reset {

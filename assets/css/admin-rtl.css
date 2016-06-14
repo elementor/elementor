@@ -93,7 +93,6 @@ body.elementor-editor-inactive #elementor-editor {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
-  background-image: url(../images/icons-bg.png);
   text-decoration: none; }
   #elementor-go-to-edit-page-link.elementor-animate #elementor-editor-button {
     display: none; }
@@ -102,17 +101,18 @@ body.elementor-editor-inactive #elementor-editor {
 
 #elementor-loader-wrapper {
   margin: auto;
-  width: 100px; }
+  width: 80px; }
 
 #elementor-loader {
-  height: 100px;
+  height: 80px;
   position: relative; }
 
 #elementor-loading-title {
   color: #a4afb7;
   text-transform: uppercase;
   margin-top: 15px;
-  letter-spacing: 7px; }
+  font-size: 11px;
+  letter-spacing: 5px; }
 
 /*= Elementor System Info
 ---------------------------------------*/
