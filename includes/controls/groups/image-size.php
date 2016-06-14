@@ -80,8 +80,10 @@ class Group_Control_Image_size extends Group_Control_Base {
 			}
 
 			$attachment_size = [
-				400,
-				400,
+				// Width
+				0 => 400,
+				// Height
+				1 => 400,
 				'bfi_thumb' => true,
 				'crop' => true,
 			];
