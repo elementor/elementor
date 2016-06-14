@@ -77,7 +77,7 @@ class Admin {
 		?>
 		<div id="elementor-switch-mode">
 			<input class="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
-			<button class="elementor-switch-mode-button button button-primary button-hero">
+			<button class="elementor-switch-mode-button button button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off"><?php _e( 'Edit with Elementor &#8594;', 'elementor' ); ?></span>
 			</button>
