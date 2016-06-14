@@ -115,6 +115,9 @@ class Widget_SlideShow extends Widget_Base {
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
 				],
+				'condition' => [
+					'type' => 'slider',
+				],
 			]
 		);
 
@@ -128,6 +131,9 @@ class Widget_SlideShow extends Widget_Base {
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'type' => 'slider',
 				],
 			]
 		);
@@ -183,20 +189,24 @@ class Widget_SlideShow extends Widget_Base {
 		foreach ( $this->_slider_options as $option_name ) {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
-		?>
 
+		$attachment_ids = explode( ',', $instance['slider'] );
+
+		$slides = [];
+		foreach ( $attachment_ids as $attachment_id ) {
+			$image = Group_Control_Image_size::get_attachment_image_src( $attachment_id, 'thumbnail', $instance );
+			if ( ! empty( $image ) ) {
+				$slides[] = '<div><img src="' . $image . '" alt="slideshow" /></div>';
+			}
+		}
+
+		if ( empty( $slides ) ) {
+			return;
+		}
+		?>
 		<div class="elementor-slider-wrapper">
 			<div class="elementor-slider" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
-				<?php
-				$slides = '';
-				$ids = explode( ',', $instance['slider'] );
-
-				foreach ( $ids as $attachment_id ) :
-					$image = wp_get_attachment_image_src( $attachment_id, $instance['thumbnail_size'] );
-					$slides .= '<div><img src="' . $image[0] . '" /></div>';
-				endforeach;
-
-				echo $slides; ?>
+				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>
 	<?php
