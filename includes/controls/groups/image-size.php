@@ -57,7 +57,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 
 		$controls['custom_dimension'] = [
 			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
-			'type' => Controls_Manager::TEXT,
+			'type' => Controls_Manager::IMAGE_DIMENSIONS,
 			'condition' => [
 				'size' => [ 'custom' ],
 			],
@@ -68,7 +68,6 @@ class Group_Control_Image_size extends Group_Control_Base {
 
 	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
 		$size = $instance[ $group_name . '_size' ];
-		//$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
 
 		if ( 'custom' !== $size ) {
 			$attachment_size = $size;
@@ -79,14 +78,20 @@ class Group_Control_Image_size extends Group_Control_Base {
 				require( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 			}
 
+			$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
+
 			$attachment_size = [
-				// Width
-				0 => 400,
-				// Height
-				1 => 400,
 				'bfi_thumb' => true,
 				'crop' => true,
 			];
+
+			if ( ! empty( $custom_dimension['width'] ) ) {
+				$attachment_size[0] = $custom_dimension['width'];
+			}
+
+			if ( ! empty( $custom_dimension['height'] ) ) {
+				$attachment_size[1] = $custom_dimension['height'];
+			}
 		}
 
 		$image_src = wp_get_attachment_image_src( $attachment_id, $attachment_size );
