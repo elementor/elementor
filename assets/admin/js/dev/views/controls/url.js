@@ -16,14 +16,8 @@ ControlUrlItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		var values = this.getControlValue();
-
-		if ( values.is_external ) {
+		if ( this.getControlValue( 'is_external' ) ) {
 			this.ui.btnExternal.addClass( 'active' );
-		}
-
-		if ( values.url ) {
-			this.ui.input.val( values.url );
 		}
 	},
 
