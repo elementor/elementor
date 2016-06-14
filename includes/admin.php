@@ -76,24 +76,31 @@ class Admin {
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 		?>
 		<div id="elementor-switch-mode">
-			<input class="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
-			<button class="elementor-switch-mode-button button button-primary button-hero">
+			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
+			<button id="elementor-switch-mode-button" class="elementor-button">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
-				<span class="elementor-switch-mode-off"><?php _e( 'Edit with Elementor &#8594;', 'elementor' ); ?></span>
+				<span class="elementor-switch-mode-off">
+					<i class="eicon-elementor"></i>
+					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
+				</span>
 			</button>
 		</div>
 		<div id="elementor-editor">
-		    <div id="elementor-go-to-edit-page">
-		        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+	        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+		        <button id="elementor-editor-button" class="elementor-button">
+			        <i class="eicon-elementor"></i>
+					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
+		        </button>
+		        <div id="elementor-loader-wrapper">
 			        <div id="elementor-loader">
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 			        </div>
-		            <div id="elementor-go-to-edit-text"><?php _e( 'Edit with Elementor', 'elementor' ); ?></div>
-		        </a>
-		    </div>
+			        <div id="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+		        </div>
+	        </a>
 		</div>
 		<?php
 	}

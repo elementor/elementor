@@ -68,7 +68,7 @@
 		},
 
 		animateLoader: function() {
-			this.cache.$elementorLoader.addClass( 'elementor-animate' );
+			this.cache.$goToEditLink.addClass( 'elementor-animate' );
 		}
 	};
 
