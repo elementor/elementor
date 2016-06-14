@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Control_Image_Dimensions extends Control_Base_Multiple {
 
 	public function get_type() {
-		return 'image-dimensions';
+		return 'image_dimensions';
 	}
 
 	public function get_default_value() {
