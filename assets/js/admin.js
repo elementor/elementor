@@ -2,18 +2,17 @@
 	'use strict';
 
 	var ElementorAdminApp = {
-		cache: {},
 
 		cacheElements: function() {
-			this.cache.$body = $( 'body' );
-			this.cache.$switchMode = $( '#elementor-switch-mode' );
-			this.cache.$goToEditLink = $( '#elementor-go-to-edit-page-link' );
-			this.cache.$switchModeInput = this.cache.$switchMode.find( '.elementor-switch-mode-input' );
-			this.cache.$switchModeButton = this.cache.$switchMode.find( '.elementor-switch-mode-button' );
-
-			this.cache.$elementorLoader = $( '#elementor-loader' );
-
-			this.cache.$builderEditor = $( '#elementor-editor' );
+			this.cache = {
+				$body: $( 'body' ),
+				$switchMode: $( '#elementor-switch-mode' ),
+				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
+				$switchModeInput: $( '#elementor-switch-mode-input' ),
+				$switchModeButton: $( '#elementor-switch-mode-button' ),
+				$elementorLoader: $( '#elementor-loader' ),
+				$builderEditor: $( '#elementor-editor' )
+			};
 		},
 
 		toggleStatus: function() {
