@@ -296,6 +296,7 @@ class Editor {
 				'edit_post_link' => get_edit_post_link(),
 				'settings_page_link' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
 				'elementor_site' => 'https://elementor.com/',
+				'assets_url' => ELEMENTOR_ASSETS_URL,
 				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
 				'locked_user' => $locked_user,
 				'is_rtl' => is_rtl(),
