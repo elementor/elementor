@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.2.3
+Stable tag: 0.2.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -108,6 +108,14 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 4. Settings page.
 
 == Changelog ==
+
+= 0.2.4 - 13.06.2016 =
+* Tweak! - Added some compatible to Cache plugins
+* Tweak! - Added shortcode support in Text Editor widget
+* Tweak! - Added title attribute for Image and Image Box widgets
+* Fixed! - Replace icon for Icon Box widget with the right icon
+* Fixed! - Scroll issue in Safari browser ([topic](https://wordpress.org/support/topic/scroll-issue-in-safri))
+* Fixed! - Text alignment justify ([topic](https://wordpress.org/support/topic/on-text-aligning))
 
 = 0.2.3 - 08.06.2016 =
 * Tweak! - Added HTML tag control for icon box title
