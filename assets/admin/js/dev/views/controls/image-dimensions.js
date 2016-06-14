@@ -3,20 +3,26 @@ var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multip
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
-		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
+		return {
+			inputWidth: 'input[data-setting="width"]',
+			inputHeight: 'input[data-setting="height"]',
 
-		ui.btnApply = 'button.elementor-image-dimensions-apply-button';
-
-		return ui;
+			btnApply: 'button.elementor-image-dimensions-apply-button'
+		};
 	},
 
 	// Override the base events
-	childEvents: {
+	baseEvents: {
 		'click @ui.btnApply': 'onApplyClicked'
 	},
 
 	onApplyClicked: function( event ) {
 		event.preventDefault();
+
+		this.setValue( {
+			width: this.ui.inputWidth.val(),
+			height: this.ui.inputHeight.val()
+		} );
 	}
 } );
 

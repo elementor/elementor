@@ -66,6 +66,7 @@ App = Marionette.Application.extend( {
 			this._controlsItemView = {
 				color: require( 'elementor-views/controls/color' ),
 				dimensions: require( 'elementor-views/controls/dimensions' ),
+				image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
 				media: require( 'elementor-views/controls/media' ),
 				slider: require( 'elementor-views/controls/slider' ),
 				wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
