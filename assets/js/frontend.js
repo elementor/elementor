@@ -269,7 +269,7 @@
 			fade: fade
 		};
 
-		if ( type && 'carusel' === type ) {
+		if ( 'carusel' === type ) {
 			var $sliderCarusel = $slider.clone().attr( 'class', 'elementor-slider-carusel' );
 			$sliderCarusel.insertAfter( $slider );
 			options.arrows = false;
