@@ -29,7 +29,7 @@
 			self.cache.$switchModeButton.on( 'click', function( event ) {
 				event.preventDefault();
 
-				if ( 'builder' === self.cache.$switchModeInput.val() ) {
+				if ( 'builder' === self.getEditMode() ) {
 					self.cache.$switchModeInput.val( 'editor' );
 				} else {
 					self.cache.$switchModeInput.val( 'builder' );
