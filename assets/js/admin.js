@@ -1,94 +1,78 @@
-( function( $, window, document, undefined ) {
+( function( $, window, document ) {
 	'use strict';
 
 	var ElementorAdminApp = {
-		cache: {},
 
 		cacheElements: function() {
-			this.cache.$switchMode = $( '#elementor-switch-mode' );
-			this.cache.$switchModeInput = this.cache.$switchMode.find( '.elementor-switch-mode-input' );
-			this.cache.$switchModeButton = this.cache.$switchMode.find( '.elementor-switch-mode-button' );
-
-			this.cache.$switchModeButtonEditorStatus = this.cache.$switchModeButton.find( '.elementor-switch-mode-off' );
-			this.cache.$switchModeButtonBuilderStatus = this.cache.$switchModeButton.find( '.elementor-switch-mode-on' );
-
-			this.cache.$builderEditor = $( '#elementor-editor' );
-			this.cache.$wpEditor = $( '#postdivrich' );
+			this.cache = {
+				$body: $( 'body' ),
+				$switchMode: $( '#elementor-switch-mode' ),
+				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
+				$switchModeInput: $( '#elementor-switch-mode-input' ),
+				$switchModeButton: $( '#elementor-switch-mode-button' ),
+				$elementorLoader: $( '#elementor-loader' ),
+				$builderEditor: $( '#elementor-editor' )
+			};
 		},
 
-		buildElements: function() {
-			var $self = this;
-			setTimeout( function() {
-				$self.toggleStatus( $self );
-			}, 300 );
+		toggleStatus: function() {
+			var isBuilderMode = 'builder' === this.getEditMode();
 
-			$self.cache.$switchModeButton.show();
-		},
-
-		toggleStatus: function( $self ) {
-			if ( 'builder' === $self.cache.$switchModeInput.val() ) {
-				$self.cache.$switchModeButtonBuilderStatus.show();
-				$self.cache.$switchModeButtonEditorStatus.hide();
-
-				$self.cache.$builderEditor
-					.removeClass( 'elementor-editor-inactive' )
-					.addClass( 'elementor-editor-active' );
-
-				$self.cache.$wpEditor.hide();
-
-				$self.cache.$switchMode
-					.removeClass( 'elementor-editor-inactive' )
-					.addClass( 'elementor-editor-active' );
-			} else {
-				$self.cache.$switchModeButtonEditorStatus.show();
-				$self.cache.$switchModeButtonBuilderStatus.hide();
-
-				$self.cache.$wpEditor.show();
-				$self.cache.$builderEditor
-					.addClass( 'elementor-editor-inactive' )
-					.removeClass( 'elementor-editor-active' );
-
-				$self.cache.$switchMode
-					.addClass( 'elementor-editor-inactive' )
-					.removeClass( 'elementor-editor-active' );
-			}
+			this.cache.$body
+			    .toggleClass( 'elementor-editor-active', isBuilderMode )
+			    .toggleClass( 'elementor-editor-inactive', ! isBuilderMode );
 		},
 
 		bindEvents: function() {
-			var $self = this;
+			var self = this;
 
-			$self.cache.$switchModeButton.on( 'click', function( event ) {
+			self.cache.$switchModeButton.on( 'click', function( event ) {
 				event.preventDefault();
 
-				if ( 'builder' === $self.cache.$switchModeInput.val() ) {
-					$self.cache.$switchModeInput.val( 'editor' );
+				if ( 'builder' === self.getEditMode() ) {
+					self.cache.$switchModeInput.val( 'editor' );
 				} else {
-					$self.cache.$switchModeInput.val( 'builder' );
+					self.cache.$switchModeInput.val( 'builder' );
 
 					var $wpTitle = $( '#title' );
+
 					if ( ! $wpTitle.val() ) {
 						$wpTitle.val( 'Elementor #' + $( '#post_ID' ).val() );
 					}
+
 					wp.autosave.server.triggerSave();
+
+					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
 						$( window ).off( 'beforeunload.edit-post' );
-						window.location = $self.cache.$builderEditor.find( 'a' ).attr( 'href' );
+						window.location = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
 
-				$self.toggleStatus( $self );
+				self.toggleStatus();
+			} );
+
+			self.cache.$goToEditLink.on( 'click', function() {
+				self.animateLoader();
 			} );
 		},
 
 		init: function() {
 			this.cacheElements();
-			this.buildElements();
 			this.bindEvents();
+		},
+
+		getEditMode: function() {
+			return this.cache.$switchModeInput.val();
+		},
+
+		animateLoader: function() {
+			this.cache.$goToEditLink.addClass( 'elementor-animate' );
 		}
 	};
 
-	$( document ).ready( function( $ ) {
+	$( function() {
 		ElementorAdminApp.init();
 	} );
 

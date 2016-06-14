@@ -86,9 +86,9 @@ img {
     height: 100px;
     position: relative; }
   #elementor-loader-wrapper .elementor-loader-box {
+    background-color: #e6e9ec; }
+  #elementor-loader-wrapper .elementor-loader-box {
     position: absolute;
-    background-color: #e6e9ec;
-    opacity: 0;
     animation: load 1.8s linear infinite; }
     #elementor-loader-wrapper .elementor-loader-box:nth-of-type(1) {
       width: 20%;
@@ -115,13 +115,6 @@ img {
     opacity: 1; }
   100% {
     opacity: .3; } }
-@keyframes load-title {
-  0% {
-    opacity: 1; }
-  50% {
-    opacity: .6; }
-  100% {
-    opacity: 1; } }
 #elementor-loading-title {
   color: #fff;
   text-align: center;
@@ -130,7 +123,13 @@ img {
   letter-spacing: 7px;
   font-size: 10px;
   animation: load-title 1.5s linear infinite; }
-
+@keyframes load-title {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: .6; }
+  100% {
+    opacity: 1; } }
 .select2-dropdown {
   border-color: #a4afb7; }
   .select2-dropdown .select2-search__field {
