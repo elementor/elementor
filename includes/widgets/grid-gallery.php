@@ -266,11 +266,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			return;
 		}
 
-		$ids = [];
-
-		foreach ( $instance['wp_gallery'] as $image ) {
-			$ids[] = $image['id'];
-		}
+		$ids = wp_list_pluck( $instance['wp_gallery'], 'id' );
 
 		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
 
