@@ -3,23 +3,23 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_SlideShow extends Widget_Base {
-	private $_slider_options = [];
+class Widget_Slideshow_Gallery extends Widget_Base {
+	private $_slideshow_options = [];
 
 	public function get_id() {
-		return 'slideshow';
+		return 'slideshow-gallery';
 	}
 
 	public function get_title() {
-		return __( 'Slideshow', 'elementor' );
+		return __( 'Slideshow Gallery', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'insert-image';
+		return 'slideshow';
 	}
 
 	protected function _register_controls() {
-		$this->_slider_options = [ 'type', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
+		$this->_slideshow_options = [ 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
 
 		$this->add_control(
 			'section_image',
@@ -40,7 +40,7 @@ class Widget_SlideShow extends Widget_Base {
 		);
 
 		$this->add_control(
-			'slider',
+			'slideshow',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
@@ -53,20 +53,6 @@ class Widget_SlideShow extends Widget_Base {
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
-			]
-		);
-
-		$this->add_control(
-			'type',
-			[
-				'label' => __( 'Slider Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'slider',
-				'section' => 'section_image',
-				'options' => [
-					'slider' => __( 'Slider', 'elementor' ),
-					'carusel' => __( 'Slider with preview', 'elementor' ),
-				],
 			]
 		);
 
@@ -115,9 +101,6 @@ class Widget_SlideShow extends Widget_Base {
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
 				],
-				'condition' => [
-					'type' => 'slider',
-				],
 			]
 		);
 
@@ -131,9 +114,6 @@ class Widget_SlideShow extends Widget_Base {
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
-				],
-				'condition' => [
-					'type' => 'slider',
 				],
 			]
 		);
@@ -182,15 +162,15 @@ class Widget_SlideShow extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['slider'] ) ) {
+		if ( empty( $instance['slideshow'] ) ) {
 			return;
 		}
 
-		foreach ( $this->_slider_options as $option_name ) {
+		foreach ( $this->_slideshow_options as $option_name ) {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
 
-		$attachment_ids = explode( ',', $instance['slider'] );
+		$attachment_ids = explode( ',', $instance['slideshow'] );
 
 		$slides = [];
 		foreach ( $attachment_ids as $attachment_id ) {
@@ -204,8 +184,8 @@ class Widget_SlideShow extends Widget_Base {
 			return;
 		}
 		?>
-		<div class="elementor-slider-wrapper">
-			<div class="elementor-slider" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
+		<div class="elementor-slideshow-wrapper">
+			<div class="elementor-slideshow" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
 				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>
