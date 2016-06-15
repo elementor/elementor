@@ -3,19 +3,19 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_SlideShow extends Widget_Base {
+class Widget_Slideshow_Gallery extends Widget_Base {
 	private $_slider_options = [];
 
 	public function get_id() {
-		return 'slideshow';
+		return 'gallery-slideshow';
 	}
 
 	public function get_title() {
-		return __( 'Slideshow', 'elementor' );
+		return __( 'Gallery Slideshow', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'insert-image';
+		return 'slideshow';
 	}
 
 	protected function _register_controls() {
