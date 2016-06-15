@@ -50,7 +50,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 			multiple: true,
 			state: frameStates[ action ],
 			button: {
-				text: 'Insert Media'
+				text: elementor.translate( 'insert_media' )
 			}
 		};
 
