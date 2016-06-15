@@ -22,6 +22,7 @@ class Control_Structure extends Control_Base {
 				var morePresets = getMorePresets();
 
 				if ( morePresets.length > 1 ) { %>
+					<div class="elementor-separator"></div>
 					<div class="elementor-control-structure-more-presets-title"><?php _e( 'More Structures', 'elementor' ); ?></div>
 					<div class="elementor-control-structure-more-presets">
 						<% _.each( morePresets, function( preset ) { %>

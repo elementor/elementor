@@ -701,8 +701,13 @@
 			color: $editor-darkest;
 			font-weight: bold;
 			padding: 15px 20px;
-			border-bottom: 1px solid $editor-background;
 			line-height: 1;
+		}
+
+		.elementor-separator {
+			margin: 15px -20px 0;
+			height: 3px;
+			background-color: $editor-background;
 		}
 
 		.elementor-control-structure-more-presets {

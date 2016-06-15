@@ -1060,8 +1060,11 @@ select {
     color: #495157;
     font-weight: bold;
     padding: 15px 20px;
-    border-bottom: 1px solid #e6e9ec;
     line-height: 1; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-separator {
+    margin: 15px -20px 0;
+    height: 3px;
+    background-color: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets {
     display: -ms-flexbox;
     display: flex;
