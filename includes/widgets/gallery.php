@@ -230,34 +230,38 @@ class Widget_Gallery extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$shortcode = '';
-		if ( '' !== $instance['wp_gallery'] ) {
-			$this->add_render_attribute( 'shortcode', 'ids', $instance['wp_gallery'] );
+		if ( ! $instance['wp_gallery'] ) {
+			return;
+		}
 
-			if ( '' !== $instance['gallery_columns'] ) {
-				$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
-			}
+		$ids = [];
 
-			if ( '' !== $instance['gallery_size'] ) {
-				$this->add_render_attribute( 'shortcode', 'size', $instance['gallery_size'] );
-			}
+		foreach ( $instance['wp_gallery'] as $image ) {
+			$ids[] = $image['id'];
+		}
 
-			if ( '' !== $instance['gallery_link'] ) {
-				$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
-			}
+		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
 
-			if ( 'no' !== $instance['gallery_rand'] ) {
-				$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
-			}
+		if ( $instance['gallery_columns'] ) {
+			$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
+		}
 
-			$shortcode .= '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']';
+		if ( $instance['gallery_size'] ) {
+			$this->add_render_attribute( 'shortcode', 'size', $instance['gallery_size'] );
+		}
+
+		if ( $instance['gallery_link'] ) {
+			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
+		}
+
+		if ( 'no' !== $instance['gallery_rand'] ) {
+			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
 		}
 		?>
-		<?php if ( ! empty( $shortcode ) ) : ?>
-			<div class="elementor-wp-gallery">
-				<?php echo do_shortcode( $shortcode ); ?>
-			</div>
-		<?php endif;
+		<div class="elementor-wp-gallery">
+			<?php echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
+		</div>
+		<?php
 	}
 
 	protected function content_template() {}
