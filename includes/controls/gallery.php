@@ -28,7 +28,7 @@ class Control_Gallery extends Control_Base {
 						<span class="elementor-control-gallery-clear">(Clear)</span>
 					</div>
 					<div class="elementor-control-gallery-thumbnails">
-						<% _.each( data.controlValue, function( image ){ %>
+						<% _.each( data.controlValue, function( image ) { %>
 							<div class="elementor-control-gallery-thumbnail" style="background-image: url(<%- image.url %>)"></div>
 						<% } ); %>
 					</div>
