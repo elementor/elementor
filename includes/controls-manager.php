@@ -25,6 +25,7 @@ class Controls_Manager {
 	const WYSIWYG = 'wysiwyg';
 	const CODE = 'code';
 	const FONT = 'font';
+	const IMAGE_DIMENSIONS = 'image_dimensions';
 
 	const WP_WIDGET = 'wp_widget';
 
@@ -74,6 +75,7 @@ class Controls_Manager {
 			self::WYSIWYG,
 			self::CODE,
 			self::FONT,
+			self::IMAGE_DIMENSIONS,
 
 			self::WP_WIDGET,
 

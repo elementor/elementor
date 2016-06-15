@@ -16,14 +16,14 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	pages: {
 		elements: {
 			view: require( 'elementor-panel/pages/elements/elements' ),
-			title: elementor.translate( 'elementor' )
+			title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 		},
 		editor: {
 			view: require( 'elementor-panel/pages/editor' )
 		},
 		menu: {
 			view: require( 'elementor-panel/pages/menu/menu' ),
-			title: elementor.translate( 'elementor' )
+			title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 		},
 		colorsScheme: {
 			view: require( 'elementor-panel/pages/schemes/colors' )
