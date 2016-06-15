@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 class Widget_Counter extends Widget_Base {
 
 	public function get_id() {
