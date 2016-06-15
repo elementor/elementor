@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?1.1");
-  src: url("../fonts/eicons.eot?1.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.1") format("woff2"), url("../fonts/eicons.woff?1.1") format("woff"), url("../fonts/eicons.ttf?1.1") format("truetype"), url("../fonts/eicons.svg?1.1#eicon") format("svg");
+  src: url("../fonts/eicons.eot?1.2");
+  src: url("../fonts/eicons.eot?1.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.2") format("woff2"), url("../fonts/eicons.woff?1.2") format("woff"), url("../fonts/eicons.ttf?1.2") format("truetype"), url("../fonts/eicons.svg?1.2#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -62,7 +62,7 @@
 .eicon-captcha:before {
   content: '\e814'; }
 
-.eicon-carrousel:before {
+.eicon-carousel:before {
   content: '\e815'; }
 
 .eicon-checkbox:before {
