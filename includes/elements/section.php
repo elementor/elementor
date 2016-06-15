@@ -42,11 +42,9 @@ class Element_Section extends Element_Base {
 			2 => [
 				[
 					'preset' => [ 33, 66 ],
-					'icon' => 'c2-2',
 				],
 				[
 					'preset' => [ 66, 33 ],
-					'icon' => 'c2-3',
 				],
 			],
 		];
@@ -55,7 +53,6 @@ class Element_Section extends Element_Base {
 			self::$presets[ $columns_count ] = [
 				[
 					'preset' => [],
-					'icon' => "c$columns_count-1",
 				],
 			];
 
