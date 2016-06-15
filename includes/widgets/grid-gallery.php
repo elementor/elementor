@@ -274,9 +274,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
 		}
 
-		if ( 'custom' !== $instance['thumbnail_size'] ) {
-			$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
-		}
+		$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
 
 		if ( $instance['gallery_link'] ) {
 			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
