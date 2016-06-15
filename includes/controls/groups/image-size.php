@@ -62,13 +62,17 @@ class Group_Control_Image_size extends Group_Control_Base {
 			'default' => $default_value,
 		];
 
-		$controls['custom_dimension'] = [
-			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
-			'type' => Controls_Manager::IMAGE_DIMENSIONS,
-			'condition' => [
-				'size' => [ 'custom' ],
-			],
-		];
+		if ( isset( $image_sizes['custom'] ) ) {
+			$controls['custom_dimension'] = [
+				'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
+				'type' => Controls_Manager::IMAGE_DIMENSIONS,
+				'description' => __( 'Choose size (px)' ),
+				'condition' => [
+					'size' => [ 'custom' ],
+				],
+				'separator' => 'none',
+			];
+		}
 
 		return $controls;
 	}
