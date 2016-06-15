@@ -61,9 +61,11 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		this.frame = wp.media( options );
 
 		// When a file is selected, run a callback.
-		this.frame.on( 'update', _.bind( this.select, this ) );
-		this.frame.on( 'menu:render:default', _.bind( this.menuRender, this ) );
-		this.frame.on( 'content:render:browse', _.bind( this.gallerySettings, this ) );
+		this.frame.on( {
+			'update': _.bind( this.select, this ),
+			'menu:render:default': _.bind( this.menuRender, this ),
+			'content:render:browse': _.bind( this.gallerySettings, this )
+		} );
 	},
 
 	menuRender: function( view ) {
@@ -113,9 +115,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		if ( this.frame ) {
-			this.frame.off( 'update' );
-			this.frame.off( 'menu:render:default' );
-			this.frame.off( 'content:render:browse' );
+			this.frame.off();
 		}
 
 		this.$el.remove();
