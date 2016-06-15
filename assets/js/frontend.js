@@ -235,18 +235,17 @@
 
 	} );
 
-	// Slider Widget
-	elementorBindUI.addBindEvent( 'slideshow', function() {
-		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
-			$slider = $wrapper.children( '.elementor-slider' ),
+	// Slideshow Widget
+	elementorBindUI.addBindEvent( 'slideshow-gallery', function() {
+		var $wrapper = $( this ).find( '.elementor-slideshow-wrapper' ),
+			$slider = $wrapper.children( '.elementor-slideshow' ),
 			$data  = $slider.data();
 
 		if ( ! $data ) {
 			return;
 		}
 
-		var type = $data.type,
-			autoPlay = $data.autoplay,
+		var autoPlay = $data.autoplay,
 			autoplaySpeed = $data.autoplayspeed,
 			dots = $data.dots,
 			arrows = $data.arrows,
@@ -268,23 +267,6 @@
 			speed: speed,
 			fade: fade
 		};
-
-		if ( 'carusel' === type ) {
-			var $sliderCarusel = $slider.clone().attr( 'class', 'elementor-slider-carusel' );
-			$sliderCarusel.insertAfter( $slider );
-			options.arrows = false;
-			options.dots = false;
-			options.asNavFor = $sliderCarusel;
-
-			$sliderCarusel.slick({
-				slidesToShow: 3,
-				slidesToScroll: 1,
-				asNavFor: $slider,
-				dots: true,
-				centerMode: true,
-				focusOnSelect: true
-			});
-		}
 
 		$slider.slick( options );
 

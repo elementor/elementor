@@ -19,7 +19,7 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_slideshow_options = [ 'type', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
+		$this->_slideshow_options = [ 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
 
 		$this->add_control(
 			'section_image',
@@ -184,7 +184,7 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 			return;
 		}
 		?>
-		<div class="elementor-slideshow-gallery-wrapper">
+		<div class="elementor-slideshow-wrapper">
 			<div class="elementor-slideshow" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
 				<?php echo implode( '', $slides ); ?>
 			</div>
