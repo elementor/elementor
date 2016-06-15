@@ -5,88 +5,57 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.controlMedia = '.elementor-control-media';
-		ui.buttonContainer = '.elementor-control-media-upload-button';
-		ui.createGallery = '.elementor-gallery-create-gallery';
-		ui.addGallery = '.elementor-gallery-add-gallery';
-		ui.editGallery = '.elementor-gallery-edit-gallery';
-		ui.resetGallery = '.elementor-gallery-reset-gallery';
-		ui.galleryCount = '.elementor-gallery-edit-gallery .elementor-gallery-count';
-		ui.frameOpeners = '.elementor-gallery-create-gallery, .elementor-gallery-add-gallery, .elementor-gallery-edit-gallery';
+		ui.addImages = '.elementor-control-gallery-add';
+		ui.clearGallery = '.elementor-control-gallery-clear';
+		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
 
 		return ui;
 	},
 
 	childEvents: {
-		'click @ui.frameOpeners': 'openFrame',
-		'click @ui.resetGallery': 'resetGallery'
+		'click @ui.addImages': 'onAddImagesClick',
+		'click @ui.clearGallery': 'onClearGalleryClick',
+		'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
 	},
 
 	onReady: function() {
-		var ids = this.getControlValue(),
-			idsLength = 0;
+		var hasImages = this.hasImages();
 
-		if ( _.isEmpty( ids ) ) {
-			this.ui.controlMedia.addClass( 'media-empty' );
-		}
-
-		if ( 0 < ids.length ) {
-			var idsArr = ids.split( ',' );
-			idsLength = idsArr.length;
-		}
-
-		if ( 0 <  idsLength ) {
-			this.ui.createGallery.hide();
-			this.ui.addGallery.show();
-			this.ui.editGallery.show();
-			this.ui.resetGallery.show();
-		} else {
-			this.ui.createGallery.show();
-			this.ui.addGallery.hide();
-			this.ui.editGallery.hide();
-			this.ui.resetGallery.hide();
-		}
-
-		this.ui.galleryCount.html( '(' + idsLength + ')' );
+		this.$el
+		    .toggleClass( 'elementor-gallery-has-images', hasImages )
+		    .toggleClass( 'elementor-gallery-empty', ! hasImages );
 
 		this.initRemoveDialog();
 	},
 
-	openFrame: function( event ) {
-		var action = this.$( event.currentTarget ).data( 'action' );
+	hasImages: function() {
+		return !! this.getControlValue().length;
+	},
+
+	openFrame: function( action ) {
 		this.initFrame( action );
 
 		this.frame.open();
 	},
 
 	initFrame: function( action ) {
-		var options,
-			ids = this.getControlValue();
+		var frameStates = {
+			create: 'gallery',
+			add: 'gallery-library',
+			edit: 'gallery-edit'
+		};
 
-		options = {
+		var options = {
 			frame:  'post',
 			multiple: true,
+			state: frameStates[ action ],
 			button: {
 				text: 'Insert Media'
 			}
 		};
 
-		switch ( action ) {
-			case 'create':
-				options.state = 'gallery';
-				break;
-			case 'add':
-				options.state = 'gallery-library';
-				break;
-			case 'edit':
-				options.state = 'gallery-edit';
-				break;
-			default:
-				options.state = 'gallery';
-		}
-
-		if ( 0 < ids.length ) {
-			options.selection = this.fetchSelection( ids );
+		if ( this.hasImages() ) {
+			options.selection = this.fetchSelection();
 		}
 
 		this.frame = wp.media( options );
@@ -108,22 +77,19 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		} );
 	},
 
-	fetchSelection: function( ids ) {
-		var idArray = ids.split( ',' ),
-			args = {
-				orderby: 'post__in',
-				order: 'ASC',
-				type: 'image',
-				perPage: -1,
-				post__in: idArray
-			},
-			attachments = wp.media.query( args ),
-			selection = new wp.media.model.Selection( attachments.models, {
-				props: attachments.props.toJSON(),
-				multiple: true
-			} );
+	fetchSelection: function() {
+		var attachments = wp.media.query( {
+			orderby: 'post__in',
+			order: 'ASC',
+			type: 'image',
+			perPage: -1,
+			post__in: _.pluck( this.getControlValue(), 'id' )
+		} );
 
-		return selection;
+		return new wp.media.model.Selection( attachments.models, {
+			props: attachments.props.toJSON(),
+			multiple: true
+		} );
 	},
 
 	/**
@@ -131,9 +97,17 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	 * Gets the selected image information, and sets it within the control.
 	 */
 	select: function( selection ) {
-		var ids = selection.pluck( 'id' );
+		var images = [];
 
-		this.setValue( ids.toString() );
+		selection.each( function( image ) {
+			images.push( {
+				id: image.get( 'id' ),
+				url: image.get( 'url' )
+			} );
+		} );
+
+		this.setValue( images );
+
 		this.render();
 	},
 
@@ -148,7 +122,9 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	},
 
 	resetGallery: function() {
-		this.getRemoveDialog().show();
+		this.setValue( '' );
+
+		this.render();
 	},
 
 	initRemoveDialog: function() {
@@ -164,17 +140,25 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 						cancel: elementor.translate( 'cancel' )
 					},
 					defaultOption: 'confirm',
-					onConfirm: _.bind( function() {
-						this.setValue( '' );
-						this.render();
-					}, this )
+					onConfirm: _.bind( this.resetGallery, this )
 				} );
 			}
 
 			return removeDialog;
 		};
-	}
+	},
 
+	onAddImagesClick: function() {
+		this.openFrame( this.hasImages() ? 'add' : 'create' );
+	},
+
+	onClearGalleryClick: function() {
+		this.getRemoveDialog().show();
+	},
+
+	onGalleryThumbnailsClick: function() {
+		this.openFrame( 'edit' );
+	}
 } );
 
 module.exports = ControlMediaItemView;
