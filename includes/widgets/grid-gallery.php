@@ -49,6 +49,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
+				'exclude' => [ 'custom' ],
 			]
 		);
 
