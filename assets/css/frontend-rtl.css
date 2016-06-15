@@ -700,9 +700,10 @@
 .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
   color: #000000; }
 
-.elementor-slider-wrapper div.slick-slide img {
+.elementor-slideshow-wrapper div.slick-slide img {
   margin: auto; }
-.elementor-slider-wrapper .slick-slider .slick-prev:before, .elementor-slider-wrapper .slick-slider .slick-next:before {
+.elementor-slideshow-wrapper .slick-slider .slick-prev:before,
+.elementor-slideshow-wrapper .slick-slider .slick-next:before {
   color: #000000; }
 
 .elementor-widget-image-box .elementor-image-box-wrapper {
