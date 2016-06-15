@@ -23,6 +23,8 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 			width: this.ui.inputWidth.val(),
 			height: this.ui.inputHeight.val()
 		} );
+
+		this.render();
 	}
 } );
 
