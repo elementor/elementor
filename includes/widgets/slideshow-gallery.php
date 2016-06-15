@@ -170,11 +170,9 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
 
-		$attachment_ids = explode( ',', $instance['slideshow'] );
-
 		$slides = [];
-		foreach ( $attachment_ids as $attachment_id ) {
-			$image = Group_Control_Image_size::get_attachment_image_src( $attachment_id, 'thumbnail', $instance );
+		foreach ( $instance['slideshow'] as $attachment ) {
+			$image = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
 			if ( ! empty( $image ) ) {
 				$slides[] = '<div><img src="' . $image . '" alt="slideshow" /></div>';
 			}
