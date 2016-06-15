@@ -87,10 +87,10 @@ class Admin {
 		</div>
 		<div id="elementor-editor">
 	        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
-		        <button id="elementor-editor-button" class="elementor-button">
+		        <div id="elementor-editor-button" class="elementor-button">
 			        <i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
-		        </button>
+		        </div>
 		        <div id="elementor-loader-wrapper">
 			        <div id="elementor-loader">
 				        <div class="elementor-loader-box"></div>
