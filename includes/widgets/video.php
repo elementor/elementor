@@ -12,7 +12,7 @@ class Widget_Video extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'YouTube', 'elementor' );
+		return __( 'Video', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -23,8 +23,24 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'section_video',
 			[
-				'label' => __( 'YouTube', 'elementor' ),
+				'label' => __( 'Video', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
+			]
+		);
+
+		$this->add_control(
+			'video_type',
+			[
+				'label' => __( 'Video Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'default' => 'youtube',
+				'label_block' => true,
+				'options' => [
+					'youtube' => __( 'YouTube', 'elementor' ),
+					'vimeo' => __( 'Vimeo', 'elementor' ),
+					'hosted' => __( 'Self Hosted', 'elementor' ),
+				],
 			]
 		);
 
@@ -35,7 +51,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'section' => 'section_video',
 	            'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
-	            'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+	            'default' => '',
 	            'label_block' => true,
 			]
 		);
@@ -56,10 +72,11 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		// Youtube
 		$this->add_control(
 			'heading_youtube',
 			[
-				'label' => __( 'YouTube Options', 'elementor' ),
+				'label' => __( 'Video Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_video',
 			]
@@ -75,12 +92,16 @@ class Widget_Video extends Widget_Base {
 					'no' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
 				],
+				'condition' => [
+					'video_type' => 'youtube',
+				],
 				'default' => 'no',
+				'label_block' => true,
 			]
 		);
 
 		$this->add_control(
-			'yt_rel_videos',
+			'yt_rel',
 			[
 				'label' => __( 'Suggested Videos', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -90,6 +111,10 @@ class Widget_Video extends Widget_Base {
 					'no' => __( 'No', 'elementor' ),
 				],
 				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+				'label_block' => true,
 			]
 		);
 
@@ -104,6 +129,10 @@ class Widget_Video extends Widget_Base {
 					'no' => __( 'No', 'elementor' ),
 				],
 				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+				'label_block' => true,
 			]
 		);
 
@@ -118,6 +147,177 @@ class Widget_Video extends Widget_Base {
 					'no' => __( 'No', 'elementor' ),
 				],
 				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+				'label_block' => true,
+			]
+		);
+
+		// Vimdeo
+		$this->add_control(
+			'vimeo_title',
+			[
+				'label' => __( 'Show the title on the video', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'vimeo_portrait',
+			[
+				'label' => __( 'Show the user’s portrait on the video', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'vimeo_color',
+			[
+				'label' => __( 'Specify the color of the video controls.', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'section' => 'section_video',
+				'default' => '#FFFFFF',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
+			'vimeo_autoplay',
+			[
+				'label' => __( 'Automatically start playback of the video.', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'vimeo_loop',
+			[
+				'label' => __( 'Play the video again automatically when it reaches the end', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'vimeo_autopause',
+			[
+				'label' => __( 'Pause this video automatically when another one plays', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+				'label_block' => true,
+			]
+		);
+
+		// Hosted
+		$this->add_control(
+			'hosted_width',
+			[
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'section' => 'section_video',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hosted_height',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'section' => 'section_video',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hosted_autoplay',
+			[
+				'label' => __( 'Auto Play', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+				],
+				'default' => 'no',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hosted_loop',
+			[
+				'label' => __( 'Play the video again automatically when it reaches the end', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+				'label_block' => true,
 			]
 		);
 
@@ -193,14 +393,17 @@ class Widget_Video extends Widget_Base {
 
 		$this->_current_instance = $instance;
 
-		add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
+		if ( 'hosted' !== $instance['video_type'] ) {
+			add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
+			$video_html = wp_oembed_get( $instance['link'], wp_embed_defaults() );
+		} else {
+			$video_html = wp_video_shortcode( $this->get_hosted_params() );
+		}
 
-		$video_embed = wp_oembed_get( $instance['link'], wp_embed_defaults() );
-
-		if ( $video_embed ) : ?>
+		if ( $video_html ) : ?>
 			<div class="elementor-video-wrapper">
 				<?php
-				echo $video_embed;
+				echo $video_html;
 
 				if ( ! empty( $this->_current_instance['image_overlay']['url'] )  && 'yes' === $this->_current_instance['show_image_overlay'] ) : ?>
 					<div class="elementor-custom-embed-image-overlay" style="background-image: url(<?php echo $this->_current_instance['image_overlay']['url']; ?>);">
@@ -220,30 +423,60 @@ class Widget_Video extends Widget_Base {
 	}
 
 	public function filter_oembed_result( $html, $url, $args ) {
-		$youtube_params = [];
+		$params = [];
 
-		if ( 'yes' === $this->_current_instance['yt_autoplay'] )
-			$youtube_params[] = 'autoplay=1';
+		if ( 'youtube' === $this->_current_instance['video_type'] ) {
+			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
 
-		if ( 'no' === $this->_current_instance['yt_rel_videos'] )
-			$youtube_params[] = 'rel=0';
+			foreach ( $youtube_options as $key => $option ) {
+				$value = ( 'yes' === $this->_current_instance[ 'yt_' . $option ] ) ? '1' : '0';
+				$params[ $option ] = $value;
+			}
 
-		if ( 'no' === $this->_current_instance['yt_controls'] )
-			$youtube_params[] = 'controls=0';
+			$params['wmode'] = 'opaque';
+		}
 
-		if ( 'no' === $this->_current_instance['yt_showinfo'] )
-			$youtube_params[] = 'showinfo=0';
+		if ( 'vimeo' === $this->_current_instance['video_type'] ) {
+			$vimeo_options = [ 'title', 'portrait', 'color', 'autoplay', 'loop', 'autopause' ];
 
-		// TODO: Check if is youtube link
-		$youtube_params[] = 'wmode=opaque';
+			foreach ( $vimeo_options as $key => $option ) {
+				$value = ( 'yes' === $this->_current_instance[ 'vimeo_' . $option ] ) ? '1' : '0';
+				$params[ $option ] = $value;
+			}
 
-		if ( ! empty( $youtube_params ) ) {
-			$separator = '&amp;';
-			$html = str_replace( '?feature=oembed', '?feature=oembed' . $separator . implode( $separator, $youtube_params ), $html );
+			$params['color'] = str_replace( '#', '', $this->_current_instance['vimeo_color'] );
+		}
+
+		if ( ! empty( $params ) ) {
+			preg_match( '/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $html, $matches );
+			$url = esc_url( add_query_arg( $params, $matches[1] ) );
+
+			$html = str_replace( $matches[1], $url, $html );
 		}
 
 		return $html;
 	}
+
+	protected function get_hosted_params() {
+		$params = [];
+		$params['src'] = $this->_current_instance['link'];
+		$hosted_options = [ 'width', 'height', 'autoplay', 'loop' ];
+
+		foreach ( $hosted_options as $key => $option ) {
+			$value = ( 'yes' === $this->_current_instance[ 'hosted_' . $option ] ) ? '1' : '0';
+
+			if ( 'width' === $option || 'height' === $option ) {
+				$value = '' !== $this->_current_instance[ 'hosted_' . $option ] ? $this->_current_instance[ 'hosted_' . $option ] : '';
+			}
+
+			if ( '' !== $value ) {
+				$params[ $option ] = $value;
+			}
+		}
+
+		return $params;
+	}
+
 
 	protected function content_template() {}
 }
