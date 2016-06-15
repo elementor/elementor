@@ -111,11 +111,11 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_gallery_images',
 				'tab' => self::TAB_STYLE,
-				'default' => 'default',
 				'options' => [
-					'default' => __( 'Default', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
+				'default' => '',
 			]
 		);
 
