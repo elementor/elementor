@@ -18,6 +18,19 @@ class Widget_Grid_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
+		$gallery_columns = [
+			1 => 1,
+			2 => 2,
+			3 => 3,
+			4 => 4,
+			5 => 5,
+			6 => 6,
+			7 => 7,
+			8 => 8,
+			9 => 9,
+			10 => 10,
+		];
+
 		$this->add_control(
 			'section_gallery_name',
 			[
@@ -58,7 +71,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 4,
-				'options' => array_combine( range( 1, 10 ),range( 1, 10 ) ),
+				'options' => $gallery_columns,
 				'section' => 'section_gallery_name',
 			]
 		);
@@ -265,7 +278,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 			if ( '' !== $instance['gallery_columns'] ) {
 				$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
 			}
-
 
 			if ( 'custom' !== $instance['thumbnail_size'] ) {
 				$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );

@@ -92,6 +92,9 @@ class Widget_Video extends Widget_Base {
 					'no' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
 				],
+				'condition' => [
+					'video_type' => 'youtube',
+				],
 				'default' => 'no',
 				'label_block' => true,
 			]
@@ -423,24 +426,22 @@ class Widget_Video extends Widget_Base {
 		$params = [];
 
 		if ( 'youtube' === $this->_current_instance['video_type'] ) {
-			foreach ( $this->_current_instance as $option => $values ) {
-				if ( false !== strpos( $option, 'yt' ) ) {
-					$key = str_replace( 'yt_', '', $option );
-					$value = ( 'yes' === $this->_current_instance[ $option ] ) ? '1' : '0';
-					$params[ $key ] = $value;
-				}
+			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
+
+			foreach ( $youtube_options as $key => $option ) {
+				$value = ( 'yes' === $this->_current_instance[ 'yt_' . $option ] ) ? '1' : '0';
+				$params[ $option ] = $value;
 			}
 
 			$params['wmode'] = 'opaque';
 		}
 
 		if ( 'vimeo' === $this->_current_instance['video_type'] ) {
-			foreach ( $this->_current_instance as $option => $values ) {
-				if ( false !== strpos( $option, 'vimeo' ) ) {
-					$key = str_replace( 'vimeo_', '', $option );
-					$value = ( 'yes' === $this->_current_instance[ $option ] ) ? '1' : '0';
-					$params[ $key ] = $value;
-				}
+			$vimeo_options = [ 'title', 'portrait', 'color', 'autoplay', 'loop', 'autopause' ];
+
+			foreach ( $vimeo_options as $key => $option ) {
+				$value = ( 'yes' === $this->_current_instance[ 'vimeo_' . $option ] ) ? '1' : '0';
+				$params[ $option ] = $value;
 			}
 
 			$params['color'] = str_replace( '#', '', $this->_current_instance['vimeo_color'] );
@@ -456,26 +457,20 @@ class Widget_Video extends Widget_Base {
 		return $html;
 	}
 
-	public function get_hosted_params() {
-
+	protected function get_hosted_params() {
 		$params = [];
-
 		$params['src'] = $this->_current_instance['link'];
+		$hosted_options = [ 'width', 'height', 'autoplay', 'loop' ];
 
-		foreach ( $this->_current_instance as $option => $values ) {
-			if ( false !== strpos( $option, 'hosted' ) ) {
-				$value = '';
+		foreach ( $hosted_options as $key => $option ) {
+			$value = ( 'yes' === $this->_current_instance[ 'hosted_' . $option ] ) ? '1' : '0';
 
-				$key = str_replace( 'hosted_', '', $option );
-				$value = ( 'yes' === $this->_current_instance[ $option ] ) ? '1' : '0';
+			if ( 'width' === $option || 'height' === $option ) {
+				$value = '' !== $this->_current_instance[ 'hosted_' . $option ] ? $this->_current_instance[ 'hosted_' . $option ] : '';
+			}
 
-				if ( '' !== $this->_current_instance[ $option ] && ( 'width' === $key || 'height' === $key ) ) {
-					$value = $this->_current_instance[ $option ];
-				}
-
-				if ( '' !== $value ) {
-					$params[ $key ] = $value;
-				}
+			if ( '' !== $value ) {
+				$params[ $option ] = $value;
 			}
 		}
 
