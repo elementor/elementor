@@ -18,18 +18,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$gallery_columns = [
-			1 => 1,
-			2 => 2,
-			3 => 3,
-			4 => 4,
-			5 => 5,
-			6 => 6,
-			7 => 7,
-			8 => 8,
-			9 => 9,
-			10 => 10,
-		];
+		$gallery_columns = range( 1, 10 );
+
+		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
 
 		$this->add_control(
 			'section_gallery_name',
