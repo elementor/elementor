@@ -129,7 +129,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			]
 		);
 
-		$columns_padding = ! is_rtl() ? '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;' : '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};';
+		$columns_padding = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
 
 		$this->add_control(
 			'columns_padding',
