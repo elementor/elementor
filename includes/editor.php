@@ -323,6 +323,7 @@ class Editor {
 					'inner_section' => __( 'Columns', 'elementor' ),
 					'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
 					'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
+					'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
 				],
 			]
 		);
