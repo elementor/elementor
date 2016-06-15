@@ -35,7 +35,10 @@ class Group_Control_Image_size extends Group_Control_Base {
 		}
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
-		$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
+
+		if ( empty( $args['exclude'] ) || ! in_array( 'custom', $args['exclude'] ) ) {
+			$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
+		}
 
 		return $image_sizes;
 	}

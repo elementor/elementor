@@ -18,10 +18,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$gallery_columns = range( 1, 10 );
-
-		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
-
 		$this->add_control(
 			'section_gallery',
 			[
@@ -53,8 +49,12 @@ class Widget_Grid_Gallery extends Widget_Base {
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
+				'exclude' => [ 'custom' ],
 			]
 		);
+
+		$gallery_columns = range( 1, 10 );
+		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
 
 		$this->add_control(
 			'gallery_columns',
@@ -88,11 +88,11 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'Ordering', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_gallery',
-				'default' => 'no',
 				'options' => [
-					'no' => __( 'Default', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
 					'rand' => __( 'Random', 'elementor' ),
 				],
+				'default' => '',
 			]
 		);
 
@@ -112,11 +112,11 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_gallery_images',
 				'tab' => self::TAB_STYLE,
-				'default' => 'default',
 				'options' => [
-					'default' => __( 'Default', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
+				'default' => '',
 			]
 		);
 
@@ -267,22 +267,19 @@ class Widget_Grid_Gallery extends Widget_Base {
 		}
 
 		$ids = wp_list_pluck( $instance['wp_gallery'], 'id' );
-
 		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
 
 		if ( $instance['gallery_columns'] ) {
 			$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
 		}
 
-		if ( 'custom' !== $instance['thumbnail_size'] ) {
-			$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
-		}
+		$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
 
 		if ( $instance['gallery_link'] ) {
 			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
 		}
 
-		if ( 'no' !== $instance['gallery_rand'] ) {
+		if ( ! empty( $instance['gallery_rand'] ) ) {
 			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
 		}
 		?>
