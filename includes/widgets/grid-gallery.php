@@ -18,10 +18,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$gallery_columns = range( 1, 10 );
-
-		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
-
 		$this->add_control(
 			'section_gallery',
 			[
@@ -55,6 +51,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'name' => 'thumbnail',
 			]
 		);
+
+		$gallery_columns = range( 1, 10 );
+		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
 
 		$this->add_control(
 			'gallery_columns',
