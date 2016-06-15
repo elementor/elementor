@@ -4118,10 +4118,10 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 
 		// When a file is selected, run a callback.
 		this.frame.on( {
-			'update': _.bind( this.select, this ),
-			'menu:render:default': _.bind( this.menuRender, this ),
-			'content:render:browse': _.bind( this.gallerySettings, this )
-		} );
+			'update': this.select,
+			'menu:render:default': this.menuRender,
+			'content:render:browse': this.gallerySettings
+		}, this );
 	},
 
 	menuRender: function( view ) {
