@@ -87,11 +87,11 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'Ordering', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_gallery',
-				'default' => 'no',
 				'options' => [
-					'no' => __( 'Default', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
 					'rand' => __( 'Random', 'elementor' ),
 				],
+				'default' => '',
 			]
 		);
 
@@ -281,7 +281,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
 		}
 
-		if ( 'no' !== $instance['gallery_rand'] ) {
+		if ( ! empty( $instance['gallery_rand'] ) ) {
 			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
 		}
 		?>
