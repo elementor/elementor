@@ -766,6 +766,11 @@
 		}
 	}
 
+	// Hidden control
+	.elementor-control-type-hidden {
+		display: none !important;
+	}
+
 	// Repeater control
 	@import "controls/repeater";
 }
