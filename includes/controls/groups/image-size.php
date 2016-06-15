@@ -18,25 +18,24 @@ class Group_Control_Image_size extends Group_Control_Base {
 
 	private function _get_image_sizes() {
 		$wp_image_sizes = get_intermediate_image_sizes();
+
 		$args = $this->get_args();
-		if ( ! empty( $args['include'] ) ) {
-			$args['exclude'] = [];
+
+		if ( $args['include'] ) {
+			$wp_image_sizes = array_intersect_key( $wp_image_sizes, $args['include'] );
+		} elseif ( $args['exclude'] ) {
+			$wp_image_sizes = array_diff_key( $wp_image_sizes, $args['exclude'] );
 		}
 
 		$image_sizes = [];
+
 		foreach ( $wp_image_sizes as $image_size ) {
-			if ( ! empty( $args['include'] ) && ! in_array( $image_size, $args['include'] ) )
-				continue;
-
-			if ( ! empty( $args['exclude'] ) && in_array( $image_size, $args['exclude'] ) )
-				continue;
-
 			$image_sizes[ $image_size ] = ucwords( str_replace( '_', ' ', $image_size ) );
 		}
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
 
-		if ( empty( $args['exclude'] ) || ! in_array( 'custom', $args['exclude'] ) ) {
+		if ( empty( $args['exclude']['custom'] ) ) {
 			$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
 		}
 
@@ -51,6 +50,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 		// Get the first item for default value
 		$default_value = array_keys( $image_sizes );
 		$default_value = array_shift( $default_value );
+
 		$controls['size'] = [
 			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
@@ -58,13 +58,17 @@ class Group_Control_Image_size extends Group_Control_Base {
 			'default' => $default_value,
 		];
 
-		$controls['custom_dimension'] = [
-			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
-			'type' => Controls_Manager::IMAGE_DIMENSIONS,
-			'condition' => [
-				'size' => [ 'custom' ],
-			],
-		];
+		if ( isset( $image_sizes['custom'] ) ) {
+			$controls['custom_dimension'] = [
+				'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
+				'type' => Controls_Manager::IMAGE_DIMENSIONS,
+				'description' => __( 'Choose size (px)' ),
+				'condition' => [
+					'size' => [ 'custom' ],
+				],
+				'separator' => 'none',
+			];
+		}
 
 		return $controls;
 	}

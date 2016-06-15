@@ -267,13 +267,14 @@ class Widget_Grid_Gallery extends Widget_Base {
 		}
 
 		$ids = wp_list_pluck( $instance['wp_gallery'], 'id' );
+
 		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
+
+		$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
 
 		if ( $instance['gallery_columns'] ) {
 			$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
 		}
-
-		$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
 
 		if ( $instance['gallery_link'] ) {
 			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );

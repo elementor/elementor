@@ -628,6 +628,10 @@
 			}
 		}
 
+		.elementor-control-media {
+			padding-top: 20px;
+		}
+
 		.elementor-control-gallery-thumbnails {
 			overflow: hidden;
 			margin-top: 20px;
@@ -764,6 +768,49 @@
 			line-height: 1;
 			color: $editor-light;
 		}
+	}
+
+	// Image dimensions control
+	.elementor-control-type-image_dimensions {
+
+		.elementor-control-description {
+			margin: 0 0 15px;
+		}
+
+		.elementor-control-input-wrapper {
+			overflow: hidden;
+		}
+
+		.elementor-image-dimensions-field {
+			width: 70px;
+			float: getStartDirection();
+		}
+
+		.elementor-image-dimensions-separator {
+			width: 20px;
+			text-align: center;
+			float: getStartDirection();
+			padding-top: 4px;
+		}
+
+		.elementor-image-dimensions-field-description {
+			text-transform: uppercase;
+			margin-top: 10px;
+			color: $editor-lightest;
+			font-size: 11px;
+			text-align: center;
+		}
+
+		.elementor-image-dimensions-apply-button {
+			float: getEndDirection();
+			height: 27px;
+			width: 70px;
+		}
+	}
+
+	// Hidden control
+	.elementor-control-type-hidden {
+		display: none !important;
 	}
 
 	// Repeater control
