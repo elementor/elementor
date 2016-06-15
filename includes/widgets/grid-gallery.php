@@ -23,7 +23,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
 
 		$this->add_control(
-			'section_gallery_name',
+			'section_gallery',
 			[
 				'label' => __( 'Grid Gallery', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
@@ -36,7 +36,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 			]
 		);
 
@@ -45,7 +45,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 			]
 		);
 
@@ -63,7 +63,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 4,
 				'options' => $gallery_columns,
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 			]
 		);
 
@@ -73,7 +73,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'file',
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 				'options' => [
 					'file' => __( 'Media File', 'elementor' ),
 					'attachment' => __( 'Attachment', 'elementor' ),
@@ -87,7 +87,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Ordering', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 				'default' => 'no',
 				'options' => [
 					'no' => __( 'Default', 'elementor' ),
