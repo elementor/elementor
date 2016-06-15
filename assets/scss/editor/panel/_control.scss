@@ -620,43 +620,45 @@
 
 	// Gallery control
 	.elementor-control-type-gallery {
-		.elementor-button {
-			border: none;
+
+		&.elementor-gallery-empty {
+
+			.elementor-control-gallery-clear, .elementor-control-gallery-thumbnails {
+				display: none;
+			}
+		}
+
+		.elementor-control-gallery-thumbnails {
+			overflow: hidden;
+			margin-top: 20px;
 			cursor: pointer;
-			border-radius: 3px;
-			transition: all 0.5s;
-			font-size: 11px;
+		}
+
+		.elementor-control-gallery-thumbnail {
+			width: 40px;
+			height: 40px;
+			background-size: cover;
+			background-position: 50% 50%;
+			float: getStartDirection();
+			margin-bottom: 10px;
+
+			&:not(:nth-child(5n)) {
+				@include margin-end(10px);
+			}
+		}
+
+		.elementor-control-gallery-add {
+			width: 100%;
+			height: 30px;
+			color: #fff;
+			background-color: $editor-light;
+			margin-top: 15px;
 			text-transform: uppercase;
-			width: 100%;
-			height: 26px;
-			background-color: $editor-darker;
-			color: $editor-lightest;
 		}
 
-		.elementor-gallery-create-gallery {
-
-		}
-
-		.elementor-gallery-add-gallery {
-			display: none;
-			display: inline-block;
-			width: 100%;
-		}
-
-		.elementor-gallery-edit-gallery {
-			margin-top: 0.5%;
-			display: none;
-			display: inline-block;
-			width: 100%;
-		}
-
-		.elementor-gallery-reset-gallery {
-			display: none;
-			background-color: transparent;
-			text-transform: capitalize;
-			color: $editor-darker;
-			width: 50%;
-			margin-top: 3%;
+		.elementor-control-gallery-clear {
+			color: $editor-warning;
+			cursor: pointer;
 		}
 	}
 
@@ -698,7 +700,7 @@
 			color: $editor-light;
 
 			i {
-				margin-right: 8px;
+				@include margin-end(8px);
 			}
 		}
 

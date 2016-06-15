@@ -18,21 +18,12 @@ class Widget_Grid_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$gallery_columns = [
-			1 => 1,
-			2 => 2,
-			3 => 3,
-			4 => 4,
-			5 => 5,
-			6 => 6,
-			7 => 7,
-			8 => 8,
-			9 => 9,
-			10 => 10,
-		];
+		$gallery_columns = range( 1, 10 );
+
+		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
 
 		$this->add_control(
-			'section_gallery_name',
+			'section_gallery',
 			[
 				'label' => __( 'Grid Gallery', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
@@ -45,7 +36,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 			]
 		);
 
@@ -54,7 +45,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 			]
 		);
 
@@ -72,7 +63,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 4,
 				'options' => $gallery_columns,
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 			]
 		);
 
@@ -82,7 +73,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'file',
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 				'options' => [
 					'file' => __( 'Media File', 'elementor' ),
 					'attachment' => __( 'Attachment', 'elementor' ),
@@ -96,7 +87,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Ordering', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_gallery_name',
+				'section' => 'section_gallery',
 				'default' => 'no',
 				'options' => [
 					'no' => __( 'Default', 'elementor' ),
@@ -129,7 +120,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			]
 		);
 
-		$columns_padding = ! is_rtl() ? '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;' : '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};';
+		$columns_padding = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
 
 		$this->add_control(
 			'columns_padding',
@@ -271,34 +262,34 @@ class Widget_Grid_Gallery extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$shortcode = '';
-		if ( '' !== $instance['wp_gallery'] ) {
-			$this->add_render_attribute( 'shortcode', 'ids', $instance['wp_gallery'] );
+		if ( ! $instance['wp_gallery'] ) {
+			return;
+		}
 
-			if ( '' !== $instance['gallery_columns'] ) {
-				$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
-			}
+		$ids = wp_list_pluck( $instance['wp_gallery'], 'id' );
 
-			if ( 'custom' !== $instance['thumbnail_size'] ) {
-				$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
-			}
+		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
 
-			if ( '' !== $instance['gallery_link'] ) {
-				$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
-			}
+		if ( $instance['gallery_columns'] ) {
+			$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
+		}
 
-			if ( 'no' !== $instance['gallery_rand'] ) {
-				$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
-			}
+		if ( 'custom' !== $instance['thumbnail_size'] ) {
+			$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
+		}
 
-			$shortcode .= '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']';
+		if ( $instance['gallery_link'] ) {
+			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
+		}
+
+		if ( 'no' !== $instance['gallery_rand'] ) {
+			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
 		}
 		?>
-		<?php if ( ! empty( $shortcode ) ) : ?>
-			<div class="elementor-wp-gallery">
-				<?php echo do_shortcode( $shortcode ); ?>
-			</div>
-		<?php endif;
+		<div class="elementor-wp-gallery">
+			<?php echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
+		</div>
+		<?php
 	}
 
 	protected function content_template() {}

@@ -40,8 +40,8 @@ body.elementor-editor-inactive #elementor-editor {
   margin: 15px 0; }
 
 .elementor-button {
-  padding: 0 25px;
-  height: 40px;
+  padding: 12.5px 25px;
+  display: inline-block;
   line-height: 1;
   border: 1px solid;
   border-radius: 3px;

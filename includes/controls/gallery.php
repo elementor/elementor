@@ -17,23 +17,24 @@ class Control_Gallery extends Control_Base {
 				<div class="elementor-control-description"><%= data.description %></div>
 				<% } %>
 				<div class="elementor-control-media">
-					<div class="elementor-control-media-upload-button">
-						<button class="elementor-gallery-create-gallery elementor-button" data-action="create"><?php _e( 'Create A New Gallery', 'elementor' ); ?></button>
-						<button class="elementor-gallery-add-gallery elementor-button show" data-action="add"><?php _e( 'Add To Gallery', 'elementor' ); ?></button>
-						<button class="elementor-gallery-edit-gallery elementor-button show" data-action="edit"><?php _e( 'Edit Gallery', 'elementor' ); ?>
-							<span class="elementor-gallery-count"></span>
-						</button>
-						<div class="elementor-gallery-reset-gallery elementor-button show" data-action="edit">
-							<i class="fa fa-undo" aria-hidden="true"></i>
-							<?php _e( 'Reset Gallery', 'elementor' ); ?>
-						</div>
+					<div class="elementor-control-gallery-status">
+						<span class="elementor-control-gallery-status-title">
+							<% if ( data.controlValue.length ) {
+								print( elementor.translate( 'gallery_images_selected', [ data.controlValue.length ] ) );
+							} else { %>
+								<?php _e( 'No Images Selected', 'elementor' ); ?>
+							<% } %>
+						</span>
+						<span class="elementor-control-gallery-clear">(Clear)</span>
 					</div>
-					<div class="elementor-control-media-image-area">
-						<div class="elementor-control-media-image"></div>
+					<div class="elementor-control-gallery-thumbnails">
+						<% _.each( data.controlValue, function( image ) { %>
+							<div class="elementor-control-gallery-thumbnail" style="background-image: url(<%- image.url %>)"></div>
+						<% } ); %>
 					</div>
+					<button class="elementor-button elementor-control-gallery-add"><?php _e( '+ Add Images', 'elementor' ); ?></button>
 				</div>
 			</div>
-			<input type="hidden" data-setting="<%= data.name %>" />
 		</div>
 		<?php
 	}
@@ -41,6 +42,11 @@ class Control_Gallery extends Control_Base {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'separator' => 'none',
 		];
+	}
+
+	public function get_default_value() {
+		return [];
 	}
 }
