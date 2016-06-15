@@ -390,11 +390,11 @@ class Widget_Video extends Widget_Base {
 
 		$this->_current_instance = $instance;
 
-		if ( 'hosted' != $instance['video_type'] ) {
+		if ( 'hosted' !== $instance['video_type'] ) {
 			add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
 			$video_html = wp_oembed_get( $instance['link'], wp_embed_defaults() );
 		} else {
-			$video_html = wp_video_shortcode( $this->build_hosted_params() );
+			$video_html = wp_video_shortcode( $this->get_hosted_params() );
 		}
 
 		if ( $video_html ) : ?>
@@ -456,29 +456,32 @@ class Widget_Video extends Widget_Base {
 		return $html;
 	}
 
-	public function build_hosted_params() {
-		if ( 'hosted' === $this->_current_instance['video_type'] ) {
-			$params = [];
+	public function get_hosted_params() {
 
-			$params['src'] = $this->_current_instance['link'];
+		$params = [];
 
-			foreach ( $this->_current_instance as $option => $values ) {
-				if ( false !== strpos( $option, 'hosted' ) ) {
-					$key = str_replace( 'hosted_', '', $option );
+		$params['src'] = $this->_current_instance['link'];
 
-					if ( ! is_numeric( $this->_current_instance[ $option ] ) ) {
-						$value = ( 'yes' === $this->_current_instance[ $option ] ) ? '1' : '0';
-					} else {
-						$value = ( '' !== $this->_current_instance[ $option ] ) ? $this->_current_instance[ $option ] : '0';
-					}
+		foreach ( $this->_current_instance as $option => $values ) {
+			if ( false !== strpos( $option, 'hosted' ) ) {
+				$value = '';
 
+				$key = str_replace( 'hosted_', '', $option );
+				$value = ( 'yes' === $this->_current_instance[ $option ] ) ? '1' : '0';
+
+				if ( '' !== $this->_current_instance[ $option ] && ( 'width' === $key || 'height' === $key ) ) {
+					$value = $this->_current_instance[ $option ];
+				}
+
+				if ( '' !== $value ) {
 					$params[ $key ] = $value;
 				}
 			}
-
-			return $params;
 		}
+
+		return $params;
 	}
+
 
 	protected function content_template() {}
 }
