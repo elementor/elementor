@@ -282,65 +282,65 @@ class Widget_Video extends Widget_Base {
 		);
 
 		// Self Hosted
-		$this->add_control(
-			'hosted_width',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'section' => 'section_video',
-				'default' => '640',
-				'condition' => [
-					'video_type' => 'hosted',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hosted_height',
-			[
-				'label' => __( 'Height', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'section' => 'section_video',
-				'default' => '360',
-				'condition' => [
-					'video_type' => 'hosted',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hosted_autoplay',
-			[
-				'label' => __( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
-				'options' => [
-					'no' => __( 'No', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-				],
-				'default' => 'no',
-				'condition' => [
-					'video_type' => 'hosted',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hosted_loop',
-			[
-				'label' => __( 'Loop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
-				'options' => [
-					'no' => __( 'No', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-				],
-				'default' => 'no',
-				'condition' => [
-					'video_type' => 'hosted',
-				],
-			]
-		);
+		//$this->add_control(
+		//	'hosted_width',
+		//	[
+		//		'label' => __( 'Width', 'elementor' ),
+		//		'type' => Controls_Manager::NUMBER,
+		//		'section' => 'section_video',
+		//		'default' => '640',
+		//		'condition' => [
+		//			'video_type' => 'hosted',
+		//		],
+		//	]
+		//);
+		//
+		//$this->add_control(
+		//	'hosted_height',
+		//	[
+		//		'label' => __( 'Height', 'elementor' ),
+		//		'type' => Controls_Manager::NUMBER,
+		//		'section' => 'section_video',
+		//		'default' => '360',
+		//		'condition' => [
+		//			'video_type' => 'hosted',
+		//		],
+		//	]
+		//);
+		//
+		//$this->add_control(
+		//	'hosted_autoplay',
+		//	[
+		//		'label' => __( 'Autoplay', 'elementor' ),
+		//		'type' => Controls_Manager::SELECT,
+		//		'section' => 'section_video',
+		//		'options' => [
+		//			'no' => __( 'No', 'elementor' ),
+		//			'yes' => __( 'Yes', 'elementor' ),
+		//		],
+		//		'default' => 'no',
+		//		'condition' => [
+		//			'video_type' => 'hosted',
+		//		],
+		//	]
+		//);
+		//
+		//$this->add_control(
+		//	'hosted_loop',
+		//	[
+		//		'label' => __( 'Loop', 'elementor' ),
+		//		'type' => Controls_Manager::SELECT,
+		//		'section' => 'section_video',
+		//		'options' => [
+		//			'no' => __( 'No', 'elementor' ),
+		//			'yes' => __( 'Yes', 'elementor' ),
+		//		],
+		//		'default' => 'no',
+		//		'condition' => [
+		//			'video_type' => 'hosted',
+		//		],
+		//	]
+		//);
 
 		$this->add_control(
 			'view',
