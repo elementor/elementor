@@ -451,8 +451,8 @@ class Widget_Video extends Widget_Base {
 		if ( 'youtube' === $this->_current_instance['video_type'] ) {
 			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
 
-			foreach ( $youtube_options as $key => $option ) {
-				if ( 'autoplay' === $key && $this->has_image_overlay() )
+			foreach ( $youtube_options as $option ) {
+				if ( 'autoplay' === $option && $this->has_image_overlay() )
 					continue;
 
 				$value = ( 'yes' === $this->_current_instance[ 'yt_' . $option ] ) ? '1' : '0';
@@ -465,8 +465,8 @@ class Widget_Video extends Widget_Base {
 		if ( 'vimeo' === $this->_current_instance['video_type'] ) {
 			$vimeo_options = [ 'autoplay', 'loop', 'title', 'portrait', 'byline' ];
 
-			foreach ( $vimeo_options as $key => $option ) {
-				if ( 'autoplay' === $key && $this->has_image_overlay() )
+			foreach ( $vimeo_options as $option ) {
+				if ( 'autoplay' === $option && $this->has_image_overlay() )
 					continue;
 
 				$value = ( 'yes' === $this->_current_instance[ 'vimeo_' . $option ] ) ? '1' : '0';
