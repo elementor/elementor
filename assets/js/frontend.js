@@ -371,8 +371,11 @@
 
 		$imageOverlay.on( 'click', function() {
 			$imageOverlay.remove();
+			var newSourceUrl = $videoFrame[0].src;
+			// Remove old autoplay if exists
+			newSourceUrl = newSourceUrl.replace( '&autoplay=0', '' );
 
-			$videoFrame[0].src = $videoFrame[0].src + '&autoplay=1';
+			$videoFrame[0].src = newSourceUrl + '&autoplay=1';
 		} );
 	} );
 

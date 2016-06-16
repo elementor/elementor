@@ -38,7 +38,7 @@ class Widget_Video extends Widget_Base {
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
 					'vimeo' => __( 'Vimeo', 'elementor' ),
-					'hosted' => __( 'Self Hosted', 'elementor' ),
+					//'hosted' => __( 'HTML5 Video', 'elementor' ),
 				],
 			]
 		);
@@ -281,14 +281,14 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		// Hosted
+		// Self Hosted
 		$this->add_control(
 			'hosted_width',
 			[
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'section' => 'section_video',
-				'label_block' => true,
+				'default' => '640',
 				'condition' => [
 					'video_type' => 'hosted',
 				],
@@ -301,7 +301,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'section' => 'section_video',
-				'label_block' => true,
+				'default' => '360',
 				'condition' => [
 					'video_type' => 'hosted',
 				],
@@ -311,7 +311,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'hosted_autoplay',
 			[
-				'label' => __( 'Auto Play', 'elementor' ),
+				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
@@ -319,7 +319,6 @@ class Widget_Video extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 				],
 				'default' => 'no',
-				'label_block' => true,
 				'condition' => [
 					'video_type' => 'hosted',
 				],
@@ -329,18 +328,17 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'hosted_loop',
 			[
-				'label' => __( 'Play the video again automatically when it reaches the end', 'elementor' ),
+				'label' => __( 'Loop', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
 				],
-				'default' => 'yes',
+				'default' => 'no',
 				'condition' => [
 					'video_type' => 'hosted',
 				],
-				'label_block' => true,
 			]
 		);
 
@@ -432,7 +430,7 @@ class Widget_Video extends Widget_Base {
 				<?php
 				echo $video_html;
 
-				if ( ! empty( $this->_current_instance['image_overlay']['url'] )  && 'yes' === $this->_current_instance['show_image_overlay'] ) : ?>
+				if ( $this->has_image_overlay() ) : ?>
 					<div class="elementor-custom-embed-image-overlay" style="background-image: url(<?php echo $this->_current_instance['image_overlay']['url']; ?>);">
 						<?php if ( 'yes' === $this->_current_instance['show_play_icon'] ) : ?>
 							<div class="elementor-custom-embed-play">
@@ -454,6 +452,9 @@ class Widget_Video extends Widget_Base {
 			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
 
 			foreach ( $youtube_options as $key => $option ) {
+				if ( 'autoplay' === $key && $this->has_image_overlay() )
+					continue;
+
 				$value = ( 'yes' === $this->_current_instance[ 'yt_' . $option ] ) ? '1' : '0';
 				$params[ $option ] = $value;
 			}
@@ -465,6 +466,9 @@ class Widget_Video extends Widget_Base {
 			$vimeo_options = [ 'autoplay', 'loop', 'title', 'portrait', 'byline' ];
 
 			foreach ( $vimeo_options as $key => $option ) {
+				if ( 'autoplay' === $key && $this->has_image_overlay() )
+					continue;
+
 				$value = ( 'yes' === $this->_current_instance[ 'vimeo_' . $option ] ) ? '1' : '0';
 				$params[ $option ] = $value;
 			}
@@ -484,24 +488,27 @@ class Widget_Video extends Widget_Base {
 
 	protected function get_hosted_params() {
 		$params = [];
-		$params['src'] = $this->_current_instance['link'];
-		$hosted_options = [ 'width', 'height', 'autoplay', 'loop' ];
+		$params['src'] = $this->_current_instance['hosted_link'];
+		$hosted_options = [ 'autoplay', 'loop' ];
 
 		foreach ( $hosted_options as $key => $option ) {
 			$value = ( 'yes' === $this->_current_instance[ 'hosted_' . $option ] ) ? '1' : '0';
-
-			if ( 'width' === $option || 'height' === $option ) {
-				$value = '' !== $this->_current_instance[ 'hosted_' . $option ] ? $this->_current_instance[ 'hosted_' . $option ] : '';
-			}
-
-			if ( '' !== $value ) {
-				$params[ $option ] = $value;
-			}
+			$params[ $option ] = $value;
 		}
 
+		if ( ! empty( $this->_current_instance['hosted_width'] ) ) {
+			$params['width'] = $this->_current_instance['hosted_width'];
+		}
+
+		if ( ! empty( $this->_current_instance['hosted_height'] ) ) {
+			$params['height'] = $this->_current_instance['hosted_height'];
+		}
 		return $params;
 	}
 
+	protected function has_image_overlay() {
+		return ! empty( $this->_current_instance['image_overlay']['url'] ) && 'yes' === $this->_current_instance['show_image_overlay'];
+	}
 
 	protected function content_template() {}
 }
