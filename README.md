@@ -116,6 +116,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 * Tweak! - Improved UI in admin area and panel
 * Tweak! - Added body class `elementor-page` in frontend ([#58](https://github.com/pojome/elementor/issues/58))
 * Fixed! - Elementor seems to get stuck while loading ([#77](https://github.com/pojome/elementor/issues/77))
+* Fixed! - WP Widgets with multiple checkboxes ([#90](https://github.com/pojome/elementor/issues/90))
 
 ### 0.2.4 - 13.06.2016 ###
 * Tweak! - Added some compatible to Cache plugins
