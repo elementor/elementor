@@ -22,9 +22,9 @@ class Group_Control_Image_size extends Group_Control_Base {
 		$args = $this->get_args();
 
 		if ( $args['include'] ) {
-			$wp_image_sizes = array_intersect_key( $wp_image_sizes, $args['include'] );
+			$wp_image_sizes = array_intersect( $wp_image_sizes, $args['include'] );
 		} elseif ( $args['exclude'] ) {
-			$wp_image_sizes = array_diff_key( $wp_image_sizes, $args['exclude'] );
+			$wp_image_sizes = array_diff( $wp_image_sizes, $args['exclude'] );
 		}
 
 		$image_sizes = [];
@@ -35,7 +35,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
 
-		if ( empty( $args['exclude']['custom'] ) ) {
+		if ( ! empty( $args['include']['custom'] ) || ! in_array( 'custom', $args['exclude'] ) ) {
 			$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
 		}
 
@@ -62,7 +62,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 			$controls['custom_dimension'] = [
 				'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
 				'type' => Controls_Manager::IMAGE_DIMENSIONS,
-				'description' => __( 'Choose size (px)' ),
+				'description' => __( 'Choose size (px)', 'elementor' ),
 				'condition' => [
 					'size' => [ 'custom' ],
 				],

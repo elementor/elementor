@@ -152,7 +152,7 @@ class Widget_Tabs extends Widget_Base {
 				'name' => 'tab_typography',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .elementor-tab-title > span',
 			]
 		);
 

@@ -140,23 +140,6 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
-			'tab_color',
-			[
-				'label' => __( 'Title Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_title_style',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
-				],
-			]
-		);
-
-		$this->add_control(
 			'tab_active_color',
 			[
 				'label' => __( 'Active Color', 'elementor' ),
