@@ -919,6 +919,8 @@ select {
         background-color: #a4afb7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-choices, #elementor-panel #elementor-panel-page-editor .elementor-control-align .elementor-choices, #elementor-panel #elementor-panel-page-editor .elementor-control-position .elementor-choices {
     direction: ltr; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-input-wrapper {
+    overflow: hidden; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider input {
     width: 80%;
     float: left; }
