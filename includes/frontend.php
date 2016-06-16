@@ -16,6 +16,7 @@ class Frontend {
 		}
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
+		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], 999999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
@@ -67,6 +68,13 @@ class Frontend {
 		$widget_obj->before_render( $instance, $widget_data['id'], $widget_data );
 		$widget_obj->render_content( $instance );
 		$widget_obj->after_render( $instance, $widget_data['id'], $widget_data );
+	}
+
+	public function body_class( $classes = [] ) {
+		if ( is_singular() && 'builder' === Plugin::instance()->db->get_edit_mode( get_the_ID() ) ) {
+			$classes[] = 'elementor-page';
+		}
+		return $classes;
 	}
 
 	public function enqueue_scripts() {
