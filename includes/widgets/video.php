@@ -154,7 +154,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		// Vimdeo
+		// Vimeo
 		$this->add_control(
 			'vimeo_title',
 			[
@@ -194,7 +194,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'vimeo_color',
 			[
-				'label' => __( 'Specify the color of the video controls.', 'elementor' ),
+				'label' => __( 'Controls Color.', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'section' => 'section_video',
 				'default' => '#FFFFFF',

@@ -1,0 +1,22 @@
+//
+// Slideshow gallery
+//
+
+.elementor-slideshow-wrapper {
+
+	div.slick-slide {
+		img {
+			margin: auto;
+		}
+	}
+
+	.slick-slider {
+
+		.slick-prev,
+		.slick-next {
+			&:before {
+				color: #000000;
+			}
+		}
+	}
+}
