@@ -143,7 +143,7 @@ WidgetView = BaseElementView.extend( {
 
 				// TODO: REMOVE THIS !!
 				// TEMP CODING !!
-				this.$( '> .elementor-element-overlay' ).append( '<i class="elementor-widget-empty-icon fa fa-' + this.model.getIcon() + '"></i>' );
+				this.$( '> .elementor-element-overlay' ).append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
 			}
 		}, this ) );
 	},

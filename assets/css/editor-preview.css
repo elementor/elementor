@@ -245,7 +245,7 @@ body.elementor-editor-active .elementor-sortable-helper {
   font-style: normal;
   line-height: 50px;
   border-radius: 3px; }
-  body.elementor-editor-active .elementor-sortable-helper .fa {
+  body.elementor-editor-active .elementor-sortable-helper i {
     font-size: 25px;
     width: 60px;
     text-align: center; }
