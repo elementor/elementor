@@ -109,6 +109,11 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 == Changelog ==
 
+= 0.2.5 - 16.06.2016 =
+* Tweak! - Added Vimeo support for widget Video
+* Tweak! - Improved UI in admin area and panel
+* Fixed! - Elementor seems to get stuck while loading ([#77](https://github.com/pojome/elementor/issues/77))
+
 = 0.2.4 - 13.06.2016 =
 * Tweak! - Added some compatible to Cache plugins
 * Tweak! - Added shortcode support in Text Editor widget
