@@ -35,11 +35,55 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'default' => 'youtube',
-				'label_block' => true,
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
 					'vimeo' => __( 'Vimeo', 'elementor' ),
 					'hosted' => __( 'Self Hosted', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_video',
+				'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
+				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
+
+		$this->add_control(
+			'vimeo_link',
+			[
+				'label' => __( 'Vimeo Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_video',
+				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
+				'default' => 'https://vimeo.com/170933924',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hosted_link',
+			[
+				'label' => __( 'Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_video',
+				'placeholder' => __( 'Enter your video link', 'elementor' ),
+				'default' => '',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'hosted',
 				],
 			]
 		);
@@ -71,21 +115,6 @@ class Widget_Video extends Widget_Base {
 
 		// Youtube
 		$this->add_control(
-			'link',
-			[
-				'label' => __( 'Link', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
-				'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
-				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
-				'label_block' => true,
-				'condition' => [
-					'video_type' => 'youtube',
-				],
-			]
-		);
-
-		$this->add_control(
 			'yt_autoplay',
 			[
 				'label' => __( 'Auto Play', 'elementor' ),
@@ -99,7 +128,6 @@ class Widget_Video extends Widget_Base {
 					'video_type' => 'youtube',
 				],
 				'default' => 'no',
-				'label_block' => true,
 			]
 		);
 
@@ -110,14 +138,13 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
 				],
-				'default' => 'yes',
+				'default' => 'no',
 				'condition' => [
 					'video_type' => 'youtube',
 				],
-				'label_block' => true,
 			]
 		);
 
@@ -128,14 +155,13 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
 				],
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'youtube',
 				],
-				'label_block' => true,
 			]
 		);
 
@@ -146,33 +172,17 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
 				],
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'youtube',
 				],
-				'label_block' => true,
 			]
 		);
 
 		// Vimeo
-		$this->add_control(
-			'vimeo_link',
-			[
-				'label' => __( 'Vimeo Link', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
-				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
-				'default' => 'https://vimeo.com/170933924',
-				'label_block' => true,
-				'condition' => [
-					'video_type' => 'vimeo',
-				],
-			]
-		);
-
 		$this->add_control(
 			'vimeo_title',
 			[
@@ -277,21 +287,6 @@ class Widget_Video extends Widget_Base {
 		);
 
 		// Hosted
-		$this->add_control(
-			'hosted_link',
-			[
-				'label' => __( 'Link', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
-				'placeholder' => __( 'Enter your video link', 'elementor' ),
-				'default' => '',
-				'label_block' => true,
-				'condition' => [
-					'video_type' => 'hosted',
-				],
-			]
-		);
-
 		$this->add_control(
 			'hosted_width',
 			[
