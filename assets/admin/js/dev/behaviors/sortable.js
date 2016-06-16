@@ -73,7 +73,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			cid: $item.data( 'model-cid' )
 		} );
 
-		return '<div style="height: 50px; width: 250px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><i class="fa fa-' + model.getIcon() + '"></i><div class="elementor-title">' + model.getTitle() + '</div></div>';
+		return '<div style="height: 50px; width: 250px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><i class="eicon-' + model.getIcon() + '"></i><div class="elementor-title">' + model.getTitle() + '</div></div>';
 	},
 
 	deactivate: function() {
