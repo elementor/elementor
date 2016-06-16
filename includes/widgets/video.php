@@ -117,7 +117,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'yt_autoplay',
 			[
-				'label' => __( 'Auto Play', 'elementor' ),
+				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
@@ -184,38 +184,87 @@ class Widget_Video extends Widget_Base {
 
 		// Vimeo
 		$this->add_control(
-			'vimeo_title',
+			'vimeo_autoplay',
 			[
-				'label' => __( 'Show the title on the video', 'elementor' ),
+				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+				],
+				'default' => 'no',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
+			'vimeo_loop',
+			[
+				'label' => __( 'Loop', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+				],
+				'default' => 'no',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
+			'vimeo_title',
+			[
+				'label' => __( 'Intro Title', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
 				],
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
-				'label_block' => true,
 			]
 		);
 
 		$this->add_control(
 			'vimeo_portrait',
 			[
-				'label' => __( 'Show the user’s portrait on the video', 'elementor' ),
+				'label' => __( 'Intro Portrait', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
 				],
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
-				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'vimeo_byline',
+			[
+				'label' => __( 'Byline', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_video',
+				'options' => [
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
+				],
+				'default' => 'yes',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
 			]
 		);
 
@@ -229,60 +278,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
-			]
-		);
-
-		$this->add_control(
-			'vimeo_autoplay',
-			[
-				'label' => __( 'Automatically start playback of the video.', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
-				'default' => 'yes',
-				'condition' => [
-					'video_type' => 'vimeo',
-				],
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'vimeo_loop',
-			[
-				'label' => __( 'Play the video again automatically when it reaches the end', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
-				'default' => 'yes',
-				'condition' => [
-					'video_type' => 'vimeo',
-				],
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'vimeo_autopause',
-			[
-				'label' => __( 'Pause this video automatically when another one plays', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
-				'default' => 'yes',
-				'condition' => [
-					'video_type' => 'vimeo',
-				],
-				'label_block' => true,
 			]
 		);
 
@@ -467,7 +462,7 @@ class Widget_Video extends Widget_Base {
 		}
 
 		if ( 'vimeo' === $this->_current_instance['video_type'] ) {
-			$vimeo_options = [ 'title', 'portrait', 'color', 'autoplay', 'loop', 'autopause' ];
+			$vimeo_options = [ 'autoplay', 'loop', 'title', 'portrait', 'byline' ];
 
 			foreach ( $vimeo_options as $key => $option ) {
 				$value = ( 'yes' === $this->_current_instance[ 'vimeo_' . $option ] ) ? '1' : '0';
