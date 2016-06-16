@@ -510,26 +510,28 @@ body {
 
 		.elementor-sortable-helper {
 			position: absolute;
-			background: fade-out($editor-darkest, .15);
-			display: table;
-			table-layout: fixed;
-			color: #fff;
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 13px;
-			font-weight: normal;
-			font-style: normal;
-			line-height: 50px;
 			border-radius: 3px;
+			background-color: #fff;
+			text-align: center;
+			color: $editor-darker;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 
-			i {
-				font-size: 25px;
-				width: 60px;
-				text-align: center;
+			.icon {
+				font-size: 28px;
+				padding-top: 15px;
+				line-height: 1;
 			}
 
-			> * {
+			.elementor-element-title-wrapper {
+				display: table;
+				width: 100%;
+			}
+
+			.title {
+				font-size: 11px;
 				display: table-cell;
 				vertical-align: middle;
+				height: 40px;
 			}
 		}
 
