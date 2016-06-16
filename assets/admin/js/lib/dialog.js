@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v2.0.0
+ * Dialogs Manager v2.0.1
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -382,9 +382,9 @@
 	DialogsManager.addWidgetType('options', {
 		activeKeyUp: function (event) {
 
-			var ENTER_KEY = 13;
+			var TAB_KEY = 9;
 
-			if (event.which !== ENTER_KEY) {
+			if (event.which === TAB_KEY) {
 
 				event.preventDefault();
 			}
@@ -395,15 +395,10 @@
 		},
 		activeKeyDown: function (event) {
 
-			var TAB_KEY = 9,
-				ENTER_KEY = 13;
-
-			if (event.which !== ENTER_KEY) {
-
-				event.preventDefault();
-			}
+			var TAB_KEY = 9;
 
 			if (event.which === TAB_KEY) {
+				event.preventDefault();
 
 				var currentButtonIndex = this.focusedButton.index(),
 					nextButtonIndex;
