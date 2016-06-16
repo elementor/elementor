@@ -45,18 +45,6 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'link',
-			[
-				'label' => __( 'Link', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
-	            'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
-	            'default' => '',
-	            'label_block' => true,
-			]
-		);
-
-		$this->add_control(
 			'aspect_ratio',
 			[
 				'label' => __( 'Aspect Ratio', 'elementor' ),
@@ -72,13 +60,28 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		// Youtube
 		$this->add_control(
 			'heading_youtube',
 			[
 				'label' => __( 'Video Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_video',
+			]
+		);
+
+		// Youtube
+		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_video',
+				'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
+				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
 			]
 		);
 
@@ -156,6 +159,21 @@ class Widget_Video extends Widget_Base {
 
 		// Vimeo
 		$this->add_control(
+			'vimeo_link',
+			[
+				'label' => __( 'Vimeo Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_video',
+				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
+				'default' => 'https://vimeo.com/170933924',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
 			'vimeo_title',
 			[
 				'label' => __( 'Show the title on the video', 'elementor' ),
@@ -194,10 +212,10 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'vimeo_color',
 			[
-				'label' => __( 'Controls Color.', 'elementor' ),
+				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'section' => 'section_video',
-				'default' => '#FFFFFF',
+				'default' => '',
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
@@ -259,6 +277,21 @@ class Widget_Video extends Widget_Base {
 		);
 
 		// Hosted
+		$this->add_control(
+			'hosted_link',
+			[
+				'label' => __( 'Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_video',
+				'placeholder' => __( 'Enter your video link', 'elementor' ),
+				'default' => '',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
 		$this->add_control(
 			'hosted_width',
 			[
@@ -395,7 +428,11 @@ class Widget_Video extends Widget_Base {
 
 		if ( 'hosted' !== $instance['video_type'] ) {
 			add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
-			$video_html = wp_oembed_get( $instance['link'], wp_embed_defaults() );
+
+			$video_link = 'youtube' === $instance['video_type'] ? $instance['link'] : $instance['vimeo_link'];
+			$video_html = wp_oembed_get( $video_link, wp_embed_defaults() );
+
+			remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );
 		} else {
 			$video_html = wp_video_shortcode( $this->get_hosted_params() );
 		}
@@ -418,8 +455,6 @@ class Widget_Video extends Widget_Base {
 		<?php else :
 			echo $instance['link'];
 		endif;
-
-		remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );
 	}
 
 	public function filter_oembed_result( $html, $url, $args ) {
