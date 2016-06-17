@@ -207,7 +207,7 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 		}
 		?>
 		<div class="elementor-slideshow-wrapper"<?php if ( 'true' === $instance['rtl'] ) echo ' dir="rtl"'; ?>>
-			<div class="elementor-slideshow" <?php echo $this->get_render_attribute_string( 'data' ); ?>">
+			<div class="elementor-slideshow" <?php echo $this->get_render_attribute_string( 'data' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>

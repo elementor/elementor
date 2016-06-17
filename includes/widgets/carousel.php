@@ -227,7 +227,7 @@ class Widget_Carousel extends Widget_Base {
 		}
 		?>
 		<div class="elementor-carousel-wrapper"<?php if ( 'true' === $instance['rtl'] ) echo ' dir="rtl"'; ?>>
-			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?>">
+			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?>>
 				<?php
 				$slides = '';
 				foreach ( $instance['carousel'] as $attachment ) :
