@@ -226,7 +226,7 @@ class Widget_Carousel extends Widget_Base {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
 		?>
-		<div class="elementor-carousel-wrapper" <?php if ( 'true' === $instance['rtl'] ) echo 'dir="rtl"'; ?>>
+		<div class="elementor-carousel-wrapper"<?php if ( 'true' === $instance['rtl'] ) echo ' dir="rtl"'; ?>>
 			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?>">
 				<?php
 				$slides = '';
