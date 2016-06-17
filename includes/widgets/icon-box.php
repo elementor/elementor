@@ -109,7 +109,7 @@ class Widget_Icon_box extends Widget_Base {
 		$this->add_control(
 			'position',
 			[
-				'label' => __( 'Icon Postion', 'elementor' ),
+				'label' => __( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'top',
 				'options' => [
