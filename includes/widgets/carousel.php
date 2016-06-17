@@ -19,12 +19,12 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover' ];
+		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'rtl' ];
 
 		$this->add_control(
 			'section_image',
 			[
-				'label' => __( 'Image', 'elementor' ),
+				'label' => __( 'Carousel Gallery', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -42,7 +42,7 @@ class Widget_Carousel extends Widget_Base {
 		$this->add_control(
 			'carousel',
 			[
-				'label' => __( 'Choose Image', 'elementor' ),
+				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
 				'default' => [],
 				'section' => 'section_image',
@@ -53,6 +53,7 @@ class Widget_Carousel extends Widget_Base {
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
+				'section' => 'section_image',
 			]
 		);
 
@@ -77,12 +78,100 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'section_additional_options',
+			[
+				'label' => __( 'Additional Options', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+			]
+		);
+
+		$this->add_control(
+			'gallery_gap',
+			[
+				'label' => __( 'Carusel Gap', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_additional_options',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => '',
+			]
+		);
+
+		$this->add_control(
+			'columns_padding',
+			[
+				'label' => __( 'Carusel Padding', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+				],
+				'condition' => [
+					'gallery_gap' => 'custom',
+				],
+				'section' => 'section_additional_options',
+				'selectors' => [
+					'{{WRAPPER}} .slick-list' => 'margin: 0 -{{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .slick-slide' => 'margin: 0 {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'arrows',
+			[
+				'label' => __( 'Arrows', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_additional_options',
+				'options' => [
+					'true' => __( 'Show', 'elementor' ),
+					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'dots',
+			[
+				'label' => __( 'Dots', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_additional_options',
+				'options' => [
+					'true' => __( 'Show', 'elementor' ),
+					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'pauseOnHover',
+			[
+				'label' => __( 'Pause On Hover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_additional_options',
+				'options' => [
+					'true' => __( 'Yes', 'elementor' ),
+					'false' => __( 'No', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'true',
-				'section' => 'section_image',
+				'section' => 'section_additional_options',
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
@@ -95,36 +184,8 @@ class Widget_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Autoplay Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'default' => 3000,
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'dots',
-			[
-				'label' => __( 'Dots', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'false',
-				'section' => 'section_image',
-				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'arrows',
-			[
-				'label' => __( 'Arrows', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
-				'section' => 'section_image',
-				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
-				],
+				'default' => 5000,
+				'section' => 'section_additional_options',
 			]
 		);
 
@@ -134,7 +195,7 @@ class Widget_Carousel extends Widget_Base {
 				'label' => __( 'Infinite Loop', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'true',
-				'section' => 'section_image',
+				'section' => 'section_additional_options',
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
@@ -143,15 +204,15 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'pauseOnHover',
+			'rtl',
 			[
-				'label' => __( 'Pause On Hover', 'elementor' ),
+				'label' => __( 'Direction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
-				'section' => 'section_image',
+				'default' => 'false',
+				'section' => 'section_additional_options',
 				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
+					'false' => __( 'Left to Right', 'elementor' ),
+					'true' => __( 'Right to Left', 'elementor' ),
 				],
 			]
 		);
@@ -165,15 +226,13 @@ class Widget_Carousel extends Widget_Base {
 			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
 		}
 		?>
-		<div class="elementor-carousel-wrapper">
-			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
+		<div class="elementor-carousel-wrapper"<?php if ( 'true' === $instance['rtl'] ) echo ' dir="rtl"'; ?>>
+			<div class="elementor-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?>>
 				<?php
 				$slides = '';
-				$attachment_ids = explode( ',', $instance['carousel'] );
-
-				foreach ( $attachment_ids as $attachment_id ) :
-					$image = wp_get_attachment_image_src( $attachment_id, $instance['thumbnail_size'] );
-					$slides .= '<div><img src="' . $image[0] . '" /></div>';
+				foreach ( $instance['carousel'] as $attachment ) :
+					$image = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
+					$slides .= '<div><img src="' . $image . '" /></div>';
 				endforeach;
 
 				echo $slides; ?>

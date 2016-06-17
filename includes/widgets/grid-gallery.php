@@ -120,7 +120,8 @@ class Widget_Grid_Gallery extends Widget_Base {
 			]
 		);
 
-		$columns_padding = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
+		$columns_margin = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
+		$columns_padding = is_rtl() ? '0 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}};' : '0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;';
 
 		$this->add_control(
 			'columns_padding',
@@ -141,8 +142,8 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'section' => 'section_gallery_images',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .gallery-item' => 'padding: 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;',
-					'{{WRAPPER}} .gallery' => 'margin: ' . $columns_padding,
+					'{{WRAPPER}} .gallery-item' => 'padding:' . $columns_padding,
+					'{{WRAPPER}} .gallery' => 'margin: ' . $columns_margin,
 				],
 			]
 		);

@@ -702,6 +702,8 @@
 
 .elementor-slideshow-wrapper div.slick-slide img {
   margin: auto; }
+.elementor-slideshow-wrapper div.slick-slide .elementor-slideshow-stretch {
+  width: 100%; }
 .elementor-slideshow-wrapper .slick-slider .slick-prev:before,
 .elementor-slideshow-wrapper .slick-slider .slick-next:before {
   color: #000000; }

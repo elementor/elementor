@@ -132,21 +132,6 @@ class Frontend {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_register_style(
-			'slick-style',
-			ELEMENTOR_ASSETS_URL . 'lib/slick/slick.css',
-			[],
-			'1.6.0'
-		);
-		wp_register_style(
-			'slick-theme',
-			ELEMENTOR_ASSETS_URL . 'lib/slick/slick-theme.css',
-			[
-				'slick-style',
-			],
-			'1.6.0'
-		);
-
 		wp_enqueue_style(
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
@@ -166,7 +151,6 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-icons',
-				'slick-theme',
 				'font-awesome',
 			],
 			Plugin::instance()->get_version()

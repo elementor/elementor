@@ -19,12 +19,12 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_slideshow_options = [ 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'speed', 'fade' ];
+		$this->_slideshow_options = [ 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'rtl', 'pauseOnHover', 'speed', 'fade', 'stretch' ];
 
 		$this->add_control(
 			'section_image',
 			[
-				'label' => __( 'Image', 'elementor' ),
+				'label' => __( 'Slideshow Gallery', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -42,7 +42,7 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 		$this->add_control(
 			'slideshow',
 			[
-				'label' => __( 'Choose Image', 'elementor' ),
+				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
 				'default' => [],
 				'section' => 'section_image',
@@ -52,17 +52,96 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_size::get_type(),
 			[
-				'name' => 'thumbnail',
+				'name' => 'full',
+				'section' => 'section_image',
+			]
+		);
+
+		$this->add_control(
+			'fade',
+			[
+				'label' => __( 'Effect', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'false',
+				'section' => 'section_image',
+				'options' => [
+					'false' => __( 'Slide', 'elementor' ),
+					'true' => __( 'Fade', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'stretch',
+			[
+				'label' => __( 'Stretch Image', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'no',
+				'section' => 'section_image',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'section_additional_options',
+			[
+				'label' => __( 'Additional Options', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+			]
+		);
+
+		$this->add_control(
+			'arrows',
+			[
+				'label' => __( 'Arrows', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_additional_options',
+				'options' => [
+					'true' => __( 'Show', 'elementor' ),
+					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'dots',
+			[
+				'label' => __( 'Dots', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_additional_options',
+				'options' => [
+					'true' => __( 'Show', 'elementor' ),
+					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'pauseOnHover',
+			[
+				'label' => __( 'Pause On Hover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'true',
+				'section' => 'section_additional_options',
+				'options' => [
+					'true' => __( 'Yes', 'elementor' ),
+					'false' => __( 'No', 'elementor' ),
+				],
 			]
 		);
 
 		$this->add_control(
 			'autoplay',
 			[
-				'label' => __( 'Autoplay', 'elementor' ),
+				'label' => __( 'Auto Play', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'true',
-				'section' => 'section_image',
+				'section' => 'section_additional_options',
 				'options' => [
 					'true' => __( 'Yes', 'elementor' ),
 					'false' => __( 'No', 'elementor' ),
@@ -75,8 +154,8 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Autoplay Speed (ms)', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'default' => 3000,
-				'section' => 'section_image',
+				'default' => 5000,
+				'section' => 'section_additional_options',
 			]
 		);
 
@@ -85,77 +164,21 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Animation Speed (ms)', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'default' => 300,
-				'section' => 'section_image',
+				'default' => 500,
+				'section' => 'section_additional_options',
 			]
 		);
 
 		$this->add_control(
-			'dots',
+			'rtl',
 			[
-				'label' => __( 'Dots', 'elementor' ),
+				'label' => __( 'Direction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'false',
-				'section' => 'section_image',
+				'section' => 'section_additional_options',
 				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'arrows',
-			[
-				'label' => __( 'Arrows', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
-				'section' => 'section_image',
-				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'infinite',
-			[
-				'label' => __( 'Infinite Loop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
-				'section' => 'section_image',
-				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'pauseOnHover',
-			[
-				'label' => __( 'Pause On Hover', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
-				'section' => 'section_image',
-				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'fade',
-			[
-				'label' => __( 'Effects', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'false',
-				'section' => 'section_image',
-				'options' => [
-					'false' => __( 'Slide', 'elementor' ),
-					'true' => __( 'Fade', 'elementor' ),
+					'false' => __( 'Left to Right', 'elementor' ),
+					'true' => __( 'Right to Left', 'elementor' ),
 				],
 			]
 		);
@@ -172,9 +195,10 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 
 		$slides = [];
 		foreach ( $instance['slideshow'] as $attachment ) {
-			$image = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
+			$image = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'full', $instance );
 			if ( ! empty( $image ) ) {
-				$slides[] = '<div><img src="' . $image . '" alt="slideshow" /></div>';
+				$stretch = 'yes' === $instance['stretch'] ? 'class="elementor-slideshow-stretch"' : '';
+				$slides[] = '<div><img ' . $stretch . ' src="' . $image . '" alt="slideshow" /></div>';
 			}
 		}
 
@@ -182,8 +206,8 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 			return;
 		}
 		?>
-		<div class="elementor-slideshow-wrapper">
-			<div class="elementor-slideshow" <?php echo $this->get_render_attribute_string( 'data' ); ?> data-rtl="<?php echo is_rtl(); ?>">
+		<div class="elementor-slideshow-wrapper"<?php if ( 'true' === $instance['rtl'] ) echo ' dir="rtl"'; ?>>
+			<div class="elementor-slideshow" <?php echo $this->get_render_attribute_string( 'data' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>
