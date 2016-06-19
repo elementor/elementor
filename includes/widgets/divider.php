@@ -127,9 +127,9 @@ class Widget_Divider extends Widget_Base {
 		);
 
 		$this->add_control(
-			'gap',
+			'gap_top',
 			[
-				'label' => __( 'Gap', 'elementor' ),
+				'label' => __( 'Gap Top', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 15,
@@ -142,7 +142,28 @@ class Widget_Divider extends Widget_Base {
 				],
 				'section' => 'section_divider',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-divider' => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-divider' => 'padding-top: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'gap_bottom',
+			[
+				'label' => __( 'Gap Bottom', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 15,
+				],
+				'range' => [
+					'px' => [
+						'min' => 2,
+						'max' => 50,
+					],
+				],
+				'section' => 'section_divider',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-divider' => 'padding-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

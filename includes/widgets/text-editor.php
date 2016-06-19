@@ -87,6 +87,10 @@ class Widget_Text_editor extends Widget_Base {
 	            'selectors' => [
 	                '{{WRAPPER}}' => 'color: {{VALUE}};',
 	            ],
+	            'scheme' => [
+		            'type' => Scheme_Color::get_type(),
+		            'value' => Scheme_Color::COLOR_3,
+	            ],
 	        ]
 	    );
 
@@ -96,6 +100,7 @@ class Widget_Text_editor extends Widget_Base {
 				'name' => 'typography',
 				'section' => 'section_style',
 				'tab' => self::TAB_STYLE,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

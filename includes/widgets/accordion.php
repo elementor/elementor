@@ -96,6 +96,29 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'border_width',
+			[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_title_style',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-wrapper .elementor-accordion-title.active > span' => 'border-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
@@ -121,7 +144,7 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
+					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);
@@ -151,7 +174,7 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'value' => Scheme_Color::COLOR_4,
 				],
 			]
 		);
@@ -164,6 +187,7 @@ class Widget_Accordion extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -190,6 +214,10 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -201,6 +229,7 @@ class Widget_Accordion extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

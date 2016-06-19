@@ -100,12 +100,31 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'link',
+			'linkto',
 			[
 				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'section' => 'section_image',
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment', 'elementor' ),
+					'media' => __( 'Media', 'elementor' ),
+					'external' => __( 'External', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'external',
+			[
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
+				'condition' => [
+					'linkto' => 'external',
+				],
 			]
 		);
 
@@ -268,6 +287,10 @@ class Widget_Image extends Widget_Base {
 					'{{WRAPPER}} .widget-image-text' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_caption',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -278,6 +301,7 @@ class Widget_Image extends Widget_Base {
 				'selector' => '{{WRAPPER}} .widget-image-text',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_caption',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -291,12 +315,28 @@ class Widget_Image extends Widget_Base {
 		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
 		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['image_title'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
 
-		if ( ! empty( $instance['link']['url'] ) ) {
+		if ( 'none' !== $instance['linkto'] ) {
 			$target = '';
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $instance['external']['is_external'] ) && 'external' === $instance['linkto'] ) {
 				$target = ' target="_blank"';
 			}
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
+
+			switch ( $instance['linkto'] ) :
+				case 'attachment':
+					$url = get_attachment_link( $instance['image']['id'] );
+					break;
+				case 'media':
+					$url = $instance['image']['url'];
+					break;
+				case 'external':
+					$url = $instance['external']['url'];
+					break;
+				default:
+					$url = $instance['image']['url'];
+					break;
+			endswitch;
+
+			$image_html = sprintf( '<a href="%s"%s>%s</a>', $url, $target, $image_html );
 		}
 
 		if ( ! empty( $instance['caption'] ) ) {

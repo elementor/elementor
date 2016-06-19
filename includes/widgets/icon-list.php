@@ -131,6 +131,37 @@ class Widget_Icon_list extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon_align',
+			[
+				'label' => __( 'Icon Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_icon_style',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'align-justify',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-items' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'section_text_style',
 			[
 				'label' => __( 'Text', 'elementor' ),
@@ -171,6 +202,10 @@ class Widget_Icon_list extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
+				],
 			]
 		);
 
@@ -182,6 +217,7 @@ class Widget_Icon_list extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_text_style',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

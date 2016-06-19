@@ -110,6 +110,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Video Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_video',
+				'separator' => 'before',
 			]
 		);
 

@@ -61,7 +61,7 @@ class Widget_Alert extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'default' => __( 'I am description. Click edit button to change this text.', 'elementor' ),
-				'label_block' => true,
+				'separator' => 'none',
 				'section' => 'section_alert',
 			]
 		);
@@ -126,6 +126,19 @@ class Widget_Alert extends Widget_Base {
 		);
 
 		$this->add_control(
+			'border_left-width',
+			[
+				'label' => __( 'Left Border Width', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_type',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-alert' => 'border-left-width: {{VALUE}}px;',
+				],
+			]
+		);
+
+		$this->add_control(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -154,6 +167,7 @@ class Widget_Alert extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-alert-title',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -186,6 +200,7 @@ class Widget_Alert extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_description',
 				'selector' => '{{WRAPPER}} .elementor-alert-description',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
