@@ -62,11 +62,11 @@ class Widget_Slideshow_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Effect', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'false',
+				'default' => 'true',
 				'section' => 'section_image',
 				'options' => [
-					'false' => __( 'Slide', 'elementor' ),
 					'true' => __( 'Fade', 'elementor' ),
+					'false' => __( 'Slide', 'elementor' ),
 				],
 			]
 		);

@@ -254,7 +254,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'vimeo_byline',
 			[
-				'label' => __( 'Byline', 'elementor' ),
+				'label' => __( 'Intro Byline', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_video',
 				'options' => [

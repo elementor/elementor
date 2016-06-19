@@ -76,7 +76,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'section' => 'section_gallery',
 				'options' => [
 					'file' => __( 'Media File', 'elementor' ),
-					'attachment' => __( 'Attachment', 'elementor' ),
+					'attachment' => __( 'Attachment Page', 'elementor' ),
 					'none' => __( 'None', 'elementor' ),
 				],
 			]
