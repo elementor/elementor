@@ -187,7 +187,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Display', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_gallery_images',
+				'section' => 'section_caption',
 				'tab' => self::TAB_STYLE,
 				'default' => 'default',
 				'options' => [
@@ -245,6 +245,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => 'default',
 				],
 			]
 		);
