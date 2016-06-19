@@ -15,9 +15,6 @@ class User {
 		if ( empty( $post_id ) )
 			$post_id = get_the_ID();
 
-		if ( ! is_singular() )
-			return false;
-
 		if ( ! Utils::is_post_type_support( $post_id ) )
 			return false;
 
