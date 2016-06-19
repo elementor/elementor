@@ -1503,7 +1503,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   left: 0;
   -webkit-user-select: none;
   -moz-user-select: none;
-  background-color: rgba(0, 0, 0, 0.5); }
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999; }
   .dialog-widget * {
     box-sizing: border-box; }
 
