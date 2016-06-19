@@ -70,10 +70,18 @@
 			transform: translateY(-20px);
 
 			.wp-color-result {
-				margin-right: getValueByDirection(8px, 7px);
+				margin-right: 7px;
 			}
 		}
 	}
+}
+
+.elementor-panel-scheme-color-title {
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 10px;
+	color: $editor-lighter;
+	font-size: 8px;
 }
 
 .elementor-panel-scheme-typography-item {

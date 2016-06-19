@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v2.0.1
+ * Dialogs Manager v2.1.0
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -115,11 +115,6 @@
 			return self;
 		};
 
-		this.popDialog = function (widget) {
-
-			Widget.show();
-		};
-
 		self.init();
 	};
 
@@ -186,6 +181,26 @@
 			};
 
 			$.extend(true, settings, userSettings);
+
+			initSettingsEvents();
+		};
+
+		var initSettingsEvents = function () {
+
+			var settings = self.getSettings();
+
+			$.each( settings, function (settingKey) {
+
+				var eventName = settingKey.match(/^on([A-Z].*)/);
+
+				if (!eventName) {
+					return;
+				}
+
+				eventName = eventName[1].charAt(0).toLowerCase() + eventName[1].slice(1);
+
+				self.on(eventName, this);
+			} );
 		};
 
 		var normalizeClassName = function (name) {
@@ -558,7 +573,10 @@
 			this.addButton({
 				name: 'cancel',
 				text: strings.cancel,
-				callback: this.getSettings('onCancel'),
+				callback: function (widget) {
+
+					widget.trigger('cancel');
+				},
 				hotKey: ESC_KEY,
 				focus: isDefaultCancel
 			});
@@ -566,7 +584,10 @@
 			this.addButton({
 				name: 'ok',
 				text: strings.confirm,
-				callback: this.getSettings('onConfirm'),
+				callback: function (widget) {
+
+					widget.trigger('confirm');
+				},
 				focus: !isDefaultCancel
 			});
 		},
@@ -575,7 +596,7 @@
 			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {
-				confirm: 'Ok',
+				confirm: 'OK',
 				cancel: 'Cancel'
 			};
 
@@ -587,19 +608,25 @@
 
 	DialogsManager.addWidgetType('alert', DialogsManager.getWidgetType('options').extend('alert', {
 		onReady: function () {
+
+			DialogsManager.getWidgetType('options').prototype.onReady.apply(this, arguments);
+
 			var strings = this.getSettings('strings');
 
 			this.addButton({
 				name: 'ok',
 				text: strings.confirm,
-				callback: this.getSettings('onConfirm')
+				callback: function (widget) {
+
+					widget.trigger('confirm');
+				}
 			});
 		},
 		getDefaultSettings: function () {
 			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {
-				confirm: 'Ok'
+				confirm: 'OK'
 			};
 
 			return settings;

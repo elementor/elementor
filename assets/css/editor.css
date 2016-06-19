@@ -602,7 +602,13 @@ select {
   #elementor-panel #elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
     transform: translateY(-20px); }
     #elementor-panel #elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
-      margin-right: 8px; }
+      margin-right: 7px; }
+  #elementor-panel .elementor-panel-scheme-color-title {
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 10px;
+    color: #c2cbd2;
+    font-size: 8px; }
   #elementor-panel .elementor-panel-scheme-typography-item {
     display: table;
     table-layout: fixed;
@@ -1224,7 +1230,8 @@ select {
   #elementor-panel .wp-color-picker {
     float: left;
     width: 100px;
-    border-radius: 3px 0 0 3px; }
+    border-radius: 3px 0 0 3px;
+    line-height: 1; }
   #elementor-panel .wp-picker-holder * {
     box-sizing: content-box; }
   #elementor-panel .wp-picker-open ~ .wp-picker-holder {
@@ -1367,10 +1374,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
   top: 0;
   right: 0;
   border: 0; }
-  #elementor-preview.elementor-device-desktop #elementor-preview-responsive-wrapper {
-    min-width: 1024px;
-    width: 100%;
-    height: 100%; }
+  #elementor-preview.elementor-device-desktop {
+    overflow-y: hidden; }
+    #elementor-preview.elementor-device-desktop #elementor-preview-responsive-wrapper {
+      min-width: 1024px;
+      width: 100%;
+      height: 100%; }
   #elementor-preview.elementor-device-laptop #elementor-preview-responsive-wrapper {
     width: 1024px;
     height: 768px;
@@ -1503,7 +1512,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   left: 0;
   -webkit-user-select: none;
   -moz-user-select: none;
-  background-color: rgba(0, 0, 0, 0.5); }
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999; }
   .dialog-widget * {
     box-sizing: border-box; }
 
