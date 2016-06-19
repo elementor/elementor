@@ -325,6 +325,8 @@ class Editor {
 					'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 					'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
 					'insert_media' => __( 'Insert Media', 'elementor' ),
+					'preview_el_not_found_header' => __( 'Sorry, content area not found in your page', 'elementor' ),
+					'preview_el_not_found_message' => __( 'You must call \'the_content\' method in current template, in order to allow Elementor work on this page.', 'elementor' ),
 				],
 			]
 		);
