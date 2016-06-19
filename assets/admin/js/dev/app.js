@@ -149,6 +149,8 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewLoaded: function() {
+		NProgress.done();
+
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
@@ -195,8 +197,6 @@ App = Marionette.Application.extend( {
 		    .addClass( 'elementor-editor-active' );
 
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
-
-		NProgress.done();
 
 		setTimeout( _.bind( function() {
 			this.introduction.startIntroduction();
