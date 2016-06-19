@@ -1367,10 +1367,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
   top: 0;
   right: 0;
   border: 0; }
-  #elementor-preview.elementor-device-desktop #elementor-preview-responsive-wrapper {
-    min-width: 1024px;
-    width: 100%;
-    height: 100%; }
+  #elementor-preview.elementor-device-desktop {
+    overflow-y: hidden; }
+    #elementor-preview.elementor-device-desktop #elementor-preview-responsive-wrapper {
+      min-width: 1024px;
+      width: 100%;
+      height: 100%; }
   #elementor-preview.elementor-device-laptop #elementor-preview-responsive-wrapper {
     width: 1024px;
     height: 768px;

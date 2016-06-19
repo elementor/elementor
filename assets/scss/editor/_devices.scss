@@ -12,6 +12,7 @@
 	&.elementor-device- {
 
 		&desktop {
+			overflow-y: hidden;
 
 			#elementor-preview-responsive-wrapper {
 				min-width: map_get($breakpoints, lg);
