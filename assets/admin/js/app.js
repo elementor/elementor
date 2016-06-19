@@ -150,12 +150,21 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewLoaded: function() {
+		NProgress.done();
+
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
+		var $previewElementorEl = this.$previewContents.find( '#elementor' );
+
+		if ( ! $previewElementorEl.length ) {
+			this.onPreviewElNotFound();
+			return;
+		}
+
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
-			el: this.$previewContents.find( '#elementor' ).get( 0 )
+			el: $previewElementorEl[0]
 		} );
 
 		this.schemes.init().printSchemesStyle();
@@ -197,8 +206,6 @@ App = Marionette.Application.extend( {
 
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
-		NProgress.done();
-
 		setTimeout( _.bind( function() {
 			this.introduction.startIntroduction();
 		}, this ), 2500 );
@@ -212,6 +219,22 @@ App = Marionette.Application.extend( {
 		} else {
 			this.exitPreviewMode();
 		}
+	},
+
+	onPreviewElNotFound: function() {
+		var dialog = this.dialogsManager.createWidget( 'alert', {
+			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
+			message: elementor.translate( 'preview_el_not_found_message' ),
+			position: {
+				my: 'center center',
+				at: 'center center'
+			},
+			onConfirm: function() {
+				parent.history.go( -1 );
+			}
+		} );
+
+		dialog.show();
 	},
 
 	setFlagEditorChange: function( status ) {
