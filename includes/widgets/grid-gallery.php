@@ -191,7 +191,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => 'default',
 				'options' => [
-					'default' => __( 'Show', 'elementor' ),
+					'' => __( 'Show', 'elementor' ),
 					'none' => __( 'Hide', 'elementor' ),
 				],
 				'selectors' => [
