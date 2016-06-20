@@ -14,11 +14,6 @@
 	}
 }
 
-// Box Sizing
-@mixin box-sizing($boxmodel) {
-	box-sizing: $boxmodel;
-}
-
 // Border Radius
 @mixin border-radius($radius) {
 	border-radius: $radius;
