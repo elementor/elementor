@@ -3,11 +3,11 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Carousel extends Widget_Base {
+class Widget_Image_Carousel extends Widget_Base {
 	private $_carusel_options = [];
 
 	public function get_id() {
-		return 'carousel';
+		return 'image-carousel';
 	}
 
 	public function get_title() {
@@ -24,18 +24,8 @@ class Widget_Carousel extends Widget_Base {
 		$this->add_control(
 			'section_image',
 			[
-				'label' => __( 'Carousel Gallery', 'elementor' ),
+				'label' => __( 'Image Carousel', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-				'section' => 'section_image',
 			]
 		);
 
@@ -79,6 +69,16 @@ class Widget_Carousel extends Widget_Base {
 				'default' => '3',
 				'section' => 'section_image',
 				'options' => $slides_to_show,
+			]
+		);
+
+		$this->add_control(
+			'view',
+			[
+				'label' => __( 'View', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'default' => 'traditional',
+				'section' => 'section_image',
 			]
 		);
 
