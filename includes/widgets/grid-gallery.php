@@ -76,7 +76,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'section' => 'section_gallery',
 				'options' => [
 					'file' => __( 'Media File', 'elementor' ),
-					'attachment' => __( 'Attachment', 'elementor' ),
+					'attachment' => __( 'Attachment Page', 'elementor' ),
 					'none' => __( 'None', 'elementor' ),
 				],
 			]
@@ -189,9 +189,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_caption',
 				'tab' => self::TAB_STYLE,
-				'default' => 'default',
+				'default' => '',
 				'options' => [
-					'default' => __( 'Show', 'elementor' ),
+					'' => __( 'Show', 'elementor' ),
 					'none' => __( 'Hide', 'elementor' ),
 				],
 				'selectors' => [
@@ -229,9 +229,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'text-align: {{VALUE}};',
 				],
-				'condition' => [
-					'gallery_display_caption' => 'default',
-				],
 			]
 		);
 
@@ -245,9 +242,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'gallery_display_caption' => 'default',
 				],
 			]
 		);

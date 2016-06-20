@@ -4,4 +4,20 @@
 			color: #000000;
 		}
 	}
+
+	.elementor-carousel {
+		.slick-next.inside {
+			right: 0;
+			z-index: 100;
+		}
+
+		.slick-prev.inside {
+			left: 0;
+			z-index: 100;
+		}
+
+		.slick-dots.inside {
+			bottom: 0px;
+		}
+	}
 }

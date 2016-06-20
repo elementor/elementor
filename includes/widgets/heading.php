@@ -48,6 +48,7 @@ class Widget_Heading extends Widget_Base {
 					'url' => '',
 				],
 				'section' => 'section_title',
+				'separator' => 'before',
 			]
 		);
 

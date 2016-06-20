@@ -128,6 +128,10 @@ class Widget_Progress extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -176,6 +180,10 @@ class Widget_Progress extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -186,6 +194,7 @@ class Widget_Progress extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-title',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

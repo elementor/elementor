@@ -217,6 +217,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-panel-scheme-color-input-wrapper">
 		<input type="text" class="elementor-panel-scheme-color-value" value="<%= value %>" />
 	</div>
+	<div class="elementor-panel-scheme-color-title"><%= title %></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-typography-item">

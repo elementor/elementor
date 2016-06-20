@@ -91,8 +91,8 @@ class Widget_Icon_box extends Widget_Base {
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'title' => __( 'Input icon text here', 'elementor' ),
 				'section' => 'section_icon',
-				'label_block' => true,
 				'rows' => 10,
+				'separator' => 'none',
 			]
 		);
 
@@ -103,6 +103,7 @@ class Widget_Icon_box extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_icon',
+				'separator' => 'before',
 			]
 		);
 
@@ -174,6 +175,7 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
+				'alpha' => true,
 			]
 		);
 
@@ -192,6 +194,7 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 				],
+				'alpha' => true,
 			]
 		);
 
@@ -242,23 +245,6 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'rotate',
-			[
-				'label' => __( 'Icon Rotate', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0,
-					'unit' => 'deg',
-				],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
-				],
-			]
-		);
-
-		$this->add_control(
 			'icon_padding',
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
@@ -279,6 +265,23 @@ class Widget_Icon_box extends Widget_Base {
 				],
 				'condition' => [
 					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'rotate',
+			[
+				'label' => __( 'Icon Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+					'unit' => 'deg',
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
@@ -436,6 +439,11 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
+				'alpha' => true,
 			]
 		);
 
@@ -446,6 +454,7 @@ class Widget_Icon_box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -470,6 +479,11 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+				'alpha' => true,
 			]
 		);
 
@@ -480,6 +494,7 @@ class Widget_Icon_box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

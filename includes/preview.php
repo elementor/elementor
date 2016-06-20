@@ -71,11 +71,7 @@ class Preview {
 	 * @return string
 	 */
 	public function builder_wrapper( $content ) {
-		return '
-				<div id="elementor" class="elementor">
-					<div class="elementor-section-wrap"></div>
-				</div>
-				';
+		return '<div id="elementor" class="elementor"></div>';
 	}
 
 	/**

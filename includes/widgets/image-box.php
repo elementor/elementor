@@ -59,7 +59,7 @@ class Widget_Image_box extends Widget_Base {
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'title' => __( 'Input image text here', 'elementor' ),
 				'section' => 'section_image',
-				'label_block' => true,
+				'separator' => 'none',
 				'rows' => 10,
 			]
 		);
@@ -71,6 +71,7 @@ class Widget_Image_box extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
+				'separator' => 'before',
 			]
 		);
 
@@ -311,6 +312,10 @@ class Widget_Image_box extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -321,6 +326,7 @@ class Widget_Image_box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -345,6 +351,10 @@ class Widget_Image_box extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_content',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -355,6 +365,7 @@ class Widget_Image_box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

@@ -38,7 +38,9 @@ ElementModel = Backbone.Model.extend( {
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
 		}
+
 		settings.elType = elType;
+		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings );
 		this.set( 'settings', settings );
