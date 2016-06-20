@@ -34,69 +34,6 @@
 	border-top-left-radius: $radius;
 }
 
-// Box Shadows
-@mixin box-shadow($shadow) {
-	box-shadow: $shadow;
-}
-
-// Transitions
-@mixin transition($transition) {
-	transition: $transition;
-}
-
-@mixin transition-property($transition-property) {
-	transition-property: $transition-property;
-}
-
-@mixin transition-delay($transition-delay) {
-	transition-delay: $transition-delay;
-}
-
-@mixin transition-duration($transition-duration) {
-	transition-duration: $transition-duration;
-}
-
-@mixin transition-timing-function($timing-function) {
-	transition-timing-function: $timing-function;
-}
-
-@mixin transition-transform($transition) {
-	transition: transform $transition;
-}
-
-// Animations
-@mixin animation($animation) {
-	animation: $animation;
-}
-
-@mixin animation-name($name) {
-	animation-name: $name;
-}
-
-@mixin animation-duration($duration) {
-	animation-duration: $duration;
-}
-
-@mixin animation-timing-function($timing-function) {
-	animation-timing-function: $timing-function;
-}
-
-@mixin animation-delay($delay) {
-	animation-delay: $delay;
-}
-
-@mixin animation-iteration-count($iteration-count) {
-	animation-iteration-count: $iteration-count;
-}
-
-@mixin animation-direction($direction) {
-	animation-direction: $direction;
-}
-
-@mixin animation-fill-mode($fill-mode) {
-	animation-fill-mode: $fill-mode;
-}
-
 // Responsive utilities
 @mixin responsive-visibility() {
 	display: block !important;
