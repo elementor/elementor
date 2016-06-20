@@ -2116,6 +2116,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		delete data.widgetType;
 		delete data.elType;
+		delete data.isInner;
 
 		_.each( data, function( attribute, key ) {
 			if ( attribute && attribute.toJSON ) {
