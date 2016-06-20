@@ -785,16 +785,15 @@
 .elementor-widget-icon-box .elementor-icon-box-description {
   margin: 0; }
 
-/* Slider */
 .slick-slider {
   position: relative;
   display: block;
   box-sizing: border-box;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   -ms-touch-action: pan-y;
   touch-action: pan-y;
   -webkit-tap-highlight-color: transparent; }
@@ -853,11 +852,9 @@
 .slick-arrow.slick-hidden {
   display: none; }
 
-/* Slider */
-.slick-loading.slick-list {
-  background: #fff; }
+.slick-loading .slick-list {
+  background: #fff url("../images/ajax-loader.gif") center center no-repeat; }
 
-/* Arrows */
 .slick-prev,
 .slick-next {
   font-size: 0;
@@ -917,7 +914,6 @@
     [dir="rtl"] .slick-next:before {
       content: '\f104'; }
 
-/* Dots */
 .slick-dotted.slick-slider {
   margin-bottom: 30px; }
 
