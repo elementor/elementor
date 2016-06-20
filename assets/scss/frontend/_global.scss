@@ -34,7 +34,7 @@
 		max-width: 100%;
 		border: none;
 		border-radius: 0;
-		@include box-shadow(0);
+		box-shadow: 0;
 	}
 	figure {
 		margin: 0;
