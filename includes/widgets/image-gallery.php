@@ -3,14 +3,14 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Grid_Gallery extends Widget_Base {
+class Widget_Image_Gallery extends Widget_Base {
 
 	public function get_id() {
-		return 'grid-gallery';
+		return 'image-gallery';
 	}
 
 	public function get_title() {
-		return __( 'Grid Gallery', 'elementor' );
+		return __( 'Image Gallery', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -21,7 +21,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 		$this->add_control(
 			'section_gallery',
 			[
-				'label' => __( 'Grid Gallery', 'elementor' ),
+				'label' => __( 'Image Gallery', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);

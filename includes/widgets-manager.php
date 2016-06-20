@@ -38,7 +38,7 @@ class Widgets_Manager {
 		];
 
 		if ( Utils::is_development_mode() ) {
-			$build_widgets_filename[] = 'grid-gallery';
+			$build_widgets_filename[] = 'image-gallery';
 			$build_widgets_filename[] = 'carousel';
 			$build_widgets_filename[] = 'slideshow-gallery';
 		}
