@@ -106,9 +106,9 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
-			'gallery_gap',
+			'image_spacing',
 			[
-				'label' => __( 'Columns Gap', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_gallery_images',
 				'tab' => self::TAB_STYLE,
@@ -124,26 +124,27 @@ class Widget_Image_Gallery extends Widget_Base {
 		$columns_padding = is_rtl() ? '0 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}};' : '0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;';
 
 		$this->add_control(
-			'columns_padding',
+			'image_spacing_custom',
 			[
-				'label' => __( 'Columns Padding', 'elementor' ),
+				'label' => __( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 15,
-				],
+				'section' => 'section_gallery_images',
+				'tab' => self::TAB_STYLE,
+				'show_label' => false,
 				'range' => [
 					'px' => [
 						'max' => 100,
 					],
 				],
-				'condition' => [
-					'gallery_gap' => 'custom',
+				'default' => [
+					'size' => 15,
 				],
-				'section' => 'section_gallery_images',
-				'tab' => self::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item' => 'padding:' . $columns_padding,
 					'{{WRAPPER}} .gallery' => 'margin: ' . $columns_margin,
+				],
+				'condition' => [
+					'image_spacing' => 'custom',
 				],
 			]
 		);
