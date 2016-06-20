@@ -33,7 +33,7 @@
 		height: auto;
 		max-width: 100%;
 		border: none;
-		@include border-radius(0);
+		border-radius: 0;
 		@include box-shadow(0);
 	}
 	figure {
