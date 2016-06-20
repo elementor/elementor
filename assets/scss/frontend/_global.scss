@@ -11,12 +11,11 @@
 }
 
 .elementor {
+
 	* {
-		@include box-sizing(border-box);
-	}
-	*:before,
-	*:after {
-		@include box-sizing(border-box);
+		&, &:before, &:after {
+			box-sizing: border-box;
+		}
 	}
 
 	// Reset Style for some themes and browsers
