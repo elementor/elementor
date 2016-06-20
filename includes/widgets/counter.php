@@ -73,7 +73,7 @@ class Widget_Counter extends Widget_Base {
 		$this->add_control(
 			'duration',
 			[
-				'label' => __( 'Animation Duration (ms)', 'elementor' ),
+				'label' => __( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 2000,
 				'min' => 100,

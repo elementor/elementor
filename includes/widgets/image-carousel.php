@@ -202,7 +202,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'speed',
 			[
-				'label' => __( 'Animation Speed (ms)', 'elementor' ),
+				'label' => __( 'Animation Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 500,
 				'section' => 'section_additional_options',
