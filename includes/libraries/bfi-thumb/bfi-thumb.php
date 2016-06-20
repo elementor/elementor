@@ -124,29 +124,6 @@ require_once ABSPATH . WPINC . '/class-wp-image-editor-imagick.php';
 require_once ABSPATH . WPINC . '/class-wp-image-editor-gd.php';
 
 
-/**
- * check for ImageMagick or GD
- */
-
-
-add_action( 'admin_init', 'bfi_wp_image_editor_check' );
-if ( ! function_exists( 'bfi_wp_image_editor_check' ) ) {
-
-	function bfi_wp_image_editor_check() {
-		$arg = array( 'mime_type' => 'image/jpeg' );
-		if ( wp_image_editor_supports( $arg ) !== true ) {
-			add_filter( 'admin_notices', 'bfi_wp_image_editor_check_notice' );
-		}
-	}
-}
-
-if ( ! function_exists( 'bfi_wp_image_editor_check_notice' ) ) {
-	function bfi_wp_image_editor_check_notice() {
-		printf( "<div class='error'><p>%s</div>", __( 'The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing.', 'elementor' ) );
-	}
-}
-
-
 /*
  * Enhanced Imagemagick Image Editor
  */
@@ -269,7 +246,7 @@ if ( ! class_exists( 'BFI_Image_Editor_GD_1_3' ) ) {
 				}
 			}
 
-			return new WP_Error( 'image_rotate_error', __( 'Image rotate failed.', 'elementor' ), $this->file );
+			return new WP_Error( 'image_rotate_error', 'Image rotate failed.', $this->file );
 		}
 
 		/** Changes the opacity of the image
@@ -293,7 +270,7 @@ if ( ! class_exists( 'BFI_Image_Editor_GD_1_3' ) ) {
 				return true;
 			}
 
-			return new WP_Error( 'image_opacity_error', __( 'Image opacity change failed.', 'elementor' ), $this->file );
+			return new WP_Error( 'image_opacity_error', 'Image opacity change failed.', $this->file );
 		}
 
 
@@ -377,7 +354,7 @@ if ( ! class_exists( 'BFI_Image_Editor_GD_1_3' ) ) {
 				}
 			}
 
-			return new WP_Error( 'image_colorize_error', __( 'Image color change failed.', 'elementor' ), $this->file );
+			return new WP_Error( 'image_colorize_error', 'Image color change failed.', $this->file );
 		}
 
 		/** Makes the image grayscale
@@ -394,7 +371,7 @@ if ( ! class_exists( 'BFI_Image_Editor_GD_1_3' ) ) {
 				}
 			}
 
-			return new WP_Error( 'image_grayscale_error', __( 'Image grayscale failed.', 'elementor' ), $this->file );
+			return new WP_Error( 'image_grayscale_error', 'Image grayscale failed.', $this->file );
 		}
 
 		/** Negates the image
@@ -411,7 +388,7 @@ if ( ! class_exists( 'BFI_Image_Editor_GD_1_3' ) ) {
 				}
 			}
 
-			return new WP_Error( 'image_negate_error', __( 'Image negate failed.', 'elementor' ), $this->file );
+			return new WP_Error( 'image_negate_error', 'Image negate failed.', $this->file );
 		}
 	}
 }
