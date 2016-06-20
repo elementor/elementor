@@ -154,7 +154,7 @@ class Widget_Carousel extends Widget_Base {
 				'default' => '#000',
 				'section' => 'section_additional_options',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -175,7 +175,7 @@ class Widget_Carousel extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-next:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

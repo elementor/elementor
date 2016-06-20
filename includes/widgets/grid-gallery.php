@@ -189,7 +189,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_caption',
 				'tab' => self::TAB_STYLE,
-				'default' => 'default',
+				'default' => '',
 				'options' => [
 					'' => __( 'Show', 'elementor' ),
 					'none' => __( 'Hide', 'elementor' ),
