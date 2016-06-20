@@ -19,7 +19,7 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'arrows', 'infinite', 'pauseOnHover', 'rtl' ];
+		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'dotspos', 'arrows', 'arrowspos', 'infinite', 'pauseOnHover', 'rtl' ];
 
 		$this->add_control(
 			'section_image',
@@ -57,13 +57,17 @@ class Widget_Carousel extends Widget_Base {
 			]
 		);
 
+		$slides_to_show = range( 1, 10 );
+		$slides_to_show = array_combine( $slides_to_show, $slides_to_show );
+
 		$this->add_control(
 			'slidesToShow',
 			[
 				'label' => __( 'Slides to show', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
+				'type' => Controls_Manager::SELECT,
 				'default' => '3',
 				'section' => 'section_image',
+				'options' => $slides_to_show,
 			]
 		);
 
@@ -71,9 +75,10 @@ class Widget_Carousel extends Widget_Base {
 			'slidesToScroll',
 			[
 				'label' => __( 'Slides to scroll', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
+				'type' => Controls_Manager::SELECT,
 				'default' => '3',
 				'section' => 'section_image',
+				'options' => $slides_to_show,
 			]
 		);
 
@@ -96,6 +101,9 @@ class Widget_Carousel extends Widget_Base {
 					'custom' => __( 'Custom', 'elementor' ),
 				],
 				'default' => '',
+				'condition' => [
+					'slidesToShow!' => 1,
+				],
 			]
 		);
 
@@ -114,6 +122,7 @@ class Widget_Carousel extends Widget_Base {
 				],
 				'condition' => [
 					'gallery_gap' => 'custom',
+					'slidesToShow!' => 1,
 				],
 				'section' => 'section_additional_options',
 				'selectors' => [
@@ -138,6 +147,20 @@ class Widget_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'arrowspos',
+			[
+				'label' => __( 'Arrows Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'inside',
+				'section' => 'section_additional_options',
+				'options' => [
+					'inside' => __( 'Inside', 'elementor' ),
+					'outside' => __( 'Outside', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'dots',
 			[
 				'label' => __( 'Dots', 'elementor' ),
@@ -147,6 +170,20 @@ class Widget_Carousel extends Widget_Base {
 				'options' => [
 					'true' => __( 'Show', 'elementor' ),
 					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'dotspos',
+			[
+				'label' => __( 'Dots Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'outside',
+				'section' => 'section_additional_options',
+				'options' => [
+					'outside' => __( 'Outside', 'elementor' ),
+					'inside' => __( 'inside', 'elementor' ),
 				],
 			]
 		);

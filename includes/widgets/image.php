@@ -100,31 +100,12 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'linkto',
+			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
-				'section' => 'section_image',
-				'options' => [
-					'none' => __( 'None', 'elementor' ),
-					'attachment' => __( 'Attachment', 'elementor' ),
-					'media' => __( 'Media', 'elementor' ),
-					'external' => __( 'External', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'external',
-			[
-				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
-				'condition' => [
-					'linkto' => 'external',
-				],
 			]
 		);
 
@@ -315,28 +296,12 @@ class Widget_Image extends Widget_Base {
 		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
 		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['image_title'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
 
-		if ( 'none' !== $instance['linkto'] ) {
+		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
-			if ( ! empty( $instance['external']['is_external'] ) && 'external' === $instance['linkto'] ) {
+			if ( ! empty( $instance['link']['is_external'] ) ) {
 				$target = ' target="_blank"';
 			}
-
-			switch ( $instance['linkto'] ) :
-				case 'attachment':
-					$url = get_attachment_link( $instance['image']['id'] );
-					break;
-				case 'media':
-					$url = $instance['image']['url'];
-					break;
-				case 'external':
-					$url = $instance['external']['url'];
-					break;
-				default:
-					$url = $instance['image']['url'];
-					break;
-			endswitch;
-
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $url, $target, $image_html );
+			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
 		}
 
 		if ( ! empty( $instance['caption'] ) ) {
@@ -357,7 +322,7 @@ class Widget_Image extends Widget_Base {
 					imgClass = 'hover-' + settings.hover_animation;
 				}
 
-				image_html = '<img src="' + settings.image.url + '" title="' + settings.image_title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
+				image_html = '<img src="' + settings.image.url + '" title="' + settings.title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
 
 				if ( settings.link ) {
 					var link = settings.link;

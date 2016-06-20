@@ -127,6 +127,7 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'background-color: {{VALUE}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -186,6 +187,7 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'background-color: {{VALUE}};',
 				],
+				'separator' => 'before',
 			]
 		);
 

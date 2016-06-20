@@ -151,6 +151,7 @@ class Widget_Tabs extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
+				'separator' => 'before',
 			]
 		);
 

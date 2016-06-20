@@ -699,6 +699,14 @@
 
 .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
   color: #000000; }
+.elementor-carousel-wrapper .elementor-carousel .slick-next.inside {
+  right: 0;
+  z-index: 100; }
+.elementor-carousel-wrapper .elementor-carousel .slick-prev.inside {
+  left: 0;
+  z-index: 100; }
+.elementor-carousel-wrapper .elementor-carousel .slick-dots.inside {
+  bottom: 0px; }
 
 .elementor-slideshow-wrapper div.slick-slide img {
   margin: auto; }

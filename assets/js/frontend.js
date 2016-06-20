@@ -201,7 +201,9 @@
 			arrows = $data.arrows,
 			infinite = $data.infinite,
 			pauseOnHover = $data.pauseonhover,
-			rtl = $data.rtl;
+			rtl = $data.rtl,
+			arrowsPos = $data.arrowspos,
+			dotsClass;
 
 		var options = {
 			slidesToShow: slideToShow,
@@ -213,6 +215,8 @@
 			infinite: infinite,
 			pauseOnHover: pauseOnHover,
 			rtl: rtl,
+			prevArrow: '<button type="button" class="slick-prev ' + arrowsPos + '">Previous</button>',
+			nextArrow: '<button type="button" class="slick-next ' + arrowsPos + '">Next</button>',
 			responsive: [
 				{
 					breakpoint: 767,
@@ -230,6 +234,10 @@
 				}
 			]
 		};
+
+		if ( $data.dotspos ) {
+			options.dotsClass = 'slick-dots ' + $data.dotspos;
+		}
 
 		$carousel.slick( options );
 

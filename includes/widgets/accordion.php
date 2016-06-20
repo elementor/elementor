@@ -148,6 +148,7 @@ class Widget_Accordion extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -203,6 +204,7 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'background-color: {{VALUE}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
