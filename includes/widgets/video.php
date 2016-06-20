@@ -114,7 +114,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		// Youtube
+		// YouTube
 		$this->add_control(
 			'yt_autoplay',
 			[
