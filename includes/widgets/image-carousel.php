@@ -266,13 +266,13 @@ class Widget_Image_Carousel extends Widget_Base {
 					'size' => 20,
 				],
 				'show_label' => false,
-				'condition' => [
-					'image_spacing' => 'custom',
-					'slides_to_show!' => '1',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .slick-list' => 'margin: 0 -{{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .slick-slide' => 'margin: 0 {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'image_spacing' => 'custom',
+					'slides_to_show!' => '1',
 				],
 			]
 		);
