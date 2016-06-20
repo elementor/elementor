@@ -243,43 +243,6 @@
 
 	} );
 
-	// Slideshow Widget
-	elementorBindUI.addBindEvent( 'slideshow-gallery', function() {
-		var $wrapper = $( this ).find( '.elementor-slideshow-wrapper' ),
-			$slider = $wrapper.children( '.elementor-slideshow' ),
-			$data  = $slider.data();
-
-		if ( ! $data ) {
-			return;
-		}
-
-		var autoPlay = $data.autoplay,
-			autoplaySpeed = $data.autoplayspeed,
-			dots = $data.dots,
-			arrows = $data.arrows,
-			infinite = $data.infinite,
-			pauseOnHover = $data.pauseonhover,
-			rtl = $data.rtl,
-			speed = $data.speed,
-			fade = $data.fade;
-
-		var options = {
-			slidesToShow: 1,
-			autoplay: autoPlay,
-			autoplaySpeed: autoplaySpeed,
-			dots: dots,
-			arrows: arrows,
-			infinite: infinite,
-			pauseOnHover: pauseOnHover,
-			rtl: rtl,
-			speed: speed,
-			fade: fade
-		};
-
-		$slider.slick( options );
-
-	} );
-
 	// Alert Widget
 	elementorBindUI.addBindEvent( 'alert', function() {
 		$( this ).find( '.elementor-alert-dismiss' ).on( 'click', function() {
