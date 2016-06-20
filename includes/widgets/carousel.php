@@ -11,7 +11,7 @@ class Widget_Carousel extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Carousel', 'elementor' );
+		return __( 'Image Carousel', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -102,7 +102,7 @@ class Widget_Carousel extends Widget_Base {
 				],
 				'default' => '',
 				'condition' => [
-					'slidesToShow!' => 1,
+					'slidesToShow!' => '1',
 				],
 			]
 		);
@@ -122,7 +122,7 @@ class Widget_Carousel extends Widget_Base {
 				],
 				'condition' => [
 					'gallery_gap' => 'custom',
-					'slidesToShow!' => 1,
+					'slidesToShow!' => '1',
 				],
 				'section' => 'section_additional_options',
 				'selectors' => [
@@ -142,6 +142,40 @@ class Widget_Carousel extends Widget_Base {
 				'options' => [
 					'true' => __( 'Show', 'elementor' ),
 					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'arrows_color',
+			[
+				'label' => __( 'Arrows Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#000',
+				'section' => 'section_additional_options',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'arrows_size',
+			[
+				'label' => __( 'Arrows Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'section' => 'section_additional_options',
+				'default' => [
+					'size' => 20,
+				],
+				'range' => [
+					'px' => [
+						'min' => 20,
+						'max' => 60,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -170,6 +204,40 @@ class Widget_Carousel extends Widget_Base {
 				'options' => [
 					'true' => __( 'Show', 'elementor' ),
 					'false' => __( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'dots_color',
+			[
+				'label' => __( 'Dots Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#000',
+				'section' => 'section_additional_options',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-carousel-wrapper .elementor-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'dots_size',
+			[
+				'label' => __( 'Dots Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'section' => 'section_additional_options',
+				'default' => [
+					'size' => 6,
+				],
+				'range' => [
+					'px' => [
+						'min' => 5,
+						'max' => 10,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-carousel-wrapper .elementor-carousel .slick-dots li button:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
