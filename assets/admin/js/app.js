@@ -3255,6 +3255,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
         this.renderStyles();
 		this.renderCustomClasses();
+		this.enqueueFonts();
 	},
 
 	onClickRemove: function( event ) {
