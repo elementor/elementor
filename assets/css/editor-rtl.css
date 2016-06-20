@@ -578,7 +578,8 @@ select {
     table-layout: fixed;
     width: 100%;
     height: 40px;
-    background-color: #fff; }
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
   #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-button-wrapper {
     display: table-cell;
     vertical-align: middle; }
@@ -600,7 +601,7 @@ select {
     #elementor-panel #elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
       margin-left: 13px; }
   #elementor-panel #elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
-    transform: translateY(-20px); }
+    transform: translateY(-37px); }
     #elementor-panel #elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 7px; }
   #elementor-panel .elementor-panel-scheme-color-title {
@@ -863,13 +864,13 @@ select {
       #elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li input + span {
         display: block;
         text-align: center;
-        color: #D4D4D4;
+        color: #d5dadf;
         font-size: 9px;
         text-transform: uppercase;
         line-height: 1;
         padding-top: 5px; }
       #elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li input:focus + span {
-        color: #818a91; }
+        color: #a4afb7; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li .elementor-link-dimensions {
       border: 1px solid #a4afb7;
       border-left: none;
@@ -1118,6 +1119,8 @@ select {
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-field {
     width: 70px;
     float: right; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-field input:focus + .elementor-image-dimensions-field-description {
+      color: #a4afb7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-separator {
     width: 20px;
     text-align: center;
@@ -1125,10 +1128,11 @@ select {
     padding-top: 4px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-field-description {
     text-transform: uppercase;
-    margin-top: 10px;
+    margin-top: 5px;
     color: #d5dadf;
-    font-size: 11px;
-    text-align: center; }
+    font-size: 9px;
+    text-align: center;
+    line-height: 1; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-apply-button {
     float: left;
     height: 27px;

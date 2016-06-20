@@ -16,6 +16,7 @@
 		width: 100%;
 		height: 40px;
 		background-color: #fff;
+		box-shadow: $panel-bottom-shadow;
 	}
 
 	.elementor-panel-scheme-button-wrapper {
@@ -67,7 +68,7 @@
 	.wp-picker-container {
 
 		&.wp-picker-active {
-			transform: translateY(-20px);
+			transform: translateY(-37px);
 
 			.wp-color-result {
 				margin-right: 7px;

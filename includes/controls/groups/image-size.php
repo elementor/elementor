@@ -62,7 +62,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 			$controls['custom_dimension'] = [
 				'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
 				'type' => Controls_Manager::IMAGE_DIMENSIONS,
-				'description' => __( 'Choose size (px)', 'elementor' ),
+				'description' => __( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
 				'condition' => [
 					'size' => [ 'custom' ],
 				],
