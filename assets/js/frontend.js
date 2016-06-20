@@ -184,9 +184,9 @@
 	} );
 
 	// Carousel Widget
-	elementorBindUI.addBindEvent( 'carousel', function() {
-		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$carousel = $wrapper.children( '.elementor-carousel' ),
+	elementorBindUI.addBindEvent( 'image-carousel', function() {
+		var $wrapper = $( this ).find( '.elementor-image-carousel-wrapper' ),
+			$carousel = $wrapper.children( '.elementor-image-carousel' ),
 			$data = $carousel.data();
 
 		if ( ! $data ) {

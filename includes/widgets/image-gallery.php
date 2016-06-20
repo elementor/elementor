@@ -151,7 +151,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
-				'name' => 'border',
+				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_gallery_images',
@@ -160,7 +160,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
-			'border_radius',
+			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,

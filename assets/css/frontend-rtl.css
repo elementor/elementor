@@ -694,24 +694,22 @@
     text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
     transition: all .5s; }
 
-.elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
-  color: #000000; }
-.elementor-carousel-wrapper .elementor-carousel .slick-next.inside {
-  right: 0;
-  z-index: 100; }
-.elementor-carousel-wrapper .elementor-carousel .slick-prev.inside {
-  left: 0;
-  z-index: 100; }
-.elementor-carousel-wrapper .elementor-carousel .slick-dots.inside {
-  bottom: 0px; }
-
-.elementor-slideshow-wrapper div.slick-slide img {
+.elementor-image-carousel-wrapper .slick-slider .slick-prev,
+.elementor-image-carousel-wrapper .slick-slider .slick-next {
+  z-index: 1; }
+  .elementor-image-carousel-wrapper .slick-slider .slick-prev:before,
+  .elementor-image-carousel-wrapper .slick-slider .slick-next:before {
+    color: #000000; }
+.elementor-image-carousel-wrapper div.slick-slide img {
   margin: auto; }
-.elementor-slideshow-wrapper div.slick-slide .elementor-slideshow-stretch {
+.elementor-image-carousel-wrapper div.slick-slide .slick-slide-image-stretch {
   width: 100%; }
-.elementor-slideshow-wrapper .slick-slider .slick-prev:before,
-.elementor-slideshow-wrapper .slick-slider .slick-next:before {
-  color: #000000; }
+.elementor-image-carousel-wrapper .elementor-image-carousel .slick-next.inside {
+  right: 25px; }
+.elementor-image-carousel-wrapper .elementor-image-carousel .slick-prev.inside {
+  left: 25px; }
+.elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots.inside {
+  bottom: 30px; }
 
 .elementor-widget-image-box .elementor-image-box-wrapper {
   overflow: hidden; }
