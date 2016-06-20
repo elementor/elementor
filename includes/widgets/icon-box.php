@@ -175,6 +175,7 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
+				'alpha' => true,
 			]
 		);
 
@@ -193,6 +194,7 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 				],
+				'alpha' => true,
 			]
 		);
 
@@ -441,6 +443,7 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
+				'alpha' => true,
 			]
 		);
 
@@ -480,6 +483,7 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
 				],
+				'alpha' => true,
 			]
 		);
 

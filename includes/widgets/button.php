@@ -132,7 +132,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'right',
+				'default' => 'left',
 				'options' => [
 					'left' => __( 'Before', 'elementor' ),
 					'right' => __( 'After', 'elementor' ),
@@ -146,10 +146,10 @@ class Widget_Button extends Widget_Base {
 		$this->add_control(
 			'icon_indent',
 			[
-				'label' => __( 'Icon Text Indent (Spacing)', 'elementor' ),
+				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 0,
+					'size' => 5,
 				],
 				'range' => [
 					'px' => [

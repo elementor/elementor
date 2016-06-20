@@ -86,7 +86,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 0,
+					'size' => 1,
 				],
 				'range' => [
 					'px' => [
@@ -98,6 +98,7 @@ class Widget_Toggle extends Widget_Base {
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -110,6 +111,7 @@ class Widget_Toggle extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-bottom-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-color: {{VALUE}};',
 				],
 			]

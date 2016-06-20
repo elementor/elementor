@@ -106,6 +106,10 @@ class Widget_Icon_list extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -133,7 +137,7 @@ class Widget_Icon_list extends Widget_Base {
 		$this->add_control(
 			'icon_align',
 			[
-				'label' => __( 'Icon Align', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_icon_style',
@@ -149,10 +153,6 @@ class Widget_Icon_list extends Widget_Base {
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
 					],
 				],
 				'selectors' => [

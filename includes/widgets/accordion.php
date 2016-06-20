@@ -101,7 +101,7 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 0,
+					'size' => 1,
 				],
 				'range' => [
 					'px' => [
@@ -113,6 +113,7 @@ class Widget_Accordion extends Widget_Base {
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'border-width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-wrapper .elementor-accordion-title.active > span' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -127,6 +128,7 @@ class Widget_Accordion extends Widget_Base {
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'border-top-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-wrapper .elementor-accordion-title.active > span' => 'border-bottom-color: {{VALUE}};',
 				],
 			]

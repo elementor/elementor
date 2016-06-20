@@ -129,11 +129,20 @@ class Widget_Alert extends Widget_Base {
 			'border_left-width',
 			[
 				'label' => __( 'Left Border Width', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
+				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_type',
+				'default' => [
+					'size' => 15,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-alert' => 'border-left-width: {{VALUE}}px;',
+					'{{WRAPPER}} .elementor-alert' => 'border-left-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
