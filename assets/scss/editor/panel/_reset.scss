@@ -16,7 +16,7 @@
 a {
 	color: $editor-accent;
     text-decoration: none;
-    @include transition(none);
+    transition: none;
     &:visited {
         color: inherit;
     }
