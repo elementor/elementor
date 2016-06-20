@@ -81,6 +81,29 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_control(
+			'border_width',
+			[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_title_style',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
@@ -88,6 +111,7 @@ class Widget_Toggle extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-bottom-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-color: {{VALUE}};',
 				],
 			]
@@ -103,6 +127,7 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'background-color: {{VALUE}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -118,7 +143,7 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
+					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);
@@ -135,7 +160,7 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'value' => Scheme_Color::COLOR_4,
 				],
 			]
 		);
@@ -148,6 +173,7 @@ class Widget_Toggle extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -161,6 +187,7 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'background-color: {{VALUE}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -174,6 +201,10 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -185,6 +216,7 @@ class Widget_Toggle extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

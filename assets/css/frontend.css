@@ -391,8 +391,8 @@
     float: right; }
   .elementor-button .elementor-align-icon-left {
     float: left; }
-  .elementor-button .elementor-button-icon {
-    padding: 0 5px; }
+  .elementor-button .elementor-button-text {
+    display: inline-block; }
 
 .elementor-widget-button .elementor-button.elementor-button-info {
   background-color: #5bc0de; }
@@ -696,6 +696,14 @@
 
 .elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
   color: #000000; }
+.elementor-carousel-wrapper .elementor-carousel .slick-next.inside {
+  right: 0;
+  z-index: 100; }
+.elementor-carousel-wrapper .elementor-carousel .slick-prev.inside {
+  left: 0;
+  z-index: 100; }
+.elementor-carousel-wrapper .elementor-carousel .slick-dots.inside {
+  bottom: 0px; }
 
 .elementor-slideshow-wrapper div.slick-slide img {
   margin: auto; }

@@ -268,6 +268,10 @@ class Widget_Image extends Widget_Base {
 					'{{WRAPPER}} .widget-image-text' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_caption',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -278,6 +282,7 @@ class Widget_Image extends Widget_Base {
 				'selector' => '{{WRAPPER}} .widget-image-text',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_caption',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -317,7 +322,7 @@ class Widget_Image extends Widget_Base {
 					imgClass = 'hover-' + settings.hover_animation;
 				}
 
-				image_html = '<img src="' + settings.image.url + '" title="' + settings.image_title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
+				image_html = '<img src="' + settings.image.url + '" title="' + settings.title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
 
 				if ( settings.link ) {
 					var link = settings.link;

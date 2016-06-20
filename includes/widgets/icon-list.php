@@ -106,6 +106,10 @@ class Widget_Icon_list extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -126,6 +130,33 @@ class Widget_Icon_list extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_icon_style',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-items' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -171,6 +202,10 @@ class Widget_Icon_list extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
+				],
 			]
 		);
 
@@ -182,6 +217,7 @@ class Widget_Icon_list extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_text_style',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}

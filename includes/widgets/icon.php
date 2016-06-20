@@ -127,6 +127,11 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
+				'alpha' => true,
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -144,6 +149,11 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
+				],
+				'alpha' => true,
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 			]
 		);
@@ -171,23 +181,6 @@ class Widget_Icon extends Widget_Base {
 		);
 
 		$this->add_control(
-			'rotate',
-			[
-				'label' => __( 'Icon Rotate', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0,
-					'unit' => 'deg',
-				],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
-				],
-			]
-		);
-
-		$this->add_control(
 			'icon_padding',
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
@@ -208,6 +201,23 @@ class Widget_Icon extends Widget_Base {
 				],
 				'condition' => [
 					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'rotate',
+			[
+				'label' => __( 'Icon Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+					'unit' => 'deg',
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);

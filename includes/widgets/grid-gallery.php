@@ -191,7 +191,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => 'default',
 				'options' => [
-					'default' => __( 'Show', 'elementor' ),
+					'' => __( 'Show', 'elementor' ),
 					'none' => __( 'Hide', 'elementor' ),
 				],
 				'selectors' => [
@@ -229,9 +229,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'text-align: {{VALUE}};',
 				],
-				'condition' => [
-					'gallery_display_caption' => 'default',
-				],
 			]
 		);
 
@@ -245,9 +242,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'gallery_display_caption' => 'default',
 				],
 			]
 		);
