@@ -1077,7 +1077,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	onBeforeRender: function() {
-		var controls = elementor.getElementControls( this.model );
+		var controls = elementor.getElementControls( this.model.get( 'settings' ) );
 
 		if ( ! controls ) {
 			throw new Error( 'No found editor controls' );
@@ -2183,7 +2183,9 @@ ElementModel = Backbone.Model.extend( {
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
 		}
+
 		settings.elType = elType;
+		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings );
 		this.set( 'settings', settings );
