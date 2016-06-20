@@ -18,10 +18,7 @@
   -webkit-hyphens: manual;
       -ms-hyphens: manual;
           hyphens: manual; }
-  .elementor * {
-    box-sizing: border-box; }
-  .elementor *:before,
-  .elementor *:after {
+  .elementor *, .elementor *:before, .elementor *:after {
     box-sizing: border-box; }
   .elementor a {
     box-shadow: none;

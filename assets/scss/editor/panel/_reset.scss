@@ -3,59 +3,67 @@
 //
 
 * {
-    @include box-sizing(border-box);
+	&, &:before, &:after {
+		box-sizing: border-box;
+	}
 }
-*:before,
-*:after {
-    @include box-sizing(border-box);
-}
+
 ::selection {
-    background: $blue-light;
-    color: $white;
+	background: $blue-light;
+	color: $white;
 }
+
 a {
 	color: $editor-accent;
-    text-decoration: none;
-    @include transition(none);
-    &:visited {
-        color: inherit;
-    }
+	text-decoration: none;
+	transition: none;
+	&:visited {
+		color: inherit;
+	}
 }
+
 ol,
 ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+	list-style: none;
+	padding: 0;
+	margin: 0;
 }
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-    font-size: 100%;
-    font-weight:normal;
+	font-size: 100%;
+	font-weight: normal;
 }
+
 abbr,
 acronym {
-    border:0;
-    font-variant:normal;
+	border: 0;
+	font-variant: normal;
 }
+
 sup {
-    vertical-align:text-top;
+	vertical-align: text-top;
 }
+
 sub {
-    vertical-align:text-bottom;
+	vertical-align: text-bottom;
 }
+
 img {
-    max-width: 100%;
-    height: auto;
-    border: 0;
+	max-width: 100%;
+	height: auto;
+	border: 0;
 }
+
 ::-moz-focus-inner {
-    padding: 0;
-    border: 0;
+	padding: 0;
+	border: 0;
 }
+
 :focus {
-    outline: 0;
+	outline: 0;
 }

@@ -384,10 +384,7 @@ select {
   top: 0;
   bottom: 0;
   overflow: visible; }
-  #elementor-panel * {
-    box-sizing: border-box; }
-  #elementor-panel *:before,
-  #elementor-panel *:after {
+  #elementor-panel *, #elementor-panel *:before, #elementor-panel *:after {
     box-sizing: border-box; }
   #elementor-panel ::-moz-selection {
     background: #5bc0de;
