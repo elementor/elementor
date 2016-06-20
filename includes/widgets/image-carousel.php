@@ -467,14 +467,14 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$slides = [];
 		foreach ( $instance['carousel'] as $attachment ) {
-			$image = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
+			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
 
 			$image_classes = [ 'slick-slide-image' ];
 			if ( 'yes' === $instance['image_stretch'] ) {
 				$image_classes[] = 'slick-slide-image-stretch';
 			}
 
-			$slides[] = '<div><img class="' . implode( ' ', $image_classes ) . '" src="' . esc_attr( $image ) . '" alt="Image Carousel" /></div>';
+			$slides[] = '<div><img class="' . implode( ' ', $image_classes ) . '" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div>';
 		}
 
 		if ( empty( $slides ) ) {
