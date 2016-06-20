@@ -19,8 +19,6 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_carusel_options = [ 'slides_to_show', 'slides_to_scroll', 'autoplay_speed', 'autoplay', 'dots', 'dots_position', 'arrows', 'arrows_position', 'infinite', 'pause_on_hover', 'speed', 'effect', 'rtl' ];
-
 		$this->add_control(
 			'section_image_carousel',
 			[
