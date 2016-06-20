@@ -282,7 +282,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
 		}
 		?>
-		<div class="elementor-wp-gallery">
+		<div class="elementor-image-gallery">
 			<?php echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
 		</div>
 		<?php
