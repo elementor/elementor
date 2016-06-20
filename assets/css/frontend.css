@@ -409,6 +409,8 @@
 .elementor-widget-divider .elementor-divider-separator {
   display: inline-block; }
 
+.elementor-image-gallery figure .gallery-icon {
+  padding: 0; }
 .elementor-image-gallery figure img {
   display: block; }
 .elementor-image-gallery figure figcaption {
