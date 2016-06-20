@@ -185,62 +185,33 @@
 
 	// Carousel Widget
 	elementorBindUI.addBindEvent( 'image-carousel', function() {
-		var $wrapper = $( this ).find( '.elementor-image-carousel-wrapper' ),
-			$carousel = $wrapper.children( '.elementor-image-carousel' ),
-			$data = $carousel.data();
-
-		if ( ! $data ) {
+		var $carousel = $( this ).find( '.elementor-image-carousel' );
+		if ( ! $carousel.length ) {
 			return;
 		}
 
-		var slideToShow = $data.slidestoshow,
-			slideToScroll = $data.slidestoscroll,
-			autoPlay = $data.autoplay,
-			autoplaySpeed = $data.autoplayspeed,
-			dots = $data.dots,
-			arrows = $data.arrows,
-			infinite = $data.infinite,
-			pauseOnHover = $data.pauseonhover,
-			rtl = $data.rtl,
-			arrowsPos = $data.arrowspos,
-			dotsClass;
-
-		var options = {
-			slidesToShow: slideToShow,
-			slidesToScroll: slideToScroll,
-			autoplay: autoPlay,
-			autoplaySpeed: autoplaySpeed,
-			dots: dots,
-			arrows: arrows,
-			infinite: infinite,
-			pauseOnHover: pauseOnHover,
-			rtl: rtl,
-			prevArrow: '<button type="button" class="slick-prev ' + arrowsPos + '">Previous</button>',
-			nextArrow: '<button type="button" class="slick-next ' + arrowsPos + '">Next</button>',
-			responsive: [
-				{
-					breakpoint: 767,
-					settings: {
-						slidesToShow: 2,
-						slidesToScroll: 2
+		var defaultOptions = {
+				responsive: [
+					{
+						breakpoint: 767,
+						settings: {
+							slidesToShow: 2,
+							slidesToScroll: 2
+						}
+					},
+					{
+						breakpoint: 480,
+						settings: {
+							slidesToShow: 1,
+							slidesToScroll: 1
+						}
 					}
-				},
-				{
-					breakpoint: 480,
-					settings: {
-						slidesToShow: 1,
-						slidesToScroll: 1
-					}
-				}
-			]
-		};
+				]
+			},
 
-		if ( $data.dotspos ) {
-			options.dotsClass = 'slick-dots ' + $data.dotspos;
-		}
+			slickOptions = $.extend( defaultOptions, $carousel.data( 'slider_options' ) );
 
-		$carousel.slick( options );
-
+		$carousel.slick( slickOptions );
 	} );
 
 	// Alert Widget

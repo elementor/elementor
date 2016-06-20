@@ -19,7 +19,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->_carusel_options = [ 'slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'autoplay', 'dots', 'dotspos', 'arrows', 'arrowspos', 'infinite', 'pauseOnHover', 'speed', 'fade', 'rtl' ];
+		$this->_carusel_options = [ 'slides_to_show', 'slides_to_scroll', 'autoplay_speed', 'autoplay', 'dots', 'dots_position', 'arrows', 'arrows_position', 'infinite', 'pause_on_hover', 'speed', 'effect', 'rtl' ];
 
 		$this->add_control(
 			'section_image_carousel',
@@ -51,7 +51,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_to_show = array_combine( $slides_to_show, $slides_to_show );
 
 		$this->add_control(
-			'slidesToShow',
+			'slides_to_show',
 			[
 				'label' => __( 'Slides to Show', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -62,7 +62,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'slidesToScroll',
+			'slides_to_scroll',
 			[
 				'label' => __( 'Slides to Scroll', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -70,7 +70,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_image_carousel',
 				'options' => $slides_to_show,
 				'condition' => [
-					'slidesToShow!' => '1',
+					'slides_to_show!' => '1',
 				],
 			]
 		);
@@ -94,11 +94,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Arrows', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
+				'default' => 'yes',
 				'section' => 'section_image_carousel',
 				'options' => [
-					'true' => __( 'Show', 'elementor' ),
-					'false' => __( 'Hide', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
 				],
 			]
 		);
@@ -108,11 +108,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Dots', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
+				'default' => 'yes',
 				'section' => 'section_image_carousel',
 				'options' => [
-					'true' => __( 'Show', 'elementor' ),
-					'false' => __( 'Hide', 'elementor' ),
+					'yes' => __( 'Show', 'elementor' ),
+					'no' => __( 'Hide', 'elementor' ),
 				],
 			]
 		);
@@ -136,15 +136,15 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'pauseOnHover',
+			'pause_on_hover',
 			[
-				'label' => __( 'Pause On Hover', 'elementor' ),
+				'label' => __( 'Pause on Hover', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
+				'default' => 'yes',
 				'section' => 'section_additional_options',
 				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
 				],
 			]
 		);
@@ -154,17 +154,17 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
+				'default' => 'yes',
 				'section' => 'section_additional_options',
 				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
 				],
 			]
 		);
 
 		$this->add_control(
-			'autoplaySpeed',
+			'autoplay_speed',
 			[
 				'label' => __( 'Autoplay Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
@@ -178,25 +178,25 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Infinite Loop', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'true',
+				'default' => 'yes',
 				'section' => 'section_additional_options',
 				'options' => [
-					'true' => __( 'Yes', 'elementor' ),
-					'false' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
 				],
 			]
 		);
 
 		$this->add_control(
-			'fade',
+			'effect',
 			[
 				'label' => __( 'Effect', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'false',
+				'default' => 'slide',
 				'section' => 'section_additional_options',
 				'options' => [
-					'false' => __( 'Slide', 'elementor' ),
-					'true' => __( 'Fade', 'elementor' ),
+					'slide' => __( 'Slide', 'elementor' ),
+					'fade' => __( 'Fade', 'elementor' ),
 				],
 			]
 		);
@@ -212,15 +212,15 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'rtl',
+			'direction',
 			[
 				'label' => __( 'Direction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'false',
+				'default' => 'ltr',
 				'section' => 'section_additional_options',
 				'options' => [
-					'false' => __( 'Left to Right', 'elementor' ),
-					'true' => __( 'Right to Left', 'elementor' ),
+					'ltr' => __( 'Left to Right', 'elementor' ),
+					'rtl' => __( 'Right to Left', 'elementor' ),
 				],
 			]
 		);
@@ -247,7 +247,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 				'default' => '',
 				'condition' => [
-					'slidesToShow!' => '1',
+					'slides_to_show!' => '1',
 				],
 			]
 		);
@@ -270,7 +270,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'show_label' => false,
 				'condition' => [
 					'image_spacing' => 'custom',
-					'slidesToShow!' => '1',
+					'slides_to_show!' => '1',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .slick-list' => 'margin: 0 -{{SIZE}}{{UNIT}};',
@@ -288,13 +288,13 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_style_carousel',
 				'separator' => 'before',
 				'condition' => [
-					'arrows' => 'true',
+					'arrows' => 'yes',
 				],
 			]
 		);
 
 		$this->add_control(
-			'arrowspos',
+			'arrows_position',
 			[
 				'label' => __( 'Arrows Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -306,7 +306,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'outside' => __( 'Outside', 'elementor' ),
 				],
 				'condition' => [
-					'arrows' => 'true',
+					'arrows' => 'yes',
 				],
 			]
 		);
@@ -331,7 +331,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'arrows' => 'true',
+					'arrows' => 'yes',
 				],
 			]
 		);
@@ -348,7 +348,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
 				],
 				'condition' => [
-					'arrows' => 'true',
+					'arrows' => 'yes',
 				],
 			]
 		);
@@ -362,13 +362,13 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_style_carousel',
 				'separator' => 'before',
 				'condition' => [
-					'dots' => 'true',
+					'dots' => 'yes',
 				],
 			]
 		);
 
 		$this->add_control(
-			'dotspos',
+			'dots_position',
 			[
 				'label' => __( 'Dots Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -380,7 +380,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'inside' => __( 'inside', 'elementor' ),
 				],
 				'condition' => [
-					'dots' => 'true',
+					'dots' => 'yes',
 				],
 			]
 		);
@@ -405,7 +405,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'dots' => 'true',
+					'dots' => 'yes',
 				],
 			]
 		);
@@ -422,7 +422,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
 				],
 				'condition' => [
-					'dots' => 'true',
+					'dots' => 'yes',
 				],
 			]
 		);
@@ -483,13 +483,41 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
-		foreach ( $this->_carusel_options as $option_name ) {
-			$this->add_render_attribute( 'data', 'data-' . $option_name , $instance[ $option_name ] );
+		$is_slideshow = '1' === $instance['slides_to_show'];
+		$is_rtl = ( 'rtl' === $instance['direction'] );
+
+		$slick_options = [
+			'slidesToShow' => $instance['slides_to_show'],
+			'autoplaySpeed' => $instance['autoplay_speed'],
+			'autoplay' => ( 'yes' === $instance['autoplay'] ),
+			'arrows' => ( 'yes' === $instance['arrows'] ),
+			'dots' => ( 'yes' === $instance['dots'] ),
+			'infinite' => ( 'yes' === $instance['infinite'] ),
+			'pauseOnHover' => ( 'yes' === $instance['pause_on_hover'] ),
+			'speed' => $instance['speed'],
+			'fade' => ( 'fade' === $instance['effect'] ),
+			'rtl' => $is_rtl,
+		];
+
+		$carousel_classes = [ 'elementor-image-carousel' ];
+
+		if ( 'yes' === $instance['arrows'] ) {
+			$slick_options['arrows'] = true;
+			$carousel_classes[] = 'slick-arrows-' . $instance['arrows_position'];
+		}
+
+		if ( 'yes' === $instance['dots'] ) {
+			$slick_options['dots'] = true;
+			$carousel_classes[] = 'slick-dots-' . $instance['dots_position'];
+		}
+
+		if ( ! $is_slideshow ) {
+			$slick_options['slidesToScroll'] = $instance['slides_to_scroll'];
 		}
 
 		?>
-		<div class="elementor-image-carousel-wrapper"<?php if ( 'true' === $instance['rtl'] ) echo ' dir="rtl"'; ?>>
-			<div class="elementor-image-carousel" <?php echo $this->get_render_attribute_string( 'data' ); ?>>
+		<div class="elementor-image-carousel-wrapper"<?php if ( $is_rtl ) echo ' dir="rtl"'; ?>>
+			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo wp_json_encode( $slick_options ); ?>'>
 				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>
