@@ -202,7 +202,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'speed',
 			[
-				'label' => __( 'Animation Speed (ms)', 'elementor' ),
+				'label' => __( 'Animation Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 500,
 				'section' => 'section_additional_options',
@@ -442,7 +442,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'name' => 'image_border',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_carousel',
-				'selector' => '{{WRAPPER}} .elementor-widget-container',
+				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image',
 			]
 		);
 
@@ -455,7 +455,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_carousel',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);

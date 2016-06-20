@@ -1,15 +1,23 @@
-/* Slider */
+//
+// Slick Carousel
+//
 
+// Slider
 .slick-slider {
 	position: relative;
 	display: block;
 	box-sizing: border-box;
 	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
 	-ms-touch-action: pan-y;
 	touch-action: pan-y;
 	-webkit-tap-highlight-color: transparent;
 }
+
 .slick-list {
 	position: relative;
 	overflow: hidden;
@@ -26,6 +34,7 @@
 		cursor: hand;
 	}
 }
+
 .slick-slider .slick-track,
 .slick-slider .slick-list {
 	transform: translate3d(0, 0, 0);
@@ -92,14 +101,15 @@
 }
 
 //
-// Theme
+// Slick Default Theme
 //
-/* Slider */
-.slick-loading.slick-list {
-	background: #fff;
+
+// Slider
+.slick-loading .slick-list {
+	background: #fff url('../images/ajax-loader.gif') center center no-repeat;
 }
 
-/* Arrows */
+// Arrows
 .slick-prev,
 .slick-next {
 	font-size: 0;
@@ -169,7 +179,7 @@
 	}
 }
 
-/* Dots */
+// Dots
 .slick-dotted.slick-slider {
 	margin-bottom: 30px;
 }
@@ -237,5 +247,50 @@
 			opacity: .75;
 			color: black;
 		}
+	}
+}
+
+//
+//  Custom Style for Elementor
+//
+
+.slick-slider {
+	.slick-prev,
+	.slick-next {
+		z-index: 1;
+	}
+}
+
+.slick-slide {
+	img {
+		margin: auto;
+	}
+}
+
+.slick-arrows-inside {
+	.slick-prev {
+		left: 20px;
+		[dir="rtl"] & {
+			left: auto;
+			right: 20px;
+		}
+	}
+
+	.slick-next {
+		right: 20px;
+		[dir="rtl"] & {
+			left: 20px;
+			right: auto;
+		}
+	}
+}
+
+.slick-dots-inside {
+	.slick-dots {
+		bottom: 20px;
+	}
+
+	&.slick-dotted.slick-slider {
+		margin-bottom: 0;
 	}
 }
