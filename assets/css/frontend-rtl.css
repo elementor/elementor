@@ -396,6 +396,8 @@
     float: left; }
   .elementor-button .elementor-button-icon {
     padding: 0 5px; }
+  .elementor-button .elementor-button-text {
+    display: inline-block; }
 
 .elementor-widget-button .elementor-button.elementor-button-info {
   background-color: #5bc0de; }

@@ -143,6 +143,28 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'icon_indent',
+			[
+				'label' => __( 'Icon Text Indent (Spacing)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+				],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+				],
+				'condition' => [
+					'icon!' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button-text' => 'text-indent: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		/*
 		$this->add_control(
 			'hover_animation',
