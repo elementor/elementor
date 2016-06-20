@@ -33,12 +33,3 @@
 	border-bottom-left-radius: $radius;
 	border-top-left-radius: $radius;
 }
-
-// Responsive utilities
-@mixin responsive-visibility() {
-	display: block !important;
-}
-
-@mixin responsive-invisibility() {
-	display: none !important;
-}
