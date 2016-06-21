@@ -40,7 +40,7 @@ class Widgets_Manager {
 		];
 
 		if ( Utils::is_development_mode() ) {
-
+			$build_widgets_filename[] = 'testimonials';
 		}
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
