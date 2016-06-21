@@ -388,9 +388,11 @@
     font-size: 20px;
     padding: 25px 50px; }
   .elementor-button .elementor-align-icon-right {
-    float: right; }
+    float: right;
+    margin-left: 5px; }
   .elementor-button .elementor-align-icon-left {
-    float: left; }
+    float: left;
+    margin-right: 5px; }
   .elementor-button .elementor-button-text {
     display: inline-block; }
 
