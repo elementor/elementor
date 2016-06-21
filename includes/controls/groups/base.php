@@ -123,6 +123,13 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$control_args['section'] = $args['section'];
 		$control_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
+		if ( ! empty( $args['condition'] ) ) {
+			if ( empty( $control_args['condition'] ) )
+				$control_args['condition'] = [];
+
+			$control_args['condition'] += $args['condition'];
+		}
+
 		return $control_args;
 	}
 }
