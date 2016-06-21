@@ -469,12 +469,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		foreach ( $instance['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
 
-			$image_classes = [ 'slick-slide-image' ];
-			if ( 'yes' === $instance['image_stretch'] ) {
-				$image_classes[] = 'slick-slide-image-stretch';
-			}
-
-			$slides[] = '<div><img class="' . implode( ' ', $image_classes ) . '" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div>';
+			$slides[] = '<div><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div>';
 		}
 
 		if ( empty( $slides ) ) {
@@ -507,6 +502,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		if ( 'yes' === $instance['dots'] ) {
 			$slick_options['dots'] = true;
 			$carousel_classes[] = 'slick-dots-' . $instance['dots_position'];
+		}
+
+		if ( 'yes' === $instance['image_stretch'] ) {
+			$carousel_classes[] = 'slick-slide-image-stretch';
 		}
 
 		if ( ! $is_slideshow ) {
