@@ -4,10 +4,13 @@
 
 .elementor-image-carousel-wrapper {
 
-	div.slick-slide {
+	.slick-image-stretch {
 
-		.slick-slide-image-stretch {
-			width: 100%;
+		.slick-slide {
+
+			.slick-slide-image {
+				width: 100%;
+			}
 		}
 	}
 }

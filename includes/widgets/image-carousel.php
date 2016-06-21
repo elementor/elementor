@@ -505,7 +505,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		if ( 'yes' === $instance['image_stretch'] ) {
-			$carousel_classes[] = 'slick-slide-image-stretch';
+			$carousel_classes[] = 'slick-image-stretch';
 		}
 
 		if ( ! $is_slideshow ) {

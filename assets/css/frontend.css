@@ -696,7 +696,7 @@
     text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
     transition: all .5s; }
 
-.elementor-image-carousel-wrapper div.slick-slide .slick-slide-image-stretch {
+.elementor-image-carousel-wrapper .slick-image-stretch .slick-slide .slick-slide-image {
   width: 100%; }
 
 .elementor-widget-image-box .elementor-image-box-wrapper {
