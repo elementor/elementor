@@ -215,55 +215,13 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'section_style_carousel',
+			'section_style_navigation',
 			[
-				'label' => __( 'Carousel', 'elementor' ),
+				'label' => __( 'Navigation', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'image_spacing',
-			[
-				'label' => __( 'Spacing', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
-				],
-				'default' => '',
 				'condition' => [
-					'slides_to_show!' => '1',
-				],
-			]
-		);
-
-		$this->add_control(
-			'image_spacing_custom',
-			[
-				'label' => __( 'Image Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
-				'range' => [
-					'px' => [
-						'max' => 100,
-					],
-				],
-				'default' => [
-					'size' => 20,
-				],
-				'show_label' => false,
-				'selectors' => [
-					'{{WRAPPER}} .slick-list' => 'margin-left: -{{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .slick-slide .slick-slide-image' => 'padding-left: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'image_spacing' => 'custom',
-					'slides_to_show!' => '1',
+					'navigation' => [ 'arrows', 'dots', 'both' ],
 				],
 			]
 		);
@@ -274,7 +232,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Arrows', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'separator' => 'before',
 				'condition' => [
 					'navigation' => [ 'arrows', 'both' ],
@@ -288,7 +246,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Arrows Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'inside',
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'tab' => self::TAB_STYLE,
 				'options' => [
 					'inside' => __( 'Inside', 'elementor' ),
@@ -305,7 +263,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Arrows Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'tab' => self::TAB_STYLE,
 				'range' => [
 					'px' => [
@@ -328,7 +286,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Arrows Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
 				],
@@ -344,7 +302,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Dots', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'separator' => 'before',
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
@@ -359,7 +317,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'outside',
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'options' => [
 					'outside' => __( 'Outside', 'elementor' ),
 					'inside' => __( 'inside', 'elementor' ),
@@ -376,7 +334,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Dots Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'range' => [
 					'px' => [
 						'min' => 5,
@@ -398,7 +356,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Dots Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_navigation',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
 				],
@@ -409,13 +367,56 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'heading_style_image',
+			'section_style_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
+				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
-				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'image_spacing',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => '',
+				'condition' => [
+					'slides_to_show!' => '1',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_spacing_custom',
+			[
+				'label' => __( 'Image Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'size' => 20,
+				],
+				'show_label' => false,
+				'selectors' => [
+					'{{WRAPPER}} .slick-list' => 'margin-left: -{{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .slick-slide .slick-slide-image' => 'padding-left: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'image_spacing' => 'custom',
+					'slides_to_show!' => '1',
+				],
 			]
 		);
 
@@ -424,7 +425,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_image',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image',
 			]
 		);
@@ -436,7 +437,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_carousel',
+				'section' => 'section_style_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
