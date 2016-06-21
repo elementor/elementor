@@ -4,7 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Carousel extends Widget_Base {
-	private $_carusel_options = [];
 
 	public function get_id() {
 		return 'image-carousel';
