@@ -255,6 +255,8 @@
 //
 
 .slick-slider {
+	overflow: hidden;
+
 	.slick-prev,
 	.slick-next {
 		z-index: 1;

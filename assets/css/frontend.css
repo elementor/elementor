@@ -958,9 +958,11 @@
       opacity: .75;
       color: black; }
 
-.slick-slider .slick-prev,
-.slick-slider .slick-next {
-  z-index: 1; }
+.slick-slider {
+  overflow: hidden; }
+  .slick-slider .slick-prev,
+  .slick-slider .slick-next {
+    z-index: 1; }
 
 .slick-slide img {
   margin: auto; }
