@@ -148,9 +148,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 5,
-				],
 				'range' => [
 					'px' => [
 						'max' => 50,
