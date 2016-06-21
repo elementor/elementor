@@ -319,7 +319,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_style_navigation',
 				'options' => [
 					'outside' => __( 'Outside', 'elementor' ),
-					'inside' => __( 'inside', 'elementor' ),
+					'inside' => __( 'Inside', 'elementor' ),
 				],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
