@@ -95,9 +95,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => 'both',
 				'section' => 'section_image_carousel',
 				'options' => [
+					'both' => __( 'Arrows and Dots', 'pojo' ),
 					'arrows' => __( 'Arrows', 'pojo' ),
 					'dots' => __( 'Dots', 'pojo' ),
-					'both' => __( 'Arrows and Dots', 'pojo' ),
 					'none' => __( 'None', 'pojo' ),
 				],
 			]
