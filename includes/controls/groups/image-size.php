@@ -92,12 +92,19 @@ class Group_Control_Image_size extends Group_Control_Base {
 				'crop' => true,
 			];
 
+			$has_custom_size = false;
 			if ( ! empty( $custom_dimension['width'] ) ) {
+				$has_custom_size = true;
 				$attachment_size[0] = $custom_dimension['width'];
 			}
 
 			if ( ! empty( $custom_dimension['height'] ) ) {
+				$has_custom_size = true;
 				$attachment_size[1] = $custom_dimension['height'];
+			}
+
+			if ( ! $has_custom_size ) {
+				$attachment_size = 'full';
 			}
 		}
 
