@@ -462,12 +462,12 @@ class Widget_Image_Carousel extends Widget_Base {
 		$show_arrows = ( in_array( $instance['navigation'], [ 'arrows', 'both' ] ) );
 
 		$slick_options = [
-			'slidesToShow' => $instance['slides_to_show'],
-			'autoplaySpeed' => $instance['autoplay_speed'],
+			'slidesToShow' => absint( $instance['slides_to_show'] ),
+			'autoplaySpeed' => absint( $instance['autoplay_speed'] ),
 			'autoplay' => ( 'yes' === $instance['autoplay'] ),
 			'infinite' => ( 'yes' === $instance['infinite'] ),
 			'pauseOnHover' => ( 'yes' === $instance['pause_on_hover'] ),
-			'speed' => $instance['speed'],
+			'speed' => absint( $instance['speed'] ),
 			'fade' => ( 'fade' === $instance['effect'] ),
 			'arrows' => $show_arrows,
 			'dots' => $show_dots,
@@ -489,7 +489,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		if ( ! $is_slideshow ) {
-			$slick_options['slidesToScroll'] = $instance['slides_to_scroll'];
+			$slick_options['slidesToScroll'] = absint( $instance['slides_to_scroll'] );
 		}
 
 		?>
