@@ -267,8 +267,8 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 				'show_label' => false,
 				'selectors' => [
-					'{{WRAPPER}} .slick-list' => 'margin: 0 -{{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .slick-slide' => 'margin: 0 {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .slick-list' => 'margin-left: -{{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .slick-slide .slick-slide-image' => 'padding-left: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'image_spacing' => 'custom',
