@@ -409,14 +409,14 @@
 .elementor-widget-divider .elementor-divider-separator {
   display: inline-block; }
 
-.elementor-image-gallery figure .gallery-icon {
-  padding: 0; }
 .elementor-image-gallery figure img {
   display: block; }
 .elementor-image-gallery figure figcaption {
   background-color: #dcdcdc;
   opacity: 0.7;
   width: 100%; }
+.gallery-spacing-custom .elementor-image-gallery .gallery-icon {
+  padding: 0; }
 
 .elementor-counter {
   text-align: center; }
@@ -977,7 +977,7 @@
     right: auto; }
 
 .slick-dots-inside .slick-dots {
-  bottom: 20px; }
+  bottom: 5px; }
 .slick-dots-inside.slick-dotted.slick-slider {
   margin-bottom: 0; }
 

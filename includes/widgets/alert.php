@@ -132,9 +132,6 @@ class Widget_Alert extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_type',
-				'default' => [
-					'size' => 15,
-				],
 				'range' => [
 					'px' => [
 						'min' => 0,
