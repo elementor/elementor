@@ -3,38 +3,11 @@
 //
 
 .elementor-image-carousel-wrapper {
-	.slick-slider {
-		.slick-prev,
-		.slick-next {
-			z-index: 1;
-
-			&:before {
-				color: #000000;
-			}
-		}
-	}
 
 	div.slick-slide {
-		img {
-			margin: auto;
-		}
 
 		.slick-slide-image-stretch {
 			width: 100%;
-		}
-	}
-
-	.elementor-image-carousel {
-		.slick-next.inside {
-			right: 25px;
-		}
-
-		.slick-prev.inside {
-			left: 25px;
-		}
-
-		.slick-dots.inside {
-			bottom: 30px;
 		}
 	}
 }
