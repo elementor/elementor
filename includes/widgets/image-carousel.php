@@ -184,6 +184,9 @@ class Widget_Image_Carousel extends Widget_Base {
 					'slide' => __( 'Slide', 'elementor' ),
 					'fade' => __( 'Fade', 'elementor' ),
 				],
+				'condition' => [
+					'slides_to_show' => '1',
+				],
 			]
 		);
 
@@ -468,7 +471,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			'infinite' => ( 'yes' === $instance['infinite'] ),
 			'pauseOnHover' => ( 'yes' === $instance['pause_on_hover'] ),
 			'speed' => absint( $instance['speed'] ),
-			'fade' => ( 'fade' === $instance['effect'] ),
 			'arrows' => $show_arrows,
 			'dots' => $show_dots,
 			'rtl' => $is_rtl,
@@ -490,6 +492,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		if ( ! $is_slideshow ) {
 			$slick_options['slidesToScroll'] = absint( $instance['slides_to_scroll'] );
+			$slick_options['fade'] = ( 'fade' === $instance['effect'] );
 		}
 
 		?>
