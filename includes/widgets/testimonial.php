@@ -345,7 +345,7 @@ class Widget_testimonial extends Widget_Base {
 		<div class="elementor-testimonial-wrapper">
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
-				<div class="elementor-testimonial-text">
+				<div class="elementor-testimonial-text<?php echo $testimonial_detailes_position; ?>">
 					<?php if ( 'yes' === $instance['testimonial_blockquote'] ) : ?>
 						<blockquote>
 					<?php endif; ?>

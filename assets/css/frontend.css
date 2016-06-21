@@ -777,6 +777,12 @@
   overflow: hidden; }
   .elementor-testimonial-wrapper .elementor-testimonial-text {
     margin: 0 0 20px 0; }
+    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-left {
+      text-align: left; }
+    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-right {
+      text-align: right; }
+    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-center {
+      text-align: center; }
   .elementor-testimonial-wrapper .testimonial_description {
     width: 100%;
     text-align: center; }

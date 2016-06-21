@@ -3,9 +3,23 @@
 //
 .elementor-testimonial-wrapper {
 	overflow: hidden;
-
+	
 	.elementor-testimonial-text {
 		margin: 0 0 20px 0;
+
+		&.elementor-testimonial-detailes-align- {
+			&left {
+				text-align: left;
+			}
+
+			&right {
+				text-align: right;
+			}
+
+			&center {
+				text-align: center;
+			}
+		}
 	}
 
 	.testimonial_description {
