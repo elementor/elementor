@@ -15,8 +15,8 @@ class Widgets_Manager {
 
 		$build_widgets_filename = [
 			'heading',
-			'text-editor',
 			'image',
+			'text-editor',
 			'video',
 			'button',
 			'divider',
@@ -24,8 +24,10 @@ class Widgets_Manager {
 			'image-box',
 			'google-maps',
 			'icon',
-			'icon-list',
 			'icon-box',
+			'image-gallery',
+			'image-carousel',
+			'icon-list',
 			'counter',
 			'progress',
 			'tabs',
@@ -38,8 +40,7 @@ class Widgets_Manager {
 		];
 
 		if ( Utils::is_development_mode() ) {
-			$build_widgets_filename[] = 'image-gallery';
-			$build_widgets_filename[] = 'image-carousel';
+
 		}
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
