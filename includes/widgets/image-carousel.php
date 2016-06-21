@@ -387,6 +387,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'custom' => __( 'Custom', 'elementor' ),
 				],
 				'default' => '',
+				'prefix_class' => 'gallery-spacing-',
 				'condition' => [
 					'slides_to_show!' => '1',
 				],
