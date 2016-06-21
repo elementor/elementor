@@ -316,9 +316,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'section' => 'section_style_carousel',
 				'tab' => self::TAB_STYLE,
-				'default' => [
-					'size' => 20,
-				],
 				'range' => [
 					'px' => [
 						'min' => 20,
@@ -339,7 +336,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Arrows Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'default' => '#000000',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_carousel',
 				'selectors' => [
@@ -390,9 +386,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_carousel',
-				'default' => [
-					'size' => 6,
-				],
 				'range' => [
 					'px' => [
 						'min' => 5,
@@ -413,7 +406,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Dots Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'default' => '#000',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_carousel',
 				'selectors' => [

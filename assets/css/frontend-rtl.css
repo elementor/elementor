@@ -875,7 +875,7 @@
   .slick-prev:before,
   .slick-next:before {
     font-family: 'FontAwesome';
-    font-size: 20px;
+    font-size: 35px;
     line-height: 1;
     opacity: .75;
     color: white;
@@ -958,11 +958,9 @@
       opacity: .75;
       color: black; }
 
-.slick-slider {
-  overflow: hidden; }
-  .slick-slider .slick-prev,
-  .slick-slider .slick-next {
-    z-index: 1; }
+.slick-slider .slick-prev,
+.slick-slider .slick-next {
+  z-index: 1; }
 
 .slick-slide img {
   margin: auto; }
