@@ -88,29 +88,17 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'arrows',
+			'navigation',
 			[
-				'label' => __( 'Arrows', 'elementor' ),
+				'label' => __( 'Navigation', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'yes',
+				'default' => 'both',
 				'section' => 'section_image_carousel',
 				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'dots',
-			[
-				'label' => __( 'Dots', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'yes',
-				'section' => 'section_image_carousel',
-				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
+					'arrows' => __( 'Arrows', 'pojo' ),
+					'dots' => __( 'Dots', 'pojo' ),
+					'both' => __( 'Arrows and Dots', 'pojo' ),
+					'none' => __( 'None', 'pojo' ),
 				],
 			]
 		);
@@ -286,7 +274,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_style_carousel',
 				'separator' => 'before',
 				'condition' => [
-					'arrows' => 'yes',
+					'navigation' => [ 'arrows', 'both' ],
 				],
 			]
 		);
@@ -304,7 +292,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'outside' => __( 'Outside', 'elementor' ),
 				],
 				'condition' => [
-					'arrows' => 'yes',
+					'navigation' => [ 'arrows', 'both' ],
 				],
 			]
 		);
@@ -326,7 +314,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'arrows' => 'yes',
+					'navigation' => [ 'arrows', 'both' ],
 				],
 			]
 		);
@@ -342,7 +330,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
 				],
 				'condition' => [
-					'arrows' => 'yes',
+					'navigation' => [ 'arrows', 'both' ],
 				],
 			]
 		);
@@ -356,7 +344,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_style_carousel',
 				'separator' => 'before',
 				'condition' => [
-					'dots' => 'yes',
+					'navigation' => [ 'dots', 'both' ],
 				],
 			]
 		);
@@ -374,7 +362,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'inside' => __( 'inside', 'elementor' ),
 				],
 				'condition' => [
-					'dots' => 'yes',
+					'navigation' => [ 'dots', 'both' ],
 				],
 			]
 		);
@@ -396,7 +384,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'dots' => 'yes',
+					'navigation' => [ 'dots', 'both' ],
 				],
 			]
 		);
@@ -412,7 +400,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
 				],
 				'condition' => [
-					'dots' => 'yes',
+					'navigation' => [ 'dots', 'both' ],
 				],
 			]
 		);
@@ -470,29 +458,29 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$is_slideshow = '1' === $instance['slides_to_show'];
 		$is_rtl = ( 'rtl' === $instance['direction'] );
+		$show_dots = ( in_array( $instance['navigation'], [ 'dots', 'both' ] ) );
+		$show_arrows = ( in_array( $instance['navigation'], [ 'arrows', 'both' ] ) );
 
 		$slick_options = [
 			'slidesToShow' => $instance['slides_to_show'],
 			'autoplaySpeed' => $instance['autoplay_speed'],
 			'autoplay' => ( 'yes' === $instance['autoplay'] ),
-			'arrows' => ( 'yes' === $instance['arrows'] ),
-			'dots' => ( 'yes' === $instance['dots'] ),
 			'infinite' => ( 'yes' === $instance['infinite'] ),
 			'pauseOnHover' => ( 'yes' === $instance['pause_on_hover'] ),
 			'speed' => $instance['speed'],
 			'fade' => ( 'fade' === $instance['effect'] ),
+			'arrows' => $show_arrows,
+			'dots' => $show_dots,
 			'rtl' => $is_rtl,
 		];
 
 		$carousel_classes = [ 'elementor-image-carousel' ];
 
-		if ( 'yes' === $instance['arrows'] ) {
-			$slick_options['arrows'] = true;
+		if ( $show_arrows ) {
 			$carousel_classes[] = 'slick-arrows-' . $instance['arrows_position'];
 		}
 
-		if ( 'yes' === $instance['dots'] ) {
-			$slick_options['dots'] = true;
+		if ( $show_dots ) {
 			$carousel_classes[] = 'slick-dots-' . $instance['dots_position'];
 		}
 
