@@ -109,6 +109,14 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 == Changelog ==
 
+= 0.3.0 - 21.06.2016 =
+* New! - Added Image Gallery widget
+* New! - Added Image Carousel widget
+* Tweak! - Fixed schemes area
+* Tweak! - Added spacing icon in Button widget
+* Fixed! - Themes without `the_content()` stop the Editor
+* Fixed! - Height option in Columns widget
+
 = 0.2.5 - 16.06.2016 =
 * Tweak! - Added Vimeo support for widget Video
 * Tweak! - Improved UI in admin area and panel
