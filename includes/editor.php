@@ -402,6 +402,7 @@ class Editor {
 		include( 'editor-templates/panel.php' );
 		include( 'editor-templates/panel-elements.php' );
 		include( 'editor-templates/repeater.php' );
+		include( 'editor-templates/templates.php' );
 	}
 
 	public function __construct() {
