@@ -1610,25 +1610,30 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-dialog-message-text {
   text-transform: uppercase; }
 
-.dialog-elementor-modal-widget-header {
-  border-bottom: 1px solid #d5dadf; }
-
 .dialog-elementor-modal-close-button {
   cursor: pointer;
   position: absolute;
-  top: 10px;
-  left: 10px; }
+  top: 16px;
+  right: 20px;
+  font-size: 16px;
+  color: #a4afb7;
+  line-height: 1; }
 
-.dialog-elementor-modal-message {
-  padding: 20px; }
-
+#elementor-introduction .dialog-widget-header {
+  padding: 40px 0 0; }
 #elementor-introduction .elementor-video-wrapper {
-  padding-bottom: 56.2%; }
+  padding-bottom: 62.4%; }
+#elementor-introduction .dialog-message {
+  margin-top: 40px; }
 
 #elementor-introduction-title {
-  font-size: 16px; }
+  color: #9b0a46;
+  font-size: 27px;
+  font-weight: bold; }
 
 #elementor-introduction-subtitle {
-  margin-top: 10px; }
+  margin-top: 12px;
+  font-size: 16px;
+  color: #a4afb7; }
 
 /*# sourceMappingURL=editor.css.map */
