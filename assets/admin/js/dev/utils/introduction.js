@@ -42,21 +42,26 @@ Introduction = function() {
 		if ( ! infoDialog ) {
 			initInfoDialog();
 		}
+	this.startIntroduction = function() {
+		var settings = this.getSettings();
 
 		return infoDialog;
+		this.getModal()
+		    .setHeaderMessage( settings.title )
+		    .setMessage( settings.content )
+		    .show();
 	};
 
-	this.startIntroduction = function() {
-		var introductionConfig = elementor.config.introduction;
+	this.startOnLoadIntroduction = function() {
+		var settings = this.getSettings();
 
-		if ( ! introductionConfig ) {
+		if ( ! settings.is_user_should_view ) {
 			return;
 		}
 
-		this.getModal()
-		    .setHeaderMessage( introductionConfig.title )
-		    .setMessage( introductionConfig.content )
-		    .show();
+		setTimeout( _.bind( function() {
+			this.startIntroduction();
+		}, this ), settings.delay );
 	};
 
 	this.setIntroductionViewed = function() {

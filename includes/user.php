@@ -43,17 +43,13 @@ class User {
 	}
 
 	public static function get_introduction() {
-		$user_should_view_introduction = self::is_user_should_view_introduction();
-
-		if ( ! $user_should_view_introduction ) {
-			return false;
-		}
-
 		$introduction = self::get_current_introduction();
 
 		if ( empty( $introduction['active'] ) ) {
 			return false;
 		}
+
+		$introduction['is_user_should_view'] = self::is_user_should_view_introduction();
 
 		return $introduction;
 	}
@@ -82,7 +78,7 @@ class User {
 		return get_user_meta( $user->ID, self::INTRODUCTION_KEY, true );
 	}
 
-	private static function is_user_should_view_introduction() {
+	public static function is_user_should_view_introduction() {
 		$user_introduction_meta = self::get_introduction_meta();
 
 		$current_introduction = self::get_current_introduction();
