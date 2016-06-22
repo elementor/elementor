@@ -88,9 +88,14 @@ class User {
 
 	private static function get_current_introduction() {
 		return [
-			'active' => false,
-			'title' => __( 'Please view our cool video', 'elementor' ),
-			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/watch?v=kB4U67tiQLA" frameborder="0" allowfullscreen></iframe></div>',
+			'active' => true,
+			'title' => '<div id="elementor-introduction-title">' .
+			           __( 'Two Minute Tour Of Elementor', 'elementor' ) .
+			           '</div><div id="elementor-introduction-subtitle">'  .
+			           __( 'Watch this quick tour that gives you a basic understanding of how to use Elementor.', 'elementor' ) .
+			           '</div>',
+			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/v/6u45V2q1s4k?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>',
+			'delay' => 2500,
 			'version' => 1,
 		];
 	}
