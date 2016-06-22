@@ -4,7 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Carousel extends Widget_Base {
-	private $_carusel_options = [];
 
 	public function get_id() {
 		return 'image-carousel';
@@ -95,10 +94,10 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => 'both',
 				'section' => 'section_image_carousel',
 				'options' => [
-					'arrows' => __( 'Arrows', 'pojo' ),
-					'dots' => __( 'Dots', 'pojo' ),
-					'both' => __( 'Arrows and Dots', 'pojo' ),
-					'none' => __( 'None', 'pojo' ),
+					'both' => __( 'Arrows and Dots', 'elementor' ),
+					'arrows' => __( 'Arrows', 'elementor' ),
+					'dots' => __( 'Dots', 'elementor' ),
+					'none' => __( 'None', 'elementor' ),
 				],
 			]
 		);
@@ -387,7 +386,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					'custom' => __( 'Custom', 'elementor' ),
 				],
 				'default' => '',
-				'prefix_class' => 'gallery-spacing-',
 				'condition' => [
 					'slides_to_show!' => '1',
 				],

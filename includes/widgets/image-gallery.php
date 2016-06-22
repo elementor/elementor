@@ -116,6 +116,7 @@ class Widget_Image_Gallery extends Widget_Base {
 					'' => __( 'Default', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
+				'prefix_class' => 'gallery-spacing-',
 				'default' => '',
 			]
 		);
