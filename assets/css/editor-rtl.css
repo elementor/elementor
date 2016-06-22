@@ -912,6 +912,10 @@ select {
       display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions .elementor-linked {
     color: #fff; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-external-hide .elementor-control-url-target {
+    display: none; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-external-show input {
+    padding-right: 46px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-input-wrapper {
     position: relative; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target {
@@ -934,7 +938,6 @@ select {
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target:not(.active) .elementor-control-url-external {
       opacity: .5; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-url input {
-    padding-right: 46px;
     direction: ltr; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:not(:focus) + .elementor-control-url-target {
       border-color: #d5dadf; }
