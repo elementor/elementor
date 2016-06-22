@@ -1,7 +1,7 @@
-var ElementorTemplatesLayoutView = require( 'elementor-templates/views/layout' ),
-	ElementorTemplatesManager;
+var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
+	TemplatesManager;
 
-ElementorTemplatesManager = function() {
+TemplatesManager = function() {
 	var self = this,
 		modal,
 		layout;
@@ -24,7 +24,7 @@ ElementorTemplatesManager = function() {
 
 	this.getLayout = function() {
 		if ( ! layout ) {
-			layout = new ElementorTemplatesLayoutView();
+			layout = new TemplatesLayoutView();
 		}
 
 		return layout;
@@ -58,4 +58,4 @@ ElementorTemplatesManager = function() {
 	};
 };
 
-module.exports = new ElementorTemplatesManager();
+module.exports = new TemplatesManager();

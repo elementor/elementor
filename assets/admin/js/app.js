@@ -792,20 +792,20 @@ SortableBehavior = Marionette.Behavior.extend( {
 module.exports = SortableBehavior;
 
 },{}],9:[function(require,module,exports){
-var ElementorTemplatesTemplateModel = require( 'elementor-templates/models/template' ),
-	ElementorTemplatesCollection;
+var TemplatesTemplateModel = require( 'elementor-templates/models/template' ),
+	TemplatesCollection;
 
-ElementorTemplatesCollection = Backbone.Collection.extend( {
-	model: ElementorTemplatesTemplateModel
+TemplatesCollection = Backbone.Collection.extend( {
+	model: TemplatesTemplateModel
 } );
 
-module.exports = ElementorTemplatesCollection;
+module.exports = TemplatesCollection;
 
 },{"elementor-templates/models/template":11}],10:[function(require,module,exports){
-var ElementorTemplatesLayoutView = require( 'elementor-templates/views/layout' ),
-	ElementorTemplatesManager;
+var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
+	TemplatesManager;
 
-ElementorTemplatesManager = function() {
+TemplatesManager = function() {
 	var self = this,
 		modal,
 		layout;
@@ -828,7 +828,7 @@ ElementorTemplatesManager = function() {
 
 	this.getLayout = function() {
 		if ( ! layout ) {
-			layout = new ElementorTemplatesLayoutView();
+			layout = new TemplatesLayoutView();
 		}
 
 		return layout;
@@ -862,12 +862,12 @@ ElementorTemplatesManager = function() {
 	};
 };
 
-module.exports = new ElementorTemplatesManager();
+module.exports = new TemplatesManager();
 
 },{"elementor-templates/views/layout":12}],11:[function(require,module,exports){
-var ElementorTemplatesTemplateModel;
+var TemplatesTemplateModel;
 
-ElementorTemplatesTemplateModel = Backbone.Model.extend( {
+TemplatesTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		name: 'awesome',
 		title: '',
@@ -879,14 +879,14 @@ ElementorTemplatesTemplateModel = Backbone.Model.extend( {
 	}
 } );
 
-module.exports = ElementorTemplatesTemplateModel;
+module.exports = TemplatesTemplateModel;
 
 },{}],12:[function(require,module,exports){
-var ElementorTemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
-	ElementorTemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
-	ElementorTemplatesLayoutView;
+var TemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
+	TemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
+	TemplatesLayoutView;
 
-ElementorTemplatesLayoutView = Marionette.LayoutView.extend( {
+TemplatesLayoutView = Marionette.LayoutView.extend( {
 	el: '#elementor-templates-modal',
 
 	regions: {
@@ -895,54 +895,54 @@ ElementorTemplatesLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		this.getRegion( 'modalHeader' ).show( new ElementorTemplatesHeaderView() );
+		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
 	},
 
 	showTemplates: function( templates ) {
-		this.getRegion( 'modalContent' ).show( new ElementorTemplatesCollectionView( {
+		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
 			templates: templates
 		} ) );
 	}
 } );
 
-module.exports = ElementorTemplatesLayoutView;
+module.exports = TemplatesLayoutView;
 
 },{"elementor-templates/views/parts/header":13,"elementor-templates/views/parts/templates":14}],13:[function(require,module,exports){
-var ElementorTemplatesHeaderView;
+var TemplatesHeaderView;
 
-ElementorTemplatesHeaderView = Marionette.ItemView.extend( {
+TemplatesHeaderView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-header'
 } );
 
-module.exports = ElementorTemplatesHeaderView;
+module.exports = TemplatesHeaderView;
 
 },{}],14:[function(require,module,exports){
-var ElementorTemplatesCollection = require( 'elementor-templates/collections/templates' ),
-	ElementorTemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
-	ElementorTemplatesCollectionView;
+var TemplatesCollection = require( 'elementor-templates/collections/templates' ),
+	TemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
+	TemplatesCollectionView;
 
-ElementorTemplatesCollectionView = Marionette.CollectionView.extend( {
-	childView: ElementorTemplatesTemplateView,
+TemplatesCollectionView = Marionette.CollectionView.extend( {
+	childView: TemplatesTemplateView,
 
 	className: 'elementor-templates-templates-container',
 
 	initialize: function() {
-		this.collection = new ElementorTemplatesCollection( this.getOption( 'templates' ) );
+		this.collection = new TemplatesCollection( this.getOption( 'templates' ) );
 	}
 } );
 
-module.exports = ElementorTemplatesCollectionView;
+module.exports = TemplatesCollectionView;
 
 },{"elementor-templates/collections/templates":9,"elementor-templates/views/template/template":15}],15:[function(require,module,exports){
-var ElementorTemplatesTemplateView;
+var TemplatesTemplateView;
 
-ElementorTemplatesTemplateView = Marionette.ItemView.extend( {
+TemplatesTemplateView = Marionette.ItemView.extend( {
 	className: 'elementor-templates-template',
 
 	template: '#tmpl-elementor-templates-template'
 } );
 
-module.exports = ElementorTemplatesTemplateView;
+module.exports = TemplatesTemplateView;
 
 },{}],16:[function(require,module,exports){
 var EditModeItemView;

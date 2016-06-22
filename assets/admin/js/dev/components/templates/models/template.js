@@ -1,6 +1,6 @@
-var ElementorTemplatesTemplateModel;
+var TemplatesTemplateModel;
 
-ElementorTemplatesTemplateModel = Backbone.Model.extend( {
+TemplatesTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		name: 'awesome',
 		title: '',
@@ -12,4 +12,4 @@ ElementorTemplatesTemplateModel = Backbone.Model.extend( {
 	}
 } );
 
-module.exports = ElementorTemplatesTemplateModel;
+module.exports = TemplatesTemplateModel;

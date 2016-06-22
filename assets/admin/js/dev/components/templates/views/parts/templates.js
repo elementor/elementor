@@ -1,15 +1,15 @@
-var ElementorTemplatesCollection = require( 'elementor-templates/collections/templates' ),
-	ElementorTemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
-	ElementorTemplatesCollectionView;
+var TemplatesCollection = require( 'elementor-templates/collections/templates' ),
+	TemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
+	TemplatesCollectionView;
 
-ElementorTemplatesCollectionView = Marionette.CollectionView.extend( {
-	childView: ElementorTemplatesTemplateView,
+TemplatesCollectionView = Marionette.CollectionView.extend( {
+	childView: TemplatesTemplateView,
 
 	className: 'elementor-templates-templates-container',
 
 	initialize: function() {
-		this.collection = new ElementorTemplatesCollection( this.getOption( 'templates' ) );
+		this.collection = new TemplatesCollection( this.getOption( 'templates' ) );
 	}
 } );
 
-module.exports = ElementorTemplatesCollectionView;
+module.exports = TemplatesCollectionView;

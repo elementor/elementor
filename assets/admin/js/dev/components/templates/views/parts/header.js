@@ -1,7 +1,7 @@
-var ElementorTemplatesHeaderView;
+var TemplatesHeaderView;
 
-ElementorTemplatesHeaderView = Marionette.ItemView.extend( {
+TemplatesHeaderView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-header'
 } );
 
-module.exports = ElementorTemplatesHeaderView;
+module.exports = TemplatesHeaderView;

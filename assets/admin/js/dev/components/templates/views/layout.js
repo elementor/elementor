@@ -1,8 +1,8 @@
-var ElementorTemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
-	ElementorTemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
-	ElementorTemplatesLayoutView;
+var TemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
+	TemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
+	TemplatesLayoutView;
 
-ElementorTemplatesLayoutView = Marionette.LayoutView.extend( {
+TemplatesLayoutView = Marionette.LayoutView.extend( {
 	el: '#elementor-templates-modal',
 
 	regions: {
@@ -11,14 +11,14 @@ ElementorTemplatesLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		this.getRegion( 'modalHeader' ).show( new ElementorTemplatesHeaderView() );
+		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
 	},
 
 	showTemplates: function( templates ) {
-		this.getRegion( 'modalContent' ).show( new ElementorTemplatesCollectionView( {
+		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
 			templates: templates
 		} ) );
 	}
 } );
 
-module.exports = ElementorTemplatesLayoutView;
+module.exports = TemplatesLayoutView;
