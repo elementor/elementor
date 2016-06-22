@@ -25,7 +25,7 @@ class Control_Gallery extends Control_Base {
 								<?php _e( 'No Images Selected', 'elementor' ); ?>
 							<% } %>
 						</span>
-						<span class="elementor-control-gallery-clear">(Clear)</span>
+						<span class="elementor-control-gallery-clear">(<?php _e( 'Clear', 'elementor' ); ?>)</span>
 					</div>
 					<div class="elementor-control-gallery-thumbnails">
 						<% _.each( data.controlValue, function( image ) { %>

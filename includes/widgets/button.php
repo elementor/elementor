@@ -148,9 +148,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 5,
-				],
 				'range' => [
 					'px' => [
 						'max' => 50,
@@ -160,7 +157,8 @@ class Widget_Button extends Widget_Base {
 					'icon!' => '',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button-text' => 'text-indent: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -374,16 +372,14 @@ class Widget_Button extends Widget_Base {
 		}
 
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-
-		if ( ! empty( $instance['icon_align'] ) ) {
-			$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
-		}
+		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
+		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
 				<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
 					<?php if ( ! empty( $instance['icon'] ) ) : ?>
-						<span class="elementor-button-icon" <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
+						<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
 							<i class="<?php echo esc_attr( $instance['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>

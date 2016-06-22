@@ -1,9 +1,10 @@
 //
-// Gallery
+// Image Gallery
 //
 .elementor-image-gallery {
 
 	figure  {
+
 		img {
 			display: block;
 		}
@@ -15,5 +16,9 @@
 		}
 	}
 
-
+	.gallery-spacing-custom & {
+		.gallery-icon {
+			padding: 0; // Reset Style for some themes
+		}
+	}
 }

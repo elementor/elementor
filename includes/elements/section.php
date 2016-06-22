@@ -166,23 +166,6 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'height_inner',
-			[
-				'label' => __( 'Height', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'min-height' => __( 'Min Height', 'elementor' ),
-				],
-				'tab' => self::TAB_SETTINGS,
-				'prefix_class' => 'elementor-section-height-',
-				'section' => 'section_layout',
-				'hide_in_top' => true,
-			]
-		);
-
-		$this->add_control(
 			'custom_height',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -204,6 +187,50 @@ class Element_Section extends Element_Base {
 					'height' => [ 'min-height' ],
 				],
 				'section' => 'section_layout',
+				'hide_in_inner' => true,
+			]
+		);
+
+		$this->add_control(
+			'height_inner',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'min-height' => __( 'Min Height', 'elementor' ),
+				],
+				'tab' => self::TAB_SETTINGS,
+				'prefix_class' => 'elementor-section-height-',
+				'section' => 'section_layout',
+				'hide_in_top' => true,
+			]
+		);
+
+		$this->add_control(
+			'custom_height_inner',
+			[
+				'label' => __( 'Minimum Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 400,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1440,
+					],
+				],
+				'tab' => self::TAB_SETTINGS,
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'height_inner' => [ 'min-height' ],
+				],
+				'section' => 'section_layout',
+				'hide_in_top' => true,
 			]
 		);
 

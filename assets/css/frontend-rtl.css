@@ -388,9 +388,11 @@
     font-size: 20px;
     padding: 25px 50px; }
   .elementor-button .elementor-align-icon-right {
-    float: right; }
+    float: right;
+    margin-left: 5px; }
   .elementor-button .elementor-align-icon-left {
-    float: left; }
+    float: left;
+    margin-right: 5px; }
   .elementor-button .elementor-button-text {
     display: inline-block; }
 
@@ -415,6 +417,8 @@
   background-color: #dcdcdc;
   opacity: 0.7;
   width: 100%; }
+.gallery-spacing-custom .elementor-image-gallery .gallery-icon {
+  padding: 0; }
 
 .elementor-counter {
   text-align: center; }
@@ -694,24 +698,8 @@
     text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
     transition: all .5s; }
 
-.elementor-carousel-wrapper .slick-slider .slick-prev:before, .elementor-carousel-wrapper .slick-slider .slick-next:before {
-  color: #000000; }
-.elementor-carousel-wrapper .elementor-carousel .slick-next.inside {
-  right: 0;
-  z-index: 100; }
-.elementor-carousel-wrapper .elementor-carousel .slick-prev.inside {
-  left: 0;
-  z-index: 100; }
-.elementor-carousel-wrapper .elementor-carousel .slick-dots.inside {
-  bottom: 0px; }
-
-.elementor-slideshow-wrapper div.slick-slide img {
-  margin: auto; }
-.elementor-slideshow-wrapper div.slick-slide .elementor-slideshow-stretch {
+.elementor-image-carousel-wrapper .slick-image-stretch .slick-slide .slick-slide-image {
   width: 100%; }
-.elementor-slideshow-wrapper .slick-slider .slick-prev:before,
-.elementor-slideshow-wrapper .slick-slider .slick-next:before {
-  color: #000000; }
 
 .elementor-widget-image-box .elementor-image-box-wrapper {
   overflow: hidden; }
@@ -787,16 +775,58 @@
 .elementor-widget-icon-box .elementor-icon-box-description {
   margin: 0; }
 
-/* Slider */
+.elementor-testimonial-wrapper {
+  overflow: hidden; }
+  .elementor-testimonial-wrapper .elementor-testimonial-text {
+    margin: 0 0 20px 0; }
+    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-left {
+      text-align: left; }
+    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-right {
+      text-align: right; }
+    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-center {
+      text-align: center; }
+  .elementor-testimonial-wrapper .testimonial_description {
+    width: 100%;
+    text-align: center; }
+    .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-left {
+      text-align: left; }
+    .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right {
+      text-align: right; }
+      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right .elementor-testimonial-image {
+        float: right; }
+      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right .testimonial-detailes {
+        text-align: right; }
+      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right .testimonial-detailes.elementor-has-image {
+        text-align: right;
+        margin-right: 20px; }
+    .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center {
+      text-align: center; }
+      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center .testimonial-detailes.elementor-has-image {
+        text-align: center;
+        margin-left: 0; }
+      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center .elementor-testimonial-image {
+        display: block; }
+    .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image {
+      display: inline-block; }
+      .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image figure img {
+        border-radius: 50%; }
+    .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes {
+      display: inline-block;
+      text-align: left;
+      vertical-align: top;
+      margin-top: 20px; }
+      .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
+        margin-left: 20px; }
+
 .slick-slider {
   position: relative;
   display: block;
   box-sizing: border-box;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   -ms-touch-action: pan-y;
   touch-action: pan-y;
   -webkit-tap-highlight-color: transparent; }
@@ -855,11 +885,9 @@
 .slick-arrow.slick-hidden {
   display: none; }
 
-/* Slider */
 .slick-loading .slick-list {
-  background: #fff; }
+  background: #fff url("../images/ajax-loader.gif") center center no-repeat; }
 
-/* Arrows */
 .slick-prev,
 .slick-next {
   font-size: 0;
@@ -892,7 +920,7 @@
   .slick-prev:before,
   .slick-next:before {
     font-family: 'FontAwesome';
-    font-size: 20px;
+    font-size: 35px;
     line-height: 1;
     opacity: .75;
     color: white;
@@ -919,7 +947,6 @@
     [dir="rtl"] .slick-next:before {
       content: '\f104'; }
 
-/* Dots */
 .slick-dotted.slick-slider {
   margin-bottom: 30px; }
 
@@ -975,6 +1002,29 @@
     .slick-dots li.slick-active button:before {
       opacity: .75;
       color: black; }
+
+.slick-slider .slick-prev,
+.slick-slider .slick-next {
+  z-index: 1; }
+
+.slick-slide img {
+  margin: auto; }
+
+.slick-arrows-inside .slick-prev {
+  left: 20px; }
+  [dir="rtl"] .slick-arrows-inside .slick-prev {
+    left: auto;
+    right: 20px; }
+.slick-arrows-inside .slick-next {
+  right: 20px; }
+  [dir="rtl"] .slick-arrows-inside .slick-next {
+    left: 20px;
+    right: auto; }
+
+.slick-dots-inside .slick-dots {
+  bottom: 5px; }
+.slick-dots-inside.slick-dotted.slick-slider {
+  margin-bottom: 0; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone, body:not(.elementor-editor-active) .elementor-visible-tablet, body:not(.elementor-editor-active) .elementor-visible-desktop {
