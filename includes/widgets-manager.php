@@ -40,8 +40,8 @@ class Widgets_Manager {
 		];
 
 		if ( Utils::is_development_mode() ) {
-			//$build_widgets_filename[] = 'testimonial';
-			//$build_widgets_filename[] = 'audio';
+			$build_widgets_filename[] = 'testimonial';
+			$build_widgets_filename[] = 'audio';
 		}
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
