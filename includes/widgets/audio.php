@@ -55,7 +55,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -69,7 +69,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -83,7 +83,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -97,7 +97,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -111,7 +111,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -125,10 +125,9 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
-
 
 		$this->add_control(
 			'show_comments',
@@ -140,7 +139,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -154,7 +153,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
 
@@ -168,7 +167,7 @@ class Widget_Audio extends Widget_Base {
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
-				]
+				],
 			]
 		);
 
