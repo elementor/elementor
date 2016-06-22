@@ -1,0 +1,17 @@
+#elementor-templates-modal {
+
+	.elementor-templates-template {
+		float: getStartDirection();
+		width: 20%;
+		height: 200px;
+		overflow: hidden;
+
+		&:not(:nth-child(5n)) {
+			@include padding-end(30px);
+		}
+	}
+
+	.elementor-templates-template-screenshot {
+		width: 100%;
+	}
+}
