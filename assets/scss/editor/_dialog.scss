@@ -139,17 +139,13 @@
 }
 
 // Modal widget
-.dialog-elementor-modal-widget-header {
-	border-bottom: 1px solid $editor-lightest;
-}
 
 .dialog-elementor-modal-close-button {
 	cursor: pointer;
 	position: absolute;
-	top: 10px;
-	left: 10px;
-}
-
-.dialog-elementor-modal-message {
-	padding: 20px;
+	top: 16px;
+	right: 20px;
+	font-size: 16px;
+	color: $editor-light;
+	line-height: 1;
 }
