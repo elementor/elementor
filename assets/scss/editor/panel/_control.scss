@@ -365,6 +365,20 @@
 	// URL Control
 	.elementor-control-type-url {
 
+		.elementor-control-url-external-hide {
+
+			.elementor-control-url-target {
+				display: none;
+			}
+		}
+
+		.elementor-control-url-external-show {
+
+			input {
+				padding-right: 46px;
+			}
+		}
+
 		.elementor-control-input-wrapper {
 			position: relative;
 		}
@@ -400,7 +414,6 @@
 		}
 
 		input {
-			padding-right: 46px;
 			direction: ltr; // Force ltr also in RTL languages
 
 			&:not(:focus) {
