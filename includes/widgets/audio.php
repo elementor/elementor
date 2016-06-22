@@ -32,7 +32,9 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::URL,
-				'default' => '',
+				'default' => [
+					'url' => '#',
+				],
 				'section' => 'section_title',
 			]
 		);
