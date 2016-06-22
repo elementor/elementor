@@ -17,6 +17,8 @@ Introduction = function() {
 			self.getInfoDialog().show();
 		} );
 
+		modal.on( 'hide', function() {
+			modal.getComponents( 'message' ).empty(); // In order to stop the video
 		} );
 	};
 
