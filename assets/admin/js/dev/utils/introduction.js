@@ -20,6 +20,8 @@ Introduction = function() {
 		} );
 	};
 
+	this.getSettings = function() {
+		return elementor.config.introduction;
 	};
 
 	this.getModal = function() {
