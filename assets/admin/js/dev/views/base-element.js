@@ -177,7 +177,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	runReadyTrigger: function() {
-		elementorBindUI.runReadyTrigger( this.$el );
+		_.defer( _.bind( function() {
+			elementorBindUI.runReadyTrigger( this.$el );
+		}, this ) );
 	},
 
 	getElementUniqueClass: function() {

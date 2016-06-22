@@ -319,7 +319,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_style_navigation',
 				'options' => [
 					'outside' => __( 'Outside', 'elementor' ),
-					'inside' => __( 'inside', 'elementor' ),
+					'inside' => __( 'Inside', 'elementor' ),
 				],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
@@ -410,7 +410,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'show_label' => false,
 				'selectors' => [
 					'{{WRAPPER}} .slick-list' => 'margin-left: -{{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .slick-slide .slick-slide-image' => 'padding-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .slick-slide .slick-slide-inner' => 'padding-left: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'image_spacing' => 'custom',
@@ -452,7 +452,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		foreach ( $instance['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
 
-			$slides[] = '<div><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div>';
+			$slides[] = '<div><div class="slick-slide-onner"><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div></div>';
 		}
 
 		if ( empty( $slides ) ) {

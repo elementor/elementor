@@ -115,20 +115,6 @@
 	color: $editor-lightest;
 }
 
-#elementor-panel-footer-help-link {
-
-	.elementor-button {
-		width: 100%;
-		padding: 10px 0;
-		background-color: $editor-darkest;
-		color: $editor-lightest;
-
-		&:hover {
-			background-color: rgba(0,0,0,.2);
-		}
-	}
-}
-
 #elementor-panel-footer-save {
 	width: 90px;
 	padding: 0 10px;

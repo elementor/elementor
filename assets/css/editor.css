@@ -912,6 +912,10 @@ select {
       display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions .elementor-linked {
     color: #fff; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-external-hide .elementor-control-url-target {
+    display: none; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-external-show input {
+    padding-right: 46px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-input-wrapper {
     position: relative; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target {
@@ -934,7 +938,6 @@ select {
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target:not(.active) .elementor-control-url-external {
       opacity: .5; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-url input {
-    padding-right: 46px;
     direction: ltr; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:not(:focus) + .elementor-control-url-target {
       border-color: #d5dadf; }
@@ -1332,13 +1335,6 @@ select {
     text-align: left;
     padding: 10px 0;
     color: #d5dadf; }
-  #elementor-panel #elementor-panel-footer-help-link .elementor-button {
-    width: 100%;
-    padding: 10px 0;
-    background-color: #495157;
-    color: #d5dadf; }
-    #elementor-panel #elementor-panel-footer-help-link .elementor-button:hover {
-      background-color: rgba(0, 0, 0, 0.2); }
   #elementor-panel #elementor-panel-footer-save {
     width: 90px;
     padding: 0 10px; }
@@ -1628,7 +1624,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-introduction .elementor-video-wrapper {
   padding-bottom: 56.2%; }
-#elementor-introduction .dialog-elementor-modal-show-later {
-  width: 100%; }
+
+#elementor-introduction-title {
+  font-size: 16px; }
+
+#elementor-introduction-subtitle {
+  margin-top: 10px; }
 
 /*# sourceMappingURL=editor.css.map */

@@ -13,21 +13,15 @@ Introduction = function() {
 
 		modal.getComponents( 'closeButton' ).on( 'click', function() {
 			self.setIntroductionViewed();
-
-			self.getInfoDialog().show();
 		} );
 
-		modal.addButton( {
-			name: 'show-later',
-			text: elementor.translate( 'Show Me Later' ),
-			callback: modal.hide
+		modal.on( 'hide', function() {
+			modal.getComponents( 'message' ).empty(); // In order to stop the video
 		} );
 	};
 
-	var initInfoDialog = function() {
-		infoDialog = elementor.dialogsManager.createWidget( 'alert' );
-
-		infoDialog.setMessage( elementor.translate( 'You can always show this introduction again' ) );
+	this.getSettings = function() {
+		return elementor.config.introduction;
 	};
 
 	this.getModal = function() {
@@ -38,25 +32,25 @@ Introduction = function() {
 		return modal;
 	};
 
-	this.getInfoDialog = function() {
-		if ( ! infoDialog ) {
-			initInfoDialog();
-		}
+	this.startIntroduction = function() {
+		var settings = this.getSettings();
 
-		return infoDialog;
+		this.getModal()
+		    .setHeaderMessage( settings.title )
+		    .setMessage( settings.content )
+		    .show();
 	};
 
-	this.startIntroduction = function() {
-		var introductionConfig = elementor.config.introduction;
+	this.startOnLoadIntroduction = function() {
+		var settings = this.getSettings();
 
-		if ( ! introductionConfig ) {
+		if ( ! settings.is_user_should_view ) {
 			return;
 		}
 
-		this.getModal()
-		    .setHeaderMessage( introductionConfig.title )
-		    .setMessage( introductionConfig.content )
-		    .show();
+		setTimeout( _.bind( function() {
+			this.startIntroduction();
+		}, this ), settings.delay );
 	};
 
 	this.setIntroductionViewed = function() {
