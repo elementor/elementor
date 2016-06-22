@@ -1608,4 +1608,14 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-introduction .dialog-elementor-modal-show-later {
   width: 100%; }
 
+#elementor-templates-modal .elementor-templates-template {
+  float: left;
+  width: 20%;
+  height: 200px;
+  overflow: hidden; }
+  #elementor-templates-modal .elementor-templates-template:not(:nth-child(5n)) {
+    padding-right: 30px; }
+#elementor-templates-modal .elementor-templates-template-screenshot {
+  width: 100%; }
+
 /*# sourceMappingURL=editor.css.map */
