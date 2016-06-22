@@ -17,10 +17,6 @@ Introduction = function() {
 			self.getInfoDialog().show();
 		} );
 
-		modal.addButton( {
-			name: 'show-later',
-			text: elementor.translate( 'Show Me Later' ),
-			callback: modal.hide
 		} );
 	};
 
