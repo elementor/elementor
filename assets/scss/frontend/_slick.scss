@@ -70,7 +70,6 @@
 	}
 	img {
 		display: block;
-		margin: auto;
 	}
 	&.slick-loading img {
 		display: none;
@@ -102,7 +101,7 @@
 }
 
 //
-// Elementor Theme for Slick
+// Slick Default Theme
 //
 
 // Slider
@@ -119,7 +118,7 @@
 	top: 50%;
 	display: block;
 	width: 20px;
-	height: auto;
+	//height: 20px;
 	padding: 0;
 	transform: translate(0, -50%);
 	cursor: pointer;
@@ -127,7 +126,6 @@
 	border: none;
 	outline: none;
 	background: transparent;
-	z-index: 1;
 
 	&:hover,
 	&:focus {
@@ -181,30 +179,12 @@
 	}
 }
 
-.slick-arrows-inside {
-	.slick-prev {
-		left: 20px;
-		[dir="rtl"] & {
-			left: auto;
-			right: 20px;
-		}
-	}
-
-	.slick-next {
-		right: 20px;
-		[dir="rtl"] & {
-			left: 20px;
-			right: auto;
-		}
-	}
-}
-
 // Dots
 .slick-dotted.slick-slider {
 	margin-bottom: 30px;
 }
 
-.slick-dots {
+ul.slick-dots {
 	position: absolute;
 	bottom: -25px;
 	display: block;
@@ -266,6 +246,42 @@
 		&.slick-active button:before {
 			opacity: .75;
 			color: black;
+		}
+	}
+}
+
+//
+//  Custom Style for Elementor
+//
+
+.slick-slider {
+
+	.slick-prev,
+	.slick-next {
+		z-index: 1;
+	}
+}
+
+.slick-slide {
+	img {
+		margin: auto;
+	}
+}
+
+.slick-arrows-inside {
+	.slick-prev {
+		left: 20px;
+		[dir="rtl"] & {
+			left: auto;
+			right: 20px;
+		}
+	}
+
+	.slick-next {
+		right: 20px;
+		[dir="rtl"] & {
+			left: 20px;
+			right: auto;
 		}
 	}
 }
