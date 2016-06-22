@@ -91,7 +91,14 @@ class Manager {
 		];
 	}
 
+	public function print_templates_json() {
+		$templates = $this->get_templates();
+
+		die( wp_json_encode( $templates ) );
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'wp_ajax_elementor_template_get', [ $this, 'print_templates_json' ] );
 	}
 }
