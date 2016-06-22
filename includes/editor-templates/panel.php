@@ -84,10 +84,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-footer-help-title"><?php _e( 'Need help?', 'elementor' ); ?></div>
-				<div id="elementor-panel-footer-help-link">
-					<a href="https://go.elementor.com/docs" target="_blank">
-						<button class="elementor-button"><?php _e( 'Go to the Documentation', 'elementor' ); ?></button>
-					</a>
+				<div id="elementor-panel-footer-watch-tutorial" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-video-camera"></i>
+					<span class="elementor-title"><?php _e( 'Take a tour', 'elementor' ); ?></span>
+				</div>
+				<div class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-external-link"></i>
+					<a class="elementor-title" href="https://go.elementor.com/docs" target="_blank"><?php _e( 'Go to the Documentation', 'elementor' ); ?></a>
 				</div>
 			</div>
 		</div>

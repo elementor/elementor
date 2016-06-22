@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.2.5  
+**Stable tag:** 0.3.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -110,6 +110,14 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 4. Settings page.
 
 ## Changelog ##
+
+### 0.3.0 - 21.06.2016 ###
+* New! - Added Image Gallery widget
+* New! - Added Image Carousel widget
+* Tweak! - Fixed schemes area
+* Tweak! - Added spacing icon in Button widget
+* Fixed! - Themes without `the_content()` stop the Editor
+* Fixed! - Height option in Columns widget
 
 ### 0.2.5 - 16.06.2016 ###
 * Tweak! - Added Vimeo support for widget Video
