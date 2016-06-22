@@ -1332,13 +1332,6 @@ select {
     text-align: right;
     padding: 10px 0;
     color: #d5dadf; }
-  #elementor-panel #elementor-panel-footer-help-link .elementor-button {
-    width: 100%;
-    padding: 10px 0;
-    background-color: #495157;
-    color: #d5dadf; }
-    #elementor-panel #elementor-panel-footer-help-link .elementor-button:hover {
-      background-color: rgba(0, 0, 0, 0.2); }
   #elementor-panel #elementor-panel-footer-save {
     width: 90px;
     padding: 0 10px; }
@@ -1628,7 +1621,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-introduction .elementor-video-wrapper {
   padding-bottom: 56.2%; }
-#elementor-introduction .dialog-elementor-modal-show-later {
-  width: 100%; }
+
+#elementor-introduction-title {
+  font-size: 16px; }
+
+#elementor-introduction-subtitle {
+  margin-top: 10px; }
 
 /*# sourceMappingURL=editor-rtl.css.map */
