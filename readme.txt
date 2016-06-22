@@ -84,7 +84,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater.
+No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 5.6 or greater and MySQL version 5.6 or greater.
 
 **With Elementor, do I still need a theme?**
 
@@ -104,7 +104,7 @@ Absolutely not! Elementor is a live frontend page builder, that lets you reach a
 
 **Will Elementor work with RTL or other languages?**
 
-Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language.
+Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about translation and localization here: https://go.elementor.com/translate/
 
 == Screenshots ==
 
