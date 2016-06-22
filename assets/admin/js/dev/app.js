@@ -8,6 +8,7 @@ App = Marionette.Application.extend( {
 	presetsFactory: require( 'elementor-utils/presets-factory' ),
 	modals: require( 'elementor-utils/modals' ),
 	introduction: require( 'elementor-utils/introduction' ),
+	templates: require( 'elementor-templates/manager' ),
 
 	// Channels
 	editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -114,6 +115,7 @@ App = Marionette.Application.extend( {
 		this.modals.init();
 
 		elementorBindUI.setEditorMode( true );
+		this.templates.init();
 
 		// Init Base elements collection from the server
 		this.elements = new ElementModel.Collection( this.config.data );
