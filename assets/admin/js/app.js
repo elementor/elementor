@@ -218,9 +218,7 @@ App = Marionette.Application.extend( {
 
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
-		setTimeout( _.bind( function() {
-			this.introduction.startIntroduction();
-		}, this ), 2500 );
+		this.introduction.startOnLoadIntroduction();
 	},
 
 	onEditModeSwitched: function() {
@@ -1016,13 +1014,15 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
-		buttonPublish: '#elementor-panel-footer-publish'
+		buttonPublish: '#elementor-panel-footer-publish',
+		watchTutorial: '#elementor-panel-footer-watch-tutorial'
 	},
 
 	events: {
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
-		'click @ui.buttonPublish': 'onClickButtonPublish'
+		'click @ui.buttonPublish': 'onClickButtonPublish',
+		'click @ui.watchTutorial': 'onClickWatchTutorial'
 	},
 
 	initialize: function() {
@@ -1151,6 +1151,10 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		this.changeDeviceMode( newDeviceMode );
+	},
+
+	onClickWatchTutorial: function() {
+		elementor.introduction.startIntroduction();
 	}
 } );
 
@@ -2829,21 +2833,15 @@ Introduction = function() {
 
 		modal.getComponents( 'closeButton' ).on( 'click', function() {
 			self.setIntroductionViewed();
-
-			self.getInfoDialog().show();
 		} );
 
-		modal.addButton( {
-			name: 'show-later',
-			text: elementor.translate( 'Show Me Later' ),
-			callback: modal.hide
+		modal.on( 'hide', function() {
+			modal.getComponents( 'message' ).empty(); // In order to stop the video
 		} );
 	};
 
-	var initInfoDialog = function() {
-		infoDialog = elementor.dialogsManager.createWidget( 'alert' );
-
-		infoDialog.setMessage( elementor.translate( 'You can always show this introduction again' ) );
+	this.getSettings = function() {
+		return elementor.config.introduction;
 	};
 
 	this.getModal = function() {
@@ -2854,25 +2852,25 @@ Introduction = function() {
 		return modal;
 	};
 
-	this.getInfoDialog = function() {
-		if ( ! infoDialog ) {
-			initInfoDialog();
-		}
+	this.startIntroduction = function() {
+		var settings = this.getSettings();
 
-		return infoDialog;
+		this.getModal()
+		    .setHeaderMessage( settings.title )
+		    .setMessage( settings.content )
+		    .show();
 	};
 
-	this.startIntroduction = function() {
-		var introductionConfig = elementor.config.introduction;
+	this.startOnLoadIntroduction = function() {
+		var settings = this.getSettings();
 
-		if ( ! introductionConfig ) {
+		if ( ! settings.is_user_should_view ) {
 			return;
 		}
 
-		this.getModal()
-		    .setHeaderMessage( introductionConfig.title )
-		    .setMessage( introductionConfig.content )
-		    .show();
+		setTimeout( _.bind( function() {
+			this.startIntroduction();
+		}, this ), settings.delay );
 	};
 
 	this.setIntroductionViewed = function() {
@@ -3414,7 +3412,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	runReadyTrigger: function() {
-		elementorBindUI.runReadyTrigger( this.$el );
+		_.defer( _.bind( function() {
+			elementorBindUI.runReadyTrigger( this.$el );
+		}, this ) );
 	},
 
 	getElementUniqueClass: function() {

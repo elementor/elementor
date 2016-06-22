@@ -110,3 +110,65 @@
 		}
 	}
 }
+
+// Alert
+.panel-alert {
+	padding: 15px;
+	border-left: 5px solid transparent;
+	position: relative;
+	font-size: 12px;
+	line-height: 1.5;
+	text-align: getStartDirection();
+
+	&.panel-alert-info {
+		color: $info-text;
+		background-color: $info-bg;
+		border-color: $info-border;
+	}
+
+	&.panel-alert-success {
+		color: $success-text;
+		background-color: $success-bg;
+		border-color: $success-border;
+	}
+
+	&.panel-alert-warning {
+		color: $warning-text;
+		background-color: $warning-bg;
+		border-color: $warning-border;
+	}
+
+	&.panel-alert-danger {
+		color: $danger-text;
+		background-color: $danger-bg;
+		border-color: $danger-border;
+	}
+}
+
+//
+// Variables
+//
+
+// Info
+$info:			#5bc0de;
+$info-text:		#31708f;
+$info-bg:		#d9edf7;
+$info-border:	darken($info-bg, 7%);
+
+// Success
+$success:		#5cb85c;
+$success-text:	#3c763d;
+$success-bg:	#dff0d8;
+$success-border:darken($success-bg, 7%);
+
+// Warning
+$warning:		#f0ad4e;
+$warning-text:	#8a6d3b;
+$warning-bg:	#fcf8e3;
+$warning-border:darken($warning-bg, 7%);
+
+// Danger
+$danger:		#d9534f;
+$danger-text:	#a94442;
+$danger-bg:		#f2dede;
+$danger-border:	darken($danger-bg, 7%);

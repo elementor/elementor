@@ -19,12 +19,13 @@ class Control_URL extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'show_external' => true,
 		];
 	}
 
 	public function content_template() {
 		?>
-		<div class="elementor-control-field">
+		<div class="elementor-control-field elementor-control-url-external-<%- data.show_external ? 'show' : 'hide' %>">
 			<label class="elementor-control-title"><%= data.label %></label>
 			<div class="elementor-control-input-wrapper">
 				<input type="url" data-setting="url" placeholder="<%- data.placeholder %>" />

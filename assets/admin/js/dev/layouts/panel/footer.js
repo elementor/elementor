@@ -18,13 +18,15 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
-		buttonPublish: '#elementor-panel-footer-publish'
+		buttonPublish: '#elementor-panel-footer-publish',
+		watchTutorial: '#elementor-panel-footer-watch-tutorial'
 	},
 
 	events: {
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
-		'click @ui.buttonPublish': 'onClickButtonPublish'
+		'click @ui.buttonPublish': 'onClickButtonPublish',
+		'click @ui.watchTutorial': 'onClickWatchTutorial'
 	},
 
 	initialize: function() {
@@ -153,6 +155,10 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		this.changeDeviceMode( newDeviceMode );
+	},
+
+	onClickWatchTutorial: function() {
+		elementor.introduction.startIntroduction();
 	}
 } );
 

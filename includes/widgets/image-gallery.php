@@ -3,14 +3,14 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Grid_Gallery extends Widget_Base {
+class Widget_Image_Gallery extends Widget_Base {
 
 	public function get_id() {
-		return 'grid-gallery';
+		return 'image-gallery';
 	}
 
 	public function get_title() {
-		return __( 'Grid Gallery', 'elementor' );
+		return __( 'Image Gallery', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -21,7 +21,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 		$this->add_control(
 			'section_gallery',
 			[
-				'label' => __( 'Grid Gallery', 'elementor' ),
+				'label' => __( 'Image Gallery', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -106,9 +106,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
-			'gallery_gap',
+			'image_spacing',
 			[
-				'label' => __( 'Columns Gap', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_gallery_images',
 				'tab' => self::TAB_STYLE,
@@ -116,6 +116,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 					'' => __( 'Default', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
+				'prefix_class' => 'gallery-spacing-',
 				'default' => '',
 			]
 		);
@@ -124,26 +125,27 @@ class Widget_Grid_Gallery extends Widget_Base {
 		$columns_padding = is_rtl() ? '0 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}};' : '0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;';
 
 		$this->add_control(
-			'columns_padding',
+			'image_spacing_custom',
 			[
-				'label' => __( 'Columns Padding', 'elementor' ),
+				'label' => __( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 15,
-				],
+				'section' => 'section_gallery_images',
+				'tab' => self::TAB_STYLE,
+				'show_label' => false,
 				'range' => [
 					'px' => [
 						'max' => 100,
 					],
 				],
-				'condition' => [
-					'gallery_gap' => 'custom',
+				'default' => [
+					'size' => 15,
 				],
-				'section' => 'section_gallery_images',
-				'tab' => self::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item' => 'padding:' . $columns_padding,
 					'{{WRAPPER}} .gallery' => 'margin: ' . $columns_margin,
+				],
+				'condition' => [
+					'image_spacing' => 'custom',
 				],
 			]
 		);
@@ -151,7 +153,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
-				'name' => 'border',
+				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_gallery_images',
@@ -160,7 +162,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
-			'border_radius',
+			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
@@ -229,6 +231,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'text-align: {{VALUE}};',
 				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
 			]
 		);
 
@@ -243,6 +248,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
 			]
 		);
 
@@ -255,6 +263,9 @@ class Widget_Grid_Gallery extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_caption',
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
 			]
 		);
 	}
@@ -267,7 +278,6 @@ class Widget_Grid_Gallery extends Widget_Base {
 		$ids = wp_list_pluck( $instance['wp_gallery'], 'id' );
 
 		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
-
 		$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
 
 		if ( $instance['gallery_columns'] ) {
@@ -282,7 +292,7 @@ class Widget_Grid_Gallery extends Widget_Base {
 			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
 		}
 		?>
-		<div class="elementor-wp-gallery">
+		<div class="elementor-image-gallery">
 			<?php echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
 		</div>
 		<?php

@@ -249,6 +249,9 @@ body.elementor-editor-active .elementor-sortable-helper {
     width: 100%; }
   body.elementor-editor-active .elementor-sortable-helper .title {
     font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-style: normal;
     display: table-cell;
     vertical-align: middle;
     height: 40px; }
