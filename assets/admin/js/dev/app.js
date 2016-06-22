@@ -93,33 +93,21 @@ App = Marionette.Application.extend( {
 		return this.getRegion( 'panel' ).currentView;
 	},
 
-	initDialogsManager: function() {
-		this.dialogsManager = new DialogsManager.Instance();
-	},
-
-	onStart: function() {
-		NProgress.start();
-		NProgress.inc( 0.2 );
-
-		this.config = ElementorConfig;
-
-		var ElementModel = require( 'elementor-models/element' );
-
-		Backbone.Radio.DEBUG = false;
-		Backbone.Radio.tuneIn( 'ELEMENTOR' );
-
+	initComponents: function() {
 		this.initDialogsManager();
 
 		this.heartbeat.init();
 
 		this.modals.init();
 
-		elementorBindUI.setEditorMode( true );
 		this.templates.init();
+	},
 
-		// Init Base elements collection from the server
-		this.elements = new ElementModel.Collection( this.config.data );
+	initDialogsManager: function() {
+		this.dialogsManager = new DialogsManager.Instance();
+	},
 
+	initPreview: function() {
 		this.$previewWrapper = Backbone.$( '#elementor-preview' );
 
 		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
@@ -137,6 +125,7 @@ App = Marionette.Application.extend( {
 		}
 
 		this.$preview = Backbone.$( '#' + previewIframeId );
+
 		this.$preview.on( 'load', _.bind( function() {
 			this.$previewContents = this.$preview.contents();
 
@@ -144,6 +133,27 @@ App = Marionette.Application.extend( {
 
 			this.triggerMethod( 'preview:loaded' );
 		}, this ) );
+	},
+
+	onStart: function() {
+		NProgress.start();
+		NProgress.inc( 0.2 );
+
+		this.config = ElementorConfig;
+
+		Backbone.Radio.DEBUG = false;
+		Backbone.Radio.tuneIn( 'ELEMENTOR' );
+
+		this.initComponents();
+
+		elementorBindUI.setEditorMode( true );
+
+		// Init Base elements collection from the server
+		var ElementModel = require( 'elementor-models/element' );
+
+		this.elements = new ElementModel.Collection( this.config.data );
+
+		this.initPreview();
 
 		this.listenTo( this.dataEditMode, 'switch', this.onEditModeSwitched );
 
