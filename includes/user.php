@@ -91,7 +91,7 @@ class User {
 			'active' => true,
 			'title' => '<div id="elementor-introduction-title">' .
 			           __( 'Two Minute Tour Of Elementor', 'elementor' ) .
-			           '</div><div id="elementor-introduction-subtitle">'  .
+			           '</div><div id="elementor-introduction-subtitle">' .
 			           __( 'Watch this quick tour that gives you a basic understanding of how to use Elementor.', 'elementor' ) .
 			           '</div>',
 			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/v/6u45V2q1s4k?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>',
