@@ -50,6 +50,47 @@ class Manager {
 		return true;
 	}
 
+	public function get_templates() {
+		return [
+			[
+				'name' => 'app',
+				'title' => __( 'App', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-app.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+			[
+				'name' => 'contact',
+				'title' => __( 'Contact', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-contact.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+			[
+				'name' => 'fashion',
+				'title' => __( 'Fashion', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-fashion.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+			[
+				'name' => 'ny',
+				'title' => __( 'New York', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-ny.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+		];
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 	}
