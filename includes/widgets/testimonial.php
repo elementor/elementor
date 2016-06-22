@@ -288,21 +288,6 @@ class Widget_testimonial extends Widget_Base {
 		);
 
 		$this->add_control(
-			'testimonial_blockquote',
-			[
-				'label' => __( 'Wrap Text With Blockquote', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_testimonial_text',
-				'default' => 'no',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
 			'content_text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -312,7 +297,6 @@ class Widget_testimonial extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-text' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-testimonial-text blockquote' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -325,7 +309,6 @@ class Widget_testimonial extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_testimonial_text',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-text',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-text blockquote',
 			]
 		);
 	}
@@ -346,15 +329,7 @@ class Widget_testimonial extends Widget_Base {
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
 				<div class="elementor-testimonial-text<?php echo $testimonial_detailes_position; ?>">
-					<?php if ( 'yes' === $instance['testimonial_blockquote'] ) : ?>
-						<blockquote>
-					<?php endif; ?>
-
 						<?php echo $instance['testimonial_text']; ?>
-
-					<?php if ( 'yes' === $instance['testimonial_blockquote'] ) : ?>
-						</blockquote>
-				<?php endif; ?>
 				</div>
 			<?php endif; ?>
 
