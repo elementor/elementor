@@ -76,7 +76,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'buying',
 			[
-				'label' => __( 'Show/hide buy buttons', 'elementor' ),
+				'label' => __( 'Buy buttons', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
 				'section' => 'section_sc_options',
@@ -90,7 +90,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'liking',
 			[
-				'label' => __( 'Show/hide like buttons', 'elementor' ),
+				'label' => __( 'Like buttons', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
 				'section' => 'section_sc_options',
@@ -104,7 +104,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'download',
 			[
-				'label' => __( 'Show/hide download buttons', 'elementor' ),
+				'label' => __( 'Download buttons', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
 				'section' => 'section_sc_options',
@@ -118,7 +118,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sharing',
 			[
-				'label' => __( 'Show/hide share buttons/dialogues', 'elementor' ),
+				'label' => __( 'Share buttons/dialogues', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
 				'section' => 'section_sc_options',
@@ -147,7 +147,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'show_playcount',
 			[
-				'label' => __( 'Show/hide number of sound plays', 'elementor' ),
+				'label' => __( 'Number of sound plays', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
 				'section' => 'section_sc_options',
@@ -161,7 +161,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'show_user',
 			[
-				'label' => __( 'Show/hide the uploader name', 'elementor' ),
+				'label' => __( 'The uploader name', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
 				'section' => 'section_sc_options',
@@ -177,7 +177,6 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_sc_options',
 				'tab' => self::TAB_STYLE,
 			]
 		);
