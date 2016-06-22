@@ -818,16 +818,6 @@
       .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
         margin-left: 20px; }
 
-.elementor-social-links-wrapper {
-  overflow: hidden; }
-  .elementor-social-links-wrapper .elementor-social-links-items {
-    list-style-type: none;
-    float: left; }
-    .elementor-social-links-wrapper .elementor-social-links-items li.elementor-social-links-item {
-      float: left; }
-      .elementor-social-links-wrapper .elementor-social-links-items li.elementor-social-links-item a {
-        display: inline-block; }
-
 .slick-slider {
   position: relative;
   display: block;

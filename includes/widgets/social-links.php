@@ -180,7 +180,7 @@ class Widget_Social_Links extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-links-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon i' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -201,7 +201,7 @@ class Widget_Social_Links extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-links-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -214,7 +214,7 @@ class Widget_Social_Links extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-links-item' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'default' => [
 					'size' => 0,
@@ -246,7 +246,7 @@ class Widget_Social_Links extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-links-item' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -257,7 +257,7 @@ class Widget_Social_Links extends Widget_Base {
 				'name' => 'image_border',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
-				'selector' => '{{WRAPPER}} .elementor-social-links-item',
+				'selector' => '{{WRAPPER}} .elementor-icon',
 			]
 		);
 	}
@@ -265,13 +265,13 @@ class Widget_Social_Links extends Widget_Base {
 
 	protected function render( $instance = [] ) {
 		?>
-		<div class="elementor-social-icon-wrapper">
+		<div class="elementor-icon-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
 
 				if ( ! empty( $item['link']['url'] ) ) : ?>
-					<a href="<?php echo $item['link']['url']; ?>">
+					<a class="elementor-icon-link" href="<?php echo $item['link']['url']; ?>">
 				<?php endif;?>
-				<div class="elementor-social-icon">
+				<div class="elementor-icon">
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
 				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
@@ -285,16 +285,16 @@ class Widget_Social_Links extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-social-icon-wrapper">
+		<div class="elementor-icon-wrapper">
 			<%
 			_.each( settings.icon_list, function( item ) {
 				if ( settings.icon ) {
 					var hasLink = settings.link && settings.link.url;
 
 					if ( hasLink ) { %>
-						<a href="<%- settings.link.url %>">
+						<a class="elementor-icon-link" href="<%- settings.link.url %>">
 					<% } %>
-					<div class="elementor-social-icon">
+					<div class="elementor-icon">
 						<i class="<%- settings.social %>"></i>
 					</div>
 					<% if ( hasLink ) { %>
