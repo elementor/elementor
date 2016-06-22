@@ -13,8 +13,6 @@ Introduction = function() {
 
 		modal.getComponents( 'closeButton' ).on( 'click', function() {
 			self.setIntroductionViewed();
-
-			self.getInfoDialog().show();
 		} );
 
 		modal.on( 'hide', function() {
@@ -22,10 +20,6 @@ Introduction = function() {
 		} );
 	};
 
-	var initInfoDialog = function() {
-		infoDialog = elementor.dialogsManager.createWidget( 'alert' );
-
-		infoDialog.setMessage( elementor.translate( 'You can always show this introduction again' ) );
 	};
 
 	this.getModal = function() {
@@ -36,14 +30,9 @@ Introduction = function() {
 		return modal;
 	};
 
-	this.getInfoDialog = function() {
-		if ( ! infoDialog ) {
-			initInfoDialog();
-		}
 	this.startIntroduction = function() {
 		var settings = this.getSettings();
 
-		return infoDialog;
 		this.getModal()
 		    .setHeaderMessage( settings.title )
 		    .setMessage( settings.content )
