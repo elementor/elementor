@@ -115,6 +115,11 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 == Changelog ==
 
+= 0.3.1 - 22.06.2016 =
+* Tweak! - Enqueue YouTube API from JS (Better compatible for more themes)
+* Tweak! - Added compatible to WooCommerce widgets
+* Tweak! - Fixes re-render elements performance
+
 = 0.3.0 - 21.06.2016 =
 * New! - Added Image Gallery widget
 * New! - Added Image Carousel widget
