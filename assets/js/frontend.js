@@ -209,7 +209,7 @@
 				]
 			},
 
-			slickOptions = $.extend( defaultOptions, $carousel.data( 'slider_options' ) );
+			slickOptions = $.extend( {}, defaultOptions, $carousel.data( 'slider_options' ) );
 
 		$carousel.slick( slickOptions );
 	} );
