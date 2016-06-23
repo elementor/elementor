@@ -1,17 +1,131 @@
 #elementor-templates-modal {
 
+	.dialog-widget-content {
+		width: 930px;
+		background-color: $editor-background;
+	}
+
+	.dialog-widget-header {
+		padding: 20px;
+		background-color: #fff;
+		box-shadow: $panel-bottom-shadow;
+	}
+
+	.dialog-buttons-wrapper {
+		display: none;
+	}
+
+	.dialog-message {
+		height: 590px;
+	}
+}
+
+#elementor-templates-header {
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+	}
+}
+
+#elementor-templates-header-logo-area {
+	width: 20%;
+	text-align: left;
+
+	> * {
+		float: left;
+	}
+}
+
+#elementor-templates-header-logo-image {
+	width: 20px;
+}
+
+#elementor-templates-header-logo-title {
+	margin-left: 10px;
+	font-size: 20px;
+	text-transform: uppercase;
+	color: $editor-darkest;
+	font-weight: bold;
+}
+
+#elementor-templates-header-menu-area {
+	width: 60%;
+}
+
+#elementor-templates-header-menu {
+	display: table;
+	width: 100%;
+	table-layout: fixed;
+
+	.elementor-templates-menu-item {
+		display: table-cell;
+		vertical-align: middle;
+	}
+}
+
+#elementor-templates-header-search-area {
+	width: 20%;
+	position: relative;
+
+	i {
+		position: absolute;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 18px;
+		color: $editor-lighter;
+	}
+}
+
+#elementor-templates-header-search {
+	border: none;
+	outline: none;
+	position: relative;
+	z-index: 1;
+
+	&:focus {
+
+		+ i {
+			display: none;
+		}
+	}
+}
+
+#elementor-templates-loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+
+	i {
+		font-size: 30px;
+	}
+}
+
+#elementor-templates-templates-container {
+	overflow: hidden;
+
 	.elementor-templates-template {
 		float: getStartDirection();
 		width: 20%;
-		height: 200px;
-		overflow: hidden;
+		padding: 0 15px;
+		margin: 15px 0;
+	}
 
-		&:not(:nth-child(5n)) {
-			@include padding-end(30px);
-		}
+	.elementor-templates-template-screenshot-wrapper {
+		height: 200px;
+		border: 1px solid $editor-lighter;
+		padding: 1px;
+		cursor: pointer;
 	}
 
 	.elementor-templates-template-screenshot {
-		width: 100%;
+		height: 100%;
+		background-size: cover;
+		background-position-x: 50%;
 	}
 }
