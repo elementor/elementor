@@ -108,7 +108,7 @@ class Editor {
 	}
 
 	public function print_panel_html() {
-		include( 'editor-templates/editor-wrapper-template.php' );
+		include( 'editor-templates/editor-wrapper.php' );
 	}
 
 	public function enqueue_scripts() {
@@ -398,10 +398,11 @@ class Editor {
 		Plugin::instance()->widgets_manager->render_widgets_content();
 		Plugin::instance()->elements_manager->render_elements_content();
 
-		include( 'editor-templates/global-template.php' );
+		include( 'editor-templates/global.php' );
 		include( 'editor-templates/panel.php' );
 		include( 'editor-templates/panel-elements.php' );
-		include( 'editor-templates/repeater-template.php' );
+		include( 'editor-templates/repeater.php' );
+		include( 'editor-templates/templates.php' );
 	}
 
 	public function __construct() {

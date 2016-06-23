@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Templates\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -85,6 +87,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
+		include( ELEMENTOR_PATH . 'includes/templates/manager.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -115,6 +118,8 @@ class Plugin {
 		$heartbeat = new Heartbeat();
 
 		$this->system_info = new System_Info\Main();
+
+		$this->templates_manager = new Manager();
 
 		if ( is_admin() ) {
 			new Admin();

@@ -108,6 +108,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/admin/js/dev/layouts/panel',
 							src: '**/*.js',
 							expose: 'elementor-panel'
+						},
+						{
+							cwd: 'assets/admin/js/dev/components/templates',
+							src: '**/*.js',
+							expose: 'elementor-templates'
 						}
 					] );
 				}

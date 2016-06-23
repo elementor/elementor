@@ -8,7 +8,7 @@ class Manager {
 	/**
 	 * @var Type_Base[]
 	 */
-	protected $_register_types = [];
+	protected $_registered_types = [];
 
 	public function init() {
 		include( ELEMENTOR_PATH . 'includes/templates/types/base.php' );
@@ -37,20 +37,68 @@ class Manager {
 		if ( ! $type_instance instanceof Type_Base ) {
 			return new \WP_Error( 'wrong_instance_type' );
 		}
-		$this->_register_types[ $type_instance->get_id() ] = $type_instance;
+		$this->_registered_types[ $type_instance->get_id() ] = $type_instance;
 
 		return true;
 	}
 
 	public function unregister_type( $id ) {
-		if ( ! isset( $this->_register_types[ $id ] ) ) {
+		if ( ! isset( $this->_registered_types[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_register_types[ $id ] );
+		unset( $this->_registered_types[ $id ] );
 		return true;
+	}
+
+	public function get_templates() {
+		return [
+			[
+				'name' => 'app',
+				'title' => __( 'App', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-app.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+			[
+				'name' => 'contact',
+				'title' => __( 'Contact', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-contact.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+			[
+				'name' => 'fashion',
+				'title' => __( 'Fashion', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-fashion.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+			[
+				'name' => 'ny',
+				'title' => __( 'New York', 'elementor' ),
+				'author' => 'John Doe',
+				'content' => '',
+				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-ny.png',
+				'categories' => [],
+				'keywords' => [],
+			],
+		];
+	}
+
+	public function print_templates_json() {
+		$templates = $this->get_templates();
+
+		die( wp_json_encode( $templates ) );
 	}
 
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'wp_ajax_elementor_template_get', [ $this, 'print_templates_json' ] );
 	}
 }

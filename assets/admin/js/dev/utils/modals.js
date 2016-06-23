@@ -16,18 +16,25 @@ Modals = {
 						at: 'center'
 					},
 					contentWidth: 'auto',
-					contentHeight: 'auto'
+					contentHeight: 'auto',
+					closeButton: true
 				} );
 			},
 			buildWidget: function() {
 				DialogsManager.getWidgetType( 'options' ).prototype.buildWidget.apply( this, arguments );
+
+				if ( ! this.getSettings( 'closeButton' ) ) {
+					return;
+				}
 
 				var $closeButton = this.addComponent( 'closeButton', '<div><i class="fa fa-times"></i></div>' );
 
 				this.getComponents( 'widgetContent' ).prepend( $closeButton );
 			},
 			attachEvents: function() {
-				this.getComponents( 'closeButton' ).on( 'click', this.hide );
+				if ( this.getSettings( 'closeButton' ) ) {
+					this.getComponents( 'closeButton' ).on( 'click', this.hide );
+				}
 			},
 			onReady: function() {
 				DialogsManager.getWidgetType( 'options' ).prototype.onReady.apply( this, arguments );
