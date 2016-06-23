@@ -23,6 +23,10 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
 			templates: templates
 		} ) );
+	},
+
+	showSaveTemplateView: function() {
+		this.getRegion( 'modalContent' ).show( new TemplatesSaveTemplateView() );
 	}
 } );
 

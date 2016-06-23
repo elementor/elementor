@@ -48,3 +48,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-templates-template-screenshot" style="background-image: url(<%- screenshot %>);"></div>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-templates-save-template">
+	<form id="elementor-templates-save-template-form">
+		<input name="name" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>">
+		<input id="elementor-templates-save-template-submit" class="elementor-button" type="submit">
+	</form>
+</script>
