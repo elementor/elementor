@@ -125,7 +125,7 @@ class Plugin {
 	}
 }
 
-if ( ! defined( 'FLEX_TESTS' ) ) {
+if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 	// In tests we run the instance manually.
 	Plugin::instance();
 }
