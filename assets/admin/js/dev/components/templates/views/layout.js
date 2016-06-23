@@ -11,7 +11,7 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 		modalHeader: '.dialog-widget-header'
 	},
 
-	onShow: function() {
+	initialize: function() {
 		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
 	},
 

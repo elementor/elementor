@@ -44,5 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-template">
-	<img class="elementor-templates-template-screenshot" src="<%- screenshot %>">
+	<div class="elementor-templates-template-screenshot-wrapper">
+		<div class="elementor-templates-template-screenshot" style="background-image: url(<%- screenshot %>);"></div>
+	</div>
 </script>
