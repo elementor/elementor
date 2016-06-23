@@ -118,7 +118,7 @@
 	top: 50%;
 	display: block;
 	width: 20px;
-	height: 20px;
+	//height: 20px;
 	padding: 0;
 	transform: translate(0, -50%);
 	cursor: pointer;
@@ -184,7 +184,7 @@
 	margin-bottom: 30px;
 }
 
-.slick-dots {
+ul.slick-dots {
 	position: absolute;
 	bottom: -25px;
 	display: block;

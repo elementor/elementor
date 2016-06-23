@@ -118,7 +118,7 @@ install_phpcs() {
 # Install JSCS: JavaScript Code Style checker
 # @link http://jscs.info/
 install_jscs() {
-	npm install -g jscs
+	npm install -g jscs@3.0.4
 }
 
 # Install JSHint, a JavaScript Code Quality Tool

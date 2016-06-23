@@ -87,6 +87,7 @@ class Widget_WordPress extends Widget_Base {
 
 	protected function render( $instance = [] ) {
 		$empty_widget_args = [
+			'widget_id' => $this->get_id(),
 			'before_widget' => '',
 			'after_widget' => '',
 			'before_title' => '<h5>',

@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Templates\Manager;
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -119,7 +117,7 @@ class Plugin {
 
 		$this->system_info = new System_Info\Main();
 
-		$this->templates_manager = new Manager();
+		$this->templates_manager = new Templates\Manager();
 
 		if ( is_admin() ) {
 			new Admin();
