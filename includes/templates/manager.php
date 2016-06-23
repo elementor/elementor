@@ -54,6 +54,15 @@ class Manager {
 		return $this->_registered_types;
 	}
 
+	public function get_type( $id ) {
+		$types = $this->get_registered_types();
+
+		if ( ! isset( $types[ $id ] ) ) {
+			return false;
+		}
+		return $types[ $id ];
+	}
+
 	public function get_templates() {
 		$templates = [];
 		foreach ( $this->get_registered_types() as $type ) {
@@ -68,9 +77,30 @@ class Manager {
 		wp_send_json( $templates );
 	}
 
+	public function save_template() {
+		if ( empty( $_POST['type'] ) ) {
+			wp_send_json_error( [ 'message' => 'No put template `type`' ] );
+		}
+
+		$type = $this->get_type( $_POST['type'] );
+		if ( ! $type ) {
+			wp_send_json_error( [ 'message' => 'No template type found.' ] );
+		}
+
+		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$return = $type->save_item( $posted, ! empty( $_POST['template_title'] ) ? $_POST['template_title'] : '' );
+
+		if ( is_wp_error( $return ) ) {
+			wp_send_json_error( [ 'message' => $return->get_error_message() ] );
+		}
+
+		wp_send_json_success( [ 'item' => $type->get_item( $return ) ] );
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 
 		add_action( 'wp_ajax_elementor_get_templates', [ $this, 'print_templates_json' ] );
+		add_action( 'wp_ajax_elementor_save_template', [ $this, 'save_template' ] );
 	}
 }

@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Templates;
 
+use Elementor\DB;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Type_Local extends Type_Base {
@@ -63,18 +66,38 @@ class Type_Local extends Type_Base {
 		$templates = [];
 		if ( $templates_query->have_posts() ) {
 			foreach ( $templates_query->get_posts() as $post ) {
-				$templates[] = $this->_get_item( $post );
+				$templates[] = $this->get_item( $post->ID );
 			}
 		}
 		return $templates;
 	}
 
+	public function save_item( $template_data = [], $template_title = '' ) {
+		$post_id = wp_insert_post(
+			[
+				'post_title' => ! empty( $template_title ) ? $template_title : __( '(no title)', 'elementor' ),
+				'post_status' => 'publish',
+				'post_type' => self::CPT,
+			]
+		);
+
+		if ( is_wp_error( $post_id ) ) {
+			return $post_id;
+		}
+
+		Plugin::instance()->db->save_builder( $post_id, $template_data );
+
+		return $post_id;
+	}
+
 	/**
-	 * @param \WP_Post $post
+	 * @param int $item_id
 	 *
 	 * @return array
 	 */
-	private function _get_item( $post ) {
+	public function get_item( $item_id ) {
+		$post = get_post( $item_id );
+
 		$user = get_user_by( 'id', $post->post_author );
 		return [
 			'id' => $post->ID,
