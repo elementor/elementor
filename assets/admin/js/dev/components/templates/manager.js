@@ -50,6 +50,8 @@ TemplatesManager = function() {
 	this.startModal = function() {
 		self.getModal().show();
 
+
+		layout.showLoading();
 		self.requestRemoteTemplates( {
 			success: function( data ) {
 				self.getLayout().showTemplates( data );
