@@ -73,8 +73,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow: function() {
-		elementor.filterState.reply( 'get', { type: 'parent', term: '' } );
-
 		var PanelFooterItemView = require( 'elementor-layouts/panel/footer' ),
 			PanelHeaderItemView = require( 'elementor-layouts/panel/header' );
 

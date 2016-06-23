@@ -13,11 +13,8 @@ App = Marionette.Application.extend( {
 	// Channels
 	editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
 	data: Backbone.Radio.channel( 'ELEMENTOR:data' ),
-	filterState: Backbone.Radio.channel( 'ELEMENTOR:filterState' ),
-	elementLibrary: Backbone.Radio.channel( 'ELEMENTOR:elementLibrary' ),
 	panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
 	dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
-	preview: Backbone.Radio.channel( 'ELEMENTOR:preview' ),
 	deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
 
 	// Private Members
