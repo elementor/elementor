@@ -127,8 +127,8 @@ class Widget_Social_Links extends Widget_Base {
 						'label_block' => true,
 						'default' => [
 							'url' => '',
+							'is_external' => 'true',
 						],
-						'is_external' => true,
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
