@@ -970,12 +970,12 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 
 		filterValue = filterValue.toLowerCase();
 
-		if ( 0 >= childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) ) {
+		if ( childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
 			return true;
 		}
 
 		return _.any( childModel.get( 'keywords' ), function( keyword ) {
-			return 0 >= keyword.toLowerCase().indexOf( filterValue );
+			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
 		} );
 	}
 } );
