@@ -70,6 +70,7 @@ class Manager {
 
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
-		add_action( 'wp_ajax_elementor_template_get', [ $this, 'print_templates_json' ] );
+
+		add_action( 'wp_ajax_elementor_get_templates', [ $this, 'print_templates_json' ] );
 	}
 }

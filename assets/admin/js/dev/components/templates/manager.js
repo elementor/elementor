@@ -30,7 +30,7 @@ TemplatesManager = function() {
 			url: elementor.config.ajaxurl,
 			dataType: 'json',
 			data: {
-				action: 'elementor_template_get'
+				action: 'elementor_get_templates'
 			}
 		};
 
