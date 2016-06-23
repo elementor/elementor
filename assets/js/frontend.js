@@ -326,6 +326,13 @@
 } )( jQuery, window );
 
 jQuery( function( $ ) {
+	// Enqueue YouTube API
+	var scriptTag = document.createElement( 'script' ),
+		firstElementScript = document.getElementsByTagName( 'script' )[0];
+
+	scriptTag.src = 'https://www.youtube.com/iframe_api';
+	firstElementScript.parentNode.insertBefore( scriptTag, firstElementScript );
+
 	$( '.elementor-element' ).each( function() {
 		elementorBindUI.runReadyTrigger( $( this ) );
 	} );

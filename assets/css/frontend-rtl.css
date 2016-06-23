@@ -896,7 +896,6 @@
   top: 50%;
   display: block;
   width: 20px;
-  height: 20px;
   padding: 0;
   transform: translate(0, -50%);
   cursor: pointer;
@@ -950,7 +949,7 @@
 .slick-dotted.slick-slider {
   margin-bottom: 30px; }
 
-.slick-dots {
+ul.slick-dots {
   position: absolute;
   bottom: -25px;
   display: block;
@@ -960,7 +959,7 @@
   list-style: none;
   text-align: center;
   line-height: 1; }
-  .slick-dots li {
+  ul.slick-dots li {
     position: relative;
     display: inline-block;
     width: 20px;
@@ -968,7 +967,7 @@
     margin: 0;
     padding: 0;
     cursor: pointer; }
-    .slick-dots li button {
+    ul.slick-dots li button {
       font-size: 0;
       line-height: 0;
       display: block;
@@ -980,11 +979,11 @@
       border: 0;
       outline: none;
       background: transparent; }
-      .slick-dots li button:hover, .slick-dots li button:focus {
+      ul.slick-dots li button:hover, ul.slick-dots li button:focus {
         outline: none; }
-        .slick-dots li button:hover:before, .slick-dots li button:focus:before {
+        ul.slick-dots li button:hover:before, ul.slick-dots li button:focus:before {
           opacity: 1; }
-      .slick-dots li button:before {
+      ul.slick-dots li button:before {
         font-family: 'FontAwesome';
         font-size: 6px;
         line-height: 20px;
@@ -999,7 +998,7 @@
         color: black;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale; }
-    .slick-dots li.slick-active button:before {
+    ul.slick-dots li.slick-active button:before {
       opacity: .75;
       color: black; }
 
