@@ -973,8 +973,8 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit'
 	},
 
-	onFormSubmit: function( e ) {
-		e.preventDefault();
+	onFormSubmit: function( event ) {
+		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject();
 
@@ -990,7 +990,7 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 			data: formData,
 			success: function( response ) {
 				if ( response.success ) {
-					
+
 				}
 			}
 		} );
