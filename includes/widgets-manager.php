@@ -21,6 +21,7 @@ class Widgets_Manager {
 			'button',
 			'divider',
 			'spacer',
+			'social-links',
 			'image-box',
 			'google-maps',
 			'icon',
