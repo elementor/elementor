@@ -22,12 +22,12 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 
 		filterValue = filterValue.toLowerCase();
 
-		if ( childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
+		if ( 0 >= childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) ) {
 			return true;
 		}
 
 		return _.any( childModel.get( 'keywords' ), function( keyword ) {
-			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
+			return 0 >= keyword.toLowerCase().indexOf( filterValue );
 		} );
 	}
 } );
