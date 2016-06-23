@@ -15,11 +15,11 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
 	},
 
-	showLoading: function() {
+	showLoadingView: function() {
 		this.getRegion( 'modalContent' ).show( new TemplatesLoadingView() );
 	},
 
-	showTemplates: function( templates ) {
+	showTemplatesView: function( templatesCollection ) {
 		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
 			templates: templates
 		} ) );
