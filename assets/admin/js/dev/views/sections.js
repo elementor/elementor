@@ -113,7 +113,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 				self.ui.addSectionArea.removeAttr( 'data-side' );
 			},
 			onDropping: function() {
-				var elementView = elementor.panelElements.request( 'element:selected' ),
+				var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 					newSection = self.addSection();
 
 				var widgetData = {

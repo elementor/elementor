@@ -96,7 +96,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		// Set default page to elements
 		this.setPage( 'elements' );
 
-		this.listenTo( elementor.data, 'scrollbar:update', this.updateScrollbar );
+		this.listenTo( elementor.channels.data, 'scrollbar:update', this.updateScrollbar );
 	},
 
 	onEditorBeforeShow: function( view, region, options ) {

@@ -18,7 +18,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	categoriesCollection: null,
 
 	initialize: function() {
-		this.listenTo( elementor.panelElements, 'element:selected', this.destroy );
+		this.listenTo( elementor.channels.panelElements, 'element:selected', this.destroy );
 	},
 
 	initElementsCollection: function() {
@@ -92,7 +92,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	changeFilter: function( filterValue ) {
-		elementor.panelElements
+		elementor.channels.panelElements
 			.reply( 'filter:value', filterValue )
 			.trigger( 'change' );
 	},
@@ -103,7 +103,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onChildviewDragStart: function( childView ) {
-		elementor.panelElements.reply( 'element:selected', childView );
+		elementor.channels.panelElements.reply( 'element:selected', childView );
 	},
 
 	onChildviewChildrenRender: function() {
@@ -116,7 +116,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		if ( _.isEmpty( value ) ) {
 			this.showCategoriesView();
 		} else {
-			var oldValue = elementor.panelElements.request( 'filter:value' );
+			var oldValue = elementor.channels.panelElements.request( 'filter:value' );
 
 			if ( _.isEmpty( oldValue ) ) {
 				this.showElementsView();
@@ -127,7 +127,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onDestroy: function() {
-		elementor.panelElements.reply( 'filter:value', null );
+		elementor.channels.panelElements.reply( 'filter:value', null );
 	},
 
 	onShow: function() {
@@ -143,7 +143,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateElementsScrollbar: function() {
-		elementor.data.trigger( 'scrollbar:update' );
+		elementor.channels.data.trigger( 'scrollbar:update' );
 	}
 } );
 
