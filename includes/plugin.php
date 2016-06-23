@@ -116,7 +116,6 @@ class Plugin {
 		$heartbeat = new Heartbeat();
 
 		$this->system_info = new System_Info\Main();
-
 		$this->templates_manager = new Templates\Manager();
 
 		if ( is_admin() ) {
