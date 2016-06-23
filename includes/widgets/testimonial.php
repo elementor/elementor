@@ -103,7 +103,7 @@ class Widget_testimonial extends Widget_Base {
 		$this->add_control(
 			'testimonial_detailes_position',
 			[
-				'label' => __( 'Testimonial Detailes Position', 'elementor' ),
+				'label' => __( 'Testimonial Details Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'Elementor',
 				'section' => 'section_testimonial',

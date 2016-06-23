@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.3.0  
+**Stable tag:** 0.3.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -40,7 +40,8 @@ Elementor works on any old or new theme. Switching between themes is no problem.
 ### RTL supported, multilingual and translatable ###
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
-### Translations: ###
+### Translations ###
+- [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
@@ -68,6 +69,11 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
+### We recommend your host supports: ###
+
+* PHP version 5.6 or greater
+* MySQL version 5.6 or greater
+
 ### Installation ###
 
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
@@ -80,7 +86,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater.
+No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 5.6 or greater and MySQL version 5.6 or greater.
 
 **With Elementor, do I still need a theme?**
 
@@ -100,7 +106,7 @@ Absolutely not! Elementor is a live frontend page builder, that lets you reach a
 
 **Will Elementor work with RTL or other languages?**
 
-Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language.
+Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about translation and localization here: https://go.elementor.com/translate/
 
 ## Screenshots ##
 
@@ -110,6 +116,13 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 4. Settings page.
 
 ## Changelog ##
+
+### 0.3.1 - 22.06.2016 ###
+* Tweak! - Added a quick tour video for Elementor
+* Tweak! - Enqueue YouTube API from JS (Better compatible for more themes)
+* Tweak! - Added compatible to WooCommerce widgets
+* Tweak! - Fixes re-render elements performance
+* Fixed! - Border & Radius options for Image Carousel widget
 
 ### 0.3.0 - 21.06.2016 ###
 * New! - Added Image Gallery widget

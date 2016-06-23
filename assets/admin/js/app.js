@@ -2663,7 +2663,7 @@ Introduction = function() {
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
 			id: 'elementor-introduction',
-			contentWidth: 800
+			contentWidth: 700
 		} );
 
 		modal.getComponents( 'closeButton' ).on( 'click', function() {

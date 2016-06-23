@@ -80,9 +80,6 @@ class Frontend {
 	public function enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		// YouTube api
-		wp_enqueue_script( 'youtube-api', 'https://www.youtube.com/iframe_api' );
-
 		wp_register_script(
 			'waypoints',
 			ELEMENTOR_ASSETS_URL . 'admin/js/lib/waypoints.js',
@@ -117,7 +114,6 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
-				'youtube-api',
 				'waypoints',
 				'jquery-numerator',
 				'jquery-slick',
