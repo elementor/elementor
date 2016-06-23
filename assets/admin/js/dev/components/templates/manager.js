@@ -1,16 +1,15 @@
 var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
+	TemplatesCollection = require( 'elementor-templates/collections/templates' ),
 	TemplatesManager;
 
 TemplatesManager = function() {
 	var self = this,
 		modal,
-		layout;
+		layout,
+		templates;
 
 	var initLayout = function() {
 		layout = new TemplatesLayoutView();
-	};
-
-	this.init = function() {
 	};
 
 	this.getModal = function() {
@@ -22,6 +21,10 @@ TemplatesManager = function() {
 		}
 
 		return modal;
+	};
+
+	this.getLayout = function() {
+		return layout;
 	};
 
 	this.requestRemoteTemplates = function( options ) {
@@ -46,13 +49,19 @@ TemplatesManager = function() {
 
 		initLayout();
 
-		layout.showLoading();
+		layout.showLoadingView();
 
 		self.requestRemoteTemplates( {
 			success: function( data ) {
-				layout.showTemplates( data );
+				self.templates = new TemplatesCollection( data );
+
+				self.showTemplates();
 			}
 		} );
+	};
+
+	this.showTemplates = function() {
+		layout.showTemplatesView( self.templates );
 	};
 };
 

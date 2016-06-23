@@ -1,6 +1,7 @@
 var TemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
 	TemplatesLoadingView = require( 'elementor-templates/views/parts/loading' ),
 	TemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
+	TemplatesSaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
 	TemplatesLayoutView;
 
 TemplatesLayoutView = Marionette.LayoutView.extend( {
@@ -21,7 +22,7 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 
 	showTemplatesView: function( templatesCollection ) {
 		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
-			templates: templates
+			collection: templatesCollection
 		} ) );
 	},
 
