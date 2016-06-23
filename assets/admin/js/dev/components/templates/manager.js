@@ -6,6 +6,10 @@ TemplatesManager = function() {
 		modal,
 		layout;
 
+	var initLayout = function() {
+		layout = new TemplatesLayoutView();
+	};
+
 	this.init = function() {
 	};
 
@@ -13,21 +17,11 @@ TemplatesManager = function() {
 		if ( ! modal ) {
 			modal = elementor.modals.createModal( {
 				id: 'elementor-templates-modal',
-				contentWidth: 950,
-				contentHeight: 500,
 				closeButton: false
 			} );
 		}
 
 		return modal;
-	};
-
-	this.getLayout = function() {
-		if ( ! layout ) {
-			layout = new TemplatesLayoutView();
-		}
-
-		return layout;
 	};
 
 	this.requestRemoteTemplates = function( options ) {
@@ -50,9 +44,13 @@ TemplatesManager = function() {
 	this.startModal = function() {
 		self.getModal().show();
 
+		initLayout();
+
+		layout.showLoading();
+
 		self.requestRemoteTemplates( {
 			success: function( data ) {
-				self.getLayout().showTemplates( data );
+				layout.showTemplates( data );
 			}
 		} );
 	};

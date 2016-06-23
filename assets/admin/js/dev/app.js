@@ -10,15 +10,14 @@ App = Marionette.Application.extend( {
 	introduction: require( 'elementor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
 
-	// Channels
-	editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
-	data: Backbone.Radio.channel( 'ELEMENTOR:data' ),
-	filterState: Backbone.Radio.channel( 'ELEMENTOR:filterState' ),
-	elementLibrary: Backbone.Radio.channel( 'ELEMENTOR:elementLibrary' ),
-	panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
-	dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
-	preview: Backbone.Radio.channel( 'ELEMENTOR:preview' ),
-	deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
+	channels: {
+		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
+		data: Backbone.Radio.channel( 'ELEMENTOR:data' ),
+		panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
+		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
+		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
+		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
+	},
 
 	// Private Members
 	_controlsItemView: null,
@@ -83,7 +82,7 @@ App = Marionette.Application.extend( {
 				structure: require( 'elementor-views/controls/structure' )
 			};
 
-			this.editor.trigger( 'editor:controls:initialize' );
+			this.channels.editor.trigger( 'editor:controls:initialize' );
 		}
 
 		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
@@ -155,7 +154,7 @@ App = Marionette.Application.extend( {
 
 		this.initPreview();
 
-		this.listenTo( this.dataEditMode, 'switch', this.onEditModeSwitched );
+		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
 	},
@@ -182,7 +181,7 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
-				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
+				editMode = elementor.channels.dataEditMode.request( 'get:active:mode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
 			if ( isClickInsideElementor && 'preview' !== editMode ) {
@@ -221,7 +220,7 @@ App = Marionette.Application.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.channels.dataEditMode.request( 'get:active:mode' );
 
 		if ( 'preview' === activeMode ) {
 			this.enterPreviewMode();
@@ -247,12 +246,12 @@ App = Marionette.Application.extend( {
 	},
 
 	setFlagEditorChange: function( status ) {
-		elementor.editor.reply( 'editor:changed', status );
-		elementor.editor.trigger( 'editor:changed', status );
+		elementor.channels.editor.reply( 'editor:changed', status );
+		elementor.channels.editor.trigger( 'editor:changed', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.editor.request( 'editor:changed' ) );
+		return ( true === elementor.channels.editor.request( 'editor:changed' ) );
 	},
 
 	setWorkSaver: function() {

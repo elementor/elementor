@@ -1,4 +1,5 @@
 var TemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
+	TemplatesLoadingView = require( 'elementor-templates/views/parts/loading' ),
 	TemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
 	TemplatesLayoutView;
 
@@ -10,8 +11,12 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 		modalHeader: '.dialog-widget-header'
 	},
 
-	onShow: function() {
+	initialize: function() {
 		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
+	},
+
+	showLoading: function() {
+		this.getRegion( 'modalContent' ).show( new TemplatesLoadingView() );
 	},
 
 	showTemplates: function( templates ) {

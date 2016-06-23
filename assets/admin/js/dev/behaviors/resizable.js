@@ -18,7 +18,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	initialize: function() {
 		Marionette.Behavior.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( elementor.dataEditMode, 'switch', this.onEditModeSwitched );
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 	},
 
 	active: function() {
@@ -40,7 +40,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.channels.dataEditMode.request( 'get:active:mode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();

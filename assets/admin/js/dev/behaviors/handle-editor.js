@@ -3,7 +3,7 @@ var HandleEditorBehavior;
 HandleEditorBehavior = Marionette.Behavior.extend( {
 
 	onClickEdit: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.channels.dataEditMode.request( 'get:active:mode' );
 
 		if ( 'preview' === activeMode ) {
 			return;

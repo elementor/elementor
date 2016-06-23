@@ -5,10 +5,30 @@ var TemplatesCollection = require( 'elementor-templates/collections/templates' )
 TemplatesCollectionView = Marionette.CollectionView.extend( {
 	childView: TemplatesTemplateView,
 
-	className: 'elementor-templates-templates-container',
+	id: 'elementor-templates-templates-container',
 
 	initialize: function() {
 		this.collection = new TemplatesCollection( this.getOption( 'templates' ) );
+
+		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+	},
+
+	filter: function( childModel ) {
+		var filterValue = elementor.channels.templates.request( 'filter:text' );
+
+		if ( ! filterValue ) {
+			return true;
+		}
+
+		filterValue = filterValue.toLowerCase();
+
+		if ( childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
+			return true;
+		}
+
+		return _.any( childModel.get( 'keywords' ), function( keyword ) {
+			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
+		} );
 	}
 } );
 

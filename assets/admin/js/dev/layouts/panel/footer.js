@@ -34,7 +34,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
 
-		this.listenTo( elementor.editor, 'editor:changed', this.onEditorChanged );
+		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged );
 	},
 
 	_initDialog: function() {
@@ -108,8 +108,9 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		this.getCurrentDeviceModeButton().addClass( 'active' );
 
-		elementor.deviceMode.reply( 'currentMode', this.currentDeviceMode );
-		elementor.deviceMode.trigger( 'change' );
+		elementor.channels.deviceMode
+		         .reply( 'currentMode', this.currentDeviceMode )
+		         .trigger( 'change' );
 	},
 
 	getCurrentDeviceModeButton: function() {

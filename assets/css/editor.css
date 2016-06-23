@@ -1636,14 +1636,95 @@ body.elementor-editor-preview #elementor-mode-switcher {
   font-size: 16px;
   color: #a4afb7; }
 
-#elementor-templates-modal .elementor-templates-template {
-  float: left;
-  width: 20%;
-  height: 200px;
-  overflow: hidden; }
-  #elementor-templates-modal .elementor-templates-template:not(:nth-child(5n)) {
-    padding-right: 30px; }
-#elementor-templates-modal .elementor-templates-template-screenshot {
+#elementor-templates-modal .dialog-widget-content {
+  width: 930px;
+  background-color: #e6e9ec; }
+#elementor-templates-modal .dialog-widget-header {
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
+#elementor-templates-modal .dialog-buttons-wrapper {
+  display: none; }
+#elementor-templates-modal .dialog-message {
+  height: 590px; }
+
+#elementor-templates-header {
+  display: table;
+  table-layout: fixed;
   width: 100%; }
+  #elementor-templates-header > * {
+    display: table-cell;
+    vertical-align: middle; }
+
+#elementor-templates-header-logo-area {
+  width: 20%;
+  text-align: left; }
+  #elementor-templates-header-logo-area > * {
+    float: left; }
+
+#elementor-templates-header-logo-image {
+  width: 20px; }
+
+#elementor-templates-header-logo-title {
+  margin-left: 10px;
+  font-size: 20px;
+  text-transform: uppercase;
+  color: #495157;
+  font-weight: bold; }
+
+#elementor-templates-header-menu-area {
+  width: 60%; }
+
+#elementor-templates-header-menu {
+  display: table;
+  width: 100%;
+  table-layout: fixed; }
+  #elementor-templates-header-menu .elementor-templates-menu-item {
+    display: table-cell;
+    vertical-align: middle; }
+
+#elementor-templates-header-search-area {
+  width: 20%;
+  position: relative; }
+  #elementor-templates-header-search-area i {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #c2cbd2; }
+
+#elementor-templates-header-search {
+  border: none;
+  outline: none;
+  position: relative;
+  z-index: 1; }
+  #elementor-templates-header-search:focus + i {
+    display: none; }
+
+#elementor-templates-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%); }
+  #elementor-templates-loading i {
+    font-size: 30px; }
+
+#elementor-templates-templates-container {
+  overflow: hidden; }
+  #elementor-templates-templates-container .elementor-templates-template {
+    float: left;
+    width: 20%;
+    padding: 0 15px;
+    margin: 15px 0; }
+  #elementor-templates-templates-container .elementor-templates-template-screenshot-wrapper {
+    height: 200px;
+    border: 1px solid #c2cbd2;
+    padding: 1px;
+    cursor: pointer; }
+  #elementor-templates-templates-container .elementor-templates-template-screenshot {
+    height: 100%;
+    background-size: cover;
+    background-position-x: 50%; }
 
 /*# sourceMappingURL=editor.css.map */
