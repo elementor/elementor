@@ -1,5 +1,4 @@
-var TemplatesCollection = require( 'elementor-templates/collections/templates' ),
-	TemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
+var TemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
 	TemplatesCollectionView;
 
 TemplatesCollectionView = Marionette.CollectionView.extend( {
@@ -8,8 +7,6 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 	id: 'elementor-templates-templates-container',
 
 	initialize: function() {
-		this.collection = new TemplatesCollection( this.getOption( 'templates' ) );
-
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 

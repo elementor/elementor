@@ -98,8 +98,6 @@ App = Marionette.Application.extend( {
 		this.heartbeat.init();
 
 		this.modals.init();
-
-		this.templates.init();
 	},
 
 	initDialogsManager: function() {
