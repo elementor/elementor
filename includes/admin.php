@@ -210,7 +210,7 @@ class Admin {
 	public function add_deactivation_dialog() {
 		?>
 		<div id="elementor-feedback-dialog-wrapper" style="display: none;">
-			<div id="elementor-feedback-dialog-content" style="height: 300px;">
+			<div id="elementor-feedback-dialog-content" style="padding-bottom: 30px;">
 				<form>
 					<ul id="elementor-deactivate-reasons">
 						<li class="elementor-reason elementor-custom-input">
@@ -219,7 +219,7 @@ class Admin {
 								<span><?php _e( 'Found a better plugin', 'elementor' ); ?></span>
 							</label>
 							<div class="elementor-reason-input" style="display: none;">
-								<textarea name="input-found-other"></textarea>
+								<textarea rows="6" name="input-found-other"></textarea>
 							</div>
 						</li>
 						<li class="elementor-reason">
@@ -234,7 +234,7 @@ class Admin {
 								<span><?php _e( 'Other Reason', 'elementor' ); ?></span>
 							</label>
 							<div class="elementor-reason-input" style="display: none;">
-								<textarea name="other-input"></textarea>
+								<textarea rows="6" name="other-input"></textarea>
 							</div>
 						</li>
 					</ul>

@@ -55,14 +55,14 @@ var feedbackDialog;
 		},
 
 		changeButtonText: function() {
-			feedbackDialog.getModal().getComponents( 'confirm' ).html( 'Submit & Deactivate' );
+			feedbackDialog.getModal().getComponents( 'ok' ).html( 'Submit & Deactivate' );
 		},
 
 		reasonChanged: function() {
 			$( '.elementor-reason-input' ).hide();
 
-			if ( this.elements.reason.hasClass( 'elementor-custom-input' ) ) {
-				this.elements.reason.find( '.elementor-reason-input' ).show();
+			if ( $( this ).hasClass( 'elementor-custom-input' ) ) {
+				$( this ).find( '.elementor-reason-input' ).show();
 			}
 		},
 
