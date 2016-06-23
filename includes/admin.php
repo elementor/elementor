@@ -22,6 +22,30 @@ class Admin {
 			Plugin::instance()->get_version(),
 			true
 		);
+
+		global $pagenow;
+
+		if ( 'plugins.php' === $pagenow ) {
+			wp_register_script(
+				'dialog',
+				ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
+				[
+					'jquery-ui-position',
+				],
+				'1.0.5',
+				true
+			);
+
+			wp_enqueue_script(
+				'feedback-dialog',
+				ELEMENTOR_ASSETS_URL . 'js/feedback-dialog' . $suffix . '.js',
+				[
+					'dialog',
+				],
+				null,
+				true
+			);
+		}
 		wp_enqueue_script( 'elementor-admin-app' );
 	}
 
@@ -177,10 +201,60 @@ class Admin {
 		return $links;
 	}
 
+	public function insert_deactivate_link_id( $links ) {
+		$links['deactivate'] = str_replace( '<a', '<a id="elementor-plugin-disable-link"', $links['deactivate'] );
+
+		return $links;
+	}
+
+	public function add_deactivation_dialog() {
+		?>
+		<div id="elementor-feedback-dialog-wrapper" style="display: none;">
+			<div id="elementor-feedback-dialog-content" style="height: 300px;">
+				<form>
+					<ul id="elementor-deactivate-reasons">
+						<li class="elementor-reason elementor-custom-input">
+							<label>
+								<span><input value="Found a better plugin" type="radio" name="reason" /></span>
+								<span><?php _e( 'Found a better plugin', 'elementor' ); ?></span>
+							</label>
+							<div class="elementor-reason-input" style="display: none;">
+								<textarea name="input-found-other"></textarea>
+							</div>
+						</li>
+						<li class="elementor-reason">
+							<label>
+								<span><input value="The plugin didn't work" type="radio" name="reason" /></span>
+								<span><?php _e( 'The plugin didn\'t work', 'elementor' ); ?></span>
+							</label>
+						</li>
+						<li class="elementor-reason elementor-custom-input">
+							<label>
+								<span><input value="Other Reason" type="radio" name="reason" /></span>
+								<span><?php _e( 'Other Reason', 'elementor' ); ?></span>
+							</label>
+							<div class="elementor-reason-input" style="display: none;">
+								<textarea name="other-input"></textarea>
+							</div>
+						</li>
+					</ul>
+				</form>
+			</div>
+		</div>
+		<?php
+	}
+
 	/**
 	 * Admin constructor.
 	 */
 	public function __construct() {
+
+		global $pagenow;
+		if ( 'plugins.php' === $pagenow ) {
+			add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'insert_deactivate_link_id' ] );
+			add_action( 'admin_footer', array( $this, 'add_deactivation_dialog' ) );
+		}
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
