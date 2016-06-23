@@ -50,6 +50,41 @@ class Type_Local extends Type_Base {
 	}
 
 	public function get_items() {
-		// Write the query to get all local templates
+		$templates_query = new \WP_Query(
+			[
+				'post_type' => self::CPT,
+				'post_status' => 'publish',
+				'posts_per_page' => -1,
+				'orderby' => 'title',
+				'order' => 'ASC',
+			]
+		);
+
+		$templates = [];
+		if ( $templates_query->have_posts() ) {
+			foreach ( $templates_query->get_posts() as $post ) {
+				$templates[] = $this->_get_item( $post );
+			}
+		}
+		return $templates;
+	}
+
+	/**
+	 * @param \WP_Post $post
+	 *
+	 * @return array
+	 */
+	private function _get_item( $post ) {
+		$user = get_user_by( 'id', $post->post_author );
+		return [
+			'id' => $post->ID,
+			'type' => $this->get_id(),
+			'title' => $post->post_title,
+			'thumbnail' => get_the_post_thumbnail_url( $post ),
+			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
+			'author' => $user->display_name,
+			'categories' => [],
+			'keywords' => [],
+		];
 	}
 }

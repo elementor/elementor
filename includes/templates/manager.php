@@ -50,69 +50,22 @@ class Manager {
 		return true;
 	}
 
+	public function get_registered_types() {
+		return $this->_registered_types;
+	}
+
 	public function get_templates() {
-		return [
-			[
-				'name' => 'app',
-				'title' => __( 'App', 'elementor' ),
-				'author' => 'John Doe',
-				'content' => '',
-				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-app.png',
-				'categories' => [],
-				'keywords' => [],
-			],
-			[
-				'name' => 'contact',
-				'title' => __( 'Contact', 'elementor' ),
-				'author' => 'John Doe',
-				'content' => '',
-				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-contact.png',
-				'categories' => [],
-				'keywords' => [],
-			],
-			[
-				'name' => 'corp',
-				'title' => __( 'Corp', 'elementor' ),
-				'author' => 'John Doe',
-				'content' => '',
-				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-corp.png',
-				'categories' => [],
-				'keywords' => [],
-			],
-			[
-				'name' => 'fashion',
-				'title' => __( 'Fashion', 'elementor' ),
-				'author' => 'John Doe',
-				'content' => '',
-				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-fashion.png',
-				'categories' => [],
-				'keywords' => [],
-			],
-			[
-				'name' => 'ny',
-				'title' => __( 'New York', 'elementor' ),
-				'author' => 'John Doe',
-				'content' => '',
-				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-ny.png',
-				'categories' => [],
-				'keywords' => [],
-			],
-			[
-				'name' => 'resume',
-				'title' => __( 'Resume', 'elementor' ),
-				'author' => 'John Doe',
-				'content' => '',
-				'screenshot' => 'http://localhost/wordpress/wp-content/uploads/2016/06/template-resume.png',
-				'categories' => [],
-				'keywords' => [],
-			],
-		];
+		$templates = [];
+		foreach ( $this->get_registered_types() as $type ) {
+			$templates += $type->get_items();
+		}
+		return $templates;
 	}
 
 	public function print_templates_json() {
 		$templates = $this->get_templates();
 
-		die( wp_json_encode( $templates ) );
+		wp_send_json( $templates );
 	}
 
 	public function __construct() {
