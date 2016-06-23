@@ -6,9 +6,41 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-header">
-	<div class="elementor-templates-header-logo-area"></div>
-	<div class="elementor-templates-header-menu-area"></div>
-	<div class="elementor-templates-header-search-area"></div>
+	<div id="elementor-templates-header-logo-area">
+		<img id="elementor-templates-header-logo-image" src="<?php echo ELEMENTOR_ASSETS_URL; ?>/images/icon.svg">
+		<div id="elementor-templates-header-logo-title"><?php _e( 'Library', 'elementor' ); ?></div>
+	</div>
+	<div id="elementor-templates-header-menu-area">
+		<div id="elementor-templates-header-menu">
+			<div class="elementor-templates-menu-item">
+				<span class="elementor-templates-menu-item-title"><?php _e( 'All', 'elementor' ); ?></span>
+			</div>
+			<div class="elementor-templates-menu-item">
+				<span class="elementor-templates-menu-item-title"><?php _e( 'My Templates', 'elementor' ); ?></span>
+				<i class="fa fa-chevron-down"></i>
+			</div>
+			<div class="elementor-templates-menu-item">
+				<span class="elementor-templates-menu-item-title"><?php _e( 'Category', 'elementor' ); ?></span>
+				<i class="fa fa-chevron-down"></i>
+			</div>
+			<div class="elementor-templates-menu-item">
+				<span class="elementor-templates-menu-item-title"><?php _e( 'Page', 'elementor' ); ?></span>
+				<i class="fa fa-chevron-down"></i>
+			</div>
+			<div class="elementor-templates-menu-item">
+				<span class="elementor-templates-menu-item-title"><?php _e( 'Sort By', 'elementor' ); ?></span>
+				<i class="fa fa-chevron-down"></i>
+			</div>
+		</div>
+	</div>
+	<div id="elementor-templates-header-search-area">
+		<input id="elementor-templates-header-search" type="search">
+		<i class="fa fa-search"></i>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-templates-loading">
+	<i class="fa fa-spin fa-refresh"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-template">
