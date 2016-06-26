@@ -272,7 +272,8 @@ class Widget_Image extends Widget_Base {
 		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
 
 		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['image_title'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
+
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), $this->get_image_title( $instance ), $this->get_image_alt( $instance ), $image_class_html );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -316,5 +317,39 @@ class Widget_Image extends Widget_Base {
 			</div>
 		<% } %>
 		<?php
+	}
+
+	private function get_image_alt( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
+
+		if ( ! $alt ) {
+			$attachment = get_post( $post_id );
+
+			$alt = $attachment->post_excerpt;
+
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+
+		return trim( strip_tags( $alt ) );
+	}
+
+	private function get_image_title( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$attachment = get_post( $post_id );
+
+		return trim( strip_tags( $attachment->post_title ) );
 	}
 }
