@@ -25,9 +25,7 @@ class Preview {
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
 		// Tell to WP Cache plugins do not cache this request.
-		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-			define( 'DONOTCACHEPAGE', true );
-		}
+		Utils::do_not_cache();
 	}
 
 	/**
