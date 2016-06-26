@@ -34,6 +34,10 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 
 					return;
 				}
+
+				elementor.templates.getTemplatesCollection().add( response.data.item );
+
+				elementor.templates.showTemplates();
 			}
 		} );
 	}
