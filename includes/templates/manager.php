@@ -89,7 +89,8 @@ class Manager {
 		}
 
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-		$return = $type->save_item( $posted, ! empty( $_POST['template_title'] ) ? $_POST['template_title'] : '' );
+
+		$return = $type->save_item( $posted, ! empty( $_POST['title'] ) ? $_POST['title'] : '' );
 
 		if ( is_wp_error( $return ) ) {
 			wp_send_json_error( [ 'message' => $return->get_error_message() ] );
