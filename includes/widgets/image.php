@@ -327,17 +327,13 @@ class Widget_Image extends Widget_Base {
 		}
 
 		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
-
 		if ( ! $alt ) {
 			$attachment = get_post( $post_id );
-
 			$alt = $attachment->post_excerpt;
-
 			if ( ! $alt ) {
 				$alt = $attachment->post_title;
 			}
 		}
-
 		return trim( strip_tags( $alt ) );
 	}
 
@@ -349,7 +345,6 @@ class Widget_Image extends Widget_Base {
 		}
 
 		$attachment = get_post( $post_id );
-
 		return trim( strip_tags( $attachment->post_title ) );
 	}
 }
