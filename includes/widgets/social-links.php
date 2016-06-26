@@ -14,7 +14,7 @@ class Widget_Social_Links extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'bullet-list';
+		return 'settings';
 	}
 
 	protected function _register_controls() {
