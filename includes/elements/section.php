@@ -141,6 +141,7 @@ class Element_Section extends Element_Base {
 					'no' => __( 'No Gap', 'elementor' ),
 					'narrow' => __( 'Narrow', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
+					'wider' => __( 'Wider', 'elementor' ),
 				],
 				'tab' => self::TAB_SETTINGS,
 				'section' => 'section_layout',
