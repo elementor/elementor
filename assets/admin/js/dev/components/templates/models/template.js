@@ -6,7 +6,7 @@ TemplatesTemplateModel = Backbone.Model.extend( {
 		title: '',
 		author: '',
 		content: '',
-		screenshot: '',
+		thumbnail: '',
 		categories: [],
 		keywords: []
 	}
