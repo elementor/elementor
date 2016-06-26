@@ -5,11 +5,23 @@ var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
 TemplatesManager = function() {
 	var self = this,
 		modal,
+		errorDialog,
 		layout,
 		templatesCollection;
 
 	var initLayout = function() {
 		layout = new TemplatesLayoutView();
+	};
+
+	this.getErrorDialog = function() {
+		if ( ! errorDialog ) {
+			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
+				id: 'elementor-templates-error-dialog',
+				headerMessage: elementor.translate( 'an_error_occurred' )
+			} );
+		}
+
+		return errorDialog;
 	};
 
 	this.getModal = function() {
@@ -62,6 +74,12 @@ TemplatesManager = function() {
 
 	this.showTemplates = function() {
 		layout.showTemplatesView( templatesCollection );
+	};
+
+	this.showErrorDialog = function( errorMessage ) {
+		this.getErrorDialog()
+		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
+		    .show();
 	};
 };
 
