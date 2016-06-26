@@ -39,6 +39,10 @@ TemplatesManager = function() {
 		return layout;
 	};
 
+	this.getTemplatesCollection = function() {
+		return templatesCollection;
+	};
+
 	this.requestRemoteTemplates = function( options ) {
 		var ajaxOptions = {
 			type: 'POST',
