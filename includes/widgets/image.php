@@ -66,28 +66,6 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => '',
-				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'image_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your title text', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
