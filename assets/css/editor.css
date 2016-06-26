@@ -1589,8 +1589,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   margin: auto;
   width: 350px; }
 .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
-  padding: 0 20px;
-  height: 50px; }
+  padding: 0 20px 10px;
+  min-height: 40px; }
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
@@ -1726,5 +1726,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
     height: 100%;
     background-size: cover;
     background-position-x: 50%; }
+
+#elementor-templates-error-dialog .dialog-message {
+  text-align: left; }
+
+#elementor-templates-error-info {
+  margin-top: 10px; }
 
 /*# sourceMappingURL=editor.css.map */

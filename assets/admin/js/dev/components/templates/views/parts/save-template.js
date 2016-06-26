@@ -29,9 +29,15 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 			url: elementor.config.ajaxurl,
 			data: formData,
 			success: function( response ) {
-				if ( response.success ) {
+				if ( ! response.success ) {
+					elementor.templates.showErrorDialog( response.data.message );
 
+					return;
 				}
+
+				elementor.templates.getTemplatesCollection().add( response.data.item );
+
+				elementor.templates.showTemplates();
 			}
 		} );
 	}
