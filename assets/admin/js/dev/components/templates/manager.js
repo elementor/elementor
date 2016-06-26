@@ -6,7 +6,7 @@ TemplatesManager = function() {
 	var self = this,
 		modal,
 		layout,
-		templates;
+		templatesCollection;
 
 	var initLayout = function() {
 		layout = new TemplatesLayoutView();
@@ -53,7 +53,7 @@ TemplatesManager = function() {
 
 		self.requestRemoteTemplates( {
 			success: function( data ) {
-				self.templates = new TemplatesCollection( data );
+				templatesCollection = new TemplatesCollection( data );
 
 				self.showTemplates();
 			}
@@ -61,7 +61,7 @@ TemplatesManager = function() {
 	};
 
 	this.showTemplates = function() {
-		layout.showTemplatesView( self.templates );
+		layout.showTemplatesView( templatesCollection );
 	};
 };
 
