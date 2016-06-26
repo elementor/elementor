@@ -152,28 +152,6 @@
 
 }
 
-// Columns Gap
-.elementor-column-gap-default {
-
-	.elementor-element-populated {
-		padding: 10px;
-	}
-}
-
-.elementor-column-gap-narrow {
-
-	.elementor-element-populated {
-		padding: 5px;
-	}
-}
-
-.elementor-column-gap-wide {
-
-	.elementor-element-populated {
-		padding: 20px;
-	}
-}
-
 // Responsive Grid
 .elementor-column {
 
@@ -193,6 +171,35 @@
 @media (min-width: $screen-md-min) {
 	.elementor-column {
 		@include elementor-grid-classes;
+	}
+
+	// Columns Gap
+	.elementor-column-gap-default {
+
+		.elementor-element-populated {
+			padding: 10px;
+		}
+	}
+
+	.elementor-column-gap-narrow {
+
+		.elementor-element-populated {
+			padding: 5px;
+		}
+	}
+
+	.elementor-column-gap-wide {
+
+		.elementor-element-populated {
+			padding: 20px;
+		}
+	}
+
+	.elementor-column-gap-wider {
+
+		.elementor-element-populated {
+			padding: 30px;
+		}
 	}
 }
 

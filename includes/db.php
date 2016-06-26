@@ -329,4 +329,16 @@ class DB {
 
 		return $builder_data;
 	}
+
+	public function iterate_data( $data_container, $callback ) {
+		foreach ( $data_container as $element_key => $element_value ) {
+			$data_container[ $element_key ] = $callback( $data_container[ $element_key ] );
+
+			if ( ! empty( $data_container[ $element_key ]['elements'] ) ) {
+				$data_container[ $element_key ]['elements'] = $this->iterate_data( $data_container[ $element_key ]['elements'], $callback );
+			}
+		}
+
+		return $data_container;
+	}
 }
