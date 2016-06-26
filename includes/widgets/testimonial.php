@@ -15,7 +15,7 @@ class Widget_testimonial extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'fa-comment-o';
+		return 'settings';
 	}
 
 	protected function _register_controls() {
