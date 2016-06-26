@@ -13,6 +13,7 @@ class Control_Structure extends Control_Base {
 		?>
 		<div class="elementor-control-field">
 			<div class="elementor-control-input-wrapper">
+				<div class="elementor-control-structure-title"><?php _e( 'Structure', 'elementor' ); ?></div>
 				<% var currentPreset = elementor.presetsFactory.getPresetByStructure( data.controlValue ); %>
 				<div class="elementor-control-structure-preset elementor-control-structure-current-preset">
 					<%= elementor.presetsFactory.getPresetSVG( currentPreset.preset, 233, 72, 5 ).outerHTML %>
@@ -42,5 +43,11 @@ class Control_Structure extends Control_Base {
 			<div class="elementor-control-description"><%= data.description %></div>
 		<% } %>
 		<?php
+	}
+
+	protected function get_default_settings() {
+		return [
+			'separator' => 'none',
+		];
 	}
 }
