@@ -86,7 +86,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 			]
 		);
 
@@ -100,7 +100,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'section' => 'section_layout',
 			]
 		);
@@ -125,7 +125,7 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'section' => 'section_layout',
 			]
 		);
@@ -142,7 +142,7 @@ class Element_Section extends Element_Base {
 					'narrow' => __( 'Narrow', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'section' => 'section_layout',
 			]
 		);
@@ -158,7 +158,7 @@ class Element_Section extends Element_Base {
 					'full' => __( 'Fit To Screen', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
@@ -179,7 +179,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -201,7 +201,7 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_top' => true,
@@ -222,7 +222,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -246,7 +246,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'prefix_class' => 'elementor-section-items-',
 				'condition' => [
 					'height' => [ 'full', 'min-height' ],
@@ -267,7 +267,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_SETTINGS,
+				'tab' => self::TAB_GENERAL,
 				'prefix_class' => 'elementor-section-content-',
 				'section' => 'section_layout',
 			]
