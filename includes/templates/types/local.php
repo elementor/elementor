@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Templates;
 
-use Elementor\DB;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
