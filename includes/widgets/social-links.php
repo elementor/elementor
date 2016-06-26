@@ -14,7 +14,7 @@ class Widget_Social_Links extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'bullet-list';
+		return 'settings';
 	}
 
 	protected function _register_controls() {
@@ -287,20 +287,20 @@ class Widget_Social_Links extends Widget_Base {
 		?>
 		<div class="elementor-icon-wrapper">
 			<%
-			_.each( settings.icon_list, function( item ) {
-				if ( settings.icon ) {
-					var hasLink = settings.link && settings.link.url;
+			_.each( settings.social_icon_list, function( item ) {
 
-					if ( hasLink ) { %>
-						<a class="elementor-icon-link" href="<%- settings.link.url %>">
-					<% } %>
-					<div class="elementor-icon">
-						<i class="<%- settings.social %>"></i>
-					</div>
-					<% if ( hasLink ) { %>
-						</a>
-					<% }
-				}
+				var hasLink = item.link && item.link.url;
+
+				if ( hasLink ) { %>
+					<a class="elementor-icon-link" href="<%- item.link.url %>">
+				<% } %>
+				<div class="elementor-icon">
+					<i class="<%- item.social %>"></i>
+				</div>
+				<% if ( hasLink ) { %>
+					</a>
+				<% }
+
 			} );
 			%>
 		</div>
