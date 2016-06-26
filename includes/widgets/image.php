@@ -300,7 +300,7 @@ class Widget_Image extends Widget_Base {
 					imgClass = 'hover-' + settings.hover_animation;
 				}
 
-				image_html = '<img src="' + settings.image.url + '" title="' + settings.title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
+				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
 
 				if ( settings.link ) {
 					var link = settings.link;
