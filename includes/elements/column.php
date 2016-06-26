@@ -252,7 +252,7 @@ class Element_Column extends Element_Base {
 						'80' => '80%',
 						'83' => '83%',
 						'90' => '90%',
-					    '100' => '100%',
+						'100' => '100%',
 					],
 					'default' => '100',
 					'tab' => self::TAB_COLUMN,
