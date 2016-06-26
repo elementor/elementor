@@ -10,6 +10,7 @@ abstract class Type_Base {
 	abstract public function register_data();
 	abstract public function get_items();
 	abstract public function get_item( $item_id );
+	abstract public function get_template( $item_id );
 
 	/**
 	 * @param array  $template_data

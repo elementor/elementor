@@ -99,10 +99,29 @@ class Manager {
 		wp_send_json_success( [ 'item' => $type->get_item( $return ) ] );
 	}
 
+	public function get_template() {
+		if ( empty( $_POST['type'] ) ) {
+			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+		}
+
+		if ( empty( $_POST['item_id'] ) ) {
+			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+		}
+
+		$type = $this->get_type( $_POST['type'] );
+
+		if ( ! $type ) {
+			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+		}
+
+		wp_send_json_success( [ 'template' => $type->get_template( $_POST['item_id'] ) ] );
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 
 		add_action( 'wp_ajax_elementor_get_templates', [ $this, 'print_templates_json' ] );
 		add_action( 'wp_ajax_elementor_save_template', [ $this, 'save_template' ] );
+		add_action( 'wp_ajax_elementor_get_template', [ $this, 'get_template' ] );
 	}
 }

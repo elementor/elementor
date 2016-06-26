@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Templates;
 
+use Elementor\DB;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -108,5 +110,14 @@ class Type_Local extends Type_Base {
 			'categories' => [],
 			'keywords' => [],
 		];
+	}
+
+	public function get_template( $item_id ) {
+		$data = Plugin::instance()->db->get_builder( $item_id );
+
+		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
+			$element['id'] = Utils::generate_random_string();
+			return $element;
+		} );
 	}
 }
