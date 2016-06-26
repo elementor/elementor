@@ -40,11 +40,12 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => '',
+				'label' => 'Link',
 				'type' => Controls_Manager::URL,
 				'default' => [
 					'url' => '#',
 				],
+				'show_external' => false,
 				'section' => 'section_title',
 			]
 		);
@@ -53,7 +54,9 @@ class Widget_Audio extends Widget_Base {
 			'section_sc_options',
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
+				'type' => Controls_Manager::HEADING,
+				'section' => 'section_title',
+				'separator' => 'before',
 			]
 		);
 
@@ -63,7 +66,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Visual Widget', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'yes',
-				'section' => 'section_sc_options',
 				'options' => [
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
@@ -77,7 +79,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'no',
-				'section' => 'section_sc_options',
 				'options' => [
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
@@ -91,7 +92,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Buy buttons', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -105,7 +105,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Like buttons', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -119,7 +118,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Download buttons', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -133,7 +131,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Share buttons/dialogues', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -147,7 +144,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Show Comments', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -161,7 +157,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Number of sound plays', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -175,7 +170,6 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'The uploader name', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'hide',
-				'section' => 'section_sc_options',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
