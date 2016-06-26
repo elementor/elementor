@@ -15,7 +15,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'coding';
+		return 'settings';
 	}
 
 	protected function _register_controls() {
@@ -24,6 +24,16 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Soundcloud', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
+			]
+		);
+
+		$this->add_control(
+			'view',
+			[
+				'label' => __( 'View', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'default' => 'soundcloud',
+				'section' => 'section_title',
 			]
 		);
 
