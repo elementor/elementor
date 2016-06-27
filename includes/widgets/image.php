@@ -80,7 +80,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link_to',
 			[
-				'label' => __( 'Link To', 'elementor' ),
+				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
 				'section' => 'section_image',
@@ -95,13 +95,14 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => 'Link to',
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
 				'condition' => [
 					'link_to' => 'custom',
 				],
+				'show_label' => false,
 			]
 		);
 
