@@ -1,5 +1,5 @@
 //
-// testimonial
+// Testimonial
 //
 .elementor-testimonial-wrapper {
 	overflow: hidden;
@@ -59,23 +59,22 @@
 
 				.elementor-testimonial-image {
 					display: block;
+
+					img {
+						width: 60px;
+						height: 60px;
+					}
 				}
 			}
 		}
 
 		.elementor-testimonial-image {
 			display: inline-block;
-
-			figure img {
-				border-radius: 50%;
-			}
 		}
 
 		.testimonial-detailes {
 			display: inline-block;
-			text-align: left;
 			vertical-align: top;
-			margin-top: 20px;
 
 			&.elementor-has-image {
 				margin-left: 20px;
