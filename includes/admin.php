@@ -177,6 +177,17 @@ class Admin {
 		return $links;
 	}
 
+	public function admin_footer_text( $footer_text ) {
+		$current_screen = get_current_screen();
+		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->base, 'elementor' ) );
+
+		if ( $is_elementor_screen ) {
+			$footer_text = sprintf( __( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ), '<a href="https://wordpress.org/support/view/plugin-reviews/elementor?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>' );
+		}
+
+		return $footer_text;
+	}
+
 	/**
 	 * Admin constructor.
 	 */
@@ -193,5 +204,6 @@ class Admin {
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
+		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 	}
 }

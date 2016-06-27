@@ -9,8 +9,7 @@ abstract class Element_Base {
 	const TAB_STYLE = 'style';
 	const TAB_ADVANCED = 'advanced';
 	const TAB_RESPONSIVE = 'responsive';
-	const TAB_STRUCTURE = 'structure';
-	const TAB_SETTINGS = 'settings';
+	const TAB_GENERAL = 'general';
 	const TAB_COLUMN = 'column';
 
 	private $_controls = [];
@@ -47,8 +46,7 @@ abstract class Element_Base {
 			self::TAB_STYLE => __( 'Style', 'elementor' ),
 			self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
 			self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
-			self::TAB_STRUCTURE => __( 'Structure', 'elementor' ),
-			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
+			self::TAB_GENERAL => __( 'General', 'elementor' ),
 			self::TAB_COLUMN => __( 'Column', 'elementor' ),
 		];
 	}
