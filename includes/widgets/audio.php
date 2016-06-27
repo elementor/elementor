@@ -15,7 +15,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'settings';
+		return 'headphones';
 	}
 
 	protected function _register_controls() {
