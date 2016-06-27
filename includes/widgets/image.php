@@ -78,12 +78,30 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link_to',
+			[
+				'label' => __( 'Link To', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'section' => 'section_image',
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
+				'condition' => [
+					'link_to' => 'custom',
+				],
 			]
 		);
 
@@ -275,12 +293,13 @@ class Widget_Image extends Widget_Base {
 
 		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), $this->get_image_title( $instance ), $this->get_image_alt( $instance ), $image_class_html );
 
-		if ( ! empty( $instance['link']['url'] ) ) {
+		$link = $this->get_link_url( $instance );
+		if ( $link ) {
 			$target = '';
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $link['is_external'] ) ) {
 				$target = ' target="_blank"';
 			}
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
+			$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 		}
 
 		if ( ! empty( $instance['caption'] ) ) {
@@ -303,9 +322,8 @@ class Widget_Image extends Widget_Base {
 
 				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
 
-				if ( settings.link ) {
-					var link = settings.link;
-					image_html = '<a href="' + link.url + '">' + image_html + '</a>';
+				if ( settings.link.url ) {
+					image_html = '<a href="' + settings.link.url + '">' + image_html + '</a>';
 				}
 
 				if ( '' !== settings.caption ) {
@@ -346,5 +364,22 @@ class Widget_Image extends Widget_Base {
 
 		$attachment = get_post( $post_id );
 		return trim( strip_tags( $attachment->post_title ) );
+	}
+
+	private function get_link_url( $instance ) {
+		if ( 'none' === $instance['link_to'] ) {
+			return false;
+		}
+
+		if ( 'custom' === $instance['link_to'] ) {
+			if ( empty( $instance['link']['url'] ) ) {
+				return false;
+			}
+			return $instance['link'];
+		}
+
+		return [
+			'url' => $instance['image']['url'],
+		];
 	}
 }
