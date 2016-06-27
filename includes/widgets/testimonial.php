@@ -15,7 +15,7 @@ class Widget_testimonial extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'settings';
+		return 'blockquote';
 	}
 
 	protected function _register_controls() {
@@ -24,26 +24,6 @@ class Widget_testimonial extends Widget_Base {
 			[
 				'label' => __( 'testimonial', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-			]
-		);
-
-		$this->add_control(
-			'testimonial_image',
-			[
-				'label' => __( 'Add Image', 'elementor' ),
-				'type' => Controls_Manager::MEDIA,
-				'default' => [
-					'url' => Utils::get_placeholder_image_src(),
-				],
-				'section' => 'section_testimonial',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Image_size::get_type(),
-			[
-				'name' => 'thumbnail',
-				'section' => 'section_testimonial',
 			]
 		);
 
@@ -95,6 +75,18 @@ class Widget_testimonial extends Widget_Base {
 				'placeholder' => 'http://your-link.com',
 				'default' => [
 					'url' => '#',
+				],
+				'section' => 'section_testimonial',
+			]
+		);
+
+		$this->add_control(
+			'testimonial_image',
+			[
+				'label' => __( 'Add Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
 				],
 				'section' => 'section_testimonial',
 			]
@@ -318,8 +310,8 @@ class Widget_testimonial extends Widget_Base {
 			return;
 
 		$has_image = false;
-		if ( '' !== $instance['testimonial_image']['id'] ) {
-			$image_url = Group_Control_Image_size::get_attachment_image_src( $instance['testimonial_image']['id'], 'thumbnail', $instance );
+		if ( '' !== $instance['testimonial_image']['url'] ) {
+			$image_url = $instance['testimonial_image']['url'];
 			$has_image = ' elementor-has-image';
 		}
 
@@ -374,5 +366,68 @@ class Widget_testimonial extends Widget_Base {
 	<?php
 	}
 
-	protected function content_template() {}
+	protected function content_template() {
+		?>
+		<%
+		var hasImage = '';
+		if ( '' !== settings.testimonial_image.url ) {
+			imageUrl = settings.testimonial_image.url;
+			hasImage = ' elementor-has-image';
+		}
+
+		var testimonial_detailes_position = settings.testimonial_detailes_position ? ' elementor-testimonial-detailes-align-' + settings.testimonial_detailes_position : '';
+		%>
+		<div class="elementor-testimonial-wrapper">
+
+			<% if ( '' !== settings.testimonial_text ) { %>
+				<div class="elementor-testimonial-text<%- testimonial_detailes_position %>">
+					<%= settings.testimonial_text %>
+				</div>
+		    <% } %>
+
+			<div class="testimonial_description<%- testimonial_detailes_position %>">
+
+				<% if ( imageUrl ) { %>
+					<div class="elementor-testimonial-image">
+						<figure>
+							<img src="<%- imageUrl %>" alt="testimonial" />
+						</figure>
+					</div>
+				<% } %>
+
+				<div class="testimonial-detailes<%- hasImage %>">
+
+					<% if ( '' !== settings.testimonial_full_name ) { %>
+						<div class="elementor-testimonial-name">
+							<%= settings.testimonial_full_name %>
+						</div>
+					<% } %>
+
+					<% if ( '' !== settings.testimonial_job_title ) { %>
+						<span class="elementor-testimonial-job-title">
+							<%= settings.testimonial_job_title %>
+						</span>
+					<% } %>
+
+					<% if ( '' !== settings.testimonial_company ) { %>
+						<span class="elementor-testimonial-company">
+
+							<% if ( '' !== settings.testimonial_company_url.url ) { %>
+								<a href="<%- settings.testimonial_company_url.url %>" class="elementor-testimonial-company-url">
+							<% } %>
+
+								<%= settings.testimonial_company %>
+
+							<% if ( '' !== settings.testimonial_company_url.url ) { %>
+								</a>
+							<% } %>
+
+						</span>
+					<% } %>
+
+				</div>
+			</div>
+		</div>
+	<?php
+	}
 }
