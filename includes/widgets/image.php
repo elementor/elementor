@@ -288,7 +288,13 @@ class Widget_Image extends Widget_Base {
 		if ( empty( $instance['image']['url'] ) ) {
 			return;
 		}
+		$has_caption = ! empty( $instance['caption'] );
+
 		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
+
+		if ( $has_caption ) {
+			$image_html .= '<figure class="wp-caption">';
+		}
 
 		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
 
@@ -303,8 +309,12 @@ class Widget_Image extends Widget_Base {
 			$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 		}
 
-		if ( ! empty( $instance['caption'] ) ) {
-			$image_html .= sprintf( '<p class="widget-image-caption wp-caption-text">%s</p>', $instance['caption'] );
+		if ( $has_caption ) {
+			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $instance['caption'] );
+		}
+
+		if ( $has_caption ) {
+			$image_html .= '</figure>';
 		}
 		$image_html .= '</div>';
 
@@ -316,9 +326,16 @@ class Widget_Image extends Widget_Base {
 		<% if ( '' !== settings.image.url ) { %>
 			<div class="elementor-image<%= settings.shape ? ' elementor-image-shape-' + settings.shape : '' %>">
 				<%
-				var imgClass = '', image_html = '';
+				var imgClass = '', image_html = '',
+					hasCaption = '' !== settings.caption,
+					image_html = '';
+
 				if ( '' !== settings.hover_animation ) {
 					imgClass = 'hover-' + settings.hover_animation;
+				}
+				
+				if ( hasCaption ) {
+					image_html += '<figure class="wp-caption">';
 				}
 
 				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
@@ -336,8 +353,12 @@ class Widget_Image extends Widget_Base {
 					image_html = '<a href="' + link_url + '">' + image_html + '</a>';
 				}
 
-				if ( '' !== settings.caption ) {
-					image_html += '<p class="widget-image-caption wp-caption-text">' + settings.caption + '</p>';
+				if ( hasCaption ) {
+					image_html += '<figcaption class="widget-image-caption wp-caption-text">' + settings.caption + '</figcaption>';
+				}
+
+				if ( hasCaption ) {
+					image_html += '</figure>';
 				}
 
 				print( image_html );
