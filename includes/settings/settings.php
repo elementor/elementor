@@ -124,8 +124,6 @@ class Settings {
 			$footer_text = sprintf( __( 'Love how Elementor works? Please leave a positive rating on %s, so we can continue to offer it for free (&#9733;&#9733;&#9733;&#9733;&#9733; would be great, thanks!).', 'elementor' ), '<a href="https://wordpress.org/support/view/plugin-reviews/elementor?filter=5" target="_blank"><strong>WordPress.org</strong></a>' );
 		}
 
-
-
 		return $footer_text;
 	}
 
