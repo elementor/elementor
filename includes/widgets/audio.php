@@ -185,7 +185,6 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'view',
 			[
