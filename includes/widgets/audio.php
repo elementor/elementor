@@ -28,16 +28,6 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'soundcloud',
-				'section' => 'section_title',
-			]
-		);
-
-		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -183,6 +173,17 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+			]
+		);
+
+
+		$this->add_control(
+			'view',
+			[
+				'label' => __( 'View', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'default' => 'soundcloud',
+				'section' => 'section_title',
 			]
 		);
 	}
