@@ -35,4 +35,26 @@ class Utils {
 
 		return $video_id_parts[1];
 	}
+
+	/**
+	 * Tell to WP Cache plugins do not cache this request.
+	 *
+	 * @return void
+	 */
+	public static function do_not_cache() {
+		if ( ! defined( 'DONOTCACHEPAGE' ) )
+			define( 'DONOTCACHEPAGE', true );
+
+		if ( ! defined( 'DONOTCACHEDB' ) )
+			define( 'DONOTCACHEDB', true );
+
+		if ( ! defined( 'DONOTMINIFY' ) )
+			define( 'DONOTMINIFY', true );
+
+		if ( ! defined( 'DONOTCDN' ) )
+			define( 'DONOTCDN', true );
+
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
+			define( 'DONOTCACHCEOBJECT', true );
+	}
 }

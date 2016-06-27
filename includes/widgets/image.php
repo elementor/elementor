@@ -66,28 +66,6 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => '',
-				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'image_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your title text', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -294,7 +272,8 @@ class Widget_Image extends Widget_Base {
 		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
 
 		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['image_title'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
+
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), $this->get_image_title( $instance ), $this->get_image_alt( $instance ), $image_class_html );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$target = '';
@@ -322,7 +301,7 @@ class Widget_Image extends Widget_Base {
 					imgClass = 'hover-' + settings.hover_animation;
 				}
 
-				image_html = '<img src="' + settings.image.url + '" title="' + settings.title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
+				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
 
 				if ( settings.link ) {
 					var link = settings.link;
@@ -338,5 +317,34 @@ class Widget_Image extends Widget_Base {
 			</div>
 		<% } %>
 		<?php
+	}
+
+	private function get_image_alt( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
+		if ( ! $alt ) {
+			$attachment = get_post( $post_id );
+			$alt = $attachment->post_excerpt;
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+		return trim( strip_tags( $alt ) );
+	}
+
+	private function get_image_title( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$attachment = get_post( $post_id );
+		return trim( strip_tags( $attachment->post_title ) );
 	}
 }
