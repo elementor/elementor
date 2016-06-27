@@ -3,25 +3,25 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Social_Links extends Widget_Base {
+class Widget_Social_Icons extends Widget_Base {
 
 	public function get_id() {
-		return 'social-links';
+		return 'social-icons';
 	}
 
 	public function get_title() {
-		return __( 'Social Links', 'elementor' );
+		return __( 'Social Icons', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'settings';
+		return 'social-icons';
 	}
 
 	protected function _register_controls() {
 		$this->add_control(
 			'section_social_icon',
 			[
-				'label' => __( 'Social Links', 'elementor' ),
+				'label' => __( 'Social Icons', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -87,10 +87,10 @@ class Widget_Social_Links extends Widget_Base {
 				'fields' => [
 					[
 						'name' => 'social',
-						'label' => __( 'Add a network', 'elementor' ),
-						'type' => Controls_Manager::SELECT2,
+						'label' => __( 'Select Social Media', 'elementor' ),
+						'type' => Controls_Manager::ICON,
 						'label_block' => true,
-						'options' => [
+						'icons' => [
 							'fa fa-behance' => __( 'Behance', 'elementor' ),
 							'fa fa-bitbucket' => __( 'Bitbucket', 'elementor' ),
 							'fa fa-codepen' => __( 'Codepen', 'elementor' ),
@@ -157,7 +157,7 @@ class Widget_Social_Links extends Widget_Base {
 		$this->add_control(
 			'icon_color',
 			[
-				'label' => __( 'Icon Colors', 'elementor' ),
+				'label' => __( 'Icon Color', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
@@ -172,7 +172,7 @@ class Widget_Social_Links extends Widget_Base {
 		$this->add_control(
 			'icon_custom_color',
 			[
-				'label' => __( 'Icon Custom Color', 'elementor' ),
+				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
