@@ -44,12 +44,16 @@ class Utils {
 	public static function do_not_cache() {
 		if ( ! defined( 'DONOTCACHEPAGE' ) )
 			define( 'DONOTCACHEPAGE', true );
+
 		if ( ! defined( 'DONOTCACHEDB' ) )
 			define( 'DONOTCACHEDB', true );
+
 		if ( ! defined( 'DONOTMINIFY' ) )
 			define( 'DONOTMINIFY', true );
+
 		if ( ! defined( 'DONOTCDN' ) )
 			define( 'DONOTCDN', true );
+
 		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
 			define( 'DONOTCACHCEOBJECT', true );
 	}

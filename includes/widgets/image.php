@@ -66,28 +66,6 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => '',
-				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'image_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your title text', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -100,12 +78,31 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'link',
+			'link_to',
 			[
 				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'section' => 'section_image',
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => 'Link to',
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
+				'condition' => [
+					'link_to' => 'custom',
+				],
+				'show_label' => false,
 			]
 		);
 
@@ -250,7 +247,7 @@ class Widget_Image extends Widget_Base {
 				],
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .widget-image-caption' => 'text-align: {{VALUE}};',
 				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_caption',
@@ -265,7 +262,7 @@ class Widget_Image extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_caption',
 				'scheme' => [
@@ -279,7 +276,7 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'selector' => '{{WRAPPER}} .widget-image-text',
+				'selector' => '{{WRAPPER}} .widget-image-caption',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -291,21 +288,33 @@ class Widget_Image extends Widget_Base {
 		if ( empty( $instance['image']['url'] ) ) {
 			return;
 		}
+		$has_caption = ! empty( $instance['caption'] );
+
 		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
 
-		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['image_title'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
-
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$target = '';
-			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$target = ' target="_blank"';
-			}
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
+		if ( $has_caption ) {
+			$image_html .= '<figure class="wp-caption">';
 		}
 
-		if ( ! empty( $instance['caption'] ) ) {
-			$image_html .= sprintf( '<p class="widget-image-text">%s</p>', $instance['caption'] );
+		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
+
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), $this->get_image_title( $instance ), $this->get_image_alt( $instance ), $image_class_html );
+
+		$link = $this->get_link_url( $instance );
+		if ( $link ) {
+			$target = '';
+			if ( ! empty( $link['is_external'] ) ) {
+				$target = ' target="_blank"';
+			}
+			$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
+		}
+
+		if ( $has_caption ) {
+			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $instance['caption'] );
+		}
+
+		if ( $has_caption ) {
+			$image_html .= '</figure>';
 		}
 		$image_html .= '</div>';
 
@@ -317,20 +326,39 @@ class Widget_Image extends Widget_Base {
 		<% if ( '' !== settings.image.url ) { %>
 			<div class="elementor-image<%= settings.shape ? ' elementor-image-shape-' + settings.shape : '' %>">
 				<%
-				var imgClass = '', image_html = '';
+				var imgClass = '', image_html = '',
+					hasCaption = '' !== settings.caption,
+					image_html = '';
+
 				if ( '' !== settings.hover_animation ) {
 					imgClass = 'hover-' + settings.hover_animation;
 				}
-
-				image_html = '<img src="' + settings.image.url + '" title="' + settings.title + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
-
-				if ( settings.link ) {
-					var link = settings.link;
-					image_html = '<a href="' + link.url + '">' + image_html + '</a>';
+				
+				if ( hasCaption ) {
+					image_html += '<figure class="wp-caption">';
 				}
 
-				if ( '' !== settings.caption ) {
-					image_html += '<p class="widget-image-text">' + settings.caption + '</p>';
+				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
+				
+				var link_url;
+				if ( 'custom' === settings.link_to ) {
+					link_url = settings.link.url;
+				}
+				
+				if ( 'file' === settings.link_to ) {
+					link_url = settings.image.url;
+				}
+				
+				if ( link_url ) {
+					image_html = '<a href="' + link_url + '">' + image_html + '</a>';
+				}
+
+				if ( hasCaption ) {
+					image_html += '<figcaption class="widget-image-caption wp-caption-text">' + settings.caption + '</figcaption>';
+				}
+
+				if ( hasCaption ) {
+					image_html += '</figure>';
 				}
 
 				print( image_html );
@@ -338,5 +366,51 @@ class Widget_Image extends Widget_Base {
 			</div>
 		<% } %>
 		<?php
+	}
+
+	private function get_image_alt( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
+		if ( ! $alt ) {
+			$attachment = get_post( $post_id );
+			$alt = $attachment->post_excerpt;
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+		return trim( strip_tags( $alt ) );
+	}
+
+	private function get_image_title( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$attachment = get_post( $post_id );
+		return trim( strip_tags( $attachment->post_title ) );
+	}
+
+	private function get_link_url( $instance ) {
+		if ( 'none' === $instance['link_to'] ) {
+			return false;
+		}
+
+		if ( 'custom' === $instance['link_to'] ) {
+			if ( empty( $instance['link']['url'] ) ) {
+				return false;
+			}
+			return $instance['link'];
+		}
+
+		return [
+			'url' => $instance['image']['url'],
+		];
 	}
 }
