@@ -11,7 +11,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Audio', 'elementor' );
+		return __( 'SoundCloud', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -22,7 +22,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'section_title',
 			[
-				'label' => __( 'Soundcloud', 'elementor' ),
+				'label' => __( 'SoundCloud', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -43,9 +43,23 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'default' => [
-					'url' => '#',
+					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
 				],
 				'show_external' => false,
+				'section' => 'section_title',
+			]
+		);
+
+		$this->add_control(
+			'visual',
+			[
+				'label' => __( 'Visual Player', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'no',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
 				'section' => 'section_title',
 			]
 		);
@@ -57,19 +71,6 @@ class Widget_Audio extends Widget_Base {
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_title',
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'visual',
-			[
-				'label' => __( 'Visual Widget', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'yes',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
 			]
 		);
 
@@ -89,9 +90,9 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'buying',
 			[
-				'label' => __( 'Buy buttons', 'elementor' ),
+				'label' => __( 'Buy button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -102,9 +103,9 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'liking',
 			[
-				'label' => __( 'Like buttons', 'elementor' ),
+				'label' => __( 'Like button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -115,9 +116,9 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'download',
 			[
-				'label' => __( 'Download buttons', 'elementor' ),
+				'label' => __( 'Download button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -128,9 +129,9 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sharing',
 			[
-				'label' => __( 'Share buttons/dialogues', 'elementor' ),
+				'label' => __( 'Share button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -143,7 +144,7 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Show Comments', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -154,9 +155,9 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'show_playcount',
 			[
-				'label' => __( 'Number of sound plays', 'elementor' ),
+				'label' => __( 'Play Counts', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -167,9 +168,9 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'show_user',
 			[
-				'label' => __( 'The uploader name', 'elementor' ),
+				'label' => __( 'Username', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'hide',
+				'default' => 'show',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -180,9 +181,8 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
 			]
 		);
 	}
