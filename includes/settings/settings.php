@@ -137,6 +137,6 @@ class Settings {
 
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] , 1, 2 );
+		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] , 1, 1 );
 	}
 }
