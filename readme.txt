@@ -115,6 +115,19 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.3.2 - 27.06.2016 =
+* Tweak! - Added fully compatible for Cache plugins
+* Tweak! - Image widget: `<img>` alt and title fetch from Media library
+* Tweak! - Image widget: Added link to file media
+* Tweak! - Image-Box widget: `<img>` alt and title fetch from Media library
+* Tweak! - Carousel widget: `<img>` alt fetch from Media library
+* Tweak! - Add more columns options for responsive mode
+* Tweak! - Add `<title>` in Elementor editor 
+* Tweak! - Rearranged section settings
+* Tweak! - Add more gap size (Wider)
+* Tweak! - Add more color schemes
+* Tweak! - Add negative value for letter spacing
+
 = 0.3.1 - 22.06.2016 =
 * Tweak! - Added a quick tour video for Elementor
 * Tweak! - Enqueue YouTube API from JS (Better compatible for more themes)
