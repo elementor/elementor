@@ -20,7 +20,7 @@ class Widget_Audio extends Widget_Base {
 
 	protected function _register_controls() {
 		$this->add_control(
-			'section_title',
+			'section_audio',
 			[
 				'label' => __( 'SoundCloud', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
@@ -36,7 +36,7 @@ class Widget_Audio extends Widget_Base {
 					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
 				],
 				'show_external' => false,
-				'section' => 'section_title',
+				'section' => 'section_audio',
 			]
 		);
 
@@ -50,7 +50,7 @@ class Widget_Audio extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'section' => 'section_title',
+				'section' => 'section_audio',
 			]
 		);
 
@@ -59,7 +59,7 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'section' => 'section_title',
+				'section' => 'section_audio',
 				'separator' => 'before',
 			]
 		);
@@ -74,6 +74,7 @@ class Widget_Audio extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -87,6 +88,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -100,6 +102,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -113,6 +116,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -126,6 +130,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -139,6 +144,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -152,6 +158,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -165,6 +172,7 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
+				'section' => 'section_audio',
 			]
 		);
 
@@ -173,6 +181,7 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'section' => 'section_audio',
 			]
 		);
 
@@ -183,7 +192,7 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'soundcloud',
-				'section' => 'section_title',
+				'section' => 'section_audio',
 			]
 		);
 	}
