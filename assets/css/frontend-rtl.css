@@ -806,14 +806,15 @@
         margin-left: 0; }
       .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center .elementor-testimonial-image {
         display: block; }
-        .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center .elementor-testimonial-image img {
-          width: 60px;
-          height: 60px; }
     .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image {
       display: inline-block; }
+      .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image figure img {
+        border-radius: 50%; }
     .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes {
       display: inline-block;
-      vertical-align: top; }
+      text-align: left;
+      vertical-align: top;
+      margin-top: 20px; }
       .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
         margin-left: 20px; }
 
