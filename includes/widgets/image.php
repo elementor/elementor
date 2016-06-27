@@ -321,9 +321,18 @@ class Widget_Image extends Widget_Base {
 				}
 
 				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
-
-				if ( settings.link.url ) {
-					image_html = '<a href="' + settings.link.url + '">' + image_html + '</a>';
+				
+				var link_url;
+				if ( 'custom' === settings.link_to ) {
+					link_url = settings.link.url;
+				}
+				
+				if ( 'file' === settings.link_to ) {
+					link_url = settings.image.url;
+				}
+				
+				if ( link_url ) {
+					image_html = '<a href="' + link_url + '">' + image_html + '</a>';
 				}
 
 				if ( '' !== settings.caption ) {
