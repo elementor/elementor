@@ -247,7 +247,7 @@ class Widget_Image extends Widget_Base {
 				],
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .widget-image-caption' => 'text-align: {{VALUE}};',
 				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_caption',
@@ -262,7 +262,7 @@ class Widget_Image extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
 				],
 				'section' => 'section_style_caption',
 				'scheme' => [
@@ -276,7 +276,7 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'selector' => '{{WRAPPER}} .widget-image-text',
+				'selector' => '{{WRAPPER}} .widget-image-caption',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -304,7 +304,7 @@ class Widget_Image extends Widget_Base {
 		}
 
 		if ( ! empty( $instance['caption'] ) ) {
-			$image_html .= sprintf( '<p class="widget-image-text">%s</p>', $instance['caption'] );
+			$image_html .= sprintf( '<p class="widget-image-caption wp-caption-text">%s</p>', $instance['caption'] );
 		}
 		$image_html .= '</div>';
 
@@ -337,7 +337,7 @@ class Widget_Image extends Widget_Base {
 				}
 
 				if ( '' !== settings.caption ) {
-					image_html += '<p class="widget-image-text">' + settings.caption + '</p>';
+					image_html += '<p class="widget-image-caption wp-caption-text">' + settings.caption + '</p>';
 				}
 
 				print( image_html );
