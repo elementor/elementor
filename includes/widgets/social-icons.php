@@ -267,16 +267,16 @@ class Widget_Social_Icons extends Widget_Base {
 		?>
 		<div class="elementor-icon-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
-
-				if ( ! empty( $item['link']['url'] ) ) : ?>
+				$has_link = ! empty( $item['link']['url'] );
+				if ( $has_link ) : ?>
 					<a class="elementor-icon-link" href="<?php echo $item['link']['url']; ?>">
-				<?php endif;?>
+				<?php endif; ?>
 				<div class="elementor-icon">
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
-				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
-					</a>
-				<?php endif; ?>
+				<?php if ( $has_link ) : ?>
+				</a>
+			<?php endif; ?>
 
 			<?php endforeach; ?>
 		</div>
@@ -288,7 +288,6 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-icon-wrapper">
 			<%
 			_.each( settings.social_icon_list, function( item ) {
-
 				var hasLink = item.link && item.link.url;
 
 				if ( hasLink ) { %>
