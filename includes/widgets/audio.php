@@ -40,7 +40,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => 'Link',
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'default' => [
 					'url' => '#',
