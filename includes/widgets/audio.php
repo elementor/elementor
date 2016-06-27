@@ -11,11 +11,11 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Audio', 'elementor' );
+		return __( 'Soundcloud', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'coding';
+		return 'settings';
 	}
 
 	protected function _register_controls() {
