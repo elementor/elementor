@@ -29,7 +29,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_control(
 			'shape',
 			[
-				'label' => __( 'Shape', 'Elementor' ),
+				'label' => __( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_social_icon',
 				'default' => 'square',
@@ -275,8 +275,8 @@ class Widget_Social_Icons extends Widget_Base {
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
 				<?php if ( $has_link ) : ?>
-				</a>
-			<?php endif; ?>
+					</a>
+				<?php endif; ?>
 
 			<?php endforeach; ?>
 		</div>
