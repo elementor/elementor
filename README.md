@@ -44,6 +44,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
 
 ### Be a contributor ###
