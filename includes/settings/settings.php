@@ -117,24 +117,11 @@ class Settings {
 		<?php
 	}
 
-	public function admin_footer_text( $footer_text ) {
-		global $current_screen;
-
-		if ( 'elementor' == $current_screen->parent_base ) {
-			$footer_text = sprintf( __( 'Love how Elementor works? Please leave a positive rating on %s, so we can continue to offer it for free (&#9733;&#9733;&#9733;&#9733;&#9733; would be great, thanks!).', 'elementor' ), '<a href="https://wordpress.org/support/view/plugin-reviews/elementor?filter=5" target="_blank"><strong>WordPress.org</strong></a>' );
-		}
-
-		return $footer_text;
-	}
-
-
-
 	public function __construct() {
 		include( ELEMENTOR_PATH . 'includes/settings/controls.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/validations.php' );
 
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] , 1, 1 );
 	}
 }
