@@ -311,7 +311,7 @@ class Widget_testimonial extends Widget_Base {
 		$testimonial_image_position = $instance['testimonial_image_position'] ? ' elementor-testimonial-image-align-' . $instance['testimonial_image_position'] : '';
 		$testimonial_text_position = $instance['testimonial_text_position'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_text_position'] : '';
 		?>
-		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?>">
+		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?><?php echo $testimonial_image_position; ?>">
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
 				<div class="elementor-testimonial-text">
