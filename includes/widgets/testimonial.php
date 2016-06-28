@@ -97,7 +97,7 @@ class Widget_testimonial extends Widget_Base {
 			[
 				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'Elementor',
+				'default' => 'center',
 				'section' => 'section_testimonial',
 				'options' => [
 					'left'    => [
@@ -113,6 +113,9 @@ class Widget_testimonial extends Widget_Base {
 						'icon' => 'align-right',
 					],
 				],
+				'condition' => [
+					'testimonial_image[url]!' => '',
+				],
 			]
 		);
 
@@ -121,7 +124,7 @@ class Widget_testimonial extends Widget_Base {
 			[
 				'label' => __( 'Details Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'Elementor',
+				'default' => 'center',
 				'section' => 'section_testimonial',
 				'options' => [
 					'left'    => [
@@ -256,10 +259,7 @@ class Widget_testimonial extends Widget_Base {
 				'label' => __( 'Typography', 'elementor' ),
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_testimonial_job',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-testimonial-job-title',
-					'{{WRAPPER}} .elementor-testimonial-company a',
-				],
+				'selector' => '{{WRAPPER}} .elementor-testimonial-job-title, {{WRAPPER}} .elementor-testimonial-company a',
 			]
 		);
 
@@ -311,7 +311,7 @@ class Widget_testimonial extends Widget_Base {
 		$testimonial_image_position = $instance['testimonial_image_position'] ? ' elementor-testimonial-image-align-' . $instance['testimonial_image_position'] : '';
 		$testimonial_text_position = $instance['testimonial_text_position'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_text_position'] : '';
 		?>
-		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?><?php echo $testimonial_image_position; ?>">
+		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?>">
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
 				<div class="elementor-testimonial-text">
@@ -319,10 +319,10 @@ class Widget_testimonial extends Widget_Base {
 				</div>
 			<?php endif; ?>
 
-			<div class="testimonial_description">
+			<div class="testimonial_description<?php echo $testimonial_image_position; ?>">
 
 				<?php if ( isset( $image_url ) ) : ?>
-					<div class="elementor-testimonial-image<?php echo $testimonial_image_position; ?>">
+					<div class="elementor-testimonial-image">
 						<figure>
 							<img src="<?php echo esc_attr( $image_url ); ?>" alt="testimonial" />
 						</figure>
@@ -363,7 +363,7 @@ class Widget_testimonial extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-		var hasImage = '';
+		var imageUrl = false, hasImage = '';
 		if ( '' !== settings.testimonial_image.url ) {
 			imageUrl = settings.testimonial_image.url;
 			hasImage = ' elementor-has-image';
@@ -380,10 +380,10 @@ class Widget_testimonial extends Widget_Base {
 				</div>
 		    <% } %>
 
-			<div class="testimonial_description<%- testimonial_text_position %>">
+			<div class="testimonial_description<%- testimonial_image_position %>">
 
 				<% if ( imageUrl ) { %>
-					<div class="elementor-testimonial-image<%- testimonial_image_position %>">
+					<div class="elementor-testimonial-image">
 						<figure>
 							<img src="<%- imageUrl %>" alt="testimonial" />
 						</figure>
