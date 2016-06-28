@@ -636,6 +636,7 @@
     .elementor-widget .elementor-icon a:hover {
       color: inherit; }
   .elementor-widget .elementor-icon i {
+    font-size: 50px;
     width: 1em;
     height: 1em; }
 .elementor-widget.elementor-view-stacked .elementor-icon {
@@ -820,6 +821,20 @@
       margin-top: 20px; }
       .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
         margin-left: 20px; }
+
+.elementor-widget .elementor-icon.elementor-social-icon {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 0.6em; }
+  .elementor-widget .elementor-icon.elementor-social-icon i {
+    font-size: 20px; }
+  .elementor-widget .elementor-icon.elementor-social-icon:hover {
+    opacity: .5; }
+.elementor-widget.elementor-shape-rounded .elementor-icon.elementor-social-icon {
+  border-radius: 20%; }
+.elementor-widget.elementor-shape-circle .elementor-icon.elementor-social-icon {
+  border-radius: 50%; }
 
 .slick-slider {
   position: relative;
