@@ -39,7 +39,7 @@ class Scheme_Color extends Scheme_Base {
 	public static function get_system_schemes() {
 		return [
 			'joker' => [
-				'title' => __( 'Joker', 'elementor' ),
+				'title' => 'Joker',
 				'items' => [
 					self::COLOR_1 => '#000000',
 					self::COLOR_2 => '#b7b4b4',
@@ -48,7 +48,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'ocean' => [
-				'title' => __( 'Ocean', 'elementor' ),
+				'title' => 'Ocean',
 				'items' => [
 					self::COLOR_1 => '#1569ae',
 					self::COLOR_2 => '#b6c9db',
@@ -57,7 +57,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'royal' => [
-				'title' => __( 'Royal', 'elementor' ),
+				'title' => 'Royal',
 				'items' => [
 					self::COLOR_1 => '#d5ba7f',
 					self::COLOR_2 => '#902729',
@@ -66,7 +66,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'violet' => [
-				'title' => __( 'Violet', 'elementor' ),
+				'title' => 'Violet',
 				'items' => [
 					self::COLOR_1 => '#747476',
 					self::COLOR_2 => '#ebca41',
@@ -75,7 +75,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'sweet' => [
-				'title' => __( 'Sweet', 'elementor' ),
+				'title' => 'Sweet',
 				'items' => [
 					self::COLOR_1 => '#6ccdd9',
 					self::COLOR_2 => '#763572',
@@ -84,7 +84,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'urban' => [
-				'title' => __( 'Urban', 'elementor' ),
+				'title' => 'Urban',
 				'items' => [
 					self::COLOR_1 => '#db6159',
 					self::COLOR_2 => '#3b3b3b',
@@ -93,7 +93,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'earth' => [
-				'title' => __( 'Earth', 'elementor' ),
+				'title' => 'Earth',
 				'items' => [
 					self::COLOR_1 => '#882021',
 					self::COLOR_2 => '#c48e4c',
@@ -102,7 +102,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'river' => [
-				'title' => __( 'River', 'elementor' ),
+				'title' => 'River',
 				'items' => [
 					self::COLOR_1 => '#8dcfc8',
 					self::COLOR_2 => '#565656',
@@ -111,7 +111,7 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 			'pastel' => [
-				'title' => __( 'Pastel', 'elementor' ),
+				'title' => 'Pastel',
 				'items' => [
 					self::COLOR_1 => '#f27f6f',
 					self::COLOR_2 => '#f4cd78',
