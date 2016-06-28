@@ -180,7 +180,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon i' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -192,16 +192,14 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
-				'default' => [
-					'size' => 20,
-				],
 				'range' => [
 					'px' => [
 						'min' => 6,
+						'max' => 300,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-social-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -214,18 +212,15 @@ class Widget_Social_Icons extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'default' => [
-					'size' => 0,
+					'unit' => 'em',
 				],
 				'range' => [
-					'px' => [
+					'em' => [
 						'min' => 0,
 					],
-				],
-				'condition' => [
-					'view!' => 'default',
 				],
 			]
 		);
@@ -237,16 +232,14 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
-				'default' => [
-					'size' => 14,
-				],
 				'range' => [
 					'px' => [
-						'min' => 6,
+						'min' => 0,
+						'max' => 100,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -257,7 +250,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'name' => 'image_border',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
-				'selector' => '{{WRAPPER}} .elementor-icon',
+				'selector' => '{{WRAPPER}} .elementor-social-icon',
 			]
 		);
 	}
@@ -265,13 +258,13 @@ class Widget_Social_Icons extends Widget_Base {
 
 	protected function render( $instance = [] ) {
 		?>
-		<div class="elementor-icon-wrapper">
+		<div class="elementor-social-icons-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
 
 				if ( ! empty( $item['link']['url'] ) ) : ?>
-					<a class="elementor-icon-link" href="<?php echo $item['link']['url']; ?>">
+					<a class="elementor-social-icon-link" href="<?php echo $item['link']['url']; ?>">
 				<?php endif;?>
-				<div class="elementor-icon">
+				<div class="elementor-icon elementor-social-icon">
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
 				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
@@ -285,16 +278,16 @@ class Widget_Social_Icons extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-icon-wrapper">
+		<div class="elementor-social-icons-wrapper">
 			<%
 			_.each( settings.social_icon_list, function( item ) {
 
 				var hasLink = item.link && item.link.url;
 
 				if ( hasLink ) { %>
-					<a class="elementor-icon-link" href="<%- item.link.url %>">
+					<a class="elementor-social-icon-link" href="<%- item.link.url %>">
 				<% } %>
-				<div class="elementor-icon">
+				<div class="elementor-icon elementor-social-icon">
 					<i class="<%- item.social %>"></i>
 				</div>
 				<% if ( hasLink ) { %>

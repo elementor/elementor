@@ -2,3 +2,43 @@
 // Social Icons
 //
 
+.elementor-widget {
+
+	.elementor-icon {
+
+		&.elementor-social-icon {
+			background-color: black;
+			color: white;
+			text-align: center;
+			padding: 0.6em;
+
+			i {
+				font-size: 20px;
+			}
+
+			&:hover {
+				opacity: .5;
+			}
+		}
+	}
+
+	&.elementor-shape-rounded {
+
+		.elementor-icon {
+
+			&.elementor-social-icon {
+				border-radius: 20%;
+			}
+		}
+	}
+
+	&.elementor-shape-circle {
+
+		.elementor-icon {
+
+			&.elementor-social-icon {
+				border-radius: 50%;
+			}
+		}
+	}
+}
