@@ -37,7 +37,6 @@ class Widget_Social_Icons extends Widget_Base {
 					'rounded' => __( 'Rounded', 'elementor' ),
 					'square' => __( 'Square', 'elementor' ),
 					'circle' => __( 'Circle', 'elementor' ),
-					'none' => __( 'None', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
@@ -109,10 +108,9 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-medium' => __( 'Medium', 'elementor' ),
 							'fa fa-pinterest' => __( 'Pinterest', 'elementor' ),
 							'fa fa-product-hunt' => __( 'Product Hunt', 'elementor' ),
-							'fa fa-reddit' => __( 'reddit', 'elementor' ),
+							'fa fa-reddit' => __( 'Reddit', 'elementor' ),
 							'fa fa-snapchat' => __( 'Snapchat', 'elementor' ),
 							'fa fa-soundcloud' => __( 'SoundCloud', 'elementor' ),
-							'fa fa-stack-exchange' => __( 'Stack Exchange', 'elementor' ),
 							'fa fa-stack-overflow' => __( 'Stack Overflow', 'elementor' ),
 							'fa fa-tumblr' => __( 'Tumblr', 'elementor' ),
 							'fa fa-twitter' => __( 'Twitter', 'elementor' ),
@@ -162,9 +160,9 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_social_style',
-				'default' => 'official',
+				'default' => 'default',
 				'options' => [
-					'official' => __( 'Official Color', 'elementor' ),
+					'default' => __( 'Official Color', 'elementor' ),
 					'custom' => __( 'Custom Color', 'elementor' ),
 				],
 			]
@@ -281,9 +279,9 @@ class Widget_Social_Icons extends Widget_Base {
 				$social = str_replace( 'fa fa-', '', $item['social'] );
 
 				if ( $has_link ) : ?>
-					<a class="elementor-social-icon-link" href="<?php echo $item['link']['url']; ?>">
+					<a class="elementor-social-icon-link" href="<?php echo esc_attr( $item['link']['url'] ); ?>">
 				<?php endif; ?>
-				<div class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social; ?>">
+				<div class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social ); ?>">
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
 				<?php if ( $has_link ) : ?>
@@ -301,7 +299,7 @@ class Widget_Social_Icons extends Widget_Base {
 			<%
 			_.each( settings.social_icon_list, function( item ) {
 				var hasLink = item.link && item.link.url
-					social = item.social.replace( 'fa fa-', '', item.social );
+					social = item.social.replace( 'fa fa-', '' );
 
 				if ( hasLink ) { %>
 					<a class="elementor-social-icon-link" href="<%- item.link.url %>">
