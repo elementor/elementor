@@ -822,14 +822,20 @@
       .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
         margin-left: 20px; }
 
+.elementor-widget .elementor-social-icons-wrapper {
+  font-size: 0; }
 .elementor-widget .elementor-icon.elementor-social-icon {
   background-color: black;
   color: white;
+  font-size: 20px;
   text-align: center;
   padding: 0.6em;
+  margin-left: 5px;
   cursor: pointer; }
+  .elementor-widget .elementor-icon.elementor-social-icon:last-child {
+    margin: 0; }
   .elementor-widget .elementor-icon.elementor-social-icon i {
-    font-size: 20px; }
+    font-size: inherit; }
   .elementor-widget .elementor-icon.elementor-social-icon:hover {
     opacity: .5; }
   .elementor-widget .elementor-icon.elementor-social-icon-behance {

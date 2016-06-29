@@ -4,17 +4,27 @@
 
 .elementor-widget {
 
+	.elementor-social-icons-wrapper {
+		font-size: 0;
+	}
+
 	.elementor-icon {
 
 		&.elementor-social-icon {
 			background-color: black;
 			color: white;
+			font-size: 20px;
 			text-align: center;
 			padding: 0.6em;
+			@include margin-end(5px);
 			cursor: pointer;
 
+			&:last-child {
+				margin: 0;
+			}
+
 			i {
-				font-size: 20px;
+				font-size: inherit;
 			}
 
 			&:hover {
