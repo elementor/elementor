@@ -37,6 +37,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'rounded' => __( 'Rounded', 'elementor' ),
 					'square' => __( 'Square', 'elementor' ),
 					'circle' => __( 'Circle', 'elementor' ),
+					'none' => __( 'None', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
@@ -70,7 +71,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_control(
 			'social_icon_list',
 			[
-				'label' => __( 'Social Icons', 'elementor' ),
+				'label' => 'Social Icons',
 				'type' => Controls_Manager::REPEATER,
 				'default' => [
 					[
@@ -170,7 +171,7 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon_custom_color',
+			'icon_primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
@@ -180,7 +181,23 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'condition' => [
+					'icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-social-icon' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -261,10 +278,12 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
 				$has_link = ! empty( $item['link']['url'] );
+				$social = str_replace( 'fa fa-', '', $item['social'] );
+
 				if ( $has_link ) : ?>
 					<a class="elementor-social-icon-link" href="<?php echo $item['link']['url']; ?>">
 				<?php endif; ?>
-				<div class="elementor-social-icon">
+				<div class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social; ?>">
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
 				<?php if ( $has_link ) : ?>
@@ -281,12 +300,13 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<%
 			_.each( settings.social_icon_list, function( item ) {
-				var hasLink = item.link && item.link.url;
+				var hasLink = item.link && item.link.url
+					social = item.social.replace( 'fa fa-', '', item.social );
 
 				if ( hasLink ) { %>
 					<a class="elementor-social-icon-link" href="<%- item.link.url %>">
 				<% } %>
-				<div class="elementor-icon elementor-social-icon">
+				<div class="elementor-icon elementor-social-icon elementor-social-icon-<%- social %>">
 					<i class="<%- item.social %>"></i>
 				</div>
 				<% if ( hasLink ) { %>
