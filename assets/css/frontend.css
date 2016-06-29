@@ -823,11 +823,18 @@
   background-color: black;
   color: white;
   text-align: center;
-  padding: 0.6em; }
+  padding: 0.6em;
+  cursor: pointer; }
   .elementor-widget .elementor-icon.elementor-social-icon i {
     font-size: 20px; }
   .elementor-widget .elementor-icon.elementor-social-icon:hover {
     opacity: .5; }
+.elementor-widget.elementor-widget-social-icons.elementor-align-right {
+  text-align: right; }
+.elementor-widget.elementor-widget-social-icons.elementor-align-left {
+  text-align: left; }
+.elementor-widget.elementor-widget-social-icons.elementor-align-center {
+  text-align: center; }
 .elementor-widget.elementor-shape-rounded .elementor-icon.elementor-social-icon {
   border-radius: 20%; }
 .elementor-widget.elementor-shape-circle .elementor-icon.elementor-social-icon {

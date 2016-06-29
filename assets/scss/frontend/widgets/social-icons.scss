@@ -11,6 +11,7 @@
 			color: white;
 			text-align: center;
 			padding: 0.6em;
+			cursor: pointer;
 
 			i {
 				font-size: 20px;
@@ -18,6 +19,23 @@
 
 			&:hover {
 				opacity: .5;
+			}
+		}
+	}
+
+	&.elementor-widget-social-icons {
+		&.elementor-align- {
+
+			&right {
+				text-align: right;
+			}
+
+			&left {
+				text-align: left;
+			}
+
+			&center {
+				text-align: center;
 			}
 		}
 	}
