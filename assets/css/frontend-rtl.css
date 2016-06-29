@@ -794,8 +794,8 @@
     .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image {
       display: inline-block; }
       .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image figure img {
-        width: 100px;
-        height: 100px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%; }
     .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-image-align-left {
       float: left;
