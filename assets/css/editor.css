@@ -705,9 +705,7 @@ select {
           content: '\f013'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
           content: '\f10a'; }
-        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-structure a:before {
-          content: '\f0db'; }
-        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-settings a:before {
+        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-general a:before {
           content: '\f013'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
           content: '\f0db'; }
@@ -1081,7 +1079,8 @@ select {
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset path {
       fill: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
-    height: 80px; }
+    height: 80px;
+    margin-top: 15px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset svg {
       width: 100%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset {
@@ -1091,28 +1090,34 @@ select {
     color: #a4afb7; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset i {
       margin-right: 8px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     color: #495157;
     font-weight: bold;
     padding: 13.5px 20px;
     line-height: 1;
-    margin: 27px -20px 0;
     position: relative; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:before, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:after, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
       content: '';
       position: absolute;
       left: 0;
       right: 0; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
-      height: 10px;
-      background-color: #e6e9ec;
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:before, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
       top: 0;
-      transform: translateY(-100%);
-      box-shadow: inset 0 2px 4px rgba(127, 127, 127, 0.1); }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
+      background-color: #e6e9ec;
+      transform: translateY(-100%); }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:after, #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
       bottom: 0;
       height: 1px;
       background-color: #e6e9ec; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title {
+    margin: 10px -20px 0; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:before {
+      height: 10px;
+      box-shadow: inset 0 2px 4px rgba(127, 127, 127, 0.1); }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
+    margin: 15px -20px 0; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
+      height: 3px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets {
     display: -ms-flexbox;
     display: flex;
