@@ -27,47 +27,6 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->add_control(
-			'shape',
-			[
-				'label' => __( 'Shape', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'section' => 'section_social_icon',
-				'default' => 'square',
-				'options' => [
-					'rounded' => __( 'Rounded', 'elementor' ),
-					'square' => __( 'Square', 'elementor' ),
-					'circle' => __( 'Circle', 'elementor' ),
-				],
-				'prefix_class' => 'elementor-shape-',
-			]
-		);
-
-		$this->add_control(
-			'align',
-			[
-				'label' => __( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_social_icon',
-				'options' => [
-					'left'    => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
-					],
-				],
-				'default' => 'center',
-				'prefix_class' => 'elementor-align-',
-			]
-		);
-
-		$this->add_control(
 			'social_icon_list',
 			[
 				'label' => 'Social Icons',
@@ -90,6 +49,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'label' => __( 'Select Social Media', 'elementor' ),
 						'type' => Controls_Manager::ICON,
 						'label_block' => true,
+						'default' => 'fa fa-wordpress',
 						'icons' => [
 							'fa fa-behance' => __( 'Behance', 'elementor' ),
 							'fa fa-bitbucket' => __( 'Bitbucket', 'elementor' ),
@@ -131,6 +91,47 @@ class Widget_Social_Icons extends Widget_Base {
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
+			]
+		);
+
+		$this->add_control(
+			'shape',
+			[
+				'label' => __( 'Shape', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'section' => 'section_social_icon',
+				'default' => 'square',
+				'options' => [
+					'rounded' => __( 'Rounded', 'elementor' ),
+					'square' => __( 'Square', 'elementor' ),
+					'circle' => __( 'Circle', 'elementor' ),
+				],
+				'prefix_class' => 'elementor-shape-',
+			]
+		);
+
+		$this->add_control(
+			'align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'section' => 'section_social_icon',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+				],
+				'default' => 'center',
+				'prefix_class' => 'elementor-align-',
 			]
 		);
 
