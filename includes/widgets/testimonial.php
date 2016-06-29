@@ -4,7 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_testimonial extends Widget_Base {
-	private $_carusel_options = [];
 
 	public function get_id() {
 		return 'testimonial';
@@ -30,9 +29,9 @@ class Widget_testimonial extends Widget_Base {
 		$this->add_control(
 			'testimonial_text',
 			[
-				'label' => __( 'Testimonial Text', 'elementor' ),
-				'type' => Controls_Manager::TEXTAREA,
-				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo..',
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.',
 				'section' => 'section_testimonial',
 			]
 		);
@@ -97,7 +96,7 @@ class Widget_testimonial extends Widget_Base {
 			[
 				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'center',
+				'default' => 'left',
 				'section' => 'section_testimonial',
 				'options' => [
 					'left'    => [
@@ -120,9 +119,9 @@ class Widget_testimonial extends Widget_Base {
 		);
 
 		$this->add_control(
-			'testimonial_text_position',
+			'testimonial_alignment',
 			[
-				'label' => __( 'Details Position', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'center',
 				'section' => 'section_testimonial',
@@ -138,10 +137,6 @@ class Widget_testimonial extends Widget_Base {
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
 					],
 				],
 			]
@@ -227,7 +222,7 @@ class Widget_testimonial extends Widget_Base {
 			]
 		);
 
-		// Detailes
+		// details
 		$this->add_control(
 			'section_style_testimonial_job',
 			[
@@ -308,10 +303,10 @@ class Widget_testimonial extends Widget_Base {
 			$has_image = ' elementor-has-image';
 		}
 
+		$testimonial_alignment = $instance['testimonial_alignment'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_alignment'] : '';
 		$testimonial_image_position = $instance['testimonial_image_position'] ? ' elementor-testimonial-image-align-' . $instance['testimonial_image_position'] : '';
-		$testimonial_text_position = $instance['testimonial_text_position'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_text_position'] : '';
 		?>
-		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?>">
+		<div class="elementor-testimonial-wrapper<?php echo $testimonial_alignment; ?>">
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
 				<div class="elementor-testimonial-text">
@@ -329,7 +324,7 @@ class Widget_testimonial extends Widget_Base {
 					</div>
 				<?php endif; ?>
 
-				<div class="testimonial-detailes<?php if ( $has_image ) echo $has_image; ?>">
+				<div class="testimonial-details<?php if ( $has_image ) echo $has_image; ?>">
 					<?php if ( ! empty( $instance['testimonial_full_name'] ) ) : ?>
 						<div class="elementor-testimonial-name">
 							<?php echo $instance['testimonial_full_name']; ?>
@@ -369,10 +364,10 @@ class Widget_testimonial extends Widget_Base {
 			hasImage = ' elementor-has-image';
 		}
 
-		var testimonial_text_position = settings.testimonial_text_position ? ' elementor-testimonial-text-align-' + settings.testimonial_text_position : '';
+		var testimonial_alignment = settings.testimonial_alignment ? ' elementor-testimonial-text-align-' + settings.testimonial_alignment : '';
 		var testimonial_image_position = settings.testimonial_image_position ? ' elementor-testimonial-image-align-' + settings.testimonial_image_position : '';
 		%>
-		<div class="elementor-testimonial-wrapper<%- testimonial_text_position %>">
+		<div class="elementor-testimonial-wrapper<%- testimonial_alignment %>">
 
 			<% if ( '' !== settings.testimonial_text ) { %>
 				<div class="elementor-testimonial-text">
@@ -390,7 +385,7 @@ class Widget_testimonial extends Widget_Base {
 					</div>
 				<% } %>
 
-				<div class="testimonial-detailes<%- hasImage %>">
+				<div class="testimonial-details<%- hasImage %>">
 
 					<% if ( '' !== settings.testimonial_full_name ) { %>
 						<div class="elementor-testimonial-name">
