@@ -29,7 +29,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_control(
 			'shape',
 			[
-				'label' => __( 'Shape', 'Elementor' ),
+				'label' => __( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_social_icon',
 				'default' => 'square',
@@ -260,14 +260,14 @@ class Widget_Social_Icons extends Widget_Base {
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
-
-				if ( ! empty( $item['link']['url'] ) ) : ?>
+				$has_link = ! empty( $item['link']['url'] );
+				if ( $has_link ) : ?>
 					<a class="elementor-social-icon-link" href="<?php echo $item['link']['url']; ?>">
-				<?php endif;?>
-				<div class="elementor-icon elementor-social-icon">
+				<?php endif; ?>
+				<div class="elementor-social-icon">
 					<i class="<?php echo $item['social']; ?>"></i>
 				</div>
-				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
+				<?php if ( $has_link ) : ?>
 					</a>
 				<?php endif; ?>
 
@@ -281,7 +281,6 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<%
 			_.each( settings.social_icon_list, function( item ) {
-
 				var hasLink = item.link && item.link.url;
 
 				if ( hasLink ) { %>
