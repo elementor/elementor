@@ -90,6 +90,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'label' => __( 'Select Social Media', 'elementor' ),
 						'type' => Controls_Manager::ICON,
 						'label_block' => true,
+						'default' => 'fa fa-wordpress',
 						'icons' => [
 							'fa fa-behance' => __( 'Behance', 'elementor' ),
 							'fa fa-bitbucket' => __( 'Bitbucket', 'elementor' ),
