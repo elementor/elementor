@@ -11,7 +11,7 @@ class Widget_testimonial extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'testimonial', 'elementor' );
+		return __( 'Testimonial', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -22,7 +22,7 @@ class Widget_testimonial extends Widget_Base {
 		$this->add_control(
 			'section_testimonial',
 			[
-				'label' => __( 'testimonial', 'elementor' ),
+				'label' => __( 'Testimonial', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -32,7 +32,7 @@ class Widget_testimonial extends Widget_Base {
 			[
 				'label' => __( 'Testimonial Text', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'default' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed magna in purus luctus ornare sit amet eu risus. Ut tincidunt nec velit at fringilla. Fusce sodales vestibulum leo vel faucibus. Ut convallis vel elit et aliquam. Morbi dolor arcu, egestas quis justo at, pharetra dignissim justo.',
+				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo..',
 				'section' => 'section_testimonial',
 			]
 		);
@@ -93,11 +93,38 @@ class Widget_testimonial extends Widget_Base {
 		);
 
 		$this->add_control(
-			'testimonial_detailes_position',
+			'testimonial_image_position',
 			[
-				'label' => __( 'Testimonial Details Position', 'elementor' ),
+				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'Elementor',
+				'default' => 'center',
+				'section' => 'section_testimonial',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+				],
+				'condition' => [
+					'testimonial_image[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'testimonial_text_position',
+			[
+				'label' => __( 'Details Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'default' => 'center',
 				'section' => 'section_testimonial',
 				'options' => [
 					'left'    => [
@@ -200,11 +227,11 @@ class Widget_testimonial extends Widget_Base {
 			]
 		);
 
-		// Job
+		// Detailes
 		$this->add_control(
 			'section_style_testimonial_job',
 			[
-				'label' => __( 'Job', 'elementor' ),
+				'label' => __( 'Job & Company', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
 			]
@@ -220,6 +247,7 @@ class Widget_testimonial extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-job-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-testimonial-company a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -231,49 +259,14 @@ class Widget_testimonial extends Widget_Base {
 				'label' => __( 'Typography', 'elementor' ),
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_testimonial_job',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-job-title',
-			]
-		);
-
-		// Company
-		$this->add_control(
-			'section_style_testimonial_company',
-			[
-				'label' => __( 'Company', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'company_text_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_testimonial_company',
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-testimonial-company' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'company_typography',
-				'label' => __( 'Typography', 'elementor' ),
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_testimonial_company',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-company',
+				'selector' => '{{WRAPPER}} .elementor-testimonial-job-title, {{WRAPPER}} .elementor-testimonial-company a',
 			]
 		);
 
 		$this->add_control(
 			'section_style_testimonial_text',
 			[
-				'label' => __( 'Text', 'elementor' ),
+				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
 			]
@@ -315,17 +308,18 @@ class Widget_testimonial extends Widget_Base {
 			$has_image = ' elementor-has-image';
 		}
 
-		$testimonial_detailes_position = $instance['testimonial_detailes_position'] ? ' elementor-testimonial-detailes-align-' . $instance['testimonial_detailes_position'] : '';
+		$testimonial_image_position = $instance['testimonial_image_position'] ? ' elementor-testimonial-image-align-' . $instance['testimonial_image_position'] : '';
+		$testimonial_text_position = $instance['testimonial_text_position'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_text_position'] : '';
 		?>
-		<div class="elementor-testimonial-wrapper">
+		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?>">
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
-				<div class="elementor-testimonial-text<?php echo $testimonial_detailes_position; ?>">
+				<div class="elementor-testimonial-text">
 						<?php echo $instance['testimonial_text']; ?>
 				</div>
 			<?php endif; ?>
 
-			<div class="testimonial_description<?php echo $testimonial_detailes_position; ?>">
+			<div class="testimonial_description<?php echo $testimonial_image_position; ?>">
 
 				<?php if ( isset( $image_url ) ) : ?>
 					<div class="elementor-testimonial-image">
@@ -369,23 +363,24 @@ class Widget_testimonial extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-		var hasImage = '';
+		var imageUrl = false, hasImage = '';
 		if ( '' !== settings.testimonial_image.url ) {
 			imageUrl = settings.testimonial_image.url;
 			hasImage = ' elementor-has-image';
 		}
 
-		var testimonial_detailes_position = settings.testimonial_detailes_position ? ' elementor-testimonial-detailes-align-' + settings.testimonial_detailes_position : '';
+		var testimonial_text_position = settings.testimonial_text_position ? ' elementor-testimonial-text-align-' + settings.testimonial_text_position : '';
+		var testimonial_image_position = settings.testimonial_image_position ? ' elementor-testimonial-image-align-' + settings.testimonial_image_position : '';
 		%>
-		<div class="elementor-testimonial-wrapper">
+		<div class="elementor-testimonial-wrapper<%- testimonial_text_position %>">
 
 			<% if ( '' !== settings.testimonial_text ) { %>
-				<div class="elementor-testimonial-text<%- testimonial_detailes_position %>">
+				<div class="elementor-testimonial-text">
 					<%= settings.testimonial_text %>
 				</div>
 		    <% } %>
 
-			<div class="testimonial_description<%- testimonial_detailes_position %>">
+			<div class="testimonial_description<%- testimonial_image_position %>">
 
 				<% if ( imageUrl ) { %>
 					<div class="elementor-testimonial-image">
