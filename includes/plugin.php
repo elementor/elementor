@@ -69,6 +69,7 @@ class Plugin {
 	private function _includes() {
 		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
 		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
+		include( ELEMENTOR_PATH . 'includes/api.php' );
 		include( ELEMENTOR_PATH . 'includes/utils.php' );
 		include( ELEMENTOR_PATH . 'includes/user.php' );
 		include( ELEMENTOR_PATH . 'includes/fonts.php' );

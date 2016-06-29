@@ -177,6 +177,34 @@ class Admin {
 		return $links;
 	}
 
+	public function admin_notices() {
+		if ( ! current_user_can( 'update_plugins' ) )
+			return;
+
+		$upgrade_notice = Api::get_upgrade_notice();
+		if ( empty( $upgrade_notice ) )
+			return;
+
+		// Check if have any upgrades
+		$update_plugins = get_site_transient( 'update_plugins' );
+		if ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) ) {
+			return;
+		}
+		$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
+
+		// Check if have upgrade notices to show
+		if ( version_compare( Plugin::instance()->get_version(), $upgrade_notice['version'], '>=' ) )
+			return;
+
+		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
+		User::is_user_notice_viewed( $notice_id );
+		if ( User::is_user_notice_viewed( $notice_id ) )
+			return;
+		?>
+		<div class="notice notice-success is-dismissible elementor-notice-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>"><p><?php echo esc_html( $upgrade_notice['message'] ); ?></p></div>
+		<?php
+	}
+
 	public function admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->base, 'elementor' ) );
@@ -203,6 +231,7 @@ class Admin {
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 
+		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 	}
