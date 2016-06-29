@@ -40,6 +40,7 @@ class Api {
 	}
 
 	public static function get_upgrade_notice() {
+		// TODO: Remove the force flag
 		$data = self::_get_info_data( true );
 		if ( empty( $data['upgrade_notice'] ) )
 			return false;
