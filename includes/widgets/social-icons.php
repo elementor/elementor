@@ -37,7 +37,6 @@ class Widget_Social_Icons extends Widget_Base {
 					'rounded' => __( 'Rounded', 'elementor' ),
 					'square' => __( 'Square', 'elementor' ),
 					'circle' => __( 'Circle', 'elementor' ),
-					'none' => __( 'None', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
