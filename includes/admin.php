@@ -200,8 +200,18 @@ class Admin {
 		User::is_user_notice_viewed( $notice_id );
 		if ( User::is_user_notice_viewed( $notice_id ) )
 			return;
+
+		$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
+		$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
 		?>
-		<div class="notice notice-success is-dismissible elementor-notice-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>"><p><?php echo esc_html( $upgrade_notice['message'] ); ?></p></div>
+		<div class="notice notice-success is-dismissible elementor-notice-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<p><?php echo esc_html( $upgrade_notice['message'] ); ?></p>
+			<p>
+				<a href="<?php echo $details_url; ?>" class="thickbox open-plugin-details-modal"><?php printf( __( 'View version %s details', 'elementor' ), $product->new_version ); ?></a>
+				|
+				<a href="<?php echo $upgrade_url; ?>"><?php _e( 'Upgrade Now', 'elementor' ); ?></a>
+			</p>
+		</div>
 		<?php
 	}
 

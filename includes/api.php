@@ -5,8 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Api {
 
-	//private static $_api_info_url = 'http://my.elementor.com/api/v1/info/';
-	private static $_api_info_url = 'http://pojo-office:5566/api/v1/info/';
+	private static $_api_info_url = 'http://my.elementor.com/api/v1/info/';
 
 	private static function _get_info_data( $force = false ) {
 		$cache_key = 'elementor_remote_info_api_data';
