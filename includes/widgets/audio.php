@@ -214,31 +214,29 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	public function filter_oembed_result( $html, $url, $args ) {
-		$params = [];
+		$params = [
+			'url' => $this->_current_instance['link']['url'],
+			'auto_play' => 'yes' === $this->_current_instance['auto_play'] ? 'true' : 'false',
+			'buying' => 'show' === $this->_current_instance['buying'] ? 'true' : 'false',
+			'liking' => 'show' === $this->_current_instance['liking'] ? 'true' : 'false',
+			'download' => 'show' === $this->_current_instance['download'] ? 'true' : 'false',
+			'sharing' => 'show' === $this->_current_instance['sharing'] ? 'true' : 'false',
+			'show_comments' => 'show' === $this->_current_instance['show_comments'] ? 'true' : 'false',
+			'show_playcount' => 'show' === $this->_current_instance['show_playcount'] ? 'true' : 'false',
+			'show_user' => 'show' === $this->_current_instance['show_user'] ? 'true' : 'false',
+			'color' => str_replace( '#', '', $this->_current_instance['color'] ),
+		];
 
-		$params['url'] = $this->_current_instance['link']['url'];
-		$params['auto_play'] = 'yes' === $this->_current_instance['auto_play'] ? 'true' : 'false';
-		$params['buying'] = 'show' === $this->_current_instance['buying'] ? 'true' : 'false';
-		$params['liking'] = 'show' === $this->_current_instance['liking'] ? 'true' : 'false';
-		$params['download'] = 'show' === $this->_current_instance['download'] ? 'true' : 'false';
-		$params['sharing'] = 'show' === $this->_current_instance['sharing'] ? 'true' : 'false';
-		$params['show_comments'] = 'show' === $this->_current_instance['show_comments'] ? 'true' : 'false';
-		$params['show_playcount'] = 'show' === $this->_current_instance['show_playcount'] ? 'true' : 'false';
-		$params['show_user'] = 'show' === $this->_current_instance['show_user'] ? 'true' : 'false';
-
-		$params['color'] = str_replace( '#', '', $this->_current_instance['color'] );
 		$visual = 'yes' === $this->_current_instance['visual'] ? 'true' : 'false';
 
-		if ( ! empty( $params ) ) {
-			preg_match( '/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $html, $matches );
-			$url = esc_url( add_query_arg( $params, $matches[1] ) );
+		preg_match( '/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $html, $matches );
+		$url = esc_url( add_query_arg( $params, $matches[1] ) );
 
-			$html = str_replace( $matches[1], $url, $html );
-			$html = str_replace( 'visual=true', 'visual=' . $visual, $html );
+		$html = str_replace( $matches[1], $url, $html );
+		$html = str_replace( 'visual=true', 'visual=' . $visual, $html );
 
-			if ( 'false' === $visual ) {
-				$html = str_replace( 'height="400"', 'height="200"', $html );
-			}
+		if ( 'false' === $visual ) {
+			$html = str_replace( 'height="400"', 'height="200"', $html );
 		}
 
 		return $html;
