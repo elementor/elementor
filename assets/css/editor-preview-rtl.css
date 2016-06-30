@@ -29,6 +29,7 @@ body.elementor-editor-active #elementor {
     right: 0;
     left: 0;
     bottom: 0;
+    letter-spacing: 0;
     z-index: 1; }
   body.elementor-editor-active #elementor .elementor-element.elementor-widget-empty {
     height: 50px;

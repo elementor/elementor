@@ -140,6 +140,7 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'no' => __( 'No Gap', 'elementor' ),
 					'narrow' => __( 'Narrow', 'elementor' ),
+					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
 				],
@@ -321,6 +322,20 @@ class Element_Section extends Element_Base {
 				'name' => 'border',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_border',
+			]
+		);
+
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_border',
+				'selectors' => [
+					'{{WRAPPER}}' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			]
 		);
 
