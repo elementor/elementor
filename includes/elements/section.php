@@ -140,6 +140,7 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'no' => __( 'No Gap', 'elementor' ),
 					'narrow' => __( 'Narrow', 'elementor' ),
+					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
 				],
