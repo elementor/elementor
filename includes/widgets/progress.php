@@ -128,10 +128,6 @@ class Widget_Progress extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
-				],
 			]
 		);
 
