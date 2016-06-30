@@ -241,6 +241,8 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
+		$icon_spacing = is_rtl() ? 'margin-left: {{SIZE}}{{UNIT}};' : 'margin-right: {{SIZE}}{{UNIT}};';
+
 		$this->add_control(
 			'icon_spacing',
 			[
@@ -255,7 +257,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-social-icon:not(:last-child)' => $icon_spacing,
 				],
 			]
 		);
