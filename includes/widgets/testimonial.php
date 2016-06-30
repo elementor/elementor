@@ -14,7 +14,7 @@ class Widget_testimonial extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'blockquote';
+		return 'testimonial';
 	}
 
 	protected function _register_controls() {
