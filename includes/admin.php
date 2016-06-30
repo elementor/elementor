@@ -13,6 +13,7 @@ class Admin {
 	 */
 	public function enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		wp_register_script(
 			'elementor-admin-app',
 			ELEMENTOR_ASSETS_URL . 'js/admin' . $suffix . '.js',
@@ -204,7 +205,7 @@ class Admin {
 		$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
 		$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
 		?>
-		<div class="notice notice-success is-dismissible elementor-notice-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+		<div class="notice notice-success is-dismissible elementor-notice elementor-notice-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<p><?php echo esc_html( $upgrade_notice['message'] ); ?></p>
 			<p>
 				<a href="<?php echo $details_url; ?>" class="thickbox open-plugin-details-modal"><?php printf( __( 'View version %s details', 'elementor' ), $product->new_version ); ?></a>
@@ -226,10 +227,80 @@ class Admin {
 		return $footer_text;
 	}
 
+	public function enqueue_feedback_dialog_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'2.1.0',
+			true
+		);
+
+		wp_register_script(
+			'elementor-admin-feedback',
+			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
+			[
+				'underscore',
+				'elementor-dialog',
+			],
+			Plugin::instance()->get_version(),
+			true
+		);
+
+		wp_enqueue_script( 'elementor-admin-feedback' );
+	}
+
+	public function print_deactivate_feedback_dialog() {
+		$deactivate_reasons = [
+			'found_a_better_plugin' => [
+				'title' => __( 'Found a better plugin', 'elementor' ),
+				'input_placeholder' => __( 'Better input placeholder', 'elementor' ),
+			],
+			'temporary_deactivation' => [
+				'title' => __( 'Temporary Deactivation', 'elementor' ),
+				'input_placeholder' => '',
+			],
+			'other' => [
+				'title' => __( 'Other', 'elementor' ),
+				'input_placeholder' => __( 'Other input placeholder', 'elementor' ),
+			],
+		];
+
+		?>
+		<div id="elementor-deactivate-feedback-dialog-wrapper">
+			<div id="elementor-deactivate-feedback-dialog-content" style="padding-bottom: 30px;">
+				<h2><?php _e( 'Feedback Title', '' ); ?></h2>
+
+				<form action="" id="elementor-deactivate-feedback-dialog-form">
+					<input type="hidden" name="action" value="elementor_deactivate_feedback" />
+					
+					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
+						<div>
+							<label>
+								<input type="radio" name="reason_key" value="<?php echo esc_attr( $reason_key ); ?>" />
+								<?php echo $reason['title']; ?>
+							</label>
+							<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
+								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
+							<?php endif; ?>
+						</div>
+					<?php endforeach; ?>
+				</form>
+			</div>
+		</div>
+		<?php
+	}
+
 	/**
 	 * Admin constructor.
 	 */
 	public function __construct() {
+		global $pagenow;
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
@@ -244,5 +315,10 @@ class Admin {
 		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
+
+		if ( 'plugins.php' === $pagenow ) {
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ], 20 );
+			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
+		}
 	}
 }
