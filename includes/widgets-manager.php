@@ -31,6 +31,7 @@ class Widgets_Manager {
 			'icon-list',
 			'counter',
 			'progress',
+			'testimonial',
 			'tabs',
 			'accordion',
 			'toggle',

@@ -782,47 +782,36 @@
   margin: 0; }
 
 .elementor-testimonial-wrapper {
-  overflow: hidden; }
-  .elementor-testimonial-wrapper .elementor-testimonial-text {
-    margin: 0 0 20px 0; }
-    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-left {
-      text-align: left; }
-    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-right {
-      text-align: right; }
-    .elementor-testimonial-wrapper .elementor-testimonial-text.elementor-testimonial-detailes-align-center {
-      text-align: center; }
-  .elementor-testimonial-wrapper .testimonial_description {
+  overflow: hidden;
+  text-align: center; }
+  .elementor-testimonial-wrapper .elementor-testimonial-content {
+    margin-bottom: 20px; }
+  .elementor-testimonial-wrapper.elementor-testimonial-text-align-left {
+    text-align: left; }
+  .elementor-testimonial-wrapper.elementor-testimonial-text-align-right {
+    text-align: right; }
+  .elementor-testimonial-wrapper .elementor-testimonial-meta {
     width: 100%;
-    text-align: center; }
-    .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-left {
-      text-align: left; }
-    .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right {
-      text-align: right; }
-      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right .elementor-testimonial-image {
-        float: right; }
-      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right .testimonial-detailes {
-        text-align: right; }
-      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-right .testimonial-detailes.elementor-has-image {
-        text-align: right;
-        margin-right: 20px; }
-    .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center {
-      text-align: center; }
-      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center .testimonial-detailes.elementor-has-image {
-        text-align: center;
-        margin-left: 0; }
-      .elementor-testimonial-wrapper .testimonial_description.elementor-testimonial-detailes-align-center .elementor-testimonial-image {
-        display: block; }
-    .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image {
+    line-height: 1; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta-inner {
       display: inline-block; }
-      .elementor-testimonial-wrapper .testimonial_description .elementor-testimonial-image figure img {
-        border-radius: 50%; }
-    .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes {
-      display: inline-block;
-      text-align: left;
-      vertical-align: top;
-      margin-top: 20px; }
-      .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
-        margin-left: 20px; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta .elementor-testimonial-details,
+    .elementor-testimonial-wrapper .elementor-testimonial-meta .elementor-testimonial-image {
+      display: table-cell;
+      vertical-align: middle; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta .elementor-testimonial-image img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-aside .elementor-testimonial-image {
+      padding-right: 15px; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-aside .elementor-testimonial-details {
+      text-align: left; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-top .elementor-testimonial-details,
+    .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-top .elementor-testimonial-image {
+      display: block; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-top .elementor-testimonial-image {
+      margin-bottom: 20px; }
 
 .slick-slider {
   position: relative;
