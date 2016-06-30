@@ -49,9 +49,6 @@ class Editor {
 			return $settings;
 		} );
 
-		// Set the headers to prevent caching for the different browsers
-		nocache_headers();
-
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
