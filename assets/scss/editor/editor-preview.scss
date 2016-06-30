@@ -55,6 +55,7 @@ body {
 					right: 0;
 					left: 0;
 					bottom: 0;
+					letter-spacing: 0; // Hack for front-end style themes
 					z-index: $element-overlay;
 				}
 

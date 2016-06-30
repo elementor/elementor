@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.3.1  
+**Stable tag:** 0.3.2  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -41,9 +41,11 @@ Elementor works on any old or new theme. Switching between themes is no problem.
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 ### Translations ###
+- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE) - in progress
 
 ### Be a contributor ###
@@ -116,6 +118,19 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 4. Settings page.
 
 ## Changelog ##
+
+### 0.3.2 - 27.06.2016 ###
+* Tweak! - Added fully compatible for Cache plugins
+* Tweak! - Image widget: `<img>` alt and title fetch from Media library
+* Tweak! - Image widget: Added link to file media
+* Tweak! - Image-Box widget: `<img>` alt and title fetch from Media library
+* Tweak! - Carousel widget: `<img>` alt fetch from Media library
+* Tweak! - Add more columns options for responsive mode
+* Tweak! - Add `<title>` in Elementor editor 
+* Tweak! - Rearranged section settings
+* Tweak! - Add more gap size (Wider)
+* Tweak! - Add more color schemes
+* Tweak! - Add negative value for letter spacing
 
 ### 0.3.1 - 22.06.2016 ###
 * Tweak! - Added a quick tour video for Elementor

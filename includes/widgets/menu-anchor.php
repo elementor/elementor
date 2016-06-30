@@ -29,7 +29,7 @@ class Widget_Menu_anchor extends Widget_Base {
 		$this->add_control(
 			'anchor_description',
 			[
-				'raw' => __( 'This ID will be the CSS ID you will have to use in your one page, Without #.', 'elementor' ),
+				'raw' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'section' => 'section_anchor',
 				'classes' => 'elementor-control-descriptor',
