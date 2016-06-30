@@ -18,6 +18,7 @@ class Widgets_Manager {
 			'image',
 			'text-editor',
 			'video',
+			'audio',
 			'button',
 			'divider',
 			'spacer',
