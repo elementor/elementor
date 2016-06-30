@@ -3,8 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_person extends Widget_Base {
-	private $_carusel_options = [];
+class Widget_Person extends Widget_Base {
 
 	public function get_id() {
 		return 'person';
@@ -66,6 +65,74 @@ class Widget_person extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo..',
 				'section' => 'section_person',
+			]
+		);
+
+		$this->add_control(
+			'social_icon_list',
+			[
+				'label' => 'Social Icons',
+				'type' => Controls_Manager::REPEATER,
+				'default' => [
+					[
+						'social' => 'fa fa-facebook',
+					],
+					[
+						'social' => 'fa fa-twitter',
+					],
+					[
+						'social' => 'fa fa-instagram',
+					],
+				],
+				'section' => 'section_person',
+				'fields' => [
+					[
+						'name' => 'social',
+						'label' => __( 'Select Social Media', 'elementor' ),
+						'type' => Controls_Manager::ICON,
+						'label_block' => true,
+						'icons' => [
+							'fa fa-behance' => __( 'Behance', 'elementor' ),
+							'fa fa-bitbucket' => __( 'Bitbucket', 'elementor' ),
+							'fa fa-codepen' => __( 'Codepen', 'elementor' ),
+							'fa fa-delicious' => __( 'Delicious', 'elementor' ),
+							'fa fa-digg' => __( 'Digg', 'elementor' ),
+							'fa fa-dribbble' => __( 'Dribbble', 'elementor' ),
+							'fa fa-facebook' => __( 'Facebook', 'elementor' ),
+							'fa fa-flickr' => __( 'Flickr', 'elementor' ),
+							'fa fa-foursquare' => __( 'Foursquare', 'elementor' ),
+							'fa fa-github' => __( 'Github', 'elementor' ),
+							'fa fa-google-plus' => __( 'Google Plus', 'elementor' ),
+							'fa fa-instagram' => __( 'Instagram', 'elementor' ),
+							'fa fa-jsfiddle' => __( 'JSFiddle', 'elementor' ),
+							'fa fa-linkedin' => __( 'Linkedin', 'elementor' ),
+							'fa fa-medium' => __( 'Medium', 'elementor' ),
+							'fa fa-pinterest' => __( 'Pinterest', 'elementor' ),
+							'fa fa-product-hunt' => __( 'Product Hunt', 'elementor' ),
+							'fa fa-reddit' => __( 'reddit', 'elementor' ),
+							'fa fa-snapchat' => __( 'Snapchat', 'elementor' ),
+							'fa fa-soundcloud' => __( 'SoundCloud', 'elementor' ),
+							'fa fa-stack-exchange' => __( 'Stack Exchange', 'elementor' ),
+							'fa fa-stack-overflow' => __( 'Stack Overflow', 'elementor' ),
+							'fa fa-tumblr' => __( 'Tumblr', 'elementor' ),
+							'fa fa-twitter' => __( 'Twitter', 'elementor' ),
+							'fa fa-vimeo' => __( 'Vimeo', 'elementor' ),
+							'fa fa-wordpress' => __( 'WordPress', 'elementor' ),
+							'fa fa-youtube' => __( 'YouTube', 'elementor' ),
+						],
+					],
+					[
+						'name' => 'link',
+						'label' => __( 'Link', 'elementor' ),
+						'type' => Controls_Manager::URL,
+						'label_block' => true,
+						'default' => [
+							'url' => '',
+							'is_external' => 'true',
+						],
+						'placeholder' => __( 'http://your-link.com', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -177,6 +244,43 @@ class Widget_person extends Widget_Base {
 			]
 		);
 
+		// Job
+		$this->add_control(
+			'section_style_person_job',
+			[
+				'label' => __( 'Job', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'job_text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_person_job',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-job-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'job_typography',
+				'label' => __( 'Typography', 'elementor' ),
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_person_job',
+				'selector' => '{{WRAPPER}} .elementor-person-job-title',
+			]
+		);
+
+		// Content
 		$this->add_control(
 			'section_style_person_text',
 			[
@@ -254,6 +358,20 @@ class Widget_person extends Widget_Base {
 							<?php echo $instance['person_text']; ?>
 						</div>
 					<?php endif; ?>
+
+					<div class="person-social-icons">
+						<?php foreach ( $instance['social_icon_list'] as $item ) : ?>
+							<div class="person-social-icon">
+								<?php if ( '' !== $item['link']['url'] ) : ?>
+									<a href="<?php echo esc_url( $item['link']['url'] ); ?>">
+								<?php endif; ?>
+									<i class="<?php echo $item['social']; ?>"></i>
+								<?php if ( '' !== $item['link'] ) : ?>
+									</a>
+								<?php endif; ?>
+							</div>
+						<?php endforeach; ?>
+					</div>
 
 				</div>
 			</div>

@@ -821,6 +821,37 @@
       .elementor-testimonial-wrapper .testimonial_description .testimonial-detailes.elementor-has-image {
         margin-left: 20px; }
 
+.elementor-person-wrapper {
+  text-align: center; }
+  .elementor-person-wrapper.elementor-person-text-align-center {
+    text-align: center; }
+  .elementor-person-wrapper.elementor-person-text-align-right {
+    text-align: right; }
+  .elementor-person-wrapper.elementor-person-text-align-left {
+    text-align: left; }
+  .elementor-person-wrapper.elementor-person-text-align-justify {
+    text-align: justify; }
+  .elementor-person-wrapper:hover {
+    cursor: pointer; }
+  .elementor-person-wrapper:hover > .person_description .person-detailes {
+    display: block;
+    background: rgba(0, 0, 0, 0.6); }
+  .elementor-person-wrapper .person_description {
+    position: relative; }
+    .elementor-person-wrapper .person_description .person-detailes {
+      display: none;
+      position: absolute;
+      color: #FFFFFF;
+      padding: 100px;
+      top: 0;
+      bottom: 0;
+      width: 100%; }
+      .elementor-person-wrapper .person_description .person-detailes .person-social-icons .person-social-icon {
+        display: inline-block;
+        margin: 10px 10px 0 10px; }
+        .elementor-person-wrapper .person_description .person-detailes .person-social-icons .person-social-icon i {
+          font-size: 20px; }
+
 .slick-slider {
   position: relative;
   display: block;
