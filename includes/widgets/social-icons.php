@@ -39,7 +39,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'social' => 'fa fa-twitter',
 					],
 					[
-						'social' => 'fa fa-instagram',
+						'social' => 'fa fa-google-plus',
 					],
 				],
 				'section' => 'section_social_icon',
@@ -100,7 +100,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'section' => 'section_social_icon',
-				'default' => 'square',
+				'default' => 'rounded',
 				'options' => [
 					'rounded' => __( 'Rounded', 'elementor' ),
 					'square' => __( 'Square', 'elementor' ),
@@ -242,7 +242,7 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon_space',
+			'icon_spacing',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -269,8 +269,21 @@ class Widget_Social_Icons extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-social-icon',
 			]
 		);
-	}
 
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+	}
 
 	protected function render( $instance = [] ) {
 		?>
