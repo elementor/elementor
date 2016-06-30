@@ -452,7 +452,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		foreach ( $instance['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
 
-			$slides[] = '<div><div class="slick-slide-inner"><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div></div>';
+			$slides[] = '<div><div class="slick-slide-inner"><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( $this->get_image_alt( $attachment ) ) . '" /></div></div>';
 		}
 
 		if ( empty( $slides ) ) {
@@ -505,4 +505,22 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	protected function content_template() {}
+
+	private function get_image_alt( $attachment ) {
+		$post_id = $attachment['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
+		if ( ! $alt ) {
+			$attachment = get_post( $post_id );
+			$alt = $attachment->post_excerpt;
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+		return trim( strip_tags( $alt ) );
+	}
 }

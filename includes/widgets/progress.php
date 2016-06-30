@@ -32,7 +32,7 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your title', 'elementor' ),
-				'default' => 'My Skill',
+				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
 				'section' => 'section_progress',
 			]
@@ -127,10 +127,6 @@ class Widget_Progress extends Widget_Base {
 				'section' => 'section_progress_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);

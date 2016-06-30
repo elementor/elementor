@@ -705,8 +705,8 @@ select {
           content: '\f013'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
           content: '\f10a'; }
-        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-general a:before {
-          content: '\f013'; }
+        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-layout a:before {
+          content: '\f0db'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
           content: '\f0db'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.active {
@@ -1200,7 +1200,7 @@ select {
         background-color: #fff; }
       #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools > div:hover {
         opacity: .95; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-number {
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
       text-align: right;
       padding-right: 20px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {

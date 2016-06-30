@@ -86,7 +86,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 			]
 		);
 
@@ -100,7 +100,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -125,7 +125,7 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -140,10 +140,11 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'no' => __( 'No Gap', 'elementor' ),
 					'narrow' => __( 'Narrow', 'elementor' ),
+					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -159,7 +160,7 @@ class Element_Section extends Element_Base {
 					'full' => __( 'Fit To Screen', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
@@ -180,7 +181,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -202,7 +203,7 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_top' => true,
@@ -223,7 +224,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -247,7 +248,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-items-',
 				'condition' => [
 					'height' => [ 'full', 'min-height' ],
@@ -268,7 +269,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-content-',
 				'section' => 'section_layout',
 			]
@@ -280,7 +281,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Structure', 'elementor' ),
 				'type' => Controls_Manager::STRUCTURE,
 				'default' => '10',
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -321,6 +322,20 @@ class Element_Section extends Element_Base {
 				'name' => 'border',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_border',
+			]
+		);
+
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_border',
+				'selectors' => [
+					'{{WRAPPER}}' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			]
 		);
 

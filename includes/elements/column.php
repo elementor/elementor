@@ -47,6 +47,20 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_COLUMN,
+				'section' => 'section_style',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
 		// Section Typography
 		$this->add_control(
 			'section_typo',

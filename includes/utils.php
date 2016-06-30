@@ -56,5 +56,8 @@ class Utils {
 
 		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
 			define( 'DONOTCACHCEOBJECT', true );
+
+		// Set the headers to prevent caching for the different browsers
+		nocache_headers();
 	}
 }
