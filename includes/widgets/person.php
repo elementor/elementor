@@ -208,6 +208,20 @@ class Widget_Person extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'image_overlay_color',
+			[
+				'label' => __( 'Overlay Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'alpha' => true,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_person_image',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-wrapper:hover > .elementor-person-content .elementor-person-detailes' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
 		// Name
 		$this->add_control(
 			'section_style_person_name',
@@ -314,6 +328,121 @@ class Widget_Person extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-person-text',
 			]
 		);
+
+		$this->add_control(
+			'section_social_style',
+			[
+				'label' => __( 'Social Icon Style', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'icon_color',
+			[
+				'label' => __( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'default' => 'official',
+				'options' => [
+					'official' => __( 'Official Color', 'elementor' ),
+					'custom' => __( 'Custom Color', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'condition' => [
+					'icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-social-icons .elementor-person-social-icon' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'condition' => [
+					'icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-social-icons .elementor-person-social-icon' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_size',
+			[
+				'label' => __( 'Icon Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'range' => [
+					'px' => [
+						'min' => 6,
+						'max' => 300,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-social-icons .elementor-person-social-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_padding',
+			[
+				'label' => __( 'Icon Padding', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-social-icons .elementor-person-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'default' => [
+					'unit' => 'em',
+				],
+				'range' => [
+					'em' => [
+						'min' => 0,
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_space',
+			[
+				'label' => __( 'Icon Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_social_style',
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-person-social-icons .elementor-person-social-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
 	}
 
 	protected function render( $instance = [] ) {
@@ -330,7 +459,7 @@ class Widget_Person extends Widget_Base {
 		?>
 		<div class="elementor-person-wrapper<?php echo $person_text_position; ?>">
 
-			<div class="person_description">
+			<div class="elementor-person-content">
 
 				<?php if ( isset( $image_url ) ) : ?>
 					<div class="elementor-person-image">
@@ -340,7 +469,7 @@ class Widget_Person extends Widget_Base {
 					</div>
 				<?php endif; ?>
 
-				<div class="person-detailes<?php if ( $has_image ) echo $has_image; ?>">
+				<div class="elementor-person-detailes<?php if ( $has_image ) echo $has_image; ?>">
 					<?php if ( ! empty( $instance['person_full_name'] ) ) : ?>
 						<div class="elementor-person-name">
 							<?php echo $instance['person_full_name']; ?>
@@ -359,9 +488,9 @@ class Widget_Person extends Widget_Base {
 						</div>
 					<?php endif; ?>
 
-					<div class="person-social-icons">
+					<div class="elementor-person-social-icons">
 						<?php foreach ( $instance['social_icon_list'] as $item ) : ?>
-							<div class="person-social-icon">
+							<div class="elementor-person-social-icon">
 								<?php if ( '' !== $item['link']['url'] ) : ?>
 									<a href="<?php echo esc_url( $item['link']['url'] ); ?>">
 								<?php endif; ?>
@@ -374,6 +503,7 @@ class Widget_Person extends Widget_Base {
 					</div>
 
 				</div>
+
 			</div>
 		</div>
 		<?php

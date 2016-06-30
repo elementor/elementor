@@ -833,12 +833,12 @@
     text-align: justify; }
   .elementor-person-wrapper:hover {
     cursor: pointer; }
-  .elementor-person-wrapper:hover > .person_description .person-detailes {
+  .elementor-person-wrapper:hover > .elementor-person-content .elementor-person-detailes {
     display: block;
     background: rgba(0, 0, 0, 0.6); }
-  .elementor-person-wrapper .person_description {
+  .elementor-person-wrapper .elementor-person-content {
     position: relative; }
-    .elementor-person-wrapper .person_description .person-detailes {
+    .elementor-person-wrapper .elementor-person-content .elementor-person-detailes {
       display: none;
       position: absolute;
       color: #FFFFFF;
@@ -846,11 +846,8 @@
       top: 0;
       bottom: 0;
       width: 100%; }
-      .elementor-person-wrapper .person_description .person-detailes .person-social-icons .person-social-icon {
-        display: inline-block;
-        margin: 10px 10px 0 10px; }
-        .elementor-person-wrapper .person_description .person-detailes .person-social-icons .person-social-icon i {
-          font-size: 20px; }
+      .elementor-person-wrapper .elementor-person-content .elementor-person-detailes .elementor-person-social-icons .elementor-person-social-icon {
+        display: inline-block; }
 
 .slick-slider {
   position: relative;

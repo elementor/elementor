@@ -26,15 +26,15 @@
 		cursor: pointer;
 	}
 
-	&:hover > .person_description .person-detailes {
+	&:hover > .elementor-person-content .elementor-person-detailes {
 		display: block;
 		background: rgba(0, 0, 0, 0.6);
 	}
 
-	.person_description {
+	.elementor-person-content {
 		position: relative;
 
-		.person-detailes {
+		.elementor-person-detailes {
 			display: none;
 			position: absolute;
 			color: #FFFFFF;
@@ -43,14 +43,9 @@
 			bottom: 0;
 			width: 100%;
 
-			.person-social-icons {
-				.person-social-icon {
+			.elementor-person-social-icons {
+				.elementor-person-social-icon {
 					display: inline-block;
-					margin: 10px 10px 0 10px;
-
-					i {
-						font-size: 20px;
-					}
 				}
 			}
 
