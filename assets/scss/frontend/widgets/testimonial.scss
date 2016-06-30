@@ -3,9 +3,10 @@
 //
 .elementor-testimonial-wrapper {
 	overflow: hidden;
+	text-align: center;
 
-	.elementor-testimonial-text {
-		margin: 0 0 20px 0;
+	.elementor-testimonial-content {
+		margin-bottom: 20px;
 	}
 
 	&.elementor-testimonial-text-align- {
@@ -16,45 +17,49 @@
 		&right {
 			text-align: right;
 		}
-
-		&center {
-			text-align: center;
-		}
 	}
 
-	.testimonial_description {
+	.elementor-testimonial-meta {
 		width: 100%;
-		text-align: center;
+		line-height: 1;
+
+		&-inner {
+			display: inline-block;
+		}
+
+		.elementor-testimonial-details,
+		.elementor-testimonial-image {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
 
 		.elementor-testimonial-image {
-			display: inline-block;
 
-			figure img {
+			img {
 				width: 60px;
 				height: 60px;
 				border-radius: 50%;
 			}
 		}
 
-		&.elementor-testimonial-image-align- {
+		&.elementor-testimonial-image-position-aside {
 
-			&left {
-				float: left;
-				margin-right: 20px;
-			}
-
-			&right {
-				float: right;
-				margin-left: 20px;
-			}
-
-			&center {
-				display: block;
+			.elementor-testimonial-image {
+				@include padding-end(15px);
 			}
 		}
 
-		.testimonial-details {
-			vertical-align: top;
+		&.elementor-testimonial-image-position-top {
+
+			.elementor-testimonial-details,
+			.elementor-testimonial-image {
+				display: block;
+			}
+
+			.elementor-testimonial-image {
+				margin-bottom: 20px;
+			}
 		}
 	}
 }
