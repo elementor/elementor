@@ -60,6 +60,7 @@ class Widget_Tabs extends Widget_Base {
 						'show_label' => false,
 					],
 				],
+				'title_field' => 'tab_title',
 			]
 		);
 
