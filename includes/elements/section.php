@@ -325,6 +325,20 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_border',
+				'selectors' => [
+					'{{WRAPPER}}' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
 		/*$this->add_control(
 			'section_background_overlay',
 			[
