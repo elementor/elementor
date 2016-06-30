@@ -4,7 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_testimonial extends Widget_Base {
-	private $_carusel_options = [];
 
 	public function get_id() {
 		return 'testimonial';
@@ -30,17 +29,17 @@ class Widget_testimonial extends Widget_Base {
 		$this->add_control(
 			'testimonial_text',
 			[
-				'label' => __( 'Testimonial Text', 'elementor' ),
-				'type' => Controls_Manager::TEXTAREA,
-				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo..',
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.',
 				'section' => 'section_testimonial',
 			]
 		);
 
 		$this->add_control(
-			'testimonial_full_name',
+			'testimonial_name',
 			[
-				'label' => __( 'Full Name', 'elementor' ),
+				'label' => __( 'Name', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'John Doe',
 				'section' => 'section_testimonial',
@@ -48,29 +47,19 @@ class Widget_testimonial extends Widget_Base {
 		);
 
 		$this->add_control(
-			'testimonial_job_title',
+			'testimonial_job',
 			[
-				'label' => __( 'Job Title', 'elementor' ),
+				'label' => __( 'Job', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => 'Elementor Lover',
+				'default' => 'Designer',
 				'section' => 'section_testimonial',
 			]
 		);
 
 		$this->add_control(
-			'testimonial_company',
+			'testimonial_job_url',
 			[
-				'label' => __( 'Job Company', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => 'Elementor',
-				'section' => 'section_testimonial',
-			]
-		);
-
-		$this->add_control(
-			'testimonial_company_url',
-			[
-				'label' => __( 'Job Company URL', 'elementor' ),
+				'label' => __( 'URL', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => 'http://your-link.com',
 				'default' => [
@@ -97,7 +86,7 @@ class Widget_testimonial extends Widget_Base {
 			[
 				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'center',
+				'default' => 'left',
 				'section' => 'section_testimonial',
 				'options' => [
 					'left'    => [
@@ -120,9 +109,9 @@ class Widget_testimonial extends Widget_Base {
 		);
 
 		$this->add_control(
-			'testimonial_text_position',
+			'testimonial_alignment',
 			[
-				'label' => __( 'Details Position', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'center',
 				'section' => 'section_testimonial',
@@ -138,10 +127,6 @@ class Widget_testimonial extends Widget_Base {
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
 					],
 				],
 			]
@@ -227,11 +212,11 @@ class Widget_testimonial extends Widget_Base {
 			]
 		);
 
-		// Detailes
+		// details
 		$this->add_control(
 			'section_style_testimonial_job',
 			[
-				'label' => __( 'Job & Company', 'elementor' ),
+				'label' => __( 'Job', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
 			]
@@ -246,8 +231,8 @@ class Widget_testimonial extends Widget_Base {
 				'section' => 'section_style_testimonial_job',
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-testimonial-job-title' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-testimonial-company a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-testimonial-job' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-testimonial-job a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -259,7 +244,7 @@ class Widget_testimonial extends Widget_Base {
 				'label' => __( 'Typography', 'elementor' ),
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_testimonial_job',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-job-title, {{WRAPPER}} .elementor-testimonial-company a',
+				'selector' => '{{WRAPPER}} .elementor-testimonial-job, {{WRAPPER}} .elementor-testimonial-job a',
 			]
 		);
 
@@ -299,7 +284,7 @@ class Widget_testimonial extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['testimonial_full_name'] ) || empty( $instance['testimonial_text'] ) )
+		if ( empty( $instance['testimonial_name'] ) || empty( $instance['testimonial_text'] ) )
 			return;
 
 		$has_image = false;
@@ -308,10 +293,10 @@ class Widget_testimonial extends Widget_Base {
 			$has_image = ' elementor-has-image';
 		}
 
+		$testimonial_alignment = $instance['testimonial_alignment'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_alignment'] : '';
 		$testimonial_image_position = $instance['testimonial_image_position'] ? ' elementor-testimonial-image-align-' . $instance['testimonial_image_position'] : '';
-		$testimonial_text_position = $instance['testimonial_text_position'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_text_position'] : '';
 		?>
-		<div class="elementor-testimonial-wrapper<?php echo $testimonial_text_position; ?>">
+		<div class="elementor-testimonial-wrapper<?php echo $testimonial_alignment; ?>">
 
 			<?php if ( ! empty( $instance['testimonial_text'] ) ) : ?>
 				<div class="elementor-testimonial-text">
@@ -329,30 +314,24 @@ class Widget_testimonial extends Widget_Base {
 					</div>
 				<?php endif; ?>
 
-				<div class="testimonial-detailes<?php if ( $has_image ) echo $has_image; ?>">
-					<?php if ( ! empty( $instance['testimonial_full_name'] ) ) : ?>
+				<div class="testimonial-details<?php if ( $has_image ) echo $has_image; ?>">
+					<?php if ( ! empty( $instance['testimonial_name'] ) ) : ?>
 						<div class="elementor-testimonial-name">
-							<?php echo $instance['testimonial_full_name']; ?>
+							<?php echo $instance['testimonial_name']; ?>
 						</div>
 					<?php endif; ?>
 
-					<?php if ( ! empty( $instance['testimonial_job_title'] ) ) : ?>
-						<span class="elementor-testimonial-job-title">
-							<?php echo $instance['testimonial_job_title']; ?>
-						</span>
-					<?php endif; ?>
-
-					<?php if ( ! empty( $instance['testimonial_company'] ) ) : ?>
-						<span class="elementor-testimonial-company">
+					<?php if ( ! empty( $instance['testimonial_job'] ) ) : ?>
+						<div class="elementor-testimonial-job">
 							-
-							<?php if ( ! empty( $instance['testimonial_company_url']['url'] ) ) : ?>
-								<a href="<?php echo esc_url( $instance['testimonial_company_url']['url'] ); ?>" class="elementor-testimonial-company-url">
+							<?php if ( ! empty( $instance['testimonial_job_url']['url'] ) ) : ?>
+								<a href="<?php echo esc_url( $instance['testimonial_job_url']['url'] ); ?>" class="elementor-testimonial-job-url">
 							<?php endif; ?>
-								<?php echo $instance['testimonial_company']; ?>
-							<?php if ( ! empty( $instance['testimonial_company_url'] ) ) : ?>
+								<?php echo $instance['testimonial_job']; ?>
+							<?php if ( ! empty( $instance['testimonial_job_url'] ) ) : ?>
 								</a>
 							<?php endif; ?>
-						</span>
+						</div>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -369,10 +348,10 @@ class Widget_testimonial extends Widget_Base {
 			hasImage = ' elementor-has-image';
 		}
 
-		var testimonial_text_position = settings.testimonial_text_position ? ' elementor-testimonial-text-align-' + settings.testimonial_text_position : '';
+		var testimonial_alignment = settings.testimonial_alignment ? ' elementor-testimonial-text-align-' + settings.testimonial_alignment : '';
 		var testimonial_image_position = settings.testimonial_image_position ? ' elementor-testimonial-image-align-' + settings.testimonial_image_position : '';
 		%>
-		<div class="elementor-testimonial-wrapper<%- testimonial_text_position %>">
+		<div class="elementor-testimonial-wrapper<%- testimonial_alignment %>">
 
 			<% if ( '' !== settings.testimonial_text ) { %>
 				<div class="elementor-testimonial-text">
@@ -390,34 +369,28 @@ class Widget_testimonial extends Widget_Base {
 					</div>
 				<% } %>
 
-				<div class="testimonial-detailes<%- hasImage %>">
+				<div class="testimonial-details<%- hasImage %>">
 
-					<% if ( '' !== settings.testimonial_full_name ) { %>
+					<% if ( '' !== settings.testimonial_name ) { %>
 						<div class="elementor-testimonial-name">
-							<%= settings.testimonial_full_name %>
+							<%= settings.testimonial_name %>
 						</div>
 					<% } %>
 
-					<% if ( '' !== settings.testimonial_job_title ) { %>
-						<span class="elementor-testimonial-job-title">
-							<%= settings.testimonial_job_title %>
-						</span>
-					<% } %>
+					<% if ( '' !== settings.testimonial_job ) { %>
+						<div class="elementor-testimonial-job">
 
-					<% if ( '' !== settings.testimonial_company ) { %>
-						<span class="elementor-testimonial-company">
-
-							<% if ( '' !== settings.testimonial_company_url.url ) { %>
-								<a href="<%- settings.testimonial_company_url.url %>" class="elementor-testimonial-company-url">
+							<% if ( '' !== settings.testimonial_job_url.url ) { %>
+								<a href="<%- settings.testimonial_job_url.url %>" class="elementor-testimonial-job-url">
 							<% } %>
 
-								<%= settings.testimonial_company %>
+								<%= settings.testimonial_job %>
 
-							<% if ( '' !== settings.testimonial_company_url.url ) { %>
+							<% if ( '' !== settings.testimonial_job_url.url ) { %>
 								</a>
 							<% } %>
 
-						</span>
+						</div>
 					<% } %>
 
 				</div>

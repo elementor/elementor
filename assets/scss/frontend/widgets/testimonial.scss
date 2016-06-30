@@ -10,23 +10,15 @@
 
 	&.elementor-testimonial-text-align- {
 		&left {
-			.testimonial-detailes {
-				text-align: left;
-			}
+			text-align: left;
 		}
 
 		&right {
-			.testimonial-detailes {
-				text-align: right;
-			}
+			text-align: right;
 		}
 
 		&center {
-
-			.testimonial-detailes {
-				text-align: center;
-			}
-
+			text-align: center;
 		}
 	}
 
@@ -38,33 +30,31 @@
 			display: inline-block;
 
 			figure img {
-				width: 100px;
-				height: 100px;
+				width: 60px;
+				height: 60px;
 				border-radius: 50%;
 			}
-
-			&.elementor-testimonial-image-align- {
-
-				&left {
-					float: left;
-					margin-right: 20px;
-				}
-
-				&right {
-					float: right;
-					margin-left: 20px;
-				}
-
-				&center {
-					display: block;
-				}
-			}
-
 		}
 
-		.testimonial-detailes {
+		&.elementor-testimonial-image-align- {
+
+			&left {
+				float: left;
+				margin-right: 20px;
+			}
+
+			&right {
+				float: right;
+				margin-left: 20px;
+			}
+
+			&center {
+				display: block;
+			}
+		}
+
+		.testimonial-details {
 			vertical-align: top;
-			margin-top: 20px;
 		}
 	}
 }
