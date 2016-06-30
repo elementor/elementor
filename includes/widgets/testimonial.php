@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_testimonial extends Widget_Base {
+class Widget_Testimonial extends Widget_Base {
 
 	public function get_id() {
 		return 'testimonial';
@@ -168,6 +168,9 @@ class Widget_testimonial extends Widget_Base {
 				'label' => __( 'Image', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
+				'condition' => [
+					'testimonial_image[url]!' => '',
+				],
 			]
 		);
 
@@ -188,6 +191,9 @@ class Widget_testimonial extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 				],
+				'condition' => [
+					'testimonial_image[url]!' => '',
+				],
 			]
 		);
 
@@ -198,6 +204,9 @@ class Widget_testimonial extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_testimonial_image',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img',
+				'condition' => [
+					'testimonial_image[url]!' => '',
+				],
 			]
 		);
 
@@ -211,6 +220,9 @@ class Widget_testimonial extends Widget_Base {
 				'section' => 'section_style_testimonial_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'testimonial_image[url]!' => '',
 				],
 			]
 		);
