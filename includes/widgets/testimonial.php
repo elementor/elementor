@@ -186,7 +186,7 @@ class Widget_testimonial extends Widget_Base {
 				'section' => 'section_style_testimonial_image',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -255,7 +255,7 @@ class Widget_testimonial extends Widget_Base {
 			]
 		);
 
-		// Details
+		// Job
 		$this->add_control(
 			'section_style_testimonial_job',
 			[
@@ -279,7 +279,6 @@ class Widget_testimonial extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-job' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-testimonial-job a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -292,7 +291,7 @@ class Widget_testimonial extends Widget_Base {
 				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_testimonial_job',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-job, {{WRAPPER}} .elementor-testimonial-job a',
+				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);
 	}

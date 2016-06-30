@@ -798,14 +798,15 @@
     .elementor-testimonial-wrapper .elementor-testimonial-meta .elementor-testimonial-details,
     .elementor-testimonial-wrapper .elementor-testimonial-meta .elementor-testimonial-image {
       display: table-cell;
-      vertical-align: middle;
-      text-align: center; }
+      vertical-align: middle; }
     .elementor-testimonial-wrapper .elementor-testimonial-meta .elementor-testimonial-image img {
       width: 60px;
       height: 60px;
       border-radius: 50%; }
     .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-aside .elementor-testimonial-image {
       padding-right: 15px; }
+    .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-aside .elementor-testimonial-details {
+      text-align: left; }
     .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-top .elementor-testimonial-details,
     .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-top .elementor-testimonial-image {
       display: block; }

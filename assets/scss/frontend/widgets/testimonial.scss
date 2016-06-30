@@ -31,7 +31,6 @@
 		.elementor-testimonial-image {
 			display: table-cell;
 			vertical-align: middle;
-			text-align: center;
 		}
 
 		.elementor-testimonial-image {
@@ -47,6 +46,10 @@
 
 			.elementor-testimonial-image {
 				@include padding-end(15px);
+			}
+
+			.elementor-testimonial-details {
+				text-align: getStartDirection();
 			}
 		}
 
