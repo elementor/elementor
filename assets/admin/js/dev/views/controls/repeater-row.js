@@ -42,8 +42,8 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.render();
 	},
 
-	setDynamicTitle: function() {
 		var dynamicTitle = this.model.get( this.getOption( 'titleField' ) );
+	setTitle: function() {
 
 		if ( ! dynamicTitle ) {
 			dynamicTitle = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
@@ -61,12 +61,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.collection = new Backbone.Collection( options.controlFields );
 
 		if ( options.titleField ) {
-			this.listenTo( this.model, 'change:' + options.titleField, this.setDynamicTitle );
+			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
 		}
 	},
 
 	onRender: function() {
-		this.setDynamicTitle();
+		this.setTitle();
 	}
 } );
 
