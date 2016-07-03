@@ -215,18 +215,18 @@ class Widget_Audio extends Widget_Base {
 
 	public function filter_oembed_result( $html ) {
 		$params = [
-			'auto_play' => 'yes' === $this->_current_instance['sc_auto_play'],
-			'buying' => 'show' === $this->_current_instance['sc_buying'],
-			'liking' => 'show' === $this->_current_instance['sc_liking'],
-			'download' => 'show' === $this->_current_instance['sc_download'],
-			'sharing' => 'show' === $this->_current_instance['sc_sharing'],
-			'show_comments' => 'show' === $this->_current_instance['sc_show_comments'],
-			'show_playcount' => 'show' === $this->_current_instance['sc_show_playcount'],
-			'show_user' => 'show' === $this->_current_instance['sc_show_user'],
+			'auto_play' => 'yes' === $this->_current_instance['sc_auto_play'] ? 'true' : 'false',
+			'buying' => 'show' === $this->_current_instance['sc_buying'] ? 'true' : 'false',
+			'liking' => 'show' === $this->_current_instance['sc_liking'] ? 'true' : 'false',
+			'download' => 'show' === $this->_current_instance['sc_download'] ? 'true' : 'false',
+			'sharing' => 'show' === $this->_current_instance['sc_sharing'] ? 'true' : 'false',
+			'show_comments' => 'show' === $this->_current_instance['sc_show_comments'] ? 'true' : 'false',
+			'show_playcount' => 'show' === $this->_current_instance['sc_show_playcount'] ? 'true' : 'false',
+			'show_user' => 'show' === $this->_current_instance['sc_show_user'] ? 'true' : 'false',
 			'color' => str_replace( '#', '', $this->_current_instance['sc_color'] ),
 		];
 
-		$visual = 'yes' === $this->_current_instance['visual'];
+		$visual = 'yes' === $this->_current_instance['visual'] ? 'true' : 'false';
 
 		preg_match( '/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $html, $matches );
 		$url = esc_url( add_query_arg( $params, $matches[1] ) );
