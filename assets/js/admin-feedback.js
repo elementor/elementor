@@ -6,7 +6,7 @@
 
 		cacheElements: function() {
 			this.cache = {
-				$deactivateLink: $( 'body.plugins-php table.wp-list-table.plugins #the-list [data-slug="elementor"] span.deactivate a' ),
+				$deactivateLink: $( '#the-list' ).find( '[data-slug="elementor"] span.deactivate a' ),
 				$dialogContent: $( '#elementor-deactivate-feedback-dialog-wrapper' ),
 				$dialogForm: $( '#elementor-deactivate-feedback-dialog-form' )
 			};
