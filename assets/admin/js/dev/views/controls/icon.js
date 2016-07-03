@@ -10,12 +10,6 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	onReady: function() {
-		this.ui.iconSelect.select2( {
-			allowClear: true,
-			templateResult: _.bind( this.iconsList, this ),
-			templateSelection: _.bind( this.iconsList, this )
-		} );
 	},
 
 	iconsList: function( icon ) {
@@ -25,6 +19,14 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		return Backbone.$(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
+	},
+
+	onReady: function() {
+		this.ui.iconSelect.select2( {
+			allowClear: true,
+			templateResult: _.bind( this.iconsList, this ),
+			templateSelection: _.bind( this.iconsList, this )
+		} );
 	},
 
 	onBeforeDestroy: function() {
