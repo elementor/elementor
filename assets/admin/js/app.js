@@ -3710,6 +3710,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return inputValue;
 	},
 
+	// This method used inside of repeater
+	getFieldTitleValue: function() {
+		return this.getControlValue();
+	},
+
 	setInputValue: function( input, value ) {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );
@@ -4298,6 +4303,12 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		);
 	},
 
+	getFieldTitleValue: function() {
+		var controlValue = this.getControlValue();
+
+		return controlValue.replace( /^fa fa-/, '' );
+	},
+
 	onReady: function() {
 		this.ui.iconSelect.select2( {
 			allowClear: true,
@@ -4482,14 +4493,16 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.render();
 	},
 
-	setDynamicTitle: function() {
-		var dynamicTitle = this.model.get( this.getOption( 'titleField' ) );
+	setTitle: function() {
+		var changerControlModel = this.collection.find( { name: this.getOption( 'titleField' ) } ),
+			changerControlView = this.children.findByModelCid( changerControlModel.cid ),
+			title = changerControlView.getFieldTitleValue();
 
-		if ( ! dynamicTitle ) {
-			dynamicTitle = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+		if ( ! title ) {
+			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
 		}
 
-		this.ui.itemTitle.text( dynamicTitle );
+		this.ui.itemTitle.text( title );
 	},
 
 	initialize: function( options ) {
@@ -4501,12 +4514,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.collection = new Backbone.Collection( options.controlFields );
 
 		if ( options.titleField ) {
-			this.listenTo( this.model, 'change:' + options.titleField, this.setDynamicTitle );
+			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
 		}
 	},
 
 	onRender: function() {
-		this.setDynamicTitle();
+		this.setTitle();
 	}
 } );
 
