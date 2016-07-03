@@ -81,7 +81,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sc_buying',
 			[
-				'label' => __( 'Buy button', 'elementor' ),
+				'label' => __( 'Buy Button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
@@ -95,7 +95,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sc_liking',
 			[
-				'label' => __( 'Like button', 'elementor' ),
+				'label' => __( 'Like Button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
@@ -109,7 +109,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sc_download',
 			[
-				'label' => __( 'Download button', 'elementor' ),
+				'label' => __( 'Download Button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
@@ -123,7 +123,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sc_sharing',
 			[
-				'label' => __( 'Share button', 'elementor' ),
+				'label' => __( 'Share Button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
@@ -137,7 +137,7 @@ class Widget_Audio extends Widget_Base {
 		$this->add_control(
 			'sc_show_comments',
 			[
-				'label' => __( 'Show Comments', 'elementor' ),
+				'label' => __( 'Comments', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
