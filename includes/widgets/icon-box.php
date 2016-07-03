@@ -168,6 +168,10 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'default' => '',
@@ -227,9 +231,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 50,
-				],
 				'range' => [
 					'px' => [
 						'min' => 6,
