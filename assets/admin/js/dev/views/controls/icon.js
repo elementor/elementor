@@ -10,6 +10,34 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
+	initialize: function() {
+		ControlBaseItemView.prototype.initialize.apply( this, arguments );
+
+		this.filterIcons();
+	},
+
+	filterIcons: function() {
+		var icons = this.model.get( 'icons' ),
+			include = this.model.get( 'include' ),
+			exclude = this.model.get( 'exclude' );
+
+		if ( include ) {
+			var filteredIcons = {};
+
+			_.each( include, function( iconKey ) {
+				filteredIcons[ iconKey ] = icons[ iconKey ];
+			} );
+
+			this.model.set( 'icons', filteredIcons );
+
+			return;
+		}
+
+		if ( exclude ) {
+			_.each( exclude, function( iconKey ) {
+				delete icons[ iconKey ];
+			} );
+		}
 	},
 
 	iconsList: function( icon ) {
