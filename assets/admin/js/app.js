@@ -4283,7 +4283,6 @@ ControlIconItemView = ControlBaseItemView.extend( {
 			} );
 
 			this.model.set( 'icons', filteredIcons );
-
 			return;
 		}
 
@@ -4298,6 +4297,7 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		if ( ! icon.id ) {
 			return icon.text;
 		}
+
 		return Backbone.$(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
