@@ -240,10 +240,12 @@ body.elementor-editor-inactive #elementor-editor {
       color: #fff;
       border-color: #7c1337;
       box-shadow: 0 1px 0 #7c1337;
-      padding: 5px 40px;
+      padding: 5px 30px;
       height: auto;
-      text-align: right;
+      line-height: 20px;
       text-transform: capitalize; }
+      .notice.elementor-message .elementor-update-now .elementor-button i {
+        padding-right: 5px; }
       .notice.elementor-message .elementor-update-now .elementor-button:hover {
         background-color: #a0124a; }
       .notice.elementor-message .elementor-update-now .elementor-button:active {
