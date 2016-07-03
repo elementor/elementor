@@ -65,7 +65,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'auto_play',
+			'sc_auto_play',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -79,7 +79,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'buying',
+			'sc_buying',
 			[
 				'label' => __( 'Buy button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -93,7 +93,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'liking',
+			'sc_liking',
 			[
 				'label' => __( 'Like button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -107,7 +107,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'download',
+			'sc_download',
 			[
 				'label' => __( 'Download button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -121,7 +121,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'sharing',
+			'sc_sharing',
 			[
 				'label' => __( 'Share button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -135,7 +135,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'show_comments',
+			'sc_show_comments',
 			[
 				'label' => __( 'Show Comments', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -149,7 +149,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'show_playcount',
+			'sc_show_playcount',
 			[
 				'label' => __( 'Play Counts', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -163,7 +163,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'show_user',
+			'sc_show_user',
 			[
 				'label' => __( 'Username', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -177,7 +177,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'color',
+			'sc_color',
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
@@ -213,17 +213,17 @@ class Widget_Audio extends Widget_Base {
 		<?php endif;
 	}
 
-	public function filter_oembed_result( $html, $url, $args ) {
+	public function filter_oembed_result( $html ) {
 		$params = [
-			'auto_play' => 'yes' === $this->_current_instance['auto_play'] ? 'true' : 'false',
-			'buying' => 'show' === $this->_current_instance['buying'] ? 'true' : 'false',
-			'liking' => 'show' === $this->_current_instance['liking'] ? 'true' : 'false',
-			'download' => 'show' === $this->_current_instance['download'] ? 'true' : 'false',
-			'sharing' => 'show' === $this->_current_instance['sharing'] ? 'true' : 'false',
-			'show_comments' => 'show' === $this->_current_instance['show_comments'] ? 'true' : 'false',
-			'show_playcount' => 'show' === $this->_current_instance['show_playcount'] ? 'true' : 'false',
-			'show_user' => 'show' === $this->_current_instance['show_user'] ? 'true' : 'false',
-			'color' => str_replace( '#', '', $this->_current_instance['color'] ),
+			'auto_play' => 'yes' === $this->_current_instance['sc_auto_play'] ? 'true' : 'false',
+			'buying' => 'show' === $this->_current_instance['sc_buying'] ? 'true' : 'false',
+			'liking' => 'show' === $this->_current_instance['sc_liking'] ? 'true' : 'false',
+			'download' => 'show' === $this->_current_instance['sc_download'] ? 'true' : 'false',
+			'sharing' => 'show' === $this->_current_instance['sc_sharing'] ? 'true' : 'false',
+			'show_comments' => 'show' === $this->_current_instance['sc_show_comments'] ? 'true' : 'false',
+			'show_playcount' => 'show' === $this->_current_instance['sc_show_playcount'] ? 'true' : 'false',
+			'show_user' => 'show' === $this->_current_instance['sc_show_user'] ? 'true' : 'false',
+			'color' => str_replace( '#', '', $this->_current_instance['sc_color'] ),
 		];
 
 		$visual = 'yes' === $this->_current_instance['visual'] ? 'true' : 'false';
