@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global jQuery, ElementorAdminFeedbackArgs */
 ( function( $, window, document ) {
 	'use strict';
 
@@ -25,8 +25,8 @@
 						contentWidth: 'auto',
 						contentHeight: 'auto',
 						strings: {
-							confirm: 'Skip & Deactivate',
-							cancel: 'Cancel'
+							confirm: 'Deactivate', // TODO: gettext
+							cancel: 'Cancel' // TODO: gettext
 						},
 						defaultOption: 'cancel',
 						onConfirm: _.bind( self.sendFeedback, self )
