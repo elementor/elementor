@@ -273,7 +273,7 @@ class Admin {
 		?>
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
 			<div id="elementor-deactivate-feedback-dialog-content" style="padding-bottom: 30px;">
-				<h2><?php _e( 'Feedback Title', '' ); ?></h2>
+				<h2><?php _e( 'Feedback Title', 'elementor' ); ?></h2>
 
 				<form action="" id="elementor-deactivate-feedback-dialog-form">
 					<input type="hidden" name="action" value="elementor_deactivate_feedback" />
