@@ -356,6 +356,8 @@
 
 .elementor-widget-image .elementor-image {
   overflow: hidden; }
+  .elementor-widget-image .elementor-image > img {
+    display: block; }
   .elementor-widget-image .elementor-image.elementor-image-shape-circle {
     border-radius: 50%; }
 
@@ -786,7 +788,12 @@
   overflow: hidden;
   text-align: center; }
   .elementor-testimonial-wrapper .elementor-testimonial-content {
+    font-size: 1.3em;
     margin-bottom: 20px; }
+  .elementor-testimonial-wrapper .elementor-testimonial-name {
+    line-height: 1.5; }
+  .elementor-testimonial-wrapper .elementor-testimonial-job {
+    font-size: 0.85em; }
   .elementor-testimonial-wrapper.elementor-testimonial-text-align-left {
     text-align: left; }
   .elementor-testimonial-wrapper.elementor-testimonial-text-align-right {
