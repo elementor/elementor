@@ -65,7 +65,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'auto_play',
+			'sc_auto_play',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -79,7 +79,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'buying',
+			'sc_buying',
 			[
 				'label' => __( 'Buy button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -93,7 +93,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'liking',
+			'sc_liking',
 			[
 				'label' => __( 'Like button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -107,7 +107,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'download',
+			'sc_download',
 			[
 				'label' => __( 'Download button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -121,7 +121,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'sharing',
+			'sc_sharing',
 			[
 				'label' => __( 'Share button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -135,7 +135,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'show_comments',
+			'sc_show_comments',
 			[
 				'label' => __( 'Show Comments', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -149,7 +149,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'show_playcount',
+			'sc_show_playcount',
 			[
 				'label' => __( 'Play Counts', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -163,7 +163,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'show_user',
+			'sc_show_user',
 			[
 				'label' => __( 'Username', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -177,7 +177,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'color',
+			'sc_color',
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
