@@ -75,6 +75,14 @@
 		object-fit: cover; // For HTML5 portrait video
 	}
 	// End Background Video
+
+	.elementor-background-overlay {
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		position: absolute;
+	}
 }
 
 // TEMP CODE

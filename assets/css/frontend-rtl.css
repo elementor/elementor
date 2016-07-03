@@ -59,6 +59,12 @@
     left: 50%;
     transform: translateY(-50%) translateX(-50%);
     object-fit: cover; }
+  .elementor .elementor-background-overlay {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute; }
 
 #elementor-select-preset {
   display: none; }
