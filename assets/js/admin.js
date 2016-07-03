@@ -57,12 +57,12 @@
 				self.animateLoader();
 			} );
 
-			$( 'div.notice.elementor-notice-dismissed' ).on( 'click', 'button.notice-dismiss', function( event ) {
+			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss', function( event ) {
 				event.preventDefault();
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
-					notice_id: $( this ).closest( '.elementor-notice-dismissed' ).data( 'notice_id' )
+					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' )
 				} );
 			} );
 		},
