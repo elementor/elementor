@@ -102,28 +102,6 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Image Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => '',
-				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
-			'image_title',
-			[
-				'label' => __( 'Image Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your title text', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
 			'title_size',
 			[
 				'label' => __( 'Title HTML Tag', 'elementor' ),
@@ -376,7 +354,7 @@ class Widget_Image_box extends Widget_Base {
 		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $instance['image']['url'] ) ) {
-			$image_html = sprintf( '<img src="%s" alt="%s" title="%s" />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ), esc_attr( $instance['image_title'] ) );
+			$image_html = sprintf( '<img src="%s" alt="%s" title="%s" />', esc_attr( $instance['image']['url'] ), $this->get_image_alt( $instance ), $this->get_image_title( $instance ) );
 
 			if ( ! empty( $instance['link']['url'] ) ) {
 				$target = '';
@@ -426,7 +404,7 @@ class Widget_Image_box extends Widget_Base {
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
-			var imageHtml = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" title="' + settings.image_title + '" />';
+			var imageHtml = '<img src="' + settings.image.url + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
@@ -462,5 +440,34 @@ class Widget_Image_box extends Widget_Base {
 		print( html );
 		%>
 		<?php
+	}
+
+	private function get_image_alt( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
+		if ( ! $alt ) {
+			$attachment = get_post( $post_id );
+			$alt = $attachment->post_excerpt;
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+		return trim( strip_tags( $alt ) );
+	}
+
+	private function get_image_title( $instance ) {
+		$post_id = $instance['image']['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$attachment = get_post( $post_id );
+		return trim( strip_tags( $attachment->post_title ) );
 	}
 }

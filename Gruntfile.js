@@ -141,6 +141,7 @@ module.exports = function( grunt ) {
 					src: [
 						'assets/admin/js/app.min.js',
 						'assets/js/admin.min.js',
+						'assets/js/admin-feedback.min.js',
 						'assets/js/frontend.min.js'
 					]
 				}
@@ -202,6 +203,9 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin.min.js': [
 						'assets/js/admin.js'
+					],
+					'assets/js/admin-feedback.min.js': [
+						'assets/js/admin-feedback.js'
 					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'

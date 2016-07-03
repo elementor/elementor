@@ -8,7 +8,7 @@ class DB {
 	/**
 	 * Current DB version of the editor.
 	 */
-	const DB_VERSION = '0.1';
+	const DB_VERSION = '0.2';
 
 	const REVISION_PUBLISH = 'publish';
 	const REVISION_DRAFT = 'draft';
