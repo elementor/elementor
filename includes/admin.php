@@ -212,10 +212,10 @@ class Admin {
 				</div>
 				<div class="elementor-message-content">
 					<h3><?php _e( '#NewInElementor', 'elementor' ); ?></h3>
-					<p>There is a new version of Elementor Page Builder available. <a href="<?php echo $details_url; ?>" class="thickbox open-plugin-details-modal"><?php printf( __( 'View version %s details', 'elementor' ), $product->new_version ); ?></a> or <a href="#"><?php _e( 'update now', 'elementor' ); ?></a>.</p>
+					<p>There is a new version of Elementor Page Builder available. <a href="<?php echo $details_url; ?>" class="thickbox open-plugin-details-modal"><?php printf( __( 'View version %s details', 'elementor' ), $product->new_version ); ?></a> or <a href="<?php echo $upgrade_url; ?>"><?php _e( 'Upgrade Now', 'elementor' ); ?>"><?php _e( 'update now', 'elementor' ); ?></a>.</p>
 				</div>
 				<div class="elementor-update-now">
-					<a class="button elementor-button" href="#"><?php _e( 'Update Now', 'elementor' ); ?></a>
+					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><?php _e( 'Upgrade Now', 'elementor' ); ?>"><?php _e( 'Update Now', 'elementor' ); ?></a>
 				</div>
 			</div>
 		</div>
