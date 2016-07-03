@@ -2657,8 +2657,7 @@ var Introduction;
 
 Introduction = function() {
 	var self = this,
-		modal,
-		infoDialog;
+		modal;
 
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
