@@ -7,6 +7,10 @@
 	.elementor-image {
 		overflow: hidden;
 
+		> img {
+			display: block;
+		}
+
 		&.elementor-image-shape- {
 
 			&circle {

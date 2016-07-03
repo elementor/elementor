@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v2.1.0
+ * Dialogs Manager v2.1.1
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -446,7 +446,9 @@
 
 			var buttonFn = function () {
 
-				self.hide();
+				if (self.getSettings('hideOnButtonClick')) {
+					self.hide();
+				}
 
 				if ($.isFunction(options.callback)) {
 					options.callback.call(this, self);
@@ -504,7 +506,8 @@
 					my: 'center',
 					at: 'center center-100'
 				},
-				headerMessage: ''
+				headerMessage: '',
+				hideOnButtonClick: true
 			};
 		},
 		onHide: function () {

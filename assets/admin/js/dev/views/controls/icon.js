@@ -10,12 +10,34 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	onReady: function() {
-		this.ui.iconSelect.select2( {
-			allowClear: true,
-			templateResult: _.bind( this.iconsList, this ),
-			templateSelection: _.bind( this.iconsList, this )
-		} );
+	initialize: function() {
+		ControlBaseItemView.prototype.initialize.apply( this, arguments );
+
+		this.filterIcons();
+	},
+
+	filterIcons: function() {
+		var icons = this.model.get( 'icons' ),
+			include = this.model.get( 'include' ),
+			exclude = this.model.get( 'exclude' );
+
+		if ( include ) {
+			var filteredIcons = {};
+
+			_.each( include, function( iconKey ) {
+				filteredIcons[ iconKey ] = icons[ iconKey ];
+			} );
+
+			this.model.set( 'icons', filteredIcons );
+
+			return;
+		}
+
+		if ( exclude ) {
+			_.each( exclude, function( iconKey ) {
+				delete icons[ iconKey ];
+			} );
+		}
 	},
 
 	iconsList: function( icon ) {
@@ -25,6 +47,14 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		return Backbone.$(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
+	},
+
+	onReady: function() {
+		this.ui.iconSelect.select2( {
+			allowClear: true,
+			templateResult: _.bind( this.iconsList, this ),
+			templateSelection: _.bind( this.iconsList, this )
+		} );
 	},
 
 	onBeforeDestroy: function() {
