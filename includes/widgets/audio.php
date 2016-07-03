@@ -213,7 +213,7 @@ class Widget_Audio extends Widget_Base {
 		<?php endif;
 	}
 
-	public function filter_oembed_result( $html, $url, $args ) {
+	public function filter_oembed_result( $html ) {
 		$params = [
 			'auto_play' => 'yes' === $this->_current_instance['auto_play'] ? 'true' : 'false',
 			'buying' => 'show' === $this->_current_instance['buying'] ? 'true' : 'false',
