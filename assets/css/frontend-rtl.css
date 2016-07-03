@@ -356,6 +356,8 @@
 
 .elementor-widget-image .elementor-image {
   overflow: hidden; }
+  .elementor-widget-image .elementor-image > img {
+    display: block; }
   .elementor-widget-image .elementor-image.elementor-image-shape-circle {
     border-radius: 50%; }
 
