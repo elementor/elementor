@@ -49,6 +49,12 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		);
 	},
 
+	getFieldTitleValue: function() {
+		var controlValue = this.getControlValue();
+
+		return controlValue.replace( /^fa fa-/, '' );
+	},
+
 	onReady: function() {
 		this.ui.iconSelect.select2( {
 			allowClear: true,

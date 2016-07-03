@@ -42,14 +42,16 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.render();
 	},
 
-		var dynamicTitle = this.model.get( this.getOption( 'titleField' ) );
 	setTitle: function() {
+		var changerControlModel = this.collection.find( { name: this.getOption( 'titleField' ) } ),
+			changerControlView = this.children.findByModelCid( changerControlModel.cid ),
+			title = changerControlView.getFieldTitleValue();
 
-		if ( ! dynamicTitle ) {
-			dynamicTitle = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+		if ( ! title ) {
+			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
 		}
 
-		this.ui.itemTitle.text( dynamicTitle );
+		this.ui.itemTitle.text( title );
 	},
 
 	initialize: function( options ) {
