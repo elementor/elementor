@@ -434,13 +434,13 @@ body {
 				}
 
 				&:last-of-type {
-					> .ui-resizable-e {
+					> .ui-resizable-e, > .ui-resizable-w {
 						display: none !important;
 					}
 				}
 
 				@media (max-width: $screen-md-max) {
-					> .ui-resizable-e {
+					> .ui-resizable-e, > .ui-resizable-w {
 						display: none !important;
 					}
 				}
