@@ -10,7 +10,6 @@ abstract class Element_Base {
 	const TAB_ADVANCED = 'advanced';
 	const TAB_RESPONSIVE = 'responsive';
 	const TAB_LAYOUT = 'layout';
-	const TAB_COLUMN = 'column';
 
 	private $_controls = [];
 	private $_tabs_controls = [];
@@ -47,7 +46,6 @@ abstract class Element_Base {
 			self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
 			self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
 			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
-			self::TAB_COLUMN => __( 'Column', 'elementor' ),
 		];
 	}
 
