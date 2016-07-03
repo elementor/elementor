@@ -91,6 +91,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
+				'title_field' => 'social',
 			]
 		);
 

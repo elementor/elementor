@@ -29,7 +29,6 @@ ControlIconItemView = ControlBaseItemView.extend( {
 			} );
 
 			this.model.set( 'icons', filteredIcons );
-
 			return;
 		}
 
@@ -44,9 +43,16 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		if ( ! icon.id ) {
 			return icon.text;
 		}
+
 		return Backbone.$(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
+	},
+
+	getFieldTitleValue: function() {
+		var controlValue = this.getControlValue();
+
+		return controlValue.replace( /^fa fa-/, '' );
 	},
 
 	onReady: function() {
