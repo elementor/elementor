@@ -198,7 +198,6 @@ class Admin {
 			return;
 
 		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
-		User::is_user_notice_viewed( $notice_id );
 		if ( User::is_user_notice_viewed( $notice_id ) )
 			return;
 
