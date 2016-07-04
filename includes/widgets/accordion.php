@@ -58,6 +58,7 @@ class Widget_Accordion extends Widget_Base {
 						'show_label' => false,
 					],
 				],
+				'title_field' => 'tab_title',
 			]
 		);
 
