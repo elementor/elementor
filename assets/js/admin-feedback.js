@@ -18,25 +18,31 @@
 				event.preventDefault();
 
 				// Open Dialog
-				var dialogManager = new DialogsManager.Instance(),
-					modal = dialogManager.createWidget( 'confirm', {
-						headerMessage: 'Feedback Title', // TODO: gettext
-						message: self.cache.$dialogForm,
-						strings: {
-							confirm: 'Deactivate', // TODO: gettext
-							cancel: 'Cancel' // TODO: gettext
-						},
-						defaultOption: 'cancel',
-						onConfirm: _.bind( self.sendFeedback, self )
-					} );
+				var dialogManager = new DialogsManager.Instance();
 
-				modal.show();
+				self.modal = dialogManager.createWidget( 'confirm', {
+					headerMessage: 'Feedback Title', // TODO: gettext
+					message: self.cache.$dialogForm,
+					strings: {
+						confirm: 'Deactivate', // TODO: gettext
+						cancel: 'Cancel' // TODO: gettext
+					},
+					defaultOption: 'cancel',
+					hideOnButtonClick: false,
+					onConfirm: _.bind( self.sendFeedback, self ),
+					onCancel: function() {
+						self.modal.hide();
+					}
+				} );
+
+				self.modal.show();
 			} );
 		},
 
 		sendFeedback: function() {
 			var self = this;
 
+			self.modal.getElements( 'ok' ).text( 'In progress' );
 			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
 				location.href = self.cache.$deactivateLink.attr( 'href' );
 				//console.log( data );
