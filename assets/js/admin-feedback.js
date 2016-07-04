@@ -42,7 +42,7 @@
 		sendFeedback: function() {
 			var self = this;
 
-			self.modal.getElements( 'ok' ).text( 'In progress' );
+			self.modal.getElements( 'ok' ).text( 'In progress..' );
 			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
 				location.href = self.cache.$deactivateLink.attr( 'href' );
 				//console.log( data );
