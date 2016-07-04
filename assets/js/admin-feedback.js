@@ -21,8 +21,8 @@
 				// Open Dialog
 				var dialogManager = new DialogsManager.Instance(),
 					modal = dialogManager.createWidget( 'confirm', {
-						message: self.cache.$dialogContent.html(),
 						headerMessage: 'Feedback Title', // TODO: gettext
+						message: self.cache.$dialogForm,
 						contentWidth: 'auto',
 						contentHeight: 'auto',
 						strings: {
