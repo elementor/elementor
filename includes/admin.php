@@ -214,8 +214,8 @@ class Admin {
 					<i class="eicon-elementor-square"></i>
 				</div>
 				<div class="elementor-message-content">
-					<h3><?php _e( '#NewInElementor', 'elementor' ); ?></h3>
-					<p><?php printf( __( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal">View version %2$s details</a> or <a href="%3$s">update now</a>.', 'elementor' ),
+					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
+					<p><?php _e( 'There is a new version of Elementor Page Builder available.', 'elementor' ); ?> <?php printf( __( '<a href="%1$s" class="thickbox open-plugin-details-modal">View version %2$s details</a> or <a href="%3$s">update now</a>.', 'elementor' ),
 							$details_url,
 							$product->new_version,
 							$upgrade_url
