@@ -212,7 +212,7 @@ body.elementor-editor-inactive #elementor-editor {
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {
-  border-left-color: #9b0a46 !important;
+  border-right-color: #9b0a46 !important;
   padding: 20px; }
   .notice.elementor-message .elementor-message-inner {
     display: table;

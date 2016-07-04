@@ -3,7 +3,7 @@
 ---------------------------------------*/
 
 .notice.elementor-message {
-	border-left-color: $editor-accent !important;
+	@include border-start-property(color, $editor-accent !important);
 	padding: 20px;
 
 	.elementor-message-inner {
