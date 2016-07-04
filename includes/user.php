@@ -5,10 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class User {
 
+	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
 	public static function init() {
 		add_action( 'wp_ajax_elementor_introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
+		add_action( 'wp_ajax_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
 	}
 
 	public static function is_current_user_can_edit( $post_id = 0 ) {
@@ -40,6 +42,32 @@ class User {
 			return false;
 
 		return true;
+	}
+
+	private static function _get_user_notices() {
+		return get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
+	}
+
+	public static function is_user_notice_viewed( $notice_id ) {
+		$notices = self::_get_user_notices();
+		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) )
+			return false;
+
+		return true;
+	}
+
+	public static function ajax_set_admin_notice_viewed() {
+		if ( empty( $_POST['notice_id'] ) )
+			die;
+
+		$notices = self::_get_user_notices();
+		if ( empty( $notices ) )
+			$notices = [];
+
+		$notices[ $_POST['notice_id'] ] = 'true';
+		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
+
+		die;
 	}
 
 	public static function get_introduction() {
