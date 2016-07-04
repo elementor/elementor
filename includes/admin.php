@@ -54,6 +54,10 @@ class Admin {
 		);
 
 		wp_enqueue_style( 'elementor-admin-app' );
+
+		// It's for upgrade notice
+		// TODO: enqueue this just if needed
+		add_thickbox();
 	}
 
 	/**
