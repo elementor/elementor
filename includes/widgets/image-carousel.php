@@ -482,24 +482,14 @@ class Widget_Image_Carousel extends Widget_Base {
 			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( $this->get_image_alt( $attachment ) ) . '" />';
 
-			$target = '';
-			if ( 'custom' === $instance['link_to'] && ! empty( $instance['link']['is_external'] ) ) {
-				$target = ' target="_blank"';
-			}
+			$link = $this->get_link_url( $attachment, $instance );
+			if ( $link ) {
+				$target = '';
+				if ( ! empty( $link['is_external'] ) ) {
+					$target = ' target="_blank"';
+				}
 
-			if ( 'none' !== $instance['link_to'] ) {
-				switch ( $instance['link_to'] ) :
-					case 'media':
-						$link = wp_get_attachment_url( $attachment['id'] );
-						break;
-					case 'custom':
-						$link = $instance['link']['url'];
-						break;
-					default:
-						$link = wp_get_attachment_url( $attachment['id'] );
-				endswitch;
-
-				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link, $target, $image_html );
+				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
 			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '</div></div>';
@@ -573,5 +563,22 @@ class Widget_Image_Carousel extends Widget_Base {
 			}
 		}
 		return trim( strip_tags( $alt ) );
+	}
+
+	private function get_link_url( $attachment, $instance ) {
+		if ( 'none' === $instance['link_to'] ) {
+			return false;
+		}
+
+		if ( 'custom' === $instance['link_to'] ) {
+			if ( empty( $instance['link']['url'] ) ) {
+				return false;
+			}
+			return $instance['link'];
+		}
+
+		return [
+			'url' => wp_get_attachment_url( $attachment['id'] ),
+		];
 	}
 }
