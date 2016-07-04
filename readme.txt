@@ -66,6 +66,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - **Divider**. A line that divides different elements in the page.
 - **Spacer**. A space that divides the various elements.
 - **Columns**. Create inner columns within the column.
+- **And counting...**
 
 = Translations =
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
