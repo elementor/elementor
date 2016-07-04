@@ -40,11 +40,41 @@ Elementor works on any old or new theme. Switching between themes is no problem.
 ### RTL supported, multilingual and translatable ###
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
+### 27 widgets and counting ###
+- **Heading**. Add eye-catching headlines.
+- **Image**. Control the size, opacity and other settings of images.
+- **Text Editor**. A wysiwyg text editor, just like the WordPress editor.
+- **Video**. Add YouTube \ Vimeo to your page.
+- **Button**. Controlling every aspect of the button design.
+- **Image Box**. A box that includes an image, headline and text.
+- **Testimonials**. Customer testimonials that show social proof.
+- **Icon**. Place one or more of 600+ icons available.
+- **Icon Box**. Works the same as the image box, only with icons.
+- **Social Icons**. Icons to your social pages like Facebook / Twitter.
+- **Image Gallery**. Displays your images in an aligned grid.
+- **Image Carousel**. A rotating carousel or slider of chosen images.
+- **Icon List**. A bullet list with any chosen icon and text.
+- **Counter**. Show stats and numbers in an escalating manner.
+- **Progress Bar**. Include an escalating progress bar.
+- **Tabs**. Multiple tabs that display different pieces of content.
+- **Accordion**. A collapsable display of content.
+- **Toggle**. Like Accordion, for FAQ pages.
+- **Alert**. A colored alert box to draw the attention of the visitor.
+- **HTML**. Insert code into the page.
+- **Menu Anchor**. Link any menu to this anchor.
+- **Sidebar**. Include any sidebar you create into the page.
+- **GoogleMaps**. Embed maps into the page.
+- **SoundCloud**. Add audio bits from SoundCloud.
+- **Divider**. A line that divides different elements in the page.
+- **Spacer**. A space that divides the various elements.
+- **Columns**. Create inner columns within the column.
+
 ### Translations ###
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
+- [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
-- [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
+- [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 
