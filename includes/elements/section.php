@@ -336,7 +336,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Overlay Opacity', 'elementor' ),
+				'label' => __( 'Opacity (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,

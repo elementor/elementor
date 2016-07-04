@@ -46,7 +46,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'fields' => [
 					[
 						'name' => 'social',
-						'label' => __( 'Select Social Media', 'elementor' ),
+						'label' => __( 'Icon', 'elementor' ),
 						'type' => Controls_Manager::ICON,
 						'label_block' => true,
 						'default' => 'fa fa-wordpress',
