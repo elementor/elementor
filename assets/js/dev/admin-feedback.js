@@ -40,19 +40,19 @@
 						onReady: function() {
 							DialogsManager.getWidgetType( 'elementor-modal' ).prototype.onReady.apply( this, arguments );
 
-							this.addButton({
+							this.addButton( {
 								name: 'deactivate',
 								text: 'Deactivate Elementor', // TODO: gettext
 								callback: _.bind( self.sendFeedback, self )
-							});
+							} );
 
-							this.addButton({
+							this.addButton( {
 								name: 'cancel',
 								text: 'Cancel', // TODO: gettext
 								callback: function() {
 									self.getModal().hide();
 								}
-							});
+							} );
 						}
 					} );
 				}

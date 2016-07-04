@@ -260,7 +260,7 @@ class Admin {
 
 		wp_register_script(
 			'elementor-admin-feedback',
-			ELEMENTOR_ASSETS_URL . 'js/dist/admin-feedback' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
 				'underscore',
 				'elementor-dialog',
