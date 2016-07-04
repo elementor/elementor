@@ -214,11 +214,11 @@ class Admin {
 					<i class="eicon-elementor-square"></i>
 				</div>
 				<div class="elementor-message-content">
-					<h3><?php _e( '#NewInElementor', 'elementor' ); ?></h3>
-					<p>There is a new version of Elementor Page Builder available. <a href="<?php echo $details_url; ?>" class="thickbox open-plugin-details-modal"><?php printf( __( 'View version %s details', 'elementor' ), $product->new_version ); ?></a> or <a href="<?php echo $upgrade_url; ?>"><?php _e( 'update now', 'elementor' ); ?></a>.</p>
+					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
+					<p><?php _e( 'There is a new version of Elementor Page Builder available.', 'elementor' ); ?> <a href="<?php echo $details_url; ?>" class="thickbox open-plugin-details-modal"><?php printf( __( 'View version %s details', 'elementor' ), $product->new_version ); ?></a> or <a href="<?php echo $upgrade_url; ?>"><?php _e( 'Update Now', 'elementor' ); ?></a>.</p>
 				</div>
 				<div class="elementor-update-now">
-					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'update now', 'elementor' ); ?></a>
+					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'Update Now', 'elementor' ); ?></a>
 				</div>
 			</div>
 		</div>
