@@ -265,9 +265,13 @@ class Admin {
 
 	public function print_deactivate_feedback_dialog() {
 		$deactivate_reasons = [
+			'no_longer_needed' => [
+				'title' => __( 'I no longer need the plugin', 'elementor' ),
+				'input_placeholder' => '',
+			],
 			'found_a_better_plugin' => [
-				'title' => __( 'Found a better plugin', 'elementor' ),
-				'input_placeholder' => __( 'Better input placeholder', 'elementor' ),
+				'title' => __( 'I found a better plugin', 'elementor' ),
+				'input_placeholder' => __( 'Please share which plugin', 'elementor' ),
 			],
 			'temporary_deactivation' => [
 				'title' => __( 'Temporary Deactivation', 'elementor' ),
@@ -283,7 +287,8 @@ class Admin {
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
 				<input type="hidden" name="action" value="elementor_deactivate_feedback" />
-				
+
+				<h3><?php _e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></h3>
 				<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
 					<div>
 						<label>
