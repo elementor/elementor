@@ -221,6 +221,15 @@
 		});
 	} );
 
+	// Countdown Widget
+	elementorBindUI.addBindEvent( 'countdown', function() {
+		var $countdown = $( this ).find( '.elementor-countdown' ),
+			date = $countdown.data( 'deadline' );
+
+		$countdown.countdown( date );
+
+	} );
+
 	// Section
 	elementorBindUI.addBindEvent( 'section', function() {
 		var player,

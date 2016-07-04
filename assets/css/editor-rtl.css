@@ -1167,6 +1167,8 @@ select {
     width: 70px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
     display: none !important; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-time .elementor-control-input-wrapper select {
+    width: 45%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
     padding: 0 10px 15px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:before {

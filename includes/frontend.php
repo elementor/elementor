@@ -111,12 +111,23 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'jquery-countdown',
+			ELEMENTOR_ASSETS_URL . 'lib/countdown/jquery.countdown' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'2.1.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
 				'waypoints',
 				'jquery-numerator',
 				'jquery-slick',
+				'jquery-countdown',
 			],
 			Plugin::instance()->get_version()
 		);

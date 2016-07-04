@@ -79,6 +79,7 @@ App = Marionette.Application.extend( {
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
+				time: require( 'elementor-views/controls/time' ),
 				structure: require( 'elementor-views/controls/structure' )
 			};
 

@@ -40,6 +40,7 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
+			'countdown',
 		];
 
 		if ( Utils::is_development_mode() ) {

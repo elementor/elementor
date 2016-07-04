@@ -35,6 +35,7 @@ class Controls_Manager {
 	const GALLERY = 'gallery';
 	const STRUCTURE = 'structure';
 	const SELECT2 = 'select2';
+	const TIME = 'time';
 
 	/**
 	 * @var Control_Base[]
@@ -85,6 +86,7 @@ class Controls_Manager {
 			self::GALLERY,
 			self::STRUCTURE,
 			self::SELECT2,
+			self::TIME,
 		];
 
 		foreach ( $available_controls as $control_id ) {

@@ -856,6 +856,13 @@
 		display: none !important;
 	}
 
+	// Time control
+	.elementor-control-time {
+		.elementor-control-input-wrapper select {
+			width: 45%;
+		}
+	}
+
 	// Repeater control
 	@import "controls/repeater";
 }
