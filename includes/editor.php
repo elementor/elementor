@@ -204,12 +204,12 @@ class Editor {
 		);
 
 		wp_register_script(
-			'dialog',
+			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],
-			'1.0.5',
+			'2.1.0',
 			true
 		);
 
@@ -240,7 +240,7 @@ class Editor {
 				'tipsy',
 				'imagesloaded',
 				'heartbeat',
-				'dialog',
+				'elementor-dialog',
 				'jquery-select2',
 			],
 			Plugin::instance()->get_version(),
