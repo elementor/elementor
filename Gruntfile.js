@@ -333,6 +333,7 @@ module.exports = function( grunt ) {
 					'!.gitmodules',
 
 					'!assets/admin/js/dev/**',
+					'!assets/js/dev/**',
 					'!assets/scss/**',
 					'!*~'
 				],
