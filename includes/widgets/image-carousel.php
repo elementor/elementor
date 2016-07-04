@@ -461,6 +461,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$is_slideshow = '1' === $instance['slides_to_show'];
 		$is_rtl = ( 'rtl' === $instance['direction'] );
+		$direction = ( 'ltr' === $instance['direction'] ) ? 'ltr' : 'rtl';
 		$show_dots = ( in_array( $instance['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $instance['navigation'], [ 'arrows', 'both' ] ) );
 
@@ -496,7 +497,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		?>
-		<div class="elementor-image-carousel-wrapper"<?php if ( $is_rtl ) echo ' dir="rtl"'; ?>>
+		<div class="elementor-image-carousel-wrapper"<?php echo ' dir="' . $direction . '"'; ?>>
 			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo wp_json_encode( $slick_options ); ?>'>
 				<?php echo implode( '', $slides ); ?>
 			</div>
