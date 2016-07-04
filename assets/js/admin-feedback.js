@@ -1,5 +1,5 @@
 /* global jQuery, ElementorAdminFeedbackArgs */
-( function( $, window, document ) {
+( function( $ ) {
 	'use strict';
 
 	var ElementorAdminDialogApp = {
@@ -55,4 +55,4 @@
 		ElementorAdminDialogApp.init();
 	} );
 
-}( jQuery, window, document ) );
+}( jQuery ) );
