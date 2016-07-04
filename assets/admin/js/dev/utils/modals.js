@@ -46,10 +46,6 @@ Modals = {
 		};
 
 		DialogsManager.addWidgetType( 'elementor-modal', DialogsManager.getWidgetType( 'options' ).extend( 'elementor-modal', modalProperties ) );
-	},
-
-	createModal: function( properties ) {
-		return elementor.dialogsManager.createWidget( 'elementor-modal', properties );
 	}
 };
 
