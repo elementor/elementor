@@ -29,6 +29,7 @@ body.elementor-editor-active #elementor {
     right: 0;
     left: 0;
     bottom: 0;
+    letter-spacing: 0;
     z-index: 1; }
   body.elementor-editor-active #elementor .elementor-element.elementor-widget-empty {
     height: 50px;
@@ -193,6 +194,7 @@ body.elementor-editor-active #elementor {
     position: absolute;
     bottom: 100%;
     left: 0;
+    margin-bottom: 5px;
     color: #999;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
@@ -206,10 +208,10 @@ body.elementor-editor-active #elementor {
     left: -5px;
     top: 0;
     height: 100%; }
-  body.elementor-editor-active #elementor .elementor-column:last-of-type > .ui-resizable-e {
+  body.elementor-editor-active #elementor .elementor-column:last-of-type > .ui-resizable-e, body.elementor-editor-active #elementor .elementor-column:last-of-type > .ui-resizable-w {
     display: none !important; }
   @media (max-width: 1023px) {
-    body.elementor-editor-active #elementor .elementor-column > .ui-resizable-e {
+    body.elementor-editor-active #elementor .elementor-column > .ui-resizable-e, body.elementor-editor-active #elementor .elementor-column > .ui-resizable-w {
       display: none !important; } }
 @media (min-width: 768px) {
   body.elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {

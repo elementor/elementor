@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-repeater-row-handle-sortable">
 			<i class="fa fa-ellipsis-v"></i>
 		</div>
-		<div class="elementor-repeater-row-item-number">Item #<%= itemIndex %></div>
+		<div class="elementor-repeater-row-item-title"></div>
 		<div class="elementor-repeater-row-tool elementor-repeater-tool-duplicate">
 			<i class="fa fa-copy"></i>
 		</div>

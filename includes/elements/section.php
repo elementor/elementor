@@ -140,6 +140,7 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'no' => __( 'No Gap', 'elementor' ),
 					'narrow' => __( 'Narrow', 'elementor' ),
+					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
 				],
@@ -305,6 +306,58 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'background_overlay_title',
+			[
+				'label' => __( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_background',
+				'separator' => 'before',
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay',
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_background',
+				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_background',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_background' => [ 'classic' ],
+				],
+			]
+		);
+
 		// Section border
 		$this->add_control(
 			'section_border',
@@ -337,43 +390,6 @@ class Element_Section extends Element_Base {
 				],
 			]
 		);
-
-		/*$this->add_control(
-			'section_background_overlay',
-			[
-				'label' => __( 'Background Overlay', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'tab' => self::TAB_SECTION,
-			]
-		);
-
-		$this->add_group_control(
-			'background',
-			[
-				'tab' => self::TAB_SECTION,
-				'name' => 'overlay',
-				'selector' => '{{WRAPPER}} > .elementor-section-background-overlay',
-			]
-		);
-
-		$this->add_control(
-			'overlay_opacity',
-			[
-				'label' => __( 'Overlay Opacity', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => '.5',
-				'min' => '.1',
-				'max' => '1',
-				'step' => '.1',
-				'tab' => self::TAB_SECTION,
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-section-background-overlay' => 'opacity: {{VALUE}};',
-				],
-				'condition' => [
-					'overlay_background' => [ 'image', 'color' ],
-				],
-			]
-		);*/
 
 		// Section Typography
 		$this->add_control(
@@ -621,10 +637,14 @@ class Element_Section extends Element_Base {
 			if ( settings.background_video_fallback ) { %>
 				<div class="elementor-background-video-fallback" style="background-image: url(<%- settings.background_video_fallback.url %>)"></div>
 			<% }
-		} %>
-			<div class="elementor-container elementor-column-gap-<%- settings.gap %>">
-				<div class="elementor-row"></div>
-			</div>
+		}
+
+		if ( 'classic' === settings.background_overlay_background ) { %>
+			<div class="elementor-background-overlay"></div>
+		<% } %>
+		<div class="elementor-container elementor-column-gap-<%- settings.gap %>">
+			<div class="elementor-row"></div>
+		</div>
 		<?php
 	}
 
@@ -650,7 +670,8 @@ class Element_Section extends Element_Base {
 		}
 		?>
 		<section class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
-			<?php if ( 'video' === $instance['background_background'] ) :
+			<?php
+			if ( 'video' === $instance['background_background'] ) :
 				if ( $instance['background_video_link'] ) :
 					$video_id = Utils::get_youtube_id_from_url( $instance['background_video_link'] );
 					?>
@@ -662,7 +683,11 @@ class Element_Section extends Element_Base {
 						<?php endif; ?>
 					</div>
 				<?php endif;
-			endif; ?>
+			endif;
+
+			if ( 'classic' === $instance['background_overlay_background'] ) : ?>
+				<div class="elementor-background-overlay"></div>
+			<?php endif; ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $instance['gap'] ); ?>">
 				<div class="elementor-row">
 		<?php

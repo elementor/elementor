@@ -24,9 +24,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
-	childViewOptions: function( childView ) {
+	childViewOptions: function() {
 		return {
-			controlFields: this.model.get( 'fields' )
+			controlFields: this.model.get( 'fields' ),
+			titleField: this.model.get( 'title_field' )
 		};
 	},
 

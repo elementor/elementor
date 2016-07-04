@@ -2657,8 +2657,7 @@ var Introduction;
 
 Introduction = function() {
 	var self = this,
-		modal,
-		infoDialog;
+		modal;
 
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
@@ -3710,6 +3709,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return inputValue;
 	},
 
+	// This method used inside of repeater
+	getFieldTitleValue: function() {
+		return this.getControlValue();
+	},
+
 	setInputValue: function( input, value ) {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );
@@ -4259,21 +4263,57 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	onReady: function() {
-		this.ui.iconSelect.select2( {
-			allowClear: true,
-			templateResult: _.bind( this.iconsList, this ),
-			templateSelection: _.bind( this.iconsList, this )
-		} );
+	initialize: function() {
+		ControlBaseItemView.prototype.initialize.apply( this, arguments );
+
+		this.filterIcons();
+	},
+
+	filterIcons: function() {
+		var icons = this.model.get( 'icons' ),
+			include = this.model.get( 'include' ),
+			exclude = this.model.get( 'exclude' );
+
+		if ( include ) {
+			var filteredIcons = {};
+
+			_.each( include, function( iconKey ) {
+				filteredIcons[ iconKey ] = icons[ iconKey ];
+			} );
+
+			this.model.set( 'icons', filteredIcons );
+			return;
+		}
+
+		if ( exclude ) {
+			_.each( exclude, function( iconKey ) {
+				delete icons[ iconKey ];
+			} );
+		}
 	},
 
 	iconsList: function( icon ) {
 		if ( ! icon.id ) {
 			return icon.text;
 		}
+
 		return Backbone.$(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
+	},
+
+	getFieldTitleValue: function() {
+		var controlValue = this.getControlValue();
+
+		return controlValue.replace( /^fa fa-/, '' ).replace( '-', ' ' );
+	},
+
+	onReady: function() {
+		this.ui.iconSelect.select2( {
+			allowClear: true,
+			templateResult: _.bind( this.iconsList, this ),
+			templateSelection: _.bind( this.iconsList, this )
+		} );
 	},
 
 	onBeforeDestroy: function() {
@@ -4419,13 +4459,13 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		duplicateButton: '.elementor-repeater-tool-duplicate',
 		editButton: '.elementor-repeater-tool-edit',
 		removeButton: '.elementor-repeater-tool-remove',
-		itemNumber: '.elementor-repeater-row-item-number'
+		itemTitle: '.elementor-repeater-row-item-title'
 	},
 
 	triggers: {
 		'click @ui.removeButton': 'click:remove',
 		'click @ui.duplicateButton': 'click:duplicate',
-		'click @ui.itemNumber': 'click:edit'
+		'click @ui.itemTitle': 'click:edit'
 	},
 
 	templateHelpers: function() {
@@ -4452,6 +4492,24 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.render();
 	},
 
+	setTitle: function() {
+		var titleField = this.getOption( 'titleField' ),
+			title;
+
+		if ( titleField ) {
+			var changerControlModel = this.collection.find( { name: titleField } ),
+				changerControlView = this.children.findByModelCid( changerControlModel.cid );
+
+			title = changerControlView.getFieldTitleValue();
+		}
+
+		if ( ! title ) {
+			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+		}
+
+		this.ui.itemTitle.text( title );
+	},
+
 	initialize: function( options ) {
 		this.elementSettingsModel = options.elementSettingsModel;
 
@@ -4459,6 +4517,14 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 		// Collection for Controls list
 		this.collection = new Backbone.Collection( options.controlFields );
+
+		if ( options.titleField ) {
+			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
+		}
+	},
+
+	onRender: function() {
+		this.setTitle();
 	}
 } );
 
@@ -4491,9 +4557,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
-	childViewOptions: function( childView ) {
+	childViewOptions: function() {
 		return {
-			controlFields: this.model.get( 'fields' )
+			controlFields: this.model.get( 'fields' ),
+			titleField: this.model.get( 'title_field' )
 		};
 	},
 
