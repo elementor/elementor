@@ -1626,6 +1626,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-introduction .dialog-widget-header {
   padding: 40px 0 0; }
+#elementor-introduction .dialog-widget-content {
+  width: 700px;
+  max-width: 100%; }
 #elementor-introduction .elementor-video-wrapper {
   padding-bottom: 62.4%; }
 #elementor-introduction .dialog-message {
