@@ -2660,7 +2660,7 @@ Introduction = function() {
 		modal;
 
 	var initModal = function() {
-		modal = elementor.modals.createModal( {
+		modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
 			id: 'elementor-introduction'
 		} );
 
@@ -2768,10 +2768,6 @@ Modals = {
 		};
 
 		DialogsManager.addWidgetType( 'elementor-modal', DialogsManager.getWidgetType( 'options' ).extend( 'elementor-modal', modalProperties ) );
-	},
-
-	createModal: function( properties ) {
-		return elementor.dialogsManager.createWidget( 'elementor-modal', properties );
 	}
 };
 
