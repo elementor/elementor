@@ -103,6 +103,36 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link_to',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'section' => 'section_image_carousel',
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => 'Link to',
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'section' => 'section_image_carousel',
+				'condition' => [
+					'link_to' => 'custom',
+				],
+				'show_label' => false,
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -207,8 +237,8 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => 'ltr',
 				'section' => 'section_additional_options',
 				'options' => [
-					'ltr' => __( 'Left to Right', 'elementor' ),
-					'rtl' => __( 'Right to Left', 'elementor' ),
+					'ltr' => __( 'Left', 'elementor' ),
+					'rtl' => __( 'Right', 'elementor' ),
 				],
 			]
 		);
@@ -451,8 +481,32 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides = [];
 		foreach ( $instance['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
+			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( $this->get_image_alt( $attachment ) ) . '" />';
 
-			$slides[] = '<div><div class="slick-slide-inner"><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( $this->get_image_alt( $attachment ) ) . '" /></div></div>';
+			$target = '';
+			if ( 'custom' === $instance['link_to'] && ! empty( $instance['link']['is_external'] ) ) {
+				$target = ' target="_blank"';
+			}
+
+			if ( 'none' !== $instance['link_to'] ) {
+				switch ( $instance['link_to'] ) :
+					case 'attachment':
+						$link = get_attachment_link( $attachment['id'] );
+						break;
+					case 'media':
+						$link = $image_url;
+						break;
+					case 'custom':
+						$link = $instance['link']['url'];
+						break;
+					default:
+						$link = $image_url;
+				endswitch;
+
+				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link, $target, $image_html );
+			}
+
+			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '</div></div>';
 		}
 
 		if ( empty( $slides ) ) {
