@@ -2657,8 +2657,7 @@ var Introduction;
 
 Introduction = function() {
 	var self = this,
-		modal,
-		infoDialog;
+		modal;
 
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
@@ -4306,7 +4305,7 @@ ControlIconItemView = ControlBaseItemView.extend( {
 	getFieldTitleValue: function() {
 		var controlValue = this.getControlValue();
 
-		return controlValue.replace( /^fa fa-/, '' );
+		return controlValue.replace( /^fa fa-/, '' ).replace( '-', ' ' );
 	},
 
 	onReady: function() {
@@ -4494,9 +4493,15 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	},
 
 	setTitle: function() {
-		var changerControlModel = this.collection.find( { name: this.getOption( 'titleField' ) } ),
-			changerControlView = this.children.findByModelCid( changerControlModel.cid ),
+		var titleField = this.getOption( 'titleField' ),
+			title;
+
+		if ( titleField ) {
+			var changerControlModel = this.collection.find( { name: titleField } ),
+				changerControlView = this.children.findByModelCid( changerControlModel.cid );
+
 			title = changerControlView.getFieldTitleValue();
+		}
 
 		if ( ! title ) {
 			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
