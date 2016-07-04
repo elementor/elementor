@@ -147,6 +147,16 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.4.0 - 04.07.2016 =
+* New! - Section: Background Overlay for image and video background 
+* New! - Added Social Icons widget
+* New! - Added Testimonial widget
+* New! - Added SoundCloud (Audio) widget
+* Tweak! - Fixed Bug with background in Image widget ([#180](https://github.com/pojome/elementor/issues/180))
+* Tweak! - Assign a field to be used as the item title for Repeater control 
+* Tweak! - Rearrange column settings panel
+* Fixed! - Bug carousel widget with `dir="rtl"`
+
 = 0.3.2 - 27.06.2016 =
 * Tweak! - Added fully compatible for Cache plugins
 * Tweak! - Image widget: `<img>` alt and title fetch from Media library
