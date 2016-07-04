@@ -22,8 +22,6 @@
 					modal = dialogManager.createWidget( 'confirm', {
 						headerMessage: 'Feedback Title', // TODO: gettext
 						message: self.cache.$dialogForm,
-						contentWidth: 'auto',
-						contentHeight: 'auto',
 						strings: {
 							confirm: 'Deactivate', // TODO: gettext
 							cancel: 'Cancel' // TODO: gettext
