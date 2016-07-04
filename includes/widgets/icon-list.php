@@ -73,6 +73,7 @@ class Widget_Icon_list extends Widget_Base {
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
+				'title_field' => 'text',
 			]
 		);
 
