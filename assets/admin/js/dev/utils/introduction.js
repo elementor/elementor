@@ -6,8 +6,7 @@ Introduction = function() {
 
 	var initModal = function() {
 		modal = elementor.modals.createModal( {
-			id: 'elementor-introduction',
-			contentWidth: 700
+			id: 'elementor-introduction'
 		} );
 
 		modal.getElements( 'closeButton' ).on( 'click', function() {
