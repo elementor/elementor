@@ -303,4 +303,60 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-deactivate-feedback-dialog-wrapper {
   display: none; }
 
+#elementor-deactivate-feedback-modal .dialog-widget-content {
+  width: 500px; }
+#elementor-deactivate-feedback-modal .dialog-widget-header {
+  padding: 20px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  text-align: right; }
+#elementor-deactivate-feedback-modal .dialog-message {
+  padding: 20px;
+  text-align: right; }
+#elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input {
+  float: right;
+  margin: 0 15px 0 0; }
+  #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input:not(:checked) ~ .elementor-feedback-text {
+    display: none; }
+#elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-label {
+  display: block;
+  font-size: 13px;
+  color: #6d7882; }
+#elementor-deactivate-feedback-modal .elementor-feedback-text {
+  margin-top: 10px;
+  padding: 2px 5px;
+  font-size: 12px;
+  box-shadow: none;
+  background-color: #fff;
+  width: 92%; }
+#elementor-deactivate-feedback-modal .dialog-buttons-wrapper button {
+  width: 50%;
+  text-align: center; }
+#elementor-deactivate-feedback-modal .dialog-deactivate {
+  color: #9b0a46;
+  font-weight: bold; }
+
+#elementor-deactivate-feedback-dialog-header i {
+  color: #9b0a46;
+  font-size: 17px; }
+
+#elementor-deactivate-feedback-dialog-header-title {
+  font-size: 15px;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-right: 5px; }
+
+#elementor-deactivate-feedback-dialog-form-caption {
+  font-weight: bold;
+  font-size: 15px;
+  color: #495157;
+  line-height: 1.6; }
+
+#elementor-deactivate-feedback-dialog-form-body {
+  padding-top: 20px; }
+
+.elementor-deactivate-feedback-dialog-input-wrapper {
+  line-height: 1;
+  overflow: hidden;
+  margin-bottom: 15px; }
+
 /*# sourceMappingURL=admin-rtl.css.map */

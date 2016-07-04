@@ -254,13 +254,13 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'2.1.0',
+			'3.0.0',
 			true
 		);
 
 		wp_register_script(
 			'elementor-admin-feedback',
-			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'js/dist/admin-feedback' . $suffix . '.js',
 			[
 				'underscore',
 				'elementor-dialog',
@@ -298,21 +298,25 @@ class Admin {
 
 		?>
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
+			<div id="elementor-deactivate-feedback-dialog-header">
+				<i class="eicon-elementor-square"></i>
+				<span id="elementor-deactivate-feedback-dialog-header-title"><?php _e( 'Quick Feedback', 'elementor' ); ?></span>
+			</div>
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
 				<input type="hidden" name="action" value="elementor_deactivate_feedback" />
 
-				<h3><?php _e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></h3>
-				<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
-					<div>
-						<label>
-							<input type="radio" name="reason_key" value="<?php echo esc_attr( $reason_key ); ?>" />
-							<?php echo $reason['title']; ?>
-						</label>
-						<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
-							<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
-						<?php endif; ?>
-					</div>
-				<?php endforeach; ?>
+				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php _e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
+				<div id="elementor-deactivate-feedback-dialog-form-body">
+					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
+						<div class="elementor-deactivate-feedback-dialog-input-wrapper">
+							<input class="elementor-deactivate-feedback-dialog-input" type="radio" name="reason_key" value="<?php echo esc_attr( $reason_key ); ?>" />
+							<label class="elementor-deactivate-feedback-dialog-label"><?php echo $reason['title']; ?></label>
+							<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
+								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
+							<?php endif; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
 			</form>
 		</div>
 		<?php

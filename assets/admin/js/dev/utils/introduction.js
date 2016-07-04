@@ -5,7 +5,7 @@ Introduction = function() {
 		modal;
 
 	var initModal = function() {
-		modal = elementor.modals.createModal( {
+		modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
 			id: 'elementor-introduction'
 		} );
 
