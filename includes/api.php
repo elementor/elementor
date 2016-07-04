@@ -46,4 +46,17 @@ class Api {
 
 		return $data['upgrade_notice'];
 	}
+
+	public static function send_feedback( $feedback_key, $feedback_text ) {
+		$response = wp_remote_post( self::$_api_feedback_url, [
+			'timeout' => 30,
+			'body' => [
+				'site_lang' => get_bloginfo( 'language' ),
+				'feedback_key' => $feedback_key,
+				'feedback' => $feedback_text,
+			],
+		] );
+
+		return true;
+	}
 }

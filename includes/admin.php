@@ -281,7 +281,7 @@ class Admin {
 			<div id="elementor-deactivate-feedback-dialog-content" style="padding-bottom: 30px;">
 				<h2><?php _e( 'Feedback Title', 'elementor' ); ?></h2>
 
-				<form action="" id="elementor-deactivate-feedback-dialog-form">
+				<form id="elementor-deactivate-feedback-dialog-form" method="post">
 					<input type="hidden" name="action" value="elementor_deactivate_feedback" />
 					
 					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
@@ -299,6 +299,20 @@ class Admin {
 			</div>
 		</div>
 		<?php
+	}
+
+	public function ajax_elementor_deactivate_feedback() {
+		$reason_text = $reason_key = '';
+
+		if ( ! empty( $_POST['reason_key'] ) )
+			$reason_key = $_POST['reason_key'];
+
+		if ( ! empty( $_POST[ "reason_{$reason_key}" ] ) )
+			$reason_text = $_POST[ "reason_{$reason_key}" ];
+
+		Api::send_feedback( $reason_key, $reason_text );
+
+		wp_send_json_success();
 	}
 
 	/**
@@ -326,5 +340,8 @@ class Admin {
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ], 20 );
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 		}
+
+		// Ajax
+		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
 	}
 }

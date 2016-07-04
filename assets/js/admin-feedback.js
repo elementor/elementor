@@ -39,8 +39,9 @@
 		sendFeedback: function() {
 			var self = this;
 
-			$.post( ajaxurl, this.cache.$dialogForm.serialize(), function( data ) {
+			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
 				location.href = self.cache.$deactivateLink.attr( 'href' );
+				//console.log( data );
 			} );
 		},
 
