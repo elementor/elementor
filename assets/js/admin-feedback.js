@@ -7,7 +7,6 @@
 		cacheElements: function() {
 			this.cache = {
 				$deactivateLink: $( '#the-list' ).find( '[data-slug="elementor"] span.deactivate a' ),
-				$dialogContent: $( '#elementor-deactivate-feedback-dialog-wrapper' ),
 				$dialogForm: $( '#elementor-deactivate-feedback-dialog-form' )
 			};
 		},
