@@ -273,13 +273,17 @@ class Admin {
 				'title' => __( 'I found a better plugin', 'elementor' ),
 				'input_placeholder' => __( 'Please share which plugin', 'elementor' ),
 			],
+			'couldnt_get_the_plugin_to_work' => [
+				'title' => __( 'I couldn\'t get the plugin to work', 'elementor' ),
+				'input_placeholder' => '',
+			],
 			'temporary_deactivation' => [
-				'title' => __( 'Temporary Deactivation', 'elementor' ),
+				'title' => __( 'It\'s a temporary deactivation', 'elementor' ),
 				'input_placeholder' => '',
 			],
 			'other' => [
 				'title' => __( 'Other', 'elementor' ),
-				'input_placeholder' => __( 'Other input placeholder', 'elementor' ),
+				'input_placeholder' => __( 'Please share the reason', 'elementor' ),
 			],
 		];
 
