@@ -1,5 +1,5 @@
 /* global jQuery, ElementorAdminFeedbackArgs */
-( function( $, window, document ) {
+( function( $ ) {
 	'use strict';
 
 	var ElementorAdminDialogApp = {
@@ -7,7 +7,6 @@
 		cacheElements: function() {
 			this.cache = {
 				$deactivateLink: $( '#the-list' ).find( '[data-slug="elementor"] span.deactivate a' ),
-				$dialogContent: $( '#elementor-deactivate-feedback-dialog-wrapper' ),
 				$dialogForm: $( '#elementor-deactivate-feedback-dialog-form' )
 			};
 		},
@@ -21,7 +20,8 @@
 				// Open Dialog
 				var dialogManager = new DialogsManager.Instance(),
 					modal = dialogManager.createWidget( 'confirm', {
-						message: self.cache.$dialogContent.html(),
+						headerMessage: 'Feedback Title', // TODO: gettext
+						message: self.cache.$dialogForm,
 						contentWidth: 'auto',
 						contentHeight: 'auto',
 						strings: {
@@ -55,4 +55,4 @@
 		ElementorAdminDialogApp.init();
 	} );
 
-}( jQuery, window, document ) );
+}( jQuery ) );
