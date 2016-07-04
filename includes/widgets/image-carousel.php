@@ -111,7 +111,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'section' => 'section_image_carousel',
 				'options' => [
 					'none' => __( 'None', 'elementor' ),
-					'attachment' => __( 'Attachment', 'elementor' ),
 					'file' => __( 'Media File', 'elementor' ),
 					'custom' => __( 'Custom URL', 'elementor' ),
 				],
@@ -490,17 +489,14 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			if ( 'none' !== $instance['link_to'] ) {
 				switch ( $instance['link_to'] ) :
-					case 'attachment':
-						$link = get_attachment_link( $attachment['id'] );
-						break;
 					case 'media':
-						$link = $image_url;
+						$link = wp_get_attachment_url( $attachment['id'] );
 						break;
 					case 'custom':
 						$link = $instance['link']['url'];
 						break;
 					default:
-						$link = $image_url;
+						$link = wp_get_attachment_url( $attachment['id'] );
 				endswitch;
 
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link, $target, $image_html );
