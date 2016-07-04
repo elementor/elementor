@@ -52,7 +52,7 @@ ControlIconItemView = ControlBaseItemView.extend( {
 	getFieldTitleValue: function() {
 		var controlValue = this.getControlValue();
 
-		return controlValue.replace( /^fa fa-/, '' );
+		return controlValue.replace( /^fa fa-/, '' ).replace( '-', ' ' );
 	},
 
 	onReady: function() {
