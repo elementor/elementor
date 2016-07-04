@@ -10,12 +10,12 @@ Introduction = function() {
 			contentWidth: 700
 		} );
 
-		modal.getComponents( 'closeButton' ).on( 'click', function() {
+		modal.getElements( 'closeButton' ).on( 'click', function() {
 			self.setIntroductionViewed();
 		} );
 
 		modal.on( 'hide', function() {
-			modal.getComponents( 'message' ).empty(); // In order to stop the video
+			modal.getElements( 'message' ).empty(); // In order to stop the video
 		} );
 	};
 
