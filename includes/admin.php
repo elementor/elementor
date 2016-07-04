@@ -217,7 +217,7 @@ class Admin {
 					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
 					<p><?php
 						/* translators: 1: details URL, 2: accessibility text, 3: version number, 4: update URL, 5: accessibility text */
-						printf( __( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.' ),
+						printf( __( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 							esc_url( $details_url ),
 							esc_attr( sprintf( __( 'View Elementor version %s details', 'elementor' ), $product->new_version ) ),
 							$product->new_version,

@@ -68,7 +68,6 @@
 
 			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
 				location.href = self.cache.$deactivateLink.attr( 'href' );
-				//console.log( data );
 			} );
 		},
 
