@@ -194,6 +194,7 @@ body.elementor-editor-active #elementor {
     position: absolute;
     bottom: 100%;
     left: 0;
+    margin-bottom: 5px;
     color: #999;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
