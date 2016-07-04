@@ -22,6 +22,7 @@
 				var dialogManager = new DialogsManager.Instance(),
 					modal = dialogManager.createWidget( 'confirm', {
 						message: self.cache.$dialogContent.html(),
+						headerMessage: 'Feedback Title', // TODO: gettext
 						contentWidth: 'auto',
 						contentHeight: 'auto',
 						strings: {
