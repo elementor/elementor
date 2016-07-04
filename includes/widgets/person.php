@@ -495,7 +495,7 @@ class Widget_Person extends Widget_Base {
 									<a href="<?php echo esc_url( $item['link']['url'] ); ?>">
 								<?php endif; ?>
 									<i class="<?php echo $item['social']; ?>"></i>
-								<?php if ( '' !== $item['link'] ) : ?>
+								<?php if ( '' !== $item['link']['url'] ) : ?>
 									</a>
 								<?php endif; ?>
 							</div>
@@ -512,32 +512,36 @@ class Widget_Person extends Widget_Base {
 	protected function content_template() {
 		?>
 		<%
-		var imageUrl = false, hasImage = '';
+		if ( '' !== settings.person_full_name || '' !== settings.person_text )
+			return;
+
+		var has_image = '',
+			image_url = '';
+
 		if ( '' !== settings.person_image.url ) {
-		imageUrl = settings.person_image.url;
-		hasImage = ' elementor-has-image';
+			image_url = settings.person_image.url;
+			has_image = ' elementor-has-image';
 		}
 
 		var person_text_position = settings.person_text_position ? ' elementor-person-text-align-' + settings.person_text_position : '';
 		%>
 		<div class="elementor-person-wrapper<%- person_text_position %>">
 
-			<div class="person_description">
+			<div class="elementor-person-content">
 
-				<% if ( imageUrl ) { %>
-				<div class="elementor-person-image">
-					<figure>
-						<img src="<%- imageUrl %>" alt="person" />
-					</figure>
-				</div>
+				<% if ( '' !== image_url ) { %>
+					<div class="elementor-person-image">
+						<figure>
+							<img src="<%- image_url %>" alt="person" />
+						</figure>
+					</div>
 				<% } %>
 
-				<div class="person-detailes<%- hasImage %>">
-
+				<div class="elementor-person-detailes<%- has_image %>">
 					<% if ( '' !== settings.person_full_name ) { %>
-					<div class="elementor-person-name">
-						<%= settings.person_full_name %>
-					</div>
+						<div class="elementor-person-name">
+							<%= settings.person_full_name %>
+						</div>
 					<% } %>
 
 					<% if ( '' !== settings.person_job_title ) { %>
@@ -547,12 +551,27 @@ class Widget_Person extends Widget_Base {
 					<% } %>
 
 					<% if ( '' !== settings.person_text ) { %>
-					<div class="elementor-person-text">
-						<%= settings.person_text %>
-					</div>
+						<div class="elementor-person-text">
+							<%= settings.person_text %>
+						</div>
 					<% } %>
 
+					<div class="elementor-person-social-icons">
+						<% _.each( settings.social_icon_list, function( item ) { %>
+							<div class="elementor-person-social-icon">
+								<% if ( '' !== item.link.url ) { %>
+									<a href="<%- item.link.url %>">
+								<% } %>
+									<i class="<%- item.social %>"></i>
+								<% if ( '' !== item.link.url ) { %>
+									</a>
+								<% } %>
+							</div>
+						<% } ); %>
+					</div>
+
 				</div>
+
 			</div>
 		</div>
 		<?php
