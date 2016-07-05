@@ -24,6 +24,12 @@ class Admin {
 			true
 		);
 		wp_enqueue_script( 'elementor-admin-app' );
+
+		if ( in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] ) ) {
+			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
+
+			$this->enqueue_feedback_dialog_scripts();
+		}
 	}
 
 	/**
@@ -368,11 +374,6 @@ class Admin {
 		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
-
-		if ( 'plugins.php' === $pagenow ) {
-			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ], 20 );
-			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
-		}
 
 		// Ajax
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
