@@ -26,6 +26,7 @@
 	.elementor-deactivate-feedback-dialog-input {
 		float: getStartDirection();
 		@include margin(0, 15px, 0, 0);
+		box-shadow: none;
 
 		&:not(:checked) {
 

@@ -4,8 +4,6 @@
   width: 100%;
   top: 0;
   left: 0;
-  -webkit-user-select: none;
-  -moz-user-select: none;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; }
   .dialog-widget * {
@@ -59,12 +57,15 @@
   .dialog-options-widget .dialog-buttons-wrapper > button:focus, .dialog-confirm-widget .dialog-buttons-wrapper > button:focus {
     background-color: #e6e9ec; }
 
-.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
-  margin: auto;
-  width: 350px; }
-.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
-  padding: 0 20px;
-  min-height: 50px; }
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+  -webkit-user-select: none;
+  -moz-user-select: none; }
+  .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+    margin: auto;
+    width: 350px; }
+  .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+    padding: 0 20px;
+    min-height: 50px; }
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
@@ -314,7 +315,8 @@ body.elementor-editor-inactive #elementor-editor {
   text-align: left; }
 #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input {
   float: left;
-  margin: 0 15px 0 0; }
+  margin: 0 15px 0 0;
+  box-shadow: none; }
   #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input:not(:checked) ~ .elementor-feedback-text {
     display: none; }
 #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-label {
