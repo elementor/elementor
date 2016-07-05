@@ -13,19 +13,20 @@
 	}
 
 	.dialog-widget-header {
-		padding: 20px;
+		padding: 15px;
 		box-shadow: $panel-bottom-shadow;
 		text-align: getStartDirection();
 	}
 
 	.dialog-message {
-		padding: 20px;
+		padding: 20px 20px 0;
 		text-align: getStartDirection();
 	}
 
 	.elementor-deactivate-feedback-dialog-input {
 		float: getStartDirection();
-		margin: 0 15px 0 0;
+		@include margin(0, 15px, 0, 0);
+		box-shadow: none;
 
 		&:not(:checked) {
 
@@ -42,7 +43,7 @@
 	}
 
 	.elementor-feedback-text {
-		margin-top: 10px;
+		@include margin(10px, 0, 0, 30px);
 		padding: 2px 5px;
 		font-size: 12px;
 		box-shadow: none;
@@ -68,7 +69,7 @@
 
 	i {
 		color: $editor-accent;
-		font-size: 17px;
+		font-size: 19px;
 	}
 }
 
@@ -91,7 +92,7 @@
 }
 
 .elementor-deactivate-feedback-dialog-input-wrapper {
-	line-height: 1;
+	line-height: 1.3;
 	overflow: hidden;
 	margin-bottom: 15px;
 }

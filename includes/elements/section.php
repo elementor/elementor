@@ -47,6 +47,20 @@ class Element_Section extends Element_Base {
 					'preset' => [ 66, 33 ],
 				],
 			],
+			3 => [
+				[
+					'preset' => [ 25, 25, 50 ],
+				],
+				[
+					'preset' => [ 50, 25, 25 ],
+				],
+				[
+					'preset' => [ 25, 50, 25 ],
+				],
+				[
+					'preset' => [ 16, 66, 16 ],
+				],
+			],
 		];
 
 		foreach ( range( 1, 10 ) as $columns_count ) {
