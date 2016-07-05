@@ -292,7 +292,7 @@ class Editor {
 				'post_id' => $post_id,
 				'post_permalink' => get_the_permalink(),
 				'edit_post_link' => get_edit_post_link(),
-				'settings_page_link' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
+				'settings_page_link' => Settings::get_url(),
 				'elementor_site' => 'https://elementor.com/',
 				'assets_url' => ELEMENTOR_ASSETS_URL,
 				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
