@@ -64,7 +64,7 @@
 		sendFeedback: function() {
 			var self = this;
 
-			self.getModal().getElements( 'deactivate' ).text( ElementorAdminFeedbackArgs.i18n.in_progress );
+			self.getModal().getElements( 'deactivate' ).text( '' ).addClass( 'elementor-loading' );
 
 			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
 				location.href = self.cache.$deactivateLink.attr( 'href' );
