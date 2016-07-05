@@ -7,6 +7,10 @@ class Settings {
 
 	const PAGE_ID = 'elementor';
 
+	public static function get_url() {
+		return admin_url( 'admin.php?page=' . self::PAGE_ID );
+	}
+
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
