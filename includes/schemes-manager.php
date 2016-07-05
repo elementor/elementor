@@ -116,6 +116,12 @@ class Schemes_Manager {
 		wp_send_json_success();
 	}
 
+	public static function is_schemes_enabled() {
+		$is_enabled = 'yes' === get_option( 'elementor_enable_schemes', 'yes' );
+
+		return apply_filters( 'elementor/schemes/is_schemes_enabled', $is_enabled );
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 		add_action( 'wp_ajax_elementor_apply_scheme', [ $this, 'ajax_apply_scheme' ] );

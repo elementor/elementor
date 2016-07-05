@@ -112,6 +112,10 @@ Schemes = function() {
 		return schemeValue;
 	};
 
+	this.isSchemesEnabled = function() {
+		return elementor.config.schemes.is_schemes_enabled;
+	};
+
 	this.printSchemesStyle = function() {
 		resetStyleRules();
 		fetchAllWidgetsSchemesStyle();

@@ -282,7 +282,10 @@ class Editor {
 				'controls' => Plugin::instance()->controls_manager->get_controls_data(),
 				'elements' => Plugin::instance()->elements_manager->get_register_elements_data(),
 				'widgets' => Plugin::instance()->widgets_manager->get_register_widgets_data(),
-				'schemes' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
+				'schemes' => [
+					'items' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
+					'is_schemes_enabled' => Schemes_Manager::is_schemes_enabled(),
+				],
 				'default_schemes' => Plugin::instance()->schemes_manager->get_schemes_defaults(),
 				'system_schemes' => Plugin::instance()->schemes_manager->get_system_schemes(),
 				'wp_editor' => $this->_get_wp_editor_config(),
