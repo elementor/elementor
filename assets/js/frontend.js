@@ -224,15 +224,16 @@
 	// Countdown Widget
 	elementorBindUI.addBindEvent( 'countdown', function() {
 		var $countdown = $( this ).find( '.elementor-countdown' ),
-			date = $countdown.data( 'deadline' );
+			$data = $countdown.data();
 
-		$countdown.countdown( date ).on( 'update.countdown', function(event) {
+
+		$countdown.countdown( $data.deadline ).on( 'update.countdown', function(event) {
 			var $this = $(this).html( event.strftime( ''
-				+ '<span class="elementor-countdown-weeks">%-w</span> week%!w '
-				+ '<span class="elementor-countdown-days">%-d</span> day%!d '
-				+ '<span class="elementor-countdown-hours">%H</span> hr '
-				+ '<span class="elementor-countdown-minutes">%M</span> min '
-				+ '<span class="elementor-countdown-seconds">%S</span> sec' )
+				+ '<div class="elementor-countdown-weeks-wrapper show-' + $data.showWeeks + '"><span class="elementor-countdown-weeks-duration elementor-countdown-duration">%-w</span><span class="elementor-countdown-weeks elementor-countdown-text">week%!w</span></div> '
+				+ '<div class="elementor-countdown-days-wrapper show-' + $data.showDays + '"><span class="elementor-countdown-days-duration elementor-countdown-duration">%-d</span><span class="elementor-countdown-days elementor-countdown-text">day%!d</span></div> '
+				+ '<div class="elementor-countdown-hours-wrapper show-' + $data.showHours + '"><span class="elementor-countdown-hours-duration elementor-countdown-duration">%H</span><span class="elementor-countdown-hours elementor-countdown-text">hr</span></div>'
+				+ '<div class="elementor-countdown-minutes-wrapper show-' + $data.showMinutes + '"><span class="elementor-countdown-minutes-duration elementor-countdown-duration">%M</span><span class="elementor-countdown-minutes elementor-countdown-text">min</span></div>'
+				+ '<div class="elementor-countdown-seconds-wrapper show-' + $data.showSeconds + '"><span class="elementor-countdown-seconds-duration elementor-countdown-duration">%S</span><span class="elementor-countdown-seconds elementor-countdown-text">sec</span></div>' )
 			);
 		} );
 
