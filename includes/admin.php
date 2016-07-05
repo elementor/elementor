@@ -183,11 +183,11 @@ class Admin {
 	}
 
 	public function admin_notices() {
-		if ( ! current_user_can( 'update_plugins' ) )
-			return;
-
 		$upgrade_notice = Api::get_upgrade_notice();
 		if ( empty( $upgrade_notice ) )
+			return;
+
+		if ( ! current_user_can( 'update_plugins' ) )
 			return;
 
 		// Check if have any upgrades
