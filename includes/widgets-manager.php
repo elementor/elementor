@@ -133,7 +133,7 @@ class Widgets_Manager {
 		ob_start();
 
 		if ( empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id', __( 'No post_id', 'elementor' ) ) );
+			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
 		}
 
 		// Override the global $post for the render
