@@ -149,7 +149,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_control(
 			'section_social_style',
 			[
-				'label' => __( 'Social Icon Style', 'elementor' ),
+				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
 			]
@@ -165,7 +165,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'default' => 'default',
 				'options' => [
 					'default' => __( 'Official Color', 'elementor' ),
-					'custom' => __( 'Custom Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			]
 		);
