@@ -1,0 +1,87 @@
+
+/*= Elementor Message
+---------------------------------------*/
+
+.notice.elementor-message {
+	@include border-start-property(color, $editor-accent !important);
+	padding: 20px;
+
+	.elementor-message-inner {
+		display: table;
+		width: 100%;
+
+		.elementor-message-icon,
+		.elementor-message-content,
+		.elementor-update-now {
+			display: table-cell;
+			vertical-align: middle;
+		}
+	}
+
+	.elementor-message-icon {
+		color: $editor-accent;
+		font-size: 50px;
+		width: 50px;
+	}
+
+	.elementor-message-content {
+		padding: 0 20px;
+	}
+
+	p {
+		padding: 0;
+		margin: 0;
+	}
+
+	h3 {
+		margin: 0 0 5px;
+	}
+
+	.elementor-update-now {
+		text-align: center;
+
+		.elementor-button {
+			background-color: $editor-accent;
+			color: #fff;
+			border-color: #7c1337;
+			box-shadow: 0 1px 0 #7c1337;
+			padding: 5px 30px;
+			height: auto;
+			line-height: 20px;
+			text-transform: capitalize;
+
+			i {
+				@include padding-end(5px);
+			}
+
+			&:hover {
+				background-color: #a0124a;
+			}
+
+			&:active {
+				box-shadow: inset 0 1px 0 #7c1337;
+				transform: translateY(1px);
+			}
+		}
+	}
+}
+
+@media (max-width: 767px) {
+	.notice.elementor-message {
+		padding: 10px;
+
+		.elementor-message-inner {
+			display: block;
+
+			.elementor-message-content {
+				display: block;
+				padding: 0;
+			}
+
+			.elementor-message-icon,
+			.elementor-update-now {
+				display: none;
+			}
+		}
+	}
+}

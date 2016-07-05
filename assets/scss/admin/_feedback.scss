@@ -1,0 +1,97 @@
+
+/*= Elementor Feedback
+---------------------------------------*/
+
+#elementor-deactivate-feedback-dialog-wrapper {
+	display: none;
+}
+
+#elementor-deactivate-feedback-modal {
+
+	.dialog-widget-content {
+		width: 500px;
+	}
+
+	.dialog-widget-header {
+		padding: 20px;
+		box-shadow: $panel-bottom-shadow;
+		text-align: getStartDirection();
+	}
+
+	.dialog-message {
+		padding: 20px;
+		text-align: getStartDirection();
+	}
+
+	.elementor-deactivate-feedback-dialog-input {
+		float: getStartDirection();
+		margin: 0 15px 0 0;
+
+		&:not(:checked) {
+
+			~ .elementor-feedback-text {
+				display: none;
+			}
+		}
+	}
+
+	.elementor-deactivate-feedback-dialog-label {
+		display: block;
+		font-size: 13px;
+		color: $editor-dark;
+	}
+
+	.elementor-feedback-text {
+		margin-top: 10px;
+		padding: 2px 5px;
+		font-size: 12px;
+		box-shadow: none;
+		background-color: #fff;
+		width: 92%;
+	}
+
+	.dialog-buttons-wrapper {
+
+		button {
+			width: 50%;
+			text-align: center;
+		}
+	}
+
+	.dialog-deactivate {
+		color: $editor-accent;
+		font-weight: bold;
+	}
+}
+
+#elementor-deactivate-feedback-dialog-header {
+
+	i {
+		color: $editor-accent;
+		font-size: 17px;
+	}
+}
+
+#elementor-deactivate-feedback-dialog-header-title {
+	font-size: 15px;
+	text-transform: uppercase;
+	font-weight: bold;
+	@include padding-start(5px);
+}
+
+#elementor-deactivate-feedback-dialog-form-caption {
+	font-weight: bold;
+	font-size: 15px;
+	color: $editor-darkest;
+	line-height: 1.6;
+}
+
+#elementor-deactivate-feedback-dialog-form-body {
+	padding-top: 20px;
+}
+
+.elementor-deactivate-feedback-dialog-input-wrapper {
+	line-height: 1;
+	overflow: hidden;
+	margin-bottom: 15px;
+}

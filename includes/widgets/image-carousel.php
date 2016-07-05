@@ -501,7 +501,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$is_slideshow = '1' === $instance['slides_to_show'];
 		$is_rtl = ( 'rtl' === $instance['direction'] );
-		$direction = ( 'ltr' === $instance['direction'] ) ? 'ltr' : 'rtl';
+		$direction = $is_rtl ? 'rtl' : 'ltr';
 		$show_dots = ( in_array( $instance['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $instance['navigation'], [ 'arrows', 'both' ] ) );
 

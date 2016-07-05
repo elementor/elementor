@@ -115,7 +115,8 @@ module.exports = function( grunt ) {
 
 			dist: {
 				files: {
-					'assets/admin/js/app.js': ['assets/admin/js/dev/app.js']
+					'assets/admin/js/app.js': ['assets/admin/js/dev/app.js'],
+					'assets/js/admin-feedback.js': ['assets/js/dev/admin-feedback.js']
 				},
 				options: pkgInfo.browserify
 			}
@@ -141,6 +142,7 @@ module.exports = function( grunt ) {
 					src: [
 						'assets/admin/js/app.min.js',
 						'assets/js/admin.min.js',
+						'assets/js/admin-feedback.min.js',
 						'assets/js/frontend.min.js'
 					]
 				}
@@ -202,6 +204,9 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin.min.js': [
 						'assets/js/admin.js'
+					],
+					'assets/js/admin-feedback.min.js': [
+						'assets/js/admin-feedback.js'
 					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
@@ -328,6 +333,7 @@ module.exports = function( grunt ) {
 					'!.gitmodules',
 
 					'!assets/admin/js/dev/**',
+					'!assets/js/dev/**',
 					'!assets/scss/**',
 					'!*~'
 				],

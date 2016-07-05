@@ -56,6 +56,15 @@
 			self.cache.$goToEditLink.on( 'click', function() {
 				self.animateLoader();
 			} );
+
+			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss', function( event ) {
+				event.preventDefault();
+
+				$.post( ajaxurl, {
+					action: 'elementor_set_admin_notice_viewed',
+					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' )
+				} );
+			} );
 		},
 
 		init: function() {

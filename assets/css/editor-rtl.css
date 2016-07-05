@@ -1185,6 +1185,7 @@ select {
       display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
+    table-layout: fixed;
     width: 100%;
     color: #556068;
     background-color: #d5dadf;
@@ -1204,7 +1205,10 @@ select {
         opacity: .95; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
       text-align: right;
-      padding-right: 20px; }
+      padding: 0 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {
       width: 40px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-handle-sortable {
@@ -1597,7 +1601,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 350px; }
 .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
   padding: 0 20px;
-  height: 50px; }
+  min-height: 50px; }
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
@@ -1628,6 +1632,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-introduction .dialog-widget-header {
   padding: 40px 0 0; }
+#elementor-introduction .dialog-widget-content {
+  width: 700px;
+  max-width: 100%; }
 #elementor-introduction .elementor-video-wrapper {
   padding-bottom: 62.4%; }
 #elementor-introduction .dialog-message {
