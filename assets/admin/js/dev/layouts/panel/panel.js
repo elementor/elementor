@@ -54,7 +54,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		};
 
 		if ( ! elementor.schemes.isSchemesEnabled() ) {
-
 			_.each( [ 'colors', 'typography' ], function( schemeType ) {
 				pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
 			} );
