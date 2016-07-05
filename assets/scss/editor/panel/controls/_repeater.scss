@@ -38,6 +38,7 @@
 
 	.elementor-repeater-row-tools {
 		display: table;
+		table-layout: fixed;
 		width: 100%;
 		color: $editor-darker;
 		background-color: $editor-lightest;
@@ -64,9 +65,12 @@
 			}
 		}
 
-		.elementor-repeater-row-item-number {
+		.elementor-repeater-row-item-title {
 			text-align: getStartDirection();
-			@include padding-start(20px);
+			padding: 0 20px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.elementor-repeater-row-tool {

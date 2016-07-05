@@ -22,7 +22,7 @@ class Element_Column extends Element_Base {
 			'section_style',
 			[
 				'label' => __( 'Background & Border', 'elementor' ),
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -31,7 +31,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
@@ -41,9 +41,23 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+			]
+		);
+
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -52,7 +66,7 @@ class Element_Column extends Element_Base {
 			'section_typo',
 			[
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -67,7 +81,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 			]
 		);
 
@@ -80,7 +94,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 				'section' => 'section_typo',
 			]
 		);
@@ -95,7 +109,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 			]
 		);
 
@@ -109,7 +123,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 			]
 		);
 
@@ -118,7 +132,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_STYLE,
 				'section' => 'section_typo',
 				'options' => [
 					'left' => [
@@ -146,7 +160,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Advanced', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_ADVANCED,
 			]
 		);
 
@@ -157,7 +171,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'section' => 'section_advanced',
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -171,7 +185,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'section' => 'section_advanced',
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -184,7 +198,7 @@ class Element_Column extends Element_Base {
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'section' => 'section_advanced',
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
 			]
@@ -196,7 +210,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Responsive', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_COLUMN,
+				'tab' => self::TAB_ADVANCED,
 			]
 		);
 
@@ -223,7 +237,7 @@ class Element_Column extends Element_Base {
 						'default' => __( 'Default', 'elementor' ),
 						'custom' => __( 'Custom', 'elementor' ),
 					],
-					'tab' => self::TAB_COLUMN,
+					'tab' => self::TAB_ADVANCED,
 				]
 			);
 
@@ -255,7 +269,7 @@ class Element_Column extends Element_Base {
 						'100' => '100%',
 					],
 					'default' => '100',
-					'tab' => self::TAB_COLUMN,
+					'tab' => self::TAB_ADVANCED,
 					'condition' => [
 						$point_name => [ 'custom' ],
 					],

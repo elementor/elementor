@@ -34,7 +34,7 @@
 		max-width: 100%;
 		border: none;
 		border-radius: 0;
-		box-shadow: 0;
+		box-shadow: none;
 	}
 	figure {
 		margin: 0;
@@ -75,6 +75,14 @@
 		object-fit: cover; // For HTML5 portrait video
 	}
 	// End Background Video
+
+	.elementor-background-overlay {
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		position: absolute;
+	}
 }
 
 // TEMP CODE

@@ -163,9 +163,6 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 50,
-				],
 				'range' => [
 					'px' => [
 						'min' => 6,

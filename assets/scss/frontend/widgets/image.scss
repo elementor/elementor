@@ -7,6 +7,10 @@
 	.elementor-image {
 		overflow: hidden;
 
+		> img {
+			vertical-align: middle;
+		}
+
 		&.elementor-image-shape- {
 
 			&circle {

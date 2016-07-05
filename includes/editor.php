@@ -49,9 +49,6 @@ class Editor {
 			return $settings;
 		} );
 
-		// Set the headers to prevent caching for the different browsers
-		nocache_headers();
-
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
@@ -207,12 +204,12 @@ class Editor {
 		);
 
 		wp_register_script(
-			'dialog',
+			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],
-			'1.0.5',
+			'3.0.0',
 			true
 		);
 
@@ -243,7 +240,7 @@ class Editor {
 				'tipsy',
 				'imagesloaded',
 				'heartbeat',
-				'dialog',
+				'elementor-dialog',
 				'jquery-select2',
 			],
 			Plugin::instance()->get_version(),

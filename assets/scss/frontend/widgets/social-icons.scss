@@ -1,0 +1,101 @@
+//
+// Social Icons
+//
+
+.elementor-widget {
+
+	.elementor-social-icons-wrapper {
+		font-size: 0;
+	}
+
+	.elementor-icon {
+
+		&.elementor-social-icon {
+			background-color: black;
+			color: white;
+			font-size: 20px;
+			text-align: center;
+			padding: 0.6em;
+			@include margin-end(5px);
+			cursor: pointer;
+
+			&:last-child {
+				margin: 0;
+			}
+
+			i {
+				font-size: inherit;
+			}
+
+			&:hover {
+				opacity: .5;
+			}
+
+			&- {
+				&behance		{ background-color: $behance; }
+				&bitbucket		{ background-color: $bitbucket; }
+				&codepen		{ background-color: $codepen; }
+				&delicious		{ background-color: $delicious; }
+				&digg			{ background-color: $digg; }
+				&dribbble		{ background-color: $dribbble; }
+				&facebook		{ background-color: $facebook; }
+				&flickr			{ background-color: $flickr; }
+				&foursquare		{ background-color: $foursquare; }
+				&github			{ background-color: $github; }
+				&google-plus	{ background-color: $google-plus; }
+				&instagram		{ background-color: $instagram; }
+				&jsfiddle		{ background-color: $jsfiddle; }
+				&linkedin		{ background-color: $linkedin; }
+				&medium			{ background-color: $medium; }
+				&pinterest		{ background-color: $pinterest; }
+				&product-hunt	{ background-color: $product-hunt; }
+				&reddit			{ background-color: $reddit; }
+				&snapchat		{ background-color: $snapchat; }
+				&soundcloud		{ background-color: $soundcloud; }
+				&stack-overflow { background-color: $stack-overflow; }
+				&tumblr			{ background-color: $tumblr; }
+				&twitter		{ background-color: $twitter; }
+				&vimeo			{ background-color: $vimeo; }
+				&wordpress		{ background-color: $wordpress; }
+				&youtube		{ background-color: $youtube; }
+			}
+		}
+	}
+
+	&.elementor-widget-social-icons {
+		&.elementor-align- {
+
+			&right {
+				text-align: right;
+			}
+
+			&left {
+				text-align: left;
+			}
+
+			&center {
+				text-align: center;
+			}
+		}
+	}
+
+	&.elementor-shape-rounded {
+
+		.elementor-icon {
+
+			&.elementor-social-icon {
+				border-radius: 10%;
+			}
+		}
+	}
+
+	&.elementor-shape-circle {
+
+		.elementor-icon {
+
+			&.elementor-social-icon {
+				border-radius: 50%;
+			}
+		}
+	}
+}

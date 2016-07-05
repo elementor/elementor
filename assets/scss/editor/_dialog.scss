@@ -8,8 +8,6 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	-webkit-user-select: none;
-	-moz-user-select: none;
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 9999;
 
@@ -95,6 +93,8 @@
 }
 
 .dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+	-webkit-user-select: none;
+	-moz-user-select: none;
 
 	.dialog-widget-content {
 		margin: auto;
@@ -102,8 +102,8 @@
 	}
 
 	.dialog-message {
-		padding: 0 20px 10px;
-		min-height: 40px;
+		padding: 0 20px;
+		min-height: 50px;
 	}
 }
 

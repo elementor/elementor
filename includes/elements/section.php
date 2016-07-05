@@ -47,6 +47,20 @@ class Element_Section extends Element_Base {
 					'preset' => [ 66, 33 ],
 				],
 			],
+			3 => [
+				[
+					'preset' => [ 25, 25, 50 ],
+				],
+				[
+					'preset' => [ 50, 25, 25 ],
+				],
+				[
+					'preset' => [ 25, 50, 25 ],
+				],
+				[
+					'preset' => [ 16, 66, 16 ],
+				],
+			],
 		];
 
 		foreach ( range( 1, 10 ) as $columns_count ) {
@@ -86,7 +100,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 			]
 		);
 
@@ -100,7 +114,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -125,7 +139,7 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -140,10 +154,11 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'no' => __( 'No Gap', 'elementor' ),
 					'narrow' => __( 'Narrow', 'elementor' ),
+					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -159,7 +174,7 @@ class Element_Section extends Element_Base {
 					'full' => __( 'Fit To Screen', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
@@ -180,7 +195,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -202,7 +217,7 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_top' => true,
@@ -223,7 +238,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -247,7 +262,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-items-',
 				'condition' => [
 					'height' => [ 'full', 'min-height' ],
@@ -268,7 +283,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-content-',
 				'section' => 'section_layout',
 			]
@@ -280,7 +295,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Structure', 'elementor' ),
 				'type' => Controls_Manager::STRUCTURE,
 				'default' => '10',
-				'tab' => self::TAB_GENERAL,
+				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
@@ -305,6 +320,58 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'background_overlay_title',
+			[
+				'label' => __( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_background',
+				'separator' => 'before',
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay',
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_background',
+				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_background',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_background' => [ 'classic' ],
+				],
+			]
+		);
+
 		// Section border
 		$this->add_control(
 			'section_border',
@@ -324,42 +391,19 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		/*$this->add_control(
-			'section_background_overlay',
-			[
-				'label' => __( 'Background Overlay', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'tab' => self::TAB_SECTION,
-			]
-		);
-
-		$this->add_group_control(
-			'background',
-			[
-				'tab' => self::TAB_SECTION,
-				'name' => 'overlay',
-				'selector' => '{{WRAPPER}} > .elementor-section-background-overlay',
-			]
-		);
-
 		$this->add_control(
-			'overlay_opacity',
+			'border_radius',
 			[
-				'label' => __( 'Overlay Opacity', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => '.5',
-				'min' => '.1',
-				'max' => '1',
-				'step' => '.1',
-				'tab' => self::TAB_SECTION,
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_border',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-section-background-overlay' => 'opacity: {{VALUE}};',
-				],
-				'condition' => [
-					'overlay_background' => [ 'image', 'color' ],
+					'{{WRAPPER}}' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
-		);*/
+		);
 
 		// Section Typography
 		$this->add_control(
@@ -607,10 +651,14 @@ class Element_Section extends Element_Base {
 			if ( settings.background_video_fallback ) { %>
 				<div class="elementor-background-video-fallback" style="background-image: url(<%- settings.background_video_fallback.url %>)"></div>
 			<% }
-		} %>
-			<div class="elementor-container elementor-column-gap-<%- settings.gap %>">
-				<div class="elementor-row"></div>
-			</div>
+		}
+
+		if ( 'classic' === settings.background_overlay_background ) { %>
+			<div class="elementor-background-overlay"></div>
+		<% } %>
+		<div class="elementor-container elementor-column-gap-<%- settings.gap %>">
+			<div class="elementor-row"></div>
+		</div>
 		<?php
 	}
 
@@ -636,7 +684,8 @@ class Element_Section extends Element_Base {
 		}
 		?>
 		<section class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
-			<?php if ( 'video' === $instance['background_background'] ) :
+			<?php
+			if ( 'video' === $instance['background_background'] ) :
 				if ( $instance['background_video_link'] ) :
 					$video_id = Utils::get_youtube_id_from_url( $instance['background_video_link'] );
 					?>
@@ -648,7 +697,11 @@ class Element_Section extends Element_Base {
 						<?php endif; ?>
 					</div>
 				<?php endif;
-			endif; ?>
+			endif;
+
+			if ( 'classic' === $instance['background_overlay_background'] ) : ?>
+				<div class="elementor-background-overlay"></div>
+			<?php endif; ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $instance['gap'] ); ?>">
 				<div class="elementor-row">
 		<?php

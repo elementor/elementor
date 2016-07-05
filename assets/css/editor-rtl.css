@@ -705,8 +705,8 @@ select {
           content: '\f013'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
           content: '\f10a'; }
-        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-general a:before {
-          content: '\f013'; }
+        #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-layout a:before {
+          content: '\f0db'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
           content: '\f0db'; }
         #elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.active {
@@ -1183,6 +1183,7 @@ select {
       display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
+    table-layout: fixed;
     width: 100%;
     color: #556068;
     background-color: #d5dadf;
@@ -1200,9 +1201,12 @@ select {
         background-color: #fff; }
       #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools > div:hover {
         opacity: .95; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-number {
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
       text-align: right;
-      padding-right: 20px; }
+      padding: 0 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {
       width: 40px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-handle-sortable {
@@ -1535,8 +1539,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 100%;
   top: 0;
   left: 0;
-  -webkit-user-select: none;
-  -moz-user-select: none;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; }
   .dialog-widget * {
@@ -1590,12 +1592,15 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .dialog-options-widget .dialog-buttons-wrapper > button:focus, .dialog-confirm-widget .dialog-buttons-wrapper > button:focus {
     background-color: #e6e9ec; }
 
-.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
-  margin: auto;
-  width: 350px; }
-.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
-  padding: 0 20px 10px;
-  min-height: 40px; }
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+  -webkit-user-select: none;
+  -moz-user-select: none; }
+  .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+    margin: auto;
+    width: 350px; }
+  .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+    padding: 0 20px;
+    min-height: 50px; }
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
@@ -1626,6 +1631,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-introduction .dialog-widget-header {
   padding: 40px 0 0; }
+#elementor-introduction .dialog-widget-content {
+  width: 700px;
+  max-width: 100%; }
 #elementor-introduction .elementor-video-wrapper {
   padding-bottom: 62.4%; }
 #elementor-introduction .dialog-message {

@@ -125,6 +125,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return inputValue;
 	},
 
+	// This method used inside of repeater
+	getFieldTitleValue: function() {
+		return this.getControlValue();
+	},
+
 	setInputValue: function( input, value ) {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );

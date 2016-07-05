@@ -103,6 +103,35 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link_to',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'section' => 'section_image_carousel',
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => 'Link to',
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'section' => 'section_image_carousel',
+				'condition' => [
+					'link_to' => 'custom',
+				],
+				'show_label' => false,
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -207,8 +236,8 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => 'ltr',
 				'section' => 'section_additional_options',
 				'options' => [
-					'ltr' => __( 'Left to Right', 'elementor' ),
-					'rtl' => __( 'Right to Left', 'elementor' ),
+					'ltr' => __( 'Left', 'elementor' ),
+					'rtl' => __( 'Right', 'elementor' ),
 				],
 			]
 		);
@@ -451,8 +480,19 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides = [];
 		foreach ( $instance['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
+			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( $this->get_image_alt( $attachment ) ) . '" />';
 
-			$slides[] = '<div><div class="slick-slide-inner"><img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="Image Carousel" /></div></div>';
+			$link = $this->get_link_url( $attachment, $instance );
+			if ( $link ) {
+				$target = '';
+				if ( ! empty( $link['is_external'] ) ) {
+					$target = ' target="_blank"';
+				}
+
+				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
+			}
+
+			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '</div></div>';
 		}
 
 		if ( empty( $slides ) ) {
@@ -461,6 +501,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$is_slideshow = '1' === $instance['slides_to_show'];
 		$is_rtl = ( 'rtl' === $instance['direction'] );
+		$direction = $is_rtl ? 'rtl' : 'ltr';
 		$show_dots = ( in_array( $instance['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $instance['navigation'], [ 'arrows', 'both' ] ) );
 
@@ -496,7 +537,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		?>
-		<div class="elementor-image-carousel-wrapper"<?php if ( $is_rtl ) echo ' dir="rtl"'; ?>>
+		<div class="elementor-image-carousel-wrapper" dir="<?php echo $direction; ?>">
 			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo wp_json_encode( $slick_options ); ?>'>
 				<?php echo implode( '', $slides ); ?>
 			</div>
@@ -505,4 +546,39 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	protected function content_template() {}
+
+	private function get_image_alt( $attachment ) {
+		$post_id = $attachment['id'];
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
+		if ( ! $alt ) {
+			$attachment = get_post( $post_id );
+			$alt = $attachment->post_excerpt;
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+		return trim( strip_tags( $alt ) );
+	}
+
+	private function get_link_url( $attachment, $instance ) {
+		if ( 'none' === $instance['link_to'] ) {
+			return false;
+		}
+
+		if ( 'custom' === $instance['link_to'] ) {
+			if ( empty( $instance['link']['url'] ) ) {
+				return false;
+			}
+			return $instance['link'];
+		}
+
+		return [
+			'url' => wp_get_attachment_url( $attachment['id'] ),
+		];
+	}
 }
