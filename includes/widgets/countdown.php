@@ -83,29 +83,7 @@ class Widget_Countdown extends Widget_Base {
 
 		$new_date = new \DateTime( $date . ' ' . $time );
 		?>
-		<div class="elementor-countdown" data-deadline="<?php echo $new_date->format( 'Y-m-d H:i:s' ); ?>">
-
-			<div>
-				<span class="days"></span>
-				<div class="smalltext">Days</div>
-			</div>
-
-			<div>
-				<span class="hours"></span>
-				<div class="smalltext">Hours</div>
-			</div>
-
-			<div>
-				<span class="minutes"></span>
-				<div class="smalltext">Minutes</div>
-			</div>
-
-			<div>
-				<span class="seconds"></span>
-				<div class="smalltext">Seconds</div>
-			</div>
-
-		</div>
+		<div class="elementor-countdown" data-deadline="<?php echo $new_date->format( 'Y-m-d H:i:s' ); ?>"></div>
 	    <?php
 	}
 

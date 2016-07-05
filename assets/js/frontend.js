@@ -226,7 +226,15 @@
 		var $countdown = $( this ).find( '.elementor-countdown' ),
 			date = $countdown.data( 'deadline' );
 
-		$countdown.countdown( date );
+		$countdown.countdown( date ).on( 'update.countdown', function(event) {
+			var $this = $(this).html( event.strftime( ''
+				+ '<span class="elementor-countdown-weeks">%-w</span> week%!w '
+				+ '<span class="elementor-countdown-days">%-d</span> day%!d '
+				+ '<span class="elementor-countdown-hours">%H</span> hr '
+				+ '<span class="elementor-countdown-minutes">%M</span> min '
+				+ '<span class="elementor-countdown-seconds">%S</span> sec' )
+			);
+		} );
 
 	} );
 

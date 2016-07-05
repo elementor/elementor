@@ -906,6 +906,12 @@
 .elementor-widget.elementor-shape-circle .elementor-icon.elementor-social-icon {
   border-radius: 50%; }
 
+.elementor-countdown {
+  border: 1px solid;
+  width: 100%;
+  padding: 10px;
+  text-align: center; }
+
 .slick-slider {
   position: relative;
   display: block;
