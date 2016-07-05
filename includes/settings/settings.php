@@ -57,13 +57,23 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
+		// Style section
+		$style_section = 'elementor_style_section';
+
+		add_settings_section(
+			$style_section,
+			__( 'Style Settings', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
 		$field_id = 'elementor_default_generic_fonts';
 		add_settings_field(
 			$field_id,
 			__( 'Default Generic Fonts', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$main_section,
+			$style_section,
 			[
 				'id' => $field_id,
 				'type' => 'text',
@@ -80,7 +90,7 @@ class Settings {
 			__( 'Usage Data Tracking', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$main_section,
+			$style_section,
 			[
 				'id' => $field_id,
 				'type' => 'checkbox',
