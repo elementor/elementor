@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<div id="elementor-select-preset-title"><?php _e( 'SELECT YOUR STRUCTURE', 'elementor' ); ?></div>
 				<ul id="elementor-select-preset-list">
 					<%
-					var structures = [ 10, 20, 21, 22, 30, 40 ,50, 60, 70, 80, 90, 100 ];
+					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
 
 					_.each( structures, function( structure ) {
 						var preset = elementor.presetsFactory.getPresetByStructure( structure ); %>
