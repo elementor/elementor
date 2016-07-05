@@ -272,3 +272,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php endforeach; ?>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
+	<?php printf( __( 'Schemes are disabled. You can enable it via <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>
+</script>

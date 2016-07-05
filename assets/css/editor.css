@@ -662,6 +662,13 @@ select {
     float: left;
     height: 20px;
     width: 25%; }
+  #elementor-panel #elementor-panel-schemes-disabled {
+    padding: 20px; }
+    #elementor-panel #elementor-panel-schemes-disabled a {
+      color: #9b0a46;
+      cursor: pointer; }
+      #elementor-panel #elementor-panel-schemes-disabled a:hover {
+        text-decoration: underline; }
   #elementor-panel #elementor-panel-content-wrapper {
     position: absolute;
     bottom: 40px;
