@@ -16,7 +16,8 @@ class Settings {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
 		// Register the main section
-		$main_section = 'elementor_section';
+		$main_section = 'elementor_general_section';
+
 		add_settings_section(
 			$main_section,
 			__( 'General Settings', 'elementor' ),
@@ -79,6 +80,25 @@ class Settings {
 				'type' => 'text',
 				'std' => 'Sans-serif',
 				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_enable_schemes';
+		add_settings_field(
+			$field_id,
+			__( 'Enable Schemes', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'default' => 'yes',
+				'std' => 'yes',
+				'sub_desc' => __( 'Determine whether to enable schemes or not.', 'elementor' ),
 			]
 		);
 
