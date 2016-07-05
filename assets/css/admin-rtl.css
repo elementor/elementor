@@ -306,15 +306,15 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-deactivate-feedback-modal .dialog-widget-content {
   width: 500px; }
 #elementor-deactivate-feedback-modal .dialog-widget-header {
-  padding: 20px;
+  padding: 15px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
   text-align: right; }
 #elementor-deactivate-feedback-modal .dialog-message {
-  padding: 20px;
+  padding: 20px 20px 0;
   text-align: right; }
 #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input {
   float: right;
-  margin: 0 15px 0 0; }
+  margin: 0 0 0 15px; }
   #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input:not(:checked) ~ .elementor-feedback-text {
     display: none; }
 #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-label {
@@ -322,7 +322,7 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 13px;
   color: #6d7882; }
 #elementor-deactivate-feedback-modal .elementor-feedback-text {
-  margin-top: 10px;
+  margin: 10px 30px 0 0;
   padding: 2px 5px;
   font-size: 12px;
   box-shadow: none;
@@ -337,7 +337,7 @@ body.elementor-editor-inactive #elementor-editor {
 
 #elementor-deactivate-feedback-dialog-header i {
   color: #9b0a46;
-  font-size: 17px; }
+  font-size: 19px; }
 
 #elementor-deactivate-feedback-dialog-header-title {
   font-size: 15px;
@@ -355,7 +355,7 @@ body.elementor-editor-inactive #elementor-editor {
   padding-top: 20px; }
 
 .elementor-deactivate-feedback-dialog-input-wrapper {
-  line-height: 1;
+  line-height: 1.3;
   overflow: hidden;
   margin-bottom: 15px; }
 
