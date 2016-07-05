@@ -2,8 +2,6 @@
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
-$structures = [ 10, 20, 21, 22, 30, 40 ,50, 60, 70, 80, 90, 100 ];
 ?>
 <script type="text/template" id="tmpl-elementor-empty-preview">
 	<div class="elementor-first-add">
