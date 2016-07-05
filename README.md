@@ -68,6 +68,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - **Divider**. A line that divides different elements in the page.
 - **Spacer**. A space that divides the various elements.
 - **Columns**. Create inner columns within the column.
+- **And counting...**
 
 ### Translations ###
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
@@ -157,6 +158,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Fixed Bug with background in Image widget ([#180](https://github.com/pojome/elementor/issues/180))
 * Tweak! - Assign a field to be used as the item title for Repeater control 
 * Tweak! - Rearrange column settings panel
+* Tweak! - Add link to carousel widget
 * Fixed! - Bug carousel widget with `dir="rtl"`
 
 ### 0.3.2 - 27.06.2016 ###

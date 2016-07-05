@@ -48,7 +48,7 @@ class Widget_Alert extends Widget_Base {
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Your Title', 'elementor' ),
-				'default' => 'This is Alert',
+				'default' => __( 'This is Alert', 'elementor' ),
 				'label_block' => true,
 				'section' => 'section_alert',
 			]
