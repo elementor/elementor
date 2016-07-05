@@ -16,6 +16,7 @@ class Api {
 			$response = wp_remote_post( self::$_api_info_url, [
 				'timeout' => 25,
 				'body' => [
+					'api_version' => ELEMENTOR_VERSION,
 					'site_lang' => get_bloginfo( 'language' ),
 				],
 			] );
@@ -51,6 +52,7 @@ class Api {
 		$response = wp_remote_post( self::$_api_feedback_url, [
 			'timeout' => 30,
 			'body' => [
+				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 				'feedback_key' => $feedback_key,
 				'feedback' => $feedback_text,
