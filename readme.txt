@@ -148,6 +148,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.4.1 - 05.07.2016 =
+* Tweak! - Default structure presets changed for new section
+* Tweak! - Added more strings to translate
+* Fixed! - Fixed alignment for Image widget
+* Fixed! - Some compatible to underscore 1.6.0 (Bundle from WordPress v4.4)
+
 = 0.4.0 - 04.07.2016 =
 * New! - Section: Background Overlay for image and video background 
 * New! - Added Social Icons widget
