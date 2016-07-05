@@ -42,13 +42,13 @@
 
 							this.addButton( {
 								name: 'deactivate',
-								text: 'Deactivate Elementor', // TODO: gettext
+								text: ElementorAdminFeedbackArgs.i18n.deactivate,
 								callback: _.bind( self.sendFeedback, self )
 							} );
 
 							this.addButton( {
 								name: 'cancel',
-								text: 'Cancel', // TODO: gettext
+								text: ElementorAdminFeedbackArgs.i18n.cancel,
 								callback: function() {
 									self.getModal().hide();
 								}
@@ -64,7 +64,7 @@
 		sendFeedback: function() {
 			var self = this;
 
-			self.getModal().getElements( 'deactivate' ).text( 'In progress..' );
+			self.getModal().getElements( 'deactivate' ).text( ElementorAdminFeedbackArgs.i18n.in_progress );
 
 			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
 				location.href = self.cache.$deactivateLink.attr( 'href' );

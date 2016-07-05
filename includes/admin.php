@@ -183,11 +183,11 @@ class Admin {
 	}
 
 	public function admin_notices() {
-		if ( ! current_user_can( 'update_plugins' ) )
-			return;
-
 		$upgrade_notice = Api::get_upgrade_notice();
 		if ( empty( $upgrade_notice ) )
+			return;
+
+		if ( ! current_user_can( 'update_plugins' ) )
 			return;
 
 		// Check if have any upgrades
@@ -270,6 +270,18 @@ class Admin {
 		);
 
 		wp_enqueue_script( 'elementor-admin-feedback' );
+
+		wp_localize_script(
+			'elementor-admin-feedback',
+			'ElementorAdminFeedbackArgs',
+			[
+				'i18n' => [
+					'cancel' => __( 'Cancel', 'elementor' ),
+					'deactivate' => __( 'Deactivate Elementor', 'elementor' ),
+					'in_progress' => __( 'In progress..', 'elementor' ),
+				],
+			]
+		);
 	}
 
 	public function print_deactivate_feedback_dialog() {
