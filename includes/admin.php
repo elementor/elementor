@@ -270,6 +270,18 @@ class Admin {
 		);
 
 		wp_enqueue_script( 'elementor-admin-feedback' );
+
+		wp_localize_script(
+			'elementor-admin-feedback',
+			'ElementorAdminFeedbackArgs',
+			[
+				'i18n' => [
+					'cancel' => __( 'Cancel', 'elementor' ),
+					'deactivate' => __( 'Deactivate Elementor', 'elementor' ),
+					'in_progress' => __( 'In progress..', 'elementor' ),
+				],
+			]
+		);
 	}
 
 	public function print_deactivate_feedback_dialog() {
