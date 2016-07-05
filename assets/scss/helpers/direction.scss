@@ -70,6 +70,11 @@
 
 // Margin Mixins
 
+@mixin margin($top, $right, $bottom, $left) {
+
+	@include _dimension(margin, $top, $right, $bottom, $left);
+}
+
 @mixin margin-start($value) {
 
 	@include _dimension_side(margin, start, $value);
