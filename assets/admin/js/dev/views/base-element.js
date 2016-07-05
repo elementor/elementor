@@ -18,11 +18,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	modelEvents: {
-		//"change": "render"
-		//'destroy': 'onModelDestroy'
-	},
-
 	baseEvents: {},
 
 	elementEvents: {},

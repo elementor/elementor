@@ -321,8 +321,8 @@ class Admin {
 				<div id="elementor-deactivate-feedback-dialog-form-body">
 					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
 						<div class="elementor-deactivate-feedback-dialog-input-wrapper">
-							<input class="elementor-deactivate-feedback-dialog-input" type="radio" name="reason_key" value="<?php echo esc_attr( $reason_key ); ?>" />
-							<label class="elementor-deactivate-feedback-dialog-label"><?php echo $reason['title']; ?></label>
+							<input id="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-input" type="radio" name="reason_key" value="<?php echo esc_attr( $reason_key ); ?>" />
+							<label for="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-label"><?php echo $reason['title']; ?></label>
 							<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
 								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
 							<?php endif; ?>
