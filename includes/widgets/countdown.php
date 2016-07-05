@@ -71,8 +71,7 @@ class Widget_Countdown extends Widget_Base {
 			[
 				'label' => __( 'Time', 'elementor' ),
 				'type' => Controls_Manager::TIME,
-				'section' => 'section_date',
-				'label_block'
+				'section' => 'section_time',
 			]
 		);
 	}
@@ -88,10 +87,4 @@ class Widget_Countdown extends Widget_Base {
 	}
 
 	protected function content_template() {}
-
-	function validateDate( $date, $format = 'Y/m/d H:i' ) {
-		$date = DateTime::createFromFormat( $format, $date );
-
-		return $date && $date->format( $format ) == $date;
-	}
 }
