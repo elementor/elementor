@@ -284,7 +284,6 @@ class Admin {
 				'i18n' => [
 					'cancel' => __( 'Cancel', 'elementor' ),
 					'deactivate' => __( 'Deactivate Elementor', 'elementor' ),
-					'in_progress' => __( 'In progress..', 'elementor' ),
 				],
 			]
 		);
