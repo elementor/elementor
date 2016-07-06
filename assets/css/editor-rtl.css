@@ -1730,15 +1730,32 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 20%;
     padding: 0 15px;
     margin: 15px 0; }
-  #elementor-templates-templates-container .elementor-templates-template-screenshot-wrapper {
+  #elementor-templates-templates-container .elementor-templates-template-body {
     height: 200px;
     border: 1px solid #c2cbd2;
     padding: 1px;
-    cursor: pointer; }
+    position: relative; }
+    #elementor-templates-templates-container .elementor-templates-template-body:not(:hover) .elementor-templates-template-controls {
+      display: none; }
   #elementor-templates-templates-container .elementor-templates-template-screenshot {
     height: 100%;
     background-size: cover;
     background-position-x: 50%; }
+  #elementor-templates-templates-container .elementor-templates-template-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); }
+  #elementor-templates-templates-container .elementor-templates-template-name {
+    padding: 20px 0;
+    font-size: 20px;
+    text-align: center;
+    color: #fff; }
+  #elementor-templates-templates-container .elementor-templates-template-control {
+    color: #fff;
+    cursor: pointer; }
 
 #elementor-templates-error-dialog .dialog-message {
   text-align: left; }
