@@ -120,4 +120,8 @@ class Type_Local extends Type_Base {
 			return $element;
 		} );
 	}
+
+	public function delete_template( $item_id ) {
+		wp_delete_post( $item_id, true );
+	}
 }

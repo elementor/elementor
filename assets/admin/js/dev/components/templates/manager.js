@@ -14,6 +14,12 @@ TemplatesManager = function() {
 	};
 
 	this.deleteTemplate = function( templateModel ) {
+		elementor.ajax.send( 'delete_template', {
+			data: {
+				type: templateModel.get( 'type' ),
+				item_id: templateModel.get( 'id' )
+			}
+		} );
 		templatesCollection.remove( templateModel );
 	};
 
