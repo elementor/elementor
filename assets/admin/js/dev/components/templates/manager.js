@@ -26,7 +26,7 @@ TemplatesManager = function() {
 
 	this.getModal = function() {
 		if ( ! modal ) {
-			modal = elementor.modals.createModal( {
+			modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
 				id: 'elementor-templates-modal',
 				closeButton: false
 			} );
