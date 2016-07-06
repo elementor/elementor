@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.4.0
+Stable tag: 0.4.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 4. Settings page.
 
 == Changelog ==
+
+= 0.4.1 - 05.07.2016 =
+* Tweak! - Default structure presets changed for new section
+* Tweak! - Added more strings to translate
+* Fixed! - Fixed alignment for Image widget
+* Fixed! - Some compatible to underscore 1.6.0 (Bundle from WordPress v4.4)
 
 = 0.4.0 - 04.07.2016 =
 * New! - Section: Background Overlay for image and video background 

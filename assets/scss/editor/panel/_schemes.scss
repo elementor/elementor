@@ -146,3 +146,16 @@
 	height: 20px;
 	width: 25%;
 }
+
+#elementor-panel-schemes-disabled {
+	padding: 20px;
+
+	a {
+		color: $editor-accent;
+		cursor: pointer;
+		
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

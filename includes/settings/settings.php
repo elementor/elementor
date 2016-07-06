@@ -7,12 +7,17 @@ class Settings {
 
 	const PAGE_ID = 'elementor';
 
+	public static function get_url() {
+		return admin_url( 'admin.php?page=' . self::PAGE_ID );
+	}
+
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
 		// Register the main section
-		$main_section = 'elementor_section';
+		$main_section = 'elementor_general_section';
+
 		add_settings_section(
 			$main_section,
 			__( 'General Settings', 'elementor' ),
@@ -53,18 +58,47 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
+		// Style section
+		$style_section = 'elementor_style_section';
+
+		add_settings_section(
+			$style_section,
+			__( 'Style Settings', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
 		$field_id = 'elementor_default_generic_fonts';
 		add_settings_field(
 			$field_id,
 			__( 'Default Generic Fonts', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$main_section,
+			$style_section,
 			[
 				'id' => $field_id,
 				'type' => 'text',
 				'std' => 'Sans-serif',
 				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_enable_schemes';
+		add_settings_field(
+			$field_id,
+			__( 'Enable Schemes', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'default' => 'yes',
+				'std' => 'yes',
+				'sub_desc' => __( 'Determine whether to enable schemes or not.', 'elementor' ),
 			]
 		);
 
@@ -76,7 +110,7 @@ class Settings {
 			__( 'Usage Data Tracking', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$main_section,
+			$style_section,
 			[
 				'id' => $field_id,
 				'type' => 'checkbox',
