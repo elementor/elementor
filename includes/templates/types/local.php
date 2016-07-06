@@ -109,10 +109,12 @@ class Type_Local extends Type_Base {
 			'author' => $user->display_name,
 			'categories' => [],
 			'keywords' => [],
+			'export_link' => $this->_get_export_link( $item_id ),
 		];
 	}
 
 	public function get_template( $item_id ) {
+		// TODO: Valid the data (in JS too!)
 		$data = Plugin::instance()->db->get_builder( $item_id );
 
 		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
@@ -123,5 +125,49 @@ class Type_Local extends Type_Base {
 
 	public function delete_template( $item_id ) {
 		wp_delete_post( $item_id, true );
+	}
+
+	public function export_template( $item_id ) {
+		$template_data = $this->get_template( $item_id );
+		if ( empty( $template_data ) )
+			wp_die( 'The template does not exist', 'elementor' );
+
+		// TODO: More fields to export?
+		$export_data = [
+			'version' => DB::DB_VERSION,
+			'title' => get_the_title( $item_id ),
+			'data' => $template_data,
+		];
+
+		$filename = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
+		$template_contents = wp_json_encode( $export_data );
+		$filesize = strlen( $template_contents );
+
+		// Headers to prompt "Save As"
+		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Disposition: attachment; filename=' . $filename );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . $filesize );
+
+		// Clear buffering just in case
+		@ob_end_clean();
+		flush();
+
+		// Output file contents
+		echo $template_contents;
+		die;
+	}
+
+	private function _get_export_link( $item_id ) {
+		return add_query_arg(
+			[
+				'action' => 'elementor_export_template',
+				'type' => $this->get_id(),
+				'item_id' => $item_id,
+			],
+			admin_url( 'admin-ajax.php' )
+		);
 	}
 }

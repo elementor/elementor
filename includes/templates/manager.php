@@ -137,6 +137,25 @@ class Manager {
 		wp_send_json_success();
 	}
 
+	public function export_template() {
+		// TODO: Add nonce for security
+		if ( empty( $_REQUEST['type'] ) ) {
+			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+		}
+
+		if ( empty( $_REQUEST['item_id'] ) ) {
+			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+		}
+
+		$type = $this->get_type( $_REQUEST['type'] );
+
+		if ( ! $type ) {
+			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+		}
+
+		$type->export_template( $_REQUEST['item_id'] );
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 
@@ -144,5 +163,6 @@ class Manager {
 		add_action( 'wp_ajax_elementor_save_template', [ $this, 'save_template' ] );
 		add_action( 'wp_ajax_elementor_get_template', [ $this, 'get_template' ] );
 		add_action( 'wp_ajax_elementor_delete_template', [ $this, 'delete_template' ] );
+		add_action( 'wp_ajax_elementor_export_template', [ $this, 'export_template' ] );
 	}
 }

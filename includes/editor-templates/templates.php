@@ -50,6 +50,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-templates-template-name"><%= title %></div>
 			<div class="elementor-templates-template-delete elementor-templates-template-control"><?php _e( 'Delete', 'elementor' ); ?></div>
 			<div class="elementor-templates-template-load elementor-templates-template-control"><?php _e( 'Load', 'elementor' ); ?></div>
+
+			<a target="_blank" href="<%= export_link %>"><?php _e( 'Export', 'elementor' ); ?></a>
 		</div>
 	</div>
 </script>
