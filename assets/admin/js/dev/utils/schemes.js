@@ -133,19 +133,16 @@ Schemes = function() {
 		elementor.config.schemes[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
 
 		NProgress.start();
-		Backbone.$.ajax( {
-				type: 'POST',
-				url: elementor.config.ajaxurl,
-				data: {
-					action: 'elementor_apply_scheme',
-					scheme_name: schemeName,
-					data: JSON.stringify( schemes[ schemeName ].items )
-				}
-			} )
 
-			.done( function( data ) {
+		elementor.ajax.send( 'apply_scheme', {
+			data: {
+				scheme_name: schemeName,
+				data: JSON.stringify( schemes[ schemeName ].items )
+			},
+			success: function() {
 				NProgress.done();
-			} );
+			}
+		} );
 	};
 
 	this.setSchemeValue = function( schemeName, itemKey, value ) {

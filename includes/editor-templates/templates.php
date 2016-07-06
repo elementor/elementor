@@ -44,9 +44,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-template">
-	<div class="elementor-templates-template-screenshot-wrapper">
+	<div class="elementor-templates-template-body">
 		<div class="elementor-templates-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>
-		<div><%= title %></div>
+		<div class="elementor-templates-template-controls">
+			<div class="elementor-templates-template-name"><%= title %></div>
+			<div class="elementor-templates-template-delete elementor-templates-template-control"><?php _e( 'Delete', 'elementor' ); ?></div>
+			<div class="elementor-templates-template-load elementor-templates-template-control"><?php _e( 'Load', 'elementor' ); ?></div>
+		</div>
 	</div>
 </script>
 

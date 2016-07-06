@@ -13,6 +13,29 @@ TemplatesManager = function() {
 		layout = new TemplatesLayoutView();
 	};
 
+	this.deleteTemplate = function( templateModel ) {
+		templatesCollection.remove( templateModel );
+	};
+
+	this.importTemplate = function( templateModel ) {
+		self.getLayout().showLoadingView();
+
+		elementor.ajax.send( 'get_template', {
+			data: {
+				type: templateModel.get( 'type' ),
+				item_id: templateModel.get( 'id' )
+			},
+			success: function( data ) {
+				self.getModal().hide();
+
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data.template );
+			},
+			error: function( data ) {
+				self.showErrorDialog( data.message );
+			}
+		} );
+	};
+
 	this.getErrorDialog = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
@@ -26,7 +49,7 @@ TemplatesManager = function() {
 
 	this.getModal = function() {
 		if ( ! modal ) {
-			modal = elementor.modals.createModal( {
+			modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
 				id: 'elementor-templates-modal',
 				closeButton: false
 			} );
@@ -44,20 +67,7 @@ TemplatesManager = function() {
 	};
 
 	this.requestRemoteTemplates = function( options ) {
-		var ajaxOptions = {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
-			dataType: 'json',
-			data: {
-				action: 'elementor_get_templates'
-			}
-		};
-
-		if ( options ) {
-			Backbone.$.extend( ajaxOptions, options );
-		}
-
-		Backbone.$.ajax( ajaxOptions );
+		elementor.ajax.send( 'get_templates', options );
 	};
 
 	this.startModal = function() {

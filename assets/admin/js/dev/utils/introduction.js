@@ -52,13 +52,7 @@ Introduction = function() {
 	};
 
 	this.setIntroductionViewed = function() {
-		Backbone.$.ajax( {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
-			data: {
-				action: 'elementor_introduction_viewed'
-			}
-		} );
+		elementor.ajax.send( 'introduction_viewed' );
 	};
 };
 

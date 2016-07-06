@@ -6,34 +6,21 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-template',
 
 	ui: {
-		item: '.elementor-templates-template-screenshot-wrapper'
+		loadButton: '.elementor-templates-template-load',
+		deleteButton: '.elementor-templates-template-delete'
 	},
 
 	events: {
-		'click @ui.item': 'onItemClicked'
+		'click @ui.loadButton': 'onLoadButtonClick',
+		'click @ui.deleteButton': 'onDeleteButtonClick'
 	},
 
-	onItemClicked: function() {
-		Backbone.$.ajax( {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
-			data: {
-				action: 'elementor_get_template',
-				type: this.model.get( 'type' ),
-				item_id: this.model.get( 'id' )
-			},
-			success: function( response ) {
-				if ( ! response.success ) {
-					elementor.templates.showErrorDialog( response.data.message );
+	onLoadButtonClick: function() {
+		elementor.templates.importTemplate( this.model );
+	},
 
-					return;
-				}
-
-				elementor.templates.getModal().hide();
-
-				elementor.getRegion( 'sections' ).currentView.addChildModel( response.data.template );
-			}
-		} );
+	onDeleteButtonClick: function() {
+		elementor.templates.deleteTemplate( this.model );
 	}
 } );
 

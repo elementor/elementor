@@ -24,18 +24,15 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		Backbone.$.ajax( {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
+		elementor.ajax.send( 'editor_get_wp_widget_form', {
 			data: {
-				action: 'elementor_editor_get_wp_widget_form',
 				widget_type: this.model.get( 'widget' ),
 				data: JSON.stringify( this.elementSettingsModel.toJSON() )
-			}
-		} )
-			.done( _.bind( function( data ) {
+			},
+			success: _.bind( function( data ) {
 				this.ui.form.html( data );
-			}, this ) );
+			}, this )
+		} );
 	}
 } );
 
