@@ -74,7 +74,7 @@ class Manager {
 	public function print_templates_json() {
 		$templates = $this->get_templates();
 
-		wp_send_json( $templates );
+		wp_send_json_success( $templates );
 	}
 
 	public function save_template() {
