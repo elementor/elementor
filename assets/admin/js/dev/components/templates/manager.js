@@ -13,6 +13,29 @@ TemplatesManager = function() {
 		layout = new TemplatesLayoutView();
 	};
 
+	this.deleteTemplate = function( templateModel ) {
+		templatesCollection.remove( templateModel );
+	};
+
+	this.importTemplate = function( templateModel ) {
+		self.getLayout().showLoadingView();
+
+		elementor.ajax.send( 'get_template', {
+			data: {
+				type: templateModel.get( 'type' ),
+				item_id: templateModel.get( 'id' )
+			},
+			success: function( data ) {
+				self.getModal().hide();
+
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data.template );
+			},
+			error: function( data ) {
+				self.showErrorDialog( data.message );
+			}
+		} );
+	};
+
 	this.getErrorDialog = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
