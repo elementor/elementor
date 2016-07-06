@@ -44,20 +44,7 @@ TemplatesManager = function() {
 	};
 
 	this.requestRemoteTemplates = function( options ) {
-		var ajaxOptions = {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
-			dataType: 'json',
-			data: {
-				action: 'elementor_get_templates'
-			}
-		};
-
-		if ( options ) {
-			Backbone.$.extend( ajaxOptions, options );
-		}
-
-		Backbone.$.ajax( ajaxOptions );
+		elementor.ajax.send( 'get_templates', options );
 	};
 
 	this.startModal = function() {

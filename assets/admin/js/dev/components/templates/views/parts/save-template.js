@@ -19,25 +19,19 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 		var formData = this.ui.form.elementorSerializeObject();
 
 		_.extend( formData, {
-			action: 'elementor_save_template',
 			data: JSON.stringify( elementor.elements.toJSON() ),
 			type: 'local'
 		} );
 
-		Backbone.$.ajax( {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
+		elementor.ajax.send( 'save_template', {
 			data: formData,
-			success: function( response ) {
-				if ( ! response.success ) {
-					elementor.templates.showErrorDialog( response.data.message );
-
-					return;
-				}
-
-				elementor.templates.getTemplatesCollection().add( response.data.item );
+			success: function( data ) {
+				elementor.templates.getTemplatesCollection().add( data.item );
 
 				elementor.templates.showTemplates();
+			},
+			error: function( data ) {
+				elementor.templates.showErrorDialog( data.message );
 			}
 		} );
 	}

@@ -287,24 +287,21 @@ App = Marionette.Application.extend( {
 
 		NProgress.start();
 
-		return Backbone.$.ajax( {
-	        type: 'POST',
-	        url: this.config.ajaxurl,
+		return this.ajax.send( 'save_builder', {
 	        data: {
-		        action: 'elementor_save_builder',
 		        post_id: this.config.post_id,
 		        revision: options.revision,
 		        data: JSON.stringify( elementor.elements.toJSON() )
-	        }
-        } )
-        .done( function( data ) {
-	        NProgress.done();
+	        },
+			success: function( data ) {
+				NProgress.done();
 
-	        elementor.setFlagEditorChange( false );
+				elementor.setFlagEditorChange( false );
 
-	        if ( _.isFunction( options.onSuccess ) ) {
-		        options.onSuccess.call( this, data );
-	        }
+				if ( _.isFunction( options.onSuccess ) ) {
+					options.onSuccess.call( this, data );
+				}
+			}
         } );
 	},
 

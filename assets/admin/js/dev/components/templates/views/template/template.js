@@ -17,21 +17,18 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 		Backbone.$.ajax( {
 			type: 'POST',
 			url: elementor.config.ajaxurl,
+		elementor.ajax.send( 'get_template', {
 			data: {
-				action: 'elementor_get_template',
 				type: this.model.get( 'type' ),
 				item_id: this.model.get( 'id' )
 			},
-			success: function( response ) {
-				if ( ! response.success ) {
-					elementor.templates.showErrorDialog( response.data.message );
-
-					return;
-				}
-
+			success: function( data ) {
 				elementor.templates.getModal().hide();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( response.data.template );
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data.template );
+			},
+			error: function( data ) {
+				elementor.templates.showErrorDialog( data.message );
 			}
 		} );
 	}
