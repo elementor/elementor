@@ -2770,27 +2770,27 @@ Ajax = {
 		this.initConfig();
 	},
 
-	send: function( action, params ) {
+	send: function( action, options ) {
 		var ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
 
-		ajaxParams.data = params && params.data || {};
+		ajaxParams.data = options && options.data || {};
 
 		ajaxParams.data.action = this.config.actionPrefix + action;
 
-		if ( params ) {
+		if ( options ) {
 			ajaxParams.success = function( response ) {
-				if ( response.success && params.success ) {
-					params.success( response.data );
+				if ( response.success && options.success ) {
+					options.success( response.data );
 				}
 
-				if ( ( ! response.success ) && params.error ) {
-					params.error( response.data );
+				if ( ( ! response.success ) && options.error ) {
+					options.error( response.data );
 				}
 			};
 
-			if ( params.error ) {
+			if ( options.error ) {
 				ajaxParams.error = function( data ) {
-					params.error( data );
+					options.error( data );
 				};
 			}
 		}
