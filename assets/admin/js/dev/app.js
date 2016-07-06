@@ -9,6 +9,7 @@ App = Marionette.Application.extend( {
 	modals: require( 'elementor-utils/modals' ),
 	introduction: require( 'elementor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
+	ajax: require( 'elementor-utils/ajax' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -98,6 +99,8 @@ App = Marionette.Application.extend( {
 		this.heartbeat.init();
 
 		this.modals.init();
+
+		this.ajax.init();
 	},
 
 	initDialogsManager: function() {
