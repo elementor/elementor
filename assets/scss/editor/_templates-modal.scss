@@ -116,17 +116,45 @@
 		margin: 15px 0;
 	}
 
-	.elementor-templates-template-screenshot-wrapper {
+	.elementor-templates-template-body {
 		height: 200px;
 		border: 1px solid $editor-lighter;
 		padding: 1px;
-		cursor: pointer;
+		position: relative;
+
+		&:not(:hover) {
+
+			.elementor-templates-template-controls {
+				display: none;
+			}
+		}
 	}
 
 	.elementor-templates-template-screenshot {
 		height: 100%;
 		background-size: cover;
 		background-position-x: 50%;
+	}
+
+	.elementor-templates-template-controls {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,.5);
+	}
+
+	.elementor-templates-template-name {
+		padding: 20px 0;
+		font-size: 20px;
+		text-align: center;
+		color: #fff;
+	}
+
+	.elementor-templates-template-control {
+		color: #fff;
+		cursor: pointer;
 	}
 }
 
