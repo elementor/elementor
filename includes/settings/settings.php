@@ -85,10 +85,10 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_enable_schemes';
+		$field_id = 'elementor_enable_color_schemes';
 		add_settings_field(
 			$field_id,
-			__( 'Enable Schemes', 'elementor' ),
+			__( 'Enable Colors Schemes', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
 			$style_section,
@@ -98,7 +98,26 @@ class Settings {
 				'value' => 'yes',
 				'default' => 'yes',
 				'std' => 'yes',
-				'sub_desc' => __( 'Determine whether to enable schemes or not.', 'elementor' ),
+				'sub_desc' => __( 'Determine whether to enable colors schemes or not.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_enable_typography_schemes';
+		add_settings_field(
+			$field_id,
+			__( 'Enable Typography Schemes', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'default' => 'yes',
+				'std' => 'yes',
+				'sub_desc' => __( 'Determine whether to enable typography schemes or not.', 'elementor' ),
 			]
 		);
 

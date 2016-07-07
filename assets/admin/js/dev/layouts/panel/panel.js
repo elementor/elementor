@@ -53,11 +53,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			}
 		};
 
-		if ( ! elementor.schemes.isSchemesEnabled() ) {
-			_.each( [ 'colors', 'typography' ], function( schemeType ) {
-				pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
-			} );
-		}
+		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
+			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemes() );
+
+		_.each( disabledSchemes, function( schemeType ) {
+			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
+		} );
 
 		this.pages = pages;
 	},
