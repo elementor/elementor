@@ -1012,7 +1012,9 @@ TemplatesImportView = Marionette.ItemView.extend( {
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
-		this.ui.uploadForm.upload();
+		this.ui.uploadForm.upload( {
+			
+		} );
 	}
 } );
 
