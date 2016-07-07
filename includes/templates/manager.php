@@ -156,6 +156,10 @@ class Manager {
 		$type->export_template( $_REQUEST['item_id'] );
 	}
 
+	public function import_template() {
+		wp_send_json_success( print_r( $_FILES, true ) );
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 
@@ -164,5 +168,6 @@ class Manager {
 		add_action( 'wp_ajax_elementor_get_template', [ $this, 'get_template' ] );
 		add_action( 'wp_ajax_elementor_delete_template', [ $this, 'delete_template' ] );
 		add_action( 'wp_ajax_elementor_export_template', [ $this, 'export_template' ] );
+		add_action( 'wp_ajax_elementor_import_template', [ $this, 'import_template' ] );
 	}
 }
