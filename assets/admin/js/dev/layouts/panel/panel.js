@@ -45,7 +45,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				view: require( 'elementor-panel/pages/menu/menu' ),
 				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 			},
-			colorsScheme: {
+			colorScheme: {
 				view: require( 'elementor-panel/pages/schemes/colors' )
 			},
 			typographyScheme: {
