@@ -8,7 +8,7 @@ class Schemes_Manager {
 	/**
 	 * @var Scheme_Base[]
 	 */
-	protected $_register_schemes = [];
+	protected $_registered_schemes = [];
 
 	public function init() {
 		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
@@ -32,21 +32,21 @@ class Schemes_Manager {
 		if ( ! $scheme_instance instanceof Scheme_Base ) {
 			return new \WP_Error( 'wrong_instance_scheme' );
 		}
-		$this->_register_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
+		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
 
 		return true;
 	}
 
 	public function unregister_scheme( $id ) {
-		if ( ! isset( $this->_register_schemes[ $id ] ) ) {
+		if ( ! isset( $this->_registered_schemes[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_register_schemes[ $id ] );
+		unset( $this->_registered_schemes[ $id ] );
 		return true;
 	}
 
 	public function get_registered_schemes() {
-		return $this->_register_schemes;
+		return $this->_registered_schemes;
 	}
 
 	public function get_registered_schemes_data() {
@@ -114,6 +114,12 @@ class Schemes_Manager {
 		$scheme_obj->save_scheme( $posted );
 
 		wp_send_json_success();
+	}
+
+	public static function is_schemes_enabled() {
+		$is_enabled = 'yes' === get_option( 'elementor_enable_schemes', 'yes' );
+
+		return apply_filters( 'elementor/schemes/is_schemes_enabled', $is_enabled );
 	}
 
 	public function __construct() {

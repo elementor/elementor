@@ -21,6 +21,10 @@ Schemes = function() {
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};
 
+	var initSchemes = function() {
+		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
+	};
+
 	var addStyleRule = function( selector, property ) {
 		if ( ! styleRules[ selector ] ) {
 			styleRules[ selector ] = [];
@@ -77,8 +81,7 @@ Schemes = function() {
 	this.init = function() {
 		initElements();
 		buildUI();
-
-		self.resetSchemes();
+		initSchemes();
 
 		return self;
 	};
@@ -112,6 +115,10 @@ Schemes = function() {
 		return schemeValue;
 	};
 
+	this.isSchemesEnabled = function() {
+		return elementor.config.schemes.is_schemes_enabled;
+	};
+
 	this.printSchemesStyle = function() {
 		resetStyleRules();
 		fetchAllWidgetsSchemesStyle();
@@ -120,17 +127,13 @@ Schemes = function() {
 	};
 
 	this.resetSchemes = function( schemeName ) {
-		if ( schemeName ) {
-			schemes[ schemeName ] = elementor.helpers.cloneObject( elementor.config.schemes[ schemeName ] );
-		} else {
-			schemes = elementor.helpers.cloneObject( elementor.config.schemes );
-		}
+		schemes[ schemeName ] = elementor.helpers.cloneObject( elementor.config.schemes.items[ schemeName ] );
 
 		this.onSchemeChange();
 	};
 
 	this.saveScheme = function( schemeName ) {
-		elementor.config.schemes[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
+		elementor.config.schemes.items[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
 
 		NProgress.start();
 		Backbone.$.ajax( {

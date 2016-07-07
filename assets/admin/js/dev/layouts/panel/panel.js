@@ -13,25 +13,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		modeSwitcher: '#elementor-mode-switcher'
 	},
 
-	pages: {
-		elements: {
-			view: require( 'elementor-panel/pages/elements/elements' ),
-			title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
-		},
-		editor: {
-			view: require( 'elementor-panel/pages/editor' )
-		},
-		menu: {
-			view: require( 'elementor-panel/pages/menu/menu' ),
-			title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
-		},
-		colorsScheme: {
-			view: require( 'elementor-panel/pages/schemes/colors' )
-		},
-		typographyScheme: {
-			view: require( 'elementor-panel/pages/schemes/typography' )
-		}
-	},
+	pages: {},
 
 	childEvents: {
 		'click:add': function() {
@@ -45,6 +27,40 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	currentPageName: null,
 
 	_isScrollbarInitialized: false,
+
+	initialize: function() {
+		this.initPages();
+	},
+
+	initPages: function() {
+		var pages = {
+			elements: {
+				view: require( 'elementor-panel/pages/elements/elements' ),
+				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
+			},
+			editor: {
+				view: require( 'elementor-panel/pages/editor' )
+			},
+			menu: {
+				view: require( 'elementor-panel/pages/menu/menu' ),
+				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
+			},
+			colorsScheme: {
+				view: require( 'elementor-panel/pages/schemes/colors' )
+			},
+			typographyScheme: {
+				view: require( 'elementor-panel/pages/schemes/typography' )
+			}
+		};
+
+		if ( ! elementor.schemes.isSchemesEnabled() ) {
+			_.each( [ 'colors', 'typography' ], function( schemeType ) {
+				pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
+			} );
+		}
+
+		this.pages = pages;
+	},
 
 	getHeaderView: function() {
 		return this.getChildView( 'header' );

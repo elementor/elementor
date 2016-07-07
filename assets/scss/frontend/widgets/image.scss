@@ -7,8 +7,8 @@
 	.elementor-image {
 		overflow: hidden;
 
-		> img {
-			display: block;
+		img {
+			vertical-align: middle;
 		}
 
 		&.elementor-image-shape- {

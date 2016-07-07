@@ -31,7 +31,7 @@
     max-width: 100%;
     border: none;
     border-radius: 0;
-    box-shadow: 0; }
+    box-shadow: none; }
   .elementor figure {
     margin: 0; }
   .elementor embed,
@@ -362,8 +362,8 @@
 
 .elementor-widget-image .elementor-image {
   overflow: hidden; }
-  .elementor-widget-image .elementor-image > img {
-    display: block; }
+  .elementor-widget-image .elementor-image img {
+    vertical-align: middle; }
   .elementor-widget-image .elementor-image.elementor-image-shape-circle {
     border-radius: 50%; }
 
