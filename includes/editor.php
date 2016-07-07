@@ -224,16 +224,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-upload',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery-upload.min.js',
-			[
-				'jquery',
-			],
-			'1.0.1',
-			true
-		);
-
-		wp_register_script(
 			'elementor',
 			ELEMENTOR_ASSETS_URL . 'admin/js/app' . $suffix . '.js',
 			[
@@ -252,7 +242,6 @@ class Editor {
 				'heartbeat',
 				'elementor-dialog',
 				'jquery-select2',
-				'jquery-upload',
 			],
 			Plugin::instance()->get_version(),
 			true
