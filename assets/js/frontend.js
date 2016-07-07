@@ -73,6 +73,25 @@
 		}
 	};
 
+	elementorBindUI.addGlobalHandler( function() {
+		if ( elementorBindUI.isEditorMode() ) {
+			return;
+		}
+
+		var $element = this,
+			animation = $element.data( 'animation' );
+
+		if ( ! animation ) {
+			return;
+		}
+
+		$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+		$element.waypoint( function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( animation );
+		}, { offset: '90%' } );
+
+	} );
 	/**
 	 * Add JS widgets here
 	 */
