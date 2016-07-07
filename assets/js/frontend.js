@@ -6,6 +6,7 @@
 
 	var elementorBindUI = ( function() {
 		var _registeredBindEvent = {},
+			_registeredGlobalHandlers = [],
 			_flagEditorMode = false,
 
 			_setEditorMode = function( mode ) {
@@ -24,6 +25,10 @@
 				_registeredBindEvent[ widgetType ] = callback;
 			},
 
+			_addGlobalHandler = function( callback ) {
+				_registeredGlobalHandlers.push( callback );
+			},
+
 			_runReadyTrigger = function( $scope ) {
 				var elementType = $scope.data( 'element_type' );
 
@@ -31,11 +36,19 @@
 					return;
 				}
 
+				_runGlobalHandlers( $scope );
+
 				if ( ! _registeredBindEvent[ elementType ] ) {
 					return;
 				}
 
 				_registeredBindEvent[ elementType ].call( $scope );
+			},
+
+			_runGlobalHandlers = function( $scope ) {
+				$.each( _registeredGlobalHandlers, function() {
+					this.call( $scope );
+				} );
 			};
 
 		// Public Members
@@ -44,6 +57,7 @@
 			setEditorMode: _setEditorMode,
 			setScopeWindow: _setScopeWindow,
 			addBindEvent: _addBindEvent,
+			addGlobalHandler: _addGlobalHandler,
 			runReadyTrigger: _runReadyTrigger
 		};
 	} )();
