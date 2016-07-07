@@ -16,6 +16,18 @@ abstract class Element_Base {
 
 	private $_render_attributes = [];
 
+	private static $_animations = [
+		'fadeIn' => 'Fade In',
+		'fadeInDown' => 'Fade In Down',
+		'fadeInDownBig' => 'Fade In Down Big',
+		'fadeInLeft' => 'Fade In Left',
+		'fadeInLeftBig' => 'Fade In Left Big',
+		'fadeInRight' => 'Fade In Right',
+		'fadeInRightBig' => 'Fade In Right Big',
+		'fadeInUp' => 'Fade In Up',
+		'fadeInUpBig' => 'Fade In Up Big',
+	];
+
 	abstract public function get_id();
 
 	abstract public function get_title();
@@ -29,6 +41,10 @@ abstract class Element_Base {
 	public function after_render( $instance, $element_id, $element_data = [] ) {}
 
 	abstract protected function content_template();
+
+	public static function get_animations() {
+		return self::$_animations;
+	}
 
 	public function get_keywords() {
 		return '';

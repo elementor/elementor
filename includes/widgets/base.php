@@ -95,17 +95,7 @@ abstract class Widget_Base extends Element_Base {
 			'_animation',[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'fadeIn' => 'Fade In',
-					'fadeInDown' => 'Fade In Down',
-					'fadeInDownBig' => 'Fade In Down Big',
-					'fadeInLeft' => 'Fade In Left',
-					'fadeInLeftBig' => 'Fade In Left Big',
-					'fadeInRight' => 'Fade In Right',
-					'fadeInRightBig' => 'Fade In Right Big',
-					'fadeInUp' => 'Fade In Up',
-					'fadeInUpBig' => 'Fade In Up Big',
-				],
+				'options' => self::get_animations(),
 				'prefix_class' => 'animated ',
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_style',
