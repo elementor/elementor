@@ -169,9 +169,7 @@ App = Marionette.Application.extend( {
 
 		this.schemes.init();
 
-		if ( this.schemes.isSchemesEnabled() ) {
-			this.schemes.printSchemesStyle();
-		}
+		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
@@ -1532,7 +1530,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
                 icon: 'paint-brush',
                 title: elementor.translate( 'colors' ),
 				type: 'page',
-                pageName: 'colorsScheme'
+                pageName: 'colorScheme'
             },
             {
                 icon: 'font',
@@ -1963,7 +1961,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				view: require( 'elementor-panel/pages/menu/menu' ),
 				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 			},
-			colorsScheme: {
+			colorScheme: {
 				view: require( 'elementor-panel/pages/schemes/colors' )
 			},
 			typographyScheme: {
@@ -1971,11 +1969,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			}
 		};
 
-		if ( ! elementor.schemes.isSchemesEnabled() ) {
-			_.each( [ 'colors', 'typography' ], function( schemeType ) {
-				pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
-			} );
-		}
+		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
+			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemes() );
+
+		_.each( disabledSchemes, function( schemeType ) {
+			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
+		} );
 
 		this.pages = pages;
 	},
@@ -3020,12 +3019,16 @@ Schemes = function() {
 		return schemes;
 	};
 
-	this.getScheme = function( schemeName ) {
-		return schemes[ schemeName ];
+	this.getScheme = function( schemeType ) {
+		return schemes[ schemeType ];
 	};
 
-	this.getSchemeValue = function( schemeName, value, key ) {
-		var scheme = self.getScheme( schemeName ),
+	this.getSchemeValue = function( schemeType, value, key ) {
+		if ( this.getEnabledSchemes().indexOf( schemeType ) < 0 ) {
+			return false;
+		}
+
+		var scheme = self.getScheme( schemeType ),
 			schemeValue = scheme.items[ value ];
 
 		if ( key && _.isObject( schemeValue ) ) {
@@ -3039,8 +3042,8 @@ Schemes = function() {
 		return schemeValue;
 	};
 
-	this.isSchemesEnabled = function() {
-		return elementor.config.schemes.is_schemes_enabled;
+	this.getEnabledSchemes = function() {
+		return elementor.config.schemes.enabled_schemes;
 	};
 
 	this.printSchemesStyle = function() {
