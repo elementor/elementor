@@ -143,11 +143,17 @@ class Frontend {
 		);
 
 		wp_register_style(
+			'animate.css',
+			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animations.min.css'
+		);
+
+		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-icons',
 				'font-awesome',
+				'animate.css',
 			],
 			Plugin::instance()->get_version()
 		);
