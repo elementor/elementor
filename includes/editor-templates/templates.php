@@ -62,3 +62,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<input id="elementor-templates-save-template-submit" class="elementor-button" type="submit">
 	</form>
 </script>
+
+<script type="text/template" id="tmpl-elementor-templates-import">
+	<form id="elementor-templates-import-form">
+		<input type="file" name="file">
+		<input type="submit">
+	</form>
+</script>
