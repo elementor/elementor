@@ -118,11 +118,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.listenTo( elementor.data, 'scrollbar:update', this.updateScrollbar );
 	},
 
-	onEditorBeforeShow: function( view, region, options ) {
+	onEditorBeforeShow: function() {
 		_.defer( this.updateScrollbar );
 	},
 
-	onEditorEmpty: function( oldView ) {
+	onEditorEmpty: function() {
 		this.updateScrollbar();
 	},
 
