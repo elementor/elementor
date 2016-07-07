@@ -96,6 +96,7 @@ abstract class Widget_Base extends Element_Base {
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => self::get_animations(),
+				'default' => '',
 				'prefix_class' => 'animated ',
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_style',
