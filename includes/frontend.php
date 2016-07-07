@@ -163,11 +163,7 @@ class Frontend {
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return;
 
-		$css_code = '';
-
-		if ( Schemes_Manager::is_schemes_enabled() ) {
-			$css_code = $this->_parse_schemes_css_code();
-		}
+		$css_code = $this->_parse_schemes_css_code();
 
 		foreach ( $data as $section ) {
 			$css_code .= $this->_parse_style_item( $section );

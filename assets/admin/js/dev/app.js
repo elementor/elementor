@@ -168,9 +168,7 @@ App = Marionette.Application.extend( {
 
 		this.schemes.init();
 
-		if ( this.schemes.isSchemesEnabled() ) {
-			this.schemes.printSchemesStyle();
-		}
+		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
