@@ -10,6 +10,8 @@ class Schemes_Manager {
 	 */
 	protected $_registered_schemes = [];
 
+	private static $_enabled_schemes;
+
 	private static $_schemes_types = [
 		'color',
 		'typography',
@@ -122,21 +124,19 @@ class Schemes_Manager {
 	}
 
 	public static function get_enabled_schemes() {
-		static $enabled_schemes = null;
+		if ( null === self::$_enabled_schemes ) {
+			$enabled_schemes = [];
 
-		if ( null !== $enabled_schemes ) {
-			return $enabled_schemes;
-		}
-
-		$enabled_schemes = [];
-
-		foreach ( self::$_schemes_types as $schemes_type ) {
-			if ( 'yes' === get_option( 'elementor_enable_' . $schemes_type . '_schemes', 'yes' ) ) {
-				$enabled_schemes[] = $schemes_type;
+			foreach ( self::$_schemes_types as $schemes_type ) {
+				if ( 'yes' === get_option( 'elementor_enable_' . $schemes_type . '_schemes', 'yes' ) ) {
+					$enabled_schemes[] = $schemes_type;
+				}
 			}
+
+			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
 		}
 
-		return apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
+		return self::$_enabled_schemes;
 	}
 
 	public function __construct() {
