@@ -145,7 +145,60 @@ class Widget_Countdown extends Widget_Base {
 			]
 		);
 
-		// Counter
+		$this->add_control(
+			'section_labels',
+			[
+				'label' => __( 'Change Labels', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+			]
+		);
+
+		$this->add_control(
+			'weeks_label',
+			[
+				'label' => __( 'Change Weeks', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_labels',
+			]
+		);
+
+		$this->add_control(
+			'days_label',
+			[
+				'label' => __( 'Change Days', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_labels',
+			]
+		);
+
+		$this->add_control(
+			'hours_label',
+			[
+				'label' => __( 'Change Hours', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_labels',
+			]
+		);
+
+		$this->add_control(
+			'minutes_label',
+			[
+				'label' => __( 'Change Minutes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_labels',
+			]
+		);
+
+		$this->add_control(
+			'seconds_label',
+			[
+				'label' => __( 'Change Seconds', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'section' => 'section_labels',
+			]
+		);
+
+		// Style Tab - Counter
 		$this->add_control(
 			'section_style_counter',
 			[
@@ -274,6 +327,12 @@ class Widget_Countdown extends Widget_Base {
 		$data .= ' data-show-hours=' . $instance['show_hours'];
 		$data .= ' data-show-minutes=' . $instance['show_minutes'];
 		$data .= ' data-show-seconds=' . $instance['show_seconds'];
+
+		$data .= ( ! empty( $instance['weeks_label'] ) ) ? ' data-weeks-label=' . $instance['weeks_label'] : '';
+		$data .= ( ! empty( $instance['days_label'] ) ) ? ' data-days-label=' . $instance['days_label'] : '';
+		$data .= ( ! empty( $instance['hours_label'] ) ) ? ' data-hours-label=' . $instance['hours_label'] : '';
+		$data .= ( ! empty( $instance['minutes_label'] ) ) ? ' data-minutes-label=' . $instance['minutes_label'] : '';
+		$data .= ( ! empty( $instance['seconds_label'] ) ) ? ' data-seconds-label=' . $instance['seconds_label'] : '';
 		?>
 		<div class="elementor-countdown" data-deadline="<?php echo $new_date->format( 'Y-m-d H:i:s' ); ?>" <?php echo $data; ?>></div>
 	    <?php
