@@ -331,7 +331,7 @@ class Widget_Countdown extends Widget_Base {
 		$minutes_label = ( ! empty( $instance['minutes_label'] ) ) ? $instance['minutes_label'] : __( 'Minutes', 'elementor' );
 		$seconds_label = ( ! empty( $instance['seconds_label'] ) ) ? $instance['seconds_label'] : __( 'Seconds', 'elementor' );
 		?>
-		<div class="elementor-countdown" data-deadline="<?php echo $new_date->format( 'Y-m-d H:i:s' ); ?>" <?php echo $data; ?>></div>
+		<div class="elementor-countdown" data-deadline="<?php echo $new_date->format( 'Y-m-d H:i:s' ); ?>"></div>
 		<div class="elementor-countdown-template" style="display: none;">
 			<div class="elementor-countdown-weeks-wrapper show-<?php echo $instance['show_weeks']; ?>"><span class="elementor-countdown-weeks-duration elementor-countdown-duration">%-w</span><span class="elementor-countdown-weeks elementor-countdown-text"><?php echo $weeks_label; ?></span></div>
 			<div class="elementor-countdown-days-wrapper show-<?php echo $instance['show_days']; ?>"><span class="elementor-countdown-days-duration elementor-countdown-duration">%-d</span><span class="elementor-countdown-days elementor-countdown-text"><?php echo $days_label; ?></span></div>
