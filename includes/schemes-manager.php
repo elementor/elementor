@@ -10,16 +10,23 @@ class Schemes_Manager {
 	 */
 	protected $_registered_schemes = [];
 
+	private static $_enabled_schemes;
+
+	private static $_schemes_types = [
+		'color',
+		'typography',
+	];
+
 	public function init() {
 		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
 
 		include( ELEMENTOR_PATH . 'includes/schemes/base.php' );
 
-		include( ELEMENTOR_PATH . 'includes/schemes/color.php' );
-		include( ELEMENTOR_PATH . 'includes/schemes/typography.php' );
+		foreach ( self::$_schemes_types as $schemes_type ) {
+			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
 
-		$this->register_scheme( __NAMESPACE__ . '\Scheme_Color' );
-		$this->register_scheme( __NAMESPACE__ . '\Scheme_Typography' );
+			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( $schemes_type ) );
+		}
 	}
 
 	public function register_scheme( $scheme_class ) {
@@ -116,10 +123,20 @@ class Schemes_Manager {
 		wp_send_json_success();
 	}
 
-	public static function is_schemes_enabled() {
-		$is_enabled = 'yes' === get_option( 'elementor_enable_schemes', 'yes' );
+	public static function get_enabled_schemes() {
+		if ( null === self::$_enabled_schemes ) {
+			$enabled_schemes = [];
 
-		return apply_filters( 'elementor/schemes/is_schemes_enabled', $is_enabled );
+			foreach ( self::$_schemes_types as $schemes_type ) {
+				if ( 'yes' === get_option( 'elementor_enable_' . $schemes_type . '_schemes', 'yes' ) ) {
+					$enabled_schemes[] = $schemes_type;
+				}
+			}
+
+			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
+		}
+
+		return self::$_enabled_schemes;
 	}
 
 	public function __construct() {

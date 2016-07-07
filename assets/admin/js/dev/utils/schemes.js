@@ -96,12 +96,16 @@ Schemes = function() {
 		return schemes;
 	};
 
-	this.getScheme = function( schemeName ) {
-		return schemes[ schemeName ];
+	this.getScheme = function( schemeType ) {
+		return schemes[ schemeType ];
 	};
 
-	this.getSchemeValue = function( schemeName, value, key ) {
-		var scheme = self.getScheme( schemeName ),
+	this.getSchemeValue = function( schemeType, value, key ) {
+		if ( this.getEnabledSchemes().indexOf( schemeType ) < 0 ) {
+			return false;
+		}
+
+		var scheme = self.getScheme( schemeType ),
 			schemeValue = scheme.items[ value ];
 
 		if ( key && _.isObject( schemeValue ) ) {
@@ -115,8 +119,8 @@ Schemes = function() {
 		return schemeValue;
 	};
 
-	this.isSchemesEnabled = function() {
-		return elementor.config.schemes.is_schemes_enabled;
+	this.getEnabledSchemes = function() {
+		return elementor.config.schemes.enabled_schemes;
 	};
 
 	this.printSchemesStyle = function() {

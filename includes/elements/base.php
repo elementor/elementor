@@ -173,8 +173,10 @@ abstract class Element_Base {
 	}
 
 	public function get_scheme_controls() {
-		return array_filter( $this->get_controls(), function( $control ) {
-			return ( ! empty( $control['scheme'] ) );
+		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
+
+		return array_filter( $this->get_controls(), function( $control ) use ( $enabled_schemes ) {
+			return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
 		} );
 	}
 
