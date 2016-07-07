@@ -224,21 +224,14 @@
 	// Countdown Widget
 	elementorBindUI.addBindEvent( 'countdown', function() {
 		var $countdown = $( this ).find( '.elementor-countdown' ),
-			$data = $countdown.data(),
-			weeksLabel = $data.weeksLabel ? $data.weeksLabel : 'Weeks',
-			daysLabel = $data.daysLabel ? $data.daysLabel : 'Days',
-			hoursLabel = $data.hoursLabel ? $data.hoursLabel : 'Hours',
-			minutesLabel = $data.minutesLabel ? $data.minutesLabel : 'Minutes',
-			secondsLabel = $data.secondsLabel ? $data.secondsLabel : 'Seconds';
+			$data = $countdown.data();
+
+		if ( undefined === $data ) {
+			return;
+		}
 
 		$countdown.countdown( $data.deadline ).on( 'update.countdown', function(event) {
-			var $this = $(this).html( event.strftime( ''
-				+ '<div class="elementor-countdown-weeks-wrapper show-' + $data.showWeeks + '"><span class="elementor-countdown-weeks-duration elementor-countdown-duration">%-w</span><span class="elementor-countdown-weeks elementor-countdown-text">' + weeksLabel + '</span></div> '
-				+ '<div class="elementor-countdown-days-wrapper show-' + $data.showDays + '"><span class="elementor-countdown-days-duration elementor-countdown-duration">%-d</span><span class="elementor-countdown-days elementor-countdown-text">' + daysLabel + '</span></div> '
-				+ '<div class="elementor-countdown-hours-wrapper show-' + $data.showHours + '"><span class="elementor-countdown-hours-duration elementor-countdown-duration">%H</span><span class="elementor-countdown-hours elementor-countdown-text">' + hoursLabel + '</span></div>'
-				+ '<div class="elementor-countdown-minutes-wrapper show-' + $data.showMinutes + '"><span class="elementor-countdown-minutes-duration elementor-countdown-duration">%M</span><span class="elementor-countdown-minutes elementor-countdown-text">' + minutesLabel + '</span></div>'
-				+ '<div class="elementor-countdown-seconds-wrapper show-' + $data.showSeconds + '"><span class="elementor-countdown-seconds-duration elementor-countdown-duration">%S</span><span class="elementor-countdown-seconds elementor-countdown-text">' + secondsLabel + '</span></div>' )
-			);
+			var $this = $(this).html( event.strftime( $countdown.next().html() ) );
 		} );
 
 	} );

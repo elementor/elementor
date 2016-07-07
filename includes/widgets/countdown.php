@@ -317,24 +317,28 @@ class Widget_Countdown extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
+		if ( empty( $instance['time'] ) || empty( $instance['year'] ) || empty( $instance['month'] ) || empty( $instance['day'] ) )
+			return;
+
 		$date = $instance['year'] . '/' . $instance['month'] . '/' . $instance['day'];
 		$time = $instance['time']['hours'] . ':' . $instance['time']['minutes'];
 
 		$new_date = new \DateTime( $date . ' ' . $time );
 
-		$data = ' data-show-weeks=' . $instance['show_weeks'];
-		$data .= ' data-show-days=' . $instance['show_days'];
-		$data .= ' data-show-hours=' . $instance['show_hours'];
-		$data .= ' data-show-minutes=' . $instance['show_minutes'];
-		$data .= ' data-show-seconds=' . $instance['show_seconds'];
-
-		$data .= ( ! empty( $instance['weeks_label'] ) ) ? ' data-weeks-label=' . $instance['weeks_label'] : '';
-		$data .= ( ! empty( $instance['days_label'] ) ) ? ' data-days-label=' . $instance['days_label'] : '';
-		$data .= ( ! empty( $instance['hours_label'] ) ) ? ' data-hours-label=' . $instance['hours_label'] : '';
-		$data .= ( ! empty( $instance['minutes_label'] ) ) ? ' data-minutes-label=' . $instance['minutes_label'] : '';
-		$data .= ( ! empty( $instance['seconds_label'] ) ) ? ' data-seconds-label=' . $instance['seconds_label'] : '';
+		$weeks_label = ( ! empty( $instance['weeks_label'] ) ) ? $instance['weeks_label'] : __( 'Weeks', 'elementor' );
+		$days_label = ( ! empty( $instance['days_label'] ) ) ? $instance['days_label'] : __( 'Days', 'elementor' );
+		$hours_label = ( ! empty( $instance['hours_label'] ) ) ? $instance['hours_label'] : __( 'Hours', 'elementor' );
+		$minutes_label = ( ! empty( $instance['minutes_label'] ) ) ? $instance['minutes_label'] : __( 'Minutes', 'elementor' );
+		$seconds_label = ( ! empty( $instance['seconds_label'] ) ) ? $instance['seconds_label'] : __( 'Seconds', 'elementor' );
 		?>
 		<div class="elementor-countdown" data-deadline="<?php echo $new_date->format( 'Y-m-d H:i:s' ); ?>" <?php echo $data; ?>></div>
+		<div class="elementor-countdown-template" style="display: none;">
+			<div class="elementor-countdown-weeks-wrapper show-<?php echo $instance['show_weeks']; ?>"><span class="elementor-countdown-weeks-duration elementor-countdown-duration">%-w</span><span class="elementor-countdown-weeks elementor-countdown-text"><?php echo $weeks_label; ?></span></div>
+			<div class="elementor-countdown-days-wrapper show-<?php echo $instance['show_days']; ?>"><span class="elementor-countdown-days-duration elementor-countdown-duration">%-d</span><span class="elementor-countdown-days elementor-countdown-text"><?php echo $days_label; ?></span></div>
+			<div class="elementor-countdown-hours-wrapper show-<?php echo $instance['show_hours']; ?>"><span class="elementor-countdown-hours-duration elementor-countdown-duration">%H</span><span class="elementor-countdown-hours elementor-countdown-text"><?php echo $hours_label; ?></span></div>
+			<div class="elementor-countdown-minutes-wrapper show-<?php echo $instance['show_minutes']; ?>"><span class="elementor-countdown-minutes-duration elementor-countdown-duration">%M</span><span class="elementor-countdown-minutes elementor-countdown-text"><?php echo $minutes_label; ?></span></div>
+			<div class="elementor-countdown-seconds-wrapper show-<?php echo $instance['show_seconds']; ?>"><span class="elementor-countdown-seconds-duration elementor-countdown-duration">%S</span><span class="elementor-countdown-seconds elementor-countdown-text"><?php echo $seconds_label; ?></span></div>
+		</div>
 	    <?php
 	}
 
