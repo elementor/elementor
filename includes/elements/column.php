@@ -374,10 +374,6 @@ class Element_Column extends Element_Base {
 
 			$wrapper_classes[] = $control['prefix_class'] . $instance[ $control['name'] ];
 		}
-
-		if ( ! empty( $element_data['elements'] ) ) {
-
-		}
 		?>
 		<div class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
 			<div class="elementor-column-wrap<?php if ( ! empty( $element_data['elements'] ) ) echo ' elementor-element-populated'; ?>">
