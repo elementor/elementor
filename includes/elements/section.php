@@ -546,8 +546,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'animation',[
 				'label' => __( 'Animation', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => self::get_animations(),
+				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
 				'tab' => self::TAB_ADVANCED,
