@@ -22,9 +22,15 @@ Ajax = {
 
 		ajaxParams.data = options && options.data || {};
 
-		ajaxParams.data.action = this.config.actionPrefix + action;
 
 		if ( options ) {
+
+		if ( ajaxParams.data instanceof FormData ) {
+			ajaxParams.data.append( 'action', action );
+		} else {
+			ajaxParams.data.action = action;
+		}
+
 			ajaxParams.success = function( response ) {
 				if ( response.success && options.success ) {
 					options.success( response.data );
