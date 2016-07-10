@@ -16,13 +16,8 @@ TemplatesImportView = Marionette.ItemView.extend( {
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
-		var formData = new FormData( this.ui.uploadForm[ 0 ] );
-		formData.append( 'action', 'elementor_import_template' );
-
-		Backbone.$.ajax( {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
-			data: formData,
+		elementor.ajax.send( 'import_template', {
+			data: new FormData( this.ui.uploadForm[ 0 ] ),
 			processData: false,
 			contentType: false,
 			success: function( response ) {
