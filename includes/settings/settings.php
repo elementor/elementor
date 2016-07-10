@@ -123,6 +123,23 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		$field_id = 'elementor_disable_animations';
+		add_settings_field(
+			$field_id,
+			__( 'Disable Animations', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'sub_desc' => __( 'Don\'t use animations in Elementor.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
 		$field_id = 'elementor_allow_tracking';
 		add_settings_field(
 			$field_id,
