@@ -9,48 +9,15 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		return 'box_shadow';
 	}
 
-	public function enqueue() {
-		wp_register_script( 'iris', admin_url( '/js/iris.min.js' ), [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker.min.js' ), [ 'iris' ], false, true );
-
-		wp_localize_script(
-			'wp-color-picker',
-			'wpColorPickerL10n',
-			[
-				'clear' => __( 'Clear', 'elementor' ),
-				'defaultString' => __( 'Default', 'elementor' ),
-				'pick' => __( 'Select Color', 'elementor' ),
-				'current' => __( 'Current Color', 'elementor' ),
-			]
-		);
-
-		wp_register_script(
-			'wp-color-picker-alpha',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/wp-color-picker-alpha.js',
-			[
-				'wp-color-picker',
-			],
-			'1.1',
-			true
-		);
-
-		wp_enqueue_style( 'wp-color-picker' );
-		wp_enqueue_script( 'wp-color-picker-alpha' );
-	}
-
 	public function get_default_value() {
 		return [
 			'horizontal' => 0,
 			'vertical' => 0,
 			'blur' => 0,
 			'spread' => 0,
+			'inset' => '',
+			'shadow' => '',
 		];
-	}
-
-	protected function get_default_settings() {
-		return array_merge( parent::get_default_settings(), [
-			'label_block' => true,
-		] );
 	}
 
 	public function get_sliders() {
@@ -59,7 +26,6 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 			[ 'label' => 'Vertical Length', 'type' => 'vertical' ],
 			[ 'label' => 'Blur Radius', 'type' => 'blur' ],
 			[ 'label' => 'Spread Radius', 'type' => 'spread' ],
-			[ 'label' => 'Opacity', 'type' => 'opacity' ],
 		];
 	}
 
@@ -72,10 +38,10 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><?php _e( 'Inset Or Outset', 'elementor' ); ?></label>
+			<label class="elementor-control-title"><?php _e( 'Inset', 'elementor' ); ?></label>
 			<div class="elementor-control-input-wrapper">
 				<select class="elementor-control-box-shadow-inset" data-setting="inset">
-					<option value="no"><?php _e( 'No', 'elementor' ); ?></option>
+					<option value=""><?php _e( 'No', 'elementor' ); ?></option>
 					<option value="inset"><?php _e( 'Yes', 'elementor' ); ?></option>
 				</select>
 			</div>
@@ -88,7 +54,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 					<?php echo $slider['label']; ?>
 				</label>
 				<div class="elementor-control-input-wrapper">
-					<div class="elementor-control-slider"></div>
+					<div class="elementor-control-slider" data-input="<?php echo $slider['type']; ?>"></div>
 					<div class="elementor-control-slider-input">
 						<input type="number" min="<%- data.min %>" max="<%- data.max %>" step="<%- data.step %>"
 						       data-setting="<?php echo $slider['type']; ?>"/>

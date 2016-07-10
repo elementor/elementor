@@ -40,13 +40,13 @@ abstract class Control_Base_Multiple extends Control_Base {
 		// the action and returning an empty string.
 		try {
 			return preg_replace_callback( '/\{\{([A-Z]+)}}/', function( $matches ) use ( $control_value ) {
-				$value = $control_value[ strtolower( $matches[1] ) ];
+				$match_key = strtolower( $matches[1] );
 
-				if ( '' === $value ) {
+				if ( ! isset( $control_value[ $match_key ] ) ) {
 					throw new \Exception();
 				}
 
-				return $value;
+				return $control_value[ $match_key ];
 			}, $css_property );
 		} catch ( \Exception $e ) {
 			return '';

@@ -5,7 +5,6 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	ui: function () {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.inset = '.elementor-control-box-shadow-inset';
 		ui.sliders = '.elementor-control-slider';
 		ui.colors = '.color-picker-hex';
 
@@ -13,71 +12,60 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	childEvents: {
-		'slide @ui.sliders': 'onSlideChange',
-		'change @ui.inset': 'onInsetChange'
-	},
-
-	onInsetChange: function( event ) {
-		var value = 'no' !== event.target.value ? ' ' + event.target.value : '';
-
-		this.setValue( 'inset', value );
+		'slide @ui.sliders': 'onSlideChange'
 	},
 
 	initSliders: function() {
-		var sliders = this.ui.sliders;
+		var value = this.getControlValue();
 
-		sliders.each( function( key, value ) {
-			var size = sliders.eq( key ).next( '.elementor-control-slider-input' ).children( 'input' ).val();
-
-			sliders.eq( key ).slider( { value: size } );
+		this.ui.sliders.each( function() {
+			Backbone.$( this ).slider( { value: value[ this.dataset.input ] } );
 		} );
 	},
 
 	initColors: function() {
-		var colors = this.ui.colors;
-			model = this;
+		var $colors = this.ui.colors,
+			self = this;
 
-		colors.each( function( key, value ){
-			var color = colors.eq( key );
+		$colors.each( function(){
+			var $color = Backbone.$( this );
 
-			color.wpColorPicker( {
-				change: _.bind( function() {
-					var type = color.data( 'setting' );
+			$color.wpColorPicker( {
+				change: function() {
+					var type = $color.data( 'setting' );
 
-					model.setValue( type, color.wpColorPicker( 'color' ) );
-				}, model ),
+					self.setValue( type, $color.wpColorPicker( 'color' ) );
+				},
 
-				clear: _.bind( function() {
-					var type = color.data( 'setting' );
+				clear: function() {
+					var type = $color.data( 'setting' );
 
-					model.setValue( type, '' );
-				}, model ),
+					self.setValue( type, '' );
+				},
 
 				width: 251
 			} );
-		}, model );
+		} );
+	},
+
+	onInputChange: function ( event ) {
+		var type = event.currentTarget.dataset.setting,
+			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
+
+		$slider.slider( { value: this.getControlValue( type ) } );
 	},
 
 	onReady: function() {
-		var value = '' !== this.getControlValue( 'inset' ) ? 'inset' : 'no';
-
-		this.ui.inset.val( value );
-
 		this.initSliders();
 		this.initColors();
 	},
 
 	onSlideChange: function( event, ui ) {
-		var $target = this.$( ui.handle ),
-			$input = $target.parent().next( '.elementor-control-slider-input' ).children( 'input' ),
-			type = $input.data( 'setting' );
+		var type = event.currentTarget.dataset.input,
+			$input = this.ui.input.filter( '[data-setting="' + type + '"]' );
 
 		$input.val( ui.value );
 		this.setValue( type, ui.value );
-	},
-
-	onBeforeDestroy: function() {
-		this.$el.remove();
 	}
 } );
 
