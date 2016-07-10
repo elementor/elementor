@@ -128,9 +128,11 @@ class Schemes_Manager {
 			$enabled_schemes = [];
 
 			foreach ( self::$_schemes_types as $schemes_type ) {
-				if ( 'yes' === get_option( 'elementor_enable_' . $schemes_type . '_schemes', 'yes' ) ) {
-					$enabled_schemes[] = $schemes_type;
+				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
+					continue;
 				}
+
+				$enabled_schemes[] = $schemes_type;
 			}
 
 			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
