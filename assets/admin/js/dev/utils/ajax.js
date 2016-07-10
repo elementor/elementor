@@ -7,7 +7,8 @@ Ajax = {
 		this.config = {
 			ajaxParams: {
 				type: 'POST',
-				url: elementor.config.ajaxurl
+				url: elementor.config.ajaxurl,
+				data: {}
 			},
 			actionPrefix: 'elementor_'
 		};
