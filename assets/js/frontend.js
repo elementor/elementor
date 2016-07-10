@@ -29,6 +29,12 @@
 				_registeredGlobalHandlers.push( callback );
 			},
 
+			_runGlobalHandlers = function( $scope ) {
+				$.each( _registeredGlobalHandlers, function() {
+					this.call( $scope );
+				} );
+			},
+
 			_runReadyTrigger = function( $scope ) {
 				var elementType = $scope.data( 'element_type' );
 
@@ -43,12 +49,6 @@
 				}
 
 				_registeredBindEvent[ elementType ].call( $scope );
-			},
-
-			_runGlobalHandlers = function( $scope ) {
-				$.each( _registeredGlobalHandlers, function() {
-					this.call( $scope );
-				} );
 			};
 
 		// Public Members
