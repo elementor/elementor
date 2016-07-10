@@ -112,7 +112,7 @@ class Element_Section extends Element_Base {
 				'section' => 'section_layout',
 				'tab' => self::TAB_LAYOUT,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container' => 'box-shadow: {{INSET}} {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{SHADOW}};',
+					'{{WRAPPER}}' => 'box-shadow: {{INSET}} {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{SHADOW}};',
 				],
 			]
 		);
