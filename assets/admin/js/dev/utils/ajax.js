@@ -7,7 +7,8 @@ Ajax = {
 		this.config = {
 			ajaxParams: {
 				type: 'POST',
-				url: elementor.config.ajaxurl
+				url: elementor.config.ajaxurl,
+				data: {}
 			},
 			actionPrefix: 'elementor_'
 		};
@@ -20,24 +21,35 @@ Ajax = {
 	send: function( action, options ) {
 		var ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
 
-		ajaxParams.data = options && options.data || {};
+		options = options || {};
 
-		ajaxParams.data.action = this.config.actionPrefix + action;
+		action = this.config.actionPrefix + action;
 
-		if ( options ) {
+		Backbone.$.extend( ajaxParams, options );
+
+		if ( ajaxParams.data instanceof FormData ) {
+			ajaxParams.data.append( 'action', action );
+		} else {
+			ajaxParams.data.action = action;
+		}
+
+		var successCallback = ajaxParams.success,
+			errorCallback = ajaxParams.error;
+
+		if ( successCallback || errorCallback ) {
 			ajaxParams.success = function( response ) {
-				if ( response.success && options.success ) {
-					options.success( response.data );
+				if ( response.success && successCallback ) {
+					successCallback( response.data );
 				}
 
-				if ( ( ! response.success ) && options.error ) {
-					options.error( response.data );
+				if ( ( ! response.success ) && errorCallback ) {
+					errorCallback( response.data );
 				}
 			};
 
-			if ( options.error ) {
+			if ( errorCallback ) {
 				ajaxParams.error = function( data ) {
-					options.error( data );
+					errorCallback( data );
 				};
 			}
 		}
