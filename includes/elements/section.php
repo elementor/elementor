@@ -105,6 +105,19 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'box_shadow',
+			[
+				'label' => __( 'Box shadow', 'elementor' ),
+				'type' => Controls_Manager::BOX_SHADOW,
+				'section' => 'section_layout',
+				'tab' => self::TAB_LAYOUT,
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'box-shadow: {{INSET}} {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{SHADOW}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'layout',
 			[
 				'label' => __( 'Width', 'elementor' ),

@@ -27,15 +27,6 @@ class Widget_Alert extends Widget_Base {
 		);
 
 		$this->add_control(
-			'box_shadow',
-			[
-				'label' => __( 'box shadow', 'elementor' ),
-				'type' => Controls_Manager::BOX_SHADOW,
-				'section' => 'section_alert',
-			]
-		);
-
-		$this->add_control(
 			'alert_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
