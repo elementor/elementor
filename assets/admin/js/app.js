@@ -3840,7 +3840,16 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var value = this.getControlValue();
 
 		this.ui.sliders.each( function() {
-			Backbone.$( this ).slider( { value: value[ this.dataset.input ] } );
+			var $slider = Backbone.$( this ),
+				$input = $slider.next( '.elementor-control-slider-input' ).find( 'input' ),
+				min = Number( $input.attr( 'min' ) ),
+				max = Number( $input.attr( 'max' ) );
+			
+			$slider.slider( {
+				value: value[ this.dataset.input ],
+				min: min,
+				max: max
+			} );
 		} );
 	},
 
@@ -3871,9 +3880,16 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 	onInputChange: function ( event ) {
 		var type = event.currentTarget.dataset.setting,
-			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
+			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' ),
+			$input = Backbone.$( event.currentTarget ),
+			min = Number( $input.attr( 'min' ) ),
+			max = Number( $input.attr( 'max' ) );
 
-		$slider.slider( { value: this.getControlValue( type ) } );
+		$slider.slider( {
+			value: this.getControlValue( type ),
+			min: min,
+			max: max
+		} );
 	},
 
 	onReady: function() {
