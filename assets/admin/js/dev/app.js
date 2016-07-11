@@ -79,7 +79,8 @@ App = Marionette.Application.extend( {
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
-				structure: require( 'elementor-views/controls/structure' )
+				structure: require( 'elementor-views/controls/structure' ),
+				animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );

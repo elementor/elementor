@@ -65,6 +65,8 @@
     top: 0;
     left: 0;
     position: absolute; }
+  .elementor .elementor-invisible {
+    visibility: hidden; }
 
 #elementor-select-preset {
   display: none; }
