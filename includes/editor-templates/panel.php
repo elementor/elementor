@@ -216,6 +216,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
+	<%= '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) %>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
 	<div class="elementor-panel-scheme-color-input-wrapper">
 		<input type="text" class="elementor-panel-scheme-color-value" value="<%= value %>" />
@@ -271,8 +275,4 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		<?php endforeach; ?>
 	</div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<?php printf( __( 'Schemes are disabled. You can enable it via <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>
 </script>

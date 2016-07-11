@@ -58,12 +58,15 @@ class Schemes_Manager {
 
 	public function get_registered_schemes_data() {
 		$data = [];
+
 		foreach ( $this->get_registered_schemes() as $scheme ) {
 			$data[ $scheme::get_type() ] = [
 				'title' => $scheme->get_title(),
+				'disabled_title' => $scheme->get_disabled_title(),
 				'items' => $scheme->get_scheme(),
 			];
 		}
+
 		return $data;
 	}
 
