@@ -139,19 +139,6 @@ abstract class Element_Base {
 		];
 	}
 
-	private function validate_control_data( $id, $args ) {
-		if ( isset( $this->_controls[ $id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
-			return false;
-		}
-
-		if ( Controls_Manager::ANIMATION === $args['type'] && ! Control_Animation::is_animations_enabled() ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	public function add_control( $id, $args ) {
 		$default_args = [
 			'default' => '',
@@ -162,7 +149,12 @@ abstract class Element_Base {
 		$args['name'] = $id;
 		$args = wp_parse_args( $args, $default_args );
 
-		if ( ! $this->validate_control_data( $id, $args ) ) {
+		if ( isset( $this->_controls[ $id ] ) ) {
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
+			return false;
+		}
+
+		if ( Controls_Manager::ANIMATION === $args['type'] && ! Control_Animation::is_animations_enabled() ) {
 			return false;
 		}
 
