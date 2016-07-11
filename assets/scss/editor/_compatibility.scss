@@ -8,6 +8,9 @@ body {
 	}
 }
 
-.animated {
-	animation-fill-mode: none !important; // Prevent external animate.css embed which causing elements overlay issue
+#elementor {
+
+	.animated {
+		animation-fill-mode: none !important; // Prevent external animate.css embed which causing elements overlay issue
+	}
 }

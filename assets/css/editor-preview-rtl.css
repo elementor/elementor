@@ -2,7 +2,7 @@
 body.layout-section .entry-content {
   overflow: visible; }
 
-.animated {
+#elementor .animated {
   animation-fill-mode: none !important; }
 
 html.elementor-html {
