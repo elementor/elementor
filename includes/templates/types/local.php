@@ -160,6 +160,26 @@ class Type_Local extends Type_Base {
 		die;
 	}
 
+	public function import_template() {
+		$import_file = $_FILES['file']['tmp_name'];
+
+		if ( empty( $import_file ) )
+			wp_send_json_error( [ 'message' => 'Please upload a file to import' ] );
+
+		$content = json_decode( file_get_contents( $import_file ), true );
+		$is_invalid_file = empty( $content ) || empty( $content['data'] ) || ! is_array( $content['data'] );
+		if ( $is_invalid_file )
+			wp_send_json_error( [ 'message' => 'Invalid file' ] );
+
+		$template_title = isset( $content['title'] ) ? $content['title'] : '';
+		$item_id = $this->save_item( $content['data'], $template_title );
+
+		if ( is_wp_error( $item_id ) )
+			wp_send_json_error( [ 'message' => $item_id->get_error_message() ] );
+
+		wp_send_json_success( [ 'item' => $this->get_item( $item_id ) ] );
+	}
+
 	private function _get_export_link( $item_id ) {
 		return add_query_arg(
 			[

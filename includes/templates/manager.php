@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Templates;
 
+use Elementor\User;
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Manager {
@@ -157,7 +160,9 @@ class Manager {
 	}
 
 	public function import_template() {
-		wp_send_json_success( print_r( $_FILES, true ) );
+		/** @var Type_Local $type */
+		$type = $this->get_type( 'local' );
+		$type->import_template();
 	}
 
 	public function __construct() {
