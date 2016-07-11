@@ -1231,6 +1231,8 @@ select {
     padding: 6.5px 15px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-add:hover {
       background-color: #6d7882; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-textarea textarea {
+    display: block; }
   #elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
