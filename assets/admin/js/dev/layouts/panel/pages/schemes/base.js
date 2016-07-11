@@ -29,12 +29,6 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '.elementor-panel-scheme-items',
 
-	templateHelpers: function() {
-		return {
-			getTitle: _.bind( this.getTitle, this )
-		};
-	},
-
 	initialize: function() {
 		this.model = new Backbone.Model();
 
@@ -42,10 +36,6 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	getType: function() {},
-
-	getTitle: function() {
-		return this.getScheme().title;
-	},
 
 	getScheme: function() {
 		return elementor.schemes.getScheme( this.getType() );
