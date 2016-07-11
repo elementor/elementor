@@ -104,16 +104,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'section_box_shadow',
-				'section' => 'section_layout',
-				'tab' => self::TAB_LAYOUT,
-				'selector' => '{{WRAPPER}}',
-			]
-		);
-
 		$this->add_control(
 			'layout',
 			[
@@ -412,6 +402,16 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'section_box_shadow',
+				'section' => 'section_border',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}}',
 			]
 		);
 

@@ -71,6 +71,16 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'colum_box_shadow',
+				'section' => 'section_style',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
 		// Section Typography
 		$this->add_control(
 			'section_typo',

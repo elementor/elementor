@@ -3890,11 +3890,11 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		$colors.each( function() {
+		this.ui.colors.each( function() {
 			var $color = Backbone.$( this );
 
 			if ( $color.wpColorPicker( 'instance' ) ) {
-				this.ui.picker.wpColorPicker( 'close' );
+				$color.wpColorPicker( 'close' );
 			}
 		} );
 
