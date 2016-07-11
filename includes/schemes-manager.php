@@ -58,12 +58,15 @@ class Schemes_Manager {
 
 	public function get_registered_schemes_data() {
 		$data = [];
+
 		foreach ( $this->get_registered_schemes() as $scheme ) {
 			$data[ $scheme::get_type() ] = [
 				'title' => $scheme->get_title(),
+				'disabled_title' => $scheme->get_disabled_title(),
 				'items' => $scheme->get_scheme(),
 			];
 		}
+
 		return $data;
 	}
 
@@ -128,9 +131,11 @@ class Schemes_Manager {
 			$enabled_schemes = [];
 
 			foreach ( self::$_schemes_types as $schemes_type ) {
-				if ( 'yes' === get_option( 'elementor_enable_' . $schemes_type . '_schemes', 'yes' ) ) {
-					$enabled_schemes[] = $schemes_type;
+				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
+					continue;
 				}
+
+				$enabled_schemes[] = $schemes_type;
 			}
 
 			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
