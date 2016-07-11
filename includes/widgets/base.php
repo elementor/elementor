@@ -92,6 +92,17 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->add_control(
+			'_animation',[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'default' => '',
+				'prefix_class' => 'animated ',
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_style',
+			]
+		);
+
+		$this->add_control(
 			'_css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
@@ -239,12 +250,12 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$wrapper_classes = [
+		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
 			'elementor-element-' . $element_id,
 			'elementor-widget-' . $this->get_id(),
-		];
+		] );
 
 		foreach ( $this->get_class_controls() as $control ) {
 			if ( empty( $instance[ $control['name'] ] ) )
@@ -253,10 +264,16 @@ abstract class Widget_Base extends Element_Base {
 			if ( ! $this->is_control_visible( $instance, $control ) )
 				continue;
 
-			$wrapper_classes[] = $control['prefix_class'] . $instance[ $control['name'] ];
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
+
+		if ( $instance['_animation'] ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['_animation'] );
+		}
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
 		?>
-		<div class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php
 	}
 

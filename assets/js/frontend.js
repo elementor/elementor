@@ -6,6 +6,7 @@
 
 	var elementorBindUI = ( function() {
 		var _registeredBindEvent = {},
+			_registeredGlobalHandlers = [],
 			_flagEditorMode = false,
 
 			_setEditorMode = function( mode ) {
@@ -24,12 +25,24 @@
 				_registeredBindEvent[ widgetType ] = callback;
 			},
 
+			_addGlobalHandler = function( callback ) {
+				_registeredGlobalHandlers.push( callback );
+			},
+
+			_runGlobalHandlers = function( $scope ) {
+				$.each( _registeredGlobalHandlers, function() {
+					this.call( $scope );
+				} );
+			},
+
 			_runReadyTrigger = function( $scope ) {
 				var elementType = $scope.data( 'element_type' );
 
 				if ( ! elementType ) {
 					return;
 				}
+
+				_runGlobalHandlers( $scope );
 
 				if ( ! _registeredBindEvent[ elementType ] ) {
 					return;
@@ -44,6 +57,7 @@
 			setEditorMode: _setEditorMode,
 			setScopeWindow: _setScopeWindow,
 			addBindEvent: _addBindEvent,
+			addGlobalHandler: _addGlobalHandler,
 			runReadyTrigger: _runReadyTrigger
 		};
 	} )();
@@ -59,6 +73,25 @@
 		}
 	};
 
+	elementorBindUI.addGlobalHandler( function() {
+		if ( elementorBindUI.isEditorMode() ) {
+			return;
+		}
+
+		var $element = this,
+			animation = $element.data( 'animation' );
+
+		if ( ! animation ) {
+			return;
+		}
+
+		$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+		$element.waypoint( function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( animation );
+		}, { offset: '90%' } );
+
+	} );
 	/**
 	 * Add JS widgets here
 	 */
