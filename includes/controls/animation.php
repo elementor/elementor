@@ -5,11 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Control_Animation extends Control_Base {
 
+	private static $_animations;
+
 	public function get_type() {
 		return 'animation';
 	}
-
-	private static $_animations;
 
 	public static function is_animations_enabled() {
 		return 'yes' !== get_option( 'elementor_disable_animations' );
