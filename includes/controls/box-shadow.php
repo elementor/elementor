@@ -22,35 +22,25 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 
 	public function get_sliders() {
 		return [
-			[ 'label' => 'Horizontal Length', 'type' => 'horizontal' ],
-			[ 'label' => 'Vertical Length', 'type' => 'vertical' ],
-			[ 'label' => 'Blur Radius', 'type' => 'blur' ],
-			[ 'label' => 'Spread Radius', 'type' => 'spread' ],
+			[ 'label' => __( 'Horizontal', 'elementor' ), 'type' => 'horizontal' ],
+			[ 'label' => __( 'Vertical', 'elementor' ), 'type' => 'vertical' ],
+			[ 'label' => __( 'Blur', 'elementor' ), 'type' => 'blur' ],
+			[ 'label' => __( 'Spread', 'elementor' ), 'type' => 'spread' ],
 		];
 	}
 
 	public function get_colors() {
 		return [
-			[ 'label' => 'Shadow Color', 'type' => 'shadow' ],
+			[ 'label' => __( 'Color', 'elementor' ), 'type' => 'shadow' ],
 		];
 	}
 
 	public function content_template() {
 		?>
-		<div class="elementor-control-field">
-			<label class="elementor-control-title"><?php _e( 'Inset', 'elementor' ); ?></label>
-			<div class="elementor-control-input-wrapper">
-				<select class="elementor-control-box-shadow-inset" data-setting="inset">
-					<option value=""><?php _e( 'No', 'elementor' ); ?></option>
-					<option value="inset"><?php _e( 'Yes', 'elementor' ); ?></option>
-				</select>
-			</div>
-		</div>
-
 		<?php
 		foreach ( $this->get_sliders() as $slider ) : ?>
-			<div class="elementor-control-field">
-				<label class="elementor-control-title">
+			<div class="elementor-control-wrapper">
+				<label class="elementor-control-label">
 					<?php echo $slider['label']; ?>
 				</label>
 				<div class="elementor-control-input-wrapper">
@@ -83,7 +73,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 					<?php echo $color['label']; ?>
 				</label>
 				<div class="elementor-control-input-wrapper">
-					<input data-setting="<?php echo $color['type']; ?>" class="color-picker-hex" type="text" maxlength="7"
+					<input data-setting="<?php echo $color['type']; ?>" class="elementor-box-shadow-color-picker" type="text" maxlength="7"
 					       placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" <%= defaultValue %><%=
 					dataAlpha %> />
 				</div>

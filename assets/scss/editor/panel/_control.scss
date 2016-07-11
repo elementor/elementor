@@ -852,6 +852,34 @@
 		}
 	}
 
+	// Box Shadow {
+	.elementor-control-type-box_shadow {
+
+		.elementor-control-content {
+			.elementor-control-wrapper {
+				margin-top: 10px;
+
+				.elementor-control-input-wrapper {
+					overflow: hidden;
+
+					.elementor-control-slider-input {
+						width: 32%;
+						float: getEndDirection();
+					}
+				}
+			}
+		}
+
+		.elementor-control-label {
+			display: block;
+			margin-bottom: 10px;
+		}
+
+		.elementor-control-field {
+			margin-top: 10px;
+		}
+	}
+
 	// Hidden control
 	.elementor-control-type-hidden {
 		display: none !important;

@@ -6,7 +6,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-control-slider';
-		ui.colors = '.color-picker-hex';
+		ui.colors = '.elementor-box-shadow-color-picker';
 
 		return ui;
 	},
@@ -66,6 +66,18 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 		$input.val( ui.value );
 		this.setValue( type, ui.value );
+	},
+
+	onBeforeDestroy: function() {
+		$colors.each( function() {
+			var $color = Backbone.$( this );
+
+			if ( $color.wpColorPicker( 'instance' ) ) {
+				this.ui.picker.wpColorPicker( 'close' );
+			}
+		} );
+
+		this.$el.remove();
 	}
 } );
 

@@ -1172,6 +1172,18 @@ select {
     float: right;
     height: 27px;
     width: 70px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-content .elementor-control-wrapper {
+    margin-top: 10px; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-content .elementor-control-wrapper .elementor-control-input-wrapper {
+      overflow: hidden; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-content .elementor-control-wrapper .elementor-control-input-wrapper .elementor-control-slider-input {
+        width: 32%;
+        float: right; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-label {
+    display: block;
+    margin-bottom: 10px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-field {
+    margin-top: 10px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
     display: none !important; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {

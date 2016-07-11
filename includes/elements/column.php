@@ -27,16 +27,13 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'box_shadow',
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
 			[
-				'label' => __( 'Box shadow', 'elementor' ),
-				'type' => Controls_Manager::BOX_SHADOW,
+				'name' => 'section_box_shadow',
 				'section' => 'section_style',
 				'tab' => self::TAB_STYLE,
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'box-shadow: {{INSET}} {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{SHADOW}};',
-				],
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
 

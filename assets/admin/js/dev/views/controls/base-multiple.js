@@ -66,7 +66,7 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 			return cssProperty.replace( /\{\{([A-Z]+)}}/g, function( fullMatch, pureMatch ) {
 				var value = controlValue[ pureMatch.toLowerCase() ];
 
-				if ( undefined === value ) {
+				if ( '' === value ) {
 					throw '';
 				}
 
