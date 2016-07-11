@@ -159,12 +159,12 @@ abstract class Element_Base {
 			'tab' => self::TAB_CONTENT,
 		];
 
+		$args['name'] = $id;
+		$args = wp_parse_args( $args, $default_args );
+
 		if ( ! $this->validate_control_data( $id, $args ) ) {
 			return false;
 		}
-
-		$args['name'] = $id;
-		$args = wp_parse_args( $args, $default_args );
 
 		$available_tabs = $this->_get_available_tabs_controls();
 		if ( ! isset( $available_tabs[ $args['tab'] ] ) ) {
