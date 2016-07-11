@@ -7,6 +7,10 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-scheme',
 
+
+	getTemplate: function() {
+		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-schemes-' + this.getType() );
+	},
 	ui: function() {
 		return {
 			saveButton: '.elementor-panel-scheme-save .elementor-button',
