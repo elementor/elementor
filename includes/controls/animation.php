@@ -18,57 +18,57 @@ class Control_Animation extends Control_Base {
 	public static function get_animations() {
 		if ( null === self::$_animations ) {
 			self::$_animations = [
-				__( 'Attention Seekers', 'elementor' ) => [
-					'bounce' => __( 'Bounce', 'elementor' ),
-					'flash' => __( 'Flash', 'elementor' ),
-					'pulse' => __( 'Pulse', 'elementor' ),
-					'rubberBand' => __( 'Rubber Band', 'elementor' ),
-					'shake' => __( 'Shake', 'elementor' ),
-					'headShake' => __( 'Head Shake', 'elementor' ),
-					'swing' => __( 'Swing', 'elementor' ),
-					'tada' => __( 'Tada', 'elementor' ),
-					'wobble' => __( 'Wobble', 'elementor' ),
-					'jello' => __( 'Jello', 'elementor' ),
+				'Attention Seekers' => [
+					'bounce' => 'Bounce',
+					'flash' => 'Flash',
+					'pulse' => 'Pulse',
+					'rubberBand' => 'Rubber Band',
+					'shake' => 'Shake',
+					'headShake' => 'Head Shake',
+					'swing' => 'Swing',
+					'tada' => 'Tada',
+					'wobble' => 'Wobble',
+					'jello' => 'Jello',
 				],
-				__( 'Bouncing', 'elementor' ) => [
-					'bounceIn' => __( 'Bounce In', 'elementor' ),
-					'bounceInDown' => __( 'Bounce In Down', 'elementor' ),
-					'bounceInLeft' => __( 'Bounce In Left', 'elementor' ),
-					'bounceInRight' => __( 'Bounce In Right', 'elementor' ),
-					'bounceInUp' => __( 'Bounce In Up', 'elementor' ),
+				'Bouncing' => [
+					'bounceIn' => 'Bounce In',
+					'bounceInDown' => 'Bounce In Down',
+					'bounceInLeft' => 'Bounce In Left',
+					'bounceInRight' => 'Bounce In Right',
+					'bounceInUp' => 'Bounce In Up',
 				],
-				__( 'Fading', 'elementor' ) => [
-					'fadeIn' => __( 'Fade In', 'elementor' ),
-					'fadeInDown' => __( 'Fade In Down', 'elementor' ),
-					'fadeInLeft' => __( 'Fade In Left', 'elementor' ),
-					'fadeInRight' => __( 'Fade In Right', 'elementor' ),
-					'fadeInUp' => __( 'Fade In Up', 'elementor' ),
+				'Fading' => [
+					'fadeIn' => 'Fade In',
+					'fadeInDown' => 'Fade In Down',
+					'fadeInLeft' => 'Fade In Left',
+					'fadeInRight' => 'Fade In Right',
+					'fadeInUp' => 'Fade In Up',
 				],
-				__( 'Light Speed', 'elementor' ) => [
-					'lightSpeedIn' => __( 'Light Speed In', 'elementor' ),
+				'Light Speed' => [
+					'lightSpeedIn' => 'Light Speed In',
 				],
-				__( 'Rotating', 'elementor' ) => [
-					'rotateIn' => __( 'Rotate In', 'elementor' ),
-					'rotateInDownLeft' => __( 'Rotate In Down Left', 'elementor' ),
-					'rotateInDownRight' => __( 'Rotate In Down Right', 'elementor' ),
-					'rotateInUpLeft' => __( 'Rotate In Up Left', 'elementor' ),
-					'rotateInUpRight' => __( 'Rotate In Up Right', 'elementor' ),
+				'Rotating' => [
+					'rotateIn' => 'Rotate In',
+					'rotateInDownLeft' => 'Rotate In Down Left',
+					'rotateInDownRight' => 'Rotate In Down Right',
+					'rotateInUpLeft' => 'Rotate In Up Left',
+					'rotateInUpRight' => 'Rotate In Up Right',
 				],
-				__( 'Specials', 'elementor' ) => [
-					'rollIn' => __( 'Roll In', 'elementor' ),
+				'Specials' => [
+					'rollIn' => 'Roll In',
 				],
-				__( 'Zooming', 'elementor' ) => [
-					'zoomIn' => __( 'Zoom In', 'elementor' ),
-					'zoomInDown' => __( 'Zoom In Down', 'elementor' ),
-					'zoomInLeft' => __( 'Zoom In Left', 'elementor' ),
-					'zoomInRight' => __( 'Zoom In Right', 'elementor' ),
-					'zoomInUp' => __( 'Zoom In Up', 'elementor' ),
+				'Zooming' => [
+					'zoomIn' => 'Zoom In',
+					'zoomInDown' => 'Zoom In Down',
+					'zoomInLeft' => 'Zoom In Left',
+					'zoomInRight' => 'Zoom In Right',
+					'zoomInUp' => 'Zoom In Up',
 				],
-				__( 'Sliding', 'elementor' ) => [
-					'slideInDown' => __( 'Slide In Down', 'elementor' ),
-					'slideInLeft' => __( 'Slide In Left', 'elementor' ),
-					'slideInRight' => __( 'Slide In Right', 'elementor' ),
-					'slideInUp' => __( 'Slide In Up', 'elementor' ),
+				'Sliding' => [
+					'slideInDown' => 'Slide In Down',
+					'slideInLeft' => 'Slide In Left',
+					'slideInRight' => 'Slide In Right',
+					'slideInUp' => 'Slide In Up',
 				],
 			];
 		}
