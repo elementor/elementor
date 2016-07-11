@@ -82,14 +82,14 @@ class Control_Animation extends Control_Base {
 			<label class="elementor-control-title"><%= data.label %></label>
 			<div class="elementor-control-input-wrapper">
 				<select data-setting="<%= data.name %>">
-					<?php foreach ( self::get_animations() as $animations_group_name => $animations_group ) { ?>
+					<?php foreach ( self::get_animations() as $animations_group_name => $animations_group ) : ?>
 						<option value=""><?php _e( 'None', 'elementor' ); ?></option>
 						<optgroup label="<?php echo $animations_group_name; ?>">
-							<?php foreach ( $animations_group  as $animation_name => $animation_title ) { ?>
+							<?php foreach ( $animations_group  as $animation_name => $animation_title ) : ?>
 								<option value="<?php echo $animation_name; ?>"><?php echo $animation_title; ?></option>
-							<?php } ?>
+							<?php endforeach; ?>
 						</optgroup>
-					<?php } ?>
+					<?php endforeach; ?>
 				</select>
 			</div>
 		</div>
