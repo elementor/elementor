@@ -2,13 +2,6 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlIconItemView;
 
 ControlIconItemView = ControlBaseItemView.extend( {
-	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
-
-		ui.iconSelect = '.elementor-control-icon';
-
-		return ui;
-	},
 
 	initialize: function() {
 		ControlBaseItemView.prototype.initialize.apply( this, arguments );
@@ -56,18 +49,11 @@ ControlIconItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		this.ui.iconSelect.select2( {
+		this.ui.select.select2( {
 			allowClear: true,
 			templateResult: _.bind( this.iconsList, this ),
 			templateSelection: _.bind( this.iconsList, this )
 		} );
-	},
-
-	onBeforeDestroy: function() {
-		if ( this.ui.iconSelect.data( 'select2' ) ) {
-			this.ui.iconSelect.select2( 'destroy' );
-		}
-		this.$el.remove();
 	}
 } );
 

@@ -57,12 +57,47 @@ abstract class Widget_Base extends Element_Base {
 	        ]
 	    );
 
+		$this->add_control(
+			'_animation',[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'default' => '',
+				'prefix_class' => 'animated ',
+				'tab' => self::TAB_ADVANCED,
+				'label_block' => true,
+				'section' => '_section_style',
+			]
+		);
+
+		$this->add_control(
+			'_css_classes',
+			[
+				'label' => __( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_style',
+				'default' => '',
+				'prefix_class' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'_section_background',
+			[
+				'label' => __( 'Background & Border', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_ADVANCED,
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => '_background',
 				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
+				'section' => '_section_background',
 				'selector' => '{{WRAPPER}} .elementor-widget-container',
 			]
 		);
@@ -72,7 +107,7 @@ abstract class Widget_Base extends Element_Base {
 			[
 				'name' => '_border',
 				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
+				'section' => '_section_background',
 				'selector' => '{{WRAPPER}} .elementor-widget-container',
 			]
 		);
@@ -84,7 +119,7 @@ abstract class Widget_Base extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
+				'section' => '_section_background',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -98,19 +133,6 @@ abstract class Widget_Base extends Element_Base {
 				'section' => '_section_style',
 				'tab' => self::TAB_ADVANCED,
 				'selector' => '{{WRAPPER}} .elementor-widget-container',
-			]
-		);
-
-		$this->add_control(
-			'_css_classes',
-			[
-				'label' => __( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
-				'default' => '',
-				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -249,12 +271,12 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$wrapper_classes = [
+		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
 			'elementor-element-' . $element_id,
 			'elementor-widget-' . $this->get_id(),
-		];
+		] );
 
 		foreach ( $this->get_class_controls() as $control ) {
 			if ( empty( $instance[ $control['name'] ] ) )
@@ -263,10 +285,16 @@ abstract class Widget_Base extends Element_Base {
 			if ( ! $this->is_control_visible( $instance, $control ) )
 				continue;
 
-			$wrapper_classes[] = $control['prefix_class'] . $instance[ $control['name'] ];
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
+
+		if ( ! empty( $instance['_animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['_animation'] );
+		}
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
 		?>
-		<div class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php
 	}
 

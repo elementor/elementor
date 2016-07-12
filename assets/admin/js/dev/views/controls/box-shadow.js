@@ -5,7 +5,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.sliders = '.elementor-control-slider';
+		ui.sliders = '.elementor-slider';
 		ui.colors = '.elementor-box-shadow-color-picker';
 
 		return ui;
@@ -20,55 +20,40 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 		this.ui.sliders.each( function() {
 			var $slider = Backbone.$( this ),
-				$input = $slider.next( '.elementor-control-slider-input' ).find( 'input' ),
-				min = Number( $input.attr( 'min' ) ),
-				max = Number( $input.attr( 'max' ) );
+				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
 
 			$slider.slider( {
 				value: value[ this.dataset.input ],
-				min: min,
-				max: max
+				min: +$input.attr( 'min' ),
+				max: +$input.attr( 'max' )
 			} );
 		} );
 	},
 
 	initColors: function() {
-		var $colors = this.ui.colors,
-			self = this;
+		var self = this;
 
-		$colors.each( function() {
-			var $color = Backbone.$( this );
+		this.ui.colors.wpColorPicker( {
+			change: function() {
+				var $this = Backbone.$( this ),
+					type = $this.data( 'setting' );
 
-			$color.wpColorPicker( {
-				change: function() {
-					var type = $color.data( 'setting' );
+				self.setValue( type, $this.wpColorPicker( 'color' ) );
+			},
 
-					self.setValue( type, $color.wpColorPicker( 'color' ) );
-				},
+			clear: function() {
+				self.setValue( this.dataset.setting, '' );
+			},
 
-				clear: function() {
-					var type = $color.data( 'setting' );
-
-					self.setValue( type, '' );
-				},
-
-				width: 251
-			} );
+			width: 251
 		} );
 	},
 
 	onInputChange: function( event ) {
 		var type = event.currentTarget.dataset.setting,
-			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' ),
-			$input = Backbone.$( event.currentTarget ),
-			min = Number( $input.attr( 'min' ) ),
-			max = Number( $input.attr( 'max' ) );
+			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
 
-		$slider.slider( {
-			value: this.getControlValue( type ),
-			min: min,
-			max: max
-		} );
+		$slider.slider( 'value', this.getControlValue( type ) );
 	},
 
 	onReady: function() {

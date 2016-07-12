@@ -80,7 +80,8 @@ App = Marionette.Application.extend( {
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
-				structure: require( 'elementor-views/controls/structure' )
+				structure: require( 'elementor-views/controls/structure' ),
+				animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );
