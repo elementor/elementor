@@ -59,11 +59,12 @@ abstract class Widget_Base extends Element_Base {
 
 		$this->add_control(
 			'_animation',[
-				'label' => __( 'Animation', 'elementor' ),
+				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
 				'tab' => self::TAB_ADVANCED,
+				'label_block' => true,
 				'section' => '_section_style',
 			]
 		);
@@ -77,6 +78,7 @@ abstract class Widget_Base extends Element_Base {
 				'section' => '_section_style',
 				'default' => '',
 				'prefix_class' => '',
+				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);

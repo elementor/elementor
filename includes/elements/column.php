@@ -194,11 +194,12 @@ class Element_Column extends Element_Base {
 
 		$this->add_control(
 			'animation',[
-				'label' => __( 'Animation', 'elementor' ),
+				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
 				'tab' => self::TAB_ADVANCED,
+				'label_block' => true,
 				'section' => 'section_advanced',
 			]
 		);
@@ -212,6 +213,8 @@ class Element_Column extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
