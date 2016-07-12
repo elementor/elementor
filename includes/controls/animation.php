@@ -85,7 +85,7 @@ class Control_Animation extends Control_Base {
 					<option value=""><?php _e( 'None', 'elementor' ); ?></option>
 					<?php foreach ( self::get_animations() as $animations_group_name => $animations_group ) : ?>
 						<optgroup label="<?php echo $animations_group_name; ?>">
-							<?php foreach ( $animations_group  as $animation_name => $animation_title ) : ?>
+							<?php foreach ( $animations_group as $animation_name => $animation_title ) : ?>
 								<option value="<?php echo $animation_name; ?>"><?php echo $animation_title; ?></option>
 							<?php endforeach; ?>
 						</optgroup>
