@@ -1,4 +1,6 @@
 <?php
+// Attention: DO NOT use this control since it has bugs
+// TODO: This control is unused
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

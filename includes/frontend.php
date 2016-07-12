@@ -143,6 +143,13 @@ class Frontend {
 		);
 
 		wp_register_style(
+			'animate.css',
+			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animations.min.css',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[
@@ -152,6 +159,7 @@ class Frontend {
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'animate.css' );
 		wp_enqueue_style( 'elementor-frontend' );
 	}
 

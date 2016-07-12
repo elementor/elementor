@@ -554,6 +554,18 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'animation',[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'default' => '',
+				'prefix_class' => 'animated ',
+				'tab' => self::TAB_ADVANCED,
+				'label_block' => true,
+				'section' => 'section_advanced',
+			]
+		);
+
+		$this->add_control(
 			'css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
@@ -562,6 +574,8 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -673,15 +687,14 @@ class Element_Section extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$wrapper_classes = [
+		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+
+		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-section',
 			'elementor-element',
 			'elementor-element-' . $element_id,
-		];
-
-		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
-
-		$wrapper_classes[] = 'elementor-' . $section_type . '-section';
+			'elementor-' . $section_type . '-section',
+		] );
 
 		foreach ( $this->get_class_controls() as $control ) {
 			if ( empty( $instance[ $control['name'] ] ) )
@@ -690,10 +703,16 @@ class Element_Section extends Element_Base {
 			if ( ! $this->is_control_visible( $instance, $control ) )
 				continue;
 
-			$wrapper_classes[] = $control['prefix_class'] . $instance[ $control['name'] ];
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
+
+		if ( ! empty( $instance['animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
+		}
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
 		?>
-		<section class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
+		<section <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<?php
 			if ( 'video' === $instance['background_background'] ) :
 				if ( $instance['background_video_link'] ) :
