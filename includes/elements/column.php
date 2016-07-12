@@ -30,7 +30,7 @@ class Element_Column extends Element_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'section_box_shadow',
+				'name' => 'box_shadow',
 				'section' => 'section_style',
 				'tab' => self::TAB_STYLE,
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
@@ -68,16 +68,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'column_box_shadow',
-				'section' => 'section_style',
-				'tab' => self::TAB_STYLE,
-				'selector' => '{{WRAPPER}}',
 			]
 		);
 
