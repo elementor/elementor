@@ -768,20 +768,20 @@ select {
         display: block; }
         #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section.elementor-open.elementor-hidden-control {
           display: none; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-block:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) .elementor-control-title {
-      display: block;
-      margin-bottom: 10px; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-field {
-      display: table;
-      width: 100%; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-field > * {
-        display: table-cell;
-        vertical-align: middle; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-title {
-      width: 45%; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-type-heading .elementor-control-title {
       font-weight: bold;
       margin: 0; }
+  #elementor-panel #elementor-panel-page-editor .elementor-label-block:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) .elementor-control-title {
+    display: block;
+    margin-bottom: 10px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field {
+    display: table;
+    width: 100%; }
+    #elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field > * {
+      display: table-cell;
+      vertical-align: middle; }
+  #elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-title {
+    width: 45%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-description {
     margin-top: 10px;
     font-size: 11px;
@@ -811,6 +811,31 @@ select {
       font-size: 12px;
       transition: all .5s;
       cursor: pointer; }
+  #elementor-panel #elementor-panel-page-editor .elementor-slider {
+    display: inline-block;
+    margin-top: 10px;
+    height: 4px;
+    background-color: #a4afb7;
+    border-radius: 5px;
+    position: relative;
+    width: 67%; }
+    #elementor-panel #elementor-panel-page-editor .elementor-slider .ui-slider-handle {
+      height: 16px;
+      width: 16px;
+      background-color: #fff;
+      display: inline-block;
+      top: 50%;
+      transform: translateY(-50%) translateX(-8px);
+      position: absolute;
+      box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      cursor: pointer; }
+  #elementor-panel #elementor-panel-page-editor .elementor-slider-input {
+    width: 33%;
+    float: right; }
+    #elementor-panel #elementor-panel-page-editor .elementor-slider-input input {
+      width: 80%;
+      float: right; }
   #elementor-panel #elementor-panel-page-editor .elementor-units-choices {
     float: right; }
     #elementor-panel #elementor-panel-page-editor .elementor-units-choices input {
@@ -824,25 +849,6 @@ select {
       padding: 0 2px;
       text-transform: uppercase;
       font-size: 9px; }
-  #elementor-panel #elementor-panel-page-editor .ui-slider-handle {
-    height: 16px;
-    width: 16px;
-    background-color: #fff;
-    display: inline-block;
-    top: 50%;
-    transform: translateY(-50%) translateX(-8px);
-    position: absolute;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
-    border-radius: 50%;
-    cursor: pointer; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-slider {
-    display: inline-block;
-    margin-top: 10px;
-    height: 4px;
-    background-color: #a4afb7;
-    border-radius: 5px;
-    position: relative;
-    width: 67%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
@@ -975,12 +981,6 @@ select {
     direction: ltr; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-input-wrapper {
     overflow: hidden; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider input {
-    width: 80%;
-    float: right; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-slider-input {
-    width: 33%;
-    float: right; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
@@ -1172,18 +1172,6 @@ select {
     float: right;
     height: 27px;
     width: 70px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-content .elementor-control-wrapper {
-    margin-top: 10px; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-content .elementor-control-wrapper .elementor-control-input-wrapper {
-      overflow: hidden; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-content .elementor-control-wrapper .elementor-control-input-wrapper .elementor-control-slider-input {
-        width: 32%;
-        float: right; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-label {
-    display: block;
-    margin-bottom: 10px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-field {
-    margin-top: 10px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
     display: none !important; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
@@ -1245,6 +1233,10 @@ select {
       background-color: #6d7882; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-textarea textarea {
     display: block; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-input-wrapper {
+    overflow: hidden; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-box-shadow-slider {
+    margin-top: 10px; }
   #elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
