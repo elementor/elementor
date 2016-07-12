@@ -1,9 +1,13 @@
 @charset "UTF-8";
+body.layout-section .entry-content {
+  overflow: visible; }
+
+#elementor .animated {
+  animation-fill-mode: none !important; }
+
 html.elementor-html {
   margin-top: 0 !important; }
 
-body.layout-section .entry-content {
-  overflow: visible; }
 body.elementor-editor-active #elementor {
   position: relative; }
   body.elementor-editor-active #elementor .elementor-element-empty .elementor-sortable-placeholder {

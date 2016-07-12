@@ -54,10 +54,14 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		};
 
 		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
-			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemes() );
+			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemesTypes() );
 
 		_.each( disabledSchemes, function( schemeType ) {
-			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
+			var scheme  = elementor.schemes.getScheme( schemeType );
+
+			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
+				disabledTitle: scheme.disabled_title
+			} );
 		} );
 
 		this.pages = pages;

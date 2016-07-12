@@ -1,8 +1,10 @@
 //
-// Editor (need to move to editor folder)
+// Editor
 //
-@import "../helpers/variables";
-@import "../helpers/mixins";
+@import '../helpers/variables';
+@import '../helpers/mixins';
+
+@import '_compatibility';
 
 // Hidden WP Admin Bar
 html.elementor-html {
@@ -10,10 +12,6 @@ html.elementor-html {
 }
 
 body {
-	// Hack for Pojo themes
-	&.layout-section .entry-content {
-		overflow: visible;
-	}
 
 	&.elementor-editor-active {
 		#elementor {
