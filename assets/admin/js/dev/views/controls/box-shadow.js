@@ -2,7 +2,7 @@ var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multip
 	ControlBoxShadowItemView;
 
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
-	ui: function () {
+	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-control-slider';
@@ -23,7 +23,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 				$input = $slider.next( '.elementor-control-slider-input' ).find( 'input' ),
 				min = Number( $input.attr( 'min' ) ),
 				max = Number( $input.attr( 'max' ) );
-			
+
 			$slider.slider( {
 				value: value[ this.dataset.input ],
 				min: min,
@@ -36,7 +36,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var $colors = this.ui.colors,
 			self = this;
 
-		$colors.each( function(){
+		$colors.each( function() {
 			var $color = Backbone.$( this );
 
 			$color.wpColorPicker( {
@@ -57,7 +57,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
-	onInputChange: function ( event ) {
+	onInputChange: function( event ) {
 		var type = event.currentTarget.dataset.setting,
 			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' ),
 			$input = Backbone.$( event.currentTarget ),
