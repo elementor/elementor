@@ -126,6 +126,16 @@ abstract class Widget_Base extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => '_box_shadow',
+				'section' => '_section_background',
+				'tab' => self::TAB_ADVANCED,
+				'selector' => '{{WRAPPER}} .elementor-widget-container',
+			]
+		);
+
 		$this->add_control(
 			'_section_responsive',
 			[
