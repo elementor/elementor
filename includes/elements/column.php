@@ -28,6 +28,16 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'section_box_shadow',
+				'section' => 'section_style',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+			]
+		);
+
+		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
@@ -58,6 +68,16 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'colum_box_shadow',
+				'section' => 'section_style',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}}',
 			]
 		);
 

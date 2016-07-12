@@ -405,6 +405,16 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'section_box_shadow',
+				'section' => 'section_border',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
 		// Section Typography
 		$this->add_control(
 			'section_typo',
