@@ -7,6 +7,12 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-scheme',
 
+	childViewContainer: '.elementor-panel-scheme-items',
+
+	getTemplate: function() {
+		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-schemes-' + this.getType() );
+	},
+
 	ui: function() {
 		return {
 			saveButton: '.elementor-panel-scheme-save .elementor-button',
@@ -23,14 +29,6 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	childViewContainer: '.elementor-panel-scheme-items',
-
-	templateHelpers: function() {
-		return {
-			getTitle: _.bind( this.getTitle, this )
-		};
-	},
-
 	initialize: function() {
 		this.model = new Backbone.Model();
 
@@ -38,10 +36,6 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	getType: function() {},
-
-	getTitle: function() {
-		return this.getScheme().title;
-	},
 
 	getScheme: function() {
 		return elementor.schemes.getScheme( this.getType() );
