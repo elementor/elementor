@@ -16,7 +16,7 @@ class Control_Animation extends Control_Base {
 	}
 
 	public static function get_animations() {
-		if ( null === self::$_animations ) {
+		if ( is_null( self::$_animations ) ) {
 			self::$_animations = [
 				'Attention Seekers' => [
 					'bounce' => 'Bounce',
