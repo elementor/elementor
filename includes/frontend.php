@@ -146,7 +146,7 @@ class Frontend {
 			'animate.css',
 			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animations.min.css',
 			[],
-			ELEMENTOR_VERSION
+			Plugin::instance()->get_version()
 		);
 
 		wp_register_style(
