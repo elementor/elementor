@@ -13,10 +13,10 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		return [
 			'horizontal' => 0,
 			'vertical' => 0,
-			'blur' => 0,
+			'blur' => 10,
 			'spread' => 0,
 			'inset' => '',
-			'shadow' => '',
+			'color' => 'rgba(0,0,0,0.5)',
 		];
 	}
 
@@ -32,22 +32,22 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	public function content_template() {
 		?>
 		<%
-		var defaultValue = '';
+		var defaultColorValue = '';
 
-		if ( data.default ) {
-			if ( '#' !== data.default.substring( 0, 1 ) ) {
-				defaultValue = '#' + data.default;
+		if ( data.default.color ) {
+			if ( '#' !== data.default.color.substring( 0, 1 ) ) {
+				defaultColorValue = '#' + data.default.color;
 			} else {
-				defaultValue = data.default;
+				defaultColorValue = data.default.color;
 			}
 
-			defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
+			defaultColorValue = ' data-default-color=' + defaultColorValue; // Quotes added automatically.
 		}
 		%>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><?php echo __( 'Color', 'elementor' ); ?></label>
+			<label class="elementor-control-title"><?php _e( 'Color', 'elementor' ); ?></label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="shadow" class="elementor-box-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"<%= defaultValue %> />
+				<input data-setting="color" class="elementor-box-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"<%= defaultColorValue %> />
 			</div>
 		</div>
 		<?php foreach ( $this->get_sliders() as $slider ) : ?>

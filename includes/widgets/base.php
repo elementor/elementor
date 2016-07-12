@@ -130,7 +130,7 @@ abstract class Widget_Base extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => '_box_shadow',
-				'section' => '_section_style',
+				'section' => '_section_background',
 				'tab' => self::TAB_ADVANCED,
 				'selector' => '{{WRAPPER}} .elementor-widget-container',
 			]
