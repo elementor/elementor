@@ -154,10 +154,6 @@ abstract class Element_Base {
 			return false;
 		}
 
-		if ( Controls_Manager::ANIMATION === $args['type'] && ! Control_Animation::is_animations_enabled() ) {
-			return false;
-		}
-
 		$available_tabs = $this->_get_available_tabs_controls();
 		if ( ! isset( $available_tabs[ $args['tab'] ] ) ) {
 			$args['tab'] = $default_args['tab'];

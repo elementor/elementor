@@ -149,22 +149,17 @@ class Frontend {
 			Plugin::instance()->get_version()
 		);
 
-		$frontend_deps = [
-			'elementor-icons',
-			'font-awesome',
-		];
-
-		if ( Control_Animation::is_animations_enabled() ) {
-			$frontend_deps[] = 'animate.css';
-		}
-
 		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
-			$frontend_deps,
+			[
+				'elementor-icons',
+				'font-awesome',
+			],
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'animate.css' );
 		wp_enqueue_style( 'elementor-frontend' );
 	}
 

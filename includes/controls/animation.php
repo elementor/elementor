@@ -11,10 +11,6 @@ class Control_Animation extends Control_Base {
 		return 'animation';
 	}
 
-	public static function is_animations_enabled() {
-		return 'yes' !== get_option( 'elementor_disable_animations' );
-	}
-
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {
 			self::$_animations = [

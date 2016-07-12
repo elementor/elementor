@@ -276,7 +276,7 @@ abstract class Widget_Base extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
 
-		if ( ! empty( $instance['animation'] ) ) {
+		if ( ! empty( $instance['_animation'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['_animation'] );
 		}
 
