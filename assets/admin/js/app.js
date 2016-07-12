@@ -1616,6 +1616,12 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-scheme',
 
+	childViewContainer: '.elementor-panel-scheme-items',
+
+	getTemplate: function() {
+		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-schemes-' + this.getType() );
+	},
+
 	ui: function() {
 		return {
 			saveButton: '.elementor-panel-scheme-save .elementor-button',
@@ -1632,14 +1638,6 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	childViewContainer: '.elementor-panel-scheme-items',
-
-	templateHelpers: function() {
-		return {
-			getTitle: _.bind( this.getTitle, this )
-		};
-	},
-
 	initialize: function() {
 		this.model = new Backbone.Model();
 
@@ -1647,10 +1645,6 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	getType: function() {},
-
-	getTitle: function() {
-		return this.getScheme().title;
-	},
 
 	getScheme: function() {
 		return elementor.schemes.getScheme( this.getType() );
@@ -1731,7 +1725,6 @@ var PanelSchemeBaseView = require( 'elementor-panel/pages/schemes/base' ),
 	PanelSchemeColorsView;
 
 PanelSchemeColorsView = PanelSchemeBaseView.extend( {
-	template: '#tmpl-elementor-panel-schemes-colors',
 
 	ui: function() {
 		var ui = PanelSchemeBaseView.prototype.ui.apply( this, arguments );
@@ -1773,6 +1766,14 @@ var PanelSchemeDisabledView;
 
 PanelSchemeDisabledView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-schemes-disabled',
+
+	disabledTitle: '',
+
+	templateHelpers: function() {
+		return {
+			disabledTitle: this.disabledTitle
+		};
+	},
 
 	id: 'elementor-panel-schemes-disabled'
 } );
@@ -1901,7 +1902,6 @@ var PanelSchemeBaseView = require( 'elementor-panel/pages/schemes/base' ),
 	PanelSchemeTypographyView;
 
 PanelSchemeTypographyView = PanelSchemeBaseView.extend( {
-	template: '#tmpl-elementor-panel-schemes-typography',
 
 	getChildView: function() {
 		return require( 'elementor-panel/pages/schemes/items/typography' );
@@ -1971,10 +1971,14 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		};
 
 		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
-			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemes() );
+			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemesTypes() );
 
 		_.each( disabledSchemes, function( schemeType ) {
-			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
+			var scheme  = elementor.schemes.getScheme( schemeType );
+
+			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
+				disabledTitle: scheme.disabled_title
+			} );
 		} );
 
 		this.pages = pages;
@@ -3020,12 +3024,16 @@ Schemes = function() {
 		return schemes;
 	};
 
+	this.getEnabledSchemesTypes = function() {
+		return elementor.config.schemes.enabled_schemes;
+	};
+
 	this.getScheme = function( schemeType ) {
 		return schemes[ schemeType ];
 	};
 
 	this.getSchemeValue = function( schemeType, value, key ) {
-		if ( this.getEnabledSchemes().indexOf( schemeType ) < 0 ) {
+		if ( this.getEnabledSchemesTypes().indexOf( schemeType ) < 0 ) {
 			return false;
 		}
 
@@ -3041,10 +3049,6 @@ Schemes = function() {
 		}
 
 		return schemeValue;
-	};
-
-	this.getEnabledSchemes = function() {
-		return elementor.config.schemes.enabled_schemes;
 	};
 
 	this.printSchemesStyle = function() {

@@ -18,6 +18,10 @@ class Scheme_Color extends Scheme_Base {
 		return __( 'Colors', 'elementor' );
 	}
 
+	public function get_disabled_title() {
+		return __( 'Color Palettes', 'elementor' );
+	}
+
 	public function get_scheme_titles() {
 		return [
 			self::COLOR_1 => __( 'Primary', 'elementor' ),
