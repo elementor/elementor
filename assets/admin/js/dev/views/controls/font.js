@@ -2,24 +2,10 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlFontItemView;
 
 ControlFontItemView = ControlBaseItemView.extend( {
-	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
-
-		ui.fontSelect = '.elementor-control-font-family';
-
-		return ui;
-	},
 	onReady: function() {
-		this.ui.fontSelect.select2( {
+		this.ui.select.select2( {
 			dir: elementor.config.is_rtl ? 'rtl' : 'ltr'
 		} );
-	},
-
-	onBeforeDestroy: function() {
-		if ( this.ui.fontSelect.data( 'select2' ) ) {
-			this.ui.fontSelect.select2( 'destroy' );
-		}
-		this.$el.remove();
 	},
 
 	templateHelpers: function() {
