@@ -385,7 +385,7 @@ class Element_Column extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
 
-		if ( $instance['animation'] ) {
+		if ( ! empty( $instance['animation'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
 		}
 

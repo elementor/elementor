@@ -57,40 +57,6 @@ abstract class Widget_Base extends Element_Base {
 	        ]
 	    );
 
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => '_background',
-				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
-				'selector' => '{{WRAPPER}} .elementor-widget-container',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => '_border',
-				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
-				'selector' => '{{WRAPPER}} .elementor-widget-container',
-			]
-		);
-
-		$this->add_control(
-			'_border_radius',
-			[
-				'label' => __( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_style',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-			]
-		);
-
 		$this->add_control(
 			'_animation',[
 				'label' => __( 'Animation', 'elementor' ),
@@ -112,6 +78,49 @@ abstract class Widget_Base extends Element_Base {
 				'default' => '',
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'_section_background',
+			[
+				'label' => __( 'Background & Border', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => self::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => '_background',
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_background',
+				'selector' => '{{WRAPPER}} .elementor-widget-container',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => '_border',
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_background',
+				'selector' => '{{WRAPPER}} .elementor-widget-container',
+			]
+		);
+
+		$this->add_control(
+			'_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_background',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -267,7 +276,7 @@ abstract class Widget_Base extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
 
-		if ( $instance['_animation'] ) {
+		if ( ! empty( $instance['animation'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['_animation'] );
 		}
 
