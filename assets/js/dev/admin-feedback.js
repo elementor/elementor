@@ -24,6 +24,14 @@
 
 				self.getModal().show();
 			} );
+
+			self.cache.$dialogForm.one( 'change', function() {
+				self.getModal().getElements( 'deactivate' ).text( ElementorAdminFeedbackArgs.i18n.deactivate );
+			} );
+		},
+
+		deactivate: function() {
+			location.href = this.cache.$deactivateLink.attr( 'href' );
 		},
 
 		initModal: function() {
@@ -42,7 +50,7 @@
 
 							this.addButton( {
 								name: 'deactivate',
-								text: ElementorAdminFeedbackArgs.i18n.deactivate,
+								text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
 								callback: _.bind( self.sendFeedback, self )
 							} );
 
@@ -64,11 +72,17 @@
 		sendFeedback: function() {
 			var self = this;
 
+			var data = self.cache.$dialogForm.serialize();
+
+			if ( ! /reason_key=[a-z]/.test( data ) ) {
+				this.deactivate();
+
+				return;
+			}
+
 			self.getModal().getElements( 'deactivate' ).text( '' ).addClass( 'elementor-loading' );
 
-			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
-				location.href = self.cache.$deactivateLink.attr( 'href' );
-			} );
+			$.post( ajaxurl, data, _.bind( this.deactivate, this ) );
 		},
 
 		init: function() {
