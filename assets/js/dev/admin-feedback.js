@@ -70,19 +70,17 @@
 		},
 
 		sendFeedback: function() {
-			var self = this;
+			var self = this,
+				formData = self.cache.$dialogForm.serialize();
 
-			var data = self.cache.$dialogForm.serialize();
-
-			if ( ! /reason_key=[a-z]/.test( data ) ) {
+			if ( ! /reason_key=[a-z]/.test( formData ) ) {
 				this.deactivate();
-
 				return;
 			}
 
 			self.getModal().getElements( 'deactivate' ).text( '' ).addClass( 'elementor-loading' );
 
-			$.post( ajaxurl, data, _.bind( this.deactivate, this ) );
+			$.post( ajaxurl, formData, _.bind( this.deactivate, this ) );
 		},
 
 		init: function() {
