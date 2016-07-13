@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .elementor-video-wrapper {
   position: relative;
   height: 0; }
@@ -625,7 +626,7 @@
       display: inline-block;
       width: 1em; }
       .elementor-toggle .elementor-toggle-title .elementor-toggle-icon .fa:before {
-        content: '\f0da'; }
+        content: ""; }
     .elementor-toggle .elementor-toggle-title.active {
       border-bottom: none; }
       .elementor-toggle .elementor-toggle-title.active .elementor-toggle-icon .fa:before {
