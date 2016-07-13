@@ -69,6 +69,7 @@ class Widgets_Manager {
 			// Skip Pojo widgets
 			$allowed_widgets = [
 				'Pojo_Widget_Recent_Posts',
+				'Pojo_Widget_Posts_Group',
 				'Pojo_Widget_Gallery',
 				'Pojo_Widget_Recent_Galleries',
 				'Pojo_Slideshow_Widget',
