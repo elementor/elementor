@@ -57,7 +57,7 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'alert_description',
 			[
-				'label' => '',
+				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'default' => __( 'I am description. Click edit button to change this text.', 'elementor' ),
