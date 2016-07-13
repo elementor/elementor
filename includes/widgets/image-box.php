@@ -53,7 +53,7 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'description_text',
 			[
-				'label' => '',
+				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Your Description', 'elementor' ),
@@ -61,6 +61,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_image',
 				'separator' => 'none',
 				'rows' => 10,
+				'show_label' => false,
 			]
 		);
 

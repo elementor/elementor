@@ -8,6 +8,13 @@ class Api {
 	private static $_api_info_url = 'http://my.elementor.com/api/v1/info/';
 	private static $_api_feedback_url = 'http://my.elementor.com/api/v1/feedback/';
 
+	/**
+	 * This function notifies the user of upgrade notices, new templates and contributors
+	 *
+	 * @param bool $force
+	 *
+	 * @return array|bool
+	 */
 	private static function _get_info_data( $force = false ) {
 		$cache_key = 'elementor_remote_info_api_data';
 		$info_data = get_transient( $cache_key );
@@ -16,7 +23,9 @@ class Api {
 			$response = wp_remote_post( self::$_api_info_url, [
 				'timeout' => 25,
 				'body' => [
+					// Which API version is used
 					'api_version' => ELEMENTOR_VERSION,
+					// Which language to return
 					'site_lang' => get_bloginfo( 'language' ),
 				],
 			] );

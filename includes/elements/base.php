@@ -146,13 +146,13 @@ abstract class Element_Base {
 			'tab' => self::TAB_CONTENT,
 		];
 
+		$args['name'] = $id;
+		$args = wp_parse_args( $args, $default_args );
+
 		if ( isset( $this->_controls[ $id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
 			return false;
 		}
-
-		$args['name'] = $id;
-		$args = wp_parse_args( $args, $default_args );
 
 		$available_tabs = $this->_get_available_tabs_controls();
 		if ( ! isset( $available_tabs[ $args['tab'] ] ) ) {
@@ -173,8 +173,10 @@ abstract class Element_Base {
 	}
 
 	public function get_scheme_controls() {
-		return array_filter( $this->get_controls(), function( $control ) {
-			return ( ! empty( $control['scheme'] ) );
+		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
+
+		return array_filter( $this->get_controls(), function( $control ) use ( $enabled_schemes ) {
+			return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
 		} );
 	}
 
@@ -227,15 +229,11 @@ abstract class Element_Base {
 	protected function _after_register_controls() {}
 
 	public function add_render_attribute( $element, $key, $value ) {
-		if ( empty( $this->_render_attributes[ $element ] ) ) {
-			$this->_render_attributes[ $element ] = [];
-		}
-
 		if ( empty( $this->_render_attributes[ $element ][ $key ] ) ) {
 			$this->_render_attributes[ $element ][ $key ] = [];
 		}
 
-		$this->_render_attributes[ $element ][ $key ][] = $value;
+		$this->_render_attributes[ $element ][ $key ] = array_merge( $this->_render_attributes[ $element ][ $key ], (array) $value );
 	}
 
 	public function get_render_attribute_string( $element ) {

@@ -35,6 +35,8 @@ class Controls_Manager {
 	const GALLERY = 'gallery';
 	const STRUCTURE = 'structure';
 	const SELECT2 = 'select2';
+	const BOX_SHADOW = 'box_shadow';
+	const ANIMATION = 'animation';
 
 	/**
 	 * @var Control_Base[]
@@ -85,6 +87,8 @@ class Controls_Manager {
 			self::GALLERY,
 			self::STRUCTURE,
 			self::SELECT2,
+			self::BOX_SHADOW,
+			self::ANIMATION,
 		];
 
 		foreach ( $available_controls as $control_id ) {
@@ -104,11 +108,13 @@ class Controls_Manager {
 		include( 'controls/groups/border.php' );
 		include( 'controls/groups/typography.php' );
 		include( 'controls/groups/image-size.php' );
+		include( 'controls/groups/box-shadow.php' );
 
 		$this->_group_controls['background'] = new Group_Control_Background();
 		$this->_group_controls['border'] = new Group_Control_Border();
 		$this->_group_controls['typography'] = new Group_Control_Typography();
 		$this->_group_controls['image-size'] = new Group_Control_Image_size();
+		$this->_group_controls['box-shadow'] = new Group_Control_Box_Shadow();
 	}
 
 	/**

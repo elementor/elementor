@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .elementor-video-wrapper {
   position: relative;
   height: 0; }
@@ -65,6 +66,8 @@
     top: 0;
     left: 0;
     position: absolute; }
+  .elementor .elementor-invisible {
+    visibility: hidden; }
 
 #elementor-select-preset {
   display: none; }
@@ -623,7 +626,7 @@
       display: inline-block;
       width: 1em; }
       .elementor-toggle .elementor-toggle-title .elementor-toggle-icon .fa:before {
-        content: '\f0da'; }
+        content: ""; }
     .elementor-toggle .elementor-toggle-title.active {
       border-bottom: none; }
       .elementor-toggle .elementor-toggle-title.active .elementor-toggle-icon .fa:before {

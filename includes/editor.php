@@ -284,7 +284,7 @@ class Editor {
 				'widgets' => Plugin::instance()->widgets_manager->get_register_widgets_data(),
 				'schemes' => [
 					'items' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
-					'is_schemes_enabled' => Schemes_Manager::is_schemes_enabled(),
+					'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 				],
 				'default_schemes' => Plugin::instance()->schemes_manager->get_schemes_defaults(),
 				'system_schemes' => Plugin::instance()->schemes_manager->get_system_schemes(),
@@ -343,7 +343,7 @@ class Editor {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.6.1'
+			'4.6.3'
 		);
 
 		wp_register_style(

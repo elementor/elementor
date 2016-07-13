@@ -95,7 +95,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => 'Link to',
+				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',

@@ -5,7 +5,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	ui: function() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
-		ui.slider = '.elementor-control-slider';
+		ui.slider = '.elementor-slider';
 
 		return ui;
 	},

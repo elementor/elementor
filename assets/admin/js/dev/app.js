@@ -80,7 +80,9 @@ App = Marionette.Application.extend( {
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
-				structure: require( 'elementor-views/controls/structure' )
+				box_shadow: require( 'elementor-views/controls/box-shadow' ),
+				structure: require( 'elementor-views/controls/structure' ),
+				animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.channels.editor.trigger( 'editor:controls:initialize' );
@@ -180,9 +182,7 @@ App = Marionette.Application.extend( {
 
 		this.schemes.init();
 
-		if ( this.schemes.isSchemesEnabled() ) {
-			this.schemes.printSchemesStyle();
-		}
+		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),

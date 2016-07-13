@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.4.1  
+**Stable tag:** 0.5.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -86,9 +86,9 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 ### Documentation and Support ###
 
-- For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/).
+- For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 - If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
-- For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/).
+- For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 ### Liked Elementor? ###
 - Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
@@ -149,6 +149,22 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 4. Settings page.
 
 ## Changelog ##
+
+### 0.5.0 - 13.07.2016 ###
+* New! - Added more than 35 Entrance Animations to all elements
+* New! - Added Box Shadow control to all elements
+* Tweak! - Added option to disable colors palettes in the settings
+* Tweak! - Added option to disable fonts default in the settings
+* Tweak! - Added hidden title to alert & image box widgets
+* Tweak! - Added group posts widget from Pojo themes
+* Tweak! - Remove extra margin bottom on Textarea ([#182](https://github.com/pojome/elementor/issues/182))
+* Tweak! - Applying border-radius on background overlay ([#249](https://github.com/pojome/elementor/issues/249))
+* Tweak! - Fixed toggle widget RTL style
+* Tweak! - Updated Font Awesome v4.6.3
+* Tweak! - Changed Textarea control markup according to the general concept
+* Tweak! - Fixed modal RTL style
+* Fixed! - Fade effect in Image Carousel widget
+* Fixed! - Don't print anything when no have link in Video widget
 
 ### 0.4.1 - 05.07.2016 ###
 * Tweak! - Default structure presets changed for new section

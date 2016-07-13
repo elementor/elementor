@@ -61,6 +61,16 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow',
+				'section' => 'section_style',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+			]
+		);
+
 		// Section Typography
 		$this->add_control(
 			'section_typo',
@@ -193,6 +203,18 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
+			'animation',[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'default' => '',
+				'prefix_class' => 'animated ',
+				'tab' => self::TAB_ADVANCED,
+				'label_block' => true,
+				'section' => 'section_advanced',
+			]
+		);
+
+		$this->add_control(
 			'css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
@@ -201,6 +223,8 @@ class Element_Column extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -354,16 +378,15 @@ class Element_Column extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$wrapper_classes = [
+		$column_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+
+		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-column',
 			'elementor-element',
 			'elementor-element-' . $element_id,
 			'elementor-col-' . $instance['_column_size'],
-		];
-
-		$column_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
-
-		$wrapper_classes[] = 'elementor-' . $column_type . '-column';
+			'elementor-' . $column_type . '-column',
+		] );
 
 		foreach ( $this->get_class_controls() as $control ) {
 			if ( empty( $instance[ $control['name'] ] ) )
@@ -372,14 +395,16 @@ class Element_Column extends Element_Base {
 			if ( ! $this->is_control_visible( $instance, $control ) )
 				continue;
 
-			$wrapper_classes[] = $control['prefix_class'] . $instance[ $control['name'] ];
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
 
-		if ( ! empty( $element_data['elements'] ) ) {
-
+		if ( ! empty( $instance['animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
 		}
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
 		?>
-		<div class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( ! empty( $element_data['elements'] ) ) echo ' elementor-element-populated'; ?>">
 				<div class="elementor-widget-wrap">
 		<?php

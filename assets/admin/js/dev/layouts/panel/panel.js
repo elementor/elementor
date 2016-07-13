@@ -45,7 +45,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				view: require( 'elementor-panel/pages/menu/menu' ),
 				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 			},
-			colorsScheme: {
+			colorScheme: {
 				view: require( 'elementor-panel/pages/schemes/colors' )
 			},
 			typographyScheme: {
@@ -53,11 +53,16 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			}
 		};
 
-		if ( ! elementor.schemes.isSchemesEnabled() ) {
-			_.each( [ 'colors', 'typography' ], function( schemeType ) {
-				pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' );
+		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
+			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemesTypes() );
+
+		_.each( disabledSchemes, function( schemeType ) {
+			var scheme  = elementor.schemes.getScheme( schemeType );
+
+			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
+				disabledTitle: scheme.disabled_title
 			} );
-		}
+		} );
 
 		this.pages = pages;
 	},
@@ -115,11 +120,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.listenTo( elementor.channels.data, 'scrollbar:update', this.updateScrollbar );
 	},
 
-	onEditorBeforeShow: function( view, region, options ) {
+	onEditorBeforeShow: function() {
 		_.defer( this.updateScrollbar );
 	},
 
-	onEditorEmpty: function( oldView ) {
+	onEditorEmpty: function() {
 		this.updateScrollbar();
 	},
 

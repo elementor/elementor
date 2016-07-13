@@ -533,6 +533,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		if ( ! $is_slideshow ) {
 			$slick_options['slidesToScroll'] = absint( $instance['slides_to_scroll'] );
+		} else {
 			$slick_options['fade'] = ( 'fade' === $instance['effect'] );
 		}
 

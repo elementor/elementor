@@ -12,7 +12,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
                 icon: 'paint-brush',
                 title: elementor.translate( 'colors' ),
 				type: 'page',
-                pageName: 'colorsScheme'
+                pageName: 'colorScheme'
             },
             {
                 icon: 'font',

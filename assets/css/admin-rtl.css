@@ -89,7 +89,7 @@
   cursor: pointer;
   position: absolute;
   top: 16px;
-  right: 20px;
+  left: 20px;
   font-size: 16px;
   color: #a4afb7;
   line-height: 1; }

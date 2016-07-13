@@ -139,7 +139,14 @@ class Frontend {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.6.1'
+			'4.6.3'
+		);
+
+		wp_register_style(
+			'animate.css',
+			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animations.min.css',
+			[],
+			Plugin::instance()->get_version()
 		);
 
 		wp_register_style(
@@ -152,6 +159,7 @@ class Frontend {
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'animate.css' );
 		wp_enqueue_style( 'elementor-frontend' );
 	}
 
@@ -163,11 +171,7 @@ class Frontend {
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return;
 
-		$css_code = '';
-
-		if ( Schemes_Manager::is_schemes_enabled() ) {
-			$css_code = $this->_parse_schemes_css_code();
-		}
+		$css_code = $this->_parse_schemes_css_code();
 
 		foreach ( $data as $section ) {
 			$css_code .= $this->_parse_style_item( $section );
