@@ -148,11 +148,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 0.4.2 - 13.07.2016 =
+= 0.5.0 - 13.07.2016 =
 * New! - Added Entrance Animations to all elements
-* New! - Added Box Shadow feature to all elements
-* Tweak! - Disable colors schemes in the settings
-* Tweak! - Disable fonts default in the settings
+* New! - Added Box Shadow control to all elements
+* Tweak! - Added option to disable colors palettes in the settings
+* Tweak! - Added option to disable fonts default in the settings
 * Tweak! - Added hidden title to alert & image box widgets
 * Tweak! - Added group posts widget from Pojo themes
 * Tweak! - Remove extra margin bottom on Textarea ([#182](https://github.com/pojome/elementor/issues/182))
