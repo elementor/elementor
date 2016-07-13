@@ -14,6 +14,40 @@ class Control_Animation extends Control_Base {
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {
 			self::$_animations = [
+				'Fading' => [
+					'fadeIn' => 'Fade In',
+					'fadeInDown' => 'Fade In Down',
+					'fadeInLeft' => 'Fade In Left',
+					'fadeInRight' => 'Fade In Right',
+					'fadeInUp' => 'Fade In Up',
+				],
+				'Zooming' => [
+					'zoomIn' => 'Zoom In',
+					'zoomInDown' => 'Zoom In Down',
+					'zoomInLeft' => 'Zoom In Left',
+					'zoomInRight' => 'Zoom In Right',
+					'zoomInUp' => 'Zoom In Up',
+				],
+				'Bouncing' => [
+					'bounceIn' => 'Bounce In',
+					'bounceInDown' => 'Bounce In Down',
+					'bounceInLeft' => 'Bounce In Left',
+					'bounceInRight' => 'Bounce In Right',
+					'bounceInUp' => 'Bounce In Up',
+				],
+				'Sliding' => [
+					'slideInDown' => 'Slide In Down',
+					'slideInLeft' => 'Slide In Left',
+					'slideInRight' => 'Slide In Right',
+					'slideInUp' => 'Slide In Up',
+				],
+				'Rotating' => [
+					'rotateIn' => 'Rotate In',
+					'rotateInDownLeft' => 'Rotate In Down Left',
+					'rotateInDownRight' => 'Rotate In Down Right',
+					'rotateInUpLeft' => 'Rotate In Up Left',
+					'rotateInUpRight' => 'Rotate In Up Right',
+				],
 				'Attention Seekers' => [
 					'bounce' => 'Bounce',
 					'flash' => 'Flash',
@@ -26,45 +60,11 @@ class Control_Animation extends Control_Base {
 					'wobble' => 'Wobble',
 					'jello' => 'Jello',
 				],
-				'Bouncing' => [
-					'bounceIn' => 'Bounce In',
-					'bounceInDown' => 'Bounce In Down',
-					'bounceInLeft' => 'Bounce In Left',
-					'bounceInRight' => 'Bounce In Right',
-					'bounceInUp' => 'Bounce In Up',
-				],
-				'Fading' => [
-					'fadeIn' => 'Fade In',
-					'fadeInDown' => 'Fade In Down',
-					'fadeInLeft' => 'Fade In Left',
-					'fadeInRight' => 'Fade In Right',
-					'fadeInUp' => 'Fade In Up',
-				],
 				'Light Speed' => [
 					'lightSpeedIn' => 'Light Speed In',
 				],
-				'Rotating' => [
-					'rotateIn' => 'Rotate In',
-					'rotateInDownLeft' => 'Rotate In Down Left',
-					'rotateInDownRight' => 'Rotate In Down Right',
-					'rotateInUpLeft' => 'Rotate In Up Left',
-					'rotateInUpRight' => 'Rotate In Up Right',
-				],
 				'Specials' => [
 					'rollIn' => 'Roll In',
-				],
-				'Zooming' => [
-					'zoomIn' => 'Zoom In',
-					'zoomInDown' => 'Zoom In Down',
-					'zoomInLeft' => 'Zoom In Left',
-					'zoomInRight' => 'Zoom In Right',
-					'zoomInUp' => 'Zoom In Up',
-				],
-				'Sliding' => [
-					'slideInDown' => 'Slide In Down',
-					'slideInLeft' => 'Slide In Left',
-					'slideInRight' => 'Slide In Right',
-					'slideInUp' => 'Slide In Up',
 				],
 			];
 		}
