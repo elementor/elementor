@@ -24,6 +24,10 @@
 
 				self.getModal().show();
 			} );
+
+			self.cache.$dialogForm.one( 'change', function() {
+				self.getModal().getElements( 'deactivate' ).text( ElementorAdminFeedbackArgs.i18n.deactivate );
+			} );
 		},
 
 		initModal: function() {
@@ -42,7 +46,7 @@
 
 							this.addButton( {
 								name: 'deactivate',
-								text: ElementorAdminFeedbackArgs.i18n.deactivate,
+								text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
 								callback: _.bind( self.sendFeedback, self )
 							} );
 
