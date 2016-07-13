@@ -63,6 +63,7 @@ class Widget_Alert extends Widget_Base {
 				'default' => __( 'I am description. Click edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
 				'section' => 'section_alert',
+				'show_label' => false,
 			]
 		);
 

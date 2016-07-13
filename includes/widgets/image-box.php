@@ -61,6 +61,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_image',
 				'separator' => 'none',
 				'rows' => 10,
+				'show_label' => false,
 			]
 		);
 
