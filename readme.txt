@@ -157,6 +157,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added group posts widget from Pojo themes
 * Tweak! - Remove extra margin bottom on Textarea ([#182](https://github.com/pojome/elementor/issues/182))
 * Tweak! - Applying border-radius on background overlay ([#249](https://github.com/pojome/elementor/issues/249))
+* Tweak! - Fixed toggle widget RTL style
 * Tweak! - Updated Font Awesome v4.6.3
 * Tweak! - Changed Textarea control markup according to the general concept
 * Tweak! - Fixed modal RTL style
