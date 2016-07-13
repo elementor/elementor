@@ -30,6 +30,10 @@
 			} );
 		},
 
+		deactivate: function() {
+			location.href = this.cache.$deactivateLink.attr( 'href' );
+		},
+
 		initModal: function() {
 			var self = this,
 				modal;
@@ -68,11 +72,17 @@
 		sendFeedback: function() {
 			var self = this;
 
+			var data = self.cache.$dialogForm.serialize();
+
+			if ( ! /reason_key=[a-z]/.test( data ) ) {
+				this.deactivate();
+
+				return;
+			}
+
 			self.getModal().getElements( 'deactivate' ).text( '' ).addClass( 'elementor-loading' );
 
-			$.post( ajaxurl, self.cache.$dialogForm.serialize(), function( data ) {
-				location.href = self.cache.$deactivateLink.attr( 'href' );
-			} );
+			$.post( ajaxurl, data, _.bind( this.deactivate, this ) );
 		},
 
 		init: function() {
