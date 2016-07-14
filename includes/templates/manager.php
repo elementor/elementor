@@ -14,6 +14,7 @@ class Manager {
 	protected $_registered_types = [];
 
 	public function init() {
+		include( ELEMENTOR_PATH . 'includes/templates/classes/class-import-images.php' );
 		include( ELEMENTOR_PATH . 'includes/templates/types/base.php' );
 
 		$types = [

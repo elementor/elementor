@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Templates;
 
+use Elementor\Controls_Manager;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -113,9 +114,13 @@ class Type_Local extends Type_Base {
 		];
 	}
 
-	public function get_template( $item_id ) {
+	public function get_template( $item_id, $context = 'display' ) {
 		// TODO: Valid the data (in JS too!)
-		$data = Plugin::instance()->db->get_builder( $item_id );
+		if ( 'display' === $context ) {
+			$data = Plugin::instance()->db->get_builder( $item_id );
+		} else {
+			$data = Plugin::instance()->db->get_plain_builder( $item_id );
+		}
 
 		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
@@ -128,7 +133,7 @@ class Type_Local extends Type_Base {
 	}
 
 	public function export_template( $item_id ) {
-		$template_data = $this->get_template( $item_id );
+		$template_data = $this->get_template( $item_id, 'raw' );
 		if ( empty( $template_data ) )
 			wp_die( 'The template does not exist', 'elementor' );
 
@@ -171,8 +176,42 @@ class Type_Local extends Type_Base {
 		if ( $is_invalid_file )
 			wp_send_json_error( [ 'message' => 'Invalid file' ] );
 
+		// Fetch all images and replace to new
+		$import_images = new Classes\Import_Images();
+
+		$content_data = Plugin::instance()->db->iterate_data( $content['data'], function( $element ) use ( $import_images ) {
+			if ( 'widget' === $element['elType'] ) {
+				$obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
+			} else {
+				$obj = Plugin::instance()->elements_manager->get_element( $element['elType'] );
+			}
+
+			if ( ! $obj )
+				return $element;
+
+			foreach ( $obj->get_controls() as $control ) {
+				if ( Controls_Manager::MEDIA === $control['type'] ) {
+					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
+						continue;
+
+					$element['settings'][ $control['name'] ] = $import_images->import( $element['settings'][ $control['name'] ] );
+				}
+
+				if ( Controls_Manager::GALLERY === $control['type'] ) {
+					foreach ( $element['settings'][ $control['name'] ] as &$attachment ) {
+						if ( empty( $attachment['url'] ) )
+							continue;
+
+						$attachment = $import_images->import( $attachment );
+					}
+				}
+			}
+
+			return $element;
+		} );
+
 		$template_title = isset( $content['title'] ) ? $content['title'] : '';
-		$item_id = $this->save_item( $content['data'], $template_title );
+		$item_id = $this->save_item( $content_data, $template_title );
 
 		if ( is_wp_error( $item_id ) )
 			wp_send_json_error( [ 'message' => $item_id->get_error_message() ] );
