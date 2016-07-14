@@ -13,22 +13,22 @@ class Theme_Reporter extends Base_Reporter {
 	private $theme = null;
 
 	public function get_title() {
-		return _x( 'Theme', 'System Info', 'elementor' );
+		return 'Theme';
 	}
 
 	public function get_fields() {
 		$fields = [
-			'name' => _x( 'Name', 'System Info', 'elementor' ),
-			'version' => _x( 'Version', 'System Info', 'elementor' ),
-			'author' => _x( 'Author', 'System Info', 'elementor' ),
-			'is_child_theme' => _x( 'Child Theme', 'System Info', 'elementor' ),
+			'name' => 'Name',
+			'version' => 'Version',
+			'author' => 'Author',
+			'is_child_theme' => 'Child Theme',
 		];
 
 		if ( $this->get_parent_theme() ) {
 			$parent_fields = [
-				'parent_name' => _x( 'Parent Theme Name', 'System Info', 'elementor' ),
-				'parent_version' => _x( 'Parent Theme Version', 'System Info', 'elementor' ),
-				'parent_author' => _x( 'Parent Theme Author', 'System Info', 'elementor' ),
+				'parent_name' => 'Parent Theme Name',
+				'parent_version' => 'Parent Theme Version',
+				'parent_author' => 'Parent Theme Author',
 			];
 			$fields = array_merge( $fields, $parent_fields );
 		}

@@ -10,7 +10,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 	private $plugins;
 
 	public function get_title() {
-		return _x( 'Network Plugins', 'System Info', 'elementor' );
+		return 'Network Plugins';
 	}
 
 	private function _get_network_plugins() {
@@ -32,7 +32,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 
 	public function get_fields() {
 		return [
-			'network_active_plugins' => _x( 'Network Plugins', 'System Info', 'elementor' ),
+			'network_active_plugins' => 'Network Plugins',
 		];
 	}
 
