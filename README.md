@@ -150,6 +150,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.5.1 - 14.07.2016 ###
+* Tweak! - Added details image sizes in Image Sizes control
+* Fixed! - Chrome bug with flex mode in Image Box widget 
+* Fixed! - Textarea control: set `label_block` to `true` by default
+* Fixed! - Textarea control style for Icon Box Widget
+* Fixed! - Removed translations from system-info for better understanding support 
+* Fixed! - Design fixes for Icon List widget
+
 ### 0.5.0 - 13.07.2016 ###
 * New! - Added more than 35 Entrance Animations to all elements
 * New! - Added Box Shadow control to all elements
