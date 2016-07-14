@@ -9,6 +9,12 @@ class Control_Textarea extends Control_Base {
 		return 'textarea';
 	}
 
+	protected function get_default_settings() {
+		return [
+			'label_block' => true,
+		];
+	}
+
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">

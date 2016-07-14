@@ -26,7 +26,9 @@
 			} );
 
 			self.cache.$dialogForm.one( 'change', function() {
-				self.getModal().getElements( 'deactivate' ).text( ElementorAdminFeedbackArgs.i18n.deactivate );
+				self.getModal().getElements( 'deactivate' )
+				    .text( ElementorAdminFeedbackArgs.i18n.deactivate )
+				    .addClass( 'elementor-active' );
 			} );
 		},
 

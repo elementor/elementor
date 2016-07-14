@@ -7,6 +7,10 @@
 		overflow: hidden;
 	}
 
+	.elementor-image-box-content {
+		width: 100%; // Hack for Chrome in flex mode
+	}
+
 	@media (min-width: $screen-md-min) {
 
 		&.elementor-position- {
