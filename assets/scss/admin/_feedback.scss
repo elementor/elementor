@@ -83,7 +83,7 @@
 	}
 
 	.dialog-deactivate {
-		background-color: $editor-accent;
+		background-color: $editor-light;
 		border-radius: 3px;
 		color: #fff;
 		line-height: 1;
@@ -91,6 +91,10 @@
 		font-size: 14px;
 		width: 180px;
 		height: 38px;
+
+		&.elementor-active {
+			background-color: $editor-accent;
+		}
 
 		&.elementor-loading {
 
