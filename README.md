@@ -163,7 +163,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Updated Font Awesome v4.6.3
 * Tweak! - Changed Textarea control markup according to the general concept
 * Tweak! - Fixed modal RTL style
-* Fixed! - Fade effect in Image Carousel widget
+* Fixed! - Fade effect in Image Carousel widget ([#245](https://github.com/pojome/elementor/issues/245), [#253](https://github.com/pojome/elementor/issues/253))
 * Fixed! - Don't print anything when no have link in Video widget
 
 ### 0.4.1 - 05.07.2016 ###
