@@ -721,6 +721,8 @@
 
 .elementor-widget-image-box .elementor-image-box-wrapper {
   overflow: hidden; }
+.elementor-widget-image-box .elementor-image-box-content {
+  width: 100%; }
 @media (min-width: 768px) {
   .elementor-widget-image-box.elementor-position-left .elementor-image-box-wrapper, .elementor-widget-image-box.elementor-position-right .elementor-image-box-wrapper {
     display: -ms-flexbox;
