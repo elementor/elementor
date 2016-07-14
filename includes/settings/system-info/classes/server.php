@@ -8,18 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Server_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return _x( 'Server Environment', 'System Info', 'elementor' );
+		return 'Server Environment';
 	}
 
 	public function get_fields() {
 		return [
-			'os' => _x( 'Operating System', 'System Info', 'elementor' ),
-			'software' => _x( 'Software', 'System Info', 'elementor' ),
-			'mysql_version' => _x( 'MySQL version', 'System Info', 'elementor' ),
-			'php_version' => _x( 'PHP Version', 'System Info', 'elementor' ),
-			'php_max_input_vars' => _x( 'PHP Max Input Vars', 'System Info', 'elementor' ),
-			'php_max_post_size' => _x( 'PHP Max Post Size', 'System Info', 'elementor' ),
-			'gd_installed' => _x( 'GD Installed', 'System Info', 'elementor' ),
+			'os' => 'Operating System',
+			'software' => 'Software',
+			'mysql_version' => 'MySQL version',
+			'php_version' => 'PHP Version',
+			'php_max_input_vars' => 'PHP Max Input Vars',
+			'php_max_post_size' => 'PHP Max Post Size',
+			'gd_installed' => 'GD Installed',
 		];
 	}
 
