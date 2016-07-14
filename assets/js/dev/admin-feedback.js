@@ -54,8 +54,6 @@
 								name: 'skip',
 								text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
 								callback: function() {
-									self.getModal().hide();
-
 									self.deactivate();
 								}
 							} );
