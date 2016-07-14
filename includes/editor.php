@@ -66,7 +66,20 @@ class Editor {
 			return true;
 		}
 
-		if ( isset( $_REQUEST['action'] ) && 'elementor_render_widget' === $_REQUEST['action'] ) {
+		// Ajax request as Editor mode
+		$actions = [
+			'elementor_render_widget',
+
+			// Templates
+			'elementor_get_templates',
+			'elementor_save_template',
+			'elementor_get_template',
+			'elementor_delete_template',
+			'elementor_export_template',
+			'elementor_import_template',
+		];
+
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions ) ) {
 			return true;
 		}
 

@@ -834,6 +834,7 @@ TemplatesManager = function() {
 		elementor.ajax.send( 'get_template', {
 			data: {
 				type: templateModel.get( 'type' ),
+				post_id: elementor.config.post_id,
 				item_id: templateModel.get( 'id' )
 			},
 			success: function( data ) {

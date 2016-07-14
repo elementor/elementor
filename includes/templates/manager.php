@@ -108,9 +108,12 @@ class Manager {
 			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
 		}
 
-		if ( empty( $_POST['item_id'] ) ) {
+		if ( empty( $_POST['item_id'] ) || empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
 		}
+
+		// Override the global $post for the render
+		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
 
 		$type = $this->get_type( $_POST['type'] );
 
