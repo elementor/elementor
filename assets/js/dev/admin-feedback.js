@@ -24,12 +24,6 @@
 
 				self.getModal().show();
 			} );
-
-			self.cache.$dialogForm.one( 'change', function() {
-				self.getModal().getElements( 'deactivate' )
-				    .text( ElementorAdminFeedbackArgs.i18n.deactivate )
-				    .addClass( 'elementor-active' );
-			} );
 		},
 
 		deactivate: function() {
@@ -51,16 +45,18 @@
 							DialogsManager.getWidgetType( 'elementor-modal' ).prototype.onReady.apply( this, arguments );
 
 							this.addButton( {
-								name: 'deactivate',
-								text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
+								name: 'submit',
+								text: ElementorAdminFeedbackArgs.i18n.submit_n_deactivate,
 								callback: _.bind( self.sendFeedback, self )
 							} );
 
 							this.addButton( {
-								name: 'cancel',
-								text: ElementorAdminFeedbackArgs.i18n.cancel,
+								name: 'skip',
+								text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
 								callback: function() {
 									self.getModal().hide();
+
+									self.deactivate();
 								}
 							} );
 						}
@@ -75,12 +71,7 @@
 			var self = this,
 				formData = self.cache.$dialogForm.serialize();
 
-			if ( ! /reason_key=[a-z]/.test( formData ) ) {
-				this.deactivate();
-				return;
-			}
-
-			self.getModal().getElements( 'deactivate' ).text( '' ).addClass( 'elementor-loading' );
+			self.getModal().getElements( 'submit' ).text( '' ).addClass( 'elementor-loading' );
 
 			$.post( ajaxurl, formData, _.bind( this.deactivate, this ) );
 		},
