@@ -39,14 +39,14 @@ class Group_Control_Image_size extends Group_Control_Base {
 	}
 
 	private function _get_image_sizes() {
-		$wp_image_sizes = get_intermediate_image_sizes();
+		$wp_image_sizes = self::get_all_image_sizes();
 
 		$args = $this->get_args();
 
 		if ( $args['include'] ) {
-			$wp_image_sizes = array_intersect( $wp_image_sizes, $args['include'] );
+			$wp_image_sizes = array_intersect_key( $wp_image_sizes, array_flip( $args['include'] ) );
 		} elseif ( $args['exclude'] ) {
-			$wp_image_sizes = array_diff( $wp_image_sizes, $args['exclude'] );
+			$wp_image_sizes = array_diff_key( $wp_image_sizes, array_flip( $args['exclude'] ) );
 		}
 
 		$image_sizes = [];
