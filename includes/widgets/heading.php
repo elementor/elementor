@@ -33,7 +33,6 @@ class Widget_Heading extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'This is heading element', 'elementor' ),
-				'label_block' => true,
 				'section' => 'section_title',
 			]
 		);

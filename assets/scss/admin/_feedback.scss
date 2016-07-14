@@ -75,14 +75,9 @@
 		border-top: none;
 		text-align: getStartDirection();
 		padding: 20px 30px 30px;
-
-		button {
-			text-align: center;
-			vertical-align: middle;
-		}
 	}
 
-	.dialog-deactivate {
+	.dialog-submit {
 		background-color: $editor-accent;
 		border-radius: 3px;
 		color: #fff;
@@ -103,9 +98,11 @@
 		}
 	}
 
-	.dialog-cancel {
-		padding: 0 30px;
+	.dialog-skip {
+		font-size: 12px;
+		color: $editor-light;
 		background: none;
+		float: getEndDirection();
 	}
 }
 

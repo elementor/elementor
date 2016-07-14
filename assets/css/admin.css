@@ -342,10 +342,7 @@ body.elementor-editor-inactive #elementor-editor {
   border-top: none;
   text-align: left;
   padding: 20px 30px 30px; }
-  #elementor-deactivate-feedback-modal .dialog-buttons-wrapper button {
-    text-align: center;
-    vertical-align: middle; }
-#elementor-deactivate-feedback-modal .dialog-deactivate {
+#elementor-deactivate-feedback-modal .dialog-submit {
   background-color: #9b0a46;
   border-radius: 3px;
   color: #fff;
@@ -354,14 +351,16 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 14px;
   width: 180px;
   height: 38px; }
-  #elementor-deactivate-feedback-modal .dialog-deactivate.elementor-loading:before {
+  #elementor-deactivate-feedback-modal .dialog-submit.elementor-loading:before {
     display: inline-block;
     content: '\f463';
     font: 18px dashicons;
     animation: elementor-rotation 2s infinite linear; }
-#elementor-deactivate-feedback-modal .dialog-cancel {
-  padding: 0 30px;
-  background: none; }
+#elementor-deactivate-feedback-modal .dialog-skip {
+  font-size: 12px;
+  color: #a4afb7;
+  background: none;
+  float: right; }
 
 #elementor-deactivate-feedback-dialog-header i {
   color: #9b0a46;

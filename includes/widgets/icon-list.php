@@ -187,7 +187,7 @@ class Widget_Icon_list extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-text' => 'text-indent: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-text' => is_rtl() ? 'padding-right: {{SIZE}}{{UNIT}};' : 'padding-left: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

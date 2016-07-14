@@ -282,8 +282,7 @@ class Admin {
 			'ElementorAdminFeedbackArgs',
 			[
 				'i18n' => [
-					'cancel' => __( 'Cancel', 'elementor' ),
-					'deactivate' => __( 'Deactivate Elementor', 'elementor' ),
+					'submit_n_deactivate' => __( 'Submit & Deactivate', 'elementor' ),
 					'skip_n_deactivate' => __( 'Skip & Deactivate', 'elementor' ),
 				],
 			]

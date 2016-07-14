@@ -93,6 +93,7 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_icon',
 				'rows' => 10,
 				'separator' => 'none',
+				'show_label' => false,
 			]
 		);
 
