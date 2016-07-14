@@ -75,15 +75,10 @@
 		border-top: none;
 		text-align: getStartDirection();
 		padding: 20px 30px 30px;
-
-		button {
-			text-align: center;
-			vertical-align: middle;
-		}
 	}
 
-	.dialog-deactivate {
-		background-color: $editor-light;
+	.dialog-submit {
+		background-color: $editor-accent;
 		border-radius: 3px;
 		color: #fff;
 		line-height: 1;
@@ -91,10 +86,6 @@
 		font-size: 14px;
 		width: 180px;
 		height: 38px;
-
-		&.elementor-active {
-			background-color: $editor-accent;
-		}
 
 		&.elementor-loading {
 
@@ -107,9 +98,11 @@
 		}
 	}
 
-	.dialog-cancel {
-		padding: 0 30px;
+	.dialog-skip {
+		font-size: 12px;
+		color: $editor-light;
 		background: none;
+		float: getEndDirection();
 	}
 }
 
