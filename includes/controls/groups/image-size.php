@@ -50,7 +50,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 
 		$image_sizes = [];
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
-			$image_sizes[ $size_key ] = ucwords( str_replace( '_', ' ', $size_key ) ) . sprintf( ' (%d x %d px)', $size_attributes['width'], $size_attributes['height'] );
+			$image_sizes[ $size_key ] = ucwords( str_replace( '_', ' ', $size_key ) ) . sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
 		}
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
