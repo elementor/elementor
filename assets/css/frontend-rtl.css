@@ -684,7 +684,8 @@
   display: table-cell;
   vertical-align: middle; }
 .elementor-widget-icon-list .elementor-icon-list-icon {
-  width: 1em; }
+  width: 1em;
+  line-height: 1; }
 
 .elementor-widget-video.elementor-aspect-ratio-169 .elementor-video-wrapper {
   padding-bottom: 56.25%; }
