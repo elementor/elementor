@@ -346,7 +346,7 @@ body.elementor-editor-inactive #elementor-editor {
     text-align: center;
     vertical-align: middle; }
 #elementor-deactivate-feedback-modal .dialog-deactivate {
-  background-color: #9b0a46;
+  background-color: #a4afb7;
   border-radius: 3px;
   color: #fff;
   line-height: 1;
@@ -354,6 +354,8 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 14px;
   width: 180px;
   height: 38px; }
+  #elementor-deactivate-feedback-modal .dialog-deactivate.elementor-active {
+    background-color: #9b0a46; }
   #elementor-deactivate-feedback-modal .dialog-deactivate.elementor-loading:before {
     display: inline-block;
     content: '\f463';
