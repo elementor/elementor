@@ -144,7 +144,7 @@ class Frontend {
 
 		wp_register_style(
 			'animate.css',
-			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animate.css',
+			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animate' . $suffix . '.css',
 			[],
 			Plugin::instance()->get_version()
 		);
