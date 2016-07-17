@@ -70,6 +70,29 @@
 		init: function() {
 			this.cacheElements();
 			this.bindEvents();
+
+			this.initTemplatesImport();
+		},
+
+		initTemplatesImport: function () {
+			if ( ! this.cache.$body.hasClass( 'post-type-elementor_tmpl' ) ) {
+				return;
+			}
+
+			var self = this,
+				$importButton = self.cache.$importButton = $( '#elementor-import-templates-trigger' );
+
+			self.cache.$importForm = $( '#elementor-import-templates-form' );
+
+			self.cache.$subList = $( '.subsubsub' );
+
+			$( '#wpbody-content' ).find( '.page-title-action' ).after( $importButton );
+
+			self.cache.$subList.before( self.cache.$importForm );
+
+			$importButton.on( 'click', function () {
+				self.cache.$importForm.toggle();
+			} );
 		},
 
 		getEditMode: function() {

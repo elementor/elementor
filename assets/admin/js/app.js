@@ -840,7 +840,7 @@ TemplatesManager = function() {
 			success: function( data ) {
 				self.getModal().hide();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data.template );
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
 			error: function( data ) {
 				self.showErrorDialog( data.message );
@@ -1012,13 +1012,20 @@ TemplatesImportView = Marionette.ItemView.extend( {
 
 	onFormSubmit: function( event ) {
 		event.preventDefault();
+		
+		elementor.templates.getLayout().showLoadingView();
 
 		elementor.ajax.send( 'import_template', {
 			data: new FormData( this.ui.uploadForm[ 0 ] ),
 			processData: false,
 			contentType: false,
-			success: function( response ) {
-				console.log( response );
+			success: function( data ) {
+				elementor.templates.getTemplatesCollection().add( data.item );
+
+				elementor.templates.showTemplates();
+			},
+			error: function( data ) {
+				elementor.templates.showErrorDialog( data.message );
 			}
 		} );
 	}
@@ -1063,10 +1070,12 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 			type: 'local'
 		} );
 
+		elementor.templates.getLayout().showLoadingView();
+
 		elementor.ajax.send( 'save_template', {
 			data: formData,
 			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data.item );
+				elementor.templates.getTemplatesCollection().add( data );
 
 				elementor.templates.showTemplates();
 			},
@@ -1214,14 +1223,16 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
 		buttonPublish: '#elementor-panel-footer-publish',
-		watchTutorial: '#elementor-panel-footer-watch-tutorial'
+		watchTutorial: '#elementor-panel-footer-watch-tutorial',
+		showTemplates: '#elementor-panel-footer-templates'
 	},
 
 	events: {
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.watchTutorial': 'onClickWatchTutorial'
+		'click @ui.watchTutorial': 'onClickWatchTutorial',
+		'click @ui.showTemplates': 'onClickShowTemplates'
 	},
 
 	initialize: function() {
@@ -1355,6 +1366,10 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	onClickWatchTutorial: function() {
 		elementor.introduction.startIntroduction();
+	},
+
+	onClickShowTemplates: function() {
+		elementor.templates.startModal();
 	}
 } );
 
