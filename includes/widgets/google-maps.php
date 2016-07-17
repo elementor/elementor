@@ -79,9 +79,9 @@ class Widget_Google_maps extends Widget_Base {
 		);
 
 		$this->add_control(
-			'prevent_mouse',
+			'prevent_scroll',
 			[
-				'label' => __( 'Prevent Mouse', 'elementor' ),
+				'label' => __( 'Prevent Scroll', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
