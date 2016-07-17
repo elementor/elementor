@@ -83,13 +83,13 @@ class Manager {
 
 	public function save_template() {
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		$type = $this->get_type( $_POST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
@@ -97,19 +97,19 @@ class Manager {
 		$return = $type->save_item( $posted, ! empty( $_POST['title'] ) ? $_POST['title'] : '' );
 
 		if ( is_wp_error( $return ) ) {
-			wp_send_json_error( [ 'message' => $return->get_error_message() ] );
+			return $return;
 		}
 
-		wp_send_json_success( [ 'item' => $type->get_item( $return ) ] );
+		return $type->get_item( $return );
 	}
 
 	public function get_template() {
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		if ( empty( $_POST['item_id'] ) || empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
 		}
 
 		// Override the global $post for the render
@@ -118,55 +118,57 @@ class Manager {
 		$type = $this->get_type( $_POST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		wp_send_json_success( [ 'template' => $type->get_template( $_POST['item_id'] ) ] );
+		return $type->get_template( $_POST['item_id'] );
 	}
 
 	public function delete_template() {
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		if ( empty( $_POST['item_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
 		}
 
 		$type = $this->get_type( $_POST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
 		$type->delete_template( $_POST['item_id'] );
 
-		wp_send_json_success();
+		return true;
 	}
 
 	public function export_template() {
 		// TODO: Add nonce for security
 		if ( empty( $_REQUEST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		if ( empty( $_REQUEST['item_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
 		}
 
 		$type = $this->get_type( $_REQUEST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		$type->export_template( $_REQUEST['item_id'] );
+		return $type->export_template( $_REQUEST['item_id'] );
 	}
 
 	public function import_template() {
 		/** @var Type_Local $type */
 		$type = $this->get_type( 'local' );
-		$type->import_template();
+
+		return $type->import_template();
+	}
 	}
 
 	public function __construct() {

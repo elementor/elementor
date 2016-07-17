@@ -169,12 +169,13 @@ class Type_Local extends Type_Base {
 		$import_file = $_FILES['file']['tmp_name'];
 
 		if ( empty( $import_file ) )
-			wp_send_json_error( [ 'message' => 'Please upload a file to import' ] );
+			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 
 		$content = json_decode( file_get_contents( $import_file ), true );
 		$is_invalid_file = empty( $content ) || empty( $content['data'] ) || ! is_array( $content['data'] );
+
 		if ( $is_invalid_file )
-			wp_send_json_error( [ 'message' => 'Invalid file' ] );
+			return new \WP_Error( 'file_error', 'Invalid File' );
 
 		// Fetch all images and replace to new
 		$import_images = new Classes\Import_Images();
@@ -214,9 +215,9 @@ class Type_Local extends Type_Base {
 		$item_id = $this->save_item( $content_data, $template_title );
 
 		if ( is_wp_error( $item_id ) )
-			wp_send_json_error( [ 'message' => $item_id->get_error_message() ] );
+			return new \WP_Error( 'save_error', $item_id->get_error_message() );
 
-		wp_send_json_success( [ 'item' => $this->get_item( $item_id ) ] );
+		return $this->get_item( $item_id );
 	}
 
 	private function _get_export_link( $item_id ) {
