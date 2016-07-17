@@ -553,7 +553,8 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'animation',[
+			'animation',
+			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
@@ -565,13 +566,14 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'animation_duration',[
+			'animation_duration',
+			[
 				'label' => __( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Normal', 'elementor' ),
 					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
 					'fast' => __( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',

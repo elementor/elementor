@@ -58,7 +58,8 @@ abstract class Widget_Base extends Element_Base {
 	    );
 
 		$this->add_control(
-			'_animation',[
+			'_animation',
+			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
@@ -70,13 +71,14 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->add_control(
-			'animation_duration',[
+			'animation_duration',
+			[
 				'label' => __( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Normal', 'elementor' ),
 					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
 					'fast' => __( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
