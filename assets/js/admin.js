@@ -74,7 +74,7 @@
 			this.initTemplatesImport();
 		},
 
-		initTemplatesImport: function () {
+		initTemplatesImport: function() {
 			if ( ! this.cache.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
@@ -90,7 +90,7 @@
 
 			self.cache.$subList.before( self.cache.$importForm );
 
-			$importButton.on( 'click', function () {
+			$importButton.on( 'click', function() {
 				self.cache.$importForm.toggle();
 			} );
 		},

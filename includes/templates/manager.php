@@ -242,7 +242,7 @@ class Manager {
 		];
 
 		foreach ( $allowed_ajax_requests as $ajax_request ) {
-			add_action( 'wp_ajax_elementor_' . $ajax_request, function() use( $ajax_request ){
+			add_action( 'wp_ajax_elementor_' . $ajax_request, function() use ( $ajax_request ) {
 				$this->handle_ajax_request( $ajax_request, func_get_args() );
 			} );
 		}

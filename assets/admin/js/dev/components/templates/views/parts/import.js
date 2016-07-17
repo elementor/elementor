@@ -15,7 +15,7 @@ TemplatesImportView = Marionette.ItemView.extend( {
 
 	onFormSubmit: function( event ) {
 		event.preventDefault();
-		
+
 		elementor.templates.getLayout().showLoadingView();
 
 		elementor.ajax.send( 'import_template', {
