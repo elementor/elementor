@@ -35,7 +35,7 @@ TemplatesManager = function() {
 			success: function( data ) {
 				self.getModal().hide();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data.template );
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
 			error: function( data ) {
 				self.showErrorDialog( data.message );
