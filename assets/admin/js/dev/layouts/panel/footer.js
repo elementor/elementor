@@ -19,14 +19,16 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
 		buttonPublish: '#elementor-panel-footer-publish',
-		watchTutorial: '#elementor-panel-footer-watch-tutorial'
+		watchTutorial: '#elementor-panel-footer-watch-tutorial',
+		showTemplates: '#elementor-panel-footer-templates'
 	},
 
 	events: {
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.watchTutorial': 'onClickWatchTutorial'
+		'click @ui.watchTutorial': 'onClickWatchTutorial',
+		'click @ui.showTemplates': 'onClickShowTemplates'
 	},
 
 	initialize: function() {
@@ -160,6 +162,10 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	onClickWatchTutorial: function() {
 		elementor.introduction.startIntroduction();
+	},
+
+	onClickShowTemplates: function() {
+		elementor.templates.startModal();
 	}
 } );
 
