@@ -75,12 +75,6 @@ class Manager {
 		return $templates;
 	}
 
-	public function print_templates_json() {
-		$templates = $this->get_templates();
-
-		wp_send_json_success( $templates );
-	}
-
 	public function save_template() {
 		if ( empty( $_POST['type'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
