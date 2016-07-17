@@ -170,6 +170,33 @@ class Manager {
 		return $type->import_template();
 	}
 
+	public function on_import_template_success() {
+		wp_redirect( admin_url( 'edit.php?post_type=' . Type_Local::CPT ) );
+	}
+
+	public function on_import_template_error( \WP_Error $error ) {
+		echo $error->get_error_message();
+	}
+
+	public function admin_import_template_form() {
+		$screen = get_current_screen();
+
+		if ( 'edit' !== $screen->base || Type_Local::CPT !== $screen->post_type ) {
+			return;
+		} ?>
+		<div id="elementor-hidden-area">
+			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Upload', 'elementor' ); ?></a>
+			<form id="elementor-import-templates-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<input type="hidden" name="action" value="elementor_import_template">
+				<fieldset id="elementor-import-templates-form-inputs">
+					<input type="file" name="file" accept="application/json" required>
+					<input type="submit">
+				</fieldset>
+			</form>
+		</div>
+		<?php
+	}
+
 	private function handle_ajax_request( $ajax_request, $args ) {
 		$result = call_user_func_array( [ $this, $ajax_request ], $args );
 
