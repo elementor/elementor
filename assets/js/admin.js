@@ -75,7 +75,7 @@
 		},
 
 		initTemplatesImport: function () {
-			if ( ! this.cache.$body.hasClass( 'post-type-elementor_tmpl' ) ) {
+			if ( ! this.cache.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
