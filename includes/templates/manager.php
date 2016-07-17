@@ -169,16 +169,71 @@ class Manager {
 
 		return $type->import_template();
 	}
+
+	private function handle_ajax_request( $ajax_request, $args ) {
+		$result = call_user_func_array( [ $this, $ajax_request ], $args );
+
+		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
+
+		if ( 'direct' === $request_type ) {
+			$callback = 'on_' . $ajax_request;
+
+			if ( method_exists( $this, $callback ) ) {
+				$this->$callback( $result );
+			}
+		}
+
+		if ( is_wp_error( $result ) ) {
+			if ( 'ajax' === $request_type ) {
+				wp_send_json_error( $result );
+			}
+
+			$callback = "on_{$ajax_request}_error";
+
+			if ( method_exists( $this, $callback ) ) {
+				$this->$callback( $result );
+			}
+
+			die;
+		}
+
+		if ( 'ajax' === $request_type ) {
+			wp_send_json_success( $result );
+		}
+
+		$callback = "on_{$ajax_request}_success";
+
+		if ( method_exists( $this, $callback ) ) {
+			$this->$callback( $result );
+		}
+
+		die;
+	}
+
+	private function init_ajax_calls() {
+		$allowed_ajax_requests = [
+			'get_templates',
+			'get_template',
+			'save_template',
+			'delete_template',
+			'export_template',
+			'import_template',
+		];
+
+		foreach ( $allowed_ajax_requests as $ajax_request ) {
+			add_action( 'wp_ajax_elementor_' . $ajax_request, function() use( $ajax_request ){
+				$this->handle_ajax_request( $ajax_request, func_get_args() );
+			} );
+		}
 	}
 
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 
-		add_action( 'wp_ajax_elementor_get_templates', [ $this, 'print_templates_json' ] );
-		add_action( 'wp_ajax_elementor_save_template', [ $this, 'save_template' ] );
-		add_action( 'wp_ajax_elementor_get_template', [ $this, 'get_template' ] );
-		add_action( 'wp_ajax_elementor_delete_template', [ $this, 'delete_template' ] );
-		add_action( 'wp_ajax_elementor_export_template', [ $this, 'export_template' ] );
-		add_action( 'wp_ajax_elementor_import_template', [ $this, 'import_template' ] );
+		$this->init_ajax_calls();
+
+		if ( is_admin() ) {
+			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
+		}
 	}
 }
