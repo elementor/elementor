@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Type_Local extends Type_Base {
 
-	const CPT = 'elementor_tmpl';
+	const CPT = 'elementor_library';
 
 	public function get_id() {
 		return 'local';
