@@ -95,6 +95,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 	</div>
+	<div id="elementor-panel-footer-templates" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Templates', 'elementor' ); ?>">
+		<span class="elementor-screen-only"><?php _e( 'Templates', 'elementor' ); ?></span>
+		<i class="fa fa-wpforms"></i>
+	</div>
 	<div id="elementor-panel-footer-save" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">
 		<button class="elementor-button">
 			<span class="elementor-state-icon">

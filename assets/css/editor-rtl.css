@@ -1672,7 +1672,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-templates-modal .dialog-buttons-wrapper {
   display: none; }
 #elementor-templates-modal .dialog-message {
-  height: 590px; }
+  height: 460px;
+  overflow: auto; }
 
 #elementor-templates-header {
   display: table;

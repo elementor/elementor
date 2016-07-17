@@ -386,4 +386,23 @@ body.elementor-editor-inactive #elementor-editor {
   overflow: hidden;
   margin-bottom: 15px; }
 
+#elementor-hidden-area {
+  display: none; }
+
+#elementor-import-templates-trigger {
+  cursor: pointer; }
+
+#elementor-import-templates-form {
+  display: none;
+  position: relative;
+  height: 200px;
+  border: 4px dashed #a4afb7;
+  margin: 15px 0; }
+
+#elementor-import-templates-form-inputs {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%); }
+
 /*# sourceMappingURL=admin.css.map */

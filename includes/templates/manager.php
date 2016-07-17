@@ -75,21 +75,15 @@ class Manager {
 		return $templates;
 	}
 
-	public function print_templates_json() {
-		$templates = $this->get_templates();
-
-		wp_send_json_success( $templates );
-	}
-
 	public function save_template() {
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		$type = $this->get_type( $_POST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
@@ -97,19 +91,19 @@ class Manager {
 		$return = $type->save_item( $posted, ! empty( $_POST['title'] ) ? $_POST['title'] : '' );
 
 		if ( is_wp_error( $return ) ) {
-			wp_send_json_error( [ 'message' => $return->get_error_message() ] );
+			return $return;
 		}
 
-		wp_send_json_success( [ 'item' => $type->get_item( $return ) ] );
+		return $type->get_item( $return );
 	}
 
 	public function get_template() {
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		if ( empty( $_POST['item_id'] ) || empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
 		}
 
 		// Override the global $post for the render
@@ -118,65 +112,149 @@ class Manager {
 		$type = $this->get_type( $_POST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		wp_send_json_success( [ 'template' => $type->get_template( $_POST['item_id'] ) ] );
+		return $type->get_template( $_POST['item_id'] );
 	}
 
 	public function delete_template() {
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		if ( empty( $_POST['item_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
 		}
 
 		$type = $this->get_type( $_POST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
 		$type->delete_template( $_POST['item_id'] );
 
-		wp_send_json_success();
+		return true;
 	}
 
 	public function export_template() {
 		// TODO: Add nonce for security
 		if ( empty( $_REQUEST['type'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
 
 		if ( empty( $_REQUEST['item_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Template `type_id` was not specified.' ] );
+			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
 		}
 
 		$type = $this->get_type( $_REQUEST['type'] );
 
 		if ( ! $type ) {
-			wp_send_json_error( [ 'message' => 'Template type not found.' ] );
+			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		$type->export_template( $_REQUEST['item_id'] );
+		return $type->export_template( $_REQUEST['item_id'] );
 	}
 
 	public function import_template() {
 		/** @var Type_Local $type */
 		$type = $this->get_type( 'local' );
-		$type->import_template();
+
+		return $type->import_template();
+	}
+
+	public function on_import_template_success() {
+		wp_redirect( admin_url( 'edit.php?post_type=' . Type_Local::CPT ) );
+	}
+
+	public function on_import_template_error( \WP_Error $error ) {
+		echo $error->get_error_message();
+	}
+
+	public function admin_import_template_form() {
+		$screen = get_current_screen();
+
+		if ( 'edit' !== $screen->base || Type_Local::CPT !== $screen->post_type ) {
+			return;
+		} ?>
+		<div id="elementor-hidden-area">
+			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Upload', 'elementor' ); ?></a>
+			<form id="elementor-import-templates-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<input type="hidden" name="action" value="elementor_import_template">
+				<fieldset id="elementor-import-templates-form-inputs">
+					<input type="file" name="file" accept="application/json" required>
+					<input type="submit">
+				</fieldset>
+			</form>
+		</div>
+		<?php
+	}
+
+	private function handle_ajax_request( $ajax_request, $args ) {
+		$result = call_user_func_array( [ $this, $ajax_request ], $args );
+
+		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
+
+		if ( 'direct' === $request_type ) {
+			$callback = 'on_' . $ajax_request;
+
+			if ( method_exists( $this, $callback ) ) {
+				$this->$callback( $result );
+			}
+		}
+
+		if ( is_wp_error( $result ) ) {
+			if ( 'ajax' === $request_type ) {
+				wp_send_json_error( $result );
+			}
+
+			$callback = "on_{$ajax_request}_error";
+
+			if ( method_exists( $this, $callback ) ) {
+				$this->$callback( $result );
+			}
+
+			die;
+		}
+
+		if ( 'ajax' === $request_type ) {
+			wp_send_json_success( $result );
+		}
+
+		$callback = "on_{$ajax_request}_success";
+
+		if ( method_exists( $this, $callback ) ) {
+			$this->$callback( $result );
+		}
+
+		die;
+	}
+
+	private function init_ajax_calls() {
+		$allowed_ajax_requests = [
+			'get_templates',
+			'get_template',
+			'save_template',
+			'delete_template',
+			'export_template',
+			'import_template',
+		];
+
+		foreach ( $allowed_ajax_requests as $ajax_request ) {
+			add_action( 'wp_ajax_elementor_' . $ajax_request, function() use ( $ajax_request ) {
+				$this->handle_ajax_request( $ajax_request, func_get_args() );
+			} );
+		}
 	}
 
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
 
-		add_action( 'wp_ajax_elementor_get_templates', [ $this, 'print_templates_json' ] );
-		add_action( 'wp_ajax_elementor_save_template', [ $this, 'save_template' ] );
-		add_action( 'wp_ajax_elementor_get_template', [ $this, 'get_template' ] );
-		add_action( 'wp_ajax_elementor_delete_template', [ $this, 'delete_template' ] );
-		add_action( 'wp_ajax_elementor_export_template', [ $this, 'export_template' ] );
-		add_action( 'wp_ajax_elementor_import_template', [ $this, 'import_template' ] );
+		$this->init_ajax_calls();
+
+		if ( is_admin() ) {
+			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
+		}
 	}
 }
