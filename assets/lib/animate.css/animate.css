@@ -1,5 +1,6 @@
 .animated {
     animation-duration: 1s;
+    /* animation-fill-mode: both; Removed due to ui error  */
 }
 
 .animated.infinite {
