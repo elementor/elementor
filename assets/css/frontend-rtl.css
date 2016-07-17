@@ -1121,6 +1121,29 @@ ul.slick-dots {
 .slick-dots-inside.slick-dotted.slick-slider {
   margin-bottom: 0; }
 
+.animated {
+  animation-duration: 1.25s; }
+  .animated.animated-slow {
+    animation-duration: 2s; }
+  .animated.animated-fast {
+    animation-duration: .75s; }
+
+.animated.infinite {
+  animation-iteration-count: infinite; }
+
+/*
+.animated.hinge {
+	animation-duration: 2s;
+}
+
+
+.animated.flipOutX,
+.animated.flipOutY,
+.animated.bounceIn,
+.animated.bounceOut {
+	animation-duration: .75s;
+}
+*/
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone, body:not(.elementor-editor-active) .elementor-visible-tablet, body:not(.elementor-editor-active) .elementor-visible-desktop {
     display: none; } }
