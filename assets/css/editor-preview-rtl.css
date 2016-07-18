@@ -342,8 +342,8 @@ body.elementor-editor-active ul#elementor-select-preset-list {
     body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset svg {
       height: 50px; }
 body.elementor-editor-preview .elementor-element-overlay,
-body.elementor-editor-preview .elementor-editor-widget-settings
-.column-title,
+body.elementor-editor-preview .elementor-editor-widget-settings,
+body.elementor-editor-preview .column-title,
 body.elementor-editor-preview .elementor-empty,
 body.elementor-editor-preview #elementor-add-section,
 body.elementor-editor-preview .elementor-element-empty {

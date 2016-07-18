@@ -118,7 +118,8 @@ class Frontend {
 				'jquery-numerator',
 				'jquery-slick',
 			],
-			Plugin::instance()->get_version()
+			Plugin::instance()->get_version(),
+			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
 	}
@@ -144,7 +145,7 @@ class Frontend {
 
 		wp_register_style(
 			'animate.css',
-			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animations.min.css',
+			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animate' . $suffix . '.css',
 			[],
 			Plugin::instance()->get_version()
 		);

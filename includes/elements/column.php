@@ -203,7 +203,8 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
-			'animation',[
+			'animation',
+			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
@@ -211,6 +212,26 @@ class Element_Column extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'label_block' => true,
 				'section' => 'section_advanced',
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'tab' => self::TAB_ADVANCED,
+				'section' => 'section_advanced',
+				'condition' => [
+					'animation!' => '',
+				],
 			]
 		);
 

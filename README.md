@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.5.0  
+**Stable tag:** 0.5.2  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -150,6 +150,18 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.5.2 - 17.08.2016 ###
+* New! - Added Animation Duration control for all elements
+* New! - Added Prevent Scroll control from Google Maps widget
+
+### 0.5.1 - 14.07.2016 ###
+* Tweak! - Added details image sizes in Image Sizes control
+* Fixed! - Chrome bug with flex mode in Image Box widget 
+* Fixed! - Textarea control: set `label_block` to `true` by default
+* Fixed! - Textarea control style for Icon Box Widget
+* Fixed! - Removed translations from system-info for better understanding support 
+* Fixed! - Design fixes for Icon List widget
+
 ### 0.5.0 - 13.07.2016 ###
 * New! - Added more than 35 Entrance Animations to all elements
 * New! - Added Box Shadow control to all elements
@@ -163,7 +175,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Updated Font Awesome v4.6.3
 * Tweak! - Changed Textarea control markup according to the general concept
 * Tweak! - Fixed modal RTL style
-* Fixed! - Fade effect in Image Carousel widget
+* Fixed! - Fade effect in Image Carousel widget ([#245](https://github.com/pojome/elementor/issues/245), [#253](https://github.com/pojome/elementor/issues/253))
 * Fixed! - Don't print anything when no have link in Video widget
 
 ### 0.4.1 - 05.07.2016 ###
