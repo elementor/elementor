@@ -115,6 +115,20 @@ class Editor {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
+		// Hack for waypoint with editor mode.
+		wp_register_script(
+			'waypoints',
+			ELEMENTOR_ASSETS_URL . 'admin/js/lib/waypoints-for-editor.js',
+			[
+				'jquery',
+			],
+			'2.0.2',
+			true
+		);
+
+		// Enqueue frontend scripts too
+		Plugin::instance()->frontend->enqueue_scripts();
+
 		wp_register_script(
 			'backbone-marionette',
 			ELEMENTOR_ASSETS_URL . 'admin/js/lib/backbone.marionette' . $suffix . '.js',
@@ -247,20 +261,6 @@ class Editor {
 			true
 		);
 		wp_enqueue_script( 'elementor' );
-
-		// Hack for waypoint with editor mode.
-		wp_register_script(
-			'waypoints',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/waypoints-for-editor.js',
-			[
-				'jquery',
-			],
-			'2.0.2',
-			true
-		);
-
-		// Enqueue frontend scripts too
-		Plugin::instance()->frontend->enqueue_scripts();
 
 		$post_id = get_the_ID();
 
