@@ -4,6 +4,8 @@ body.layout-section .entry-content {
 
 #elementor .animated {
   animation-fill-mode: none !important; }
+#elementor .elementor-editor-element-settings-list {
+  word-break: normal; }
 
 html.elementor-html {
   margin-top: 0 !important; }
