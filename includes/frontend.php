@@ -118,7 +118,8 @@ class Frontend {
 				'jquery-numerator',
 				'jquery-slick',
 			],
-			Plugin::instance()->get_version()
+			Plugin::instance()->get_version(),
+			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
 	}
