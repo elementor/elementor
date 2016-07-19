@@ -214,6 +214,17 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'prefix_class' => 'elementor-animation-',
+			]
+		);
+
+		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,

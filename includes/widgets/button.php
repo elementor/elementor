@@ -163,34 +163,6 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		/*
-		$this->add_control(
-			'hover_animation',
-			[
-				'label' => __( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => __( 'None', 'elementor' ),
-					'grow' => __( 'Grow', 'elementor' ),
-					'shrink' => __( 'Shrink', 'elementor' ),
-					'pulse-grow' => __( 'Pulse Grow', 'elementor' ),
-					'pulse-shrink' => __( 'Pulse Shrink', 'elementor' ),
-					'push' => __( 'Push', 'elementor' ),
-					'pop' => __( 'Pop', 'elementor' ),
-					'rotate' => __( 'Rotate', 'elementor' ),
-					'grow-rotate' => __( 'Grow Rotate', 'elementor' ),
-					'float' => __( 'Float', 'elementor' ),
-					'sink' => __( 'Sink', 'elementor' ),
-					'hover' => __( 'Hover', 'elementor' ),
-					'wobble-vertical' => __( 'Wobble Vertical', 'elementor' ),
-					'wobble-horizontal' => __( 'Wobble Horizontal', 'elementor' ),
-					'buzz' => __( 'Buzz', 'elementor' ),
-				],
-				'default' => '',
-				'tab' => self::TAB_STYLE,
-			]
-		);*/
-
 		$this->add_control(
 			'view',
 			[
@@ -339,6 +311,17 @@ class Widget_Button extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'prefix_class' => 'elementor-animation-',
 			]
 		);
 	}

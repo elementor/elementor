@@ -309,6 +309,17 @@ class Widget_Icon extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+				'prefix_class' => 'elementor-animation-',
+			]
+		);
 	}
 
 	protected function render( $instance = [] ) {
