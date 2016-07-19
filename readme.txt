@@ -76,6 +76,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
+- [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -105,6 +106,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 * PHP version 5.6 or greater
 * MySQL version 5.6 or greater
 
+https://www.youtube.com/watch?v=Ypn6fltn_7s
+
 = Installation =
 
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
@@ -112,6 +115,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 3. Go to Pages > Add New
 4. Press the 'Edit with Elementor' button.
 5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
+
+For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 == Frequently Asked Questions ==
 
