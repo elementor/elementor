@@ -175,9 +175,6 @@ class Widget_Icon_list extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_text_style',
-				'default' => [
-					'size' => 0,
-				],
 				'range' => [
 					'px' => [
 						'max' => 50,
