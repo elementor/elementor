@@ -53,7 +53,7 @@ class Widget_Toggle extends Widget_Base {
 					[
 						'name' => 'tab_content',
 						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::TEXTAREA,
+						'type' => Controls_Manager::WYSIWYG,
 						'default' => __( 'Toggle Content', 'elementor' ),
 						'show_label' => false,
 					],
