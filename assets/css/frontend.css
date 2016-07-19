@@ -58,7 +58,8 @@
     max-width: none;
     top: 50%;
     left: 50%;
-    transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%); }
+  .elementor .elementor-html5-video {
     object-fit: cover; }
   .elementor .elementor-background-overlay {
     height: 100%;
