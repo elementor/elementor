@@ -178,7 +178,7 @@ App = Marionette.Application.extend( {
 				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! $target.parents( 'document' ).length ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! this.contains( $target[0] ) ) {
 				return;
 			}
 
@@ -3286,7 +3286,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onSettingsChanged: function( settings ) {
-		if ( this.model.get( 'settings' ) === settings ) {
+		if ( this.model.get( 'editSettings' ) !== settings ) {
 			elementor.setFlagEditorChange( true );
 		}
 

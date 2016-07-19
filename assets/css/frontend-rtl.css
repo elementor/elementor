@@ -463,7 +463,7 @@
     font-size: 13px; }
   .elementor-alert button.elementor-alert-dismiss {
     position: absolute;
-    right: 10px;
+    left: 10px;
     top: 10px;
     padding: 3px;
     font-size: 13px;
@@ -1146,13 +1146,13 @@ ul.slick-dots {
 }
 */
 @media (max-width: 767px) {
-  body:not(.elementor-editor-active) .elementor-hidden-phone, body:not(.elementor-editor-active) .elementor-visible-tablet, body:not(.elementor-editor-active) .elementor-visible-desktop {
+  body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
 @media (min-width: 480px) and (max-width: 1023px) {
-  body:not(.elementor-editor-active) .elementor-hidden-tablet, body:not(.elementor-editor-active) .elementor-visible-phone, body:not(.elementor-editor-active) .elementor-visible-desktop {
+  body:not(.elementor-editor-active) .elementor-hidden-tablet {
     display: none; } }
 @media (min-width: 1024px) {
-  body:not(.elementor-editor-active) .elementor-hidden-desktop, body:not(.elementor-editor-active) .elementor-visible-phone, body:not(.elementor-editor-active) .elementor-visible-tablet {
+  body:not(.elementor-editor-active) .elementor-hidden-desktop {
     display: none; } }
 body:not(.elementor-editor-active) .elementor-hidden {
   display: none; }
