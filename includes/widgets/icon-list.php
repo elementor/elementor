@@ -67,9 +67,6 @@ class Widget_Icon_list extends Widget_Base {
 						'label' => __( 'Link', 'elementor' ),
 						'type' => Controls_Manager::URL,
 						'label_block' => true,
-						'default' => [
-							'url' => '',
-						],
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
