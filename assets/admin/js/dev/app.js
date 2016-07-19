@@ -177,7 +177,7 @@ App = Marionette.Application.extend( {
 				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! $target.parents( 'document' ).length ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! this.contains( $target[0] ) ) {
 				return;
 			}
 
