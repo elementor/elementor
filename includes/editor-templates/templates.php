@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-templates-template-preview">
 				<i class="fa fa-search-plus"></i>
 			</div>
-			<button class="elementor-button elementor-button-success elementor-templates-template-insert">
+			<button class="elementor-templates-template-insert elementor-button elementor-button-success">
 				<i class="fa fa-download"></i>
 				<?php _e( 'Insert', 'elementor' ); ?>
 			</button>
