@@ -10,7 +10,12 @@ class Utils {
 	}
 
 	public static function get_edit_link( $post_id = 0 ) {
-		return add_query_arg( 'elementor', '', get_permalink( $post_id ) );
+		$edit_url = get_permalink( $post_id );
+
+		if ( is_ssl() )
+			$edit_url = str_replace( 'http', 'https' , $edit_url );
+
+		return add_query_arg( 'elementor', '', $edit_url );
 	}
 
 	public static function is_post_type_support( $post_id = 0 ) {
