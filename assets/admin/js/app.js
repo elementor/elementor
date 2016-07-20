@@ -978,17 +978,15 @@ TemplatesHeaderView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-header',
 
 	ui: {
-		searchInput: '#elementor-templates-header-search-area input'
+		closeModal: '#elementor-templates-header-close-modal'
 	},
 
 	events: {
-		'input @ui.searchInput': 'onSearchInputChange'
+		'click @ui.closeModal': 'onCloseModalClick'
 	},
 
-	onSearchInputChange: function() {
-		elementor.channels.templates
-		         .reply( 'filter:text', this.ui.searchInput.val() )
-		         .trigger( 'filter:change' );
+	onCloseModalClick: function() {
+		elementor.templates.getModal().hide();
 	}
 } );
 
@@ -1131,21 +1129,15 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-template',
 
 	ui: {
-		loadButton: '.elementor-templates-template-load',
-		deleteButton: '.elementor-templates-template-delete'
+		insertButton: '.elementor-templates-template-insert'
 	},
 
 	events: {
-		'click @ui.loadButton': 'onLoadButtonClick',
-		'click @ui.deleteButton': 'onDeleteButtonClick'
+		'click @ui.insertButton': 'onLoadButtonClick'
 	},
 
 	onLoadButtonClick: function() {
 		elementor.templates.importTemplate( this.model );
-	},
-
-	onDeleteButtonClick: function() {
-		elementor.templates.deleteTemplate( this.model );
 	}
 } );
 
