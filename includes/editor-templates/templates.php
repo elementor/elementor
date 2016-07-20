@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 	<div id="elementor-templates-header-menu-area">
 		<div id="elementor-templates-header-menu">
-			<div class="elementor-templates-menu-item"><?php _e( 'Pre Made Templates', 'elementor' ); ?></div>
-			<div class="elementor-templates-menu-item elementor-active"><?php _e( 'My Templates', 'elementor' ); ?></div>
+			<div id="elementor-templates-menu-pre-made-templates" class="elementor-templates-menu-item"><?php _e( 'Pre Made Templates', 'elementor' ); ?></div>
+			<div id="elementor-templates-menu-my-templates" class="elementor-templates-menu-item elementor-active"><?php _e( 'My Templates', 'elementor' ); ?></div>
 		</div>
 	</div>
 	<div id="elementor-templates-header-tools-area">
