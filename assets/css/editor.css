@@ -1800,6 +1800,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
   color: #6d7882;
   line-height: 1; }
 
+#elementor-templates-preview {
+  width: 100%;
+  height: 99%; }
+
 #elementor-templates-error-dialog .dialog-message {
   text-align: left; }
 
