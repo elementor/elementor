@@ -153,7 +153,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 0.5.2 - 17.08.2016 =
+= 0.5.2 - 17.07.2016 =
 * New! - Added Animation Duration control for all elements
 * New! - Added Prevent Scroll control from Google Maps widget
 
