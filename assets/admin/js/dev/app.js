@@ -81,7 +81,8 @@ App = Marionette.Application.extend( {
 				select2: require( 'elementor-views/controls/select2' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' )
+				animation: require( 'elementor-views/controls/animation' ),
+				hover_animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );
@@ -177,7 +178,7 @@ App = Marionette.Application.extend( {
 				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! $target.parent().length ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! this.contains( $target[0] ) ) {
 				return;
 			}
 

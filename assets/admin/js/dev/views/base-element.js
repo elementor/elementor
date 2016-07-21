@@ -186,7 +186,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onSettingsChanged: function( settings ) {
-		elementor.setFlagEditorChange( true );
+		if ( this.model.get( 'editSettings' ) !== settings ) {
+			elementor.setFlagEditorChange( true );
+		}
 
         this.renderStyles();
 		this.renderCustomClasses();
