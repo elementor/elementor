@@ -21,8 +21,8 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			}, this ),
 
 			width: 251
-		} ).wpColorPicker( 'instance' ).wrap
-			.find( '> .wp-picker-input-wrap > .wp-color-picker' )
+		} ).wpColorPicker( 'instance' )
+			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );
 	},
 
