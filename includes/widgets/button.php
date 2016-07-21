@@ -321,7 +321,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::HOVER_ANIMATION,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_hover',
-				'prefix_class' => 'elementor-animation-',
 			]
 		);
 	}
@@ -352,6 +351,10 @@ class Widget_Button extends Widget_Base {
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $instance['button_type'] );
 		}
 
+		if ( $instance['hover_animation'] ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		}
+
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
@@ -374,7 +377,7 @@ class Widget_Button extends Widget_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-button-wrapper elementor-align-<%- settings.align %>">
-			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %>" href="<%- settings.link.url %>">
+			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %> elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
 				<span class="elementor-button-content-wrapper">
 					<% if ( settings.icon ) { %>
 					<span class="elementor-button-icon elementor-align-icon-<%- settings.icon_align %>">
