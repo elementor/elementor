@@ -675,14 +675,12 @@
   padding: 0; }
 .elementor-widget-icon-list .elementor-icon-list-item {
   margin: 0;
-  padding: 0;
-  line-height: 1.5;
-  display: table; }
+  padding: 0; }
   .elementor-widget-icon-list .elementor-icon-list-item a {
-    display: table; }
+    display: inline; }
 .elementor-widget-icon-list .elementor-icon-list-icon,
 .elementor-widget-icon-list .elementor-icon-list-text {
-  display: table-cell;
+  display: inline;
   vertical-align: middle; }
 .elementor-widget-icon-list .elementor-icon-list-icon {
   width: 1em;
