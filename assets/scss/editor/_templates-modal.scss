@@ -1,12 +1,12 @@
 #elementor-templates-modal {
 
 	.dialog-widget-content {
-		width: 930px;
+		width: 990px;
 		background-color: $editor-background;
 	}
 
 	.dialog-widget-header {
-		padding: 20px;
+		padding: 0;
 		background-color: #fff;
 		box-shadow: $panel-bottom-shadow;
 	}
@@ -16,7 +16,9 @@
 	}
 
 	.dialog-message {
-		height: 590px;
+		height: 600px;
+		overflow: auto;
+		padding: 15px;
 	}
 }
 
@@ -33,10 +35,11 @@
 
 #elementor-templates-header-logo-area {
 	width: 20%;
-	text-align: left;
+	text-align: getStartDirection();
+	@include padding-start(15px);
 
 	> * {
-		float: left;
+		float: getStartDirection();
 	}
 }
 
@@ -53,45 +56,44 @@
 }
 
 #elementor-templates-header-menu-area {
-	width: 60%;
+	width: 70%;
 }
 
 #elementor-templates-header-menu {
-	display: table;
-	width: 100%;
-	table-layout: fixed;
+	text-align: center;
+}
 
-	.elementor-templates-menu-item {
-		display: table-cell;
-		vertical-align: middle;
+.elementor-templates-menu-item {
+	display: inline-block;
+	padding: 20px;
+	cursor: pointer;
+
+	&.elementor-active {
+		background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+		border-bottom: 3px solid #9b0a46;
 	}
 }
 
-#elementor-templates-header-search-area {
+#elementor-templates-header-tools-area {
 	width: 20%;
+}
+
+.elementor-templates-header-tool {
 	position: relative;
+	float: getEndDirection();
+	color: $editor-light;
+	@include border-start(2px solid $editor-background);
+	height: 55px;
+	width: 55px;
+	box-sizing: content-box;
+	cursor: pointer;
 
 	i {
 		position: absolute;
-		right: 0;
 		top: 50%;
-		transform: translateY(-50%);
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
 		font-size: 18px;
-		color: $editor-lighter;
-	}
-}
-
-#elementor-templates-header-search {
-	border: none;
-	outline: none;
-	position: relative;
-	z-index: 1;
-
-	&:focus {
-
-		+ i {
-			display: none;
-		}
 	}
 }
 
@@ -108,54 +110,81 @@
 
 #elementor-templates-templates-container {
 	overflow: hidden;
+}
 
-	.elementor-templates-template {
-		float: getStartDirection();
-		width: 20%;
-		padding: 0 15px;
-		margin: 15px 0;
-	}
+.elementor-templates-template {
+	float: getStartDirection();
+	width: 25%;
+	padding: 0 15px;
+	margin-top: 15px;
+}
 
-	.elementor-templates-template-body {
-		height: 200px;
-		border: 1px solid $editor-lighter;
-		padding: 1px;
-		position: relative;
+.elementor-templates-template-body {
+	height: 250px;
+	border: 3px solid #fff;
+	position: relative;
+	box-shadow: 0 1px 6px rgba(0,0,0,0.2);
 
-		&:not(:hover) {
+	&:not(:hover) {
 
-			.elementor-templates-template-controls {
-				display: none;
-			}
+		.elementor-templates-template-controls {
+			display: none;
 		}
 	}
+}
 
-	.elementor-templates-template-screenshot {
-		height: 100%;
-		background-size: cover;
-		background-position-x: 50%;
-	}
+.elementor-templates-template-screenshot {
+	height: 100%;
+	background-size: cover;
+	background-position-x: 50%;
+}
 
-	.elementor-templates-template-controls {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0,0,0,.5);
-	}
+.elementor-templates-template-controls {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,.65);
+}
 
-	.elementor-templates-template-name {
-		padding: 20px 0;
+.elementor-templates-template-preview {
+	position: relative;
+	height: 180px;
+
+	i {
 		font-size: 20px;
-		text-align: center;
-		color: #fff;
-	}
-
-	.elementor-templates-template-control {
-		color: #fff;
+		color: $editor-lightest;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
 		cursor: pointer;
 	}
+}
+
+.elementor-templates-template-insert {
+	font-size: 11px;
+	text-transform: uppercase;
+	padding: 11px;
+	width: 150px;
+
+	i {
+		@include padding-end(5px);
+	}
+}
+
+.elementor-templates-template-name {
+	padding-top: 8px;
+	font-size: 12px;
+	text-align: center;
+	color: $editor-dark;
+	line-height: 1;
+}
+
+#elementor-templates-preview {
+	width: 100%;
+	height: 99%;
 }
 
 #elementor-templates-error-dialog {

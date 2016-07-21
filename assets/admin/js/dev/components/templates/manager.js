@@ -20,6 +20,7 @@ TemplatesManager = function() {
 				item_id: templateModel.get( 'id' )
 			}
 		} );
+
 		templatesCollection.remove( templateModel );
 	};
 
@@ -35,7 +36,7 @@ TemplatesManager = function() {
 			success: function( data ) {
 				self.getModal().hide();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data.template );
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
 			error: function( data ) {
 				self.showErrorDialog( data.message );
@@ -95,6 +96,19 @@ TemplatesManager = function() {
 
 	this.showTemplates = function() {
 		layout.showTemplatesView( templatesCollection );
+	};
+
+	this.showTemplatePreview = function( templateModel ) {
+		layout.showLoadingView();
+
+		elementor.ajax.send( 'get_template_url', {
+			data: {
+				id: templateModel.get( 'id' )
+			},
+			success: function( data ) {
+				layout.showPreviewView( data );
+			}
+		} );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {

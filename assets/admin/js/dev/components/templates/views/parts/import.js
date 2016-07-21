@@ -16,12 +16,19 @@ TemplatesImportView = Marionette.ItemView.extend( {
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
+		elementor.templates.getLayout().showLoadingView();
+
 		elementor.ajax.send( 'import_template', {
 			data: new FormData( this.ui.uploadForm[ 0 ] ),
 			processData: false,
 			contentType: false,
-			success: function( response ) {
-				console.log( response );
+			success: function( data ) {
+				elementor.templates.getTemplatesCollection().add( data.item );
+
+				elementor.templates.showTemplates();
+			},
+			error: function( data ) {
+				elementor.templates.showErrorDialog( data.message );
 			}
 		} );
 	}

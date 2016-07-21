@@ -23,10 +23,12 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 			type: 'local'
 		} );
 
+		elementor.templates.getLayout().showLoadingView();
+
 		elementor.ajax.send( 'save_template', {
 			data: formData,
 			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data.item );
+				elementor.templates.getTemplatesCollection().add( data );
 
 				elementor.templates.showTemplates();
 			},
