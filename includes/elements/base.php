@@ -154,7 +154,7 @@ abstract class Element_Base {
 		];
 
 		$args['name'] = $id;
-		$args = wp_parse_args( $args, $default_args );
+		$args = array_merge( $default_args, $args );
 
 		if ( isset( $this->_controls[ $id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
@@ -167,7 +167,7 @@ abstract class Element_Base {
 		}
 		$this->_tabs_controls[ $args['tab'] ] = $available_tabs[ $args['tab'] ];
 
-		$this->_controls[ $id ] = wp_parse_args( $args, $default_args );
+		$this->_controls[ $id ] = array_merge( $default_args, $args );
 		return true;
 	}
 
