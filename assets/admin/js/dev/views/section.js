@@ -219,12 +219,6 @@ SectionView = BaseElementView.extend( {
 		nextChildView.changeSizeUI();
 	},
 
-	onSettingsChanged: function() {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		this.render();
-	},
-
 	onStructureChanged: function() {
 		this.redefineLayout();
 	}
