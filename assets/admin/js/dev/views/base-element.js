@@ -187,6 +187,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	onSettingsChanged: function( settings ) {
 		if ( this.model.get( 'editSettings' ) !== settings ) {
+			// Change flag only if server settings was changed
 			elementor.setFlagEditorChange( true );
 		}
 
