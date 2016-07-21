@@ -12,30 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 	<div id="elementor-templates-header-menu-area">
 		<div id="elementor-templates-header-menu">
-			<div class="elementor-templates-menu-item">
-				<span class="elementor-templates-menu-item-title"><?php _e( 'All', 'elementor' ); ?></span>
-			</div>
-			<div class="elementor-templates-menu-item">
-				<span class="elementor-templates-menu-item-title"><?php _e( 'My Templates', 'elementor' ); ?></span>
-				<i class="fa fa-chevron-down"></i>
-			</div>
-			<div class="elementor-templates-menu-item">
-				<span class="elementor-templates-menu-item-title"><?php _e( 'Category', 'elementor' ); ?></span>
-				<i class="fa fa-chevron-down"></i>
-			</div>
-			<div class="elementor-templates-menu-item">
-				<span class="elementor-templates-menu-item-title"><?php _e( 'Page', 'elementor' ); ?></span>
-				<i class="fa fa-chevron-down"></i>
-			</div>
-			<div class="elementor-templates-menu-item">
-				<span class="elementor-templates-menu-item-title"><?php _e( 'Sort By', 'elementor' ); ?></span>
-				<i class="fa fa-chevron-down"></i>
-			</div>
+			<div id="elementor-templates-menu-pre-made-templates" class="elementor-templates-menu-item"><?php _e( 'Pre Made Templates', 'elementor' ); ?></div>
+			<div id="elementor-templates-menu-my-templates" class="elementor-templates-menu-item elementor-active"><?php _e( 'My Templates', 'elementor' ); ?></div>
 		</div>
 	</div>
-	<div id="elementor-templates-header-search-area">
-		<input id="elementor-templates-header-search" type="search">
-		<i class="fa fa-search"></i>
+	<div id="elementor-templates-header-tools-area">
+		<div id="elementor-templates-header-close-modal" class="elementor-templates-header-tool" title="<?php _e( 'Close', 'elementor' ); ?>">
+			<i class="fa fa-times"></i>
+		</div>
+		<div id="elementor-templates-header-settings" class="elementor-templates-header-tool" title="<?php _e( 'Settings', 'elementor' ); ?>">
+			<i class="fa fa-cog"></i>
+		</div>
 	</div>
 </script>
 
@@ -47,13 +34,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-templates-template-body">
 		<div class="elementor-templates-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>
 		<div class="elementor-templates-template-controls">
-			<div class="elementor-templates-template-name"><%= title %></div>
-			<div class="elementor-templates-template-delete elementor-templates-template-control"><?php _e( 'Delete', 'elementor' ); ?></div>
-			<div class="elementor-templates-template-load elementor-templates-template-control"><?php _e( 'Load', 'elementor' ); ?></div>
-
-			<a target="_blank" href="<%= export_link %>"><?php _e( 'Export', 'elementor' ); ?></a>
+			<div class="elementor-templates-template-preview">
+				<i class="fa fa-search-plus"></i>
+			</div>
+			<button class="elementor-templates-template-insert elementor-button elementor-button-success">
+				<i class="fa fa-download"></i>
+				<?php _e( 'Insert', 'elementor' ); ?>
+			</button>
 		</div>
 	</div>
+	<div class="elementor-templates-template-name"><%= title %></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-save-template">

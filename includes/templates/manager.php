@@ -118,6 +118,14 @@ class Manager {
 		return $type->get_template( $_POST['item_id'] );
 	}
 
+	public function get_template_url() {
+		if ( empty( $_POST['id'] ) ) {
+			return new \WP_Error( 'template_error', 'Template `id` was not specified.' );
+		}
+
+		return get_post_permalink( $_POST['id'] );
+	}
+
 	public function delete_template() {
 		if ( empty( $_POST['type'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
@@ -235,6 +243,7 @@ class Manager {
 		$allowed_ajax_requests = [
 			'get_templates',
 			'get_template',
+			'get_template_url',
 			'save_template',
 			'delete_template',
 			'export_template',

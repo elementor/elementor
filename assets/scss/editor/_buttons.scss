@@ -7,6 +7,7 @@
 	cursor: pointer;
 	border-radius: 3px;
 	transition: $transition-hover;
+	outline: none;
 
 	&:not(.elementor-button-state) {
 

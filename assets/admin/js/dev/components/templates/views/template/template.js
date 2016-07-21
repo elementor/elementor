@@ -6,21 +6,21 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-template',
 
 	ui: {
-		loadButton: '.elementor-templates-template-load',
-		deleteButton: '.elementor-templates-template-delete'
+		insertButton: '.elementor-templates-template-insert',
+		previewButton: '.elementor-templates-template-preview'
 	},
 
 	events: {
-		'click @ui.loadButton': 'onLoadButtonClick',
-		'click @ui.deleteButton': 'onDeleteButtonClick'
+		'click @ui.insertButton': 'onLoadButtonClick',
+		'click @ui.previewButton': 'onPreviewButtonClick'
 	},
 
 	onLoadButtonClick: function() {
 		elementor.templates.importTemplate( this.model );
 	},
 
-	onDeleteButtonClick: function() {
-		elementor.templates.deleteTemplate( this.model );
+	onPreviewButtonClick: function() {
+		elementor.templates.showTemplatePreview( this.model );
 	}
 } );
 
