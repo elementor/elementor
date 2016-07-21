@@ -177,9 +177,10 @@ App = Marionette.Application.extend( {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
 				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! this.contains( $target[0] ) ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -3288,6 +3289,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	onSettingsChanged: function( settings ) {
 		if ( this.model.get( 'editSettings' ) !== settings ) {
+			// Change flag only if server settings was changed
 			elementor.setFlagEditorChange( true );
 		}
 
@@ -4003,8 +4005,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			}, this ),
 
 			width: 251
-		} ).wpColorPicker( 'instance' )
-			.wrap
+		} ).wpColorPicker( 'instance' ).wrap
 			.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );
 	},
