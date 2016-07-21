@@ -179,7 +179,6 @@ class Widget_Image extends Widget_Base {
 				'type' => Controls_Manager::HOVER_ANIMATION,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_image',
-				'prefix_class' => 'elementor-animation-',
 			]
 		);
 
