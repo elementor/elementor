@@ -742,7 +742,7 @@ class Element_Section extends Element_Base {
 						<?php if ( $video_id ) : ?>
 							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
 						<?php else : ?>
-							<video class="elementor-background-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
+							<video class="elementor-background-video elementor-html5-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
 				<?php endif;

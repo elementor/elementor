@@ -56,7 +56,7 @@ class Widget_Tabs extends Widget_Base {
 						'label' => __( 'Content', 'elementor' ),
 						'default' => __( 'Tab Content', 'elementor' ),
 						'placeholder' => __( 'Tab Content', 'elementor' ),
-						'type' => Controls_Manager::TEXTAREA,
+						'type' => Controls_Manager::WYSIWYG,
 						'show_label' => false,
 					],
 				],

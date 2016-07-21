@@ -82,7 +82,8 @@ App = Marionette.Application.extend( {
 				select2: require( 'elementor-views/controls/select2' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' )
+				animation: require( 'elementor-views/controls/animation' ),
+				hover_animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );
@@ -176,9 +177,10 @@ App = Marionette.Application.extend( {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
 				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -3286,7 +3288,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onSettingsChanged: function( settings ) {
-		elementor.setFlagEditorChange( true );
+		if ( this.model.get( 'editSettings' ) !== settings ) {
+			// Change flag only if server settings was changed
+			elementor.setFlagEditorChange( true );
+		}
 
         this.renderStyles();
 		this.renderCustomClasses();
@@ -4000,7 +4005,9 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			}, this ),
 
 			width: 251
-		} );
+		} ).wpColorPicker( 'instance' )
+			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
+			.removeAttr( 'maxlength' );
 	},
 
 	onBeforeDestroy: function() {
@@ -4601,7 +4608,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
-		this.render();
+		this.setTitle();
 	},
 
 	setTitle: function() {
