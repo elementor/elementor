@@ -175,7 +175,7 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
-				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
+				editMode = elementor.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
@@ -215,7 +215,7 @@ App = Marionette.Application.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' === activeMode ) {
 			this.enterPreviewMode();
