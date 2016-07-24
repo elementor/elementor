@@ -153,18 +153,22 @@ body.elementor-editor-active #elementor {
       margin-right: 5px; }
   body.elementor-editor-active #elementor .elementor-editor-widget-settings {
     z-index: 2;
-    top: -1px;
-    right: -1px; }
-    body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-settings-list {
-      background-color: #71d7f7; }
+    top: 2px;
+    left: 2px; }
     body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting {
       width: 24px; }
       body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting:not(:last-child) {
-        border-left: 1px solid #fff; }
+        padding-left: 2px; }
       body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting > a {
-        padding: 5.5px 0; }
+        background-color: #71d7f7;
+        font-size: 10px;
+        padding: 6px 8px; }
         body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting > a:hover {
-          background-color: #9be7ff; }
+          background-color: #41c9f4; }
+      body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting.elementor-editor-element-remove .fa {
+        color: #ffffff; }
+      body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting.elementor-editor-element-remove:hover .fa {
+        color: #f00; }
   @media (max-width: 1023px) {
     body.elementor-editor-active #elementor .elementor-editor-element-setting:not(.elementor-editor-element-edit) {
       display: none; } }

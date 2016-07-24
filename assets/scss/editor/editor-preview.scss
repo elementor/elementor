@@ -234,6 +234,7 @@ body {
 						display: inline-block;
 						width: 100%;
 						font-size: 11px;
+						line-height: 1;
 						color: #fff;
 					}
 				}
@@ -312,25 +313,37 @@ body {
 			// Widget - Overlay Settings
 			.elementor-editor-widget-settings {
 				z-index: $second-layer;
-				top: -1px;
-				right: -1px;
-
-				.elementor-editor-element-settings-list {
-					background-color: $editor-info;
-				}
+				top: 2px;
+				@include end(2px);
 
 				.elementor-editor-element-setting {
 					width: 24px;
 
 					&:not(:last-child) {
-						@include border-end(1px solid #fff);
+						@include padding-end(2px);
 					}
 
 					> a {
-						padding: 5.5px 0;
+						background-color: $editor-info;
+						font-size: 10px;
+						padding: 6px 8px;
 
 						&:hover {
-							background-color: #9be7ff;
+							background-color: darken( $editor-info, 10% );
+						}
+					}
+
+					&.elementor-editor-element-remove {
+
+						.fa {
+							color: #ffffff;
+						}
+
+						&:hover {
+
+							.fa {
+								color: $editor-danger;
+							}
 						}
 					}
 				}
