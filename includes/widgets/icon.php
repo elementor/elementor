@@ -317,7 +317,6 @@ class Widget_Icon extends Widget_Base {
 				'type' => Controls_Manager::HOVER_ANIMATION,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_hover',
-				'prefix_class' => 'elementor-animation-',
 			]
 		);
 	}
@@ -326,6 +325,10 @@ class Widget_Icon extends Widget_Base {
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
 		$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
+
+		if ( ! empty( $instance['hover_animation'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		}
 
 		if ( ! empty( $instance['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
@@ -364,7 +367,7 @@ class Widget_Icon extends Widget_Base {
 			<% if ( hasLink ) { %>
 			<a class="elementor-icon-link" href="<%- settings.link.url %>">
 				<% } %>
-				<div class="elementor-icon">
+				<div class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
 					<i class="<%- settings.icon %>"></i>
 				</div>
 				<% if ( hasLink ) { %>

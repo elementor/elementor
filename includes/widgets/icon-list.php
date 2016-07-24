@@ -223,7 +223,7 @@ class Widget_Icon_list extends Widget_Base {
 			<?php foreach ( $instance['icon_list'] as $item ) : ?>
 				<li class="elementor-icon-list-item" >
 					<?php
-					if ( $item['link']['url'] ) {
+					if ( ! empty( $item['link']['url'] ) ) {
 						$target = $item['link']['is_external'] ? ' target="_blank"' : '';
 
 						echo '<a href="' . $item['link']['url'] . '"' . $target . '>';
@@ -236,7 +236,7 @@ class Widget_Icon_list extends Widget_Base {
 					<?php endif; ?>
 					<span class="elementor-icon-list-text"><?php echo $item['text']; ?></span>
 					<?php
-					if ( $item['link']['url'] ) {
+					if ( ! empty( $item['link']['url'] ) ) {
 						echo '</a>';
 					}
 					?>

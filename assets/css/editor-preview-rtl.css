@@ -121,6 +121,7 @@ body.elementor-editor-active #elementor {
         display: inline-block;
         width: 100%;
         font-size: 11px;
+        line-height: 1;
         color: #fff; }
     body.elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-remove .fa {
       color: #f00; }

@@ -53,7 +53,7 @@ class Widget_Accordion extends Widget_Base {
 					[
 						'name' => 'tab_content',
 						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
+						'type' => Controls_Manager::TEXTAREA,
 						'default' => __( 'Accordion Content', 'elementor' ),
 						'show_label' => false,
 					],
