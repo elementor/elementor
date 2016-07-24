@@ -81,7 +81,8 @@ App = Marionette.Application.extend( {
 				select2: require( 'elementor-views/controls/select2' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' )
+				animation: require( 'elementor-views/controls/animation' ),
+				hover_animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );
@@ -175,9 +176,10 @@ App = Marionette.Application.extend( {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
 				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 

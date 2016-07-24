@@ -163,34 +163,6 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		/*
-		$this->add_control(
-			'hover_animation',
-			[
-				'label' => __( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => __( 'None', 'elementor' ),
-					'grow' => __( 'Grow', 'elementor' ),
-					'shrink' => __( 'Shrink', 'elementor' ),
-					'pulse-grow' => __( 'Pulse Grow', 'elementor' ),
-					'pulse-shrink' => __( 'Pulse Shrink', 'elementor' ),
-					'push' => __( 'Push', 'elementor' ),
-					'pop' => __( 'Pop', 'elementor' ),
-					'rotate' => __( 'Rotate', 'elementor' ),
-					'grow-rotate' => __( 'Grow Rotate', 'elementor' ),
-					'float' => __( 'Float', 'elementor' ),
-					'sink' => __( 'Sink', 'elementor' ),
-					'hover' => __( 'Hover', 'elementor' ),
-					'wobble-vertical' => __( 'Wobble Vertical', 'elementor' ),
-					'wobble-horizontal' => __( 'Wobble Horizontal', 'elementor' ),
-					'buzz' => __( 'Buzz', 'elementor' ),
-				],
-				'default' => '',
-				'tab' => self::TAB_STYLE,
-			]
-		);*/
-
 		$this->add_control(
 			'view',
 			[
@@ -241,7 +213,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'alpha' => true,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style',
 				'scheme' => [
@@ -322,7 +293,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'alpha' => true,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
@@ -341,6 +311,16 @@ class Widget_Button extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
 			]
 		);
 	}
@@ -371,6 +351,10 @@ class Widget_Button extends Widget_Base {
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $instance['button_type'] );
 		}
 
+		if ( $instance['hover_animation'] ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		}
+
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
@@ -393,7 +377,7 @@ class Widget_Button extends Widget_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-button-wrapper elementor-align-<%- settings.align %>">
-			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %>" href="<%- settings.link.url %>">
+			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %> elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
 				<span class="elementor-button-content-wrapper">
 					<% if ( settings.icon ) { %>
 					<span class="elementor-button-icon elementor-align-icon-<%- settings.icon_align %>">
