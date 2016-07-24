@@ -4,7 +4,7 @@ var EditModeItemView = require( 'elementor-layouts/edit-mode' ),
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
-	className: 'elementor-panel-inner',
+	id: 'elementor-panel-inner',
 
 	regions: {
 		content: '#elementor-panel-content-wrapper',
