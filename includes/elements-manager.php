@@ -8,12 +8,15 @@ class Elements_Manager {
 	/**
 	 * @var Element_Base[]
 	 */
-	protected $_register_elements = [];
+	protected $_register_elements = null;
 
-	public function init() {
-		include( ELEMENTOR_PATH . 'includes/elements/base.php' );
+	private function _init_elements() {
+		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
+
 		include( ELEMENTOR_PATH . 'includes/elements/column.php' );
 		include( ELEMENTOR_PATH . 'includes/elements/section.php' );
+
+		$this->_register_elements = [];
 
 		$this->register_element( __NAMESPACE__ . '\Element_Column' );
 		$this->register_element( __NAMESPACE__ . '\Element_Section' );
@@ -64,6 +67,9 @@ class Elements_Manager {
 	}
 
 	public function get_register_elements() {
+		if ( is_null( $this->_register_elements ) ) {
+			$this->_init_elements();
+		}
 		return $this->_register_elements;
 	}
 
@@ -105,8 +111,6 @@ class Elements_Manager {
 	}
 
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
-
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 }

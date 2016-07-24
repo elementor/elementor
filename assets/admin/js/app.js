@@ -3100,7 +3100,8 @@ Schemes = function() {
 module.exports = new Schemes();
 
 },{}],44:[function(require,module,exports){
-var BaseElementView;
+var BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
@@ -3134,6 +3135,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	events: function() {
 		return _.extend( {}, this.baseEvents, this.elementEvents );
+	},
+
+	getTemplateType: function() {
+		return 'remote';
 	},
 
 	initialize: function() {
@@ -3296,6 +3301,32 @@ BaseElementView = Marionette.CompositeView.extend( {
         this.renderStyles();
 		this.renderCustomClasses();
 		this.enqueueFonts();
+
+		// Make sure is correct model
+		if ( settings instanceof BaseSettingsModel ) {
+			var isContentChanged = false;
+
+			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+					isContentChanged = true;
+				}
+			} );
+
+			if ( ! isContentChanged ) {
+				return;
+			}
+		}
+
+		// Re-render the template
+		switch ( this.getTemplateType() ) {
+			case 'js' :
+				this.model.setHtmlCache();
+				this.render();
+				break;
+
+			default :
+				this.model.renderRemoteServer();
+		}
 	},
 
 	onClickRemove: function( event ) {
@@ -3308,7 +3339,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 module.exports = BaseElementView;
 
-},{}],45:[function(require,module,exports){
+},{"elementor-models/base-settings":32}],45:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
 	WidgetView = require( 'elementor-views/widget' ),
@@ -5393,12 +5424,6 @@ SectionView = BaseElementView.extend( {
 		nextChildView.changeSizeUI();
 	},
 
-	onSettingsChanged: function() {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		this.render();
-	},
-
 	onStructureChanged: function() {
 		this.redefineLayout();
 	}
@@ -5565,7 +5590,6 @@ module.exports = SectionsCollectionView;
 
 },{"elementor-behaviors/duplicate":2,"elementor-behaviors/elements-relation":3,"elementor-behaviors/handle-duplicate":4,"elementor-behaviors/sortable":8,"elementor-views/section":69}],71:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
-	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetView;
 
 WidgetView = BaseElementView.extend( {
@@ -5656,35 +5680,6 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	onSettingsChanged: function( settings ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false;
-
-			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-					isContentChanged = true;
-				}
-			} );
-
-			if ( ! isContentChanged ) {
-				return;
-			}
-		}
-
-		switch ( this.getTemplateType() ) {
-			case 'js' :
-				this.model.setHtmlCache();
-				this.render();
-				break;
-
-			default :
-				this.model.renderRemoteServer();
-		}
-	},
-
 	attachElContent: function( html ) {
 		var htmlCache = this.model.getHtmlCache();
 
@@ -5732,5 +5727,5 @@ WidgetView = BaseElementView.extend( {
 
 module.exports = WidgetView;
 
-},{"elementor-behaviors/handle-edit-mode":5,"elementor-behaviors/handle-editor":6,"elementor-models/base-settings":32,"elementor-views/base-element":44}]},{},[1])
+},{"elementor-behaviors/handle-edit-mode":5,"elementor-behaviors/handle-editor":6,"elementor-views/base-element":44}]},{},[1])
 //# sourceMappingURL=app.js.map
