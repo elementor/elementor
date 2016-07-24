@@ -166,10 +166,12 @@ body.elementor-editor-active #elementor {
         padding: 6px 8px; }
         body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting > a:hover {
           background-color: #41c9f4; }
-      body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting.elementor-editor-element-remove .fa {
-        color: #ffffff; }
-      body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-setting.elementor-editor-element-remove:hover .fa {
-        color: #f00; }
+    body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-remove .fa {
+      color: #ffffff; }
+    body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-remove:hover .fa {
+      color: #f00; }
+    body.elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-edit a {
+      cursor: move; }
   @media (max-width: 1023px) {
     body.elementor-editor-active #elementor .elementor-editor-element-setting:not(.elementor-editor-element-edit) {
       display: none; } }

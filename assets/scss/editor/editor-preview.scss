@@ -332,19 +332,26 @@ body {
 							background-color: darken( $editor-info, 10% );
 						}
 					}
+				}
 
-					&.elementor-editor-element-remove {
+				.elementor-editor-element-remove {
+
+					.fa {
+						color: #ffffff;
+					}
+
+					&:hover {
 
 						.fa {
-							color: #ffffff;
+							color: $editor-danger;
 						}
+					}
+				}
 
-						&:hover {
+				.elementor-editor-element-edit {
 
-							.fa {
-								color: $editor-danger;
-							}
-						}
+					a {
+						cursor: move;
 					}
 				}
 			}
