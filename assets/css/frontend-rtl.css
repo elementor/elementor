@@ -546,7 +546,7 @@
   .elementor-tabs .elementor-tabs-wrapper {
     overflow: hidden; }
     .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title {
-      display: inline-block; }
+      display: table-cell; }
       .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title > span {
         position: relative;
         display: block;
