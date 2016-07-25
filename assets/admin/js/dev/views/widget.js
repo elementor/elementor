@@ -1,5 +1,4 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
-	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetView;
 
 WidgetView = BaseElementView.extend( {
@@ -88,35 +87,6 @@ WidgetView = BaseElementView.extend( {
 
 		this.$el.removeClass( 'elementor-loading' );
 		this.render();
-	},
-
-	onSettingsChanged: function( settings ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false;
-
-			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-					isContentChanged = true;
-				}
-			} );
-
-			if ( ! isContentChanged ) {
-				return;
-			}
-		}
-
-		switch ( this.getTemplateType() ) {
-			case 'js' :
-				this.model.setHtmlCache();
-				this.render();
-				break;
-
-			default :
-				this.model.renderRemoteServer();
-		}
 	},
 
 	attachElContent: function( html ) {

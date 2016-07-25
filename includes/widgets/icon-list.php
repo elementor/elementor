@@ -67,9 +67,6 @@ class Widget_Icon_list extends Widget_Base {
 						'label' => __( 'Link', 'elementor' ),
 						'type' => Controls_Manager::URL,
 						'label_block' => true,
-						'default' => [
-							'url' => '',
-						],
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
@@ -178,9 +175,6 @@ class Widget_Icon_list extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_text_style',
-				'default' => [
-					'size' => 0,
-				],
 				'range' => [
 					'px' => [
 						'max' => 50,
@@ -230,17 +224,19 @@ class Widget_Icon_list extends Widget_Base {
 				<li class="elementor-icon-list-item" >
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
-						echo '<a href="' . $item['link']['url'] . '">';
+						$target = $item['link']['is_external'] ? ' target="_blank"' : '';
+
+						echo '<a href="' . $item['link']['url'] . '"' . $target . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) ) : ?>
+					if ( $item['icon'] ) : ?>
 						<span class="elementor-icon-list-icon">
 							<i class="<?php echo esc_attr( $item['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>
 					<span class="elementor-icon-list-text"><?php echo $item['text']; ?></span>
 					<?php
-					if ( ! empty( $item['link'] ) ) {
+					if ( ! empty( $item['link']['url'] ) ) {
 						echo '</a>';
 					}
 					?>
@@ -258,14 +254,14 @@ class Widget_Icon_list extends Widget_Base {
 			if ( settings.icon_list ) {
 				_.each( settings.icon_list, function( item ) { %>
 					<li class="elementor-icon-list-item">
-						<% if ( item.link && '' !== item.link.url ) { %>
+						<% if ( item.link && item.link.url ) { %>
 							<a href="<%- item.link.url %>">
 						<% } %>
 						<span class="elementor-icon-list-icon">
 							<i class="<%- item.icon %>"></i>
 						</span>
 						<span class="elementor-icon-list-text"><%= item.text %></span>
-						<% if ( item.link && '' !== item.link.url ) { %>
+						<% if ( item.link && item.link.url ) { %>
 							</a>
 						<% } %>
 					</li>
