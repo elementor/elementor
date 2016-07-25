@@ -28,10 +28,10 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChange: function() {
-		var oldEditMode = elementor.dataEditMode.request( 'get:active:mode' ),
+		var oldEditMode = elementor.dataEditMode.request( 'activeMode' ),
 			currentMode = this.getCurrentMode();
 
-		elementor.dataEditMode.reply( 'get:active:mode', currentMode );
+		elementor.dataEditMode.reply( 'activeMode', currentMode );
 
 		if ( currentMode !== oldEditMode ) {
 			elementor.dataEditMode.trigger( 'switch' );

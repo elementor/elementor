@@ -76,6 +76,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
+- [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR) - in progress
@@ -157,7 +158,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ### 0.5.2 - 17.07.2016 ###
 * New! - Added Animation Duration control for all elements
-* New! - Added Prevent Scroll control from Google Maps widget
+* New! - Added Prevent Scroll control for Google Maps widget
 
 ### 0.5.1 - 14.07.2016 ###
 * Tweak! - Added details image sizes in Image Sizes control

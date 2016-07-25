@@ -142,7 +142,8 @@
 
 .elementor-widget-wrap {
   position: relative;
-  width: 100%; }
+  width: 100%;
+  z-index: 1; }
 
 .elementor-widget {
   position: relative; }
@@ -913,7 +914,7 @@
 .elementor-widget.elementor-shape-circle .elementor-icon.elementor-social-icon {
   border-radius: 50%; }
 
-.elementor-page .elementor-widget-menu-anchor {
+body.elementor-page .elementor-widget-menu-anchor {
   margin-bottom: 0; }
 
 .slick-slider {
