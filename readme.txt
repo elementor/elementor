@@ -159,14 +159,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Added smooth scrolling for anchors in Anchor Menu widget
 * Tweak! - Improved performance
 * Tweak! - Improved speed in live editing
-* Tweak! - Optimization for memory usage
+* Tweak! - Optimization for memory usage (30% less!)
 * Tweak! - Improved UI for preview editor
 * Tweak! - Add `contain` background image CSS option ([#297](https://github.com/pojome/elementor/pull/297))
 * Tweak! - Added compatibility for NextGen Gallery plugin ([#296](https://github.com/pojome/elementor/issues/296))
-* Tweak! - Enqueue scripts in footer
+* Tweak! - Print JS scripts in the footer
 * Tweak! - Set color picker control `alpha` for all widgets
 * Fixed! - Remove `maxlength` attribute from color picker input ([#298](https://github.com/pojome/elementor/issues/298))
-* Fixed! - Background video HTML5 set object-fit only HTML5 player (solved Safari YouTube issue)
+* Fixed! - Background video: Set object-fit only HTML5 player (solved Safari YouTube issue)
 * Fixed! - Bug with target blank link in Icon List widget
 * Fixed! - Bug with alignment in Icon List widget ([#283](https://github.com/pojome/elementor/issues/283))
 * Fixed! - Improved responsive in Tabs widget ([#279](https://github.com/pojome/elementor/issues/279))
