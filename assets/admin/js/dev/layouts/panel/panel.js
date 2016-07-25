@@ -123,7 +123,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( this.updateScrollbar );
+		_.defer( _.bind( this.updateScrollbar, this ) );
 	},
 
 	onEditorEmpty: function() {
