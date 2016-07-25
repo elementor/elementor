@@ -176,7 +176,7 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
-				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
+				editMode = elementor.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
@@ -210,13 +210,15 @@ App = Marionette.Application.extend( {
 		    .children( 'body' )
 		    .addClass( 'elementor-editor-active' );
 
+		this.setResizablePanel();
+
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		this.introduction.startOnLoadIntroduction();
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' === activeMode ) {
 			this.enterPreviewMode();
@@ -258,12 +260,44 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	setResizablePanel: function() {
+		var self = this,
+			side = elementor.config.is_rtl ? 'right' : 'left';
+
+		self.panel.$el.resizable( {
+			handles: elementor.config.is_rtl ? 'w' : 'e',
+			minWidth: 200,
+			maxWidth: 500,
+			start: function() {
+				self.$previewWrapper
+					.addClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', 'none' );
+			},
+			stop: function() {
+				self.$previewWrapper
+					.removeClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', '' );
+
+				elementor.data.trigger( 'scrollbar:update' );
+			},
+			resize: function( event, ui ) {
+				self.$previewWrapper
+					.css( side, ui.size.width );
+			}
+		} );
+	},
+
 	enterPreviewMode: function() {
 		this.$previewContents
 		    .find( 'body' )
 		    .add( 'body' )
 		    .removeClass( 'elementor-editor-active' )
 		    .addClass( 'elementor-editor-preview' );
+
+		// Handle panel resize
+		this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+
+		this.panel.$el.css( 'width', '' );
 	},
 
 	exitPreviewMode: function() {
@@ -426,7 +460,7 @@ HandleEditModeBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		this.view.$el.toggleClass( 'elementor-active-mode', 'preview' !== activeMode );
 	},
@@ -444,7 +478,7 @@ var HandleEditorBehavior;
 HandleEditorBehavior = Marionette.Behavior.extend( {
 
 	onClickEdit: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' === activeMode ) {
 			return;
@@ -519,7 +553,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();
@@ -588,7 +622,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();
@@ -816,10 +850,10 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChange: function() {
-		var oldEditMode = elementor.dataEditMode.request( 'get:active:mode' ),
+		var oldEditMode = elementor.dataEditMode.request( 'activeMode' ),
 			currentMode = this.getCurrentMode();
 
-		elementor.dataEditMode.reply( 'get:active:mode', currentMode );
+		elementor.dataEditMode.reply( 'activeMode', currentMode );
 
 		if ( currentMode !== oldEditMode ) {
 			elementor.dataEditMode.trigger( 'switch' );
@@ -1924,7 +1958,7 @@ var EditModeItemView = require( 'elementor-layouts/edit-mode' ),
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
-	className: 'elementor-panel-inner',
+	id: 'elementor-panel-inner',
 
 	regions: {
 		content: '#elementor-panel-content-wrapper',
@@ -2043,7 +2077,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( this.updateScrollbar );
+		_.defer( _.bind( this.updateScrollbar, this ) );
 	},
 
 	onEditorEmpty: function() {
@@ -2051,7 +2085,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateScrollbar: function() {
-		var $panel = Backbone.$( '#elementor-panel-content-wrapper' );
+		var $panel = this.content.$el;
+
 		if ( ! this._isScrollbarInitialized ) {
 			$panel.perfectScrollbar();
 			this._isScrollbarInitialized = true;
