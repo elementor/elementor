@@ -103,7 +103,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 			elTopOffset = this.$el.offset().top,
 			elTopOffsetRange = sectionHandleHeight - elTopOffset;
 
-		if ( elTopOffsetRange > 0 ) {
+		if ( 0 < elTopOffsetRange ) {
 			this.$el.css( 'margin-top', elTopOffsetRange );
 		}
 	},
