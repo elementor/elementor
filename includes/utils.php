@@ -15,6 +15,10 @@ class Utils {
 		if ( is_ssl() )
 			$edit_url = str_replace( 'http', 'https' , $edit_url );
 
+		// Fix for NEXTGEN Gallery
+		if ( defined( 'NGG_PLUGIN_VERSION' ) )
+			$edit_url = add_query_arg( 'display_gallery_iframe', '', $edit_url );
+
 		return add_query_arg( 'elementor', '', $edit_url );
 	}
 
