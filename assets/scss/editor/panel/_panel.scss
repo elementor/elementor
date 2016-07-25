@@ -20,6 +20,15 @@
 	bottom: 0;
     overflow: visible;
 
+	> .ui-resizable-e, > .ui-resizable-w {
+		position: absolute;
+		top: 0;
+		height: 100%;
+		width: 7px;
+		@include end(-5px);
+		cursor: ew-resize;
+	}
+
 	#elementor-panel-inner {
         position: relative;
 		height: 100%;
