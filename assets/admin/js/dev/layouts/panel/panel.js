@@ -131,7 +131,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateScrollbar: function() {
-		var $panel = Backbone.$( '#elementor-panel-content-wrapper' );
+		var $panel = this.content.$el;
+
 		if ( ! this._isScrollbarInitialized ) {
 			$panel.perfectScrollbar();
 			this._isScrollbarInitialized = true;
