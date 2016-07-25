@@ -263,30 +263,27 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function render_settings() {
 		?>
-		<div class="elementor-element-overlay">
-			<div class="elementor-element-label"><?php echo $this->get_short_title(); ?></div>
-			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_id() ); ?>-settings">
-				<ul class="elementor-editor-element-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-times"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
+		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_id() ); ?>-settings">
+			<ul class="elementor-editor-element-settings-list">
+				<li class="elementor-editor-element-setting elementor-editor-element-edit">
+					<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
+						<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
+						<i class="fa fa-pencil"></i>
+					</a>
+				</li>
+				<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
+					<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
+						<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
+						<i class="fa fa-files-o"></i>
+					</a>
+				</li>
+				<li class="elementor-editor-element-setting elementor-editor-element-remove">
+					<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
+						<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
+						<i class="fa fa-times"></i>
+					</a>
+				</li>
+			</ul>
 		</div>
 		<?php
 	}

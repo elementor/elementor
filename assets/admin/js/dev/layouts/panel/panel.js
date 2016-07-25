@@ -4,7 +4,7 @@ var EditModeItemView = require( 'elementor-layouts/edit-mode' ),
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
-	className: 'elementor-panel-inner',
+	id: 'elementor-panel-inner',
 
 	regions: {
 		content: '#elementor-panel-content-wrapper',
@@ -123,7 +123,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( this.updateScrollbar );
+		_.defer( _.bind( this.updateScrollbar, this ) );
 	},
 
 	onEditorEmpty: function() {
@@ -131,7 +131,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateScrollbar: function() {
-		var $panel = Backbone.$( '#elementor-panel-content-wrapper' );
+		var $panel = this.content.$el;
+
 		if ( ! this._isScrollbarInitialized ) {
 			$panel.perfectScrollbar();
 			this._isScrollbarInitialized = true;

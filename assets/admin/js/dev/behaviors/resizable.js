@@ -40,7 +40,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();
