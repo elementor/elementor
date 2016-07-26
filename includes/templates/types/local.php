@@ -245,6 +245,12 @@ class Type_Local extends Type_Base {
 		</div>
 		<?php
 	}
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->_add_actions();
+	}
 	private function _get_export_link( $item_id ) {
 		return add_query_arg(
 			[
@@ -256,7 +262,11 @@ class Type_Local extends Type_Base {
 		);
 	}
 
+	private function _add_actions() {
+		if ( is_admin() ) {
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
+		}
+	}
 }
