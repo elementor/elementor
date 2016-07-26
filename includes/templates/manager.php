@@ -97,7 +97,7 @@ class Manager {
 		return $type->get_item( $return );
 	}
 
-	public function get_template() {
+	public function get_template_content() {
 		if ( empty( $_POST['type'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
 		}
@@ -115,7 +115,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		return $type->get_template( $_POST['item_id'] );
+		return $type->get_template_content( $_POST['item_id'] );
 	}
 
 	public function get_template_url() {
@@ -242,7 +242,7 @@ class Manager {
 	private function init_ajax_calls() {
 		$allowed_ajax_requests = [
 			'get_templates',
-			'get_template',
+			'get_template_content',
 			'get_template_url',
 			'save_template',
 			'delete_template',

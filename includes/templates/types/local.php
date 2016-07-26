@@ -114,7 +114,7 @@ class Type_Local extends Type_Base {
 		];
 	}
 
-	public function get_template( $item_id, $context = 'display' ) {
+	public function get_template_content( $item_id, $context = 'display' ) {
 		// TODO: Valid the data (in JS too!)
 		if ( 'display' === $context ) {
 			$data = Plugin::instance()->db->get_builder( $item_id );
@@ -133,7 +133,7 @@ class Type_Local extends Type_Base {
 	}
 
 	public function export_template( $item_id ) {
-		$template_data = $this->get_template( $item_id, 'raw' );
+		$template_data = $this->get_template_content( $item_id, 'raw' );
 		if ( empty( $template_data ) )
 			wp_die( 'The template does not exist', 'elementor' );
 
