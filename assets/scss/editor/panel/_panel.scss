@@ -20,11 +20,21 @@
 	bottom: 0;
     overflow: visible;
 
-	.elementor-panel-inner {
+	> .ui-resizable-e, > .ui-resizable-w {
+		position: absolute;
+		top: 0;
+		height: 100%;
+		width: 7px;
+		@include end(-5px);
+		cursor: ew-resize;
+	}
+
+	#elementor-panel-inner {
         position: relative;
 		height: 100%;
         box-shadow: 0 0 5px 0 rgba(0,0,0,0.2);
 	}
+
     .elementor-panel-container {
       clear: both;
       padding-left: 15px;

@@ -6,7 +6,7 @@ HandleEditModeBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
 		this.view.$el.toggleClass( 'elementor-active-mode', 'preview' !== activeMode );
 	},
