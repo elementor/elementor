@@ -74,6 +74,30 @@ TemplatesManager = function() {
 		return templatesCollection;
 	};
 
+	this.getRemoteTemplateProperty = function( templateModel, property, callback, requestOptions ) {
+		var value = templateModel.get( property );
+
+		if ( undefined !== value ) {
+			callback( value );
+
+			return;
+		}
+
+		layout.showLoadingView();
+
+		elementor.ajax.send( 'get_template_' + property, {
+			data: requestOptions,
+			success: function( data ) {
+				templateModel.set( property, data );
+
+				callback( data );
+			},
+			error: function( data ) {
+				self.showErrorDialog( data.message );
+			}
+		} );
+	};
+
 	this.requestRemoteTemplates = function( options ) {
 		elementor.ajax.send( 'get_templates', options );
 	};
