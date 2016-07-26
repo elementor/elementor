@@ -220,6 +220,24 @@ class Type_Local extends Type_Base {
 		return $this->get_item( $item_id );
 	}
 
+
+	public function admin_import_template_form() {
+		if ( ! $this->_is_base_templates_screen() ) {
+			return;
+		}
+		?>
+		<div id="elementor-hidden-area">
+			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Upload', 'elementor' ); ?></a>
+			<form id="elementor-import-templates-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<input type="hidden" name="action" value="elementor_import_template">
+				<fieldset id="elementor-import-templates-form-inputs">
+					<input type="file" name="file" accept="application/json" required>
+					<input type="submit">
+				</fieldset>
+			</form>
+		</div>
+		<?php
+	}
 	private function _get_export_link( $item_id ) {
 		return add_query_arg(
 			[
@@ -230,4 +248,6 @@ class Type_Local extends Type_Base {
 			admin_url( 'admin-ajax.php' )
 		);
 	}
+
+			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 }
