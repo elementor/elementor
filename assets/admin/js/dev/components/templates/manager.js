@@ -97,7 +97,17 @@ TemplatesManager = function() {
 	this.startModal = function() {
 		self.getModal().show();
 
-		initLayout();
+		if ( ! layout ) {
+			initLayout();
+		}
+	};
+
+	this.showTemplates = function() {
+		if ( templatesCollection ) {
+			layout.showTemplatesView( templatesCollection );
+
+			return;
+		}
 
 		layout.showLoadingView();
 
@@ -105,13 +115,9 @@ TemplatesManager = function() {
 			success: function( data ) {
 				templatesCollection = new TemplatesCollection( data );
 
-				self.showTemplates();
+				layout.showTemplatesView( templatesCollection );
 			}
 		} );
-	};
-
-	this.showTemplates = function() {
-		layout.showTemplatesView( templatesCollection );
 	};
 
 	this.showTemplatePreview = function( templateModel ) {
