@@ -366,8 +366,8 @@ class Widget_Image_box extends Widget_Base {
 
 		if ( ! empty( $instance['image']['url'] ) ) {
 			$this->add_render_attribute( 'image', 'src', $instance['image']['url'] );
-			$this->add_render_attribute( 'image', 'alt', $this->get_image_alt( $instance ) );
-			$this->add_render_attribute( 'image', 'title', $this->get_image_title( $instance ) );
+			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $instance['image'] ) );
+			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $instance['image'] ) );
 
 			if ( $instance['hover_animation'] ) {
 				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $instance['hover_animation'] );
@@ -459,34 +459,5 @@ class Widget_Image_box extends Widget_Base {
 		print( html );
 		%>
 		<?php
-	}
-
-	private function get_image_alt( $instance ) {
-		$post_id = $instance['image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
-		if ( ! $alt ) {
-			$attachment = get_post( $post_id );
-			$alt = $attachment->post_excerpt;
-			if ( ! $alt ) {
-				$alt = $attachment->post_title;
-			}
-		}
-		return trim( strip_tags( $alt ) );
-	}
-
-	private function get_image_title( $instance ) {
-		$post_id = $instance['image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$attachment = get_post( $post_id );
-		return trim( strip_tags( $attachment->post_title ) );
 	}
 }
