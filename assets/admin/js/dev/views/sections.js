@@ -98,6 +98,16 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		this.ui.selectPreset.hide();
 	},
 
+	fixBlankPageOffset: function() {
+		var sectionHandleHeight = 27,
+			elTopOffset = this.$el.offset().top,
+			elTopOffsetRange = sectionHandleHeight - elTopOffset;
+
+		if ( 0 < elTopOffsetRange ) {
+			this.$el.css( 'margin-top', elTopOffsetRange );
+		}
+	},
+
 	onRender: function() {
 		var self = this;
 
@@ -125,6 +135,8 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 				newSection.triggerMethod( 'request:add', widgetData );
 			}
 		} );
+
+		_.defer( _.bind( self.fixBlankPageOffset, this ) );
 	},
 
 	onPresetSelected: function( event ) {

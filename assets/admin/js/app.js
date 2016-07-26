@@ -82,7 +82,8 @@ App = Marionette.Application.extend( {
 				select2: require( 'elementor-views/controls/select2' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' )
+				animation: require( 'elementor-views/controls/animation' ),
+				hover_animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );
@@ -175,10 +176,11 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
-				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+				editMode = elementor.dataEditMode.request( 'activeMode' ),
+				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -208,13 +210,15 @@ App = Marionette.Application.extend( {
 		    .children( 'body' )
 		    .addClass( 'elementor-editor-active' );
 
+		this.setResizablePanel();
+
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		this.introduction.startOnLoadIntroduction();
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' === activeMode ) {
 			this.enterPreviewMode();
@@ -256,12 +260,44 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	setResizablePanel: function() {
+		var self = this,
+			side = elementor.config.is_rtl ? 'right' : 'left';
+
+		self.panel.$el.resizable( {
+			handles: elementor.config.is_rtl ? 'w' : 'e',
+			minWidth: 200,
+			maxWidth: 500,
+			start: function() {
+				self.$previewWrapper
+					.addClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', 'none' );
+			},
+			stop: function() {
+				self.$previewWrapper
+					.removeClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', '' );
+
+				elementor.data.trigger( 'scrollbar:update' );
+			},
+			resize: function( event, ui ) {
+				self.$previewWrapper
+					.css( side, ui.size.width );
+			}
+		} );
+	},
+
 	enterPreviewMode: function() {
 		this.$previewContents
 		    .find( 'body' )
 		    .add( 'body' )
 		    .removeClass( 'elementor-editor-active' )
 		    .addClass( 'elementor-editor-preview' );
+
+		// Handle panel resize
+		this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+
+		this.panel.$el.css( 'width', '' );
 	},
 
 	exitPreviewMode: function() {
@@ -424,7 +460,7 @@ HandleEditModeBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		this.view.$el.toggleClass( 'elementor-active-mode', 'preview' !== activeMode );
 	},
@@ -442,7 +478,7 @@ var HandleEditorBehavior;
 HandleEditorBehavior = Marionette.Behavior.extend( {
 
 	onClickEdit: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' === activeMode ) {
 			return;
@@ -517,7 +553,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();
@@ -586,7 +622,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();
@@ -814,10 +850,10 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChange: function() {
-		var oldEditMode = elementor.dataEditMode.request( 'get:active:mode' ),
+		var oldEditMode = elementor.dataEditMode.request( 'activeMode' ),
 			currentMode = this.getCurrentMode();
 
-		elementor.dataEditMode.reply( 'get:active:mode', currentMode );
+		elementor.dataEditMode.reply( 'activeMode', currentMode );
 
 		if ( currentMode !== oldEditMode ) {
 			elementor.dataEditMode.trigger( 'switch' );
@@ -1922,7 +1958,7 @@ var EditModeItemView = require( 'elementor-layouts/edit-mode' ),
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
-	className: 'elementor-panel-inner',
+	id: 'elementor-panel-inner',
 
 	regions: {
 		content: '#elementor-panel-content-wrapper',
@@ -2041,7 +2077,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( this.updateScrollbar );
+		_.defer( _.bind( this.updateScrollbar, this ) );
 	},
 
 	onEditorEmpty: function() {
@@ -2049,7 +2085,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateScrollbar: function() {
-		var $panel = Backbone.$( '#elementor-panel-content-wrapper' );
+		var $panel = this.content.$el;
+
 		if ( ! this._isScrollbarInitialized ) {
 			$panel.perfectScrollbar();
 			this._isScrollbarInitialized = true;
@@ -3098,7 +3135,8 @@ Schemes = function() {
 module.exports = new Schemes();
 
 },{}],44:[function(require,module,exports){
-var BaseElementView;
+var BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
@@ -3132,6 +3170,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	events: function() {
 		return _.extend( {}, this.baseEvents, this.elementEvents );
+	},
+
+	getTemplateType: function() {
+		return 'remote';
 	},
 
 	initialize: function() {
@@ -3286,11 +3328,40 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onSettingsChanged: function( settings ) {
-		elementor.setFlagEditorChange( true );
+		if ( this.model.get( 'editSettings' ) !== settings ) {
+			// Change flag only if server settings was changed
+			elementor.setFlagEditorChange( true );
+		}
 
         this.renderStyles();
 		this.renderCustomClasses();
 		this.enqueueFonts();
+
+		// Make sure is correct model
+		if ( settings instanceof BaseSettingsModel ) {
+			var isContentChanged = false;
+
+			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+					isContentChanged = true;
+				}
+			} );
+
+			if ( ! isContentChanged ) {
+				return;
+			}
+		}
+
+		// Re-render the template
+		switch ( this.getTemplateType() ) {
+			case 'js' :
+				this.model.setHtmlCache();
+				this.render();
+				break;
+
+			default :
+				this.model.renderRemoteServer();
+		}
 	},
 
 	onClickRemove: function( event ) {
@@ -3303,7 +3374,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 module.exports = BaseElementView;
 
-},{}],45:[function(require,module,exports){
+},{"elementor-models/base-settings":32}],45:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
 	WidgetView = require( 'elementor-views/widget' ),
@@ -4000,7 +4071,9 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			}, this ),
 
 			width: 251
-		} );
+		} ).wpColorPicker( 'instance' )
+			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
+			.removeAttr( 'maxlength' );
 	},
 
 	onBeforeDestroy: function() {
@@ -4601,7 +4674,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
-		this.render();
+		this.setTitle();
 	},
 
 	setTitle: function() {
@@ -5096,11 +5169,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 			switchEditors.go( self.editorID, 'tmce' );
 
-			// Remove default instance after initializes. This allows reinitializion an unlimited amount of times.
-			_.defer( function() {
-				delete QTags.instances[ 0 ];
-			} );
-
+			delete QTags.instances[ 0 ];
 		} );
 	},
 
@@ -5386,12 +5455,6 @@ SectionView = BaseElementView.extend( {
 		nextChildView.changeSizeUI();
 	},
 
-	onSettingsChanged: function() {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		this.render();
-	},
-
 	onStructureChanged: function() {
 		this.redefineLayout();
 	}
@@ -5500,6 +5563,16 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		this.ui.selectPreset.hide();
 	},
 
+	fixBlankPageOffset: function() {
+		var sectionHandleHeight = 27,
+			elTopOffset = this.$el.offset().top,
+			elTopOffsetRange = sectionHandleHeight - elTopOffset;
+
+		if ( 0 < elTopOffsetRange ) {
+			this.$el.css( 'margin-top', elTopOffsetRange );
+		}
+	},
+
 	onRender: function() {
 		var self = this;
 
@@ -5527,6 +5600,8 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 				newSection.triggerMethod( 'request:add', widgetData );
 			}
 		} );
+
+		_.defer( _.bind( self.fixBlankPageOffset, this ) );
 	},
 
 	onPresetSelected: function( event ) {
@@ -5558,7 +5633,6 @@ module.exports = SectionsCollectionView;
 
 },{"elementor-behaviors/duplicate":2,"elementor-behaviors/elements-relation":3,"elementor-behaviors/handle-duplicate":4,"elementor-behaviors/sortable":8,"elementor-views/section":69}],71:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
-	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetView;
 
 WidgetView = BaseElementView.extend( {
@@ -5582,22 +5656,16 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	triggers: {
-		'click > .elementor-element-overlay': {
+		'click': {
 			event: 'click:edit',
 			stopPropagation: false
 		},
-		'click > .elementor-element-overlay .elementor-editor-add-element': 'click:add',
-		'click > .elementor-element-overlay .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	ui: {
-		settings: '> .elementor-element-overlay .elementor-editor-widget-settings'
+		'click > .elementor-editor-element-settings .elementor-editor-add-element': 'click:add',
+		'click > .elementor-editor-element-settings .elementor-editor-element-duplicate': 'click:duplicate'
 	},
 
 	elementEvents: {
-		'click': 'showSettings',
-		'mouseleave @ui.settings': 'hideSettings',
-		'click > .elementor-element-overlay .elementor-editor-element-remove': 'onClickRemove'
+		'click > .elementor-editor-element-settings .elementor-editor-element-remove': 'onClickRemove'
 	},
 
 	behaviors: {
@@ -5649,35 +5717,6 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	onSettingsChanged: function( settings ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false;
-
-			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-					isContentChanged = true;
-				}
-			} );
-
-			if ( ! isContentChanged ) {
-				return;
-			}
-		}
-
-		switch ( this.getTemplateType() ) {
-			case 'js' :
-				this.model.setHtmlCache();
-				this.render();
-				break;
-
-			default :
-				this.model.renderRemoteServer();
-		}
-	},
-
 	attachElContent: function( html ) {
 		var htmlCache = this.model.getHtmlCache();
 
@@ -5693,7 +5732,8 @@ WidgetView = BaseElementView.extend( {
 	onRender: function() {
 		this.$el
 			.removeClass( 'elementor-widget-empty' )
-			.find( '> .elementor-element-overlay .elementor-widget-empty-icon' ).remove();
+			.children( '.elementor-widget-empty-icon' )
+			.remove();
 
 		this.$el.imagesLoaded().always( _.bind( function() {
 			// Is element empty?
@@ -5702,28 +5742,13 @@ WidgetView = BaseElementView.extend( {
 
 				// TODO: REMOVE THIS !!
 				// TEMP CODING !!
-				this.$( '> .elementor-element-overlay' ).append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
+				this.$el.append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
 			}
 		}, this ) );
-	},
-
-	showSettings: function( event ) {
-		var positionSettings = {
-			my: elementor.config.is_rtl ? 'right+15 center' : 'left-15 center',
-			of: event,
-			collision: 'fit',
-			within: this.$el
-		};
-
-		this.ui.settings.addClass( 'elementor-open' ).position( positionSettings );
-	},
-
-	hideSettings: function() {
-		this.ui.settings.removeClass( 'elementor-open' );
 	}
 } );
 
 module.exports = WidgetView;
 
-},{"elementor-behaviors/handle-edit-mode":5,"elementor-behaviors/handle-editor":6,"elementor-models/base-settings":32,"elementor-views/base-element":44}]},{},[1])
+},{"elementor-behaviors/handle-edit-mode":5,"elementor-behaviors/handle-editor":6,"elementor-views/base-element":44}]},{},[1])
 //# sourceMappingURL=app.js.map

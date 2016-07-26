@@ -44,7 +44,7 @@ body {
 		}
 	}
 
-	&:not(.elementor-editor-active) {
+	&.elementor-editor-preview {
 
 		#elementor-preview {
 			left: 0;
@@ -52,6 +52,10 @@ body {
 
 		#elementor-panel {
 			@include start(-280px);
+
+			> .ui-resizable-e, > .ui-resizable-w {
+				display: none;
+			}
 		}
 
 		#elementor-mode-switcher-preview {
@@ -71,5 +75,8 @@ img {
 }
 
 #elementor-preview, #elementor-panel {
-	transition: getStartDirection() .5s;
+
+	&:not(.ui-resizable-resizing) {
+		transition: getStartDirection() .5s, width 0.5s;
+	}
 }

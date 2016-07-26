@@ -81,7 +81,8 @@ App = Marionette.Application.extend( {
 				select2: require( 'elementor-views/controls/select2' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' )
+				animation: require( 'elementor-views/controls/animation' ),
+				hover_animation: require( 'elementor-views/controls/animation' )
 			};
 
 			this.editor.trigger( 'editor:controls:initialize' );
@@ -174,10 +175,11 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
-				editMode = elementor.dataEditMode.request( 'get:active:mode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+				editMode = elementor.dataEditMode.request( 'activeMode' ),
+				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode ) {
+			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -207,13 +209,15 @@ App = Marionette.Application.extend( {
 		    .children( 'body' )
 		    .addClass( 'elementor-editor-active' );
 
+		this.setResizablePanel();
+
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		this.introduction.startOnLoadIntroduction();
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' === activeMode ) {
 			this.enterPreviewMode();
@@ -255,12 +259,44 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	setResizablePanel: function() {
+		var self = this,
+			side = elementor.config.is_rtl ? 'right' : 'left';
+
+		self.panel.$el.resizable( {
+			handles: elementor.config.is_rtl ? 'w' : 'e',
+			minWidth: 200,
+			maxWidth: 500,
+			start: function() {
+				self.$previewWrapper
+					.addClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', 'none' );
+			},
+			stop: function() {
+				self.$previewWrapper
+					.removeClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', '' );
+
+				elementor.data.trigger( 'scrollbar:update' );
+			},
+			resize: function( event, ui ) {
+				self.$previewWrapper
+					.css( side, ui.size.width );
+			}
+		} );
+	},
+
 	enterPreviewMode: function() {
 		this.$previewContents
 		    .find( 'body' )
 		    .add( 'body' )
 		    .removeClass( 'elementor-editor-active' )
 		    .addClass( 'elementor-editor-preview' );
+
+		// Handle panel resize
+		this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+
+		this.panel.$el.css( 'width', '' );
 	},
 
 	exitPreviewMode: function() {

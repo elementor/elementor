@@ -57,11 +57,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 			switchEditors.go( self.editorID, 'tmce' );
 
-			// Remove default instance after initializes. This allows reinitializion an unlimited amount of times.
-			_.defer( function() {
-				delete QTags.instances[ 0 ];
-			} );
-
+			delete QTags.instances[ 0 ];
 		} );
 	},
 
