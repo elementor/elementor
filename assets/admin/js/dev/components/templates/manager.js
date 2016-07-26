@@ -123,7 +123,7 @@ TemplatesManager = function() {
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
-		this.getErrorDialog()
+		self.getErrorDialog()
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
