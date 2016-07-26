@@ -3173,7 +3173,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	getTemplateType: function() {
-		return 'remote';
+		return 'js';
 	},
 
 	initialize: function() {
