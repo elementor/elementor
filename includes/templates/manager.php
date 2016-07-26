@@ -123,7 +123,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template `id` was not specified.' );
 		}
 
-		return get_post_permalink( $_POST['id'] );
+		return get_permalink( $_POST['id'] );
 	}
 
 	public function delete_template() {
