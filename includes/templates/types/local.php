@@ -22,7 +22,7 @@ class Type_Local extends Type_Base {
 
 	public function register_data() {
 		$labels = [
-			'name' => __( 'Templates', 'elementor' ),
+			'name' => __( 'Library', 'elementor' ),
 			'singular_name' => __( 'Template', 'elementor' ),
 			'add_new' => __( 'Add New', 'elementor' ),
 			'add_new_item' => __( 'Add New Template', 'elementor' ),
