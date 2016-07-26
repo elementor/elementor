@@ -25,22 +25,14 @@ TemplatesManager = function() {
 	};
 
 	this.importTemplate = function( templateModel ) {
-		self.getLayout().showLoadingView();
+		self.getRemoteTemplateProperty( templateModel, 'content', function( data ) {
+			self.getModal().hide();
 
-		elementor.ajax.send( 'get_template', {
-			data: {
-				type: templateModel.get( 'type' ),
-				post_id: elementor.config.post_id,
-				item_id: templateModel.get( 'id' )
-			},
-			success: function( data ) {
-				self.getModal().hide();
-
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
-			},
-			error: function( data ) {
-				self.showErrorDialog( data.message );
-			}
+			elementor.getRegion( 'sections' ).currentView.addChildModel( data );
+		}, {
+			type: templateModel.get( 'type' ),
+			post_id: elementor.config.post_id,
+			item_id: templateModel.get( 'id' )
 		} );
 	};
 
@@ -123,16 +115,11 @@ TemplatesManager = function() {
 	};
 
 	this.showTemplatePreview = function( templateModel ) {
-		layout.showLoadingView();
+		layout.getHeaderView().menuArea.reset();
 
-		elementor.ajax.send( 'get_template_url', {
-			data: {
-				id: templateModel.get( 'id' )
-			},
-			success: function( data ) {
-				layout.showPreviewView( data );
-			}
-		} );
+		self.getRemoteTemplateProperty( templateModel, 'url', function() {
+			layout.showPreviewView( templateModel );
+		}, { id: templateModel.get( 'id' ) } );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
