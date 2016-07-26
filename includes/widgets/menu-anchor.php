@@ -52,6 +52,8 @@ class Widget_Menu_anchor extends Widget_Base {
 		if ( ! empty( $instance['anchor'] ) ) {
 			$this->add_render_attribute( 'inner', 'id', $instance['anchor'] );
 		}
+
+		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'inner' ); ?>></div>
 		<?php
@@ -59,7 +61,7 @@ class Widget_Menu_anchor extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div<%= settings.anchor ? ' id="' + settings.anchor + '"' : '' %>><div>
+		<div class="elementor-menu-anchor"<%= settings.anchor ? ' id="' + settings.anchor + '"' : '' %>></div>
 		<?php
 	}
 }

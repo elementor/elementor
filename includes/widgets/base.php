@@ -58,7 +58,8 @@ abstract class Widget_Base extends Element_Base {
 	    );
 
 		$this->add_control(
-			'_animation',[
+			'_animation',
+			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
@@ -66,6 +67,26 @@ abstract class Widget_Base extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'label_block' => true,
 				'section' => '_section_style',
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_style',
+				'condition' => [
+					'_animation!' => '',
+				],
 			]
 		);
 
@@ -242,30 +263,27 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function render_settings() {
 		?>
-		<div class="elementor-element-overlay">
-			<div class="elementor-element-label"><?php echo $this->get_short_title(); ?></div>
-			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_id() ); ?>-settings">
-				<ul class="elementor-editor-element-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-times"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
+		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_id() ); ?>-settings">
+			<ul class="elementor-editor-element-settings-list">
+				<li class="elementor-editor-element-setting elementor-editor-element-edit">
+					<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
+						<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
+						<i class="fa fa-pencil"></i>
+					</a>
+				</li>
+				<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
+					<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
+						<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
+						<i class="fa fa-files-o"></i>
+					</a>
+				</li>
+				<li class="elementor-editor-element-setting elementor-editor-element-remove">
+					<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
+						<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
+						<i class="fa fa-times"></i>
+					</a>
+				</li>
+			</ul>
 		</div>
 		<?php
 	}

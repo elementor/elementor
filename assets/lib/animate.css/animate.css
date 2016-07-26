@@ -1,21 +1,4 @@
-.animated {
-    animation-duration: 1s;
-}
-
-.animated.infinite {
-    animation-iteration-count: infinite;
-}
-
-.animated.hinge {
-    animation-duration: 2s;
-}
-
-.animated.flipOutX,
-.animated.flipOutY,
-.animated.bounceIn,
-.animated.bounceOut {
-    animation-duration: .75s;
-}
+/* Custom style for animate.css. Lines 1-17 moved to frontend/_animate.scss */
 
 @keyframes bounce {
     from, 20%, 53%, 80%, to {

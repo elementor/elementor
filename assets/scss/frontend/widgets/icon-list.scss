@@ -13,21 +13,20 @@
 	.elementor-icon-list-item {
 		margin: 0;
 		padding: 0;
-		line-height: 1.5;
-		display: table;
 
 		a {
-			display: table;
+			display: inline;
 		}
 	}
 
 	.elementor-icon-list-icon,
 	 .elementor-icon-list-text {
-		display: table-cell;
+		display: inline;
 		 vertical-align: middle;
 	 }
 
 	.elementor-icon-list-icon {
 		width: 1em;
+		line-height: 1;
 	}
 }

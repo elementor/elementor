@@ -553,7 +553,8 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'animation',[
+			'animation',
+			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
@@ -561,6 +562,26 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'label_block' => true,
 				'section' => 'section_advanced',
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'tab' => self::TAB_ADVANCED,
+				'section' => 'section_advanced',
+				'condition' => [
+					'animation!' => '',
+				],
 			]
 		);
 
@@ -721,7 +742,7 @@ class Element_Section extends Element_Base {
 						<?php if ( $video_id ) : ?>
 							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
 						<?php else : ?>
-							<video class="elementor-background-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
+							<video class="elementor-background-video elementor-html5-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
 				<?php endif;

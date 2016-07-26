@@ -8,9 +8,10 @@ class Widgets_Manager {
 	/**
 	 * @var Widget_Base[]
 	 */
-	protected $_register_widgets = [];
+	protected $_register_widgets = null;
 
-	public function init() {
+	private function _init_widgets() {
+		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
 		include( ELEMENTOR_PATH . 'includes/widgets/base.php' );
 
 		$build_widgets_filename = [
@@ -42,10 +43,7 @@ class Widgets_Manager {
 			'sidebar',
 		];
 
-		if ( Utils::is_development_mode() ) {
-
-		}
-
+		$this->_register_widgets = [];
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
 
@@ -109,6 +107,9 @@ class Widgets_Manager {
 	}
 
 	public function get_register_widgets() {
+		if ( is_null( $this->_register_widgets ) ) {
+			$this->_init_widgets();
+		}
 		return $this->_register_widgets;
 	}
 
@@ -176,8 +177,6 @@ class Widgets_Manager {
 	}
 
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
-
 		add_action( 'wp_ajax_elementor_render_widget', [ $this, 'ajax_render_widget' ] );
 		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}

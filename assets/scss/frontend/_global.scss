@@ -72,6 +72,9 @@
 		top: 50%;
 		left: 50%;
 		transform: translateY(-50%) translateX(-50%);
+	}
+
+	.elementor-html5-video {
 		object-fit: cover; // For HTML5 portrait video
 	}
 	// End Background Video

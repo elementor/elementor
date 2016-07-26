@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.5  
-**Stable tag:** 0.5.0  
+**Stable tag:** 0.6.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -76,6 +76,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
+- [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 
@@ -107,6 +108,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 * PHP version 5.6 or greater
 * MySQL version 5.6 or greater
 
+https://www.youtube.com/watch?v=Ypn6fltn_7s
+
 ### Installation ###
 
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
@@ -114,6 +117,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 3. Go to Pages > Add New
 4. Press the 'Edit with Elementor' button.
 5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
+
+For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 ## Frequently Asked Questions ##
 
@@ -150,6 +155,37 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.6.0 - 25.07.2016 ###
+* New! - Added 27 Hover Animations for Image / Icon / Button widgets
+* New! - Editor panel now is resizable
+* New! - Added smooth scrolling for anchors in Anchor Menu widget
+* Tweak! - Improved performance
+* Tweak! - Improved speed in live editing
+* Tweak! - Optimization for memory usage (30% less!)
+* Tweak! - Improved UI for preview editor
+* Tweak! - Add `contain` background image CSS option ([#297](https://github.com/pojome/elementor/pull/297))
+* Tweak! - Added compatibility for NextGen Gallery plugin ([#296](https://github.com/pojome/elementor/issues/296))
+* Tweak! - Print JS scripts in the footer
+* Tweak! - Set color picker control `alpha` for all widgets
+* Fixed! - Remove `maxlength` attribute from color picker input ([#298](https://github.com/pojome/elementor/issues/298))
+* Fixed! - Background video: Set object-fit only HTML5 player (solved Safari YouTube issue)
+* Fixed! - Bug with target blank link in Icon List widget
+* Fixed! - Bug with alignment in Icon List widget ([#283](https://github.com/pojome/elementor/issues/283))
+* Fixed! - Improved responsive in Tabs widget ([#279](https://github.com/pojome/elementor/issues/279))
+* Fixed! - RTL bug in Alert widget ([#287](https://github.com/pojome/elementor/issues/287))
+
+### 0.5.2 - 17.07.2016 ###
+* New! - Added Animation Duration control for all elements
+* New! - Added Prevent Scroll control for Google Maps widget
+
+### 0.5.1 - 14.07.2016 ###
+* Tweak! - Added details image sizes in Image Sizes control
+* Fixed! - Chrome bug with flex mode in Image Box widget 
+* Fixed! - Textarea control: set `label_block` to `true` by default
+* Fixed! - Textarea control style for Icon Box Widget
+* Fixed! - Removed translations from system-info for better understanding support 
+* Fixed! - Design fixes for Icon List widget
+
 ### 0.5.0 - 13.07.2016 ###
 * New! - Added more than 35 Entrance Animations to all elements
 * New! - Added Box Shadow control to all elements
@@ -163,7 +199,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Updated Font Awesome v4.6.3
 * Tweak! - Changed Textarea control markup according to the general concept
 * Tweak! - Fixed modal RTL style
-* Fixed! - Fade effect in Image Carousel widget
+* Fixed! - Fade effect in Image Carousel widget ([#245](https://github.com/pojome/elementor/issues/245), [#253](https://github.com/pojome/elementor/issues/253))
 * Fixed! - Don't print anything when no have link in Video widget
 
 ### 0.4.1 - 05.07.2016 ###

@@ -18,7 +18,7 @@
 
 	button.elementor-alert-dismiss {
 		position: absolute;
-		right: 10px;
+		@include end(10px);
 		top: 10px;
 		padding: 3px;
 		font-size: 13px;

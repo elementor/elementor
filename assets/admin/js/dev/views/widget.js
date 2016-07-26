@@ -1,5 +1,4 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
-	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetView;
 
 WidgetView = BaseElementView.extend( {
@@ -23,22 +22,16 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	triggers: {
-		'click > .elementor-element-overlay': {
+		'click': {
 			event: 'click:edit',
 			stopPropagation: false
 		},
-		'click > .elementor-element-overlay .elementor-editor-add-element': 'click:add',
-		'click > .elementor-element-overlay .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	ui: {
-		settings: '> .elementor-element-overlay .elementor-editor-widget-settings'
+		'click > .elementor-editor-element-settings .elementor-editor-add-element': 'click:add',
+		'click > .elementor-editor-element-settings .elementor-editor-element-duplicate': 'click:duplicate'
 	},
 
 	elementEvents: {
-		'click': 'showSettings',
-		'mouseleave @ui.settings': 'hideSettings',
-		'click > .elementor-element-overlay .elementor-editor-element-remove': 'onClickRemove'
+		'click > .elementor-editor-element-settings .elementor-editor-element-remove': 'onClickRemove'
 	},
 
 	behaviors: {
@@ -90,35 +83,6 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	onSettingsChanged: function( settings ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false;
-
-			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-					isContentChanged = true;
-				}
-			} );
-
-			if ( ! isContentChanged ) {
-				return;
-			}
-		}
-
-		switch ( this.getTemplateType() ) {
-			case 'js' :
-				this.model.setHtmlCache();
-				this.render();
-				break;
-
-			default :
-				this.model.renderRemoteServer();
-		}
-	},
-
 	attachElContent: function( html ) {
 		var htmlCache = this.model.getHtmlCache();
 
@@ -134,7 +98,8 @@ WidgetView = BaseElementView.extend( {
 	onRender: function() {
 		this.$el
 			.removeClass( 'elementor-widget-empty' )
-			.find( '> .elementor-element-overlay .elementor-widget-empty-icon' ).remove();
+			.children( '.elementor-widget-empty-icon' )
+			.remove();
 
 		this.$el.imagesLoaded().always( _.bind( function() {
 			// Is element empty?
@@ -143,24 +108,9 @@ WidgetView = BaseElementView.extend( {
 
 				// TODO: REMOVE THIS !!
 				// TEMP CODING !!
-				this.$( '> .elementor-element-overlay' ).append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
+				this.$el.append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
 			}
 		}, this ) );
-	},
-
-	showSettings: function( event ) {
-		var positionSettings = {
-			my: elementor.config.is_rtl ? 'right+15 center' : 'left-15 center',
-			of: event,
-			collision: 'fit',
-			within: this.$el
-		};
-
-		this.ui.settings.addClass( 'elementor-open' ).position( positionSettings );
-	},
-
-	hideSettings: function() {
-		this.ui.settings.removeClass( 'elementor-open' );
 	}
 } );
 

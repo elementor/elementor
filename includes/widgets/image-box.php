@@ -214,6 +214,16 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+			]
+		);
+
+		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -355,7 +365,15 @@ class Widget_Image_box extends Widget_Base {
 		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $instance['image']['url'] ) ) {
-			$image_html = sprintf( '<img src="%s" alt="%s" title="%s" />', esc_attr( $instance['image']['url'] ), $this->get_image_alt( $instance ), $this->get_image_title( $instance ) );
+			$this->add_render_attribute( 'image', 'src', $instance['image']['url'] );
+			$this->add_render_attribute( 'image', 'alt', $this->get_image_alt( $instance ) );
+			$this->add_render_attribute( 'image', 'title', $this->get_image_title( $instance ) );
+
+			if ( $instance['hover_animation'] ) {
+				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+			}
+
+			$image_html = '<img ' . $this->get_render_attribute_string( 'image' ) . '>';
 
 			if ( ! empty( $instance['link']['url'] ) ) {
 				$target = '';
@@ -405,7 +423,7 @@ class Widget_Image_box extends Widget_Base {
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
-			var imageHtml = '<img src="' + settings.image.url + '" />';
+			var imageHtml = '<img src="' + settings.image.url + '" class="elementor-animation-' + settings.hover_animation + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
