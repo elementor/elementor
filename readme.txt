@@ -154,6 +154,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.6.1 - 26.07.2016 =
+* Tweak! - Improved editor UI for blank pages
+* Fixed! - Hide empty widgets in preview mode
+* Fixed! - Bug with Section background overlay and background video ([#323](https://github.com/pojome/elementor/issues/323))
+* Fixed! - Minor security issue
+
 = 0.6.0 - 25.07.2016 =
 * New! - Added 27 Hover Animations for Image / Icon / Button widgets
 * New! - Editor panel now is resizable
