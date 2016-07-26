@@ -220,6 +220,13 @@ class Type_Local extends Type_Base {
 		return $this->get_item( $item_id );
 	}
 
+	public function post_row_actions( $actions, \WP_Post $post ) {
+		if ( $this->_is_base_templates_screen() ) {
+			$actions[] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+		}
+
+		return $actions;
+	}
 
 	public function admin_import_template_form() {
 		if ( ! $this->_is_base_templates_screen() ) {
@@ -248,6 +255,8 @@ class Type_Local extends Type_Base {
 			admin_url( 'admin-ajax.php' )
 		);
 	}
+
+			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 }
