@@ -88,9 +88,12 @@ class Control_Media extends Control_Base_Multiple {
 		if ( ! $attachment_id )
 			return '';
 
+		$attachment = get_post( $attachment_id );
+		if ( ! $attachment )
+			return '';
+
 		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
 		if ( ! $alt ) {
-			$attachment = get_post( $attachment_id );
 			$alt = $attachment->post_excerpt;
 			if ( ! $alt ) {
 				$alt = $attachment->post_title;
