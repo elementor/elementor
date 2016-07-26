@@ -251,6 +251,17 @@ class Type_Local extends Type_Base {
 
 		$this->_add_actions();
 	}
+
+	private function _is_base_templates_screen() {
+		global $current_screen;
+
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		return 'edit' === $current_screen->base && self::CPT === $current_screen->post_type;
+	}
+
 	private function _get_export_link( $item_id ) {
 		return add_query_arg(
 			[
