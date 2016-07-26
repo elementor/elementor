@@ -355,7 +355,8 @@ body.elementor-editor-preview .elementor-editor-widget-settings,
 body.elementor-editor-preview .column-title,
 body.elementor-editor-preview .elementor-empty,
 body.elementor-editor-preview #elementor-add-section,
-body.elementor-editor-preview .elementor-element-empty {
+body.elementor-editor-preview .elementor-element-empty,
+body.elementor-editor-preview .elementor-widget-empty {
   display: none; }
 
 /*# sourceMappingURL=editor-preview-rtl.css.map */
