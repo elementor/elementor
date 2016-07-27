@@ -1011,9 +1011,7 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 		var headerView = this.getHeaderView();
 
 		headerView.tools.show( new TemplatesHeaderSettingsView() );
-
 		headerView.menuArea.show( new TemplatesHeaderMenuView() );
-
 		headerView.logoArea.show( new TemplatesHeaderLogoView() );
 	},
 
