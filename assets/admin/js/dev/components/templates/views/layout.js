@@ -66,6 +66,8 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 
 		var headerView = this.getHeaderView();
 
+		headerView.menuArea.reset();
+
 		headerView.tools.show( new TemplatesHeaderPreviewView( {
 			model: templateModel
 		} ) );

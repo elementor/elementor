@@ -20,7 +20,7 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onPreviewButtonClick: function() {
-		elementor.templates.showTemplatePreview( this.model );
+		elementor.templates.getLayout().showPreviewView( this.model );
 	}
 } );
 
