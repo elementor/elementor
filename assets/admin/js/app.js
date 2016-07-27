@@ -1048,6 +1048,12 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 
 	showSaveTemplateView: function() {
 		this.getRegion( 'modalContent' ).show( new TemplatesSaveTemplateView() );
+
+		var headerView = this.getHeaderView();
+
+		headerView.menuArea.reset();
+
+		headerView.logoArea.show( new TemplatesHeaderLogoView() );
 	},
 
 	showPreviewView: function( templateModel ) {
