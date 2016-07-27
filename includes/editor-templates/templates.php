@@ -6,24 +6,40 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-header">
-	<div id="elementor-templates-header-logo-area">
-		<img id="elementor-templates-header-logo-image" src="<?php echo ELEMENTOR_ASSETS_URL; ?>/images/icon.svg">
-		<div id="elementor-templates-header-logo-title"><?php _e( 'Library', 'elementor' ); ?></div>
-	</div>
-	<div id="elementor-templates-header-menu-area">
-		<div id="elementor-templates-header-menu">
-			<div id="elementor-templates-menu-pre-made-templates" class="elementor-templates-menu-item"><?php _e( 'Pre Made Templates', 'elementor' ); ?></div>
-			<div id="elementor-templates-menu-my-templates" class="elementor-templates-menu-item elementor-active"><?php _e( 'My Templates', 'elementor' ); ?></div>
-		</div>
-	</div>
-	<div id="elementor-templates-header-tools-area">
-		<div id="elementor-templates-header-close-modal" class="elementor-templates-header-tool" title="<?php _e( 'Close', 'elementor' ); ?>">
+	<div id="elementor-templates-header-logo-area"></div>
+	<div id="elementor-templates-header-menu-area"></div>
+	<div id="elementor-templates-header-items-area">
+		<div id="elementor-templates-header-close-modal" class="elementor-templates-header-item" title="<?php _e( 'Close', 'elementor' ); ?>">
 			<i class="fa fa-times"></i>
 		</div>
-		<div id="elementor-templates-header-settings" class="elementor-templates-header-tool" title="<?php _e( 'Settings', 'elementor' ); ?>">
-			<i class="fa fa-cog"></i>
-		</div>
+		<div id="elementor-templates-header-tools"></div>
 	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-templates-header-logo">
+	<i class="eicon-elementor-square"></i><?php _e( 'Library', 'elementor' ); ?>
+</script>
+
+<script type="text/template" id="tmpl-elementor-templates-header-settings">
+	<i class="fa fa-cog" title="<?php _e( 'Settings', 'elementor' ); ?>"></i>
+</script>
+
+<script type="text/template" id="tmpl-elementor-templates-header-menu">
+	<div id="elementor-templates-menu-pre-made-templates" class="elementor-templates-menu-item"><?php _e( 'Pre Made Templates', 'elementor' ); ?></div>
+	<div id="elementor-templates-menu-my-templates" class="elementor-templates-menu-item elementor-active"><?php _e( 'My Templates', 'elementor' ); ?></div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-templates-header-preview">
+	<div id="elementor-templates-header-preview-insert-wrapper" class="elementor-templates-header-item">
+		<button id="elementor-templates-header-preview-insert" class="elementor-templates-template-insert elementor-button elementor-button-success">
+			<i class="fa fa-download"></i>
+			<?php _e( 'Insert', 'elementor' ); ?>
+		</button>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-templates-header-back">
+	<span id="elementor-templates-header-preview-back"><?php _e( 'Back To library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-loading">
