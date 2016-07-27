@@ -866,14 +866,20 @@ TemplatesManager = function() {
 	};
 
 	this.importTemplate = function( templateModel ) {
-		self.getRemoteTemplateProperty( templateModel, 'content', function( data ) {
-			self.getModal().hide();
+		elementor.ajax.send( 'get_template_content', {
+			data: {
+				type: templateModel.get( 'type' ),
+				post_id: elementor.config.post_id,
+				item_id: templateModel.get( 'id' )
+			},
+			success: function( data ) {
+				self.getModal().hide();
 
-			elementor.getRegion( 'sections' ).currentView.addChildModel( data );
-		}, {
-			type: templateModel.get( 'type' ),
-			post_id: elementor.config.post_id,
-			item_id: templateModel.get( 'id' )
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
+			},
+			error: function( data ) {
+				self.showErrorDialog( data.message );
+			}
 		} );
 	};
 
@@ -907,30 +913,6 @@ TemplatesManager = function() {
 		return templatesCollection;
 	};
 
-	this.getRemoteTemplateProperty = function( templateModel, property, callback, requestOptions ) {
-		var value = templateModel.get( property );
-
-		if ( undefined !== value ) {
-			callback( value );
-
-			return;
-		}
-
-		layout.showLoadingView();
-
-		elementor.ajax.send( 'get_template_' + property, {
-			data: requestOptions,
-			success: function( data ) {
-				templateModel.set( property, data );
-
-				callback( data );
-			},
-			error: function( data ) {
-				self.showErrorDialog( data.message );
-			}
-		} );
-	};
-
 	this.requestRemoteTemplates = function( options ) {
 		elementor.ajax.send( 'get_templates', options );
 	};
@@ -961,14 +943,6 @@ TemplatesManager = function() {
 		} );
 	};
 
-	this.showTemplatePreview = function( templateModel ) {
-		layout.getHeaderView().menuArea.reset();
-
-		self.getRemoteTemplateProperty( templateModel, 'url', function() {
-			layout.showPreviewView( templateModel );
-		}, { id: templateModel.get( 'id' ) } );
-	};
-
 	this.showErrorDialog = function( errorMessage ) {
 		self.getErrorDialog()
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
@@ -987,6 +961,7 @@ TemplatesTemplateModel = Backbone.Model.extend( {
 		title: '',
 		author: '',
 		thumbnail: '',
+		url: '',
 		categories: [],
 		keywords: []
 	}
@@ -1062,6 +1037,8 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 		} ) );
 
 		var headerView = this.getHeaderView();
+
+		headerView.menuArea.reset();
 
 		headerView.tools.show( new TemplatesHeaderPreviewView( {
 			model: templateModel
@@ -1391,7 +1368,7 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onPreviewButtonClick: function() {
-		elementor.templates.showTemplatePreview( this.model );
+		elementor.templates.getLayout().showPreviewView( this.model );
 	}
 } );
 
