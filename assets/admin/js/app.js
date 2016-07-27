@@ -2543,6 +2543,8 @@ heartbeat = {
 				} else {
 					heartbeat.getModal().hide();
 				}
+
+				elementor.config.nonce = response.elementor_nonce;
 			}
 		} );
 
