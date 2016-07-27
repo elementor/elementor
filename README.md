@@ -156,6 +156,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.6.2 - 27.07.2016 ###
+* Tweak! - Improve the way using attachment details
+* Tweak! - Verifies the AJAX request to prevent processing requests external of the editor
+* Fixed! - Hover animation classes in Image widget
+* Fixed! - Icon spacing on mobile in Icon Box widget
+* Fixed! - Image spacing on mobile in Image Box widget
+
 ### 0.6.1 - 26.07.2016 ###
 * Tweak! - Improved editor UI for blank pages
 * Fixed! - Hide empty widgets in preview mode
