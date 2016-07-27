@@ -30,7 +30,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 			data: {
 				action: 'elementor_editor_get_wp_widget_form',
 				widget_type: this.model.get( 'widget' ),
-				data: JSON.stringify( this.elementSettingsModel.toJSON() )
+				data: JSON.stringify( this.elementSettingsModel.toJSON() ),
+				_nonce: elementor.config.nonce
 			}
 		} )
 			.done( _.bind( function( data ) {

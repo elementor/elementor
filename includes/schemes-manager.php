@@ -111,6 +111,10 @@ class Schemes_Manager {
 	}
 
 	public function ajax_apply_scheme() {
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
+
 		if ( ! isset( $_POST['scheme_name'] ) ) {
 			wp_send_json_error();
 		}
@@ -120,7 +124,6 @@ class Schemes_Manager {
 			wp_send_json_error();
 		}
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-
 		$scheme_obj->save_scheme( $posted );
 
 		wp_send_json_success();

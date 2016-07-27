@@ -323,7 +323,8 @@ App = Marionette.Application.extend( {
 		        action: 'elementor_save_builder',
 		        post_id: this.config.post_id,
 		        revision: options.revision,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( elementor.elements.toJSON() ),
+		        _nonce: elementor.config.nonce
 	        }
         } )
         .done( function( data ) {
@@ -2376,7 +2377,8 @@ ElementModel = Backbone.Model.extend( {
 			data: {
 				action: 'elementor_render_widget',
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
 			},
 			dataType: 'json'
 		} )
@@ -3112,7 +3114,8 @@ Schemes = function() {
 				data: {
 					action: 'elementor_apply_scheme',
 					scheme_name: schemeName,
-					data: JSON.stringify( schemes[ schemeName ].items )
+					data: JSON.stringify( schemes[ schemeName ].items ),
+					_nonce: elementor.config.nonce
 				}
 			} )
 
@@ -5098,7 +5101,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 			data: {
 				action: 'elementor_editor_get_wp_widget_form',
 				widget_type: this.model.get( 'widget' ),
-				data: JSON.stringify( this.elementSettingsModel.toJSON() )
+				data: JSON.stringify( this.elementSettingsModel.toJSON() ),
+				_nonce: elementor.config.nonce
 			}
 		} )
 			.done( _.bind( function( data ) {

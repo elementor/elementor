@@ -322,7 +322,8 @@ App = Marionette.Application.extend( {
 		        action: 'elementor_save_builder',
 		        post_id: this.config.post_id,
 		        revision: options.revision,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( elementor.elements.toJSON() ),
+		        _nonce: elementor.config.nonce
 	        }
         } )
         .done( function( data ) {
