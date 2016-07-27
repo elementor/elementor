@@ -3112,6 +3112,7 @@ Ajax = {
 			ajaxParams.data.append( 'action', action );
 			ajaxParams.data.append( '_nonce', elementor.config.nonce );
 		} else {
+			ajaxParams.data.action = action;
 			ajaxParams.data._nonce = elementor.config.nonce;
 		}
 
