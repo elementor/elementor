@@ -35,7 +35,7 @@
 }
 
 #elementor-templates-header-logo-area {
-	width: 20%;
+	width: 35%;
 	text-align: getStartDirection();
 	@include padding-start(15px);
 
@@ -44,20 +44,16 @@
 	}
 }
 
-#elementor-templates-header-logo-image {
-	width: 20px;
-}
-
-#elementor-templates-header-logo-title {
-	margin-left: 10px;
+#elementor-templates-header-logo {
 	font-size: 20px;
 	text-transform: uppercase;
 	color: $editor-darkest;
 	font-weight: bold;
-}
 
-#elementor-templates-header-menu-area {
-	width: 70%;
+	i {
+		@include padding-end(10px);
+		color: $editor-accent;
+	}
 }
 
 #elementor-templates-header-menu {
@@ -75,26 +71,70 @@
 	}
 }
 
-#elementor-templates-header-tools-area {
-	width: 20%;
+#elementor-templates-header-items-area {
+	width: 35%;
+
+	> * {
+		float: getEndDirection();
+	}
 }
 
-.elementor-templates-header-tool {
+#elementor-templates-header-tools {
+
+	> * {
+		float: getEndDirection();
+	}
+}
+
+.elementor-templates-header-item {
 	position: relative;
-	float: getEndDirection();
 	color: $editor-light;
 	@include border-start(2px solid $editor-background);
-	height: 55px;
-	width: 55px;
+	height: 56px;
 	box-sizing: content-box;
-	cursor: pointer;
 
-	i {
+	> * {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
+		cursor: pointer;
+	}
+
+	> i {
 		font-size: 18px;
+	}
+}
+
+#elementor-templates-header-close-modal, #elementor-templates-header-settings {
+	width: 56px;
+}
+
+#elementor-templates-header-preview {
+
+	> * {
+		float: getEndDirection();
+	}
+}
+
+#elementor-templates-header-preview-insert-wrapper {
+	width: 100px;
+}
+
+#elementor-templates-header-preview-insert {
+	width: 80%;
+}
+
+#elementor-templates-header-preview-back-wrapper {
+	cursor: pointer;
+}
+
+#elementor-templates-header-preview-back {
+	width: 100%;
+
+	&:before {
+		content: getValueByDirection( '<', '>' );
+		@include padding-end(10px);
 	}
 }
 
@@ -147,6 +187,11 @@
 	width: 100%;
 	height: 100%;
 	background-color: rgba(0,0,0,.65);
+
+	.elementor-templates-template-insert {
+		font-size: 11px;
+		width: 150px;
+	}
 }
 
 .elementor-templates-template-preview {
@@ -165,10 +210,8 @@
 }
 
 .elementor-templates-template-insert {
-	font-size: 11px;
 	text-transform: uppercase;
 	padding: 11px;
-	width: 150px;
 
 	i {
 		@include padding-end(5px);
