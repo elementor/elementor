@@ -124,6 +124,7 @@ class Type_Local extends Type_Base {
 			'categories' => [],
 			'keywords' => [],
 			'export_link' => $this->_get_export_link( $item_id ),
+			'url' => get_permalink( $post->ID ),
 		];
 	}
 

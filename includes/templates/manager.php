@@ -112,14 +112,6 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-	}
-
-	public function get_template_url() {
-		if ( empty( $_POST['id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `id` was not specified.' );
-		}
-
-		return get_permalink( $_POST['id'] );
 		return $type->get_content( $_POST['item_id'] );
 	}
 
@@ -221,7 +213,6 @@ class Manager {
 		$allowed_ajax_requests = [
 			'get_templates',
 			'get_template_content',
-			'get_template_url',
 			'save_template',
 			'delete_template',
 			'export_template',
