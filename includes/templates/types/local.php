@@ -45,7 +45,7 @@ class Type_Local extends Type_Base {
 			'show_in_menu' => false,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 		];
 
 		register_post_type(
