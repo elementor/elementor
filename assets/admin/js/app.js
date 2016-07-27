@@ -2942,7 +2942,8 @@ ElementModel = Backbone.Model.extend( {
 		this._jqueryXhr = elementor.ajax.send( 'render_widget', {
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
 			},
 			success: _.bind( this.onRemoteGetHtml, this )
 		} );
@@ -3109,8 +3110,9 @@ Ajax = {
 
 		if ( ajaxParams.data instanceof FormData ) {
 			ajaxParams.data.append( 'action', action );
+			ajaxParams.data.append( '_nonce', elementor.config.nonce );
 		} else {
-			ajaxParams.data.action = action;
+			ajaxParams.data._nonce = elementor.config.nonce;
 		}
 
 		var successCallback = ajaxParams.success,
@@ -3168,6 +3170,8 @@ heartbeat = {
 				} else {
 					heartbeat.getModal().hide();
 				}
+
+				elementor.config.nonce = response.elementor_nonce;
 			}
 		} );
 

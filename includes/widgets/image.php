@@ -265,7 +265,7 @@ class Widget_Image extends Widget_Base {
 			$image_html .= '<figure class="wp-caption">';
 		}
 
-		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
+		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="elementor-animation-' . $instance['hover_animation'] . '"' : '';
 
 		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), Control_Media::get_image_title( $instance['image'] ), Control_Media::get_image_alt( $instance['image'] ), $image_class_html );
 
@@ -300,7 +300,7 @@ class Widget_Image extends Widget_Base {
 					image_html = '';
 
 				if ( '' !== settings.hover_animation ) {
-					imgClass = 'hover-' + settings.hover_animation;
+					imgClass = 'elementor-animation-' + settings.hover_animation;
 				}
 				
 				if ( hasCaption ) {

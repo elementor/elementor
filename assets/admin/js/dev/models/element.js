@@ -150,7 +150,8 @@ ElementModel = Backbone.Model.extend( {
 		this._jqueryXhr = elementor.ajax.send( 'render_widget', {
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
 			},
 			success: _.bind( this.onRemoteGetHtml, this )
 		} );

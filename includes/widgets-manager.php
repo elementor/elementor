@@ -131,7 +131,9 @@ class Widgets_Manager {
 	}
 
 	public function ajax_render_widget() {
-		ob_start();
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
 
 		if ( empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
@@ -146,6 +148,8 @@ class Widgets_Manager {
 
 		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
+		// Start buffering
+		ob_start();
 		$widget = $this->get_widget( $data['widgetType'] );
 		if ( false !== $widget ) {
 			$data['settings'] = $widget->get_parse_values( $data['settings'] );
@@ -162,6 +166,10 @@ class Widgets_Manager {
 	}
 
 	public function ajax_get_wp_widget_form() {
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			die;
+		}
+
 		$widget_type = $_POST['widget_type'];
 		$widget_obj = $this->get_widget( $widget_type );
 
