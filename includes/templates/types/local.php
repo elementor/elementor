@@ -53,8 +53,6 @@ class Type_Local extends Type_Base {
 			self::CPT,
 			apply_filters( 'elementor/templates/types/local/register_post_type_args', $args )
 		);
-
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
 	}
 
 	public function register_admin_menu() {
@@ -289,8 +287,8 @@ class Type_Local extends Type_Base {
 
 	private function _add_actions() {
 		if ( is_admin() ) {
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
-
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 		}
 	}
