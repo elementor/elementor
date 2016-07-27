@@ -25,9 +25,7 @@ TemplatesManager = function() {
 	};
 
 	this.importTemplate = function( templateModel ) {
-		self.getLayout().showLoadingView();
-
-		elementor.ajax.send( 'get_template', {
+		elementor.ajax.send( 'get_template_content', {
 			data: {
 				type: templateModel.get( 'type' ),
 				post_id: elementor.config.post_id,
@@ -81,7 +79,17 @@ TemplatesManager = function() {
 	this.startModal = function() {
 		self.getModal().show();
 
-		initLayout();
+		if ( ! layout ) {
+			initLayout();
+		}
+	};
+
+	this.showTemplates = function() {
+		if ( templatesCollection ) {
+			layout.showTemplatesView( templatesCollection );
+
+			return;
+		}
 
 		layout.showLoadingView();
 
@@ -89,30 +97,13 @@ TemplatesManager = function() {
 			success: function( data ) {
 				templatesCollection = new TemplatesCollection( data );
 
-				self.showTemplates();
-			}
-		} );
-	};
-
-	this.showTemplates = function() {
-		layout.showTemplatesView( templatesCollection );
-	};
-
-	this.showTemplatePreview = function( templateModel ) {
-		layout.showLoadingView();
-
-		elementor.ajax.send( 'get_template_url', {
-			data: {
-				id: templateModel.get( 'id' )
-			},
-			success: function( data ) {
-				layout.showPreviewView( data );
+				layout.showTemplatesView( templatesCollection );
 			}
 		} );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
-		this.getErrorDialog()
+		self.getErrorDialog()
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};

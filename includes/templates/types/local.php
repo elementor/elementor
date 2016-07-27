@@ -23,7 +23,7 @@ class Type_Local extends Type_Base {
 
 	public function register_data() {
 		$labels = [
-			'name' => __( 'Templates', 'elementor' ),
+			'name' => __( 'Library', 'elementor' ),
 			'singular_name' => __( 'Template', 'elementor' ),
 			'add_new' => __( 'Add New', 'elementor' ),
 			'add_new_item' => __( 'Add New Template', 'elementor' ),
@@ -124,10 +124,11 @@ class Type_Local extends Type_Base {
 			'categories' => [],
 			'keywords' => [],
 			'export_link' => $this->_get_export_link( $item_id ),
+			'url' => get_permalink( $post->ID ),
 		];
 	}
 
-	public function get_template( $item_id, $context = 'display' ) {
+	public function get_content( $item_id, $context = 'display' ) {
 		// TODO: Valid the data (in JS too!)
 		if ( 'display' === $context ) {
 			$data = Plugin::instance()->db->get_builder( $item_id );
@@ -146,7 +147,7 @@ class Type_Local extends Type_Base {
 	}
 
 	public function export_template( $item_id ) {
-		$template_data = $this->get_template( $item_id, 'raw' );
+		$template_data = $this->get_content( $item_id, 'raw' );
 		if ( empty( $template_data ) )
 			wp_die( 'The template does not exist', 'elementor' );
 
@@ -233,6 +234,48 @@ class Type_Local extends Type_Base {
 		return $this->get_item( $item_id );
 	}
 
+	public function post_row_actions( $actions, \WP_Post $post ) {
+		if ( $this->_is_base_templates_screen() ) {
+			$actions[] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+		}
+
+		return $actions;
+	}
+
+	public function admin_import_template_form() {
+		if ( ! $this->_is_base_templates_screen() ) {
+			return;
+		}
+		?>
+		<div id="elementor-hidden-area">
+			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Upload', 'elementor' ); ?></a>
+			<form id="elementor-import-templates-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<input type="hidden" name="action" value="elementor_import_template">
+				<fieldset id="elementor-import-templates-form-inputs">
+					<input type="file" name="file" accept="application/json" required>
+					<input type="submit">
+				</fieldset>
+			</form>
+		</div>
+		<?php
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->_add_actions();
+	}
+
+	private function _is_base_templates_screen() {
+		global $current_screen;
+
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		return 'edit' === $current_screen->base && self::CPT === $current_screen->post_type;
+	}
+
 	private function _get_export_link( $item_id ) {
 		return add_query_arg(
 			[
@@ -242,5 +285,13 @@ class Type_Local extends Type_Base {
 			],
 			admin_url( 'admin-ajax.php' )
 		);
+	}
+
+	private function _add_actions() {
+		if ( is_admin() ) {
+			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
+
+			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
+		}
 	}
 }
