@@ -788,7 +788,8 @@
 @media (max-width: 767px) {
   .elementor-widget-icon-box .elementor-icon-box-icon {
     margin-left: auto !important;
-    margin-right: auto !important; } }
+    margin-right: auto !important;
+    margin-bottom: 15px; } }
 .elementor-widget-icon-box .elementor-icon-box-wrapper {
   text-align: center; }
 .elementor-widget-icon-box .elementor-icon-box-description {
