@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -77,6 +77,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
+- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -152,6 +153,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 4. Settings page.
 
 == Changelog ==
+
+= 0.6.1 - 26.07.2016 =
+* Tweak! - Improved editor UI for blank pages
+* Fixed! - Hide empty widgets in preview mode
+* Fixed! - Bug with Section background overlay and background video ([#323](https://github.com/pojome/elementor/issues/323))
+* Fixed! - Minor security issue
 
 = 0.6.0 - 25.07.2016 =
 * New! - Added 27 Hover Animations for Image / Icon / Button widgets

@@ -99,6 +99,14 @@ class Elements_Manager {
 	}
 
 	public function ajax_save_builder() {
+		if ( empty( $_POST['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+		}
+
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_access' ) );
+		}
+
 		if ( isset( $_POST['revision'] ) && DB::REVISION_PUBLISH === $_POST['revision'] ) {
 			$revision = DB::REVISION_PUBLISH;
 		} else {

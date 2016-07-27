@@ -4,6 +4,7 @@ namespace Elementor\Templates;
 use Elementor\Controls_Manager;
 use Elementor\DB;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -45,12 +46,24 @@ class Type_Local extends Type_Base {
 			'show_in_menu' => false,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 		];
 
 		register_post_type(
 			self::CPT,
 			apply_filters( 'elementor/templates/types/local/register_post_type_args', $args )
+		);
+
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
+	}
+
+	public function register_admin_menu() {
+		add_submenu_page(
+			Settings::PAGE_ID,
+			__( 'Templates', 'elementor' ),
+			__( 'Templates', 'elementor' ),
+			'edit_pages',
+			'edit.php?post_type=' . self::CPT
 		);
 	}
 

@@ -320,6 +320,9 @@ class Admin {
 				<span id="elementor-deactivate-feedback-dialog-header-title"><?php _e( 'Quick Feedback', 'elementor' ); ?></span>
 			</div>
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
+				<?php
+				wp_nonce_field( '_elementor_deactivate_feedback_nonce' );
+				?>
 				<input type="hidden" name="action" value="elementor_deactivate_feedback" />
 
 				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php _e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
@@ -340,6 +343,10 @@ class Admin {
 	}
 
 	public function ajax_elementor_deactivate_feedback() {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_elementor_deactivate_feedback_nonce' ) ) {
+			wp_send_json_error();
+		}
+
 		$reason_text = $reason_key = '';
 
 		if ( ! empty( $_POST['reason_key'] ) )

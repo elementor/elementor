@@ -3817,7 +3817,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	getTemplateType: function() {
-		return 'remote';
+		return 'js';
 	},
 
 	initialize: function() {
@@ -6210,7 +6210,9 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 			elTopOffsetRange = sectionHandleHeight - elTopOffset;
 
 		if ( 0 < elTopOffsetRange ) {
-			this.$el.css( 'margin-top', elTopOffsetRange );
+			var $style = Backbone.$( '<style>' ).text( '.elementor-editor-active #elementor-inner{margin-top: ' + elTopOffsetRange + 'px}' );
+
+			elementor.$previewContents.children().children( 'head' ).append( $style );
 		}
 	},
 

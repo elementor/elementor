@@ -134,13 +134,10 @@ class Schemes_Manager {
 				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
 					continue;
 				}
-
 				$enabled_schemes[] = $schemes_type;
 			}
-
 			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
 		}
-
 		return self::$_enabled_schemes;
 	}
 

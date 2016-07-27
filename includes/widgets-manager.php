@@ -137,6 +137,10 @@ class Widgets_Manager {
 			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
 		}
 
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_access' ) );
+		}
+
 		// Override the global $post for the render
 		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
 
