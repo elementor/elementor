@@ -112,7 +112,6 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		return $type->get_template_content( $_POST['item_id'] );
 	}
 
 	public function get_template_url() {
@@ -121,6 +120,7 @@ class Manager {
 		}
 
 		return get_permalink( $_POST['id'] );
+		return $type->get_content( $_POST['item_id'] );
 	}
 
 	public function delete_template() {
