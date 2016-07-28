@@ -100,9 +100,7 @@ App = Marionette.Application.extend( {
 		this.initDialogsManager();
 
 		this.heartbeat.init();
-
 		this.modals.init();
-
 		this.ajax.init();
 	},
 
