@@ -118,16 +118,7 @@
   width: 100%;
   display: -ms-flexbox;
   display: flex;
-  /* In dragging mode it's causing a columns fall */
-  /* Temp Removing = Wrap in Safari browser
-  &:before,
-  &:after {
-  	content: " ";
-  	display: table;
-  }
-  &:after {
-  	clear: both;
-  }*/ }
+  /* In dragging mode it's causing a columns fall */ }
   @media (max-width: 767px) {
     .elementor-row {
       -ms-flex-wrap: wrap;
@@ -372,6 +363,42 @@
   .elementor-widget-image .elementor-image.elementor-image-shape-circle {
     border-radius: 50%; }
 
+.elementor-image-gallery .gallery .gallery-item {
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto; }
+  .elementor-image-gallery .gallery .gallery-item img {
+    margin: 0 auto; }
+.elementor-image-gallery .gallery.gallery-columns-2 .gallery-item {
+  max-width: 50%; }
+.elementor-image-gallery .gallery.gallery-columns-3 .gallery-item {
+  max-width: 33.33%; }
+.elementor-image-gallery .gallery.gallery-columns-4 .gallery-item {
+  max-width: 25%; }
+.elementor-image-gallery .gallery.gallery-columns-5 .gallery-item {
+  max-width: 20%; }
+.elementor-image-gallery .gallery.gallery-columns-6 .gallery-item {
+  max-width: 16.66%; }
+.elementor-image-gallery .gallery.gallery-columns-7 .gallery-item {
+  max-width: 14.28%; }
+.elementor-image-gallery .gallery.gallery-columns-8 .gallery-item {
+  max-width: 12.5%; }
+.elementor-image-gallery .gallery.gallery-columns-9 .gallery-item {
+  max-width: 11.11%; }
+.elementor-image-gallery .gallery.gallery-columns-10 .gallery-item {
+  max-width: 10%; }
+.elementor-image-gallery .gallery .gallery-caption {
+  margin: 0; }
+
+@media (max-width: 767px) {
+  .elementor-image-gallery .gallery.gallery-columns-3 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-4 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-5 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-6 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-7 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-8 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-9 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-10 .gallery-item {
+    max-width: 50%; } }
+@media (max-width: 479px) {
+  .elementor-image-gallery .gallery.gallery-columns-2 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-3 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-4 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-5 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-6 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-7 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-8 .gallery-item, .elementor-image-gallery .gallery.gallery-columns-9 .gallery-item {
+    max-width: 100%; } }
 .elementor-button-wrapper.elementor-align-center {
   text-align: center; }
 .elementor-button-wrapper.elementor-align-right {

@@ -90,15 +90,6 @@
 	@media(max-width: $screen-sm-max) {
 		flex-wrap: wrap;
 	}
-	/* Temp Removing = Wrap in Safari browser
-	&:before,
-	&:after {
-		content: " ";
-		display: table;
-	}
-	&:after {
-		clear: both;
-	}*/
 }
 
 // Widget
