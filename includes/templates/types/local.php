@@ -35,7 +35,7 @@ class Type_Local extends Type_Base {
 			'not_found' => __( 'No Templates found', 'elementor' ),
 			'not_found_in_trash' => __( 'No Templates found in Trash', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Templates', 'elementor' ),
+			'menu_name' => __( 'Library', 'elementor' ),
 		];
 
 		$args = [
