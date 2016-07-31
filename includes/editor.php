@@ -326,6 +326,7 @@ class Editor {
 					'insert_media' => __( 'Insert Media', 'elementor' ),
 					'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 					'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
+					'learn_more' => __( 'Learn More', 'elementor' ),
 				],
 			]
 		);
