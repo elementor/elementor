@@ -141,6 +141,9 @@ body {
   .select2-dropdown .select2-search__field {
     outline: none; }
 
+#elementor-fatal-error-dialog .dialog-widget-header {
+  font-size: 13px; }
+
 .elementor-button {
   border: none;
   cursor: pointer;
