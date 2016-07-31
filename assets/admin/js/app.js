@@ -228,13 +228,17 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		var dialog = this.dialogsManager.createWidget( 'alert', {
+		var dialog = this.dialogsManager.createWidget( 'confirm', {
 			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
 			message: elementor.translate( 'preview_el_not_found_message' ),
 			position: {
 				my: 'center center',
 				at: 'center center'
 			},
+            strings: {
+			    confirm: elementor.translate( 'close' ),
+                cancel: elementor.translate( 'learn_more' )
+            },
 			onConfirm: function() {
 				parent.history.go( -1 );
 			}
