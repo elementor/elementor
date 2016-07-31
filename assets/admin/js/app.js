@@ -237,8 +237,8 @@ App = Marionette.Application.extend( {
 				at: 'center center'
 			},
             strings: {
-			    confirm: elementor.translate( 'learn_more' ),
-                cancel: elementor.translate( 'go_back' )
+				confirm: elementor.translate( 'learn_more' ),
+				cancel: elementor.translate( 'go_back' )
             },
 			onConfirm: function() {
 				open( elementor.config.help_the_content_url, '_blank' );
