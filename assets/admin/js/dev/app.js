@@ -228,6 +228,7 @@ App = Marionette.Application.extend( {
 
 	onPreviewElNotFound: function() {
 		var dialog = this.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-fatal-error-dialog',
 			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
 			message: elementor.translate( 'preview_el_not_found_message' ),
 			position: {
@@ -235,12 +236,16 @@ App = Marionette.Application.extend( {
 				at: 'center center'
 			},
             strings: {
-			    confirm: elementor.translate( 'close' ),
-                cancel: elementor.translate( 'learn_more' )
+			    confirm: elementor.translate( 'learn_more' ),
+                cancel: elementor.translate( 'go_back' )
             },
 			onConfirm: function() {
+				open( elementor.config.help_the_content_url, '_blank' );
+			},
+			onCancel: function() {
 				parent.history.go( -1 );
-			}
+			},
+			hideOnButtonClick: false
 		} );
 
 		dialog.show();
