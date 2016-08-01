@@ -16,6 +16,7 @@ class Manager {
 
 		$types = [
 			'local',
+			'remote',
 		];
 
 		foreach ( $types as $types_filename ) {
@@ -67,7 +68,7 @@ class Manager {
 	public function get_templates() {
 		$templates = [];
 		foreach ( $this->get_registered_types() as $type ) {
-			$templates += $type->get_items();
+			$templates = array_merge( $templates, $type->get_items() );
 		}
 		return $templates;
 	}
