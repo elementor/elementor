@@ -69,7 +69,8 @@
 	font-weight: 500;
 }
 
-.dialog-options-widget, .dialog-confirm-widget {
+.dialog-options-widget,
+.dialog-confirm-widget {
 
 	.dialog-widget-header {
 		font-size: 15px;
@@ -85,8 +86,8 @@
 				@include border-end(1px solid $editor-background);
 			}
 
-			&:focus {
-				background-color: $editor-background;
+			&:hover {
+				background-color: lighten( $editor-background, 5%);
 			}
 		}
 	}
@@ -139,7 +140,6 @@
 }
 
 // Modal widget
-
 .dialog-elementor-modal-close-button {
 	cursor: pointer;
 	position: absolute;
