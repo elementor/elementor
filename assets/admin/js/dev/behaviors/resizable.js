@@ -10,8 +10,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'resize': 'onResize',
-		'resizestop': 'onResizeStop'
+		'resize': 'onResize'
 	},
 
 	initialize: function() {
@@ -61,12 +60,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		event.stopPropagation();
 
 		this.view.triggerMethod( 'request:resize', ui );
-	},
-
-	onResizeStop: function( event, ui ) {
-		event.stopPropagation();
-
-		this.view.triggerMethod( 'resize:stopped', ui );
 	},
 
 	getChildViewContainer: function() {
