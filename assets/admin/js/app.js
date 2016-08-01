@@ -5434,7 +5434,7 @@ SectionView = BaseElementView.extend( {
 		return {
 			currentColumnNewSize: newSize.toFixed( 3 ),
 			nextColumn: nextChildView,
-			nextColumnNewSize: nextElementNewSize.toFixed
+			nextColumnNewSize: nextElementNewSize.toFixed( 3 )
 		};
 	},
 
