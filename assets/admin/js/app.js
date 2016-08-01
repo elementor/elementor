@@ -5146,7 +5146,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: this.editorID,
 			selector: '#' + this.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change', function() {
+				editor.on( 'keyup change undo redo', function() {
 					editor.save();
 
 					self.setValue( editor.getContent() );
