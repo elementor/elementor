@@ -58,8 +58,8 @@ class Type_Local extends Type_Base {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Settings::PAGE_ID,
-			__( 'Templates', 'elementor' ),
-			__( 'Templates', 'elementor' ),
+			__( 'Library', 'elementor' ),
+			__( 'Library', 'elementor' ),
 			'edit_pages',
 			'edit.php?post_type=' . self::CPT
 		);
@@ -246,7 +246,7 @@ class Type_Local extends Type_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Upload', 'elementor' ); ?></a>
+			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Import Template', 'elementor' ); ?></a>
 			<form id="elementor-import-templates-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 				<input type="hidden" name="action" value="elementor_import_template">
 				<fieldset id="elementor-import-templates-form-inputs">
