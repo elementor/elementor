@@ -77,9 +77,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
+				var elementTitle = this.model.getTitle();
+
 				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete' ),
-					headerMessage: elementor.translate( 'delete_element' ),
+					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
+					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
 						cancel: elementor.translate( 'cancel' )
@@ -145,6 +147,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 			if ( ! _.isEmpty( inlineSize ) ) {
 				styleHtml += '@media (min-width: 768px) {#' + this.getElementUniqueClass() + '{width:' + inlineSize + '%;}';
 			}
+		}
+
+		if ( _.isEmpty( styleHtml ) ) {
+			return;
 		}
 
 		if ( 0 === $stylesheet.length ) {

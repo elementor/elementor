@@ -227,7 +227,7 @@ body.elementor-editor-active #elementor {
     padding: 10px; } }
 body.elementor-editor-active .elementor-widget.elementor-loading {
   opacity: .3; }
-body.elementor-editor-active .elementor-widget:not(.elementor-loading) {
+body.elementor-editor-active .elementor-widget:not(.elementor-loading):not(.elementor-widget-menu-anchor) {
   transition: all .1s; }
 body.elementor-editor-active .elementor-widget.elementor-element-editable, body.elementor-editor-active .elementor-widget:hover {
   outline: 1px solid #71d7f7; }

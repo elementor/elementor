@@ -39,7 +39,7 @@ Schemes = function() {
 				outputSelector,
 				outputCssProperty;
 
-			if ( _.isEmpty( currentSchemeValue ) ) {
+			if ( _.isEmpty( currentSchemeValue.value ) ) {
 				return;
 			}
 

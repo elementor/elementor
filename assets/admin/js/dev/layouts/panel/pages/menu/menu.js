@@ -10,13 +10,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		this.collection = new Backbone.Collection( [
             {
                 icon: 'paint-brush',
-                title: elementor.translate( 'colors' ),
+                title: elementor.translate( 'global_colors' ),
 				type: 'page',
                 pageName: 'colorScheme'
             },
             {
                 icon: 'font',
-                title: elementor.translate( 'fonts' ),
+                title: elementor.translate( 'global_fonts' ),
 				type: 'page',
                 pageName: 'typographyScheme'
             },

@@ -37,6 +37,10 @@ html {
 html {
   background-color: #F1F1F1; }
 
+iframe,
+img {
+  border: 0 none; }
+
 body {
   color: #6d7882;
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
@@ -46,6 +50,10 @@ body {
   text-decoration: none;
   text-transform: none;
   overflow: hidden; }
+  body a {
+    color: #71d7f7; }
+    body a:hover {
+      color: #9b0a46; }
   body.elementor-editor-active #elementor-preview {
     left: 280px;
     right: 0; }
@@ -61,10 +69,6 @@ body {
       display: none; }
   body.elementor-editor-preview #elementor-mode-switcher-preview .fa:before {
     content: ""; }
-
-iframe,
-img {
-  border: 0 none; }
 
 #elementor-preview:not(.ui-resizable-resizing), #elementor-panel:not(.ui-resizable-resizing) {
   transition: left 0.5s, width 0.5s; }
@@ -136,6 +140,10 @@ img {
   border-color: #a4afb7; }
   .select2-dropdown .select2-search__field {
     outline: none; }
+
+#elementor-fatal-error-dialog .dialog-widget-header {
+  font-size: 13px;
+  color: #6d7882; }
 
 .elementor-button {
   border: none;

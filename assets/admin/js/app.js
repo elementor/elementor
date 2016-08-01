@@ -238,16 +238,25 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		var dialog = this.dialogsManager.createWidget( 'alert', {
+		var dialog = this.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-fatal-error-dialog',
 			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
 			message: elementor.translate( 'preview_el_not_found_message' ),
 			position: {
 				my: 'center center',
 				at: 'center center'
 			},
+            strings: {
+				confirm: elementor.translate( 'learn_more' ),
+				cancel: elementor.translate( 'go_back' )
+            },
 			onConfirm: function() {
+				open( elementor.config.help_the_content_url, '_blank' );
+			},
+			onCancel: function() {
 				parent.history.go( -1 );
-			}
+			},
+			hideOnButtonClick: false
 		} );
 
 		dialog.show();
@@ -2135,13 +2144,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		this.collection = new Backbone.Collection( [
             {
                 icon: 'paint-brush',
-                title: elementor.translate( 'colors' ),
+                title: elementor.translate( 'global_colors' ),
 				type: 'page',
                 pageName: 'colorScheme'
             },
             {
                 icon: 'font',
-                title: elementor.translate( 'fonts' ),
+                title: elementor.translate( 'global_fonts' ),
 				type: 'page',
                 pageName: 'typographyScheme'
             },
@@ -3636,7 +3645,7 @@ Schemes = function() {
 				outputSelector,
 				outputCssProperty;
 
-			if ( _.isEmpty( currentSchemeValue ) ) {
+			if ( _.isEmpty( currentSchemeValue.value ) ) {
 				return;
 			}
 
@@ -3842,9 +3851,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
+				var elementTitle = this.model.getTitle();
+
 				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete' ),
-					headerMessage: elementor.translate( 'delete_element' ),
+					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
+					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
 						cancel: elementor.translate( 'cancel' )
@@ -3910,6 +3921,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 			if ( ! _.isEmpty( inlineSize ) ) {
 				styleHtml += '@media (min-width: 768px) {#' + this.getElementUniqueClass() + '{width:' + inlineSize + '%;}';
 			}
+		}
+
+		if ( _.isEmpty( styleHtml ) ) {
+			return;
 		}
 
 		if ( 0 === $stylesheet.length ) {
