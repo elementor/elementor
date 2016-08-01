@@ -295,6 +295,7 @@ class Editor {
 				'edit_post_link' => get_edit_post_link(),
 				'settings_page_link' => Settings::get_url(),
 				'elementor_site' => 'https://elementor.com/',
+				'help_the_content_url' => 'http://docs.elementor.com/article/56-content-area-not-found',
 				'assets_url' => ELEMENTOR_ASSETS_URL,
 				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
 				'locked_user' => $locked_user,
@@ -324,8 +325,9 @@ class Editor {
 					'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 					'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
 					'insert_media' => __( 'Insert Media', 'elementor' ),
-					'preview_el_not_found_header' => __( 'Sorry, content area not found in your page', 'elementor' ),
-					'preview_el_not_found_message' => __( 'You must call \'the_content\' method in current template, in order to allow Elementor work on this page.', 'elementor' ),
+					'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
+					'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
+					'learn_more' => __( 'Learn More', 'elementor' ),
 				],
 			]
 		);
