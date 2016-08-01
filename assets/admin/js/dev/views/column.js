@@ -88,14 +88,10 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
-	changeSizeUI: function( inlineSize ) {
-		var columnSize = this.model.getSetting( '_column_size' );
-
-		if ( undefined === inlineSize ) {
-			inlineSize = this.model.getSetting( '_inline_size' );
-		}
-
-		var columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
+	changeSizeUI: function() {
+		var columnSize = this.model.getSetting( '_column_size' ),
+			inlineSize = this.model.getSetting( '_inline_size' ),
+			columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
 
 		this.$el.attr( 'data-col', columnSize );
 
