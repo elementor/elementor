@@ -533,9 +533,8 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'resizestart': 'onResizeStart',
-		'resizestop': 'onResizeStop',
-		'resize': 'onResize'
+		'resize': 'onResize',
+		'resizestop': 'onResizeStop'
 	},
 
 	initialize: function() {
@@ -581,28 +580,19 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		this.deactivate();
 	},
 
-	onResizeStart: function( event, ui ) {
-		//this.ui.columnTitle.fadeIn( 'fast' );
-	},
-
-	onResizeStop: function( event, ui ) {
-		//this.ui.columnTitle.fadeOut( 'fast' );
-	},
-
 	onResize: function( event, ui ) {
 		event.stopPropagation();
 
 		this.view.triggerMethod( 'request:resize', ui );
 	},
 
+	onResizeStop: function( event, ui ) {
+		event.stopPropagation();
+
+		this.view.triggerMethod( 'resize:stopped', ui );
+	},
+
 	getChildViewContainer: function() {
-		//if ( 'function' === typeof this.view.getChildViewContainer ) {
-		//	// CompositeView
-		//	return this.view.getChildViewContainer( this.view );
-		//} else {
-		//	// CollectionView
-		//	return this.$el;
-		//}
 		return this.$el;
 	}
 } );
@@ -3485,13 +3475,16 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
-	changeSizeUI: function() {
-		var columnSize = this.model.getSetting( '_column_size' ),
-			inlineSize = this.model.getSetting( '_inline_size' ),
-			columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
+	changeSizeUI: function( inlineSize ) {
+		var columnSize = this.model.getSetting( '_column_size' );
+
+		if ( undefined === inlineSize ) {
+			inlineSize = this.model.getSetting( '_inline_size' );
+		}
+
+		var columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
 
 		this.$el.attr( 'data-col', columnSize );
-		//this.$el.css( 'width', inlineSize ? inlineSize + '%' : '' );
 
 		this.ui.columnTitle.html( columnSizeTitle );
 	},
@@ -5411,6 +5404,40 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
+	parseColumnsResize: function( childView, ui ) {
+		var currentSize = childView.model.getSetting( '_inline_size' );
+
+		if ( ! currentSize ) {
+			currentSize = this.getColumnPercentSize( ui.element, ui.originalSize.width );
+		}
+
+		var	newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
+			difference = newSize - currentSize;
+
+		// Get next column details
+		var modelIndex = this.collection.indexOf( childView.model ),
+			nextModel = this.collection.at( modelIndex + 1 ),
+			nextChildView = this.children.findByModelCid( nextModel.cid );
+
+		if ( ! nextChildView ) {
+			return false;
+		}
+
+		var $nextElement = nextChildView.$el,
+			nextElementCurrentSize = this.getColumnPercentSize( $nextElement, $nextElement.width() ),
+			nextElementNewSize = nextElementCurrentSize - difference;
+
+		if ( newSize < 10 || newSize > 100 || ! difference || nextElementNewSize < 10 || nextElementNewSize > 100 ) {
+			return false;
+		}
+
+		return {
+			currentColumnNewSize: newSize.toFixed( 3 ),
+			nextColumn: nextChildView,
+			nextColumnNewSize: nextElementNewSize.toFixed
+		};
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -5434,46 +5461,30 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onChildviewRequestResize: function( childView, ui ) {
-		// Get current column details
-		var currentSize = childView.model.getSetting( '_inline_size' );
+		var parsedResize = this.parseColumnsResize( childView, ui );
 
-		if ( ! currentSize ) {
-			currentSize = this.getColumnPercentSize( ui.element, ui.originalSize.width );
-		}
+		childView.changeSizeUI( parsedResize.currentColumnNewSize );
 
-		var	newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
-			difference = newSize - currentSize;
+		parsedResize.nextColumn.changeSizeUI( parsedResize.nextColumnNewSize );
+	},
+
+	onChildviewResizeStopped: function( childView, ui ) {
+		var parsedResize = this.parseColumnsResize( childView, ui );
 
 		ui.element.css( {
-			//width: currentSize + '%',
 			width: '',
 			left: 'initial' // Fix for RTL resizing
 		} );
 
-		// Get next column details
-		var modelIndex = this.collection.indexOf( childView.model ),
-			nextModel = this.collection.at( modelIndex + 1 ),
-			nextChildView = this.children.findByModelCid( nextModel.cid );
-
-		if ( ! nextChildView ) {
-			return;
-		}
-
-		var $nextElement = nextChildView.$el,
-			nextElementCurrentSize = this.getColumnPercentSize( $nextElement, $nextElement.width() ),
-			nextElementNewSize = nextElementCurrentSize - difference;
-
-		if ( newSize < 10 || newSize > 100 || ! difference || nextElementNewSize < 10 || nextElementNewSize > 100 ) {
+		if ( ! parsedResize ) {
 			return;
 		}
 
 		// Set the current column size
-		childView.model.setSetting( '_inline_size', newSize.toFixed( 3 ) );
-		childView.changeSizeUI();
+		childView.model.setSetting( '_inline_size', parsedResize.currentColumnNewSize );
 
 		// Set the next column size
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize.toFixed( 3 ) );
-		nextChildView.changeSizeUI();
+		parsedResize.nextColumn.model.setSetting( '_inline_size', parsedResize.nextColumnNewSize );
 	},
 
 	onStructureChanged: function() {
