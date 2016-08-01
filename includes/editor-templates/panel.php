@@ -101,7 +101,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-footer-templates-modal" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-wpforms"></i>
+					<i class="elementor-icon fa fa-folder"></i>
 					<span class="elementor-title"><?php _e( 'Templates Library', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-footer-save-template" class="elementor-panel-footer-sub-menu-item">
