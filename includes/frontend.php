@@ -307,6 +307,9 @@ class Frontend {
 					$scheme_value = $scheme_value[ $control['scheme']['key'] ];
 				}
 
+				if ( empty( $scheme_value ) )
+					continue;
+
 				$element_unique_class = 'elementor-widget-' . $widget_obj->get_id();
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
