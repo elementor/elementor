@@ -143,16 +143,10 @@ class Frontend {
 			'4.6.3'
 		);
 
+		// Elementor Animations
 		wp_register_style(
-			'animate.css',
-			ELEMENTOR_ASSETS_URL . 'lib/animate.css/animate.min.css',
-			[],
-			Plugin::instance()->get_version()
-		);
-
-		wp_register_style(
-			'hover',
-			ELEMENTOR_ASSETS_URL . 'lib/hover/hover.min.css',
+			'elementor-animations',
+			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -167,8 +161,7 @@ class Frontend {
 			Plugin::instance()->get_version()
 		);
 
-		wp_enqueue_style( 'animate.css' );
-		wp_enqueue_style( 'hover' );
+		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 	}
 
