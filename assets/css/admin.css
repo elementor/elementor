@@ -43,7 +43,6 @@
       background-color: rgba(230, 233, 236, 0.5); }
 
 .dialog-widget-header {
-  line-height: 1;
   padding: 20px 0;
   font-weight: 500; }
 
@@ -91,8 +90,7 @@
   top: 16px;
   right: 20px;
   font-size: 16px;
-  color: #a4afb7;
-  line-height: 1; }
+  color: #a4afb7; }
 
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
