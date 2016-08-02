@@ -390,17 +390,20 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-import-templates-trigger {
   cursor: pointer; }
 
-#elementor-import-templates-form {
+#elementor-import-templates-area {
   display: none;
-  position: relative;
-  height: 200px;
-  border: 4px dashed #a4afb7;
-  margin: 15px 0; }
+  margin: 50px 0 30px;
+  text-align: center; }
 
-#elementor-import-templates-form-inputs {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%); }
+#elementor-import-templates-form {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 30px 50px;
+  background-color: #fafafa;
+  border: 1px solid #e5e5e5; }
+
+#elementor-import-templates-title {
+  font-size: 18px;
+  color: #555d66; }
 
 /*# sourceMappingURL=admin.css.map */
