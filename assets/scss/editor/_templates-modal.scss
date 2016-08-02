@@ -111,6 +111,38 @@
 	width: 56px;
 }
 
+#elementor-templates-header-settings {
+
+	&:not(:hover) {
+		#elementor-templates-header-settings-menu {
+			display: none;
+		}
+	}
+}
+
+#elementor-templates-header-settings-menu {
+	top: 100%;
+	@include end(0);
+	@include start(initial);
+	width: 200px;
+	transform: none;
+	z-index: 1;
+}
+
+.elementor-templates-header-settings-menu-item {
+	background-color: #fff;
+
+	&:hover {
+		background-color: $editor-background;
+	}
+
+	a {
+		display: block;
+		color: inherit;
+		padding: 10px;
+	}
+}
+
 #elementor-templates-header-preview {
 
 	> * {

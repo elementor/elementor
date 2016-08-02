@@ -20,6 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-templates-header-settings">
 	<i class="fa fa-cog" title="<?php _e( 'Settings', 'elementor' ); ?>"></i>
+	<ul id="elementor-templates-header-settings-menu">
+		<li class="elementor-templates-header-settings-menu-item">
+			<a href="<?php echo admin_url( 'edit.php?post_type=' . Templates\Type_Local::CPT );  ?>"><?php _e( 'Library Manager', 'elementor' ); ?></a>
+		</li>
+		<li id="elementor-templates-header-settings-save" class="elementor-templates-header-settings-menu-item">
+			<a><?php _e( 'Save Template', 'elementor' ); ?></a>
+		</li>
+	</ul>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-header-menu">
