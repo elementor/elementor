@@ -10,38 +10,46 @@ TemplatesHeaderMenuView = Marionette.ItemView.extend( {
 	id: 'elementor-templates-header-menu',
 
 	ui: {
-		menuItems: '.elementor-templates-menu-item',
-		menuMyTemplates: '#elementor-templates-menu-my-templates'
+		menuItems: '.elementor-templates-menu-item'
 	},
 
 	events: {
-		'click @ui.menuItems': 'onMenuItemClick',
-		'click @ui.menuMyTemplates': 'onMenuMyTemplatesClick'
+		'click @ui.menuItems': 'onMenuItemClick'
 	},
 
 	$activeItem: null,
 
-	onRender: function() {
-		this.$activeItem = this.ui.menuItems.filter( '.' + this.getOption( 'activeClass' ) );
-	},
-
-	onMenuItemClick: function( event ) {
-		var $item = Backbone.$( event.currentTarget ),
-			activeClass = this.getOption( 'activeClass' );
+	activateMenuItem: function( $item ) {
+		var activeClass = this.getOption( 'activeClass' );
 
 		if ( this.$activeItem === $item ) {
 			return;
 		}
 
-		this.$activeItem.removeClass( activeClass );
+		if ( this.$activeItem ) {
+			this.$activeItem.removeClass( activeClass );
+		}
 
 		$item.addClass( activeClass );
 
 		this.$activeItem = $item;
 	},
 
-	onMenuMyTemplatesClick: function() {
-		elementor.templates.showTemplates();
+	onRender: function() {
+		var currentType = elementor.channels.templates.request( 'filter:type' ),
+			$typeItem = this.ui.menuItems.filter( '[data-template-type="' + currentType + '"]' );
+
+		this.activateMenuItem( $typeItem );
+	},
+
+	onMenuItemClick: function( event ) {
+		var item = event.currentTarget;
+
+		this.activateMenuItem( Backbone.$( item ) );
+
+		elementor.channels.templates
+			.reply( 'filter:type', item.dataset.templateType )
+			.trigger( 'filter:change' );
 	}
 } );
 
