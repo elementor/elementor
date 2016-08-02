@@ -1725,7 +1725,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-templates-header-item {
   position: relative;
   color: #a4afb7;
-  border-left: 2px solid #e6e9ec;
+  border-left: 1px solid #e6e9ec;
   height: 50px;
   box-sizing: content-box;
   cursor: pointer; }
