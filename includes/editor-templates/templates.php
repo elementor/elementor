@@ -22,16 +22,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="fa fa-cog" title="<?php _e( 'Settings', 'elementor' ); ?>"></i>
 	<ul id="elementor-templates-header-settings-menu">
 		<li class="elementor-templates-header-settings-menu-item">
-			<a href="<?php echo admin_url( 'edit.php?post_type=' . Templates\Type_Local::CPT );  ?>"><?php _e( 'Library Manager', 'elementor' ); ?></a>
+			<a href="<?php echo admin_url( 'edit.php?post_type=' . Templates\Type_Local::CPT );  ?>" target="_blank"><i class="fa fa-external-link"></i> <?php _e( 'Library Manager', 'elementor' ); ?></a>
 		</li>
 		<li id="elementor-templates-header-settings-save" class="elementor-templates-header-settings-menu-item">
-			<a><?php _e( 'Save Template', 'elementor' ); ?></a>
+			<a><i class="fa fa-floppy-o"></i> <?php _e( 'Save Template', 'elementor' ); ?></a>
 		</li>
 	</ul>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-header-menu">
-	<div id="elementor-templates-menu-pre-made-templates" class="elementor-templates-menu-item" data-template-type="remote"><?php _e( 'Pre Made Templates', 'elementor' ); ?></div>
+	<div id="elementor-templates-menu-pre-made-templates" class="elementor-templates-menu-item" data-template-type="remote"><?php _e( 'Templates', 'elementor' ); ?></div>
 	<div id="elementor-templates-menu-my-templates" class="elementor-templates-menu-item" data-template-type="local"><?php _e( 'My Templates', 'elementor' ); ?></div>
 </script>
 
