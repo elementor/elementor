@@ -15,12 +15,14 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		addNewSection: '#elementor-add-new-section',
 		closePresetsIcon: '#elementor-select-preset-close',
 		addSectionButton: '#elementor-add-section-button',
+		addTemplateButton: '#elementor-add-template-button',
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},
 
 	events: {
 		'click @ui.addSectionButton': 'onAddSectionButtonClick',
+		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 		'click @ui.closePresetsIcon': 'closeSelectPresets',
 		'click @ui.presets': 'onPresetSelected'
 	},
@@ -109,6 +111,13 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		this.ui.addNewSection.hide();
 		this.ui.selectPreset.show();
 	},
+
+	onAddTemplateButtonClick: function() {
+		elementor.templates.startModal();
+
+		elementor.templates.showTemplates();
+	},
+
 	onRender: function() {
 		var self = this;
 
