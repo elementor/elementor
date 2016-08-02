@@ -11,6 +11,7 @@ input, select, textarea {
 	color: $editor-darkest;
 	border: 1px solid;
 	margin: 0;
+	outline: none;
 
 	&:not(:focus) {
 		border-color: $editor-lightest;
