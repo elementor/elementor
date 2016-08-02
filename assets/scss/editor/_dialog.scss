@@ -64,7 +64,6 @@
 }
 
 .dialog-widget-header {
-	line-height: 1;
 	padding: 20px 0;
 	font-weight: 500;
 }
@@ -147,5 +146,4 @@
 	@include end(20px);
 	font-size: 16px;
 	color: $editor-light;
-	line-height: 1;
 }

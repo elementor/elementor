@@ -36,7 +36,6 @@
 	.icon {
 		font-size: 28px;
 		padding-top: 15px;
-		line-height: 1;
 		color: $editor-darker;
 	}
 
@@ -69,7 +68,6 @@
 #elementor-panel-elements-search-input {
 	width: 100%;
 	background-color: #fff;
-	line-height: 1;
 	font-size: 11px;
 	@include padding(8px, 42px, 8px, 15px);
 	font-style: italic;
