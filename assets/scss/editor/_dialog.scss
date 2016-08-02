@@ -10,10 +10,6 @@
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 9999;
-
-	* {
-		box-sizing: border-box;
-	}
 }
 
 .dialog-widget-content {
@@ -43,7 +39,6 @@
 		cursor: pointer;
 		padding: 13px 0;
 		outline: none;
-		margin: 0;
 
 		&:first-child {
 			color: $editor-dark;
