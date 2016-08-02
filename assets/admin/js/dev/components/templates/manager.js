@@ -81,6 +81,8 @@ TemplatesManager = function() {
 	this.startModal = function() {
 		self.getModal().show();
 
+		elementor.channels.templates.reply( 'filter:type', 'local' );
+
 		if ( ! layout ) {
 			initLayout();
 		}

@@ -1,12 +1,12 @@
-//
-// Preview (iframe)
-//
+*, :before, :after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
 
 body,
 html {
     height: 100%;
-    margin: 0;
-    padding: 0;
 }
 
 html {
@@ -16,6 +16,14 @@ html {
 iframe,
 img {
 	border: 0 none;
+}
+
+li {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
 }
 
 body {

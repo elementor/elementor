@@ -295,7 +295,6 @@
 			left: 0;
 			right: 0;
 			text-align: center;
-			line-height: 1;
 			padding: 9.5px;
 			font-size: 11px;
 			color: #fff;
@@ -339,7 +338,6 @@
 					color: $editor-lightest;
 					font-size: 9px;
 					text-transform: uppercase;
-					line-height: 1;
 					padding-top: 5px;
 				}
 
@@ -730,7 +728,6 @@
 			color: $editor-darkest;
 			font-weight: bold;
 			padding: 13.5px 20px;
-			line-height: 1;
 			position: relative;
 
 			&:before, &:after {
@@ -797,7 +794,6 @@
 			padding-top: 5px;
 			font-style: italic;
 			font-size: 11px;
-			line-height: 1;
 			color: $editor-light;
 		}
 	}
@@ -807,6 +803,7 @@
 
 		.elementor-control-description {
 			margin: 0 0 15px;
+			line-height: 1.4;
 		}
 
 		.elementor-control-input-wrapper {
@@ -841,7 +838,6 @@
 			color: $editor-lightest;
 			font-size: 9px;
 			text-align: center;
-			line-height: 1;
 		}
 
 		.elementor-image-dimensions-apply-button {
