@@ -2,12 +2,6 @@
 // Reset Panel
 //
 
-* {
-	&, &:before, &:after {
-		box-sizing: border-box;
-	}
-}
-
 ::selection {
 	background: $blue-light;
 	color: $white;
@@ -15,18 +9,11 @@
 
 a {
 	color: $editor-accent;
-	text-decoration: none;
 	transition: none;
+
 	&:visited {
 		color: inherit;
 	}
-}
-
-ol,
-ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
 }
 
 h1,

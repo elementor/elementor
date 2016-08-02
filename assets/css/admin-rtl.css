@@ -6,8 +6,6 @@
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; }
-  .dialog-widget * {
-    box-sizing: border-box; }
 
 .dialog-widget-content {
   background-color: #fff;
@@ -31,8 +29,7 @@
     font-size: 15px;
     cursor: pointer;
     padding: 13px 0;
-    outline: none;
-    margin: 0; }
+    outline: none; }
     .dialog-buttons-wrapper > button:first-child {
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {
@@ -43,7 +40,6 @@
       background-color: rgba(230, 233, 236, 0.5); }
 
 .dialog-widget-header {
-  line-height: 1;
   padding: 20px 0;
   font-weight: 500; }
 
@@ -91,8 +87,7 @@
   top: 16px;
   left: 20px;
   font-size: 16px;
-  color: #a4afb7;
-  line-height: 1; }
+  color: #a4afb7; }
 
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
@@ -392,17 +387,20 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-import-templates-trigger {
   cursor: pointer; }
 
-#elementor-import-templates-form {
+#elementor-import-templates-area {
   display: none;
-  position: relative;
-  height: 200px;
-  border: 4px dashed #a4afb7;
-  margin: 15px 0; }
+  margin: 50px 0 30px;
+  text-align: center; }
 
-#elementor-import-templates-form-inputs {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%); }
+#elementor-import-templates-form {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 30px 50px;
+  background-color: #fafafa;
+  border: 1px solid #e5e5e5; }
+
+#elementor-import-templates-title {
+  font-size: 18px;
+  color: #555d66; }
 
 /*# sourceMappingURL=admin-rtl.css.map */

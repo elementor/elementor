@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div id="elementor-add-section-inner">
 			<div id="elementor-add-new-section">
 				<button id="elementor-add-section-button" class="elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>
+				<button id="elementor-add-template-button" class="elementor-button"><?php _e( 'Add Template', 'elementor' ); ?></button>
 				<div id="elementor-add-section-drag-title"><?php _e( 'Or drag widget here', 'elementor' ); ?></div>
 			</div>
 			<div id="elementor-select-preset">

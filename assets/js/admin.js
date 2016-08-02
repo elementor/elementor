@@ -80,18 +80,17 @@
 			}
 
 			var self = this,
-				$importButton = self.cache.$importButton = $( '#elementor-import-templates-trigger' );
+				$importButton = self.cache.$importButton = $( '#elementor-import-templates-trigger' ),
+				$importArea = self.cache.$importArea = $( '#elementor-import-templates-area' );
 
-			self.cache.$importForm = $( '#elementor-import-templates-form' );
-
-			self.cache.$subList = $( '.subsubsub' );
+			self.cache.$formAnchor = $( 'h1' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).after( $importButton );
 
-			self.cache.$subList.before( self.cache.$importForm );
+			self.cache.$formAnchor.after( self.cache.$importArea );
 
 			$importButton.on( 'click', function() {
-				self.cache.$importForm.toggle();
+				$importArea.toggle();
 			} );
 		},
 

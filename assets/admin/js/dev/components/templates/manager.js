@@ -25,6 +25,8 @@ TemplatesManager = function() {
 	};
 
 	this.importTemplate = function( templateModel ) {
+		layout.showLoadingView();
+
 		elementor.ajax.send( 'get_template_content', {
 			data: {
 				type: templateModel.get( 'type' ),
@@ -78,6 +80,8 @@ TemplatesManager = function() {
 
 	this.startModal = function() {
 		self.getModal().show();
+
+		elementor.channels.templates.reply( 'filter:type', 'local' );
 
 		if ( ! layout ) {
 			initLayout();
