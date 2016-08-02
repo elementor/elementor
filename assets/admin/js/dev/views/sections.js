@@ -14,13 +14,15 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		addSectionArea: '#elementor-add-section',
 		addNewSection: '#elementor-add-new-section',
 		closePresetsIcon: '#elementor-select-preset-close',
-		addIcon: '#elementor-add-section-button',
+		addSectionButton: '#elementor-add-section-button',
+		addTemplateButton: '#elementor-add-template-button',
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},
 
 	events: {
-		'click @ui.addIcon': 'showSelectPresets',
+		'click @ui.addSectionButton': 'onAddSectionButtonClick',
+		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 		'click @ui.closePresetsIcon': 'closeSelectPresets',
 		'click @ui.presets': 'onPresetSelected'
 	},
@@ -88,11 +90,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		return this.children.findByModelCid( newModel.cid );
 	},
 
-	showSelectPresets: function() {
-		this.ui.addNewSection.hide();
-		this.ui.selectPreset.show();
-	},
-
 	closeSelectPresets: function() {
 		this.ui.addNewSection.show();
 		this.ui.selectPreset.hide();
@@ -108,6 +105,17 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 
 			elementor.$previewContents.children().children( 'head' ).append( $style );
 		}
+	},
+
+	onAddSectionButtonClick: function() {
+		this.ui.addNewSection.hide();
+		this.ui.selectPreset.show();
+	},
+
+	onAddTemplateButtonClick: function() {
+		elementor.templates.startModal();
+
+		elementor.templates.showTemplates();
 	},
 
 	onRender: function() {

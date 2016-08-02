@@ -11,11 +11,11 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'click @ui.insertButton': 'onLoadButtonClick',
+		'click @ui.insertButton': 'onInsertButtonClick',
 		'click @ui.previewButton': 'onPreviewButtonClick'
 	},
 
-	onLoadButtonClick: function() {
+	onInsertButtonClick: function() {
 		elementor.templates.importTemplate( this.model );
 	},
 

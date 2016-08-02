@@ -46,7 +46,7 @@ body {
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
   font-size: 13px;
   font-weight: normal;
-  line-height: 1.4;
+  line-height: 1;
   text-decoration: none;
   text-transform: none;
   overflow: hidden; }
@@ -177,7 +177,8 @@ input, select, textarea {
   box-shadow: none;
   color: #495157;
   border: 1px solid;
-  margin: 0; }
+  margin: 0;
+  outline: none; }
   input:not(:focus), select:not(:focus), textarea:not(:focus) {
     border-color: #d5dadf; }
   input:focus, select:focus, textarea:focus {
@@ -1682,7 +1683,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-templates-modal .dialog-widget-content {
   width: 990px;
-  background-color: #e6e9ec; }
+  background-color: #f1f3f5; }
 #elementor-templates-modal .dialog-widget-header {
   padding: 0;
   background-color: #fff;
@@ -1711,20 +1712,21 @@ body.elementor-editor-preview #elementor-mode-switcher {
     float: left; }
 
 #elementor-templates-header-logo {
-  font-size: 20px;
+  font-size: 15px;
   text-transform: uppercase;
   color: #495157;
   font-weight: bold; }
   #elementor-templates-header-logo i {
     padding-right: 10px;
-    color: #9b0a46; }
+    color: #9b0a46;
+    font-size: 20px; }
 
 #elementor-templates-header-menu {
   text-align: center; }
 
 .elementor-templates-menu-item {
   display: inline-block;
-  padding: 20px;
+  padding: 17px;
   cursor: pointer; }
   .elementor-templates-menu-item.elementor-active {
     background-image: linear-gradient(to bottom, #f3f3f3, #fff);
@@ -1742,7 +1744,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   position: relative;
   color: #a4afb7;
   border-left: 2px solid #e6e9ec;
-  height: 56px;
+  height: 50px;
   box-sizing: content-box; }
   .elementor-templates-header-item > * {
     position: absolute;
@@ -1770,9 +1772,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-templates-header-preview-back {
   width: 100%; }
-  #elementor-templates-header-preview-back:before {
-    content: "<";
+  #elementor-templates-header-preview-back i {
     padding-right: 10px; }
+    #elementor-templates-header-preview-back i:before {
+      content: ""; }
 
 #elementor-templates-loading {
   position: absolute;
@@ -1843,6 +1846,53 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-templates-preview {
   width: 100%;
   height: 99%; }
+
+#elementor-templates-save-template-title {
+  font-size: 30px;
+  margin-top: 55px; }
+
+#elementor-templates-save-template-excerpt {
+  font-size: 18px;
+  color: #a4afb7;
+  margin-top: 20px;
+  font-weight: 300; }
+
+#elementor-templates-save-template-form {
+  margin-top: 55px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center; }
+  #elementor-templates-save-template-form input {
+    height: 60px;
+    font-size: 18px; }
+
+#elementor-templates-save-template-name {
+  width: 460px;
+  background-color: #fff;
+  font-weight: 300;
+  color: #a4afb7;
+  padding-left: 25px;
+  border-radius: 3px 0 0 3px;
+  border: none; }
+
+#elementor-templates-save-template-submit {
+  width: 150px;
+  border-radius: 0 3px 3px 0;
+  font-weight: 500;
+  text-transform: uppercase; }
+
+#elementor-templates-save-template-footer {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #a4afb7;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 500; }
 
 #elementor-templates-error-dialog .dialog-message {
   text-align: left; }

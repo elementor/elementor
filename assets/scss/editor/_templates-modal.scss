@@ -2,7 +2,7 @@
 
 	.dialog-widget-content {
 		width: 990px;
-		background-color: $editor-background;
+		background-color: $editor-background-light;
 	}
 
 	.dialog-widget-header {
@@ -45,7 +45,7 @@
 }
 
 #elementor-templates-header-logo {
-	font-size: 20px;
+	font-size: 15px;
 	text-transform: uppercase;
 	color: $editor-darkest;
 	font-weight: bold;
@@ -53,6 +53,7 @@
 	i {
 		@include padding-end(10px);
 		color: $editor-accent;
+		font-size: 20px;
 	}
 }
 
@@ -62,7 +63,7 @@
 
 .elementor-templates-menu-item {
 	display: inline-block;
-	padding: 20px;
+	padding: 17px;
 	cursor: pointer;
 
 	&.elementor-active {
@@ -90,7 +91,7 @@
 	position: relative;
 	color: $editor-light;
 	@include border-start(2px solid $editor-background);
-	height: 56px;
+	height: 50px;
 	box-sizing: content-box;
 
 	> * {
@@ -132,9 +133,12 @@
 #elementor-templates-header-preview-back {
 	width: 100%;
 
-	&:before {
-		content: getValueByDirection( '<', '>' );
+	i {
 		@include padding-end(10px);
+
+		&:before {
+			content: getValueByDirection( '\f053', '\f054' );
+		}
 	}
 }
 
@@ -229,6 +233,58 @@
 #elementor-templates-preview {
 	width: 100%;
 	height: 99%;
+}
+
+#elementor-templates-save-template-title {
+	font-size: 30px;
+	margin-top: 55px;
+}
+
+#elementor-templates-save-template-excerpt {
+	font-size: 18px;
+	color: $editor-light;
+	margin-top: 20px;
+	font-weight: 300;
+}
+
+#elementor-templates-save-template-form {
+	margin-top: 55px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	input {
+		height: 60px;
+		font-size: 18px;
+	}
+}
+
+#elementor-templates-save-template-name {
+	width: 460px;
+	background-color: #fff;
+	font-weight: 300;
+	color: $editor-light;
+	padding-left: 25px;
+	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+	border: none;
+}
+
+#elementor-templates-save-template-submit {
+	width: 150px;
+	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+#elementor-templates-save-template-footer {
+	position: absolute;
+	bottom: 90px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: $editor-light;
+	font-size: 13px;
+	font-style: italic;
+	font-weight: 500;
 }
 
 #elementor-templates-error-dialog {

@@ -37,7 +37,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-header-back">
-	<span id="elementor-templates-header-preview-back"><?php _e( 'Back To library', 'elementor' ); ?></span>
+	<span id="elementor-templates-header-preview-back">
+		<i class="fa"></i><?php _e( 'Back To library', 'elementor' ); ?>
+	</span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-loading">
@@ -61,10 +63,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-save-template">
+	<div id="elementor-templates-save-template-title"><?php _e( 'Save Your Template', 'elementor' ); ?></div>
+	<div id="elementor-templates-save-template-excerpt"><?php _e( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit', 'elementor' ); ?></div>
 	<form id="elementor-templates-save-template-form">
-		<input name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>">
-		<input id="elementor-templates-save-template-submit" class="elementor-button" type="submit">
+		<input id="elementor-templates-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>">
+		<input id="elementor-templates-save-template-submit" class="elementor-button elementor-button-success" type="submit" value="<?php _e( 'Save', 'elementor' ); ?>">
 	</form>
+	<div id="elementor-templates-save-template-footer"><?php _e( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit', 'elementor' ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-templates-import">
