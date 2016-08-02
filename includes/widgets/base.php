@@ -248,13 +248,21 @@ abstract class Widget_Base extends Element_Base {
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
 			$this->render_settings();
 		}
+		// Allow themes to add their own render attributes and other advanced layout changes
+		do_action( 'elementor/widgets/render_content/before', $this, $instance );
+
+		$this->add_render_attribute( 'widget-container', 'class', [
+			'elementor-widget-container',
+		] );
 		?>
-		<div class="elementor-widget-container">
+		<div <?php echo $this->get_render_attribute_string( 'widget-container' ); ?>>
 			<?php
 			$this->render( $instance );
 			?>
 		</div>
 		<?php
+		// Allow themes to add their own render attributes and other advanced layout changes
+		do_action( 'elementor/widgets/render_content/after', $this, $instance );
 	}
 
 	public function render_plain_content( $instance = [] ) {
@@ -289,6 +297,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
+
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
