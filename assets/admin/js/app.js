@@ -929,6 +929,8 @@ TemplatesManager = function() {
 	this.startModal = function() {
 		self.getModal().show();
 
+		elementor.channels.templates.reply( 'filter:type', 'local' );
+
 		if ( ! layout ) {
 			initLayout();
 		}
@@ -1104,38 +1106,46 @@ TemplatesHeaderMenuView = Marionette.ItemView.extend( {
 	id: 'elementor-templates-header-menu',
 
 	ui: {
-		menuItems: '.elementor-templates-menu-item',
-		menuMyTemplates: '#elementor-templates-menu-my-templates'
+		menuItems: '.elementor-templates-menu-item'
 	},
 
 	events: {
-		'click @ui.menuItems': 'onMenuItemClick',
-		'click @ui.menuMyTemplates': 'onMenuMyTemplatesClick'
+		'click @ui.menuItems': 'onMenuItemClick'
 	},
 
 	$activeItem: null,
 
-	onRender: function() {
-		this.$activeItem = this.ui.menuItems.filter( '.' + this.getOption( 'activeClass' ) );
-	},
-
-	onMenuItemClick: function( event ) {
-		var $item = Backbone.$( event.currentTarget ),
-			activeClass = this.getOption( 'activeClass' );
+	activateMenuItem: function( $item ) {
+		var activeClass = this.getOption( 'activeClass' );
 
 		if ( this.$activeItem === $item ) {
 			return;
 		}
 
-		this.$activeItem.removeClass( activeClass );
+		if ( this.$activeItem ) {
+			this.$activeItem.removeClass( activeClass );
+		}
 
 		$item.addClass( activeClass );
 
 		this.$activeItem = $item;
 	},
 
-	onMenuMyTemplatesClick: function() {
-		elementor.templates.showTemplates();
+	onRender: function() {
+		var currentType = elementor.channels.templates.request( 'filter:type' ),
+			$typeItem = this.ui.menuItems.filter( '[data-template-type="' + currentType + '"]' );
+
+		this.activateMenuItem( $typeItem );
+	},
+
+	onMenuItemClick: function( event ) {
+		var item = event.currentTarget;
+
+		this.activateMenuItem( Backbone.$( item ) );
+
+		elementor.channels.templates
+			.reply( 'filter:type', item.dataset.templateType )
+			.trigger( 'filter:change' );
 	}
 } );
 
@@ -1331,7 +1341,7 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filter: function( childModel ) {
+	filterByName: function( model ) {
 		var filterValue = elementor.channels.templates.request( 'filter:text' );
 
 		if ( ! filterValue ) {
@@ -1340,13 +1350,27 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 
 		filterValue = filterValue.toLowerCase();
 
-		if ( childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
+		if ( model.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
 			return true;
 		}
 
-		return _.any( childModel.get( 'keywords' ), function( keyword ) {
+		return _.any( model.get( 'keywords' ), function( keyword ) {
 			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
 		} );
+	},
+
+	filterByType: function( model ) {
+		var filterValue = elementor.channels.templates.request( 'filter:type' );
+
+		if ( ! filterValue ) {
+			return true;
+		}
+
+		return filterValue === model.get( 'type' );
+	},
+
+	filter: function( childModel ) {
+		return this.filterByName( childModel ) && this.filterByType( childModel );
 	}
 } );
 

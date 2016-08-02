@@ -1732,13 +1732,13 @@ body.elementor-editor-preview #elementor-mode-switcher {
   color: #a4afb7;
   border-right: 2px solid #e6e9ec;
   height: 50px;
-  box-sizing: content-box; }
+  box-sizing: content-box;
+  cursor: pointer; }
   .elementor-templates-header-item > * {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    cursor: pointer; }
+    transform: translateX(-50%) translateY(-50%); }
   .elementor-templates-header-item > i {
     font-size: 18px; }
 
@@ -1749,7 +1749,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   float: left; }
 
 #elementor-templates-header-preview-insert-wrapper {
-  width: 100px; }
+  width: 100px;
+  cursor: default; }
 
 #elementor-templates-header-preview-insert {
   width: 80%; }
