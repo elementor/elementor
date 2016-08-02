@@ -228,16 +228,25 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		var dialog = this.dialogsManager.createWidget( 'alert', {
+		var dialog = this.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-fatal-error-dialog',
 			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
 			message: elementor.translate( 'preview_el_not_found_message' ),
 			position: {
 				my: 'center center',
 				at: 'center center'
 			},
+            strings: {
+				confirm: elementor.translate( 'learn_more' ),
+				cancel: elementor.translate( 'go_back' )
+            },
 			onConfirm: function() {
+				open( elementor.config.help_the_content_url, '_blank' );
+			},
+			onCancel: function() {
 				parent.history.go( -1 );
-			}
+			},
+			hideOnButtonClick: false
 		} );
 
 		dialog.show();
@@ -323,7 +332,8 @@ App = Marionette.Application.extend( {
 		        action: 'elementor_save_builder',
 		        post_id: this.config.post_id,
 		        revision: options.revision,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( elementor.elements.toJSON() ),
+		        _nonce: elementor.config.nonce
 	        }
         } )
         .done( function( data ) {
@@ -523,8 +533,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'resizestart': 'onResizeStart',
-		'resizestop': 'onResizeStop',
 		'resize': 'onResize'
 	},
 
@@ -571,14 +579,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		this.deactivate();
 	},
 
-	onResizeStart: function( event, ui ) {
-		//this.ui.columnTitle.fadeIn( 'fast' );
-	},
-
-	onResizeStop: function( event, ui ) {
-		//this.ui.columnTitle.fadeOut( 'fast' );
-	},
-
 	onResize: function( event, ui ) {
 		event.stopPropagation();
 
@@ -586,13 +586,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	getChildViewContainer: function() {
-		//if ( 'function' === typeof this.view.getChildViewContainer ) {
-		//	// CompositeView
-		//	return this.view.getChildViewContainer( this.view );
-		//} else {
-		//	// CollectionView
-		//	return this.$el;
-		//}
 		return this.$el;
 	}
 } );
@@ -1566,13 +1559,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		this.collection = new Backbone.Collection( [
             {
                 icon: 'paint-brush',
-                title: elementor.translate( 'colors' ),
+                title: elementor.translate( 'global_colors' ),
 				type: 'page',
                 pageName: 'colorScheme'
             },
             {
                 icon: 'font',
-                title: elementor.translate( 'fonts' ),
+                title: elementor.translate( 'global_fonts' ),
 				type: 'page',
                 pageName: 'typographyScheme'
             },
@@ -2376,7 +2369,8 @@ ElementModel = Backbone.Model.extend( {
 			data: {
 				action: 'elementor_render_widget',
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
 			},
 			dataType: 'json'
 		} )
@@ -2541,6 +2535,8 @@ heartbeat = {
 				} else {
 					heartbeat.getModal().hide();
 				}
+
+				elementor.config.nonce = response.elementor_nonce;
 			}
 		} );
 
@@ -3005,7 +3001,7 @@ Schemes = function() {
 				outputSelector,
 				outputCssProperty;
 
-			if ( _.isEmpty( currentSchemeValue ) ) {
+			if ( _.isEmpty( currentSchemeValue.value ) ) {
 				return;
 			}
 
@@ -3112,7 +3108,8 @@ Schemes = function() {
 				data: {
 					action: 'elementor_apply_scheme',
 					scheme_name: schemeName,
-					data: JSON.stringify( schemes[ schemeName ].items )
+					data: JSON.stringify( schemes[ schemeName ].items ),
+					_nonce: elementor.config.nonce
 				}
 			} )
 
@@ -3173,7 +3170,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	getTemplateType: function() {
-		return 'remote';
+		return 'js';
 	},
 
 	initialize: function() {
@@ -3214,9 +3211,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
+				var elementTitle = this.model.getTitle();
+
 				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete' ),
-					headerMessage: elementor.translate( 'delete_element' ),
+					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
+					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
 						cancel: elementor.translate( 'cancel' )
@@ -3284,6 +3283,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
+		if ( _.isEmpty( styleHtml ) ) {
+			return;
+		}
+
 		if ( 0 === $stylesheet.length ) {
 			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
@@ -3342,7 +3345,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			var isContentChanged = false;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && settings.getControl( settingKey ) ) {
 					isContentChanged = true;
 				}
 			} );
@@ -3471,7 +3474,6 @@ ColumnView = BaseElementView.extend( {
 			columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
 
 		this.$el.attr( 'data-col', columnSize );
-		//this.$el.css( 'width', inlineSize ? inlineSize + '%' : '' );
 
 		this.ui.columnTitle.html( columnSizeTitle );
 	},
@@ -5098,7 +5100,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 			data: {
 				action: 'elementor_editor_get_wp_widget_form',
 				widget_type: this.model.get( 'widget' ),
-				data: JSON.stringify( this.elementSettingsModel.toJSON() )
+				data: JSON.stringify( this.elementSettingsModel.toJSON() ),
+				_nonce: elementor.config.nonce
 			}
 		} )
 			.done( _.bind( function( data ) {
@@ -5143,7 +5146,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: this.editorID,
 			selector: '#' + this.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change', function() {
+				editor.on( 'keyup change undo redo', function() {
 					editor.save();
 
 					self.setValue( editor.getContent() );
@@ -5420,7 +5423,7 @@ SectionView = BaseElementView.extend( {
 			currentSize = this.getColumnPercentSize( ui.element, ui.originalSize.width );
 		}
 
-		var	newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
+		var newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
 			difference = newSize - currentSize;
 
 		ui.element.css( {
@@ -5569,7 +5572,9 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 			elTopOffsetRange = sectionHandleHeight - elTopOffset;
 
 		if ( 0 < elTopOffsetRange ) {
-			this.$el.css( 'margin-top', elTopOffsetRange );
+			var $style = Backbone.$( '<style>' ).text( '.elementor-editor-active #elementor-inner{margin-top: ' + elTopOffsetRange + 'px}' );
+
+			elementor.$previewContents.children().children( 'head' ).append( $style );
 		}
 	},
 

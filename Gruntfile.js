@@ -338,6 +338,7 @@ module.exports = function( grunt ) {
 					'!assets/admin/js/dev/**',
 					'!assets/js/dev/**',
 					'!assets/scss/**',
+					'!assets/**/*.map',
 					'!*~'
 				],
 				expand: true,

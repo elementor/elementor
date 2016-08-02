@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.6.0
+Stable tag: 0.6.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,7 +76,9 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES) - in progress
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
+- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -152,6 +154,27 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 4. Settings page.
 
 == Changelog ==
+
+= 0.6.3 - 01.08.2016 =
+* Tweak! - Show element title in delete dialog ([#337](https://github.com/pojome/elementor/pull/337))
+* Tweak! - Added responsive support for Image Gallery widget ([topic](https://wordpress.org/support/topic/galery-not-responsive))
+* Tweak! - CSS files for entrance animation and hover animations combine to `animations.min.css` file
+* Fixed! - Columns resize cannot be repeated ([#349](https://github.com/pojome/elementor/issues/349))
+* Fixed! - Anchor Menu widget in Safari browser
+* Fixed! - Bug when global font set as a default ([topic](https://wordpress.org/support/topic/font-family-bug))
+
+= 0.6.2 - 27.07.2016 =
+* Tweak! - Improve the way using attachment details
+* Tweak! - Verifies the AJAX request to prevent processing requests external of the editor
+* Fixed! - Hover animation classes in Image widget
+* Fixed! - Icon spacing on mobile in Icon Box widget
+* Fixed! - Image spacing on mobile in Image Box widget
+
+= 0.6.1 - 26.07.2016 =
+* Tweak! - Improved editor UI for blank pages
+* Fixed! - Hide empty widgets in preview mode
+* Fixed! - Bug with Section background overlay and background video ([#323](https://github.com/pojome/elementor/issues/323))
+* Fixed! - Minor security issue
 
 = 0.6.0 - 25.07.2016 =
 * New! - Added 27 Hover Animations for Image / Icon / Button widgets

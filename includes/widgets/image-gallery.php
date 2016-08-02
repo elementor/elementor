@@ -50,6 +50,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'thumbnail',
 				'exclude' => [ 'custom' ],
+				'section' => 'section_gallery',
 			]
 		);
 

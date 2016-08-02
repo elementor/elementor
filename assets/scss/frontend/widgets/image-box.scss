@@ -3,10 +3,6 @@
 //
 .elementor-widget-image-box {
 
-	.elementor-image-box-wrapper {
-		overflow: hidden;
-	}
-
 	.elementor-image-box-content {
 		width: 100%; // Hack for Chrome in flex mode
 	}
@@ -77,6 +73,7 @@
 		.elementor-image-box-img {
 			margin-left: auto !important;
 			margin-right: auto !important;
+			margin-bottom: 15px;
 		}
 	}
 

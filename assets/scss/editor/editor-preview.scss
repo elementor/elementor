@@ -485,7 +485,7 @@ body {
 				opacity: .3;
 			}
 
-			&:not(.elementor-loading) {
+			&:not(.elementor-loading):not(.elementor-widget-menu-anchor) { // Don't apply transition on anchor widget - Safari hack
 				transition: all .1s;
 			}
 
@@ -696,7 +696,8 @@ body {
 		.column-title,
 		.elementor-empty,
 		#elementor-add-section,
-		.elementor-element-empty {
+		.elementor-element-empty,
+		.elementor-widget-empty {
 			display: none;
 		}
 	}

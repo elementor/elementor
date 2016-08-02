@@ -265,9 +265,9 @@ class Widget_Image extends Widget_Base {
 			$image_html .= '<figure class="wp-caption">';
 		}
 
-		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
+		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="elementor-animation-' . $instance['hover_animation'] . '"' : '';
 
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), $this->get_image_title( $instance ), $this->get_image_alt( $instance ), $image_class_html );
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), Control_Media::get_image_title( $instance['image'] ), Control_Media::get_image_alt( $instance['image'] ), $image_class_html );
 
 		$link = $this->get_link_url( $instance );
 		if ( $link ) {
@@ -300,7 +300,7 @@ class Widget_Image extends Widget_Base {
 					image_html = '';
 
 				if ( '' !== settings.hover_animation ) {
-					imgClass = 'hover-' + settings.hover_animation;
+					imgClass = 'elementor-animation-' + settings.hover_animation;
 				}
 				
 				if ( hasCaption ) {
@@ -335,35 +335,6 @@ class Widget_Image extends Widget_Base {
 			</div>
 		<% } %>
 		<?php
-	}
-
-	private function get_image_alt( $instance ) {
-		$post_id = $instance['image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
-		if ( ! $alt ) {
-			$attachment = get_post( $post_id );
-			$alt = $attachment->post_excerpt;
-			if ( ! $alt ) {
-				$alt = $attachment->post_title;
-			}
-		}
-		return trim( strip_tags( $alt ) );
-	}
-
-	private function get_image_title( $instance ) {
-		$post_id = $instance['image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$attachment = get_post( $post_id );
-		return trim( strip_tags( $attachment->post_title ) );
 	}
 
 	private function get_link_url( $instance ) {

@@ -36,7 +36,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	getTemplateType: function() {
-		return 'remote';
+		return 'js';
 	},
 
 	initialize: function() {
@@ -77,9 +77,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
+				var elementTitle = this.model.getTitle();
+
 				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete' ),
-					headerMessage: elementor.translate( 'delete_element' ),
+					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
+					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
 						cancel: elementor.translate( 'cancel' )
@@ -147,6 +149,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
+		if ( _.isEmpty( styleHtml ) ) {
+			return;
+		}
+
 		if ( 0 === $stylesheet.length ) {
 			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
@@ -205,7 +211,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			var isContentChanged = false;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && settings.getControl( settingKey ) ) {
 					isContentChanged = true;
 				}
 			} );

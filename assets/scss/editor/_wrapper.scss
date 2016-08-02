@@ -13,6 +13,11 @@ html {
     background-color: #F1F1F1;
 }
 
+iframe,
+img {
+	border: 0 none;
+}
+
 body {
     color: $editor-dark;
     font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
@@ -22,6 +27,14 @@ body {
     text-decoration: none;
     text-transform: none;
     overflow: hidden;
+
+	a {
+		color: $editor-info;
+
+		&:hover {
+			color: $editor-accent;
+		}
+	}
 
 	&.elementor-editor-active {
 
@@ -67,11 +80,6 @@ body {
 			}
 		}
 	}
-}
-
-iframe,
-img {
-    border: 0 none;
 }
 
 #elementor-preview, #elementor-panel {

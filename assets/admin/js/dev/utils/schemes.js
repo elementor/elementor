@@ -39,7 +39,7 @@ Schemes = function() {
 				outputSelector,
 				outputCssProperty;
 
-			if ( _.isEmpty( currentSchemeValue ) ) {
+			if ( _.isEmpty( currentSchemeValue.value ) ) {
 				return;
 			}
 
@@ -146,7 +146,8 @@ Schemes = function() {
 				data: {
 					action: 'elementor_apply_scheme',
 					scheme_name: schemeName,
-					data: JSON.stringify( schemes[ schemeName ].items )
+					data: JSON.stringify( schemes[ schemeName ].items ),
+					_nonce: elementor.config.nonce
 				}
 			} )
 

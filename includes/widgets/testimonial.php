@@ -30,7 +30,7 @@ class Widget_Testimonial extends Widget_Base {
 			'testimonial_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
-				'type' => Controls_Manager::WYSIWYG,
+				'type' => Controls_Manager::TEXTAREA,
 				'rows' => '10',
 				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.',
 				'section' => 'section_testimonial',
@@ -333,7 +333,7 @@ class Widget_Testimonial extends Widget_Base {
 				<div class="elementor-testimonial-meta-inner">
 					<?php if ( isset( $image_url ) ) : ?>
 						<div class="elementor-testimonial-image">
-							<img src="<?php echo esc_attr( $image_url ); ?>" alt="<?php echo esc_attr( $this->get_image_alt( $instance ) ); ?>" />
+							<img src="<?php echo esc_attr( $image_url ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $instance['testimonial_image'] ) ); ?>" />
 						</div>
 					<?php endif; ?>
 
@@ -403,23 +403,5 @@ class Widget_Testimonial extends Widget_Base {
 			</div>
 		</div>
 	<?php
-	}
-
-	private function get_image_alt( $instance ) {
-		$post_id = $instance['testimonial_image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
-		if ( ! $alt ) {
-			$attachment = get_post( $post_id );
-			$alt = $attachment->post_excerpt;
-			if ( ! $alt ) {
-				$alt = $attachment->post_title;
-			}
-		}
-		return trim( strip_tags( $alt ) );
 	}
 }

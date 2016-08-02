@@ -153,7 +153,8 @@ ElementModel = Backbone.Model.extend( {
 			data: {
 				action: 'elementor_render_widget',
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
 			},
 			dataType: 'json'
 		} )
