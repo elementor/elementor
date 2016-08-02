@@ -93,13 +93,13 @@
 	@include border-start(2px solid $editor-background);
 	height: 50px;
 	box-sizing: content-box;
+	cursor: pointer;
 
 	> * {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
-		cursor: pointer;
 	}
 
 	> i {
