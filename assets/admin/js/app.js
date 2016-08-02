@@ -1182,7 +1182,19 @@ TemplatesHeaderSettingsView = Marionette.ItemView.extend( {
 
 	id: 'elementor-templates-header-settings',
 
-	className: 'elementor-templates-header-item'
+	className: 'elementor-templates-header-item',
+
+	ui: {
+		saveButton: '#elementor-templates-header-settings-save'
+	},
+
+	events: {
+		'click @ui.saveButton': 'onSaveButtonClick'
+	},
+
+	onSaveButtonClick: function() {
+		elementor.templates.getLayout().showSaveTemplateView();
+	}
 } );
 
 module.exports = TemplatesHeaderSettingsView;

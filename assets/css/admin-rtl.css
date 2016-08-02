@@ -6,8 +6,6 @@
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; }
-  .dialog-widget * {
-    box-sizing: border-box; }
 
 .dialog-widget-content {
   background-color: #fff;
@@ -31,8 +29,7 @@
     font-size: 15px;
     cursor: pointer;
     padding: 13px 0;
-    outline: none;
-    margin: 0; }
+    outline: none; }
     .dialog-buttons-wrapper > button:first-child {
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {

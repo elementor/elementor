@@ -28,11 +28,14 @@
   clip: rect(0, 0, 0, 0);
   border: 0; }
 
+*, :before, :after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; }
+
 body,
 html {
-  height: 100%;
-  margin: 0;
-  padding: 0; }
+  height: 100%; }
 
 html {
   background-color: #F1F1F1; }
@@ -40,6 +43,12 @@ html {
 iframe,
 img {
   border: 0 none; }
+
+li {
+  list-style: none; }
+
+a {
+  text-decoration: none; }
 
 body {
   color: #6d7882;
@@ -177,7 +186,6 @@ input, select, textarea {
   box-shadow: none;
   color: #495157;
   border: 1px solid;
-  margin: 0;
   outline: none; }
   input:not(:focus), select:not(:focus), textarea:not(:focus) {
     border-color: #d5dadf; }
@@ -205,7 +213,6 @@ input[type="radio"] {
   height: 16px;
   margin: -4px 4px 0 0;
   outline: 0;
-  padding: 0;
   text-align: center;
   vertical-align: middle;
   width: 16px;
@@ -394,8 +401,6 @@ select {
   top: 0;
   bottom: 0;
   overflow: visible; }
-  #elementor-panel *, #elementor-panel *:before, #elementor-panel *:after {
-    box-sizing: border-box; }
   #elementor-panel ::-moz-selection {
     background: #5bc0de;
     color: #ffffff; }
@@ -404,15 +409,9 @@ select {
     color: #ffffff; }
   #elementor-panel a {
     color: #9b0a46;
-    text-decoration: none;
     transition: none; }
     #elementor-panel a:visited {
       color: inherit; }
-  #elementor-panel ol,
-  #elementor-panel ul {
-    list-style: none;
-    padding: 0;
-    margin: 0; }
   #elementor-panel h1,
   #elementor-panel h2,
   #elementor-panel h3,
@@ -592,8 +591,7 @@ select {
     font-style: italic;
     color: #a4afb7;
     border: none;
-    border-radius: 0;
-    margin: 0; }
+    border-radius: 0; }
   #elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
     padding-top: 14px; }
   #elementor-panel .panel-elements-category-title {
@@ -1562,8 +1560,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; }
-  .dialog-widget * {
-    box-sizing: border-box; }
 
 .dialog-widget-content {
   background-color: #fff;
@@ -1587,8 +1583,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     font-size: 15px;
     cursor: pointer;
     padding: 13px 0;
-    outline: none;
-    margin: 0; }
+    outline: none; }
     .dialog-buttons-wrapper > button:first-child {
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {
@@ -1744,6 +1739,26 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-templates-header-close-modal, #elementor-templates-header-settings {
   width: 56px; }
+
+#elementor-templates-header-settings:not(:hover) #elementor-templates-header-settings-menu {
+  display: none; }
+
+#elementor-templates-header-settings-menu {
+  top: 100%;
+  left: 0;
+  right: initial;
+  width: 200px;
+  transform: none;
+  z-index: 1; }
+
+.elementor-templates-header-settings-menu-item {
+  background-color: #fff; }
+  .elementor-templates-header-settings-menu-item:hover {
+    background-color: #e6e9ec; }
+  .elementor-templates-header-settings-menu-item a {
+    display: block;
+    color: inherit;
+    padding: 10px; }
 
 #elementor-templates-header-preview > * {
   float: left; }
