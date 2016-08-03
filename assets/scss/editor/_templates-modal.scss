@@ -90,7 +90,7 @@
 .elementor-templates-header-item {
 	position: relative;
 	color: $editor-light;
-	@include border-start(2px solid $editor-background);
+	@include border-start(1px solid $editor-background);
 	height: 50px;
 	box-sizing: content-box;
 	cursor: pointer;
