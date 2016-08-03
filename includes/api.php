@@ -28,6 +28,7 @@ class Api {
 					'api_version' => ELEMENTOR_VERSION,
 					// Which language to return
 					'site_lang' => get_bloginfo( 'language' ),
+					'debug_mode' => 'true',
 				],
 			] );
 
