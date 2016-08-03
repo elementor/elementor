@@ -253,7 +253,7 @@ class Type_Local extends Type_Base {
 					<input type="hidden" name="action" value="elementor_import_template">
 					<fieldset id="elementor-import-templates-form-inputs">
 						<input type="file" name="file" accept="application/json" required>
-						<input type="submit" class="button" value="Import">
+						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
