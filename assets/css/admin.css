@@ -47,15 +47,19 @@
   padding: 20px 0;
   font-weight: 500; }
 
-.dialog-options-widget .dialog-widget-header, .dialog-confirm-widget .dialog-widget-header {
+.dialog-options-widget .dialog-widget-header,
+.dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
   color: #495157; }
-.dialog-options-widget .dialog-buttons-wrapper > button, .dialog-confirm-widget .dialog-buttons-wrapper > button {
+.dialog-options-widget .dialog-buttons-wrapper > button,
+.dialog-confirm-widget .dialog-buttons-wrapper > button {
   width: 50%; }
-  .dialog-options-widget .dialog-buttons-wrapper > button:first-child, .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
+  .dialog-options-widget .dialog-buttons-wrapper > button:first-child,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
     border-right: 1px solid #e6e9ec; }
-  .dialog-options-widget .dialog-buttons-wrapper > button:focus, .dialog-confirm-widget .dialog-buttons-wrapper > button:focus {
-    background-color: #e6e9ec; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:hover,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:hover {
+    background-color: #f4f6f7; }
 
 .dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
   -webkit-user-select: none;
