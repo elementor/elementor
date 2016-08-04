@@ -202,7 +202,7 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var MINIMUM_COLUMN_SIZE = 5,
+		var MINIMUM_COLUMN_SIZE = 10,
 
 			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = this.getColumnPercentSize( $nextElement, $nextElement.width() ),
