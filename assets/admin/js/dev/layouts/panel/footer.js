@@ -167,15 +167,15 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickShowTemplates: function() {
-		elementor.templates.startModal();
-
-		elementor.templates.showTemplates();
+		elementor.templates.startModal( function() {
+			elementor.templates.showTemplates();
+		} );
 	},
 
 	onClickSaveTemplate: function() {
-		elementor.templates.startModal();
-
-		elementor.templates.getLayout().showSaveTemplateView();
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView();
+		} );
 	}
 } );
 

@@ -113,9 +113,9 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onAddTemplateButtonClick: function() {
-		elementor.templates.startModal();
-
-		elementor.templates.showTemplates();
+		elementor.templates.startModal( function() {
+			elementor.templates.showTemplates();
+		} );
 	},
 
 	onRender: function() {
