@@ -222,10 +222,17 @@ class Admin {
 				<div class="elementor-message-content">
 					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
 					<p><?php
-						/* translators: 1: details URL, 2: accessibility text, 3: version number, 4: update URL, 5: accessibility text */
-						printf( __( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
+						printf(
+							/* translators: 1: details URL, 2: accessibility text, 3: version number, 4: update URL, 5: accessibility text */
+							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 							esc_url( $details_url ),
-							esc_attr( sprintf( __( 'View Elementor version %s details', 'elementor' ), $product->new_version ) ),
+							esc_attr(
+								sprintf(
+									/* translators: %s: version number */
+									__( 'View Elementor version %s details', 'elementor' ),
+									$product->new_version
+								)
+							),
 							$product->new_version,
 							esc_url( $upgrade_url ),
 							esc_attr( __( 'Update Now', 'elementor' ) )
@@ -245,7 +252,11 @@ class Admin {
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->base, 'elementor' ) );
 
 		if ( $is_elementor_screen ) {
-			$footer_text = sprintf( __( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ), '<a href="https://wordpress.org/support/view/plugin-reviews/elementor?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>' );
+			$footer_text = sprintf(
+				/* translators: %s: link to plugin review */
+				__( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ),
+				'<a href="https://wordpress.org/support/view/plugin-reviews/elementor?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+			);
 		}
 
 		return $footer_text;
