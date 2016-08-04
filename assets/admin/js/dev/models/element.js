@@ -34,11 +34,13 @@ ElementModel = Backbone.Model.extend( {
 
 		var SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
-		settings = this.get( 'settings' );
+		settings = this.get( 'settings' ) || {};
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
 		}
+
 		settings.elType = elType;
+		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings );
 		this.set( 'settings', settings );
@@ -151,7 +153,8 @@ ElementModel = Backbone.Model.extend( {
 			data: {
 				action: 'elementor_render_widget',
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
 			},
 			dataType: 'json'
 		} )

@@ -13,12 +13,8 @@ class Widget_Progress extends Widget_Base {
 		return __( 'Progress Bar', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
-		return 'success-chart';
+		return 'skill-bar';
 	}
 
 	protected function _register_controls() {
@@ -36,7 +32,7 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your title', 'elementor' ),
-				'default' => 'My Skill',
+				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
 				'section' => 'section_progress',
 			]
@@ -180,6 +176,10 @@ class Widget_Progress extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -190,6 +190,7 @@ class Widget_Progress extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-title',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -218,6 +219,8 @@ class Widget_Progress extends Widget_Base {
 		}
 
 		$html .= '<span class="elementor-progress-inner-text"' . $data_inner . '>';
+
+		$html .= '<span class="elementor-progress-text"></span>';
 
 		if ( 'hide' !== $instance['display_percentage'] ) {
 			$html .= '<span class="elementor-progress-percentage"></span>';
@@ -248,6 +251,7 @@ class Widget_Progress extends Widget_Base {
 		}
 
 		html += '<span class="elementor-progress-inner-text"' + data_inner + '>';
+		html += '<span class="elementor-progress-text"></span>';
 
 		if ( 'hide' !== settings.display_percentage ) {
 			html += '<span class="elementor-progress-percentage"></span>';

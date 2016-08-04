@@ -9,6 +9,12 @@ class Group_Control_Background extends Group_Control_Base {
 		return 'background';
 	}
 
+	protected function _get_child_default_args() {
+		return [
+			'types' => [ 'classic' ],
+		];
+	}
+
 	protected function _get_controls( $args ) {
 		$available_types = [
 			'classic' => [
@@ -50,7 +56,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'label' => _x( 'Color', 'Background Control', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'alpha' => true,
 				'tab' => $args['tab'],
 				'title' => _x( 'Background Color', 'Background Control', 'elementor' ),
 				'selectors' => [
@@ -69,9 +74,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'label' => _x( 'Image', 'Background Control', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'title' => _x( 'Background Image', 'Background Control', 'elementor' ),
-				'default' => [
-					'url' => Utils::get_placeholder_image_src(),
-				],
 				'selectors' => [
 					$args['selector'] => 'background-image: url("{{URL}}");',
 				],
@@ -151,6 +153,7 @@ class Group_Control_Background extends Group_Control_Base {
 					'' => _x( 'None', 'Background Control', 'elementor' ),
 					'auto' => _x( 'Auto', 'Background Control', 'elementor' ),
 					'cover' => _x( 'Cover', 'Background Control', 'elementor' ),
+					'contain' => _x( 'Contain', 'Background Control', 'elementor' ),
 				],
 				'selectors' => [
 					$args['selector'] => 'background-size: {{VALUE}};',
@@ -168,6 +171,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+			'description' => __( 'Insert YouTube link or video file (mp4 is recommended)', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
@@ -179,9 +183,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'label_block' => true,
-			'default' => [
-				'url' => Utils::get_placeholder_image_src(),
-			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -192,11 +193,5 @@ class Group_Control_Background extends Group_Control_Base {
 		// End Background:video
 
 		return $controls;
-	}
-
-	protected function _get_child_default_args() {
-		return [
-			'types' => [ 'classic' ],
-		];
 	}
 }

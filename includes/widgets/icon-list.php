@@ -13,10 +13,6 @@ class Widget_Icon_list extends Widget_Base {
 		return __( 'Icon List', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'bullet-list';
 	}
@@ -71,12 +67,10 @@ class Widget_Icon_list extends Widget_Base {
 						'label' => __( 'Link', 'elementor' ),
 						'type' => Controls_Manager::URL,
 						'label_block' => true,
-						'default' => [
-							'url' => '',
-						],
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
+				'title_field' => 'text',
 			]
 		);
 
@@ -110,6 +104,10 @@ class Widget_Icon_list extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -135,6 +133,33 @@ class Widget_Icon_list extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_icon_style',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-items' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'section_text_style',
 			[
 				'label' => __( 'Text', 'elementor' ),
@@ -150,16 +175,13 @@ class Widget_Icon_list extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_text_style',
-				'default' => [
-					'size' => 0,
-				],
 				'range' => [
 					'px' => [
 						'max' => 50,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-text' => 'text-indent: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-text' => is_rtl() ? 'padding-right: {{SIZE}}{{UNIT}};' : 'padding-left: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -175,6 +197,10 @@ class Widget_Icon_list extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
+				],
 			]
 		);
 
@@ -186,6 +212,7 @@ class Widget_Icon_list extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_text_style',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -197,17 +224,19 @@ class Widget_Icon_list extends Widget_Base {
 				<li class="elementor-icon-list-item" >
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
-						echo '<a href="' . $item['link']['url'] . '">';
+						$target = $item['link']['is_external'] ? ' target="_blank"' : '';
+
+						echo '<a href="' . $item['link']['url'] . '"' . $target . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) ) : ?>
+					if ( $item['icon'] ) : ?>
 						<span class="elementor-icon-list-icon">
 							<i class="<?php echo esc_attr( $item['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>
 					<span class="elementor-icon-list-text"><?php echo $item['text']; ?></span>
 					<?php
-					if ( ! empty( $item['link'] ) ) {
+					if ( ! empty( $item['link']['url'] ) ) {
 						echo '</a>';
 					}
 					?>
@@ -225,14 +254,14 @@ class Widget_Icon_list extends Widget_Base {
 			if ( settings.icon_list ) {
 				_.each( settings.icon_list, function( item ) { %>
 					<li class="elementor-icon-list-item">
-						<% if ( item.link && '' !== item.link.url ) { %>
+						<% if ( item.link && item.link.url ) { %>
 							<a href="<%- item.link.url %>">
 						<% } %>
 						<span class="elementor-icon-list-icon">
 							<i class="<%- item.icon %>"></i>
 						</span>
 						<span class="elementor-icon-list-text"><%= item.text %></span>
-						<% if ( item.link && '' !== item.link.url ) { %>
+						<% if ( item.link && item.link.url ) { %>
 							</a>
 						<% } %>
 					</li>

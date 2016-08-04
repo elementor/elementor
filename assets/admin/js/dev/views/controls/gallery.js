@@ -5,62 +5,67 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.controlMedia = '.elementor-control-media';
-		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.addImages = '.elementor-control-gallery-add';
+		ui.clearGallery = '.elementor-control-gallery-clear';
+		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
 
 		return ui;
 	},
 
 	childEvents: {
-		'click @ui.frameOpeners': 'openFrame',
-		'click @ui.deleteButton': 'deleteImage'
+		'click @ui.addImages': 'onAddImagesClick',
+		'click @ui.clearGallery': 'onClearGalleryClick',
+		'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
 	},
 
 	onReady: function() {
-		if ( _.isEmpty( this.getControlValue() ) ) {
-			this.ui.controlMedia.addClass( 'media-empty' );
-		}
+		var hasImages = this.hasImages();
+
+		this.$el
+		    .toggleClass( 'elementor-gallery-has-images', hasImages )
+		    .toggleClass( 'elementor-gallery-empty', ! hasImages );
+
+		this.initRemoveDialog();
 	},
 
-	openFrame: function() {
-		this.initFrame();
+	hasImages: function() {
+		return !! this.getControlValue().length;
+	},
+
+	openFrame: function( action ) {
+		this.initFrame( action );
 
 		this.frame.open();
 	},
 
-	deleteImage: function() {
-		this.setValue( '' );
-		this.render();
-	},
-
-	/**
-	 * Create a media modal select frame, and store it so the instance can be reused when needed.
-	 */
-	initFrame: function() {
-		var options,
-			ids = this.getControlValue();
-
-		options = {
-			frame:  'post',
-			multiple: true,
-			button: {
-				text: 'Insert Media'
-			},
-			state: 'gallery'
+	initFrame: function( action ) {
+		var frameStates = {
+			create: 'gallery',
+			add: 'gallery-library',
+			edit: 'gallery-edit'
 		};
 
-		if ( '' !== ids ) {
-			options.selection = this.fetchSelection( ids );
-			options.state = 'gallery-edit';
+		var options = {
+			frame:  'post',
+			multiple: true,
+			state: frameStates[ action ],
+			button: {
+				text: elementor.translate( 'insert_media' )
+			}
+		};
+
+		if ( this.hasImages() ) {
+			options.selection = this.fetchSelection();
 		}
 
 		this.frame = wp.media( options );
 
 		// When a file is selected, run a callback.
-		this.frame.on( 'update', _.bind( this.select, this ) );
-		this.frame.on( 'menu:render:default', _.bind( this.menuRender, this ) );
-		this.frame.on( 'content:render:browse', _.bind( this.gallerySettings, this ) );
+		this.frame.on( {
+			'update': this.select,
+			'menu:render:default': this.menuRender,
+			'content:render:browse': this.gallerySettings
+		}, this );
 	},
 
 	menuRender: function( view ) {
@@ -74,22 +79,19 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		} );
 	},
 
-	fetchSelection: function( ids ) {
-		var idArray = ids.split( ',' ),
-			args = {
-				orderby: 'post__in',
-				order: 'ASC',
-				type: 'image',
-				perPage: -1,
-				post__in: idArray
-			},
-			attachments = wp.media.query( args ),
-			selection = new wp.media.model.Selection( attachments.models, {
-				props: attachments.props.toJSON(),
-				multiple: true
-			} );
+	fetchSelection: function() {
+		var attachments = wp.media.query( {
+			orderby: 'post__in',
+			order: 'ASC',
+			type: 'image',
+			perPage: -1,
+			post__in: _.pluck( this.getControlValue(), 'id' )
+		} );
 
-		return selection;
+		return new wp.media.model.Selection( attachments.models, {
+			props: attachments.props.toJSON(),
+			multiple: true
+		} );
 	},
 
 	/**
@@ -97,20 +99,65 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 	 * Gets the selected image information, and sets it within the control.
 	 */
 	select: function( selection ) {
-		var ids = selection.pluck( 'id' );
+		var images = [];
 
-		this.setValue( ids.toString() );
+		selection.each( function( image ) {
+			images.push( {
+				id: image.get( 'id' ),
+				url: image.get( 'url' )
+			} );
+		} );
+
+		this.setValue( images );
+
 		this.render();
 	},
 
 	onBeforeDestroy: function() {
 		if ( this.frame ) {
-			this.frame.off( 'update' );
-			this.frame.off( 'menu:render:default' );
-			this.frame.off( 'content:render:browse' );
+			this.frame.off();
 		}
 
 		this.$el.remove();
+	},
+
+	resetGallery: function() {
+		this.setValue( '' );
+
+		this.render();
+	},
+
+	initRemoveDialog: function() {
+		var removeDialog;
+
+		this.getRemoveDialog = function() {
+			if ( ! removeDialog ) {
+				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+					message: elementor.translate( 'dialog_confirm_gallery_delete' ),
+					headerMessage: elementor.translate( 'delete_gallery' ),
+					strings: {
+						confirm: elementor.translate( 'delete' ),
+						cancel: elementor.translate( 'cancel' )
+					},
+					defaultOption: 'confirm',
+					onConfirm: _.bind( this.resetGallery, this )
+				} );
+			}
+
+			return removeDialog;
+		};
+	},
+
+	onAddImagesClick: function() {
+		this.openFrame( this.hasImages() ? 'add' : 'create' );
+	},
+
+	onClearGalleryClick: function() {
+		this.getRemoveDialog().show();
+	},
+
+	onGalleryThumbnailsClick: function() {
+		this.openFrame( 'edit' );
 	}
 } );
 

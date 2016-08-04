@@ -1,18 +1,87 @@
 //
 // Image Box
 //
-.elementor-image-box-wrapper {
-	overflow: hidden;
+.elementor-widget-image-box {
 
-	.elementor-position-right {
-		float: right;
+	.elementor-image-box-content {
+		width: 100%; // Hack for Chrome in flex mode
 	}
 
-	.elementor-position-left {
-		float: left;
+	@media (min-width: $screen-md-min) {
+
+		&.elementor-position- {
+
+			&left, &right {
+
+				.elementor-image-box-wrapper {
+					display: flex;
+				}
+			}
+
+			&right {
+
+				.elementor-image-box-wrapper {
+					text-align: getEndDirection();
+					flex-direction: getValueByDirection(row-reverse, row);
+				}
+			}
+
+			&left {
+
+				.elementor-image-box-wrapper {
+					text-align: getStartDirection();
+					flex-direction: getValueByDirection(row, row-reverse);
+				}
+			}
+
+			&top {
+
+				.elementor-image-box-img {
+					margin: auto;
+				}
+			}
+		}
+
+		&.elementor-vertical-align- {
+
+			&top {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-start;
+				}
+			}
+
+			&middle {
+
+				.elementor-image-box-wrapper {
+					align-items: center;
+				}
+			}
+
+			&bottom {
+
+				.elementor-image-box-wrapper {
+					align-items: flex-end;
+				}
+			}
+		}
 	}
 
-	.elementor-position-center {
+	@media (max-width: $screen-sm-max) {
+
+		// TEMP code to override the image spacing
+		.elementor-image-box-img {
+			margin-left: auto !important;
+			margin-right: auto !important;
+			margin-bottom: 15px;
+		}
+	}
+
+	.elementor-image-box-wrapper {
 		text-align: center;
+	}
+
+	.elementor-image-box-description {
+		margin: 0;
 	}
 }

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title><?php _e( 'Elementor', 'elementor' ); ?></title>
+	<title><?php echo __( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
 	<?php wp_head(); ?>
 </head>
 <body class="elementor-editor-active">
@@ -39,7 +39,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 	<div id="elementor-panel"></div>
-	<div id="elementor-modal-area"></div>
 </div>
 <?php wp_footer(); ?>
 </body>

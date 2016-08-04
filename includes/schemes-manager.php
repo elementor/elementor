@@ -8,18 +8,25 @@ class Schemes_Manager {
 	/**
 	 * @var Scheme_Base[]
 	 */
-	protected $_register_schemes = [];
+	protected $_registered_schemes = [];
+
+	private static $_enabled_schemes;
+
+	private static $_schemes_types = [
+		'color',
+		'typography',
+	];
 
 	public function init() {
 		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
 
 		include( ELEMENTOR_PATH . 'includes/schemes/base.php' );
 
-		include( ELEMENTOR_PATH . 'includes/schemes/color.php' );
-		include( ELEMENTOR_PATH . 'includes/schemes/typography.php' );
+		foreach ( self::$_schemes_types as $schemes_type ) {
+			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
 
-		$this->register_scheme( __NAMESPACE__ . '\Scheme_Color' );
-		$this->register_scheme( __NAMESPACE__ . '\Scheme_Typography' );
+			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( $schemes_type ) );
+		}
 	}
 
 	public function register_scheme( $scheme_class ) {
@@ -32,31 +39,34 @@ class Schemes_Manager {
 		if ( ! $scheme_instance instanceof Scheme_Base ) {
 			return new \WP_Error( 'wrong_instance_scheme' );
 		}
-		$this->_register_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
+		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
 
 		return true;
 	}
 
 	public function unregister_scheme( $id ) {
-		if ( ! isset( $this->_register_schemes[ $id ] ) ) {
+		if ( ! isset( $this->_registered_schemes[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_register_schemes[ $id ] );
+		unset( $this->_registered_schemes[ $id ] );
 		return true;
 	}
 
 	public function get_registered_schemes() {
-		return $this->_register_schemes;
+		return $this->_registered_schemes;
 	}
 
 	public function get_registered_schemes_data() {
 		$data = [];
+
 		foreach ( $this->get_registered_schemes() as $scheme ) {
 			$data[ $scheme::get_type() ] = [
 				'title' => $scheme->get_title(),
+				'disabled_title' => $scheme->get_disabled_title(),
 				'items' => $scheme->get_scheme(),
 			];
 		}
+
 		return $data;
 	}
 
@@ -101,6 +111,10 @@ class Schemes_Manager {
 	}
 
 	public function ajax_apply_scheme() {
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
+
 		if ( ! isset( $_POST['scheme_name'] ) ) {
 			wp_send_json_error();
 		}
@@ -110,10 +124,24 @@ class Schemes_Manager {
 			wp_send_json_error();
 		}
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-
 		$scheme_obj->save_scheme( $posted );
 
 		wp_send_json_success();
+	}
+
+	public static function get_enabled_schemes() {
+		if ( null === self::$_enabled_schemes ) {
+			$enabled_schemes = [];
+
+			foreach ( self::$_schemes_types as $schemes_type ) {
+				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
+					continue;
+				}
+				$enabled_schemes[] = $schemes_type;
+			}
+			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
+		}
+		return self::$_enabled_schemes;
 	}
 
 	public function __construct() {

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 class Widget_Counter extends Widget_Base {
 
 	public function get_id() {
@@ -11,12 +13,8 @@ class Widget_Counter extends Widget_Base {
 		return __( 'Counter', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
-		return 'digital-alarm-clock';
+		return 'counter';
 	}
 
 	protected function _register_controls() {
@@ -75,7 +73,7 @@ class Widget_Counter extends Widget_Base {
 		$this->add_control(
 			'duration',
 			[
-				'label' => __( 'Animation Duration (ms)', 'elementor' ),
+				'label' => __( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 2000,
 				'min' => 100,
@@ -220,7 +218,7 @@ class Widget_Counter extends Widget_Base {
 					$prefix = '<span class="elementor-counter-number-prefix">' . $instance['prefix'] . '</span>';
 				}
 
-				$duration = '<span class="elementor-counter-number" data-duration="' . $instance['duration'] . '" data-to_value="' . $instance['ending_number'] . '">' . $instance['starting_number']. '</span>';
+				$duration = '<span class="elementor-counter-number" data-duration="' . $instance['duration'] . '" data-to_value="' . $instance['ending_number'] . '">' . $instance['starting_number'] . '</span>';
 
 				if ( $instance['suffix'] ) {
 					$suffix = '<span class="elementor-counter-number-suffix">' . $instance['suffix'] . '</span>';

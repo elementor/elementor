@@ -105,7 +105,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	setStructure: function( structure ) {
-		var parsedStructure = SectionView.getParsedStructure( structure );
+		var parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
+
 		if ( +parsedStructure.columnsCount !== this.collection.length ) {
 			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
 		}
@@ -114,7 +115,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	redefineLayout: function() {
-		var preset = SectionView.getPresetByStructure( this.getStructure() );
+		var preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
 
 		this.collection.each( function( model, index ) {
 			model.setSetting( '_column_size', preset.preset[ index ] );
@@ -126,6 +127,14 @@ SectionView = BaseElementView.extend( {
 
 	resetLayout: function() {
 		this.setStructure( this.getDefaultStructure() );
+	},
+
+	resetColumnsCustomSize: function() {
+		this.collection.each( function( model ) {
+			model.setSetting( '_inline_size', null );
+		} );
+
+		this.children.invoke( 'changeSizeUI' );
 	},
 
 	isCollectionFilled: function() {
@@ -151,8 +160,6 @@ SectionView = BaseElementView.extend( {
 
 	onRender: function() {
 		this._checkIsFull();
-
-		this.redefineLayout();
 	},
 
 	onAddChild: function() {
@@ -177,7 +184,7 @@ SectionView = BaseElementView.extend( {
 			currentSize = this.getColumnPercentSize( ui.element, ui.originalSize.width );
 		}
 
-		var	newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
+		var newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
 			difference = newSize - currentSize;
 
 		ui.element.css( {
@@ -212,42 +219,8 @@ SectionView = BaseElementView.extend( {
 		nextChildView.changeSizeUI();
 	},
 
-	onSettingsChanged: function() {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		this.render();
-	},
-
 	onStructureChanged: function() {
 		this.redefineLayout();
-	}
-}, {
-	// Static methods
-	getPresets: function( columnsCount, presetIndex ) {
-		var presets = elementor.helpers.cloneObject( elementor.config.elements.section.presets );
-
-		if ( columnsCount ) {
-			presets = presets[ columnsCount ];
-		}
-
-		if ( presetIndex ) {
-			presets = presets[ presetIndex ];
-		}
-
-		return presets;
-	},
-
-	getPresetByStructure: function( structure ) {
-		var parsedStructure = SectionView.getParsedStructure( structure );
-
-		return SectionView.getPresets( parsedStructure.columnsCount, parsedStructure.presetIndex );
-	},
-
-	getParsedStructure: function( structure ) {
-		return {
-			columnsCount: structure.slice( 0, -1 ),
-			presetIndex: structure.substr( -1 )
-		};
 	}
 } );
 

@@ -23,6 +23,9 @@ class Preview {
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
+
+		// Tell to WP Cache plugins do not cache this request.
+		Utils::do_not_cache();
 	}
 
 	/**
@@ -32,7 +35,7 @@ class Preview {
 	 * @return bool
 	 */
 	public function is_preview_mode() {
-		if ( ! Utils::is_current_user_can_edit() ) {
+		if ( ! User::is_current_user_can_edit() ) {
 			return false;
 		}
 
@@ -66,11 +69,7 @@ class Preview {
 	 * @return string
 	 */
 	public function builder_wrapper( $content ) {
-		return '
-				<div id="elementor" class="elementor">
-					<div class="elementor-section-wrap"></div>
-				</div>
-				';
+		return '<div id="elementor" class="elementor"></div>';
 	}
 
 	/**
@@ -86,7 +85,14 @@ class Preview {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style( 'editor-preview', ELEMENTOR_ASSETS_URL . 'css/editor-preview' .$direction_suffix . $suffix . '.css', false, Plugin::instance()->get_version() );
+		wp_register_style(
+			'editor-preview',
+			ELEMENTOR_ASSETS_URL . 'css/editor-preview' . $direction_suffix . $suffix . '.css',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_enqueue_style( 'editor-preview' );
 	}
 
 	/**

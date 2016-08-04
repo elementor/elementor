@@ -13,10 +13,6 @@ class Widget_Text_editor extends Widget_Base {
 		return __( 'Text Editor', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'align-left';
 	}
@@ -91,6 +87,10 @@ class Widget_Text_editor extends Widget_Base {
 	            'selectors' => [
 	                '{{WRAPPER}}' => 'color: {{VALUE}};',
 	            ],
+	            'scheme' => [
+		            'type' => Scheme_Color::get_type(),
+		            'value' => Scheme_Color::COLOR_3,
+	            ],
 	        ]
 	    );
 
@@ -100,15 +100,24 @@ class Widget_Text_editor extends Widget_Base {
 				'name' => 'typography',
 				'section' => 'section_style',
 				'tab' => self::TAB_STYLE,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
 
 	protected function render( $instance = [] ) {
-		$instance['editor'] = apply_filters( 'widget_text', empty( $instance['editor'] ) ? '' : $instance['editor'], $instance );
+		$instance['editor'] = apply_filters( 'widget_text', $instance['editor'], $instance );
+
+		$instance['editor'] = shortcode_unautop( $instance['editor'] );
+		$instance['editor'] = do_shortcode( $instance['editor'] );
 		?>
 		<div class="elementor-text-editor"><?php echo $instance['editor']; ?></div>
 		<?php
+	}
+
+	public function render_plain_content( $instance = [] ) {
+		// In plain mode, render without shortcode
+		echo $instance['editor'];
 	}
 
 	protected function content_template() {

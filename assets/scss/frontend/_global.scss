@@ -2,13 +2,20 @@
 // Global selectors for Elementor Front-End
 //
 
+// Admin Bar - Icon (Front-End)
+#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
+	content: "\e800";
+	font-family: eicon;
+	font-size: 12px;
+	margin-top: 5px;
+}
+
 .elementor {
+
 	* {
-		@include box-sizing(border-box);
-	}
-	*:before,
-	*:after {
-		@include box-sizing(border-box);
+		&, &:before, &:after {
+			box-sizing: border-box;
+		}
 	}
 
 	// Reset Style for some themes and browsers
@@ -26,8 +33,8 @@
 		height: auto;
 		max-width: 100%;
 		border: none;
-		@include border-radius(0);
-		@include box-shadow(0);
+		border-radius: 0;
+		box-shadow: none;
 	}
 	figure {
 		margin: 0;
@@ -67,17 +74,22 @@
 		transform: translateY(-50%) translateX(-50%);
 	}
 
-	.elementor-background-video-fallback {
-		position: absolute;
+	.elementor-html5-video {
+		object-fit: cover; // For HTML5 portrait video
+	}
+	// End Background Video
+
+	.elementor-background-overlay {
 		height: 100%;
 		width: 100%;
 		top: 0;
 		left: 0;
-		background-size: cover;
-		background-position: 50% 50%;
+		position: absolute;
 	}
 
-	// End Background Video
+	.elementor-invisible {
+		visibility: hidden;
+	}
 }
 
 // TEMP CODE

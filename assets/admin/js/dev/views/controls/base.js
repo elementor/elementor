@@ -60,7 +60,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel = options.elementSettingsModel;
 
 		var controlType = this.model.get( 'type' ),
-			controlSettings = _.extend( {}, elementor.config.controls[ controlType ], this.model.attributes );
+			controlSettings = Backbone.$.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
@@ -123,6 +123,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		return inputValue;
+	},
+
+	// This method used inside of repeater
+	getFieldTitleValue: function() {
+		return this.getControlValue();
 	},
 
 	setInputValue: function( input, value ) {

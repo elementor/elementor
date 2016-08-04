@@ -13,8 +13,13 @@ html {
     background-color: #F1F1F1;
 }
 
+iframe,
+img {
+	border: 0 none;
+}
+
 body {
-    color: $gray-darker;
+    color: $editor-dark;
     font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
     font-size: 13px;
     font-weight: normal;
@@ -22,6 +27,14 @@ body {
     text-decoration: none;
     text-transform: none;
     overflow: hidden;
+
+	a {
+		color: $editor-info;
+
+		&:hover {
+			color: $editor-accent;
+		}
+	}
 
 	&.elementor-editor-active {
 
@@ -44,7 +57,7 @@ body {
 		}
 	}
 
-	&:not(.elementor-editor-active) {
+	&.elementor-editor-preview {
 
 		#elementor-preview {
 			left: 0;
@@ -52,6 +65,10 @@ body {
 
 		#elementor-panel {
 			@include start(-280px);
+
+			> .ui-resizable-e, > .ui-resizable-w {
+				display: none;
+			}
 		}
 
 		#elementor-mode-switcher-preview {
@@ -65,21 +82,9 @@ body {
 	}
 }
 
-iframe,
-img {
-    border: 0 none;
-}
-
-#elementor-preview {
-    background-color: #333;
-    position: absolute;
-    overflow: auto;
-    height: 100%;
-    top: 0;
-	right: 0;
-    border: 0;
-}
-
 #elementor-preview, #elementor-panel {
-	transition: getStartDirection() .5s;
+
+	&:not(.ui-resizable-resizing) {
+		transition: getStartDirection() .5s, width 0.5s;
+	}
 }

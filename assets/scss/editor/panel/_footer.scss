@@ -109,6 +109,12 @@
 	}
 }
 
+#elementor-panel-footer-help-title {
+	text-align: getStartDirection();
+	padding: 10px 0;
+	color: $editor-lightest;
+}
+
 #elementor-panel-footer-save {
 	width: 90px;
 	padding: 0 10px;

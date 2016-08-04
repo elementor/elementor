@@ -13,10 +13,6 @@ class Widget_Accordion extends Widget_Base {
 		return __( 'Accordion', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'accordion';
 	}
@@ -62,6 +58,7 @@ class Widget_Accordion extends Widget_Base {
 						'show_label' => false,
 					],
 				],
+				'title_field' => 'tab_title',
 			]
 		);
 
@@ -100,6 +97,30 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'border_width',
+			[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_title_style',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-wrapper .elementor-accordion-title.active > span' => 'border-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
@@ -108,6 +129,7 @@ class Widget_Accordion extends Widget_Base {
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'border-top-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-wrapper .elementor-accordion-title.active > span' => 'border-bottom-color: {{VALUE}};',
 				],
 			]
@@ -125,8 +147,9 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
+					'value' => Scheme_Color::COLOR_1,
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -144,23 +167,6 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
-			'tab_color',
-			[
-				'label' => __( 'Title Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_title_style',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
-				],
-			]
-		);
-
-		$this->add_control(
 			'tab_active_color',
 			[
 				'label' => __( 'Active Color', 'elementor' ),
@@ -172,7 +178,7 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'value' => Scheme_Color::COLOR_4,
 				],
 			]
 		);
@@ -185,6 +191,7 @@ class Widget_Accordion extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -198,6 +205,7 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'background-color: {{VALUE}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -211,6 +219,10 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -222,6 +234,7 @@ class Widget_Accordion extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -232,13 +245,13 @@ class Widget_Accordion extends Widget_Base {
 			<?php $counter = 1; ?>
 			<?php foreach ( $instance['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-tab="<?php echo $counter; ?>">
+					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $instance['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
-					<div class="elementor-accordion-content" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_content']; ?></div>
+					<div class="elementor-accordion-content" data-section="<?php echo $counter; ?>"><?php echo $item['tab_content']; ?></div>
 				</div>
 			<?php
 				$counter++;
@@ -249,19 +262,19 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0 %>">
+		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
 			<%
 			if ( settings.tabs ) {
 				var counter = 1;
 				_.each( settings.tabs, function( item ) { %>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-tab="<%- counter %>">
+						<div class="elementor-accordion-title" data-section="<%- counter %>">
 							<span class="elementor-accordion-icon elementor-accordion-icon-<%- settings.icon_align %>">
 								<i class="fa"></i>
 							</span>
 							<%= item.tab_title %>
 						</div>
-						<div class="elementor-accordion-content" data-tab="<%- counter %>"><%= item.tab_content %></div>
+						<div class="elementor-accordion-content" data-section="<%- counter %>"><%= item.tab_content %></div>
 					</div>
 				<%
 					counter++;

@@ -13,10 +13,6 @@ class Widget_Heading extends Widget_Base {
 		return __( 'Heading', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'type-tool';
 	}
@@ -37,7 +33,6 @@ class Widget_Heading extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'This is heading element', 'elementor' ),
-				'label_block' => true,
 				'section' => 'section_title',
 			]
 		);
@@ -52,6 +47,7 @@ class Widget_Heading extends Widget_Base {
 					'url' => '',
 				],
 				'section' => 'section_title',
+				'separator' => 'before',
 			]
 		);
 
@@ -112,7 +108,7 @@ class Widget_Heading extends Widget_Base {
 						'icon' => 'align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justify', 'elementor' ),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'align-justify',
 					],
 				],
@@ -148,10 +144,10 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-                'scheme' => [
-                    'type' => Scheme_Color::get_type(),
-                    'value' => Scheme_Color::COLOR_1,
-                ],
+				'scheme' => [
+				    'type' => Scheme_Color::get_type(),
+				    'value' => Scheme_Color::COLOR_1,
+				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
@@ -164,7 +160,7 @@ class Widget_Heading extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-                'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',

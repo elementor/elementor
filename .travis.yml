@@ -8,19 +8,17 @@ language: php
 # PHP version used in first build configuration.
 php:
     - 5.4
-#    - 5.5
-#    - 5.6
-#    - 7.0
+    - 5.5
+    - 5.6
+    - 7.0
 
 # WordPress version used in first build configuration.
 env:
-#    - WP_VERSION=latest WP_MULTISITE=0
-#    - WP_VERSION=latest WP_MULTISITE=1
-#    - WP_VERSION=4.3 WP_MULTISITE=0
-#    - WP_VERSION=4.3 WP_MULTISITE=1
-#    - WP_VERSION=4.4 WP_MULTISITE=0
-#    - WP_VERSION=4.4 WP_MULTISITE=1
-#    - WP_VERSION=4.5 WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=4.4 WP_MULTISITE=0
+    - WP_VERSION=4.4 WP_MULTISITE=1
+    - WP_VERSION=4.5 WP_MULTISITE=0
     - WP_VERSION=4.5 WP_MULTISITE=1
     
 install:
@@ -33,4 +31,8 @@ before_script:
 after_success:
   - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt
 
-script: phpunit --coverage-clover=/tmp/coverage.xml
+script:
+  - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+  - jscs -c .jscsrc .
+  - jshint .
+  - phpunit --coverage-clover=build/logs/clover.xml

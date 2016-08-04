@@ -22,12 +22,12 @@ class MU_Plugins_Reporter extends Base_Reporter {
 	}
 
 	public function get_title() {
-		return __( 'Must-Use Plugins', 'elementor' );
+		return 'Must-Use Plugins';
 	}
 
 	public function get_fields() {
 		return [
-			'must_use_plugins' => __( 'Must Use Plugins', 'elementor' ),
+			'must_use_plugins' => 'Must-Use Plugins',
 		];
 	}
 

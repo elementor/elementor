@@ -90,15 +90,6 @@
 	@media(max-width: $screen-sm-max) {
 		flex-wrap: wrap;
 	}
-	/* Temp Removing = Wrap in Safari browser
-	&:before,
-	&:after {
-		content: " ";
-		display: table;
-	}
-	&:after {
-		clear: both;
-	}*/
 }
 
 // Widget
@@ -113,6 +104,7 @@
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
+	z-index: 1;
 }
 
 .elementor-widget {
@@ -131,7 +123,6 @@
 
 }
 
-// Need to move for another file (_grid-mixin.scss for example)
 @mixin elementor-grid-classes {
 
 	@each $sizeKey, $size in $column-sizes {
@@ -153,30 +144,7 @@
 
 }
 
-// Columns Gap
-.elementor-column-gap-default {
-
-	.elementor-element-populated {
-		padding: 10px;
-	}
-}
-
-.elementor-column-gap-narrow {
-
-	.elementor-element-populated {
-		padding: 5px;
-	}
-}
-
-.elementor-column-gap-wide {
-
-	.elementor-element-populated {
-		padding: 20px;
-	}
-}
-
 // Responsive Grid
-
 .elementor-column {
 
 	@media (max-width: $screen-xs-max) {
@@ -195,6 +163,42 @@
 @media (min-width: $screen-md-min) {
 	.elementor-column {
 		@include elementor-grid-classes;
+	}
+
+	// Columns Gap
+	.elementor-column-gap-default {
+
+		.elementor-element-populated {
+			padding: 10px;
+		}
+	}
+
+	.elementor-column-gap-narrow {
+
+		.elementor-element-populated {
+			padding: 5px;
+		}
+	}
+
+	.elementor-column-gap-extended {
+
+		.elementor-element-populated {
+			padding: 15px;
+		}
+	}
+
+	.elementor-column-gap-wide {
+
+		.elementor-element-populated {
+			padding: 20px;
+		}
+	}
+
+	.elementor-column-gap-wider {
+
+		.elementor-element-populated {
+			padding: 30px;
+		}
 	}
 }
 

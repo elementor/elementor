@@ -13,10 +13,6 @@ class Widget_Image extends Widget_Base {
 		return __( 'Image', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'media' ];
-	}
-
 	public function get_icon() {
 		return 'insert-image';
 	}
@@ -70,18 +66,6 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'alt_text',
-			[
-				'label' => __( 'Alt Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your alternative text', 'elementor' ),
-				'default' => __( 'Sample Image', 'elementor' ),
-				'title' => __( 'Input an alternative text when the image can\'t to be displayed', 'elementor' ),
-				'section' => 'section_image',
-			]
-		);
-
-		$this->add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -94,12 +78,31 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link_to',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'section' => 'section_image',
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
 				'section' => 'section_image',
+				'condition' => [
+					'link_to' => 'custom',
+				],
+				'show_label' => false,
 			]
 		);
 
@@ -113,17 +116,59 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		/*$this->add_control(
-			'shape',
+		$this->add_control(
+			'section_style_image',
 			[
-				'label' => __( 'Image Shape', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'circle' => __( 'Circle', 'elementor' ),
-				],
-				'default' => '',
+				'type'  => Controls_Manager::SECTION,
+				'label' => __( 'Image', 'elementor' ),
+				'tab'   => self::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'space',
+			[
+				'label' => __( 'Size (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
 				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'default' => [
+					'size' => 100,
+					'unit' => '%',
+				],
+				'size_units' => [ '%' ],
+				'range' => [
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'max-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'opacity: {{SIZE}};',
+				],
 			]
 		);
 
@@ -131,31 +176,14 @@ class Widget_Image extends Widget_Base {
 			'hover_animation',
 			[
 				'label' => __( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => __( 'None', 'elementor' ),
-					'grow' => __( 'Grow', 'elementor' ),
-					'shrink' => __( 'Shrink', 'elementor' ),
-					'pulse-grow' => __( 'Pulse Grow', 'elementor' ),
-					'pulse-shrink' => __( 'Pulse Shrink', 'elementor' ),
-					'push' => __( 'Push', 'elementor' ),
-					'pop' => __( 'Pop', 'elementor' ),
-					'rotate' => __( 'Rotate', 'elementor' ),
-					'grow-rotate' => __( 'Grow Rotate', 'elementor' ),
-					'float' => __( 'Float', 'elementor' ),
-					'sink' => __( 'Sink', 'elementor' ),
-					'hover' => __( 'Hover', 'elementor' ),
-					'wobble-vertical' => __( 'Wobble Vertical', 'elementor' ),
-					'wobble-horizontal' => __( 'Wobble Horizontal', 'elementor' ),
-					'buzz' => __( 'Buzz', 'elementor' ),
-				],
-				'default' => '',
+				'type' => Controls_Manager::HOVER_ANIMATION,
 				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
 			]
-		);*/
+		);
 
 		$this->add_control(
-			'section_heading',
+			'section_style_caption',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Caption', 'elementor' ),
@@ -182,16 +210,16 @@ class Widget_Image extends Widget_Base {
 						'icon' => 'align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justify', 'elementor' ),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'align-justify',
 					],
 				],
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .widget-image-caption' => 'text-align: {{VALUE}};',
 				],
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_heading',
+				'section' => 'section_style_caption',
 			]
 		);
 
@@ -203,9 +231,13 @@ class Widget_Image extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-text' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
 				],
-				'section' => 'section_heading',
+				'section' => 'section_style_caption',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -213,9 +245,10 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'selector' => '{{WRAPPER}} .widget-image-text',
+				'selector' => '{{WRAPPER}} .widget-image-caption',
 				'tab' => self::TAB_STYLE,
-				'section' => 'section_heading',
+				'section' => 'section_style_caption',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -224,21 +257,33 @@ class Widget_Image extends Widget_Base {
 		if ( empty( $instance['image']['url'] ) ) {
 			return;
 		}
+		$has_caption = ! empty( $instance['caption'] );
+
 		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
 
-		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="hover-' . $instance['hover_animation'] . '"' : '';
-		$image_html .= sprintf( '<img src="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), esc_attr( $instance['alt_text'] ), $image_class_html );
-
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$target = '';
-			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$target = ' target="_blank"';
-			}
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
+		if ( $has_caption ) {
+			$image_html .= '<figure class="wp-caption">';
 		}
 
-		if ( ! empty( $instance['caption'] ) ) {
-			$image_html .= sprintf( '<p class="widget-image-text">%s</p>', $instance['caption'] );
+		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="elementor-animation-' . $instance['hover_animation'] . '"' : '';
+
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), Control_Media::get_image_title( $instance['image'] ), Control_Media::get_image_alt( $instance['image'] ), $image_class_html );
+
+		$link = $this->get_link_url( $instance );
+		if ( $link ) {
+			$target = '';
+			if ( ! empty( $link['is_external'] ) ) {
+				$target = ' target="_blank"';
+			}
+			$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
+		}
+
+		if ( $has_caption ) {
+			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $instance['caption'] );
+		}
+
+		if ( $has_caption ) {
+			$image_html .= '</figure>';
 		}
 		$image_html .= '</div>';
 
@@ -250,20 +295,39 @@ class Widget_Image extends Widget_Base {
 		<% if ( '' !== settings.image.url ) { %>
 			<div class="elementor-image<%= settings.shape ? ' elementor-image-shape-' + settings.shape : '' %>">
 				<%
-				var imgClass = '', image_html = '';
+				var imgClass = '', image_html = '',
+					hasCaption = '' !== settings.caption,
+					image_html = '';
+
 				if ( '' !== settings.hover_animation ) {
-					imgClass = 'hover-' + settings.hover_animation;
+					imgClass = 'elementor-animation-' + settings.hover_animation;
+				}
+				
+				if ( hasCaption ) {
+					image_html += '<figure class="wp-caption">';
 				}
 
-				image_html = '<img src="' + settings.image.url + '" alt="' + settings.alt_text + '" class="' + imgClass + '" />';
-
-				if ( settings.link ) {
-					var link = settings.link;
-					image_html = '<a href="' + link.url + '">' + image_html + '</a>';
+				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
+				
+				var link_url;
+				if ( 'custom' === settings.link_to ) {
+					link_url = settings.link.url;
+				}
+				
+				if ( 'file' === settings.link_to ) {
+					link_url = settings.image.url;
+				}
+				
+				if ( link_url ) {
+					image_html = '<a href="' + link_url + '">' + image_html + '</a>';
 				}
 
-				if ( '' !== settings.caption ) {
-					image_html += '<p class="widget-image-text">' + settings.caption + '</p>';
+				if ( hasCaption ) {
+					image_html += '<figcaption class="widget-image-caption wp-caption-text">' + settings.caption + '</figcaption>';
+				}
+
+				if ( hasCaption ) {
+					image_html += '</figure>';
 				}
 
 				print( image_html );
@@ -271,5 +335,22 @@ class Widget_Image extends Widget_Base {
 			</div>
 		<% } %>
 		<?php
+	}
+
+	private function get_link_url( $instance ) {
+		if ( 'none' === $instance['link_to'] ) {
+			return false;
+		}
+
+		if ( 'custom' === $instance['link_to'] ) {
+			if ( empty( $instance['link']['url'] ) ) {
+				return false;
+			}
+			return $instance['link'];
+		}
+
+		return [
+			'url' => $instance['image']['url'],
+		];
 	}
 }

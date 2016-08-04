@@ -8,9 +8,8 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	-webkit-user-select: none;
-	-moz-user-select: none;
 	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 9999;
 
 	* {
 		box-sizing: border-box;
@@ -20,9 +19,6 @@
 .dialog-widget-content {
 	background-color: #fff;
 	position: absolute;
-	width: 350px;
-	height: 150px;
-	margin: auto;
 	border-radius: 3px;
 	box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
 	overflow: hidden;
@@ -32,28 +28,15 @@
 	text-align: center;
 }
 
-.dialog-widget-header {
-	font-size: 15px;
-	line-height: 1;
-	padding: 20px 0;
-	font-weight: 500;
-	color: $editor-darkest;
-}
-
 .dialog-message {
-	color: $editor-dark;
-	padding: 0 20px;
 	font-size: 12px;
 }
 
 .dialog-buttons-wrapper {
 	border-top: 1px solid $editor-background;
-	position: absolute;
-	bottom: 0;
-	width: 100%;
+	text-align: center;
 
 	> button {
-		width: 50%;
 		border: none;
 		background: none;
 		font-size: 15px;
@@ -63,7 +46,6 @@
 		margin: 0;
 
 		&:first-child {
-			border-right: 1px solid $editor-background;
 			color: $editor-dark;
 		}
 
@@ -75,12 +57,62 @@
 			color: $editor-success;
 		}
 
-		&:focus {
-			background-color: $editor-background;
-		}
-
 		&:active {
 			background-color: fade-out($editor-background, .5);
+		}
+	}
+}
+
+.dialog-widget-header {
+	line-height: 1;
+	padding: 20px 0;
+	font-weight: 500;
+}
+
+.dialog-options-widget, .dialog-confirm-widget {
+
+	.dialog-widget-header {
+		font-size: 15px;
+		color: $editor-darkest;
+	}
+
+	.dialog-buttons-wrapper {
+
+		> button {
+			width: 50%;
+
+			&:first-child {
+				@include border-end(1px solid $editor-background);
+			}
+
+			&:focus {
+				background-color: $editor-background;
+			}
+		}
+	}
+}
+
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+
+	.dialog-widget-content {
+		margin: auto;
+		width: 350px;
+	}
+
+	.dialog-message {
+		padding: 0 20px;
+		min-height: 50px;
+	}
+}
+
+.dialog-alert-widget {
+
+	.dialog-buttons-wrapper {
+
+		> button {
+			width: 100%;
 		}
 	}
 }
@@ -104,4 +136,16 @@
 
 .elementor-dialog-message-text {
 	text-transform: uppercase;
+}
+
+// Modal widget
+
+.dialog-elementor-modal-close-button {
+	cursor: pointer;
+	position: absolute;
+	top: 16px;
+	@include end(20px);
+	font-size: 16px;
+	color: $editor-light;
+	line-height: 1;
 }

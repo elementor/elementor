@@ -8,10 +8,12 @@ class DB {
 	/**
 	 * Current DB version of the editor.
 	 */
-	const DB_VERSION = '0.1';
+	const DB_VERSION = '0.2';
 
 	const REVISION_PUBLISH = 'publish';
 	const REVISION_DRAFT = 'draft';
+
+	private $_fetch_html_cache = false;
 
 	/**
 	 * Save builder method.
@@ -49,26 +51,9 @@ class DB {
 	public function get_builder( $post_id, $revision = self::REVISION_PUBLISH ) {
 		$data = $this->get_plain_builder( $post_id, $revision );
 
-		if ( ! empty( $data ) ) {
-			foreach ( $data as &$section ) {
-				foreach ( $section['elements'] as &$column ) {
-					foreach ( $column['elements'] as &$widget ) {
-						if ( empty( $widget['widgetType'] ) )
-							continue;
-
-						$widget_obj = Plugin::instance()->widgets_manager->get_widget( $widget['widgetType'] );
-						if ( false !== $widget_obj ) {
-							ob_start();
-							if ( empty( $widget['settings'] ) ) {
-								$widget['settings'] = [];
-							}
-							$widget_obj->render_content( $widget['settings'] );
-							$widget['htmlCache'] = ob_get_clean();
-						}
-					}
-				}
-			}
-		}
+		$this->_fetch_html_cache = true;
+		$data = $this->_sanitize_saved_data( $data );
+		$this->_fetch_html_cache = false;
 
 		return $data;
 	}
@@ -309,6 +294,12 @@ class DB {
 			'widgetType' => $posted_widget['widgetType'],
 		];
 
+		if ( $this->_fetch_html_cache ) {
+			ob_start();
+			$widget_obj->render_content( $widget_data['settings'] );
+			$widget_data['htmlCache'] = ob_get_clean();
+		}
+
 		// TODO: Validate widget here..
 		return $widget_data;
 	}
@@ -337,5 +328,17 @@ class DB {
 		}
 
 		return $builder_data;
+	}
+
+	public function iterate_data( $data_container, $callback ) {
+		foreach ( $data_container as $element_key => $element_value ) {
+			$data_container[ $element_key ] = $callback( $data_container[ $element_key ] );
+
+			if ( ! empty( $data_container[ $element_key ]['elements'] ) ) {
+				$data_container[ $element_key ]['elements'] = $this->iterate_data( $data_container[ $element_key ]['elements'], $callback );
+			}
+		}
+
+		return $data_container;
 	}
 }

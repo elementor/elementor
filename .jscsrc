@@ -24,6 +24,9 @@
 	"disallowNewlineBeforeBlockStatements": true,
 	"excludeFiles": [
 		"./assets/admin/js/lib/*.js",
+		"./assets/lib/**/*.js",
+		"./assets/js/admin-feedback.js",
+		"./assets/admin/js/app.js",
 		"**/*.min.js",
 		"**/node_modules/**",
 		"**/vendor/**"

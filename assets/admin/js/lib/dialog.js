@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v1.0.2
+ * Dialogs Manager v3.0.0
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -10,8 +10,11 @@
 (function ($, global) {
 	'use strict';
 
+	/*
+	 * Dialog Manager
+	 */
 	var DialogsManager = {
-		widgets: {},
+		widgetsTypes: {},
 		createWidgetType: function (typeName, properties, Parent) {
 			if (!Parent) {
 				Parent = this.Widget;
@@ -19,7 +22,7 @@
 
 			var WidgetType = function () {
 
-				Parent.call(this, typeName);
+				Parent.apply(this, arguments);
 			};
 
 			var prototype = WidgetType.prototype = new Parent(typeName);
@@ -38,22 +41,29 @@
 		addWidgetType: function (typeName, properties, Parent) {
 
 			if (properties && properties.prototype instanceof this.Widget) {
-				return this.widgets[typeName] = properties;
+				return this.widgetsTypes[typeName] = properties;
 			}
 
-			return this.widgets[typeName] = this.createWidgetType(typeName, properties, Parent);
+			return this.widgetsTypes[typeName] = this.createWidgetType(typeName, properties, Parent);
+		},
+		getWidgetType: function (widgetType) {
+
+			return this.widgetsTypes[widgetType];
 		}
 	};
 
+	/*
+	 * Dialog Manager instances constructor
+	 */
 	DialogsManager.Instance = function () {
 
 		var self = this,
-			components = {},
+			elements = {},
 			settings = {};
 
-		var initComponents = function () {
+		var initElements = function () {
 
-			components.$body = $('body');
+			elements.body = $('body');
 		};
 
 		var initSettings = function (options) {
@@ -71,17 +81,14 @@
 
 		this.createWidget = function (widgetType, properties) {
 
-			var widget = new DialogsManager.widgets[widgetType]();
+			var WidgetTypeConstructor = DialogsManager.getWidgetType(widgetType),
+				widget = new WidgetTypeConstructor(widgetType);
 
 			properties = properties || {};
 
 			widget.init(self, properties);
 
 			widget.setMessage(properties.message);
-
-			if (properties.linkedElement) {
-				widget.linkElement(properties.linkedElement, widget);
-			}
 
 			return widget;
 		};
@@ -99,31 +106,28 @@
 
 			initSettings(settings);
 
-			initComponents();
+			initElements();
 
 			return self;
-		};
-
-		this.popDialog = function (widget) {
-
-			Widget.show();
 		};
 
 		self.init();
 	};
 
+	/*
+	 * Widget types constructor
+	 */
 	DialogsManager.Widget = function (widgetName) {
 
 		var self = this,
 			settings = {},
-			components = {
-				$element: 0
-			};
+			events = {},
+			elements = {};
 
 		var callEffect = function (intent) {
 
 			var effect = settings.effects[intent],
-				$widget = components.$widget;
+				$widget = elements.widget;
 
 			if ($.isFunction(effect)) {
 				effect.call($widget);
@@ -139,11 +143,18 @@
 			}
 		};
 
-		var initComponents = function () {
+		var initElements = function () {
 
-			self.addComponent('widget');
+			self.addElement('widget');
 
-			self.addComponent('message');
+			self.addElement('message');
+
+			var id = self.getSettings('id');
+
+			if (id) {
+
+				self.getElements('widget').attr('id', id);
+			}
 		};
 
 		var initSettings = function (parent, userSettings) {
@@ -159,11 +170,30 @@
 			settings.classes = {
 				globalPrefix: parentSettings.classPrefix,
 				prefix: prefix,
-				Widget: 'dialog-widget',
-				linkedActive: prefix + '-linked-active'
+				widget: 'dialog-widget'
 			};
 
 			$.extend(true, settings, userSettings);
+
+			initSettingsEvents();
+		};
+
+		var initSettingsEvents = function () {
+
+			var settings = self.getSettings();
+
+			$.each(settings, function (settingKey) {
+
+				var eventName = settingKey.match(/^on([A-Z].*)/);
+
+				if (!eventName) {
+					return;
+				}
+
+				eventName = eventName[1].charAt(0).toLowerCase() + eventName[1].slice(1);
+
+				self.on(eventName, this);
+			});
 		};
 
 		var normalizeClassName = function (name) {
@@ -173,9 +203,9 @@
 			});
 		};
 
-		this.addComponent = function (name, component, type) {
+		this.addElement = function (name, element, type) {
 
-			var $newComponent = components['$' + name] = $(component || '<div>'),
+			var $newElement = elements[name] = $(element || '<div>'),
 				className = settings.classes.prefix + '-';
 
 			name = normalizeClassName(name);
@@ -188,9 +218,9 @@
 
 			className += ' ' + settings.classes.globalPrefix + '-' + type;
 
-			$newComponent.addClass(className);
+			$newElement.addClass(className);
 
-			return $newComponent;
+			return $newElement;
 		};
 
 		this.getSettings = function (setting) {
@@ -210,11 +240,11 @@
 				throw 'The ' + self.widgetName + ' must to be initialized from an instance of DialogsManager.Instance';
 			}
 
-			self.onInit(properties);
+			self.trigger('init', properties);
 
 			initSettings(parent, properties);
 
-			initComponents();
+			initElements();
 
 			self.buildWidget();
 
@@ -222,39 +252,38 @@
 				self.attachEvents();
 			}
 
-			self.onReady();
+			self.trigger('ready');
 
 			return self;
 		};
 
-		this.getComponents = function (item) {
+		this.getElements = function (item) {
 
-			return item ? components['$' + item] : components;
+			return item ? elements[item] : elements;
 		};
 
 		this.hide = function () {
 
 			callEffect('hide');
 
-			if (components.$element.length) {
-				components.$element.removeClass(settings.classes.linkedActive);
-			}
-
-			self.onHide();
+			self.trigger('hide');
 
 			return self;
 		};
 
-		this.linkElement = function (element) {
+		this.on = function (eventName, callback) {
+			if (!events[eventName]) {
+				events[eventName] = [];
+			}
 
-			this.addComponent('element', element);
+			events[eventName].push(callback);
 
 			return self;
 		};
 
 		this.setMessage = function (message) {
 
-			components.$message.html(message);
+			elements.message.html(message);
 
 			return self;
 		};
@@ -265,26 +294,41 @@
 				e.stopPropagation();
 			}
 
-			components.$widget.appendTo('body');
+			elements.widget.appendTo('body');
 
 			callEffect('show');
 
-			if (components.$element.length) {
-				components.$element.addClass(settings.classes.linkedActive);
-			}
-
-			self.onShow(userSettings);
+			self.trigger('show', userSettings);
 
 			return self;
 		};
 
+		this.trigger = function (eventName, params) {
+
+			var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1);
+
+			if (self[methodName]) {
+				self[methodName](params);
+			}
+
+			var callbacks = events[eventName];
+
+			if (!callbacks) {
+				return;
+			}
+
+			$.each(callbacks, function (index, callback) {
+				callback.call(self, params);
+			});
+		};
 	};
 
+	// Inheritable widget methods
 	DialogsManager.Widget.prototype.buildWidget = function () {
 
-		var components = this.getComponents();
+		var elements = this.getElements();
 
-		components.$widget.html(components.$message);
+		elements.widget.html(elements.message);
 	};
 
 	DialogsManager.Widget.prototype.getDefaultSettings = function () {
@@ -304,33 +348,15 @@
 	DialogsManager.Widget.prototype.onReady = function () {
 	};
 
-	DialogsManager.addWidgetType('tool-tip', {
-		onShow: function () {
-
-			var components = this.getComponents();
-
-			if (components.$element.length) {
-
-				components.$widget.position({
-					at: 'left top-5',
-					my: 'left+10 bottom',
-					of: components.$element,
-					collision: 'none none'
-				});
-
-				components.$element.focus();
-			}
-
-			setTimeout(this.hide, 5000);
-		}
-	});
-
+	/*
+	 * Default basic widget types
+	 */
 	DialogsManager.addWidgetType('options', {
 		activeKeyUp: function (event) {
 
-			var ENTER_KEY = 13;
+			var TAB_KEY = 9;
 
-			if (event.which !== ENTER_KEY) {
+			if (event.which === TAB_KEY) {
 
 				event.preventDefault();
 			}
@@ -341,15 +367,10 @@
 		},
 		activeKeyDown: function (event) {
 
-			var TAB_KEY = 9,
-				ENTER_KEY = 13;
-
-			if (event.which !== ENTER_KEY) {
-
-				event.preventDefault();
-			}
+			var TAB_KEY = 9;
 
 			if (event.which === TAB_KEY) {
+				event.preventDefault();
 
 				var currentButtonIndex = this.focusedButton.index(),
 					nextButtonIndex;
@@ -376,13 +397,15 @@
 		addButton: function (options) {
 
 			var self = this,
-				$button = self.addComponent(options.name, $('<button>').text(options.text));
+				$button = self.addElement(options.name, $('<button>').text(options.text));
 
 			self.buttons.push($button);
 
 			var buttonFn = function () {
 
-				self.hide();
+				if (self.getSettings('hideOnButtonClick')) {
+					self.hide();
+				}
 
 				if ($.isFunction(options.callback)) {
 					options.callback.call(this, self);
@@ -395,41 +418,52 @@
 				this.hotKeys[options.hotKey] = buttonFn;
 			}
 
-			this.getComponents('buttonsWrapper').append($button);
+			this.getElements('buttonsWrapper').append($button);
 
 			if (options.focus) {
 				this.focusedButton = $button;
 			}
+
+			return self;
 		},
 		bindHotKeys: function () {
-			var self = this;
 
-			self.bindKeyUpEvents = function (event) {
-
-				self.activeKeyUp(event);
-			};
-
-			self.bindKeyDownEvents = function (event) {
-
-				self.activeKeyDown(event);
-			};
-
-			$(window).on({
-				keyup: self.bindKeyUpEvents,
-				keydown: self.bindKeyDownEvents
+			this.getElements('window').on({
+				keyup: this.activeKeyUp,
+				keydown: this.activeKeyDown
 			});
 		},
 		buildWidget: function () {
+			this.addElement('window', window);
 
-			var $widgetHeader = this.addComponent('widgetHeader'),
-				$widgetContent = this.addComponent('widgetContent'),
-				$buttonsWrapper = this.addComponent('buttonsWrapper');
+			var $widgetHeader = this.addElement('widgetHeader'),
+				$widgetContent = this.addElement('widgetContent'),
+				$buttonsWrapper = this.addElement('buttonsWrapper');
 
-			var components = this.getComponents();
+			var elements = this.getElements();
 
-			$widgetContent.append($widgetHeader, components.$message, $buttonsWrapper);
+			$widgetContent.append($widgetHeader, elements.message, $buttonsWrapper);
 
-			components.$widget.html($widgetContent);
+			elements.widget.html($widgetContent);
+		},
+		ensureClosureMethods: function () {
+
+			var self = this,
+				closureMethodsNames = [
+					'placeWidget',
+					'activeKeyUp',
+					'activeKeyDown'
+				];
+
+			$.each(closureMethodsNames, function () {
+
+				var methodName = this,
+					oldMethod = self[methodName];
+
+				self[methodName] = function () {
+					oldMethod.apply(self, arguments);
+				};
+			});
 		},
 		getDefaultSettings: function () {
 
@@ -438,14 +472,20 @@
 					my: 'center',
 					at: 'center center-100'
 				},
-				headerMessage: ''
+				headerMessage: '',
+				hideOnButtonClick: true,
+				refreshPosition: true
 			};
 		},
 		onHide: function () {
 
 			this.unbindHotKeys();
+
+			this.getElements('window').off('resize', this.placeWidget);
 		},
 		onInit: function () {
+
+			this.ensureClosureMethods();
 
 			this.buttons = [];
 
@@ -459,44 +499,57 @@
 		},
 		onShow: function (userSettings) {
 
-			var components = this.getComponents(),
+			var self = this;
+
+			self.placeWidget(userSettings);
+
+			if (self.getSettings('refreshPosition')) {
+
+				self.getElements('window').on('resize',  self.placeWidget);
+			}
+
+			self.bindHotKeys();
+
+			if (!self.focusedButton) {
+				self.focusedButton = self.buttons[0];
+			}
+
+			if (self.focusedButton) {
+				self.focusedButton.focus();
+			}
+		},
+		placeWidget: function (userSettings) {
+
+			var elements = this.getElements(),
 				position = this.getSettings('position');
 
-			position.of = components.$widget;
+			position.of = elements.widget;
 
 			if (userSettings) {
 				$.extend(position, userSettings);
 			}
 
-			components.$widgetContent.position(position);
-
-			this.bindHotKeys();
-
-			if (!this.focusedButton) {
-				this.focusedButton = this.buttons[0];
-			}
-
-			if (this.focusedButton) {
-				this.focusedButton.focus();
-			}
+			elements.widgetContent.position(position);
 		},
 		setHeaderMessage: function (message) {
 
-			this.getComponents('widgetHeader').html(message);
+			this.getElements('widgetHeader').html(message);
+
+			return this;
 		},
 		unbindHotKeys: function () {
 
-			$(window).off({
-				keyup: this.bindKeyUpEvents,
-				keydown: this.bindKeyDownEvents
+			this.getElements('window').off({
+				keyup: this.activeKeyUp,
+				keydown: this.activeKeyDown
 			});
 		}
 	});
 
-	DialogsManager.addWidgetType('confirm', DialogsManager.widgets.options.extend('confirm', {
+	DialogsManager.addWidgetType('confirm', DialogsManager.getWidgetType('options').extend('confirm', {
 		onReady: function () {
 
-			DialogsManager.widgets.options.prototype.onReady.apply(this, arguments);
+			DialogsManager.getWidgetType('options').prototype.onReady.apply(this, arguments);
 
 			var strings = this.getSettings('strings'),
 				ESC_KEY = 27,
@@ -505,7 +558,10 @@
 			this.addButton({
 				name: 'cancel',
 				text: strings.cancel,
-				callback: this.getSettings('onCancel'),
+				callback: function (widget) {
+
+					widget.trigger('cancel');
+				},
 				hotKey: ESC_KEY,
 				focus: isDefaultCancel
 			});
@@ -513,16 +569,19 @@
 			this.addButton({
 				name: 'ok',
 				text: strings.confirm,
-				callback: this.getSettings('onConfirm'),
+				callback: function (widget) {
+
+					widget.trigger('confirm');
+				},
 				focus: !isDefaultCancel
 			});
 		},
 		getDefaultSettings: function () {
 
-			var settings = DialogsManager.widgets.options.prototype.getDefaultSettings.apply(this, arguments);
+			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {
-				confirm: 'Ok',
+				confirm: 'OK',
 				cancel: 'Cancel'
 			};
 
@@ -532,21 +591,27 @@
 		}
 	}));
 
-	DialogsManager.addWidgetType('alert', DialogsManager.widgets.options.extend('alert', {
+	DialogsManager.addWidgetType('alert', DialogsManager.getWidgetType('options').extend('alert', {
 		onReady: function () {
+
+			DialogsManager.getWidgetType('options').prototype.onReady.apply(this, arguments);
+
 			var strings = this.getSettings('strings');
 
 			this.addButton({
 				name: 'ok',
 				text: strings.confirm,
-				callback: this.getSettings('onConfirm')
+				callback: function (widget) {
+
+					widget.trigger('confirm');
+				}
 			});
 		},
 		getDefaultSettings: function () {
-			var settings = DialogsManager.widgets.options.prototype.getDefaultSettings.apply(this, arguments);
+			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {
-				confirm: 'Ok'
+				confirm: 'OK'
 			};
 
 			return settings;
@@ -569,13 +634,12 @@
 		},
 		onShow: function () {
 
-			var $widgetMessage = this.getComponents('message');
-
-			$widgetMessage.position(this.getSettings('position'));
+			this.getElements('message').position(this.getSettings('position'));
 
 			setTimeout(this.hide, this.getSettings('hide').delay);
 		}
 	});
 
+	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
-})('function' === typeof require ? require('jquery') : jQuery, 'undefined' !== typeof module && module.exports || window);
+})(typeof require === 'function' ? require('jquery') : jQuery, typeof module !== 'undefined' ? module.exports : window);

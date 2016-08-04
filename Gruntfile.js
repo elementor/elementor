@@ -50,45 +50,6 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		pot: {
-			options:{
-				text_domain: 'elementor',
-				dest: 'languages/',
-				encoding: 'UTF-8',
-				package_name: '<%= pkg.name %>',
-				package_version: '<%= pkg.version %>',
-				msgid_bugs_address: 'team@pojo.me',
-				keywords: [
-					// WordPress keywords
-					'__:1',
-					'_e:1',
-					'_x:1,2c',
-					'esc_html__:1',
-					'esc_html_e:1',
-					'esc_html_x:1,2c',
-					'esc_attr__:1',
-					'esc_attr_e:1',
-					'esc_attr_x:1,2c',
-					'_ex:1,2c',
-					'_n:1,2',
-					'_nx:1,2,4c',
-					'_n_noop:1,2',
-					'_nx_noop:1,2,3c'
-				]
-			},
-			files:{
-				src: [
-					'**/*.php',
-					'!node_modules/**',
-					'!build/**',
-					'!tests/**',
-					'!vendor/**',
-					'!*~'
-				],
-				expand: true
-			}
-		},
-
 		sass: {
 			dist: {
 				files: [ {
@@ -154,7 +115,8 @@ module.exports = function( grunt ) {
 
 			dist: {
 				files: {
-					'assets/admin/js/app.js': ['assets/admin/js/dev/app.js']
+					'assets/admin/js/app.js': ['assets/admin/js/dev/app.js'],
+					'assets/js/admin-feedback.js': ['assets/js/dev/admin-feedback.js']
 				},
 				options: pkgInfo.browserify
 			}
@@ -180,6 +142,7 @@ module.exports = function( grunt ) {
 					src: [
 						'assets/admin/js/app.min.js',
 						'assets/js/admin.min.js',
+						'assets/js/admin-feedback.min.js',
 						'assets/js/frontend.min.js'
 					]
 				}
@@ -192,7 +155,10 @@ module.exports = function( grunt ) {
 			},
 			all: [
 				'Gruntfile.js',
-				'assets/admin/js/dev/**/*.js'
+				'assets/admin/js/dev/**/*.js',
+				'assets/js/dev/**/*.js',
+				'assets/js/admin.js',
+				'assets/js/frontend.js'
 			]
 		},
 
@@ -242,6 +208,9 @@ module.exports = function( grunt ) {
 					'assets/js/admin.min.js': [
 						'assets/js/admin.js'
 					],
+					'assets/js/admin-feedback.min.js': [
+						'assets/js/admin-feedback.js'
+					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
 					]
@@ -259,12 +228,27 @@ module.exports = function( grunt ) {
 
 			scripts: {
 				files: [
-					'assets/js/*.js',
-					'!assets/js/*.min.js',
+					'assets/js/admin.js',
+					'assets/js/frontend.js',
 					'assets/js/dev/**/*.js',
 					'assets/admin/js/dev/**/*.js'
 				],
 				tasks: [ 'scripts' ]
+			}
+		},
+
+		wp_readme_to_markdown: {
+			github: {
+				options: {
+					wordpressPluginSlug: 'elementor',
+					travisUrlRepo: 'https://travis-ci.org/pojome/elementor',
+					gruntDependencyStatusUrl: 'https://david-dm.org/pojome/elementor',
+					coverallsRepo: 'pojome/elementor',
+					screenshot_url: 'assets/{screenshot}.png'
+				},
+				files: {
+					'README.md': 'readme.txt'
+				}
 			}
 		},
 
@@ -336,6 +320,7 @@ module.exports = function( grunt ) {
 					'!tests/**',
 					'!.travis.yml',
 					'!.jscsrc',
+					'!.jshintignore',
 					'!.jshintrc',
 					'!ruleset.xml',
 					'!README.md',
@@ -351,7 +336,9 @@ module.exports = function( grunt ) {
 					'!.gitmodules',
 
 					'!assets/admin/js/dev/**',
+					'!assets/js/dev/**',
 					'!assets/scss/**',
+					'!assets/**/*.map',
 					'!*~'
 				],
 				expand: true,
@@ -381,13 +368,13 @@ module.exports = function( grunt ) {
 	// Default task(s).
 	grunt.registerTask( 'default', [
 		'i18n',
+		'wp_readme_to_markdown',
 		'scripts',
 		'styles'
 	] );
 
 	grunt.registerTask( 'i18n', [
-		'checktextdomain',
-		'pot'
+		'checktextdomain'
 	] );
 
 	grunt.registerTask( 'scripts', [

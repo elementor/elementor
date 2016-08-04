@@ -13,10 +13,6 @@ class Widget_Icon extends Widget_Base {
 		return __( 'Icon', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'favorite';
 	}
@@ -131,6 +127,10 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 			]
 		);
 
@@ -149,6 +149,10 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
+				],
 			]
 		);
 
@@ -157,9 +161,6 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 50,
-				],
 				'range' => [
 					'px' => [
 						'min' => 6,
@@ -170,23 +171,6 @@ class Widget_Icon extends Widget_Base {
 				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'rotate',
-			[
-				'label' => __( 'Rotate', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0,
-					'unit' => 'deg',
-				],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
@@ -212,6 +196,23 @@ class Widget_Icon extends Widget_Base {
 				],
 				'condition' => [
 					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'rotate',
+			[
+				'label' => __( 'Icon Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+					'unit' => 'deg',
+				],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_icon',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
@@ -308,12 +309,26 @@ class Widget_Icon extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+			]
+		);
 	}
 
 	protected function render( $instance = [] ) {
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
 		$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
+
+		if ( ! empty( $instance['hover_animation'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		}
 
 		if ( ! empty( $instance['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
@@ -352,7 +367,7 @@ class Widget_Icon extends Widget_Base {
 			<% if ( hasLink ) { %>
 			<a class="elementor-icon-link" href="<%- settings.link.url %>">
 				<% } %>
-				<div class="elementor-icon">
+				<div class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
 					<i class="<%- settings.icon %>"></i>
 				</div>
 				<% if ( hasLink ) { %>

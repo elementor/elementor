@@ -13,10 +13,6 @@ class Widget_Tabs extends Widget_Base {
 		return __( 'Tabs', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'tabs';
 	}
@@ -64,6 +60,7 @@ class Widget_Tabs extends Widget_Base {
 						'show_label' => false,
 					],
 				],
+				'title_field' => 'tab_title',
 			]
 		);
 
@@ -87,15 +84,26 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'background_color',
+			'border_width',
 			[
-				'label' => __( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 1,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title.active' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tab-content' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:after' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tabs .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -117,6 +125,20 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
+			'background_color',
+			[
+				'label' => __( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_title_style',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-tab-title.active' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tabs .elementor-tab-content' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'tab_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
@@ -128,8 +150,9 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
+					'value' => Scheme_Color::COLOR_1,
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -145,7 +168,7 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'value' => Scheme_Color::COLOR_4,
 				],
 			]
 		);
@@ -156,7 +179,8 @@ class Widget_Tabs extends Widget_Base {
 				'name' => 'tab_typography',
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_title_style',
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .elementor-tab-title > span',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -179,6 +203,10 @@ class Widget_Tabs extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
 			]
 		);
 
@@ -189,6 +217,7 @@ class Widget_Tabs extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_tab_content',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
@@ -219,7 +248,7 @@ class Widget_Tabs extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-tabs" data-active-tab="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0 %>">
+		<div class="elementor-tabs" data-active-tab="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
 			<%
 			if ( settings.tabs ) {
 				var counter = 1; %>

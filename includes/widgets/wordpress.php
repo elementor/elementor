@@ -30,6 +30,10 @@ class Widget_WordPress extends Widget_Base {
 		return $this->_widget_instance;
 	}
 
+	private function _is_pojo_widget() {
+		return $this->_get_widget_instance() instanceof \Pojo_Widget_Base;
+	}
+
 	public function get_id() {
 		return 'wp-widget-' . $this->_get_widget_instance()->id_base;
 	}
@@ -39,10 +43,18 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		if ( $this->_is_pojo_widget() ) {
+			$category = 'pojo';
+		} else {
+			$category = 'wordpress';
+		}
+		return [ $category ];
 	}
 
 	public function get_icon() {
+		if ( $this->_is_pojo_widget() ) {
+			return 'pojome';
+		}
 		return 'wordpress';
 	}
 
@@ -65,7 +77,7 @@ class Widget_WordPress extends Widget_Base {
 		$this->add_control(
 			'wp',
 			[
-				'label' => 'Form',
+				'label' => __( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
 				'widget' => $this->get_id(),
 				'id_base' => $this->_get_widget_instance()->id_base,
@@ -75,6 +87,7 @@ class Widget_WordPress extends Widget_Base {
 
 	protected function render( $instance = [] ) {
 		$empty_widget_args = [
+			'widget_id' => $this->get_id(),
 			'before_widget' => '',
 			'after_widget' => '',
 			'before_title' => '<h5>',

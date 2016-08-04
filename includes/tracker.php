@@ -110,6 +110,10 @@ class Tracker {
 	}
 
 	public static function admin_notices() {
+		// Show tracker notice after 12 hours from installed time.
+		if ( self::_get_installed_time() > strtotime( '-12 hours' ) )
+			return;
+
 		if ( '1' === get_option( 'elementor_tracker_notice' ) )
 			return;
 
@@ -124,10 +128,19 @@ class Tracker {
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 		?>
 		<div class="updated">
-			<p><?php _e( 'Love using Elementor? Be a super contributor by opting in to our anonymous plugin data collection and to our newsletter. We guarantee no sensitive data will ever be tracked.', 'elementor' ); ?></p>
+			<p><?php _e( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' ); ?></p>
 			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'I won\'t help', 'elementor' ); ?></a></p>
 		</div>
 		<?php
+	}
+
+	private static function _get_installed_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+		if ( ! $installed_time ) {
+			$installed_time = time();
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+		return $installed_time;
 	}
 
 	private static function _get_system_reports_data() {

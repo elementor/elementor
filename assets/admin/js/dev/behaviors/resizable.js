@@ -10,8 +10,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'resizestart': 'onResizeStart',
-		'resizestop': 'onResizeStop',
 		'resize': 'onResize'
 	},
 
@@ -40,7 +38,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function() {
-		var activeMode = elementor.dataEditMode.request( 'get:active:mode' );
+		var activeMode = elementor.dataEditMode.request( 'activeMode' );
 
 		if ( 'preview' !== activeMode ) {
 			this.active();
@@ -58,14 +56,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		this.deactivate();
 	},
 
-	onResizeStart: function( event, ui ) {
-		//this.ui.columnTitle.fadeIn( 'fast' );
-	},
-
-	onResizeStop: function( event, ui ) {
-		//this.ui.columnTitle.fadeOut( 'fast' );
-	},
-
 	onResize: function( event, ui ) {
 		event.stopPropagation();
 
@@ -73,13 +63,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	getChildViewContainer: function() {
-		//if ( 'function' === typeof this.view.getChildViewContainer ) {
-		//	// CompositeView
-		//	return this.view.getChildViewContainer( this.view );
-		//} else {
-		//	// CollectionView
-		//	return this.$el;
-		//}
 		return this.$el;
 	}
 } );

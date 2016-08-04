@@ -35,13 +35,25 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => [
 				'size' => 15,
 			],
+			'range' => [
+				'px' => [
+					'min' => 1,
+				],
+			],
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
+
+		$default_fonts = get_option( 'elementor_default_generic_fonts', 'Sans-serif' );
+
+		if ( $default_fonts ) {
+			$default_fonts = ', ' . $default_fonts;
+		}
 
 		$fields['font_family'] = [
 			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
+			'selector_value' => 'font-family: {{VALUE}}' . $default_fonts . ';',
 		];
 
 		$typo_weight_options = [ '' => __( 'Default', 'elementor' ) ];
@@ -62,9 +74,9 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'' => __( 'Default', 'elementor' ),
-				'uppercase' => __( 'Uppercase', 'elementor', 'elementor' ),
-				'lowercase' => __( 'Lowercase', 'elementor', 'elementor' ),
-				'capitalize' => __( 'Capitalize', 'elementor', 'elementor' ),
+				'uppercase' => _x( 'Uppercase', 'Typography Control', 'elementor' ),
+				'lowercase' => _x( 'Lowercase', 'Typography Control', 'elementor' ),
+				'capitalize' => _x( 'Capitalize', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -73,10 +85,10 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => __( 'Default', 'elementor', 'elementor' ),
-				'normal' => __( 'Normal', 'elementor', 'elementor' ),
-				'italic' => __( 'Italic', 'elementor', 'elementor' ),
-				'oblique' => __( 'Oblique', 'elementor', 'elementor' ),
+				'' => __( 'Default', 'elementor' ),
+				'normal' => _x( 'Normal', 'Typography Control', 'elementor' ),
+				'italic' => _x( 'Italic', 'Typography Control', 'elementor' ),
+				'oblique' => _x( 'Oblique', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -85,6 +97,11 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'default' => [
 				'unit' => 'em',
+			],
+			'range' => [
+				'px' => [
+					'min' => 1,
+				],
 			],
 			'size_units' => [ 'px', 'em' ],
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
@@ -95,6 +112,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
+					'min' => -5,
 					'max' => 10,
 					'step' => 0.1,
 				],
@@ -126,8 +144,8 @@ class Group_Control_Typography extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			],
 		];

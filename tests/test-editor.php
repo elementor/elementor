@@ -24,7 +24,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 			'tipsy',
 			'imagesloaded',
 			'heartbeat',
-			'dialog',
+			'elementor-dialog',
 
 			'elementor',
 		];

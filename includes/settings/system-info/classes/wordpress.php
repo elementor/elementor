@@ -8,22 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WordPress_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return __( 'WordPress Environment', 'elementor' );
+		return 'WordPress Environment';
 	}
 
 	public function get_fields() {
 		return [
-			'version' => __( 'Version', 'elementor' ),
-			'site_url' => __( 'Site URL', 'elementor' ),
-			'home_url' => __( 'Home URL', 'elementor' ),
-			'is_multisite' => __( 'WP Multisite', 'elementor' ),
-			'max_upload_size' => __( 'Max Upload Size', 'elementor' ),
-			'memory_limit' => __( 'Memory limit', 'elementor' ),
-			'permalink_structure' => __( 'Permalink Structure', 'elementor' ),
-			'language' => __( 'Language', 'elementor' ),
-			'timezone' => __( 'Timezone', 'elementor' ),
-			'admin_email' => __( 'Admin Email', 'elementor' ),
-			'debug_mode' => __( 'Debug Mode', 'elementor' ),
+			'version' => 'Version',
+			'site_url' => 'Site URL',
+			'home_url' => 'Home URL',
+			'is_multisite' => 'WP Multisite',
+			'max_upload_size' => 'Max Upload Size',
+			'memory_limit' => 'Memory limit',
+			'permalink_structure' => 'Permalink Structure',
+			'language' => 'Language',
+			'timezone' => 'Timezone',
+			'admin_email' => 'Admin Email',
+			'debug_mode' => 'Debug Mode',
 		];
 	}
 
@@ -41,7 +41,7 @@ class WordPress_Reporter extends Base_Reporter {
 
 	public function get_is_multisite() {
 		return [
-			'value' => is_multisite()? __( 'Yes', 'elementor' ) : __( 'No', 'elementor' ),
+			'value' => is_multisite() ? 'Yes' : 'No',
 		];
 	}
 
@@ -96,7 +96,7 @@ class WordPress_Reporter extends Base_Reporter {
 
 	public function get_debug_mode() {
 		return [
-			'value' => WP_DEBUG ? __( 'Active', 'elementor' ) : __( 'Inactive', 'elementor' ),
+			'value' => WP_DEBUG ? 'Active' : 'Inactive',
 		];
 	}
 }

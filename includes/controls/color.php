@@ -67,4 +67,10 @@ class Control_Color extends Control_Base {
 		</div>
 		<?php
 	}
+
+	protected function get_default_settings() {
+		return [
+			'alpha' => true,
+		];
+	}
 }

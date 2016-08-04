@@ -6,6 +6,7 @@
 
 	var elementorBindUI = ( function() {
 		var _registeredBindEvent = {},
+			_registeredGlobalHandlers = [],
 			_flagEditorMode = false,
 
 			_setEditorMode = function( mode ) {
@@ -24,12 +25,24 @@
 				_registeredBindEvent[ widgetType ] = callback;
 			},
 
+			_addGlobalHandler = function( callback ) {
+				_registeredGlobalHandlers.push( callback );
+			},
+
+			_runGlobalHandlers = function( $scope ) {
+				$.each( _registeredGlobalHandlers, function() {
+					this.call( $scope );
+				} );
+			},
+
 			_runReadyTrigger = function( $scope ) {
 				var elementType = $scope.data( 'element_type' );
 
 				if ( ! elementType ) {
 					return;
 				}
+
+				_runGlobalHandlers( $scope );
 
 				if ( ! _registeredBindEvent[ elementType ] ) {
 					return;
@@ -44,13 +57,14 @@
 			setEditorMode: _setEditorMode,
 			setScopeWindow: _setScopeWindow,
 			addBindEvent: _addBindEvent,
+			addGlobalHandler: _addGlobalHandler,
 			runReadyTrigger: _runReadyTrigger
 		};
 	} )();
 
 	var onYoutubeApiReady = function( callback ) {
-		if ( window.YT ) {
-			callback( window.YT );
+		if ( window.YT && YT.loaded ) {
+			callback( YT );
 		} else {
 			// If not ready check again by timeout..
 			setTimeout( function() {
@@ -59,6 +73,25 @@
 		}
 	};
 
+	elementorBindUI.addGlobalHandler( function() {
+		if ( elementorBindUI.isEditorMode() ) {
+			return;
+		}
+
+		var $element = this,
+			animation = $element.data( 'animation' );
+
+		if ( ! animation ) {
+			return;
+		}
+
+		$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+		$element.waypoint( function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( animation );
+		}, { offset: '90%' } );
+
+	} );
 	/**
 	 * Add JS widgets here
 	 */
@@ -80,12 +113,13 @@
 			var $progressbar = $( this ),
 				max = parseInt( $progressbar.data( 'max' ), 10 ),
 				$inner = $progressbar.next(),
+				$innerTextWrap = $inner.find( '.elementor-progress-text' ),
 				$percent = $inner.find( '.elementor-progress-percentage' ),
 				innerText = $inner.data( 'inner' ) ? $inner.data( 'inner' ) : '';
 
 			$progressbar.css( 'width', max + '%' );
 			$inner.css( 'width', max + '%' );
-			$inner.prepend( innerText + ' ' );
+			$innerTextWrap.html( innerText + '' );
 			$percent.html(  max + '%' );
 
 		}, { offset: '90%' } );
@@ -101,7 +135,7 @@
 			$content;
 
 		if ( ! defaultActiveTab ) {
-			defaultActiveTab = 0;
+			defaultActiveTab = 1;
 		}
 
 		var activateTab = function( tabIndex ) {
@@ -111,11 +145,11 @@
 				$content.hide();
 			}
 
-			$active = $tabsTitles.eq( tabIndex );
+			$active = $tabsTitles.filter( '[data-tab="' + tabIndex + '"]' );
 
 			$active.addClass( 'active' );
 
-			$content = $tabs.filter( '[data-tab="' + $active.data( 'tab' ) + '"]' );
+			$content = $tabs.filter( '[data-tab="' + tabIndex + '"]' );
 
 			$content.show();
 		};
@@ -123,9 +157,7 @@
 		activateTab( defaultActiveTab );
 
 		$tabsTitles.on( 'click', function() {
-			var clickedTabIndex = $( this ).index( $tabsTitles );
-
-			activateTab( clickedTabIndex );
+			activateTab( this.dataset.tab );
 		} );
 	} );
 
@@ -137,7 +169,7 @@
 			$activeTitle = $accordionTitles.filter( '.active' );
 
 		var activateSection = function( sectionIndex ) {
-			var $requestedTitle = $accordionTitles.eq( sectionIndex ),
+			var $requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
 				isRequestedActive = $requestedTitle.hasClass( 'active' );
 
 			$activeTitle
@@ -156,15 +188,13 @@
 		};
 
 		if ( ! defaultActiveSection ) {
-			defaultActiveSection = 0;
+			defaultActiveSection = 1;
 		}
 
 		activateSection( defaultActiveSection );
 
 		$accordionTitles.on( 'click', function() {
-			var clickedTitleIndex = $( this ).index( $accordionTitles );
-
-			activateSection( clickedTitleIndex );
+			activateSection( this.dataset.section );
 		} );
 	} );
 
@@ -187,38 +217,34 @@
 	} );
 
 	// Carousel Widget
-	elementorBindUI.addBindEvent( 'carousel', function() {
-		var $wrapper = $( this ).find( '.elementor-carousel-wrapper' ),
-			$forNav = $wrapper.children( '.elementor-carousel-for' ),
-			$nav = $wrapper.children( '.elementor-carousel-nav' ),
-			data = $nav.data();
+	elementorBindUI.addBindEvent( 'image-carousel', function() {
+		var $carousel = $( this ).find( '.elementor-image-carousel' );
+		if ( ! $carousel.length ) {
+			return;
+		}
 
-		$forNav.slick( {
-			slidesToShow: 1,
-			slidesToScroll: 1,
-			arrows: false,
-			fade: true,
-			asNavFor: $nav
-		} );
+		var defaultOptions = {
+				responsive: [
+					{
+						breakpoint: 767,
+						settings: {
+							slidesToShow: 2,
+							slidesToScroll: 2
+						}
+					},
+					{
+						breakpoint: 480,
+						settings: {
+							slidesToShow: 1,
+							slidesToScroll: 1
+						}
+					}
+				]
+			},
 
-		$nav.slick( {
-			slidesToShow: data.slideToShow,
-			slidesToScroll: data.slideToScroll,
-			asNavFor: $forNav,
-			dots: true,
-			arrows: true,
-			focusOnSelect: true,
-			autoplay: data.autoPlay
-		} );
-	} );
+			slickOptions = $.extend( {}, defaultOptions, $carousel.data( 'slider_options' ) );
 
-	// Slider Widget
-	elementorBindUI.addBindEvent( 'slider', function() {
-		var $wrapper = $( this ).find( '.elementor-slider-wrapper' ),
-			$slider = $wrapper.children( '.elementor-slider' ),
-			$data = $slider.data();
-
-		$slider.slick( $data );
+		$carousel.slick( slickOptions );
 	} );
 
 	// Alert Widget
@@ -233,16 +259,14 @@
 		var player,
 			ui = {
 				backgroundVideoContainer: this.find( '.elementor-background-video-container' )
-			};
+			},
+			isYTVideo = false;
 
-		ui.backgroundVideoFrame = ui.backgroundVideoContainer.children( '.elementor-background-video' );
+		if ( ! ui.backgroundVideoContainer.length ) {
+			return;
+		}
 
-		var changeVideoSize = function() {
-			var $videoFrame = $( player.getIframe() ),
-				size = calcVideosSize();
-
-			$videoFrame.width( size.width ).height( size.height );
-		};
+		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
 
 		var calcVideosSize = function() {
 			var containerWidth = ui.backgroundVideoContainer.outerWidth(),
@@ -260,17 +284,17 @@
 			};
 		};
 
-		var prepareVideo = function( YT ) {
-			var $backgroundVideo = ui.backgroundVideoFrame,
-				videoData = $backgroundVideo.data(),
-				videoId = videoData.videoId;
+		var changeVideoSize = function() {
+			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
+				size = calcVideosSize();
 
-			if ( ! videoId ) {
-				return;
-			}
+			$video.width( size.width ).height( size.height );
+		};
 
-			player = new YT.Player( $backgroundVideo[0], {
-				videoId: videoId,
+		var prepareYTVideo = function( YT, videoID ) {
+
+			player = new YT.Player( ui.backgroundVideo[0], {
+				videoId: videoID,
 				events: {
 					onReady: function() {
 						player.mute();
@@ -291,16 +315,23 @@
 				}
 			} );
 
-			$( scopeWindow ).on( 'resize', changeVideoSize );
 		};
 
-		if ( ui.backgroundVideoContainer.length ) {
+		var videoID = ui.backgroundVideo.data( 'video-id' );
+
+		if ( videoID ) {
+			isYTVideo = true;
+
 			onYoutubeApiReady( function( YT ) {
 				setTimeout( function() {
-					prepareVideo( YT );
+					prepareYTVideo( YT, videoID );
 				}, 1 );
 			} );
+		} else {
+			ui.backgroundVideo.one( 'canplay', changeVideoSize );
 		}
+
+		$( scopeWindow ).on( 'resize', changeVideoSize );
 	} );
 
 	// Video Widget
@@ -315,8 +346,38 @@
 
 		$imageOverlay.on( 'click', function() {
 			$imageOverlay.remove();
+			var newSourceUrl = $videoFrame[0].src;
+			// Remove old autoplay if exists
+			newSourceUrl = newSourceUrl.replace( '&autoplay=0', '' );
 
-			$videoFrame[0].src = $videoFrame[0].src + '&autoplay=1';
+			$videoFrame[0].src = newSourceUrl + '&autoplay=1';
+		} );
+	} );
+
+	elementorBindUI.addBindEvent( 'menu-anchor', function() {
+		if ( elementorBindUI.isEditorMode() ) {
+			return;
+		}
+
+		var $anchor = this.find( '.elementor-menu-anchor' ),
+			anchorID = $anchor.attr( 'id' ),
+			$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
+			$scrollable = $( 'html, body' ),
+			adminBarHeight = $( '#wpadminbar' ).height();
+
+		$anchorLinks.on( 'click', function( event ) {
+			var isSamePathname = ( location.pathname === this.pathname ),
+				isSameHostname = ( location.hostname === this.hostname );
+
+			if ( ! isSameHostname || ! isSamePathname ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			$scrollable.animate( {
+				scrollTop: $anchor.offset().top - adminBarHeight
+			}, 1000 );
 		} );
 	} );
 
@@ -325,6 +386,13 @@
 } )( jQuery, window );
 
 jQuery( function( $ ) {
+	// Enqueue YouTube API
+	var scriptTag = document.createElement( 'script' ),
+		firstElementScript = document.getElementsByTagName( 'script' )[0];
+
+	scriptTag.src = 'https://www.youtube.com/iframe_api';
+	firstElementScript.parentNode.insertBefore( scriptTag, firstElementScript );
+
 	$( '.elementor-element' ).each( function() {
 		elementorBindUI.runReadyTrigger( $( this ) );
 	} );

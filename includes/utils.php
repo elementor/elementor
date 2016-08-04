@@ -5,8 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Utils {
 
+	public static function is_development_mode() {
+		return apply_filters( 'elementor/utils/is_development_mode', false );
+	}
+
 	public static function get_edit_link( $post_id = 0 ) {
-		return add_query_arg( 'elementor', '', get_permalink( $post_id ) );
+		return apply_filters( 'elementor/utils/get_edit_link', add_query_arg( 'elementor', '', get_permalink( $post_id ) ), $post_id );
 	}
 
 	public static function is_post_type_support( $post_id = 0 ) {
@@ -22,44 +26,38 @@ class Utils {
 		return substr( str_shuffle( str_repeat( $salt, $length ) ), 0, $length );
 	}
 
-	public static function is_current_user_can_edit( $post_id = 0 ) {
-		if ( empty( $post_id ) )
-			$post_id = get_the_ID();
-
-		if ( ! self::is_post_type_support( $post_id ) )
-			return false;
-
-		if ( 'trash' === get_post_status( $post_id ) )
-			return false;
-
-		$post_type_object = get_post_type_object( get_post_type( $post_id ) );
-		if ( empty( $post_type_object ) )
-			return false;
-
-		if ( ! isset( $post_type_object->cap->edit_post ) )
-			return false;
-
-		$edit_cap = $post_type_object->cap->edit_post;
-		if ( ! current_user_can( $edit_cap, $post_id ) )
-			return false;
-
-		$user = wp_get_current_user();
-		$exclude_roles = get_option( 'elementor_exclude_user_roles', [] );
-
-		$compare_roles = array_intersect( $user->roles, $exclude_roles );
-		if ( ! empty( $compare_roles ) )
-			return false;
-
-		return true;
-	}
-
 	public static function get_youtube_id_from_url( $url ) {
-		preg_match( '/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/', $url, $video_id_parts );
+		preg_match( '/^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/', $url, $video_id_parts );
 
-		if ( empty( $video_id_parts[2] ) ) {
+		if ( empty( $video_id_parts[1] ) ) {
 			return false;
 		}
 
-		return $video_id_parts[2];
+		return $video_id_parts[1];
+	}
+
+	/**
+	 * Tell to WP Cache plugins do not cache this request.
+	 *
+	 * @return void
+	 */
+	public static function do_not_cache() {
+		if ( ! defined( 'DONOTCACHEPAGE' ) )
+			define( 'DONOTCACHEPAGE', true );
+
+		if ( ! defined( 'DONOTCACHEDB' ) )
+			define( 'DONOTCACHEDB', true );
+
+		if ( ! defined( 'DONOTMINIFY' ) )
+			define( 'DONOTMINIFY', true );
+
+		if ( ! defined( 'DONOTCDN' ) )
+			define( 'DONOTCDN', true );
+
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
+			define( 'DONOTCACHCEOBJECT', true );
+
+		// Set the headers to prevent caching for the different browsers
+		nocache_headers();
 	}
 }

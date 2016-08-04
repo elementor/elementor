@@ -30,6 +30,14 @@
 					margin-bottom: 15px;
 					background-color: $editor-background;
 				}
+
+				&.elementor-control-wp {
+					margin-top: 15px;
+
+					&:before {
+						background-color: transparent;
+					}
+				}
 			}
 
 			&before {
@@ -74,40 +82,40 @@
 			}
 		}
 
-		&.elementor-label-block {
-
-			&:not(.elementor-control-hidden-label) {
-
-				.elementor-control-title {
-					display: block;
-					margin-bottom: 10px;
-				}
-			}
-		}
-
-		&.elementor-label-inline {
-
-			.elementor-control-field {
-				display: table;
-				width: 100%;
-
-				> * {
-					display: table-cell;
-					vertical-align: middle;
-				}
-			}
-
-			.elementor-control-title {
-				width: 45%;
-			}
-		}
-
 		&.elementor-control-type-heading {
 
 			.elementor-control-title {
 				font-weight: bold;
 				margin: 0;
 			}
+		}
+	}
+
+	.elementor-label-block {
+
+		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
+
+			.elementor-control-title {
+				display: block;
+				margin-bottom: 10px;
+			}
+		}
+	}
+
+	.elementor-label-inline {
+
+		.elementor-control-field {
+			display: table;
+			width: 100%;
+
+			> * {
+				display: table-cell;
+				vertical-align: middle;
+			}
+		}
+
+		.elementor-control-title {
+			width: 45%;
 		}
 	}
 
@@ -151,6 +159,39 @@
 			font-size: 12px;
 			transition: all .5s;
 			cursor: pointer;
+		}
+	}
+
+	.elementor-slider {
+		display: inline-block;
+		margin-top: 10px;
+		height: 4px;
+		background-color: $editor-light;
+		border-radius: 5px;
+		position: relative;
+		width: 67%;
+
+		.ui-slider-handle {
+			height: 16px;
+			width: 16px;
+			background-color: #fff;
+			display: inline-block;
+			top: 50%;
+			transform: translateY(-50%) translateX(-8px);
+			position: absolute;
+			box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
+			border-radius: 50%;
+			cursor: pointer;
+		}
+	}
+
+	.elementor-slider-input {
+		width: 33%;
+		float: getEndDirection();
+
+		input {
+			width: 80%;
+			float: getEndDirection();
 		}
 	}
 
@@ -295,7 +336,7 @@
 				+ span {
 					display: block;
 					text-align: center;
-					color: $gray-light;
+					color: $editor-lightest;
 					font-size: 9px;
 					text-transform: uppercase;
 					line-height: 1;
@@ -305,7 +346,7 @@
 				&:focus {
 
 					+ span {
-						color: $gray;
+						color: $editor-light;
 					}
 				}
 			}
@@ -357,6 +398,20 @@
 	// URL Control
 	.elementor-control-type-url {
 
+		.elementor-control-url-external-hide {
+
+			.elementor-control-url-target {
+				display: none;
+			}
+		}
+
+		.elementor-control-url-external-show {
+
+			input {
+				padding-right: 46px;
+			}
+		}
+
 		.elementor-control-input-wrapper {
 			position: relative;
 		}
@@ -392,7 +447,6 @@
 		}
 
 		input {
-			padding-right: 46px;
 			direction: ltr; // Force ltr also in RTL languages
 
 			&:not(:focus) {
@@ -419,50 +473,19 @@
 		}
 	}
 
-	// = Choices control for Text Align
-	.elementor-control-text_align {
-		.elementor-control-type-choose {
+	// = Choices control for alignment
+	.elementor-control-text_align, .elementor-control-align, .elementor-control-position {
 
-			.elementor-choices {
-				direction: ltr; // Force ltr also in RTL languages
-			}
+		.elementor-choices {
+			direction: ltr; // Force ltr also in RTL languages
 		}
 	}
 
 	// Slider control
 	.elementor-control-type-slider {
 
-		input {
-			width: 80%;
-			float: getEndDirection();
-		}
-
-		.elementor-control-slider {
-			display: inline-block;
-			margin-top: 10px;
-			height: 4px;
-			background-color: $editor-light;
-			border-radius: 5px;
-			position: relative;
-			width: 67%;
-		}
-
-		.elementor-control-slider-input {
-			width: 33%;
-			float: getEndDirection();
-		}
-
-		.ui-slider-handle {
-			height: 16px;
-			width: 16px;
-			background-color: #fff;
-			display: inline-block;
-			top: 50%;
-			transform: translateY(-50%) translateX(-8px);
-			position: absolute;
-			box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
-			border-radius: 50%;
-			cursor: pointer;
+		.elementor-control-input-wrapper {
+			overflow: hidden;
 		}
 	}
 
@@ -612,6 +635,54 @@
 		}
 	}
 
+	// Gallery control
+	.elementor-control-type-gallery {
+
+		&.elementor-gallery-empty {
+
+			.elementor-control-gallery-clear, .elementor-control-gallery-thumbnails {
+				display: none;
+			}
+		}
+
+		.elementor-control-media {
+			padding-top: 20px;
+		}
+
+		.elementor-control-gallery-thumbnails {
+			overflow: hidden;
+			margin-top: 20px;
+			cursor: pointer;
+		}
+
+		.elementor-control-gallery-thumbnail {
+			width: 40px;
+			height: 40px;
+			background-size: cover;
+			background-position: 50% 50%;
+			float: getStartDirection();
+			margin-bottom: 10px;
+
+			&:not(:nth-child(5n)) {
+				@include margin-end(10px);
+			}
+		}
+
+		.elementor-control-gallery-add {
+			width: 100%;
+			height: 30px;
+			color: #fff;
+			background-color: $editor-light;
+			margin-top: 10px;
+			text-transform: uppercase;
+		}
+
+		.elementor-control-gallery-clear {
+			color: $editor-warning;
+			cursor: pointer;
+		}
+	}
+
 	// Structure control
 	.elementor-control-type-structure {
 
@@ -623,30 +694,80 @@
 			&:not(.elementor-control-structure-current-preset) {
 				display: inline-block;
 				cursor: pointer;
+				height: 50px;
 
-				i {
-					font-size: 50px;
+				svg {
+					height: 100%;
 				}
 			}
 
-			i {
-				color: $editor-background;
+			path {
+				fill: $editor-background;
 			}
 		}
 
 		.elementor-control-structure-current-preset {
+			height: 80px;
+			margin-top: 15px;
+
+			svg {
+				width: 100%; // For safari
+			}
+		}
+
+		.elementor-control-structure-reset {
+			padding: 10px 0 0 2px;
+			font-size: 11px;
+			cursor: pointer;
+			color: $editor-light;
 
 			i {
-				font-size: 116px;
+				@include margin-end(8px);
+			}
+		}
+
+		.elementor-control-structure-title, .elementor-control-structure-more-presets-title {
+			color: $editor-darkest;
+			font-weight: bold;
+			padding: 13.5px 20px;
+			line-height: 1;
+			position: relative;
+
+			&:before, &:after {
+				content: '';
+				position: absolute;
+				left: 0;
+				right: 0;
+			}
+
+			&:before {
+				top: 0;
+				background-color: $editor-background;
+				transform: translateY(-100%);
+			}
+
+			&:after {
+				bottom: 0;
+				height: 1px;
+				background-color: $editor-background;
+			}
+		}
+
+		.elementor-control-structure-title {
+			margin: 10px -20px 0;
+
+			&:before {
+				height: 10px;
+				box-shadow: inset 0 2px 4px rgba(127,127,127,.1);
 			}
 		}
 
 		.elementor-control-structure-more-presets-title {
-			color: $editor-darkest;
-			font-weight: bold;
-			padding: 15px 20px;
-			border-bottom: 1px solid $editor-background;
-			line-height: 1;
+			margin: 15px -20px 0;
+
+			&:before {
+				height: 3px;
+			}
 		}
 
 		.elementor-control-structure-more-presets {
@@ -658,16 +779,16 @@
 				display: none;
 
 				&:checked + .elementor-control-structure-preset {
+					border: 1px solid $editor-light;
 
-					i {
-						color: $editor-light;
+					path {
+						fill: $editor-light;
 					}
 				}
 			}
 		}
 
 		.elementor-control-structure-preset-wrapper {
-			width: 45%;
 			margin-top: 15px;
 		}
 
@@ -675,9 +796,72 @@
 			text-align: center;
 			padding-top: 5px;
 			font-style: italic;
+			font-size: 11px;
+			line-height: 1;
+			color: $editor-light;
 		}
+	}
+
+	// Image dimensions control
+	.elementor-control-type-image_dimensions {
+
+		.elementor-control-description {
+			margin: 0 0 15px;
+		}
+
+		.elementor-control-input-wrapper {
+			overflow: hidden;
+		}
+
+		.elementor-image-dimensions-field {
+			width: 70px;
+			float: getStartDirection();
+
+			input {
+
+				&:focus {
+
+					+ .elementor-image-dimensions-field-description {
+						color: $editor-light;
+					}
+				}
+			}
+		}
+
+		.elementor-image-dimensions-separator {
+			width: 20px;
+			text-align: center;
+			float: getStartDirection();
+			padding-top: 4px;
+		}
+
+		.elementor-image-dimensions-field-description {
+			text-transform: uppercase;
+			margin-top: 5px;
+			color: $editor-lightest;
+			font-size: 9px;
+			text-align: center;
+			line-height: 1;
+		}
+
+		.elementor-image-dimensions-apply-button {
+			float: getEndDirection();
+			height: 27px;
+			width: 70px;
+		}
+	}
+
+	// Hidden control
+	.elementor-control-type-hidden {
+		display: none !important;
 	}
 
 	// Repeater control
 	@import "controls/repeater";
+
+	// Textarea control
+	@import "controls/textarea";
+
+	// Box-shadow control
+	@import "controls/box-shadow";
 }

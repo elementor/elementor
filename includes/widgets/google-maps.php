@@ -13,10 +13,6 @@ class Widget_Google_maps extends Widget_Base {
 		return __( 'Google Maps', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'media' ];
-	}
-
 	public function get_icon() {
 		return 'google-maps';
 	}
@@ -78,6 +74,23 @@ class Widget_Google_maps extends Widget_Base {
 				'section' => 'section_map',
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'prevent_scroll',
+			[
+				'label' => __( 'Prevent Scroll', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'No', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+				],
+				'section' => 'section_map',
+				'selectors' => [
+					'{{WRAPPER}} iframe' => 'pointer-events: none;',
 				],
 			]
 		);

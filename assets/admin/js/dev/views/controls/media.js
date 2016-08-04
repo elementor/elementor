@@ -18,7 +18,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		if ( _.isEmpty( this.getControlValue() ) ) {
+		if ( _.isEmpty( this.getControlValue( 'url' ) ) ) {
 			this.ui.controlMedia.addClass( 'media-empty' );
 		}
 	},

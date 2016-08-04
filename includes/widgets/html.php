@@ -13,10 +13,6 @@ class Widget_Html extends Widget_Base {
 		return __( 'HTML', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'coding';
 	}
@@ -38,6 +34,7 @@ class Widget_Html extends Widget_Base {
 				'default' => '',
 				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
 				'section' => 'section_title',
+				'show_label' => false,
 			]
 		);
 	}

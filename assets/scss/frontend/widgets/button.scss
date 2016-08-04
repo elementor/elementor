@@ -18,7 +18,7 @@
 			text-align: left;
 		}
 
-		&block {
+		&justify {
 
 			.elementor-button {
 				width: 100%;
@@ -66,34 +66,35 @@
 	}
 
 	.elementor-align-icon- {
+
 		&right {
 			float: right;
+			margin-left: 5px;
 		}
 		&left {
 			float: left;
+			margin-right: 5px;
 		}
 	}
 
-	.elementor-button-icon {
-		padding: 0 5px;
+	.elementor-button-text {
+		display: inline-block;
 	}
 }
 
 .elementor-widget-button {
 	.elementor-button {
 		&.elementor-button- {
+
 			&info {
 				background-color: $info;
 			}
-
 			&success {
 				background-color: $success;
 			}
-
 			&warning {
 				background-color: $warning;
 			}
-
 			&danger {
 				background-color: $danger;
 			}

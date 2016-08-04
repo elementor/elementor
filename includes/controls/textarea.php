@@ -9,12 +9,20 @@ class Control_Textarea extends Control_Base {
 		return 'textarea';
 	}
 
+	protected function get_default_settings() {
+		return [
+			'label_block' => true,
+		];
+	}
+
 	public function content_template() {
 		?>
-		<label>
-			<span class="elementor-control-title"><%= data.label %></span>
-			<textarea rows="<%= data.rows || 5 %>" data-setting="<%= data.name %>" placeholder="<%= data.placeholder %>"></textarea>
-		</label>
+		<div class="elementor-control-field">
+			<label class="elementor-control-title"><%= data.label %></label>
+			<div class="elementor-control-input-wrapper">
+				<textarea rows="<%= data.rows || 5 %>" data-setting="<%= data.name %>" placeholder="<%= data.placeholder %>"></textarea>
+			</div>
+		</div>
 		<% if ( data.description ) { %>
 		<div class="elementor-control-description"><%= data.description %></div>
 		<% } %>

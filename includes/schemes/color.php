@@ -18,6 +18,10 @@ class Scheme_Color extends Scheme_Base {
 		return __( 'Colors', 'elementor' );
 	}
 
+	public function get_disabled_title() {
+		return __( 'Color Palettes', 'elementor' );
+	}
+
 	public function get_scheme_titles() {
 		return [
 			self::COLOR_1 => __( 'Primary', 'elementor' ),
@@ -38,31 +42,85 @@ class Scheme_Color extends Scheme_Base {
 
 	public static function get_system_schemes() {
 		return [
+			'joker' => [
+				'title' => 'Joker',
+				'items' => [
+					self::COLOR_1 => '#000000',
+					self::COLOR_2 => '#b7b4b4',
+					self::COLOR_3 => '#707070',
+					self::COLOR_4 => '#f6121c',
+				],
+			],
+			'ocean' => [
+				'title' => 'Ocean',
+				'items' => [
+					self::COLOR_1 => '#1569ae',
+					self::COLOR_2 => '#b6c9db',
+					self::COLOR_3 => '#969696',
+					self::COLOR_4 => '#fdd247',
+				],
+			],
 			'royal' => [
-				'title' => __( 'Royal', 'elementor' ),
+				'title' => 'Royal',
 				'items' => [
-					self::COLOR_1 => '#ac8e4d',
-					self::COLOR_2 => '#d0b270',
-					self::COLOR_3 => '#e2cea1',
-					self::COLOR_4 => '#fff',
+					self::COLOR_1 => '#d5ba7f',
+					self::COLOR_2 => '#902729',
+					self::COLOR_3 => '#95938f',
+					self::COLOR_4 => '#302a8c',
 				],
 			],
-			'autumn' => [
-				'title' => __( 'Autumn', 'elementor' ),
+			'violet' => [
+				'title' => 'Violet',
 				'items' => [
-					self::COLOR_1 => '#103c29',
-					self::COLOR_2 => '#10593a',
-					self::COLOR_3 => '#23885d',
-					self::COLOR_4 => '#fff',
+					self::COLOR_1 => '#747476',
+					self::COLOR_2 => '#ebca41',
+					self::COLOR_3 => '#6f1683',
+					self::COLOR_4 => '#a43cbd',
 				],
 			],
-			'silver' => [
-				'title' => __( 'Silver', 'elementor' ),
+			'sweet' => [
+				'title' => 'Sweet',
 				'items' => [
-					self::COLOR_1 => '#671d7a',
-					self::COLOR_2 => '#8c2ea4',
-					self::COLOR_3 => '#ae63c1',
-					self::COLOR_4 => '#fff',
+					self::COLOR_1 => '#6ccdd9',
+					self::COLOR_2 => '#763572',
+					self::COLOR_3 => '#919ca7',
+					self::COLOR_4 => '#f12184',
+				],
+			],
+			'urban' => [
+				'title' => 'Urban',
+				'items' => [
+					self::COLOR_1 => '#db6159',
+					self::COLOR_2 => '#3b3b3b',
+					self::COLOR_3 => '#7a7979',
+					self::COLOR_4 => '#2abf64',
+				],
+			],
+			'earth' => [
+				'title' => 'Earth',
+				'items' => [
+					self::COLOR_1 => '#882021',
+					self::COLOR_2 => '#c48e4c',
+					self::COLOR_3 => '#825e24',
+					self::COLOR_4 => '#e8c12f',
+				],
+			],
+			'river' => [
+				'title' => 'River',
+				'items' => [
+					self::COLOR_1 => '#8dcfc8',
+					self::COLOR_2 => '#565656',
+					self::COLOR_3 => '#50656e',
+					self::COLOR_4 => '#dc5049',
+				],
+			],
+			'pastel' => [
+				'title' => 'Pastel',
+				'items' => [
+					self::COLOR_1 => '#f27f6f',
+					self::COLOR_2 => '#f4cd78',
+					self::COLOR_3 => '#a5b3c1',
+					self::COLOR_4 => '#aac9c3',
 				],
 			],
 		];

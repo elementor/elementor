@@ -39,7 +39,6 @@ fi
 set -ex
 
 install_wp() {
-
 	if [ -d $WP_CORE_DIR ]; then
 		return;
 	fi
@@ -83,7 +82,6 @@ install_test_suite() {
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
 	fi
-
 }
 
 install_db() {
@@ -107,6 +105,31 @@ install_db() {
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
+# Install CodeSniffer for WordPress Coding Standards checks.
+install_phpcs() {
+	pear config-set auto_discover 1
+	pear install PHP_CodeSniffer
+	git clone git://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $(pear config-get php_dir)/PHP/CodeSniffer/Standards/WordPress
+	phpenv rehash
+	phpcs --config-set installed_paths $(pear config-get php_dir)/PHP/CodeSniffer/Standards/WordPress
+	phpcs -i
+}
+
+# Install JSCS: JavaScript Code Style checker
+# @link http://jscs.info/
+install_jscs() {
+	npm install -g jscs@3.0.4
+}
+
+# Install JSHint, a JavaScript Code Quality Tool
+# @link http://jshint.com/docs/
+install_jshint() {
+	npm install -g jshint
+}
+
 install_wp
 install_test_suite
 install_db
+install_phpcs
+install_jscs
+install_jshint

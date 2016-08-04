@@ -16,7 +16,8 @@ class Frontend {
 		}
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], 999999 );
+		add_filter( 'body_class', [ $this, 'body_class' ] );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
@@ -69,11 +70,15 @@ class Frontend {
 		$widget_obj->after_render( $instance, $widget_data['id'], $widget_data );
 	}
 
+	public function body_class( $classes = [] ) {
+		if ( is_singular() && 'builder' === Plugin::instance()->db->get_edit_mode( get_the_ID() ) ) {
+			$classes[] = 'elementor-page';
+		}
+		return $classes;
+	}
+
 	public function enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		// YouTube api
-		wp_enqueue_script( 'youtube-api', 'https://www.youtube.com/iframe_api' );
 
 		wp_register_script(
 			'waypoints',
@@ -109,12 +114,12 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
-				'youtube-api',
 				'waypoints',
 				'jquery-numerator',
 				'jquery-slick',
 			],
-			Plugin::instance()->get_version()
+			Plugin::instance()->get_version(),
+			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
 	}
@@ -124,15 +129,40 @@ class Frontend {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style( 'slick-style', ELEMENTOR_ASSETS_URL . 'lib/slick/slick.css', false, '1.6.0' );
-		wp_enqueue_style( 'slick-theme', ELEMENTOR_ASSETS_URL . 'lib/slick/slick-theme.css', false, '1.6.0' );
+		wp_enqueue_style(
+			'elementor-icons',
+			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
+			[],
+			Plugin::instance()->get_version()
+		);
 
-		if ( is_admin_bar_showing() ) {
-			wp_enqueue_style( 'elementor-admin-app', ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css', [], Plugin::instance()->get_version() );
-		}
+		wp_register_style(
+			'font-awesome',
+			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
+			[],
+			'4.6.3'
+		);
 
-		wp_enqueue_style( 'font-awesome', ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css', false, '4.6.1' );
-		wp_enqueue_style( 'elementor-frontend', ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css', [], Plugin::instance()->get_version() );
+		// Elementor Animations
+		wp_register_style(
+			'elementor-animations',
+			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'elementor-frontend',
+			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
+			[
+				'elementor-icons',
+				'font-awesome',
+			],
+			Plugin::instance()->get_version()
+		);
+
+		wp_enqueue_style( 'elementor-animations' );
+		wp_enqueue_style( 'elementor-frontend' );
 	}
 
 	public function print_css() {
@@ -144,6 +174,7 @@ class Frontend {
 			return;
 
 		$css_code = $this->_parse_schemes_css_code();
+
 		foreach ( $data as $section ) {
 			$css_code .= $this->_parse_style_item( $section );
 		}
@@ -269,6 +300,9 @@ class Frontend {
 					$scheme_value = $scheme_value[ $control['scheme']['key'] ];
 				}
 
+				if ( empty( $scheme_value ) )
+					continue;
+
 				$element_unique_class = 'elementor-widget-' . $widget_obj->get_id();
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
@@ -307,12 +341,12 @@ class Frontend {
 			</div>
 		</div>
 		<?php
-		return ob_get_clean();
+		return apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
 	}
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
-		if ( ! is_singular() || ! Utils::is_current_user_can_edit( $post_id ) ) {
+		if ( ! is_singular() || ! User::is_current_user_can_edit( $post_id ) ) {
 			return;
 		}
 

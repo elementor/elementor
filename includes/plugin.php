@@ -68,8 +68,12 @@ class Plugin {
 
 	private function _includes() {
 		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
+		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
+		include( ELEMENTOR_PATH . 'includes/api.php' );
 		include( ELEMENTOR_PATH . 'includes/utils.php' );
+		include( ELEMENTOR_PATH . 'includes/user.php' );
 		include( ELEMENTOR_PATH . 'includes/fonts.php' );
+		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
 		include( ELEMENTOR_PATH . 'includes/controls-manager.php' );
@@ -121,7 +125,7 @@ class Plugin {
 	}
 }
 
-if ( ! defined( 'FLEX_TESTS' ) ) {
+if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 	// In tests we run the instance manually.
 	Plugin::instance();
 }

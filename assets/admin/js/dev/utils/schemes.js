@@ -21,6 +21,10 @@ Schemes = function() {
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};
 
+	var initSchemes = function() {
+		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
+	};
+
 	var addStyleRule = function( selector, property ) {
 		if ( ! styleRules[ selector ] ) {
 			styleRules[ selector ] = [];
@@ -35,7 +39,7 @@ Schemes = function() {
 				outputSelector,
 				outputCssProperty;
 
-			if ( _.isEmpty( currentSchemeValue ) ) {
+			if ( _.isEmpty( currentSchemeValue.value ) ) {
 				return;
 			}
 
@@ -77,8 +81,7 @@ Schemes = function() {
 	this.init = function() {
 		initElements();
 		buildUI();
-
-		self.resetSchemes();
+		initSchemes();
 
 		return self;
 	};
@@ -93,12 +96,20 @@ Schemes = function() {
 		return schemes;
 	};
 
-	this.getScheme = function( schemeName ) {
-		return schemes[ schemeName ];
+	this.getEnabledSchemesTypes = function() {
+		return elementor.config.schemes.enabled_schemes;
 	};
 
-	this.getSchemeValue = function( schemeName, value, key ) {
-		var scheme = self.getScheme( schemeName ),
+	this.getScheme = function( schemeType ) {
+		return schemes[ schemeType ];
+	};
+
+	this.getSchemeValue = function( schemeType, value, key ) {
+		if ( this.getEnabledSchemesTypes().indexOf( schemeType ) < 0 ) {
+			return false;
+		}
+
+		var scheme = self.getScheme( schemeType ),
 			schemeValue = scheme.items[ value ];
 
 		if ( key && _.isObject( schemeValue ) ) {
@@ -120,17 +131,13 @@ Schemes = function() {
 	};
 
 	this.resetSchemes = function( schemeName ) {
-		if ( schemeName ) {
-			schemes[ schemeName ] = elementor.helpers.cloneObject( elementor.config.schemes[ schemeName ] );
-		} else {
-			schemes = elementor.helpers.cloneObject( elementor.config.schemes );
-		}
+		schemes[ schemeName ] = elementor.helpers.cloneObject( elementor.config.schemes.items[ schemeName ] );
 
 		this.onSchemeChange();
 	};
 
 	this.saveScheme = function( schemeName ) {
-		elementor.config.schemes[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
+		elementor.config.schemes.items[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
 
 		NProgress.start();
 		Backbone.$.ajax( {
@@ -139,7 +146,8 @@ Schemes = function() {
 				data: {
 					action: 'elementor_apply_scheme',
 					scheme_name: schemeName,
-					data: JSON.stringify( schemes[ schemeName ].items )
+					data: JSON.stringify( schemes[ schemeName ].items ),
+					_nonce: elementor.config.nonce
 				}
 			} )
 

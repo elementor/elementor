@@ -1,7 +1,10 @@
 //
 // Icon
 //
-.elementor-widget-icon {
+
+// For the all elements with icon options
+
+.elementor-widget {
 
 	.elementor-icon {
 		display: inline-block;
@@ -17,6 +20,7 @@
 		}
 
 		i {
+			font-size: 50px;
 			width: 1em;
 			height: 1em;
 		}

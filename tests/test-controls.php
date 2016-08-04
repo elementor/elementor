@@ -33,7 +33,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$this->assertInstanceOf( '\WP_Error', $return );
 		$this->assertEquals( 'element_class_name_not_exists', $return->get_error_code() );
 
-		$return = Elementor\Plugin::instance()->controls_manager->register_control( 'test_control', '\Elementor\Element_Column' );
+		$return = Elementor\Plugin::instance()->controls_manager->register_control( 'test_control', '\Elementor\DB' );
 		$this->assertInstanceOf( '\WP_Error', $return );
 		$this->assertEquals( 'wrong_instance_control', $return->get_error_code() );
 

@@ -1,29 +1,47 @@
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
-	SectionView = require( 'elementor-views/section' ),
 	ControlStructureItemView;
 
 ControlStructureItemView = ControlBaseItemView.extend( {
+	ui: function() {
+		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+
+		ui.resetStructure = '.elementor-control-structure-reset';
+
+		return ui;
+	},
+
+	childEvents: {
+		'click @ui.resetStructure': 'onResetStructureClick'
+	},
 
 	templateHelpers: function() {
 		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
-
-		helpers.getPresetByStructure = function( structure ) {
-			return SectionView.getPresetByStructure( structure );
-		};
 
 		helpers.getMorePresets = _.bind( this.getMorePresets, this );
 
 		return helpers;
 	},
 
-	getMorePresets: function() {
-		var parsedStructure = SectionView.getParsedStructure( this.getControlValue() );
+	getCurrentEditedSection: function() {
+		var editor = elementor.getPanelView().getCurrentPageView();
 
-		return SectionView.getPresets( parsedStructure.columnsCount );
+		return editor.getOption( 'editedElementView' );
+	},
+
+	getMorePresets: function() {
+		var parsedStructure = elementor.presetsFactory.getParsedStructure( this.getControlValue() );
+
+		return elementor.presetsFactory.getPresets( parsedStructure.columnsCount );
 	},
 
 	onInputChange: function() {
+		this.getCurrentEditedSection().redefineLayout();
+
 		this.render();
+	},
+
+	onResetStructureClick: function() {
+		this.getCurrentEditedSection().resetColumnsCustomSize();
 	}
 } );
 

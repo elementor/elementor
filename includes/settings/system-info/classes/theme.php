@@ -13,23 +13,22 @@ class Theme_Reporter extends Base_Reporter {
 	private $theme = null;
 
 	public function get_title() {
-		return __( 'Theme', 'elementor' );
+		return 'Theme';
 	}
 
 	public function get_fields() {
 		$fields = [
-			'name' => __( 'Name', 'elementor' ),
-			'version' => __( 'Version', 'elementor' ),
-			'author' => __( 'Author', 'elementor' ),
-			'is_child_theme' => __( 'Child Theme', 'elementor' ),
-			// 'license_status' => __( 'License Status', 'elementor' ),
+			'name' => 'Name',
+			'version' => 'Version',
+			'author' => 'Author',
+			'is_child_theme' => 'Child Theme',
 		];
 
 		if ( $this->get_parent_theme() ) {
 			$parent_fields = [
-				'parent_name' => __( 'Parent Theme Name', 'elementor' ),
-				'parent_version' => __( 'Parent Theme Version', 'elementor' ),
-				'parent_author' => __( 'Parent Theme Author', 'elementor' ),
+				'parent_name' => 'Parent Theme Name',
+				'parent_version' => 'Parent Theme Version',
+				'parent_author' => 'Parent Theme Author',
 			];
 			$fields = array_merge( $fields, $parent_fields );
 		}
@@ -70,11 +69,11 @@ class Theme_Reporter extends Base_Reporter {
 		$is_child_theme = is_child_theme();
 
 		$result = [
-			'value' => $is_child_theme ? __( 'Yes', 'elementor' ) : __( 'No', 'elementor' ),
+			'value' => $is_child_theme ? 'Yes' : 'No',
 		];
 
 		if ( ! $is_child_theme ) {
-			$result['recommendation'] = __( 'If you want to modify the source code of your theme, we recommend using a child theme. See: <a href="https://codex.wordpress.org/Child_Themes">How to use a child theme</a>', 'elementor' );
+			$result['recommendation'] = _x( 'If you want to modify the source code of your theme, we recommend using a child theme. See: <a href="https://codex.wordpress.org/Child_Themes">How to use a child theme</a>', 'System Info', 'elementor' );
 		}
 
 		return $result;
