@@ -905,36 +905,47 @@ TemplatesManager = function() {
 		return templatesCollection;
 	};
 
-	this.requestRemoteTemplates = function( options ) {
-		elementor.ajax.send( 'get_templates', options );
+	this.requestRemoteTemplates = function( callback, forceUpdate ) {
+		if ( templatesCollection && ! forceUpdate ) {
+			if ( callback ) {
+				callback();
+			}
+
+			return;
+		}
+
+		elementor.ajax.send( 'get_templates', {
+			success: function( data ) {
+				templatesCollection = new TemplatesCollection( data );
+
+				if ( callback ) {
+					callback();
+				}
+			}
+		} );
 	};
 
-	this.startModal = function() {
+	this.startModal = function( onModalReady ) {
 		self.getModal().show();
 
+		// Set default templates type to 'local'
 		elementor.channels.templates.reply( 'filter:type', 'local' );
 
 		if ( ! layout ) {
 			initLayout();
 		}
-	};
-
-	this.showTemplates = function() {
-		if ( templatesCollection ) {
-			layout.showTemplatesView( templatesCollection );
-
-			return;
-		}
 
 		layout.showLoadingView();
 
-		self.requestRemoteTemplates( {
-			success: function( data ) {
-				templatesCollection = new TemplatesCollection( data );
-
-				layout.showTemplatesView( templatesCollection );
+		self.requestRemoteTemplates( function() {
+			if ( onModalReady ) {
+				onModalReady();
 			}
 		} );
+	};
+
+	this.showTemplates = function() {
+		layout.showTemplatesView( templatesCollection );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
@@ -1620,15 +1631,15 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickShowTemplates: function() {
-		elementor.templates.startModal();
-
-		elementor.templates.showTemplates();
+		elementor.templates.startModal( function() {
+			elementor.templates.showTemplates();
+		} );
 	},
 
 	onClickSaveTemplate: function() {
-		elementor.templates.startModal();
-
-		elementor.templates.getLayout().showSaveTemplateView();
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView();
+		} );
 	}
 } );
 
@@ -6238,9 +6249,9 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onAddTemplateButtonClick: function() {
-		elementor.templates.startModal();
-
-		elementor.templates.showTemplates();
+		elementor.templates.startModal( function() {
+			elementor.templates.showTemplates();
+		} );
 	},
 
 	onRender: function() {
