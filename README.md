@@ -157,6 +157,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.6.4 - 04.08.2016 ###
+* Tweak! - Google Fonts list updated ([#371](https://github.com/pojome/elementor/pull/371))
+* Fixed! - Content overflow in "fit to screen" sections for mobile ([#369](https://github.com/pojome/elementor/issues/369))
+* Fixed! - Icon Box Widget: Better support for Safari browser
+* Fixed! - Text Editor Widget: Added listening to undo & redo events ([#340](https://github.com/pojome/elementor/issues/340))
+
 ### 0.6.3 - 01.08.2016 ###
 * Tweak! - Show element title in delete dialog ([#337](https://github.com/pojome/elementor/pull/337))
 * Tweak! - Added responsive support for Image Gallery widget ([topic](https://wordpress.org/support/topic/galery-not-responsive))
