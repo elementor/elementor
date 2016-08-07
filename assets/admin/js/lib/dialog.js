@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v2.1.0
+ * Dialogs Manager v3.0.0
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -58,12 +58,12 @@
 	DialogsManager.Instance = function () {
 
 		var self = this,
-			components = {},
+			elements = {},
 			settings = {};
 
-		var initComponents = function () {
+		var initElements = function () {
 
-			components.$body = $('body');
+			elements.body = $('body');
 		};
 
 		var initSettings = function (options) {
@@ -90,10 +90,6 @@
 
 			widget.setMessage(properties.message);
 
-			if (properties.linkedElement) {
-				widget.linkElement(properties.linkedElement, widget);
-			}
-
 			return widget;
 		};
 
@@ -110,7 +106,7 @@
 
 			initSettings(settings);
 
-			initComponents();
+			initElements();
 
 			return self;
 		};
@@ -126,14 +122,12 @@
 		var self = this,
 			settings = {},
 			events = {},
-			components = {
-				$element: 0
-			};
+			elements = {};
 
 		var callEffect = function (intent) {
 
 			var effect = settings.effects[intent],
-				$widget = components.$widget;
+				$widget = elements.widget;
 
 			if ($.isFunction(effect)) {
 				effect.call($widget);
@@ -149,17 +143,17 @@
 			}
 		};
 
-		var initComponents = function () {
+		var initElements = function () {
 
-			self.addComponent('widget');
+			self.addElement('widget');
 
-			self.addComponent('message');
+			self.addElement('message');
 
 			var id = self.getSettings('id');
 
 			if (id) {
 
-				self.getComponents('widget').attr('id', id);
+				self.getElements('widget').attr('id', id);
 			}
 		};
 
@@ -176,8 +170,7 @@
 			settings.classes = {
 				globalPrefix: parentSettings.classPrefix,
 				prefix: prefix,
-				widget: 'dialog-widget',
-				linkedActive: prefix + '-linked-active'
+				widget: 'dialog-widget'
 			};
 
 			$.extend(true, settings, userSettings);
@@ -189,7 +182,7 @@
 
 			var settings = self.getSettings();
 
-			$.each( settings, function (settingKey) {
+			$.each(settings, function (settingKey) {
 
 				var eventName = settingKey.match(/^on([A-Z].*)/);
 
@@ -200,7 +193,7 @@
 				eventName = eventName[1].charAt(0).toLowerCase() + eventName[1].slice(1);
 
 				self.on(eventName, this);
-			} );
+			});
 		};
 
 		var normalizeClassName = function (name) {
@@ -210,9 +203,9 @@
 			});
 		};
 
-		this.addComponent = function (name, component, type) {
+		this.addElement = function (name, element, type) {
 
-			var $newComponent = components['$' + name] = $(component || '<div>'),
+			var $newElement = elements[name] = $(element || '<div>'),
 				className = settings.classes.prefix + '-';
 
 			name = normalizeClassName(name);
@@ -225,9 +218,9 @@
 
 			className += ' ' + settings.classes.globalPrefix + '-' + type;
 
-			$newComponent.addClass(className);
+			$newElement.addClass(className);
 
-			return $newComponent;
+			return $newElement;
 		};
 
 		this.getSettings = function (setting) {
@@ -251,7 +244,7 @@
 
 			initSettings(parent, properties);
 
-			initComponents();
+			initElements();
 
 			self.buildWidget();
 
@@ -264,27 +257,16 @@
 			return self;
 		};
 
-		this.getComponents = function (item) {
+		this.getElements = function (item) {
 
-			return item ? components['$' + item] : components;
+			return item ? elements[item] : elements;
 		};
 
 		this.hide = function () {
 
 			callEffect('hide');
 
-			if (components.$element.length) {
-				components.$element.removeClass(settings.classes.linkedActive);
-			}
-
 			self.trigger('hide');
-
-			return self;
-		};
-
-		this.linkElement = function (element) {
-
-			this.addComponent('element', element);
 
 			return self;
 		};
@@ -301,7 +283,7 @@
 
 		this.setMessage = function (message) {
 
-			components.$message.html(message);
+			elements.message.html(message);
 
 			return self;
 		};
@@ -312,13 +294,9 @@
 				e.stopPropagation();
 			}
 
-			components.$widget.appendTo('body');
+			elements.widget.appendTo('body');
 
 			callEffect('show');
-
-			if (components.$element.length) {
-				components.$element.addClass(settings.classes.linkedActive);
-			}
 
 			self.trigger('show', userSettings);
 
@@ -348,9 +326,9 @@
 	// Inheritable widget methods
 	DialogsManager.Widget.prototype.buildWidget = function () {
 
-		var components = this.getComponents();
+		var elements = this.getElements();
 
-		components.$widget.html(components.$message);
+		elements.widget.html(elements.message);
 	};
 
 	DialogsManager.Widget.prototype.getDefaultSettings = function () {
@@ -373,27 +351,6 @@
 	/*
 	 * Default basic widget types
 	 */
-	DialogsManager.addWidgetType('tool-tip', {
-		onShow: function () {
-
-			var components = this.getComponents();
-
-			if (components.$element.length) {
-
-				components.$widget.position({
-					at: 'left top-5',
-					my: 'left+10 bottom',
-					of: components.$element,
-					collision: 'none none'
-				});
-
-				components.$element.focus();
-			}
-
-			setTimeout(this.hide, 5000);
-		}
-	});
-
 	DialogsManager.addWidgetType('options', {
 		activeKeyUp: function (event) {
 
@@ -440,13 +397,15 @@
 		addButton: function (options) {
 
 			var self = this,
-				$button = self.addComponent(options.name, $('<button>').text(options.text));
+				$button = self.addElement(options.name, $('<button>').text(options.text));
 
 			self.buttons.push($button);
 
 			var buttonFn = function () {
 
-				self.hide();
+				if (self.getSettings('hideOnButtonClick')) {
+					self.hide();
+				}
 
 				if ($.isFunction(options.callback)) {
 					options.callback.call(this, self);
@@ -459,7 +418,7 @@
 				this.hotKeys[options.hotKey] = buttonFn;
 			}
 
-			this.getComponents('buttonsWrapper').append($button);
+			this.getElements('buttonsWrapper').append($button);
 
 			if (options.focus) {
 				this.focusedButton = $button;
@@ -468,34 +427,43 @@
 			return self;
 		},
 		bindHotKeys: function () {
-			var self = this;
 
-			self.bindKeyUpEvents = function (event) {
-
-				self.activeKeyUp(event);
-			};
-
-			self.bindKeyDownEvents = function (event) {
-
-				self.activeKeyDown(event);
-			};
-
-			$(window).on({
-				keyup: self.bindKeyUpEvents,
-				keydown: self.bindKeyDownEvents
+			this.getElements('window').on({
+				keyup: this.activeKeyUp,
+				keydown: this.activeKeyDown
 			});
 		},
 		buildWidget: function () {
+			this.addElement('window', window);
 
-			var $widgetHeader = this.addComponent('widgetHeader'),
-				$widgetContent = this.addComponent('widgetContent'),
-				$buttonsWrapper = this.addComponent('buttonsWrapper');
+			var $widgetHeader = this.addElement('widgetHeader'),
+				$widgetContent = this.addElement('widgetContent'),
+				$buttonsWrapper = this.addElement('buttonsWrapper');
 
-			var components = this.getComponents();
+			var elements = this.getElements();
 
-			$widgetContent.append($widgetHeader, components.$message, $buttonsWrapper);
+			$widgetContent.append($widgetHeader, elements.message, $buttonsWrapper);
 
-			components.$widget.html($widgetContent);
+			elements.widget.html($widgetContent);
+		},
+		ensureClosureMethods: function () {
+
+			var self = this,
+				closureMethodsNames = [
+					'placeWidget',
+					'activeKeyUp',
+					'activeKeyDown'
+				];
+
+			$.each(closureMethodsNames, function () {
+
+				var methodName = this,
+					oldMethod = self[methodName];
+
+				self[methodName] = function () {
+					oldMethod.apply(self, arguments);
+				};
+			});
 		},
 		getDefaultSettings: function () {
 
@@ -504,14 +472,20 @@
 					my: 'center',
 					at: 'center center-100'
 				},
-				headerMessage: ''
+				headerMessage: '',
+				hideOnButtonClick: true,
+				refreshPosition: true
 			};
 		},
 		onHide: function () {
 
 			this.unbindHotKeys();
+
+			this.getElements('window').off('resize', this.placeWidget);
 		},
 		onInit: function () {
+
+			this.ensureClosureMethods();
 
 			this.buttons = [];
 
@@ -525,38 +499,49 @@
 		},
 		onShow: function (userSettings) {
 
-			var components = this.getComponents(),
+			var self = this;
+
+			self.placeWidget(userSettings);
+
+			if (self.getSettings('refreshPosition')) {
+
+				self.getElements('window').on('resize',  self.placeWidget);
+			}
+
+			self.bindHotKeys();
+
+			if (!self.focusedButton) {
+				self.focusedButton = self.buttons[0];
+			}
+
+			if (self.focusedButton) {
+				self.focusedButton.focus();
+			}
+		},
+		placeWidget: function (userSettings) {
+
+			var elements = this.getElements(),
 				position = this.getSettings('position');
 
-			position.of = components.$widget;
+			position.of = elements.widget;
 
 			if (userSettings) {
 				$.extend(position, userSettings);
 			}
 
-			components.$widgetContent.position(position);
-
-			this.bindHotKeys();
-
-			if (!this.focusedButton) {
-				this.focusedButton = this.buttons[0];
-			}
-
-			if (this.focusedButton) {
-				this.focusedButton.focus();
-			}
+			elements.widgetContent.position(position);
 		},
 		setHeaderMessage: function (message) {
 
-			this.getComponents('widgetHeader').html(message);
+			this.getElements('widgetHeader').html(message);
 
 			return this;
 		},
 		unbindHotKeys: function () {
 
-			$(window).off({
-				keyup: this.bindKeyUpEvents,
-				keydown: this.bindKeyDownEvents
+			this.getElements('window').off({
+				keyup: this.activeKeyUp,
+				keydown: this.activeKeyDown
 			});
 		}
 	});
@@ -649,9 +634,7 @@
 		},
 		onShow: function () {
 
-			var $widgetMessage = this.getComponents('message');
-
-			$widgetMessage.position(this.getSettings('position'));
+			this.getElements('message').position(this.getSettings('position'));
 
 			setTimeout(this.hide, this.getSettings('hide').delay);
 		}
@@ -659,4 +642,4 @@
 
 	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
-})('function' === typeof require ? require('jquery') : jQuery, 'undefined' !== typeof module && module.exports || window);
+})(typeof require === 'function' ? require('jquery') : jQuery, typeof module !== 'undefined' ? module.exports : window);

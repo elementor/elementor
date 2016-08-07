@@ -1,3 +1,5 @@
+// Attention: DO NOT use this control since it has bugs
+// TODO: This control is unused
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 

@@ -2,21 +2,19 @@ var Introduction;
 
 Introduction = function() {
 	var self = this,
-		modal,
-		infoDialog;
+		modal;
 
 	var initModal = function() {
-		modal = elementor.modals.createModal( {
-			id: 'elementor-introduction',
-			contentWidth: 700
+		modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
+			id: 'elementor-introduction'
 		} );
 
-		modal.getComponents( 'closeButton' ).on( 'click', function() {
+		modal.getElements( 'closeButton' ).on( 'click', function() {
 			self.setIntroductionViewed();
 		} );
 
 		modal.on( 'hide', function() {
-			modal.getComponents( 'message' ).empty(); // In order to stop the video
+			modal.getElements( 'message' ).empty(); // In order to stop the video
 		} );
 	};
 

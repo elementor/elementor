@@ -8,12 +8,15 @@ class Elements_Manager {
 	/**
 	 * @var Element_Base[]
 	 */
-	protected $_register_elements = [];
+	protected $_register_elements = null;
 
-	public function init() {
-		include( ELEMENTOR_PATH . 'includes/elements/base.php' );
+	private function _init_elements() {
+		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
+
 		include( ELEMENTOR_PATH . 'includes/elements/column.php' );
 		include( ELEMENTOR_PATH . 'includes/elements/section.php' );
+
+		$this->_register_elements = [];
 
 		$this->register_element( __NAMESPACE__ . '\Element_Column' );
 		$this->register_element( __NAMESPACE__ . '\Element_Section' );
@@ -64,6 +67,9 @@ class Elements_Manager {
 	}
 
 	public function get_register_elements() {
+		if ( is_null( $this->_register_elements ) ) {
+			$this->_init_elements();
+		}
 		return $this->_register_elements;
 	}
 
@@ -93,6 +99,18 @@ class Elements_Manager {
 	}
 
 	public function ajax_save_builder() {
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
+
+		if ( empty( $_POST['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+		}
+
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_access' ) );
+		}
+
 		if ( isset( $_POST['revision'] ) && DB::REVISION_PUBLISH === $_POST['revision'] ) {
 			$revision = DB::REVISION_PUBLISH;
 		} else {
@@ -105,8 +123,6 @@ class Elements_Manager {
 	}
 
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
-
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 }

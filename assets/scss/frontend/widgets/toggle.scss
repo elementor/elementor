@@ -19,7 +19,7 @@
 			.fa {
 
 				&:before {
-					content: '\f0da';
+					content: getValueByDirection('\f0da', '\f0d9');
 				}
 			}
 		}

@@ -68,4 +68,37 @@ class Control_Media extends Control_Base_Multiple {
 			'label_block' => true,
 		];
 	}
+
+	public static function get_image_title( $instance ) {
+		if ( empty( $instance['id'] ) )
+			return '';
+
+		$attachment_id = $instance['id'];
+		if ( ! $attachment_id )
+			return '';
+
+		return get_the_title( $attachment_id );
+	}
+
+	public static function get_image_alt( $instance ) {
+		if ( empty( $instance['id'] ) )
+			return '';
+
+		$attachment_id = $instance['id'];
+		if ( ! $attachment_id )
+			return '';
+
+		$attachment = get_post( $attachment_id );
+		if ( ! $attachment )
+			return '';
+
+		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+		if ( ! $alt ) {
+			$alt = $attachment->post_excerpt;
+			if ( ! $alt ) {
+				$alt = $attachment->post_title;
+			}
+		}
+		return trim( strip_tags( $alt ) );
+	}
 }

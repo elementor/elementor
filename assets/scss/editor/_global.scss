@@ -63,3 +63,17 @@
 		outline: none;
 	}
 }
+
+
+// Modal Confirm (the_content missing)
+#elementor-fatal-error-dialog {
+
+	button.dialog-ok {
+		color: $editor-info;
+	}
+
+	.dialog-widget-header {
+		font-size: 13px;
+		color: $editor-dark;
+	}
+}

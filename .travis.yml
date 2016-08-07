@@ -32,7 +32,7 @@ after_success:
   - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt
 
 script:
-  - phpunit --coverage-clover=build/logs/clover.xml
   - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
   - jscs -c .jscsrc .
   - jshint .
+  - phpunit --coverage-clover=build/logs/clover.xml

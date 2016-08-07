@@ -13,6 +13,11 @@ html {
     background-color: #F1F1F1;
 }
 
+iframe,
+img {
+	border: 0 none;
+}
+
 body {
     color: $editor-dark;
     font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
@@ -22,6 +27,14 @@ body {
     text-decoration: none;
     text-transform: none;
     overflow: hidden;
+
+	a {
+		color: $editor-info;
+
+		&:hover {
+			color: $editor-accent;
+		}
+	}
 
 	&.elementor-editor-active {
 
@@ -44,7 +57,7 @@ body {
 		}
 	}
 
-	&:not(.elementor-editor-active) {
+	&.elementor-editor-preview {
 
 		#elementor-preview {
 			left: 0;
@@ -52,6 +65,10 @@ body {
 
 		#elementor-panel {
 			@include start(-280px);
+
+			> .ui-resizable-e, > .ui-resizable-w {
+				display: none;
+			}
 		}
 
 		#elementor-mode-switcher-preview {
@@ -65,11 +82,9 @@ body {
 	}
 }
 
-iframe,
-img {
-    border: 0 none;
-}
-
 #elementor-preview, #elementor-panel {
-	transition: getStartDirection() .5s;
+
+	&:not(.ui-resizable-resizing) {
+		transition: getStartDirection() .5s, width 0.5s;
+	}
 }

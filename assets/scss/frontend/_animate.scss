@@ -1,0 +1,30 @@
+// Global style for animate.css
+
+.animated {
+	animation-duration: 1.25s;
+
+	&.animated-slow {
+		animation-duration: 2s;
+	}
+
+	&.animated-fast {
+		animation-duration: .75s;
+	}
+}
+
+.animated.infinite {
+	animation-iteration-count: infinite;
+}
+/*
+.animated.hinge {
+	animation-duration: 2s;
+}
+
+
+.animated.flipOutX,
+.animated.flipOutY,
+.animated.bounceIn,
+.animated.bounceOut {
+	animation-duration: .75s;
+}
+*/

@@ -17,7 +17,7 @@ class Frontend {
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], 999999 );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
@@ -118,7 +118,8 @@ class Frontend {
 				'jquery-numerator',
 				'jquery-slick',
 			],
-			Plugin::instance()->get_version()
+			Plugin::instance()->get_version(),
+			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
 	}
@@ -139,7 +140,15 @@ class Frontend {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.6.1'
+			'4.6.3'
+		);
+
+		// Elementor Animations
+		wp_register_style(
+			'elementor-animations',
+			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
+			[],
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -152,6 +161,7 @@ class Frontend {
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 	}
 
@@ -164,6 +174,7 @@ class Frontend {
 			return;
 
 		$css_code = $this->_parse_schemes_css_code();
+
 		foreach ( $data as $section ) {
 			$css_code .= $this->_parse_style_item( $section );
 		}
@@ -288,6 +299,9 @@ class Frontend {
 				if ( ! empty( $control['scheme']['key'] ) ) {
 					$scheme_value = $scheme_value[ $control['scheme']['key'] ];
 				}
+
+				if ( empty( $scheme_value ) )
+					continue;
 
 				$element_unique_class = 'elementor-widget-' . $widget_obj->get_id();
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );

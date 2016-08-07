@@ -6,6 +6,7 @@
 
 	var elementorBindUI = ( function() {
 		var _registeredBindEvent = {},
+			_registeredGlobalHandlers = [],
 			_flagEditorMode = false,
 
 			_setEditorMode = function( mode ) {
@@ -24,12 +25,24 @@
 				_registeredBindEvent[ widgetType ] = callback;
 			},
 
+			_addGlobalHandler = function( callback ) {
+				_registeredGlobalHandlers.push( callback );
+			},
+
+			_runGlobalHandlers = function( $scope ) {
+				$.each( _registeredGlobalHandlers, function() {
+					this.call( $scope );
+				} );
+			},
+
 			_runReadyTrigger = function( $scope ) {
 				var elementType = $scope.data( 'element_type' );
 
 				if ( ! elementType ) {
 					return;
 				}
+
+				_runGlobalHandlers( $scope );
 
 				if ( ! _registeredBindEvent[ elementType ] ) {
 					return;
@@ -44,6 +57,7 @@
 			setEditorMode: _setEditorMode,
 			setScopeWindow: _setScopeWindow,
 			addBindEvent: _addBindEvent,
+			addGlobalHandler: _addGlobalHandler,
 			runReadyTrigger: _runReadyTrigger
 		};
 	} )();
@@ -59,6 +73,25 @@
 		}
 	};
 
+	elementorBindUI.addGlobalHandler( function() {
+		if ( elementorBindUI.isEditorMode() ) {
+			return;
+		}
+
+		var $element = this,
+			animation = $element.data( 'animation' );
+
+		if ( ! animation ) {
+			return;
+		}
+
+		$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+		$element.waypoint( function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( animation );
+		}, { offset: '90%' } );
+
+	} );
 	/**
 	 * Add JS widgets here
 	 */
@@ -318,6 +351,33 @@
 			newSourceUrl = newSourceUrl.replace( '&autoplay=0', '' );
 
 			$videoFrame[0].src = newSourceUrl + '&autoplay=1';
+		} );
+	} );
+
+	elementorBindUI.addBindEvent( 'menu-anchor', function() {
+		if ( elementorBindUI.isEditorMode() ) {
+			return;
+		}
+
+		var $anchor = this.find( '.elementor-menu-anchor' ),
+			anchorID = $anchor.attr( 'id' ),
+			$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
+			$scrollable = $( 'html, body' ),
+			adminBarHeight = $( '#wpadminbar' ).height();
+
+		$anchorLinks.on( 'click', function( event ) {
+			var isSamePathname = ( location.pathname === this.pathname ),
+				isSameHostname = ( location.hostname === this.hostname );
+
+			if ( ! isSameHostname || ! isSamePathname ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			$scrollable.animate( {
+				scrollTop: $anchor.offset().top - adminBarHeight
+			}, 1000 );
 		} );
 	} );
 

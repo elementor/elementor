@@ -93,6 +93,7 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_icon',
 				'rows' => 10,
 				'separator' => 'none',
+				'show_label' => false,
 			]
 		);
 
@@ -168,6 +169,10 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'default' => '',
@@ -175,7 +180,6 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -194,7 +198,6 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -227,9 +230,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 50,
-				],
 				'range' => [
 					'px' => [
 						'min' => 6,
@@ -362,6 +362,16 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+			]
+		);
+
+		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -443,7 +453,6 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -483,7 +492,6 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -500,10 +508,14 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$html = '<div class="elementor-icon-box-wrapper">';
+		$this->add_render_attribute( 'icon-box-wrapper', 'class', 'elementor-icon-box-wrapper' );
+
+		$html = '<div ' . $this->get_render_attribute_string( 'icon-box-wrapper' ) . '>';
 
 		if ( ! empty( $instance['icon'] ) ) {
-			$icon_html = sprintf( '<i class="%s"></i>', esc_attr( $instance['icon'] ) );
+			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
+
+			$icon_html = '<i ' . $this->get_render_attribute_string( 'icon' ) . '></i>';
 
 			if ( ! empty( $instance['link']['url'] ) ) {
 				$target = '';
@@ -515,7 +527,13 @@ class Widget_Icon_box extends Widget_Base {
 				$icon_html = sprintf( '<a href="%s"%s>%s</a>', esc_attr( $instance['link']['url'] ), $target, $icon_html );
 			}
 
-			$html .= '<div class="elementor-icon-box-icon"><div class="elementor-icon">' . $icon_html . '</div></div>';
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
+
+			if ( $instance['hover_animation'] ) {
+				$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+			}
+
+			$html .= '<div class="elementor-icon-box-icon"><div ' . $this->get_render_attribute_string( 'icon-wrapper' ) . '>' . $icon_html . '</div></div>';
 		}
 
 		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
@@ -563,7 +581,7 @@ class Widget_Icon_box extends Widget_Base {
 				icon_html = '<a href="' + settings.link.url + '">' + icon_html + '</a>';
 			}
 			
-			html += '<div class="elementor-icon-box-icon"><div class="elementor-icon">' + icon_html + '</div></div>';
+			html += '<div class="elementor-icon-box-icon"><div class="elementor-icon elementor-animation-' + settings.hover_animation + '">' + icon_html + '</div></div>';
 		}
 
 		var hasContent = !! ( settings.title_text || settings.description_text );

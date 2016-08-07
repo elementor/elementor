@@ -7,12 +7,17 @@ class Settings {
 
 	const PAGE_ID = 'elementor';
 
+	public static function get_url() {
+		return admin_url( 'admin.php?page=' . self::PAGE_ID );
+	}
+
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
 		// Register the main section
-		$main_section = 'elementor_section';
+		$main_section = 'elementor_general_section';
+
 		add_settings_section(
 			$main_section,
 			__( 'General Settings', 'elementor' ),
@@ -53,23 +58,6 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
-		$field_id = 'elementor_default_generic_fonts';
-		add_settings_field(
-			$field_id,
-			__( 'Default Generic Fonts', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$main_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'std' => 'Sans-serif',
-				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
 		$field_id = 'elementor_allow_tracking';
 		add_settings_field(
 			$field_id,
@@ -87,6 +75,67 @@ class Settings {
 		);
 
 		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
+
+		// Style section
+		$style_section = 'elementor_style_section';
+
+		add_settings_section(
+			$style_section,
+			__( 'Style Settings', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_default_generic_fonts';
+		add_settings_field(
+			$field_id,
+			__( 'Default Generic Fonts', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'std' => 'Sans-serif',
+				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_disable_color_schemes';
+		add_settings_field(
+			$field_id,
+			__( 'Disable Color Palettes', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'sub_desc' => __( 'Color Palettes let you change the default colors that appear under the various widgets. If you prefer to inherit the colors from your theme, you can disable this feature.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_disable_typography_schemes';
+		add_settings_field(
+			$field_id,
+			__( 'Disable Default Fonts', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'sub_desc' => __( 'Default Fonts let you change the fonts that appear on Elementor from one place. If you prefer to inherit the fonts from your theme, you can disable this feature here.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
 	}
 
 	public function register_admin_menu() {

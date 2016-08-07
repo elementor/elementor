@@ -10,7 +10,7 @@ class Utils {
 	}
 
 	public static function get_edit_link( $post_id = 0 ) {
-		return add_query_arg( 'elementor', '', get_permalink( $post_id ) );
+		return apply_filters( 'elementor/utils/get_edit_link', add_query_arg( 'elementor', '', get_permalink( $post_id ) ), $post_id );
 	}
 
 	public static function is_post_type_support( $post_id = 0 ) {
@@ -56,5 +56,8 @@ class Utils {
 
 		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
 			define( 'DONOTCACHCEOBJECT', true );
+
+		// Set the headers to prevent caching for the different browsers
+		nocache_headers();
 	}
 }

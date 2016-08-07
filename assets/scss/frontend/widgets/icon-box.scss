@@ -3,10 +3,6 @@
 //
 .elementor-widget-icon-box {
 
-	.elementor-icon-box-wrapper {
-		overflow: hidden;
-	}
-
 	@media (min-width: $screen-md-min) {
 
 		&.elementor-position- {
@@ -15,6 +11,10 @@
 
 				.elementor-icon-box-wrapper {
 					display: flex;
+				}
+
+				.elementor-icon-box-icon {
+					flex: 0 0 auto; // Hack for Safari
 				}
 			}
 
@@ -73,6 +73,7 @@
 		.elementor-icon-box-icon {
 			margin-left: auto !important;
 			margin-right: auto !important;
+			margin-bottom: 15px;
 		}
 	}
 

@@ -34,6 +34,7 @@ class Widget_Html extends Widget_Base {
 				'default' => '',
 				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
 				'section' => 'section_title',
+				'show_label' => false,
 			]
 		);
 	}

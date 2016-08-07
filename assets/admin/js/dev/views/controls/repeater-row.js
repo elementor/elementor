@@ -9,13 +9,13 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		duplicateButton: '.elementor-repeater-tool-duplicate',
 		editButton: '.elementor-repeater-tool-edit',
 		removeButton: '.elementor-repeater-tool-remove',
-		itemNumber: '.elementor-repeater-row-item-number'
+		itemTitle: '.elementor-repeater-row-item-title'
 	},
 
 	triggers: {
 		'click @ui.removeButton': 'click:remove',
 		'click @ui.duplicateButton': 'click:duplicate',
-		'click @ui.itemNumber': 'click:edit'
+		'click @ui.itemTitle': 'click:edit'
 	},
 
 	templateHelpers: function() {
@@ -39,7 +39,25 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
-		this.render();
+		this.setTitle();
+	},
+
+	setTitle: function() {
+		var titleField = this.getOption( 'titleField' ),
+			title;
+
+		if ( titleField ) {
+			var changerControlModel = this.collection.find( { name: titleField } ),
+				changerControlView = this.children.findByModelCid( changerControlModel.cid );
+
+			title = changerControlView.getFieldTitleValue();
+		}
+
+		if ( ! title ) {
+			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+		}
+
+		this.ui.itemTitle.text( title );
 	},
 
 	initialize: function( options ) {
@@ -49,6 +67,14 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 		// Collection for Controls list
 		this.collection = new Backbone.Collection( options.controlFields );
+
+		if ( options.titleField ) {
+			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
+		}
+	},
+
+	onRender: function() {
+		this.setTitle();
 	}
 } );
 

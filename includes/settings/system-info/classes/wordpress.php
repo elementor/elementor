@@ -8,22 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WordPress_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return _x( 'WordPress Environment', 'System Info', 'elementor' );
+		return 'WordPress Environment';
 	}
 
 	public function get_fields() {
 		return [
-			'version' => _x( 'Version', 'System Info', 'elementor' ),
-			'site_url' => _x( 'Site URL', 'System Info', 'elementor' ),
-			'home_url' => _x( 'Home URL', 'System Info', 'elementor' ),
-			'is_multisite' => _x( 'WP Multisite', 'System Info', 'elementor' ),
-			'max_upload_size' => _x( 'Max Upload Size', 'System Info', 'elementor' ),
-			'memory_limit' => _x( 'Memory limit', 'System Info', 'elementor' ),
-			'permalink_structure' => _x( 'Permalink Structure', 'System Info', 'elementor' ),
-			'language' => _x( 'Language', 'System Info', 'elementor' ),
-			'timezone' => _x( 'Timezone', 'System Info', 'elementor' ),
-			'admin_email' => _x( 'Admin Email', 'System Info', 'elementor' ),
-			'debug_mode' => _x( 'Debug Mode', 'System Info', 'elementor' ),
+			'version' => 'Version',
+			'site_url' => 'Site URL',
+			'home_url' => 'Home URL',
+			'is_multisite' => 'WP Multisite',
+			'max_upload_size' => 'Max Upload Size',
+			'memory_limit' => 'Memory limit',
+			'permalink_structure' => 'Permalink Structure',
+			'language' => 'Language',
+			'timezone' => 'Timezone',
+			'admin_email' => 'Admin Email',
+			'debug_mode' => 'Debug Mode',
 		];
 	}
 

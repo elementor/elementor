@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?1.2");
-  src: url("../fonts/eicons.eot?1.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.2") format("woff2"), url("../fonts/eicons.woff?1.2") format("woff"), url("../fonts/eicons.ttf?1.2") format("truetype"), url("../fonts/eicons.svg?1.2#eicon") format("svg");
+  src: url("../fonts/eicons.eot?1.4");
+  src: url("../fonts/eicons.eot?1.4#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.4") format("woff2"), url("../fonts/eicons.woff?1.4") format("woff"), url("../fonts/eicons.ttf?1.4") format("truetype"), url("../fonts/eicons.svg?1.4#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -325,5 +325,17 @@
 
 .eicon-settings:before {
   content: '\e902'; }
+
+.eicon-headphones:before {
+  content: '\e903'; }
+
+.eicon-testimonial:before {
+  content: '\e904'; }
+
+.eicon-counter-circle:before {
+  content: '\e905'; }
+
+.eicon-person:before {
+  content: '\e906'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */

@@ -13,22 +13,22 @@ class Theme_Reporter extends Base_Reporter {
 	private $theme = null;
 
 	public function get_title() {
-		return _x( 'Theme', 'System Info', 'elementor' );
+		return 'Theme';
 	}
 
 	public function get_fields() {
 		$fields = [
-			'name' => _x( 'Name', 'System Info', 'elementor' ),
-			'version' => _x( 'Version', 'System Info', 'elementor' ),
-			'author' => _x( 'Author', 'System Info', 'elementor' ),
-			'is_child_theme' => _x( 'Child Theme', 'System Info', 'elementor' ),
+			'name' => 'Name',
+			'version' => 'Version',
+			'author' => 'Author',
+			'is_child_theme' => 'Child Theme',
 		];
 
 		if ( $this->get_parent_theme() ) {
 			$parent_fields = [
-				'parent_name' => _x( 'Parent Theme Name', 'System Info', 'elementor' ),
-				'parent_version' => _x( 'Parent Theme Version', 'System Info', 'elementor' ),
-				'parent_author' => _x( 'Parent Theme Author', 'System Info', 'elementor' ),
+				'parent_name' => 'Parent Theme Name',
+				'parent_version' => 'Parent Theme Version',
+				'parent_author' => 'Parent Theme Author',
 			];
 			$fields = array_merge( $fields, $parent_fields );
 		}
@@ -73,7 +73,11 @@ class Theme_Reporter extends Base_Reporter {
 		];
 
 		if ( ! $is_child_theme ) {
-			$result['recommendation'] = _x( 'If you want to modify the source code of your theme, we recommend using a child theme. See: <a href="https://codex.wordpress.org/Child_Themes">How to use a child theme</a>', 'System Info', 'elementor' );
+			$result['recommendation'] = sprintf(
+				/* translators: %s: codex child theme URL */
+				_x( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'System Info', 'elementor' ),
+				esc_html( 'https://codex.wordpress.org/Child_Themes' )
+			);
 		}
 
 		return $result;

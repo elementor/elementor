@@ -8,8 +8,6 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	-webkit-user-select: none;
-	-moz-user-select: none;
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 9999;
 
@@ -71,7 +69,8 @@
 	font-weight: 500;
 }
 
-.dialog-options-widget, .dialog-confirm-widget {
+.dialog-options-widget,
+.dialog-confirm-widget {
 
 	.dialog-widget-header {
 		font-size: 15px;
@@ -87,14 +86,16 @@
 				@include border-end(1px solid $editor-background);
 			}
 
-			&:focus {
-				background-color: $editor-background;
+			&:hover {
+				background-color: lighten( $editor-background, 5%);
 			}
 		}
 	}
 }
 
 .dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+	-webkit-user-select: none;
+	-moz-user-select: none;
 
 	.dialog-widget-content {
 		margin: auto;
@@ -103,7 +104,7 @@
 
 	.dialog-message {
 		padding: 0 20px;
-		height: 50px;
+		min-height: 50px;
 	}
 }
 
@@ -139,12 +140,11 @@
 }
 
 // Modal widget
-
 .dialog-elementor-modal-close-button {
 	cursor: pointer;
 	position: absolute;
 	top: 16px;
-	right: 20px;
+	@include end(20px);
 	font-size: 16px;
 	color: $editor-light;
 	line-height: 1;

@@ -410,15 +410,16 @@ class Widget_Video extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		if ( empty( $instance['link'] ) )
-			return;
-
 		$this->_current_instance = $instance;
 
 		if ( 'hosted' !== $instance['video_type'] ) {
 			add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
 
 			$video_link = 'youtube' === $instance['video_type'] ? $instance['link'] : $instance['vimeo_link'];
+
+			if ( empty( $video_link ) )
+				return;
+
 			$video_html = wp_oembed_get( $video_link, wp_embed_defaults() );
 
 			remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );

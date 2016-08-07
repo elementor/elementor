@@ -184,7 +184,7 @@ SectionView = BaseElementView.extend( {
 			currentSize = this.getColumnPercentSize( ui.element, ui.originalSize.width );
 		}
 
-		var	newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
+		var newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
 			difference = newSize - currentSize;
 
 		ui.element.css( {
@@ -202,11 +202,13 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var $nextElement = nextChildView.$el,
+		var MINIMUM_COLUMN_SIZE = 10,
+
+			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = this.getColumnPercentSize( $nextElement, $nextElement.width() ),
 			nextElementNewSize = nextElementCurrentSize - difference;
 
-		if ( newSize < 10 || newSize > 100 || ! difference || nextElementNewSize < 10 || nextElementNewSize > 100 ) {
+		if ( newSize < MINIMUM_COLUMN_SIZE || newSize > 100 || ! difference || nextElementNewSize < MINIMUM_COLUMN_SIZE || nextElementNewSize > 100 ) {
 			return;
 		}
 
@@ -217,12 +219,6 @@ SectionView = BaseElementView.extend( {
 		// Set the next column size
 		nextChildView.model.setSetting( '_inline_size', nextElementNewSize.toFixed( 3 ) );
 		nextChildView.changeSizeUI();
-	},
-
-	onSettingsChanged: function() {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		this.render();
 	},
 
 	onStructureChanged: function() {

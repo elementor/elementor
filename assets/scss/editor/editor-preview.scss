@@ -1,8 +1,10 @@
 //
-// Editor (need to move to editor folder)
+// Editor
 //
-@import "../helpers/variables";
-@import "../helpers/mixins";
+@import '../helpers/variables';
+@import '../helpers/mixins';
+
+@import '_compatibility';
 
 // Hidden WP Admin Bar
 html.elementor-html {
@@ -10,10 +12,6 @@ html.elementor-html {
 }
 
 body {
-	// Hack for Pojo themes
-	&.layout-section .entry-content {
-		overflow: visible;
-	}
 
 	&.elementor-editor-active {
 		#elementor {
@@ -55,6 +53,7 @@ body {
 					right: 0;
 					left: 0;
 					bottom: 0;
+					letter-spacing: 0; // Hack for front-end style themes
 					z-index: $element-overlay;
 				}
 
@@ -185,24 +184,6 @@ body {
 					font-style: normal;
 					line-height: 1;
 
-					&:not(.elementor-editor-section-settings-list) {
-						background-color: $editor-darkest;
-
-						.elementor-editor-element-setting {
-
-							&:not(:last-child) {
-								@include border-end(1px solid $editor-darker);
-							}
-
-							> a {
-
-								&:hover {
-									background-color: $editor-darker;
-								}
-							}
-						}
-					}
-
 					&.elementor-editor-section-settings-list {
 						background-color: $editor-light;
 
@@ -253,6 +234,7 @@ body {
 						display: inline-block;
 						width: 100%;
 						font-size: 11px;
+						line-height: 1;
 						color: #fff;
 					}
 				}
@@ -276,6 +258,21 @@ body {
 
 				.elementor-editor-element-settings-list {
 					float: getStartDirection();
+					background-color: $editor-darkest;
+
+					.elementor-editor-element-setting {
+
+						&:not(:last-child) {
+							@include border-end(1px solid $editor-darker);
+						}
+
+						> a {
+
+							&:hover {
+								background-color: $editor-darker;
+							}
+						}
+					}
 				}
 
 				.elementor-editor-element-trigger {
@@ -316,10 +313,46 @@ body {
 			// Widget - Overlay Settings
 			.elementor-editor-widget-settings {
 				z-index: $second-layer;
-				border-radius: 3px;
+				top: 2px;
+				@include end(2px);
 
-				&:not(.elementor-open) {
-					display: none;
+				.elementor-editor-element-setting {
+					width: 24px;
+
+					&:not(:last-child) {
+						@include padding-end(2px);
+					}
+
+					> a {
+						background-color: $editor-info;
+						font-size: 10px;
+						padding: 6px 8px;
+
+						&:hover {
+							background-color: darken( $editor-info, 10% );
+						}
+					}
+				}
+
+				.elementor-editor-element-remove {
+
+					.fa {
+						color: #ffffff;
+					}
+
+					&:hover {
+
+						.fa {
+							color: $editor-danger;
+						}
+					}
+				}
+
+				.elementor-editor-element-edit {
+
+					a {
+						cursor: move;
+					}
 				}
 			}
 
@@ -331,20 +364,6 @@ body {
 						display: none;
 					}
 				}
-			}
-
-			.elementor-element-label {
-				position: absolute;
-				@include end(-1px);
-				top: -1px;
-				background-color: $editor-info;
-				color: #fff;
-				font-family: Arial, Helvetica, sans-serif;
-				font-weight: normal;
-				font-style: normal;
-				font-size: 9px;
-				line-height: 1;
-				padding: 3px 6px;
 			}
 
 			// Section Full (No more columns) - Overlay
@@ -415,6 +434,7 @@ body {
 					position: absolute;
 					bottom: 100%;
 					@include end(0);
+					margin-bottom: 5px;
 					color: #999;
 					font-family: Arial, Helvetica, sans-serif;
 					font-weight: normal;
@@ -433,13 +453,13 @@ body {
 				}
 
 				&:last-of-type {
-					> .ui-resizable-e {
+					> .ui-resizable-e, > .ui-resizable-w {
 						display: none !important;
 					}
 				}
 
 				@media (max-width: $screen-md-max) {
-					> .ui-resizable-e {
+					> .ui-resizable-e, > .ui-resizable-w {
 						display: none !important;
 					}
 				}
@@ -465,20 +485,17 @@ body {
 				opacity: .3;
 			}
 
-			&:not(.elementor-loading) {
+			&:not(.elementor-loading):not(.elementor-widget-menu-anchor) { // Don't apply transition on anchor widget - Safari hack
 				transition: all .1s;
 			}
 
 			&.elementor-element-editable, &:hover {
-
-				> .elementor-element-overlay {
-					border: 1px solid $editor-info;
-				}
+				outline: 1px solid $editor-info;
 			}
 
 			&:not(.elementor-element-editable):not(:hover) {
 
-				.elementor-element-label {
+				.elementor-editor-element-settings {
 					display: none;
 				}
 			}
@@ -675,10 +692,12 @@ body {
 	&.elementor-editor-preview {
 
 		.elementor-element-overlay,
+		.elementor-editor-widget-settings,
 		.column-title,
 		.elementor-empty,
 		#elementor-add-section,
-		.elementor-element-empty {
+		.elementor-element-empty,
+		.elementor-widget-empty {
 			display: none;
 		}
 	}

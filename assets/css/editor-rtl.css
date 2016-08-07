@@ -37,6 +37,10 @@ html {
 html {
   background-color: #F1F1F1; }
 
+iframe,
+img {
+  border: 0 none; }
+
 body {
   color: #6d7882;
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
@@ -46,6 +50,10 @@ body {
   text-decoration: none;
   text-transform: none;
   overflow: hidden; }
+  body a {
+    color: #71d7f7; }
+    body a:hover {
+      color: #9b0a46; }
   body.elementor-editor-active #elementor-preview {
     right: 280px;
     left: 0; }
@@ -53,19 +61,17 @@ body {
     right: 0; }
   body.elementor-editor-active #elementor-mode-switcher-preview .fa:before {
     content: ""; }
-  body:not(.elementor-editor-active) #elementor-preview {
+  body.elementor-editor-preview #elementor-preview {
     left: 0; }
-  body:not(.elementor-editor-active) #elementor-panel {
+  body.elementor-editor-preview #elementor-panel {
     right: -280px; }
-  body:not(.elementor-editor-active) #elementor-mode-switcher-preview .fa:before {
+    body.elementor-editor-preview #elementor-panel > .ui-resizable-e, body.elementor-editor-preview #elementor-panel > .ui-resizable-w {
+      display: none; }
+  body.elementor-editor-preview #elementor-mode-switcher-preview .fa:before {
     content: ""; }
 
-iframe,
-img {
-  border: 0 none; }
-
-#elementor-preview, #elementor-panel {
-  transition: right 0.5s; }
+#elementor-preview:not(.ui-resizable-resizing), #elementor-panel:not(.ui-resizable-resizing) {
+  transition: right 0.5s, width 0.5s; }
 
 #elementor-loading {
   position: fixed;
@@ -134,6 +140,12 @@ img {
   border-color: #a4afb7; }
   .select2-dropdown .select2-search__field {
     outline: none; }
+
+#elementor-fatal-error-dialog button.dialog-ok {
+  color: #71d7f7; }
+#elementor-fatal-error-dialog .dialog-widget-header {
+  font-size: 13px;
+  color: #6d7882; }
 
 .elementor-button {
   border: none;
@@ -428,7 +440,14 @@ select {
     border: 0; }
   #elementor-panel :focus {
     outline: 0; }
-  #elementor-panel .elementor-panel-inner {
+  #elementor-panel > .ui-resizable-e, #elementor-panel > .ui-resizable-w {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 7px;
+    left: -5px;
+    cursor: ew-resize; }
+  #elementor-panel #elementor-panel-inner {
     position: relative;
     height: 100%;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2); }
@@ -662,6 +681,13 @@ select {
     float: left;
     height: 20px;
     width: 25%; }
+  #elementor-panel #elementor-panel-schemes-disabled {
+    padding: 20px; }
+    #elementor-panel #elementor-panel-schemes-disabled a {
+      color: #9b0a46;
+      cursor: pointer; }
+      #elementor-panel #elementor-panel-schemes-disabled a:hover {
+        text-decoration: underline; }
   #elementor-panel #elementor-panel-content-wrapper {
     position: absolute;
     bottom: 40px;
@@ -761,20 +787,20 @@ select {
         display: block; }
         #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section.elementor-open.elementor-hidden-control {
           display: none; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-block:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) .elementor-control-title {
-      display: block;
-      margin-bottom: 10px; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-field {
-      display: table;
-      width: 100%; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-field > * {
-        display: table-cell;
-        vertical-align: middle; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-label-inline .elementor-control-title {
-      width: 45%; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-type-heading .elementor-control-title {
       font-weight: bold;
       margin: 0; }
+  #elementor-panel #elementor-panel-page-editor .elementor-label-block:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) .elementor-control-title {
+    display: block;
+    margin-bottom: 10px; }
+  #elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field {
+    display: table;
+    width: 100%; }
+    #elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field > * {
+      display: table-cell;
+      vertical-align: middle; }
+  #elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-title {
+    width: 45%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-description {
     margin-top: 10px;
     font-size: 11px;
@@ -804,6 +830,31 @@ select {
       font-size: 12px;
       transition: all .5s;
       cursor: pointer; }
+  #elementor-panel #elementor-panel-page-editor .elementor-slider {
+    display: inline-block;
+    margin-top: 10px;
+    height: 4px;
+    background-color: #a4afb7;
+    border-radius: 5px;
+    position: relative;
+    width: 67%; }
+    #elementor-panel #elementor-panel-page-editor .elementor-slider .ui-slider-handle {
+      height: 16px;
+      width: 16px;
+      background-color: #fff;
+      display: inline-block;
+      top: 50%;
+      transform: translateY(-50%) translateX(-8px);
+      position: absolute;
+      box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      cursor: pointer; }
+  #elementor-panel #elementor-panel-page-editor .elementor-slider-input {
+    width: 33%;
+    float: left; }
+    #elementor-panel #elementor-panel-page-editor .elementor-slider-input input {
+      width: 80%;
+      float: left; }
   #elementor-panel #elementor-panel-page-editor .elementor-units-choices {
     float: left; }
     #elementor-panel #elementor-panel-page-editor .elementor-units-choices input {
@@ -949,31 +1000,6 @@ select {
     direction: ltr; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-input-wrapper {
     overflow: hidden; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider input {
-    width: 80%;
-    float: left; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-slider {
-    display: inline-block;
-    margin-top: 10px;
-    height: 4px;
-    background-color: #a4afb7;
-    border-radius: 5px;
-    position: relative;
-    width: 67%; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-slider-input {
-    width: 33%;
-    float: left; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .ui-slider-handle {
-    height: 16px;
-    width: 16px;
-    background-color: #fff;
-    display: inline-block;
-    top: 50%;
-    transform: translateY(-50%) translateX(-8px);
-    position: absolute;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
-    border-radius: 50%;
-    cursor: pointer; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
@@ -1183,6 +1209,7 @@ select {
       display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
+    table-layout: fixed;
     width: 100%;
     color: #556068;
     background-color: #d5dadf;
@@ -1200,9 +1227,12 @@ select {
         background-color: #fff; }
       #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools > div:hover {
         opacity: .95; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-number {
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
       text-align: right;
-      padding-right: 20px; }
+      padding: 0 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {
       width: 40px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-handle-sortable {
@@ -1220,6 +1250,12 @@ select {
     padding: 6.5px 15px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-add:hover {
       background-color: #6d7882; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-textarea textarea {
+    display: block; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-input-wrapper {
+    overflow: hidden; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-box-shadow-slider {
+    margin-top: 10px; }
   #elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
@@ -1535,8 +1571,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 100%;
   top: 0;
   left: 0;
-  -webkit-user-select: none;
-  -moz-user-select: none;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; }
   .dialog-widget * {
@@ -1580,22 +1614,29 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 20px 0;
   font-weight: 500; }
 
-.dialog-options-widget .dialog-widget-header, .dialog-confirm-widget .dialog-widget-header {
+.dialog-options-widget .dialog-widget-header,
+.dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
   color: #495157; }
-.dialog-options-widget .dialog-buttons-wrapper > button, .dialog-confirm-widget .dialog-buttons-wrapper > button {
+.dialog-options-widget .dialog-buttons-wrapper > button,
+.dialog-confirm-widget .dialog-buttons-wrapper > button {
   width: 50%; }
-  .dialog-options-widget .dialog-buttons-wrapper > button:first-child, .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
+  .dialog-options-widget .dialog-buttons-wrapper > button:first-child,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
     border-left: 1px solid #e6e9ec; }
-  .dialog-options-widget .dialog-buttons-wrapper > button:focus, .dialog-confirm-widget .dialog-buttons-wrapper > button:focus {
-    background-color: #e6e9ec; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:hover,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:hover {
+    background-color: #f4f6f7; }
 
-.dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
-  margin: auto;
-  width: 350px; }
-.dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
-  padding: 0 20px;
-  height: 50px; }
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+  -webkit-user-select: none;
+  -moz-user-select: none; }
+  .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+    margin: auto;
+    width: 350px; }
+  .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+    padding: 0 20px;
+    min-height: 50px; }
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
@@ -1619,13 +1660,16 @@ body.elementor-editor-preview #elementor-mode-switcher {
   cursor: pointer;
   position: absolute;
   top: 16px;
-  right: 20px;
+  left: 20px;
   font-size: 16px;
   color: #a4afb7;
   line-height: 1; }
 
 #elementor-introduction .dialog-widget-header {
   padding: 40px 0 0; }
+#elementor-introduction .dialog-widget-content {
+  width: 700px;
+  max-width: 100%; }
 #elementor-introduction .elementor-video-wrapper {
   padding-bottom: 62.4%; }
 #elementor-introduction .dialog-message {

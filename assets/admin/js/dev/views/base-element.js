@@ -1,4 +1,5 @@
-var BaseElementView;
+var BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
@@ -18,11 +19,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	modelEvents: {
-		//"change": "render"
-		//'destroy': 'onModelDestroy'
-	},
-
 	baseEvents: {},
 
 	elementEvents: {},
@@ -39,6 +35,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return _.extend( {}, this.baseEvents, this.elementEvents );
 	},
 
+	getTemplateType: function() {
+		return 'js';
+	},
+
 	initialize: function() {
 		// grab the child collection from the parent model
 		// so that we can render the collection as children
@@ -52,10 +52,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.listenTo( this.model.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( this.model.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
 
-		this.on( 'render', this.enqueueFonts );
-		this.on( 'render', this.renderStyles );
-		this.on( 'render', this.renderCustomClasses );
-		this.on( 'render', this.runReadyTrigger );
+		this.on( 'render', function() {
+			this.renderUI();
+			this.runReadyTrigger();
+		} );
 
 		this.initRemoveDialog();
 	},
@@ -77,9 +77,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
+				var elementTitle = this.model.getTitle();
+
 				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete' ),
-					headerMessage: elementor.translate( 'delete_element' ),
+					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
+					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
 						cancel: elementor.translate( 'cancel' )
@@ -147,7 +149,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
-		if ( 0 === $stylesheet.length ) {
+		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
+			return;
+		}
+
+		if ( ! $stylesheet.length ) {
 			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
 		}
@@ -176,6 +182,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	renderUI: function() {
+		this.renderStyles();
+		this.renderCustomClasses();
+		this.enqueueFonts();
+	},
+
 	runReadyTrigger: function() {
 		_.defer( _.bind( function() {
 			elementorBindUI.runReadyTrigger( this.$el );
@@ -191,11 +203,37 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onSettingsChanged: function( settings ) {
-		elementor.setFlagEditorChange( true );
+		if ( this.model.get( 'editSettings' ) !== settings ) {
+			// Change flag only if server settings was changed
+			elementor.setFlagEditorChange( true );
+		}
 
-        this.renderStyles();
-		this.renderCustomClasses();
-		this.enqueueFonts();
+		// Make sure is correct model
+		if ( settings instanceof BaseSettingsModel ) {
+			var isContentChanged = false;
+
+			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && settings.getControl( settingKey ) ) {
+					isContentChanged = true;
+				}
+			} );
+
+			if ( ! isContentChanged ) {
+				this.renderUI();
+				return;
+			}
+		}
+
+		// Re-render the template
+		switch ( this.getTemplateType() ) {
+			case 'js' :
+				this.model.setHtmlCache();
+				this.render();
+				break;
+
+			default :
+				this.model.renderRemoteServer();
+		}
 	},
 
 	onClickRemove: function( event ) {
