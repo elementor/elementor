@@ -43,6 +43,15 @@ class Widgets_Manager {
 			'sidebar',
 		];
 
+		/**
+         * Allow override of registered widget defaults
+         *
+         * @since 0.6.5
+        *
+        * @param array $build_widgets_filename.
+        */
+        $build_widgets_filename = apply_filters( 'elementor_default_widgets_filename', $build_widgets_filename );
+
 		$this->_register_widgets = [];
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
@@ -74,6 +83,15 @@ class Widgets_Manager {
 				'Pojo_Forms_Widget',
 				'Pojo_Widget_News_Ticker',
 			];
+
+			/**
+             * Allow override of allowed widgets
+             *
+             * @since 0.6.5
+            *
+            * @param array $allowed_widgets.
+            */
+            $allowed_widgets = apply_filters( 'elementor_default_allowed_widgets', $allowed_widgets );
 
 			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $allowed_widgets ) ) {
 				continue;
