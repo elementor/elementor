@@ -84,9 +84,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-
-		$return = $type->save_item( $posted, ! empty( $_POST['title'] ) ? $_POST['title'] : '' );
+		$item_id = $type->save_item( $_POST );
 
 		if ( is_wp_error( $return ) ) {
 			return $return;

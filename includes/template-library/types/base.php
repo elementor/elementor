@@ -12,16 +12,10 @@ abstract class Type_Base {
 	abstract public function get_item( $item_id );
 	abstract public function get_content( $item_id );
 	abstract public function delete_template( $item_id );
+	abstract public function save_item( $template_data );
 
 	public function export_template( $item_id ) {}
 
-	/**
-	 * @param array  $template_data
-	 * @param string $template_title
-	 *
-	 * @return int|\WP_Error
-	 */
-	abstract public function save_item( $template_data = [], $template_title = '' );
 
 	public function __construct() {
 		$this->register_data();

@@ -85,10 +85,10 @@ class Type_Local extends Type_Base {
 		return $templates;
 	}
 
-	public function save_item( $template_data = [], $template_title = '' ) {
+	public function save_item( $template_data ) {
 		$post_id = wp_insert_post(
 			[
-				'post_title' => ! empty( $template_title ) ? $template_title : __( '(no title)', 'elementor' ),
+				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 				'post_status' => 'publish',
 				'post_type' => self::CPT,
 			]
@@ -98,7 +98,7 @@ class Type_Local extends Type_Base {
 			return $post_id;
 		}
 
-		Plugin::instance()->db->save_builder( $post_id, $template_data );
+		Plugin::instance()->db->save_builder( $post_id, json_decode( stripslashes( html_entity_decode( $template_data['data'] ) ), true ) );
 
 		return $post_id;
 	}
@@ -223,8 +223,7 @@ class Type_Local extends Type_Base {
 			return $element;
 		} );
 
-		$template_title = isset( $content['title'] ) ? $content['title'] : '';
-		$item_id = $this->save_item( $content_data, $template_title );
+		$item_id = $this->save_item( [ 'data' => $content_data ] );
 
 		if ( is_wp_error( $item_id ) )
 			return new \WP_Error( 'save_error', $item_id->get_error_message() );
