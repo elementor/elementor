@@ -16,11 +16,19 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
-		var formData = this.ui.form.elementorSerializeObject();
+		var formData = this.ui.form.elementorSerializeObject(),
+			elementsData = elementor.helpers.cloneObject( elementor.elements.toJSON() ),
+			sectionID = this.getOption( 'sectionID' ),
+			saveType = sectionID ? 'section' : 'full';
+
+		if ( 'section' === saveType ) {
+			elementsData = [ _.findWhere( elementsData, { id: sectionID } ) ];
+		}
 
 		_.extend( formData, {
-			data: JSON.stringify( elementor.elements.toJSON() ),
-			type: 'local'
+			data: JSON.stringify( elementsData ),
+			type: 'local',
+			kind: saveType
 		} );
 
 		elementor.templates.getLayout().showLoadingView();

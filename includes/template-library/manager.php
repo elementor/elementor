@@ -84,15 +84,13 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template type not found.' );
 		}
 
-		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$item_id = $type->save_item( $_POST );
 
-		$return = $type->save_item( $posted, ! empty( $_POST['title'] ) ? $_POST['title'] : '' );
-
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		if ( is_wp_error( $item_id ) ) {
+			return $item_id;
 		}
 
-		return $type->get_item( $return );
+		return $type->get_item( $item_id );
 	}
 
 	public function get_template_content() {

@@ -962,7 +962,7 @@ var TemplateLibraryTemplateModel;
 
 TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
-		name: 'awesome',
+		name: '',
 		title: '',
 		author: '',
 		thumbnail: '',
@@ -1024,8 +1024,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		this.getRegion( 'modalContent' ).show( new TemplateLibraryImportView() );
 	},
 
-	showSaveTemplateView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView() );
+	showSaveTemplateView: function( sectionID ) {
+		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView( { sectionID: sectionID } ) );
 
 		var headerView = this.getHeaderView();
 
@@ -1309,11 +1309,19 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
-		var formData = this.ui.form.elementorSerializeObject();
+		var formData = this.ui.form.elementorSerializeObject(),
+			elementsData = elementor.helpers.cloneObject( elementor.elements.toJSON() ),
+			sectionID = this.getOption( 'sectionID' ),
+			saveType = sectionID ? 'section' : 'full';
+
+		if ( 'section' === saveType ) {
+			elementsData = [ _.findWhere( elementsData, { id: sectionID } ) ];
+		}
 
 		_.extend( formData, {
-			data: JSON.stringify( elementor.elements.toJSON() ),
-			type: 'local'
+			data: JSON.stringify( elementsData ),
+			type: 'local',
+			kind: saveType
 		} );
 
 		elementor.templates.getLayout().showLoadingView();

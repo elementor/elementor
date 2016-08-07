@@ -51,7 +51,7 @@ class Type_Remote extends Type_Base {
 		];
 	}
 
-	public function save_item( $template_data = [], $template_title = '' ) {
+	public function save_item( $template_data ) {
 		return false;
 	}
 

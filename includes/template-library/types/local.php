@@ -13,6 +13,15 @@ class Type_Local extends Type_Base {
 
 	const CPT = 'elementor_library';
 
+	const KIND_META_KEY = '_elementor_template_kind';
+
+	public static function get_template_kinds() {
+		return [
+			'full',
+			'section',
+		];
+	}
+
 	public function get_id() {
 		return 'local';
 	}
@@ -85,10 +94,14 @@ class Type_Local extends Type_Base {
 		return $templates;
 	}
 
-	public function save_item( $template_data = [], $template_title = '' ) {
+	public function save_item( $template_data ) {
+		if ( ! empty( $template_data['kind'] ) && ! in_array( $template_data['kind'], self::get_template_kinds() ) ) {
+			return new \WP_Error( 'save_error', 'The specified template kind doesn\'t exists' );
+		}
+
 		$post_id = wp_insert_post(
 			[
-				'post_title' => ! empty( $template_title ) ? $template_title : __( '(no title)', 'elementor' ),
+				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 				'post_status' => 'publish',
 				'post_type' => self::CPT,
 			]
@@ -98,7 +111,9 @@ class Type_Local extends Type_Base {
 			return $post_id;
 		}
 
-		Plugin::instance()->db->save_builder( $post_id, $template_data );
+		Plugin::instance()->db->save_builder( $post_id, json_decode( stripslashes( html_entity_decode( $template_data['data'] ) ), true ) );
+
+		update_post_meta( $post_id, self::KIND_META_KEY, $template_data['kind'] );
 
 		return $post_id;
 	}
@@ -223,11 +238,10 @@ class Type_Local extends Type_Base {
 			return $element;
 		} );
 
-		$template_title = isset( $content['title'] ) ? $content['title'] : '';
-		$item_id = $this->save_item( $content_data, $template_title );
+		$item_id = $this->save_item( [ 'data' => $content_data ] );
 
 		if ( is_wp_error( $item_id ) )
-			return new \WP_Error( 'save_error', $item_id->get_error_message() );
+			return $item_id;
 
 		return $this->get_item( $item_id );
 	}
