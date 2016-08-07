@@ -226,7 +226,7 @@ class Type_Local extends Type_Base {
 		$item_id = $this->save_item( [ 'data' => $content_data ] );
 
 		if ( is_wp_error( $item_id ) )
-			return new \WP_Error( 'save_error', $item_id->get_error_message() );
+			return $item_id;
 
 		return $this->get_item( $item_id );
 	}
