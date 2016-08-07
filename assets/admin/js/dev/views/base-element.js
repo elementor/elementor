@@ -149,11 +149,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
-		if ( _.isEmpty( styleHtml ) ) {
+		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
 			return;
 		}
 
-		if ( 0 === $stylesheet.length ) {
+		if ( ! $stylesheet.length ) {
 			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
 		}
