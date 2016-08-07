@@ -5634,7 +5634,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
-
 		newSection.redefineLayout();
 	}
 } );
