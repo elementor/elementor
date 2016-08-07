@@ -1,10 +1,10 @@
-var TemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
-	TemplatesCollectionView;
+var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/template' ),
+	TemplateLibraryCollectionView;
 
-TemplatesCollectionView = Marionette.CollectionView.extend( {
-	childView: TemplatesTemplateView,
+TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
+	childView: TemplateLibraryTemplateView,
 
-	id: 'elementor-templates-templates-container',
+	id: 'elementor-template-library-templates-container',
 
 	initialize: function() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
@@ -43,4 +43,4 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 	}
 } );
 
-module.exports = TemplatesCollectionView;
+module.exports = TemplateLibraryCollectionView;

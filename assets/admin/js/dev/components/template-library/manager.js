@@ -1,8 +1,8 @@
-var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
-	TemplatesCollection = require( 'elementor-templates/collections/templates' ),
-	TemplatesManager;
+var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
+	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
+	TemplateLibraryManager;
 
-TemplatesManager = function() {
+TemplateLibraryManager = function() {
 	var self = this,
 		modal,
 		errorDialog,
@@ -10,7 +10,7 @@ TemplatesManager = function() {
 		templatesCollection;
 
 	var initLayout = function() {
-		layout = new TemplatesLayoutView();
+		layout = new TemplateLibraryLayoutView();
 	};
 
 	this.deleteTemplate = function( templateModel ) {
@@ -47,7 +47,7 @@ TemplatesManager = function() {
 	this.getErrorDialog = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
-				id: 'elementor-templates-error-dialog',
+				id: 'elementor-template-library-error-dialog',
 				headerMessage: elementor.translate( 'an_error_occurred' )
 			} );
 		}
@@ -58,7 +58,7 @@ TemplatesManager = function() {
 	this.getModal = function() {
 		if ( ! modal ) {
 			modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
-				id: 'elementor-templates-modal',
+				id: 'elementor-template-library-modal',
 				closeButton: false
 			} );
 		}
@@ -85,7 +85,7 @@ TemplatesManager = function() {
 
 		elementor.ajax.send( 'get_templates', {
 			success: function( data ) {
-				templatesCollection = new TemplatesCollection( data );
+				templatesCollection = new TemplateLibraryCollection( data );
 
 				if ( callback ) {
 					callback();
@@ -119,9 +119,9 @@ TemplatesManager = function() {
 
 	this.showErrorDialog = function( errorMessage ) {
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
+		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
 };
 
-module.exports = new TemplatesManager();
+module.exports = new TemplateLibraryManager();

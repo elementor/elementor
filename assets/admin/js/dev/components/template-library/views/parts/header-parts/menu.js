@@ -1,16 +1,16 @@
-var TemplatesHeaderMenuView;
+var TemplateLibraryHeaderMenuView;
 
-TemplatesHeaderMenuView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	options: {
 		activeClass: 'elementor-active'
 	},
 
-	template: '#tmpl-elementor-templates-header-menu',
+	template: '#tmpl-elementor-template-library-header-menu',
 
-	id: 'elementor-templates-header-menu',
+	id: 'elementor-template-library-header-menu',
 
 	ui: {
-		menuItems: '.elementor-templates-menu-item'
+		menuItems: '.elementor-template-library-menu-item'
 	},
 
 	events: {
@@ -53,4 +53,4 @@ TemplatesHeaderMenuView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderMenuView;
+module.exports = TemplateLibraryHeaderMenuView;

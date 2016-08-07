@@ -1,12 +1,12 @@
-var TemplatesImportView;
+var TemplateLibraryImportView;
 
-TemplatesImportView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-import',
+TemplateLibraryImportView = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-import',
 
-	id: 'elementor-templates-import',
+	id: 'elementor-template-library-import',
 
 	ui: {
-		uploadForm: '#elementor-templates-import-form'
+		uploadForm: '#elementor-template-library-import-form'
 	},
 
 	events: {
@@ -34,4 +34,4 @@ TemplatesImportView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesImportView;
+module.exports = TemplateLibraryImportView;
