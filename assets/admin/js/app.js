@@ -3186,8 +3186,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.listenTo( this.model.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( this.model.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
 
-		this.on( 'render', this.renderUI );
-		this.on( 'render', this.runReadyTrigger );
+		this.on( 'render', function() {
+			this.renderUI();
+			this.runReadyTrigger();
+		} );
 
 		this.initRemoveDialog();
 	},
