@@ -13,6 +13,12 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit'
 	},
 
+	templateHelpers: function() {
+		return {
+			sectionID: this.getOption( 'sectionID' )
+		};
+	},
+
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
