@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Templates\Classes;
+namespace Elementor\TemplateLibrary\Classes;
 
 class Import_Images {
 

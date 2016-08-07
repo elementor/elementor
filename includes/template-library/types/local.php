@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Templates;
+namespace Elementor\TemplateLibrary;
 
 use Elementor\Controls_Manager;
 use Elementor\DB;
@@ -51,7 +51,7 @@ class Type_Local extends Type_Base {
 
 		register_post_type(
 			self::CPT,
-			apply_filters( 'elementor/templates/types/local/register_post_type_args', $args )
+			apply_filters( 'elementor/template_library/types/local/register_post_type_args', $args )
 		);
 	}
 
@@ -246,12 +246,12 @@ class Type_Local extends Type_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-templates-trigger" class="page-title-action"><?php _e( 'Import Template', 'elementor' ); ?></a>
-			<div id="elementor-import-templates-area">
-				<div id="elementor-import-templates-title"><?php _e( 'Choose an Elementor template JSON file, and add it to the list of templates available in your library.', 'elementor' ); ?></div>
-				<form id="elementor-import-templates-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php _e( 'Import Template', 'elementor' ); ?></a>
+			<div id="elementor-import-template-area">
+				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file, and add it to the list of templates available in your library.', 'elementor' ); ?></div>
+				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
-					<fieldset id="elementor-import-templates-form-inputs">
+					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept="application/json" required>
 						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>

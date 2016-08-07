@@ -80,8 +80,8 @@
 			}
 
 			var self = this,
-				$importButton = self.cache.$importButton = $( '#elementor-import-templates-trigger' ),
-				$importArea = self.cache.$importArea = $( '#elementor-import-templates-area' );
+				$importButton = self.cache.$importButton = $( '#elementor-import-template-trigger' ),
+				$importArea = self.cache.$importArea = $( '#elementor-import-template-area' );
 
 			self.cache.$formAnchor = $( 'h1' );
 

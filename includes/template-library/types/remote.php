@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Templates;
+namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Controls_Manager;

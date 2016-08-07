@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="fa fa-cog" title="<?php _e( 'Settings', 'elementor' ); ?>"></i>
 	<ul id="elementor-templates-header-settings-menu">
 		<li class="elementor-templates-header-settings-menu-item">
-			<a href="<?php echo admin_url( 'edit.php?post_type=' . Templates\Type_Local::CPT );  ?>" target="_blank"><i class="fa fa-external-link"></i> <?php _e( 'Library Manager', 'elementor' ); ?></a>
+			<a href="<?php echo admin_url( 'edit.php?post_type=' . TemplateLibrary\Type_Local::CPT );  ?>" target="_blank"><i class="fa fa-external-link"></i> <?php _e( 'Library Manager', 'elementor' ); ?></a>
 		</li>
 		<li id="elementor-templates-header-settings-save" class="elementor-templates-header-settings-menu-item">
 			<a><i class="fa fa-floppy-o"></i> <?php _e( 'Save Template', 'elementor' ); ?></a>

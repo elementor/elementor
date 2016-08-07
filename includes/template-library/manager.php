@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Templates;
+namespace Elementor\TemplateLibrary;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -11,8 +11,8 @@ class Manager {
 	protected $_registered_types = [];
 
 	public function init() {
-		include( ELEMENTOR_PATH . 'includes/templates/classes/class-import-images.php' );
-		include( ELEMENTOR_PATH . 'includes/templates/types/base.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/types/base.php' );
 
 		$types = [
 			'local',
@@ -20,7 +20,7 @@ class Manager {
 		];
 
 		foreach ( $types as $types_filename ) {
-			include( ELEMENTOR_PATH . 'includes/templates/types/' . $types_filename . '.php' );
+			include( ELEMENTOR_PATH . 'includes/template-library/types/' . $types_filename . '.php' );
 
 			$class_name = ucwords( $types_filename );
 			$class_name = str_replace( '-', '_', $class_name );
