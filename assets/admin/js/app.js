@@ -819,21 +819,21 @@ SortableBehavior = Marionette.Behavior.extend( {
 module.exports = SortableBehavior;
 
 },{}],9:[function(require,module,exports){
-var TemplatesTemplateModel = require( 'elementor-templates/models/template' ),
-	TemplatesCollection;
+var TemplateLibraryTemplateModel = require( 'elementor-templates/models/template' ),
+	TemplateLibraryCollection;
 
-TemplatesCollection = Backbone.Collection.extend( {
-	model: TemplatesTemplateModel
+TemplateLibraryCollection = Backbone.Collection.extend( {
+	model: TemplateLibraryTemplateModel
 } );
 
-module.exports = TemplatesCollection;
+module.exports = TemplateLibraryCollection;
 
 },{"elementor-templates/models/template":11}],10:[function(require,module,exports){
-var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
-	TemplatesCollection = require( 'elementor-templates/collections/templates' ),
-	TemplatesManager;
+var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
+	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
+	TemplateLibraryManager;
 
-TemplatesManager = function() {
+TemplateLibraryManager = function() {
 	var self = this,
 		modal,
 		errorDialog,
@@ -841,7 +841,7 @@ TemplatesManager = function() {
 		templatesCollection;
 
 	var initLayout = function() {
-		layout = new TemplatesLayoutView();
+		layout = new TemplateLibraryLayoutView();
 	};
 
 	this.deleteTemplate = function( templateModel ) {
@@ -878,7 +878,7 @@ TemplatesManager = function() {
 	this.getErrorDialog = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
-				id: 'elementor-templates-error-dialog',
+				id: 'elementor-template-library-error-dialog',
 				headerMessage: elementor.translate( 'an_error_occurred' )
 			} );
 		}
@@ -889,7 +889,7 @@ TemplatesManager = function() {
 	this.getModal = function() {
 		if ( ! modal ) {
 			modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
-				id: 'elementor-templates-modal',
+				id: 'elementor-template-library-modal',
 				closeButton: false
 			} );
 		}
@@ -916,7 +916,7 @@ TemplatesManager = function() {
 
 		elementor.ajax.send( 'get_templates', {
 			success: function( data ) {
-				templatesCollection = new TemplatesCollection( data );
+				templatesCollection = new TemplateLibraryCollection( data );
 
 				if ( callback ) {
 					callback();
@@ -950,17 +950,17 @@ TemplatesManager = function() {
 
 	this.showErrorDialog = function( errorMessage ) {
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
+		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
 };
 
-module.exports = new TemplatesManager();
+module.exports = new TemplateLibraryManager();
 
 },{"elementor-templates/collections/templates":9,"elementor-templates/views/layout":12}],11:[function(require,module,exports){
-var TemplatesTemplateModel;
+var TemplateLibraryTemplateModel;
 
-TemplatesTemplateModel = Backbone.Model.extend( {
+TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		name: 'awesome',
 		title: '',
@@ -972,24 +972,24 @@ TemplatesTemplateModel = Backbone.Model.extend( {
 	}
 } );
 
-module.exports = TemplatesTemplateModel;
+module.exports = TemplateLibraryTemplateModel;
 
 },{}],12:[function(require,module,exports){
-var TemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
-	TemplatesHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplatesHeaderSettingsView = require( 'elementor-templates/views/parts/header-parts/settings' ),
-	TemplatesHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
-	TemplatesHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
-	TemplatesHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
-	TemplatesLoadingView = require( 'elementor-templates/views/parts/loading' ),
-	TemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
-	TemplatesSaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
-	TemplatesImportView = require( 'elementor-templates/views/parts/import' ),
-	TemplatesPreviewView = require( 'elementor-templates/views/parts/preview' ),
-	TemplatesLayoutView;
+var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
+	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
+	TemplateLibraryHeaderSettingsView = require( 'elementor-templates/views/parts/header-parts/settings' ),
+	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
+	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
+	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
+	TemplateLibraryLoadingView = require( 'elementor-templates/views/parts/loading' ),
+	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
+	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
+	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
+	TemplateLibraryLayoutView;
 
-TemplatesLayoutView = Marionette.LayoutView.extend( {
-	el: '#elementor-templates-modal',
+TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
+	el: '#elementor-template-library-modal',
 
 	regions: {
 		modalContent: '.dialog-message',
@@ -997,7 +997,7 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initialize: function() {
-		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
+		this.getRegion( 'modalHeader' ).show( new TemplateLibraryHeaderView() );
 	},
 
 	getHeaderView: function() {
@@ -1005,37 +1005,37 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showLoadingView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplatesLoadingView() );
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryLoadingView() );
 	},
 
 	showTemplatesView: function( templatesCollection ) {
-		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection
 		} ) );
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplatesHeaderSettingsView() );
-		headerView.menuArea.show( new TemplatesHeaderMenuView() );
-		headerView.logoArea.show( new TemplatesHeaderLogoView() );
+		headerView.tools.show( new TemplateLibraryHeaderSettingsView() );
+		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showImportView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplatesImportView() );
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryImportView() );
 	},
 
 	showSaveTemplateView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplatesSaveTemplateView() );
+		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView() );
 
 		var headerView = this.getHeaderView();
 
 		headerView.tools.reset();
 		headerView.menuArea.reset();
-		headerView.logoArea.show( new TemplatesHeaderLogoView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showPreviewView: function( templateModel ) {
-		this.getRegion( 'modalContent' ).show( new TemplatesPreviewView( {
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' )
 		} ) );
 
@@ -1043,26 +1043,26 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 
 		headerView.menuArea.reset();
 
-		headerView.tools.show( new TemplatesHeaderPreviewView( {
+		headerView.tools.show( new TemplateLibraryHeaderPreviewView( {
 			model: templateModel
 		} ) );
 
-		headerView.logoArea.show( new TemplatesHeaderBackView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	}
 } );
 
-module.exports = TemplatesLayoutView;
+module.exports = TemplateLibraryLayoutView;
 
 },{"elementor-templates/views/parts/header":18,"elementor-templates/views/parts/header-parts/back":13,"elementor-templates/views/parts/header-parts/logo":14,"elementor-templates/views/parts/header-parts/menu":15,"elementor-templates/views/parts/header-parts/preview":16,"elementor-templates/views/parts/header-parts/settings":17,"elementor-templates/views/parts/import":19,"elementor-templates/views/parts/loading":20,"elementor-templates/views/parts/preview":21,"elementor-templates/views/parts/save-template":22,"elementor-templates/views/parts/templates":23}],13:[function(require,module,exports){
-var TemplatesHeaderBackView;
+var TemplateLibraryHeaderBackView;
 
-TemplatesHeaderBackView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-back',
+TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-header-back',
 
-	id: 'elementor-templates-header-preview-back-wrapper',
+	id: 'elementor-template-library-header-preview-back-wrapper',
 
 	ui: {
-		backButton: '#elementor-templates-header-preview-back'
+		backButton: '#elementor-template-library-header-preview-back'
 	},
 
 	events: {
@@ -1074,33 +1074,33 @@ TemplatesHeaderBackView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderBackView;
+module.exports = TemplateLibraryHeaderBackView;
 
 },{}],14:[function(require,module,exports){
-var TemplatesHeaderLogoView;
+var TemplateLibraryHeaderLogoView;
 
-TemplatesHeaderLogoView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-logo',
+TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-header-logo',
 
-	id: 'elementor-templates-header-logo'
+	id: 'elementor-template-library-header-logo'
 } );
 
-module.exports = TemplatesHeaderLogoView;
+module.exports = TemplateLibraryHeaderLogoView;
 
 },{}],15:[function(require,module,exports){
-var TemplatesHeaderMenuView;
+var TemplateLibraryHeaderMenuView;
 
-TemplatesHeaderMenuView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	options: {
 		activeClass: 'elementor-active'
 	},
 
-	template: '#tmpl-elementor-templates-header-menu',
+	template: '#tmpl-elementor-template-library-header-menu',
 
-	id: 'elementor-templates-header-menu',
+	id: 'elementor-template-library-header-menu',
 
 	ui: {
-		menuItems: '.elementor-templates-menu-item'
+		menuItems: '.elementor-template-library-menu-item'
 	},
 
 	events: {
@@ -1143,18 +1143,18 @@ TemplatesHeaderMenuView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderMenuView;
+module.exports = TemplateLibraryHeaderMenuView;
 
 },{}],16:[function(require,module,exports){
-var TemplatesHeaderPreviewView;
+var TemplateLibraryHeaderPreviewView;
 
-TemplatesHeaderPreviewView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-preview',
+TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-header-preview',
 
-	id: 'elementor-templates-header-preview',
+	id: 'elementor-template-library-header-preview',
 
 	ui: {
-		insertButton: '#elementor-templates-header-preview-insert'
+		insertButton: '#elementor-template-library-header-preview-insert'
 	},
 
 	events: {
@@ -1166,20 +1166,20 @@ TemplatesHeaderPreviewView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderPreviewView;
+module.exports = TemplateLibraryHeaderPreviewView;
 
 },{}],17:[function(require,module,exports){
-var TemplatesHeaderSettingsView;
+var TemplateLibraryHeaderSettingsView;
 
-TemplatesHeaderSettingsView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-settings',
+TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-header-settings',
 
-	id: 'elementor-templates-header-settings',
+	id: 'elementor-template-library-header-settings',
 
-	className: 'elementor-templates-header-item',
+	className: 'elementor-template-library-header-item',
 
 	ui: {
-		saveButton: '#elementor-templates-header-settings-save'
+		saveButton: '#elementor-template-library-header-settings-save'
 	},
 
 	events: {
@@ -1191,25 +1191,25 @@ TemplatesHeaderSettingsView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderSettingsView;
+module.exports = TemplateLibraryHeaderSettingsView;
 
 },{}],18:[function(require,module,exports){
-var TemplatesHeaderView;
+var TemplateLibraryHeaderView;
 
-TemplatesHeaderView = Marionette.LayoutView.extend( {
+TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
 
-	id: 'elementor-templates-header',
+	id: 'elementor-template-library-header',
 
-	template: '#tmpl-elementor-templates-header',
+	template: '#tmpl-elementor-template-library-header',
 
 	regions: {
-		logoArea: '#elementor-templates-header-logo-area',
-		tools: '#elementor-templates-header-tools',
-		menuArea: '#elementor-templates-header-menu-area'
+		logoArea: '#elementor-template-library-header-logo-area',
+		tools: '#elementor-template-library-header-tools',
+		menuArea: '#elementor-template-library-header-menu-area'
 	},
 
 	ui: {
-		closeModal: '#elementor-templates-header-close-modal'
+		closeModal: '#elementor-template-library-header-close-modal'
 	},
 
 	events: {
@@ -1221,18 +1221,18 @@ TemplatesHeaderView = Marionette.LayoutView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderView;
+module.exports = TemplateLibraryHeaderView;
 
 },{}],19:[function(require,module,exports){
-var TemplatesImportView;
+var TemplateLibraryImportView;
 
-TemplatesImportView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-import',
+TemplateLibraryImportView = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-import',
 
-	id: 'elementor-templates-import',
+	id: 'elementor-template-library-import',
 
 	ui: {
-		uploadForm: '#elementor-templates-import-form'
+		uploadForm: '#elementor-template-library-import-form'
 	},
 
 	events: {
@@ -1260,26 +1260,26 @@ TemplatesImportView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesImportView;
+module.exports = TemplateLibraryImportView;
 
 },{}],20:[function(require,module,exports){
-var TemplatesLoadingView;
+var TemplateLibraryLoadingView;
 
-TemplatesLoadingView = Marionette.ItemView.extend( {
-	id: 'elementor-templates-loading',
+TemplateLibraryLoadingView = Marionette.ItemView.extend( {
+	id: 'elementor-template-library-loading',
 
-	template: '#tmpl-elementor-templates-loading'
+	template: '#tmpl-elementor-template-library-loading'
 } );
 
-module.exports = TemplatesLoadingView;
+module.exports = TemplateLibraryLoadingView;
 
 },{}],21:[function(require,module,exports){
-var TemplatesPreviewView;
+var TemplateLibraryPreviewView;
 
-TemplatesPreviewView = Marionette.ItemView.extend( {
+TemplateLibraryPreviewView = Marionette.ItemView.extend( {
 	tagName: 'iframe',
 
-	id: 'elementor-templates-preview',
+	id: 'elementor-template-library-preview',
 
 	template: false,
 
@@ -1288,18 +1288,18 @@ TemplatesPreviewView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesPreviewView;
+module.exports = TemplateLibraryPreviewView;
 
 },{}],22:[function(require,module,exports){
-var TemplatesSaveTemplateView;
+var TemplateLibrarySaveTemplateView;
 
-TemplatesSaveTemplateView = Marionette.ItemView.extend( {
-	id: 'elementor-templates-save-template',
+TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
+	id: 'elementor-template-library-save-template',
 
-	template: '#tmpl-elementor-templates-save-template',
+	template: '#tmpl-elementor-template-library-save-template',
 
 	ui: {
-		form: '#elementor-templates-save-template-form'
+		form: '#elementor-template-library-save-template-form'
 	},
 
 	events: {
@@ -1332,16 +1332,16 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesSaveTemplateView;
+module.exports = TemplateLibrarySaveTemplateView;
 
 },{}],23:[function(require,module,exports){
-var TemplatesTemplateView = require( 'elementor-templates/views/template/template' ),
-	TemplatesCollectionView;
+var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/template' ),
+	TemplateLibraryCollectionView;
 
-TemplatesCollectionView = Marionette.CollectionView.extend( {
-	childView: TemplatesTemplateView,
+TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
+	childView: TemplateLibraryTemplateView,
 
-	id: 'elementor-templates-templates-container',
+	id: 'elementor-template-library-templates-container',
 
 	initialize: function() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
@@ -1380,19 +1380,19 @@ TemplatesCollectionView = Marionette.CollectionView.extend( {
 	}
 } );
 
-module.exports = TemplatesCollectionView;
+module.exports = TemplateLibraryCollectionView;
 
 },{"elementor-templates/views/template/template":24}],24:[function(require,module,exports){
-var TemplatesTemplateView;
+var TemplateLibraryTemplateView;
 
-TemplatesTemplateView = Marionette.ItemView.extend( {
-	className: 'elementor-templates-template',
+TemplateLibraryTemplateView = Marionette.ItemView.extend( {
+	className: 'elementor-template-library-template',
 
-	template: '#tmpl-elementor-templates-template',
+	template: '#tmpl-elementor-template-library-template',
 
 	ui: {
-		insertButton: '.elementor-templates-template-insert',
-		previewButton: '.elementor-templates-template-preview'
+		insertButton: '.elementor-template-library-template-insert',
+		previewButton: '.elementor-template-library-template-preview'
 	},
 
 	events: {
@@ -1409,7 +1409,7 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesTemplateView;
+module.exports = TemplateLibraryTemplateView;
 
 },{}],25:[function(require,module,exports){
 var EditModeItemView;
