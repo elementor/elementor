@@ -71,7 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
-	<div id="elementor-template-library-save-template-title"><?php _e( 'Save Your Template', 'elementor' ); ?></div>
+	<div id="elementor-template-library-save-template-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
 	<div id="elementor-template-library-save-template-excerpt"><?php _e( 'Save and reuse your page designs with the Elementor Library', 'elementor' ); ?></div>
 	<form id="elementor-template-library-save-template-form">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>">
