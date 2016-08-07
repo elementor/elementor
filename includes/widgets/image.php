@@ -172,7 +172,6 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'hover_animation',
 			[
@@ -191,20 +190,6 @@ class Widget_Image extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selector' => '{{WRAPPER}} .elementor-image img',
-			]
-		);
-
-		$this->add_control(
-			'image_border_radius',
-			[
-				'label' => __( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_image',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
 			]
 		);
 
