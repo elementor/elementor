@@ -170,7 +170,6 @@ class Admin {
 
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
 			$post = get_post();
-
 			$current_mode = Plugin::instance()->db->get_edit_mode( $post->ID );
 
 			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';
