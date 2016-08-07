@@ -86,11 +86,11 @@ class Manager {
 
 		$item_id = $type->save_item( $_POST );
 
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		if ( is_wp_error( $item_id ) ) {
+			return $item_id;
 		}
 
-		return $type->get_item( $return );
+		return $type->get_item( $item_id );
 	}
 
 	public function get_template_content() {
