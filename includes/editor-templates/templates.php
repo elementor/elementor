@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="fa fa-spin fa-refresh"></i>
 </script>
 
-<script type="text/template" id="tmpl-elementor-template-library-template-remote">
+<script type="text/template" id="tmpl-elementor-template-library-template">
 	<div class="elementor-template-library-template-body">
 		<div class="elementor-template-library-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>
 		<div class="elementor-template-library-template-controls">
