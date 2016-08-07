@@ -3186,10 +3186,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.listenTo( this.model.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( this.model.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
 
-		this.on( 'render', this.enqueueFonts );
-		this.on( 'render', this.renderStyles );
-		this.on( 'render', this.renderCustomClasses );
-		this.on( 'render', this.runReadyTrigger );
+		this.on( 'render', function() {
+			this.renderUI();
+			this.runReadyTrigger();
+		} );
 
 		this.initRemoveDialog();
 	},
@@ -3283,11 +3283,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
-		if ( _.isEmpty( styleHtml ) ) {
+		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
 			return;
 		}
 
-		if ( 0 === $stylesheet.length ) {
+		if ( ! $stylesheet.length ) {
 			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
 		}
@@ -3316,6 +3316,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	renderUI: function() {
+		this.renderStyles();
+		this.renderCustomClasses();
+		this.enqueueFonts();
+	},
+
 	runReadyTrigger: function() {
 		_.defer( _.bind( function() {
 			elementorBindUI.runReadyTrigger( this.$el );
@@ -3336,10 +3342,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 			elementor.setFlagEditorChange( true );
 		}
 
-        this.renderStyles();
-		this.renderCustomClasses();
-		this.enqueueFonts();
-
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
@@ -3351,6 +3353,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			} );
 
 			if ( ! isContentChanged ) {
+				this.renderUI();
 				return;
 			}
 		}
