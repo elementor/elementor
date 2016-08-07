@@ -1,6 +1,6 @@
-var TemplatesHeaderPreviewView;
+var TemplateLibraryHeaderPreviewView;
 
-TemplatesHeaderPreviewView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-header-preview',
 
 	id: 'elementor-templates-header-preview',
@@ -18,4 +18,4 @@ TemplatesHeaderPreviewView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderPreviewView;
+module.exports = TemplateLibraryHeaderPreviewView;

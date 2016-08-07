@@ -1,9 +1,9 @@
-var TemplatesLoadingView;
+var TemplateLibraryLoadingView;
 
-TemplatesLoadingView = Marionette.ItemView.extend( {
+TemplateLibraryLoadingView = Marionette.ItemView.extend( {
 	id: 'elementor-templates-loading',
 
 	template: '#tmpl-elementor-templates-loading'
 } );
 
-module.exports = TemplatesLoadingView;
+module.exports = TemplateLibraryLoadingView;

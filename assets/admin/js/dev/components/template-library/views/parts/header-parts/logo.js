@@ -1,9 +1,9 @@
-var TemplatesHeaderLogoView;
+var TemplateLibraryHeaderLogoView;
 
-TemplatesHeaderLogoView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-header-logo',
 
 	id: 'elementor-templates-header-logo'
 } );
 
-module.exports = TemplatesHeaderLogoView;
+module.exports = TemplateLibraryHeaderLogoView;

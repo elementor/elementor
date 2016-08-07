@@ -1,6 +1,6 @@
-var TemplatesTemplateModel;
+var TemplateLibraryTemplateModel;
 
-TemplatesTemplateModel = Backbone.Model.extend( {
+TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		name: 'awesome',
 		title: '',
@@ -12,4 +12,4 @@ TemplatesTemplateModel = Backbone.Model.extend( {
 	}
 } );
 
-module.exports = TemplatesTemplateModel;
+module.exports = TemplateLibraryTemplateModel;

@@ -1,6 +1,6 @@
-var TemplatesHeaderView;
+var TemplateLibraryHeaderView;
 
-TemplatesHeaderView = Marionette.LayoutView.extend( {
+TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
 
 	id: 'elementor-templates-header',
 
@@ -25,4 +25,4 @@ TemplatesHeaderView = Marionette.LayoutView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderView;
+module.exports = TemplateLibraryHeaderView;

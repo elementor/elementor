@@ -1,6 +1,6 @@
-var TemplatesPreviewView;
+var TemplateLibraryPreviewView;
 
-TemplatesPreviewView = Marionette.ItemView.extend( {
+TemplateLibraryPreviewView = Marionette.ItemView.extend( {
 	tagName: 'iframe',
 
 	id: 'elementor-templates-preview',
@@ -12,4 +12,4 @@ TemplatesPreviewView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesPreviewView;
+module.exports = TemplateLibraryPreviewView;

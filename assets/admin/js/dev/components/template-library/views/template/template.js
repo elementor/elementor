@@ -1,6 +1,6 @@
-var TemplatesTemplateView;
+var TemplateLibraryTemplateView;
 
-TemplatesTemplateView = Marionette.ItemView.extend( {
+TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: 'elementor-templates-template',
 
 	template: '#tmpl-elementor-templates-template',
@@ -24,4 +24,4 @@ TemplatesTemplateView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesTemplateView;
+module.exports = TemplateLibraryTemplateView;

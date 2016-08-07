@@ -1,8 +1,8 @@
-var TemplatesLayoutView = require( 'elementor-templates/views/layout' ),
-	TemplatesCollection = require( 'elementor-templates/collections/templates' ),
-	TemplatesManager;
+var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
+	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
+	TemplateLibraryManager;
 
-TemplatesManager = function() {
+TemplateLibraryManager = function() {
 	var self = this,
 		modal,
 		errorDialog,
@@ -10,7 +10,7 @@ TemplatesManager = function() {
 		templatesCollection;
 
 	var initLayout = function() {
-		layout = new TemplatesLayoutView();
+		layout = new TemplateLibraryLayoutView();
 	};
 
 	this.deleteTemplate = function( templateModel ) {
@@ -85,7 +85,7 @@ TemplatesManager = function() {
 
 		elementor.ajax.send( 'get_templates', {
 			success: function( data ) {
-				templatesCollection = new TemplatesCollection( data );
+				templatesCollection = new TemplateLibraryCollection( data );
 
 				if ( callback ) {
 					callback();
@@ -124,4 +124,4 @@ TemplatesManager = function() {
 	};
 };
 
-module.exports = new TemplatesManager();
+module.exports = new TemplateLibraryManager();

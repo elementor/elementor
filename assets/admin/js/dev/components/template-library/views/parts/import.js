@@ -1,6 +1,6 @@
-var TemplatesImportView;
+var TemplateLibraryImportView;
 
-TemplatesImportView = Marionette.ItemView.extend( {
+TemplateLibraryImportView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-import',
 
 	id: 'elementor-templates-import',
@@ -34,4 +34,4 @@ TemplatesImportView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesImportView;
+module.exports = TemplateLibraryImportView;

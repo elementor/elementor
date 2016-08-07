@@ -1,17 +1,17 @@
-var TemplatesHeaderView = require( 'elementor-templates/views/parts/header' ),
-	TemplatesHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplatesHeaderSettingsView = require( 'elementor-templates/views/parts/header-parts/settings' ),
-	TemplatesHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
-	TemplatesHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
-	TemplatesHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
-	TemplatesLoadingView = require( 'elementor-templates/views/parts/loading' ),
-	TemplatesCollectionView = require( 'elementor-templates/views/parts/templates' ),
-	TemplatesSaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
-	TemplatesImportView = require( 'elementor-templates/views/parts/import' ),
-	TemplatesPreviewView = require( 'elementor-templates/views/parts/preview' ),
-	TemplatesLayoutView;
+var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
+	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
+	TemplateLibraryHeaderSettingsView = require( 'elementor-templates/views/parts/header-parts/settings' ),
+	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
+	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
+	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
+	TemplateLibraryLoadingView = require( 'elementor-templates/views/parts/loading' ),
+	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
+	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
+	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
+	TemplateLibraryLayoutView;
 
-TemplatesLayoutView = Marionette.LayoutView.extend( {
+TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	el: '#elementor-templates-modal',
 
 	regions: {
@@ -20,7 +20,7 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initialize: function() {
-		this.getRegion( 'modalHeader' ).show( new TemplatesHeaderView() );
+		this.getRegion( 'modalHeader' ).show( new TemplateLibraryHeaderView() );
 	},
 
 	getHeaderView: function() {
@@ -28,37 +28,37 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showLoadingView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplatesLoadingView() );
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryLoadingView() );
 	},
 
 	showTemplatesView: function( templatesCollection ) {
-		this.getRegion( 'modalContent' ).show( new TemplatesCollectionView( {
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection
 		} ) );
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplatesHeaderSettingsView() );
-		headerView.menuArea.show( new TemplatesHeaderMenuView() );
-		headerView.logoArea.show( new TemplatesHeaderLogoView() );
+		headerView.tools.show( new TemplateLibraryHeaderSettingsView() );
+		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showImportView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplatesImportView() );
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryImportView() );
 	},
 
 	showSaveTemplateView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplatesSaveTemplateView() );
+		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView() );
 
 		var headerView = this.getHeaderView();
 
 		headerView.tools.reset();
 		headerView.menuArea.reset();
-		headerView.logoArea.show( new TemplatesHeaderLogoView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showPreviewView: function( templateModel ) {
-		this.getRegion( 'modalContent' ).show( new TemplatesPreviewView( {
+		this.getRegion( 'modalContent' ).show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' )
 		} ) );
 
@@ -66,12 +66,12 @@ TemplatesLayoutView = Marionette.LayoutView.extend( {
 
 		headerView.menuArea.reset();
 
-		headerView.tools.show( new TemplatesHeaderPreviewView( {
+		headerView.tools.show( new TemplateLibraryHeaderPreviewView( {
 			model: templateModel
 		} ) );
 
-		headerView.logoArea.show( new TemplatesHeaderBackView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	}
 } );
 
-module.exports = TemplatesLayoutView;
+module.exports = TemplateLibraryLayoutView;

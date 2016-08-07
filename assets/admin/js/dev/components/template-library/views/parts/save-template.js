@@ -1,6 +1,6 @@
-var TemplatesSaveTemplateView;
+var TemplateLibrarySaveTemplateView;
 
-TemplatesSaveTemplateView = Marionette.ItemView.extend( {
+TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-templates-save-template',
 
 	template: '#tmpl-elementor-templates-save-template',
@@ -39,4 +39,4 @@ TemplatesSaveTemplateView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesSaveTemplateView;
+module.exports = TemplateLibrarySaveTemplateView;

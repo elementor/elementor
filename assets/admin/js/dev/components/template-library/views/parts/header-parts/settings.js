@@ -1,6 +1,6 @@
-var TemplatesHeaderSettingsView;
+var TemplateLibraryHeaderSettingsView;
 
-TemplatesHeaderSettingsView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-templates-header-settings',
 
 	id: 'elementor-templates-header-settings',
@@ -20,4 +20,4 @@ TemplatesHeaderSettingsView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplatesHeaderSettingsView;
+module.exports = TemplateLibraryHeaderSettingsView;

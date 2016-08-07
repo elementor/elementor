@@ -1,8 +1,8 @@
-var TemplatesTemplateModel = require( 'elementor-templates/models/template' ),
-	TemplatesCollection;
+var TemplateLibraryTemplateModel = require( 'elementor-templates/models/template' ),
+	TemplateLibraryCollection;
 
-TemplatesCollection = Backbone.Collection.extend( {
-	model: TemplatesTemplateModel
+TemplateLibraryCollection = Backbone.Collection.extend( {
+	model: TemplateLibraryTemplateModel
 } );
 
-module.exports = TemplatesCollection;
+module.exports = TemplateLibraryCollection;
