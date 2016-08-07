@@ -356,12 +356,10 @@
   .elementor-widget-heading .elementor-heading-title.elementor-size-xxl {
     font-size: 59px; }
 
-.elementor-widget-image .elementor-image {
-  overflow: hidden; }
-  .elementor-widget-image .elementor-image img {
-    vertical-align: middle; }
-  .elementor-widget-image .elementor-image.elementor-image-shape-circle {
-    border-radius: 50%; }
+.elementor-widget-image .elementor-image img {
+  vertical-align: middle; }
+.elementor-widget-image .elementor-image.elementor-image-shape-circle {
+  border-radius: 50%; }
 
 .elementor-image-gallery .gallery .gallery-item {
   display: inline-block;
