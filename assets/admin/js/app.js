@@ -929,7 +929,7 @@ TemplateLibraryManager = function() {
 		self.getModal().show();
 
 		// Set default templates type to 'local'
-		elementor.channels.templates.reply( 'filter:type', 'local' );
+		elementor.channels.templates.reply( 'filter:type', 'remote' );
 
 		if ( ! layout ) {
 			initLayout();
@@ -1304,6 +1304,12 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	events: {
 		'submit @ui.form': 'onFormSubmit'
+	},
+
+	templateHelpers: function() {
+		return {
+			sectionID: this.getOption( 'sectionID' )
+		};
 	},
 
 	onFormSubmit: function( event ) {
@@ -5942,7 +5948,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	elementEvents: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove'
+		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove',
+		'click .elementor-editor-section-settings-list .elementor-editor-element-save': 'onClickSave'
 	},
 
 	behaviors: {
@@ -6138,6 +6145,14 @@ SectionView = BaseElementView.extend( {
 
 	onStructureChanged: function() {
 		this.redefineLayout();
+	},
+
+	onClickSave: function() {
+		var sectionID = this.model.get( 'id' );
+
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView( sectionID );
+		} );
 	}
 } );
 
