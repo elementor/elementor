@@ -4,7 +4,7 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/t
 TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 	childView: TemplateLibraryTemplateView,
 
-	id: 'elementor-templates-templates-container',
+	id: 'elementor-template-library-templates-container',
 
 	initialize: function() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );

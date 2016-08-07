@@ -1,12 +1,12 @@
 var TemplateLibrarySaveTemplateView;
 
 TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
-	id: 'elementor-templates-save-template',
+	id: 'elementor-template-library-save-template',
 
-	template: '#tmpl-elementor-templates-save-template',
+	template: '#tmpl-elementor-template-library-save-template',
 
 	ui: {
-		form: '#elementor-templates-save-template-form'
+		form: '#elementor-template-library-save-template-form'
 	},
 
 	events: {

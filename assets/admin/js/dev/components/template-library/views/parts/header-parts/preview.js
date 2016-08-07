@@ -1,12 +1,12 @@
 var TemplateLibraryHeaderPreviewView;
 
 TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-preview',
+	template: '#tmpl-elementor-template-library-header-preview',
 
-	id: 'elementor-templates-header-preview',
+	id: 'elementor-template-library-header-preview',
 
 	ui: {
-		insertButton: '#elementor-templates-header-preview-insert'
+		insertButton: '#elementor-template-library-header-preview-insert'
 	},
 
 	events: {

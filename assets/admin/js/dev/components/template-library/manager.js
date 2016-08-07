@@ -47,7 +47,7 @@ TemplateLibraryManager = function() {
 	this.getErrorDialog = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
-				id: 'elementor-templates-error-dialog',
+				id: 'elementor-template-library-error-dialog',
 				headerMessage: elementor.translate( 'an_error_occurred' )
 			} );
 		}
@@ -58,7 +58,7 @@ TemplateLibraryManager = function() {
 	this.getModal = function() {
 		if ( ! modal ) {
 			modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
-				id: 'elementor-templates-modal',
+				id: 'elementor-template-library-modal',
 				closeButton: false
 			} );
 		}
@@ -119,7 +119,7 @@ TemplateLibraryManager = function() {
 
 	this.showErrorDialog = function( errorMessage ) {
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-templates-error-info">' + errorMessage + '</div>' )
+		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
 };

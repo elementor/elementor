@@ -3,7 +3,7 @@ var TemplateLibraryPreviewView;
 TemplateLibraryPreviewView = Marionette.ItemView.extend( {
 	tagName: 'iframe',
 
-	id: 'elementor-templates-preview',
+	id: 'elementor-template-library-preview',
 
 	template: false,
 

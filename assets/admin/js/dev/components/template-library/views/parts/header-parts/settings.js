@@ -1,14 +1,14 @@
 var TemplateLibraryHeaderSettingsView;
 
 TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-settings',
+	template: '#tmpl-elementor-template-library-header-settings',
 
-	id: 'elementor-templates-header-settings',
+	id: 'elementor-template-library-header-settings',
 
-	className: 'elementor-templates-header-item',
+	className: 'elementor-template-library-header-item',
 
 	ui: {
-		saveButton: '#elementor-templates-header-settings-save'
+		saveButton: '#elementor-template-library-header-settings-save'
 	},
 
 	events: {

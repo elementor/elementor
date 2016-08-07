@@ -1,13 +1,13 @@
 var TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
-	className: 'elementor-templates-template',
+	className: 'elementor-template-library-template',
 
-	template: '#tmpl-elementor-templates-template',
+	template: '#tmpl-elementor-template-library-template',
 
 	ui: {
-		insertButton: '.elementor-templates-template-insert',
-		previewButton: '.elementor-templates-template-preview'
+		insertButton: '.elementor-template-library-template-insert',
+		previewButton: '.elementor-template-library-template-preview'
 	},
 
 	events: {

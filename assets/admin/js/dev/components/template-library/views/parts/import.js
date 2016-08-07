@@ -1,12 +1,12 @@
 var TemplateLibraryImportView;
 
 TemplateLibraryImportView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-import',
+	template: '#tmpl-elementor-template-library-import',
 
-	id: 'elementor-templates-import',
+	id: 'elementor-template-library-import',
 
 	ui: {
-		uploadForm: '#elementor-templates-import-form'
+		uploadForm: '#elementor-template-library-import-form'
 	},
 
 	events: {

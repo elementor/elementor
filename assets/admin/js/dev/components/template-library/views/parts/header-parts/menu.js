@@ -5,12 +5,12 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 		activeClass: 'elementor-active'
 	},
 
-	template: '#tmpl-elementor-templates-header-menu',
+	template: '#tmpl-elementor-template-library-header-menu',
 
-	id: 'elementor-templates-header-menu',
+	id: 'elementor-template-library-header-menu',
 
 	ui: {
-		menuItems: '.elementor-templates-menu-item'
+		menuItems: '.elementor-template-library-menu-item'
 	},
 
 	events: {

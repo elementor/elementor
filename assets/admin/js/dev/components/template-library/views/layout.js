@@ -12,7 +12,7 @@ var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header
 	TemplateLibraryLayoutView;
 
 TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
-	el: '#elementor-templates-modal',
+	el: '#elementor-template-library-modal',
 
 	regions: {
 		modalContent: '.dialog-message',

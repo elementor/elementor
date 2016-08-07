@@ -1,12 +1,12 @@
 var TemplateLibraryHeaderBackView;
 
 TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-templates-header-back',
+	template: '#tmpl-elementor-template-library-header-back',
 
-	id: 'elementor-templates-header-preview-back-wrapper',
+	id: 'elementor-template-library-header-preview-back-wrapper',
 
 	ui: {
-		backButton: '#elementor-templates-header-preview-back'
+		backButton: '#elementor-template-library-header-preview-back'
 	},
 
 	events: {

@@ -2,18 +2,18 @@ var TemplateLibraryHeaderView;
 
 TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
 
-	id: 'elementor-templates-header',
+	id: 'elementor-template-library-header',
 
-	template: '#tmpl-elementor-templates-header',
+	template: '#tmpl-elementor-template-library-header',
 
 	regions: {
-		logoArea: '#elementor-templates-header-logo-area',
-		tools: '#elementor-templates-header-tools',
-		menuArea: '#elementor-templates-header-menu-area'
+		logoArea: '#elementor-template-library-header-logo-area',
+		tools: '#elementor-template-library-header-tools',
+		menuArea: '#elementor-template-library-header-menu-area'
 	},
 
 	ui: {
-		closeModal: '#elementor-templates-header-close-modal'
+		closeModal: '#elementor-template-library-header-close-modal'
 	},
 
 	events: {
