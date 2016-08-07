@@ -98,7 +98,7 @@ TemplateLibraryManager = function() {
 		self.getModal().show();
 
 		// Set default templates type to 'local'
-		elementor.channels.templates.reply( 'filter:type', 'local' );
+		elementor.channels.templates.reply( 'filter:type', 'remote' );
 
 		if ( ! layout ) {
 			initLayout();
