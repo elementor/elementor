@@ -1,4 +1,4 @@
-#elementor-templates-modal {
+#elementor-template-library-modal {
 
 	.dialog-widget-content {
 		width: 990px;
@@ -23,7 +23,7 @@
 	}
 }
 
-#elementor-templates-header {
+#elementor-template-library-header {
 	display: table;
 	table-layout: fixed;
 	width: 100%;
@@ -34,7 +34,7 @@
 	}
 }
 
-#elementor-templates-header-logo-area {
+#elementor-template-library-header-logo-area {
 	width: 35%;
 	text-align: getStartDirection();
 	@include padding-start(15px);
@@ -44,7 +44,7 @@
 	}
 }
 
-#elementor-templates-header-logo {
+#elementor-template-library-header-logo {
 	font-size: 15px;
 	text-transform: uppercase;
 	color: $editor-darkest;
@@ -57,11 +57,11 @@
 	}
 }
 
-#elementor-templates-header-menu {
+#elementor-template-library-header-menu {
 	text-align: center;
 }
 
-.elementor-templates-menu-item {
+.elementor-template-library-menu-item {
 	display: inline-block;
 	padding: 17px;
 	cursor: pointer;
@@ -72,7 +72,7 @@
 	}
 }
 
-#elementor-templates-header-items-area {
+#elementor-template-library-header-items-area {
 	width: 35%;
 
 	> * {
@@ -80,14 +80,14 @@
 	}
 }
 
-#elementor-templates-header-tools {
+#elementor-template-library-header-tools {
 
 	> * {
 		float: getEndDirection();
 	}
 }
 
-.elementor-templates-header-item {
+.elementor-template-library-header-item {
 	position: relative;
 	color: $editor-light;
 	@include border-start(1px solid $editor-background);
@@ -107,20 +107,20 @@
 	}
 }
 
-#elementor-templates-header-close-modal, #elementor-templates-header-settings {
+#elementor-template-library-header-close-modal, #elementor-template-library-header-settings {
 	width: 56px;
 }
 
-#elementor-templates-header-settings {
+#elementor-template-library-header-settings {
 
 	&:not(:hover) {
-		#elementor-templates-header-settings-menu {
+		#elementor-template-library-header-settings-menu {
 			display: none;
 		}
 	}
 }
 
-#elementor-templates-header-settings-menu {
+#elementor-template-library-header-settings-menu {
 	top: 100%;
 	@include end(0);
 	@include start(initial);
@@ -129,7 +129,7 @@
 	z-index: 1;
 }
 
-.elementor-templates-header-settings-menu-item {
+.elementor-template-library-header-settings-menu-item {
 	background-color: #fff;
 
 	&:hover {
@@ -143,27 +143,27 @@
 	}
 }
 
-#elementor-templates-header-preview {
+#elementor-template-library-header-preview {
 
 	> * {
 		float: getEndDirection();
 	}
 }
 
-#elementor-templates-header-preview-insert-wrapper {
+#elementor-template-library-header-preview-insert-wrapper {
 	width: 100px;
 	cursor: default;
 }
 
-#elementor-templates-header-preview-insert {
+#elementor-template-library-header-preview-insert {
 	width: 80%;
 }
 
-#elementor-templates-header-preview-back-wrapper {
+#elementor-template-library-header-preview-back-wrapper {
 	cursor: pointer;
 }
 
-#elementor-templates-header-preview-back {
+#elementor-template-library-header-preview-back {
 	width: 100%;
 
 	i {
@@ -175,7 +175,7 @@
 	}
 }
 
-#elementor-templates-loading {
+#elementor-template-library-loading {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -186,18 +186,18 @@
 	}
 }
 
-#elementor-templates-templates-container {
+#elementor-template-library-templates-container {
 	overflow: hidden;
 }
 
-.elementor-templates-template {
+.elementor-template-library-template {
 	float: getStartDirection();
 	width: 25%;
 	padding: 0 15px;
 	margin-top: 15px;
 }
 
-.elementor-templates-template-body {
+.elementor-template-library-template-body {
 	height: 250px;
 	border: 3px solid #fff;
 	position: relative;
@@ -205,19 +205,19 @@
 
 	&:not(:hover) {
 
-		.elementor-templates-template-controls {
+		.elementor-template-library-template-controls {
 			display: none;
 		}
 	}
 }
 
-.elementor-templates-template-screenshot {
+.elementor-template-library-template-screenshot {
 	height: 100%;
 	background-size: cover;
 	background-position-x: 50%;
 }
 
-.elementor-templates-template-controls {
+.elementor-template-library-template-controls {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -225,13 +225,13 @@
 	height: 100%;
 	background-color: rgba(0,0,0,.65);
 
-	.elementor-templates-template-insert {
+	.elementor-template-library-template-insert {
 		font-size: 11px;
 		width: 150px;
 	}
 }
 
-.elementor-templates-template-preview {
+.elementor-template-library-template-preview {
 	position: relative;
 	height: 180px;
 
@@ -246,7 +246,7 @@
 	}
 }
 
-.elementor-templates-template-insert {
+.elementor-template-library-template-insert {
 	text-transform: uppercase;
 	padding: 11px;
 
@@ -255,31 +255,31 @@
 	}
 }
 
-.elementor-templates-template-name {
+.elementor-template-library-template-name {
 	padding-top: 8px;
 	font-size: 12px;
 	text-align: center;
 	color: $editor-dark;
 }
 
-#elementor-templates-preview {
+#elementor-template-library-preview {
 	width: 100%;
 	height: 99%;
 }
 
-#elementor-templates-save-template-title {
+#elementor-template-library-save-template-title {
 	font-size: 30px;
 	margin-top: 55px;
 }
 
-#elementor-templates-save-template-excerpt {
+#elementor-template-library-save-template-excerpt {
 	font-size: 18px;
 	color: $editor-light;
 	margin-top: 20px;
 	font-weight: 300;
 }
 
-#elementor-templates-save-template-form {
+#elementor-template-library-save-template-form {
 	margin-top: 55px;
 	display: flex;
 	align-items: center;
@@ -291,7 +291,7 @@
 	}
 }
 
-#elementor-templates-save-template-name {
+#elementor-template-library-save-template-name {
 	width: 460px;
 	background-color: #fff;
 	font-weight: 300;
@@ -301,14 +301,14 @@
 	border: none;
 }
 
-#elementor-templates-save-template-submit {
+#elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	font-weight: 500;
 	text-transform: uppercase;
 }
 
-#elementor-templates-save-template-footer {
+#elementor-template-library-save-template-footer {
 	position: absolute;
 	bottom: 90px;
 	left: 50%;
@@ -319,13 +319,13 @@
 	font-weight: 500;
 }
 
-#elementor-templates-error-dialog {
+#elementor-template-library-error-dialog {
 
 	.dialog-message {
 		text-align: left;
 	}
 }
 
-#elementor-templates-error-info {
+#elementor-template-library-error-info {
 	margin-top: 10px;
 }
