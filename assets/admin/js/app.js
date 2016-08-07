@@ -962,7 +962,7 @@ var TemplateLibraryTemplateModel;
 
 TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
-		name: 'awesome',
+		name: '',
 		title: '',
 		author: '',
 		thumbnail: '',
