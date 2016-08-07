@@ -168,6 +168,7 @@ class Type_Local extends Type_Base {
 		$export_data = [
 			'version' => DB::DB_VERSION,
 			'title' => get_the_title( $item_id ),
+			'kind' => get_post_meta( $item_id, self::KIND_META_KEY, true ),
 			'data' => $template_data,
 		];
 
@@ -238,7 +239,11 @@ class Type_Local extends Type_Base {
 			return $element;
 		} );
 
-		$item_id = $this->save_item( [ 'data' => $content_data ] );
+		$item_id = $this->save_item( [
+			'data' => $content_data,
+			'title' => $content['title'],
+			'kind' => $content['kind'],
+		] );
 
 		if ( is_wp_error( $item_id ) )
 			return $item_id;
