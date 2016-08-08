@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="fa fa-spin fa-refresh"></i>
 </script>
 
-<script type="text/template" id="tmpl-elementor-template-library-template">
+<script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
 		<div class="elementor-template-library-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>
 		<div class="elementor-template-library-template-controls">
@@ -68,6 +68,31 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 	<div class="elementor-template-library-template-name"><%= title %></div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-template-local">
+	<div class="elementor-template-library-template-icon">
+		<i class="fa fa-<%- 'page' === kind ? 'file-text-o' : 'columns' %>"></i>
+	</div>
+	<div class="elementor-template-library-template-name"><%= title %></div>
+	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
+	<div class="elementor-template-library-template-controls">
+		<div class="elementor-template-library-template-preview">
+			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-delete">
+			<i class="fa fa-trash-o"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Delete', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-export">
+			<a href="<%- export_link %>">
+				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
+			</a>
+		</div>
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+			<i class="fa fa-download"></i>
+			<?php _e( 'Insert', 'elementor' ); ?>
+		</button>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">

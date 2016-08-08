@@ -21,6 +21,17 @@
 		overflow: auto;
 		padding: 15px;
 	}
+
+	a {
+
+		&, &:hover {
+			color: inherit;
+		}
+	}
+
+	.elementor-button-success {
+		text-transform: uppercase;
+	}
 }
 
 #elementor-template-library-header {
@@ -138,7 +149,6 @@
 
 	a {
 		display: block;
-		color: inherit;
 		padding: 10px;
 	}
 }
@@ -157,6 +167,7 @@
 
 #elementor-template-library-header-preview-insert {
 	width: 80%;
+	padding: 8px 0;
 }
 
 #elementor-template-library-header-preview-back-wrapper {
@@ -188,78 +199,139 @@
 
 #elementor-template-library-templates-container {
 	overflow: hidden;
+
+	&[data-template-type="local"] {
+		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
+		margin: 15px;
+	}
 }
 
-.elementor-template-library-template {
+.elementor-template-library-template-remote {
 	float: getStartDirection();
 	width: 25%;
 	padding: 0 15px;
 	margin-top: 15px;
-}
 
-.elementor-template-library-template-body {
-	height: 250px;
-	border: 3px solid #fff;
-	position: relative;
-	box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+	.elementor-template-library-template-body {
+		height: 250px;
+		border: 3px solid #fff;
+		position: relative;
+		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
 
-	&:not(:hover) {
+		&:not(:hover) {
 
-		.elementor-template-library-template-controls {
-			display: none;
+			.elementor-template-library-template-controls {
+				display: none;
+			}
 		}
 	}
-}
 
-.elementor-template-library-template-screenshot {
-	height: 100%;
-	background-size: cover;
-	background-position-x: 50%;
-}
+	.elementor-template-library-template-screenshot {
+		height: 100%;
+		background-size: cover;
+		background-position-x: 50%;
+	}
 
-.elementor-template-library-template-controls {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0,0,0,.65);
+	.elementor-template-library-template-controls {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,.65);
+	}
 
 	.elementor-template-library-template-insert {
 		font-size: 11px;
 		width: 150px;
 	}
-}
 
-.elementor-template-library-template-preview {
-	position: relative;
-	height: 180px;
+	.elementor-template-library-template-preview {
+		position: relative;
+		height: 180px;
 
-	i {
-		font-size: 20px;
-		color: $editor-lightest;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		cursor: pointer;
+		i {
+			font-size: 20px;
+			color: $editor-lightest;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			cursor: pointer;
+		}
+	}
+
+	.elementor-template-library-template-insert {
+		padding: 11px;
+
+		i {
+			@include padding-end(5px);
+		}
+	}
+
+	.elementor-template-library-template-name {
+		padding-top: 8px;
+		font-size: 12px;
+		text-align: center;
+		color: $editor-dark;
 	}
 }
 
-.elementor-template-library-template-insert {
-	text-transform: uppercase;
-	padding: 11px;
+.elementor-template-library-template-local {
+	background-color: #fff;
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+	border-bottom: 1px solid $editor-lightest;
+	height: 50px;
 
-	i {
-		@include padding-end(5px);
+	&:hover {
+		background-color: $editor-background-light;
 	}
-}
 
-.elementor-template-library-template-name {
-	padding-top: 8px;
-	font-size: 12px;
-	text-align: center;
-	color: $editor-dark;
+	&:not(:hover) {
+
+		.elementor-template-library-template-controls {
+			visibility: hidden;
+		}
+	}
+
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+		text-align: start;
+	}
+
+	.elementor-template-library-template-icon {
+		text-align: center;
+		width: 6%;
+	}
+
+	.elementor-template-library-template-name {
+		font-weight: bold;
+		width: 35%;
+	}
+
+	.elementor-template-library-template-kind {
+		width: 20%;
+	}
+
+	.elementor-template-library-template-controls {
+
+		> * {
+			display: inline-block;
+			margin: 0 10px;
+			cursor: pointer;
+		}
+	}
+
+	.elementor-template-library-template-control-title {
+		@include margin-start(8px);
+	}
+
+	.elementor-template-library-template-insert {
+		padding: 6px 25px;
+	}
 }
 
 #elementor-template-library-preview {
@@ -305,7 +377,6 @@
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	font-weight: 500;
-	text-transform: uppercase;
 }
 
 #elementor-template-library-save-template-footer {
