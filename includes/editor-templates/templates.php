@@ -74,11 +74,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
 			</a>
 		</div>
-		<div class="elementor-template-library-template-preview">
-			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
-		</div>
 		<div class="elementor-template-library-template-delete">
 			<i class="fa fa-trash-o"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Delete', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-preview">
+			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
 		</div>
 	</div>
 </script>
