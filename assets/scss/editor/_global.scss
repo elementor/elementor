@@ -11,7 +11,7 @@
 	z-index: $editor-layer;
 }
 
-#elementor-loader-wrapper {
+.elementor-loader-wrapper {
 	$size: 100px;
 
 	position: absolute;
@@ -20,7 +20,7 @@
 	transform: translateX(-50%) translateY(-50%);
 	width: $size;
 
-	#elementor-loader {
+	.elementor-loader {
 		height: $size;
 		position: relative;
 	}
@@ -32,7 +32,7 @@
 	@import "loader";
 }
 
-#elementor-loading-title {
+.elementor-loading-title {
 
 	@keyframes load-title {
 		0% {
