@@ -1704,12 +1704,15 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding-right: 15px; }
   #elementor-template-library-header-logo-area > * {
     float: right; }
+    #elementor-template-library-header-logo-area > * > * {
+      vertical-align: middle; }
 
 #elementor-template-library-header-logo {
   font-size: 15px;
   text-transform: uppercase;
   color: #495157;
-  font-weight: bold; }
+  font-weight: bold;
+  cursor: pointer; }
   #elementor-template-library-header-logo i {
     padding-left: 10px;
     color: #9b0a46;
@@ -1736,11 +1739,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-template-library-header-item {
   position: relative;
-  color: #a4afb7;
   border-right: 1px solid #e6e9ec;
   height: 50px;
   box-sizing: content-box;
   cursor: pointer; }
+  .elementor-template-library-header-item:not(:hover) {
+    color: #a4afb7; }
   .elementor-template-library-header-item > * {
     position: absolute;
     top: 50%;
@@ -1763,15 +1767,17 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 80%;
   padding: 8px 0; }
 
-#elementor-template-library-header-preview-back-wrapper {
-  cursor: pointer; }
-
 #elementor-template-library-header-preview-back {
-  width: 100%; }
+  padding: 16.5px 0 15px 16.5px;
+  border-left: 1px solid #e6e9ec;
+  cursor: pointer; }
+  #elementor-template-library-header-preview-back:not(:hover) {
+    color: #a4afb7; }
   #elementor-template-library-header-preview-back i {
-    padding-left: 10px; }
+    padding-left: 10px;
+    font-size: 18px; }
     #elementor-template-library-header-preview-back i:before {
-      content: ""; }
+      content: ""; }
 
 #elementor-template-library-loading {
   position: absolute;
@@ -1854,19 +1860,29 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 6%; }
   .elementor-template-library-template-local .elementor-template-library-template-name {
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 500;
     width: 35%; }
   .elementor-template-library-template-local .elementor-template-library-template-kind {
-    width: 20%;
     color: #a4afb7; }
-  .elementor-template-library-template-local .elementor-template-library-template-controls > * {
-    display: inline-block;
-    margin: 0 10px;
-    cursor: pointer; }
+  .elementor-template-library-template-local .elementor-template-library-template-controls {
+    width: 40%;
+    direction: ltr; }
+    .elementor-template-library-template-local .elementor-template-library-template-controls > * {
+      direction: rtl; }
+    .elementor-template-library-template-local .elementor-template-library-template-controls > div {
+      display: inline-block;
+      margin-right: 15px;
+      cursor: pointer;
+      font-weight: 500; }
+      .elementor-template-library-template-local .elementor-template-library-template-controls > div:not(:hover) {
+        color: #a4afb7; }
   .elementor-template-library-template-local .elementor-template-library-template-control-title {
-    margin-right: 8px; }
+    margin-right: 6px; }
+  .elementor-template-library-template-local .elementor-template-library-template-delete:hover {
+    color: #b01b1b; }
   .elementor-template-library-template-local .elementor-template-library-template-insert {
-    padding: 8px 18px; }
+    padding: 8px 18px;
+    margin: 0 20px; }
 
 #elementor-template-library-preview {
   width: 100%;
