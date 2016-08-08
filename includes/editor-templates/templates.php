@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div id="elementor-template-library-header-menu-area"></div>
 	<div id="elementor-template-library-header-items-area">
 		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item" title="<?php _e( 'Close', 'elementor' ); ?>">
-			<i class="fa fa-times"></i>
+			<i class="eicon-close"></i>
 		</div>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-save">
-	<i class="fa fa-floppy-o" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
+	<i class="eicon-save" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
 		<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 	</div>
 </script>
@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<i class="fa fa-search-plus"></i>
 			</div>
 			<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-				<i class="fa fa-download"></i>
+				<i class="eicon-file-download"></i>
 				<?php _e( 'Insert', 'elementor' ); ?>
 			</button>
 		</div>
