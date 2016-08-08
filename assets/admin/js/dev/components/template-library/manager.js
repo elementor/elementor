@@ -5,6 +5,7 @@ var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
 TemplateLibraryManager = function() {
 	var self = this,
 		modal,
+		deleteDialog,
 		errorDialog,
 		layout,
 		templatesCollection;
@@ -14,19 +15,25 @@ TemplateLibraryManager = function() {
 	};
 
 	this.deleteTemplate = function( templateModel ) {
-		layout.showLoadingView();
+		var dialog = self.getDeleteDialog();
 
-		elementor.ajax.send( 'delete_template', {
-			data: {
-				type: templateModel.get( 'type' ),
-				item_id: templateModel.get( 'id' )
-			},
-			success: function() {
-				templatesCollection.remove( templateModel );
+		dialog.onConfirm = function() {
+			layout.showLoadingView();
 
-				self.showTemplates();
-			}
-		} );
+			elementor.ajax.send( 'delete_template', {
+				data: {
+					type: templateModel.get( 'type' ),
+					item_id: templateModel.get( 'id' )
+				},
+				success: function() {
+					templatesCollection.remove( templateModel );
+
+					self.showTemplates();
+				}
+			} );
+		};
+
+		dialog.show();
 	};
 
 	this.importTemplate = function( templateModel ) {
@@ -47,6 +54,18 @@ TemplateLibraryManager = function() {
 				self.showErrorDialog( data.message );
 			}
 		} );
+	};
+
+	this.getDeleteDialog = function() {
+		if ( ! deleteDialog ) {
+			deleteDialog = elementor.dialogsManager.createWidget( 'confirm', {
+				id: 'elementor-template-library-delete-dialog',
+				headerMessage: elementor.translate( 'delete_template' ),
+				message: elementor.translate( 'delete_template_confirm' )
+			} );
+		}
+
+		return deleteDialog;
 	};
 
 	this.getErrorDialog = function() {
@@ -102,8 +121,7 @@ TemplateLibraryManager = function() {
 	this.startModal = function( onModalReady ) {
 		self.getModal().show();
 
-		// Set default templates type to 'local'
-		elementor.channels.templates.reply( 'filter:type', 'remote' );
+		self.setTemplatesType( 'remote' );
 
 		if ( ! layout ) {
 			initLayout();
@@ -116,6 +134,16 @@ TemplateLibraryManager = function() {
 				onModalReady();
 			}
 		} );
+	};
+
+	this.setTemplatesType = function( type, trigger ) {
+		var channel = elementor.channels.templates;
+
+		channel.reply( 'filter:type', type );
+
+		if ( trigger ) {
+			channel.trigger( 'filter:change' );
+		}
 	};
 
 	this.showTemplates = function() {

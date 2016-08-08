@@ -102,14 +102,14 @@ class Admin {
 			        <i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 		        </div>
-		        <div id="elementor-loader-wrapper">
-			        <div id="elementor-loader">
+		        <div class="elementor-loader-wrapper">
+			        <div class="elementor-loader">
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 			        </div>
-			        <div id="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+			        <div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
 		        </div>
 	        </a>
 		</div>

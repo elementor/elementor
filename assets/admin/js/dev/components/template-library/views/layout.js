@@ -1,6 +1,6 @@
 var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
 	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplateLibraryHeaderSettingsView = require( 'elementor-templates/views/parts/header-parts/settings' ),
+	TemplateLibraryHeaderSaveView = require( 'elementor-templates/views/parts/header-parts/save' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
@@ -38,7 +38,7 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplateLibraryHeaderSettingsView() );
+		headerView.tools.show( new TemplateLibraryHeaderSaveView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
 		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},

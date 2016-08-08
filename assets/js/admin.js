@@ -10,7 +10,7 @@
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
 				$switchModeInput: $( '#elementor-switch-mode-input' ),
 				$switchModeButton: $( '#elementor-switch-mode-button' ),
-				$elementorLoader: $( '#elementor-loader' ),
+				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' )
 			};
 		},

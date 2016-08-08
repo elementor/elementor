@@ -836,6 +836,7 @@ var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
 TemplateLibraryManager = function() {
 	var self = this,
 		modal,
+		deleteDialog,
 		errorDialog,
 		layout,
 		templatesCollection;
@@ -845,19 +846,25 @@ TemplateLibraryManager = function() {
 	};
 
 	this.deleteTemplate = function( templateModel ) {
-		layout.showLoadingView();
+		var dialog = self.getDeleteDialog();
 
-		elementor.ajax.send( 'delete_template', {
-			data: {
-				type: templateModel.get( 'type' ),
-				item_id: templateModel.get( 'id' )
-			},
-			success: function() {
-				templatesCollection.remove( templateModel );
+		dialog.onConfirm = function() {
+			layout.showLoadingView();
 
-				self.showTemplates();
-			}
-		} );
+			elementor.ajax.send( 'delete_template', {
+				data: {
+					type: templateModel.get( 'type' ),
+					item_id: templateModel.get( 'id' )
+				},
+				success: function() {
+					templatesCollection.remove( templateModel );
+
+					self.showTemplates();
+				}
+			} );
+		};
+
+		dialog.show();
 	};
 
 	this.importTemplate = function( templateModel ) {
@@ -878,6 +885,18 @@ TemplateLibraryManager = function() {
 				self.showErrorDialog( data.message );
 			}
 		} );
+	};
+
+	this.getDeleteDialog = function() {
+		if ( ! deleteDialog ) {
+			deleteDialog = elementor.dialogsManager.createWidget( 'confirm', {
+				id: 'elementor-template-library-delete-dialog',
+				headerMessage: elementor.translate( 'delete_template' ),
+				message: elementor.translate( 'delete_template_confirm' )
+			} );
+		}
+
+		return deleteDialog;
 	};
 
 	this.getErrorDialog = function() {
@@ -933,8 +952,7 @@ TemplateLibraryManager = function() {
 	this.startModal = function( onModalReady ) {
 		self.getModal().show();
 
-		// Set default templates type to 'local'
-		elementor.channels.templates.reply( 'filter:type', 'remote' );
+		self.setTemplatesType( 'remote' );
 
 		if ( ! layout ) {
 			initLayout();
@@ -947,6 +965,16 @@ TemplateLibraryManager = function() {
 				onModalReady();
 			}
 		} );
+	};
+
+	this.setTemplatesType = function( type, trigger ) {
+		var channel = elementor.channels.templates;
+
+		channel.reply( 'filter:type', type );
+
+		if ( trigger ) {
+			channel.trigger( 'filter:change' );
+		}
 	};
 
 	this.showTemplates = function() {
@@ -985,7 +1013,7 @@ module.exports = TemplateLibraryTemplateModel;
 },{}],12:[function(require,module,exports){
 var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
 	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplateLibraryHeaderSettingsView = require( 'elementor-templates/views/parts/header-parts/settings' ),
+	TemplateLibraryHeaderSaveView = require( 'elementor-templates/views/parts/header-parts/save' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
@@ -1023,7 +1051,7 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplateLibraryHeaderSettingsView() );
+		headerView.tools.show( new TemplateLibraryHeaderSaveView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
 		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
@@ -1061,23 +1089,19 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 module.exports = TemplateLibraryLayoutView;
 
-},{"elementor-templates/views/parts/header":18,"elementor-templates/views/parts/header-parts/back":13,"elementor-templates/views/parts/header-parts/logo":14,"elementor-templates/views/parts/header-parts/menu":15,"elementor-templates/views/parts/header-parts/preview":16,"elementor-templates/views/parts/header-parts/settings":17,"elementor-templates/views/parts/import":19,"elementor-templates/views/parts/loading":20,"elementor-templates/views/parts/preview":21,"elementor-templates/views/parts/save-template":22,"elementor-templates/views/parts/templates":23}],13:[function(require,module,exports){
+},{"elementor-templates/views/parts/header":18,"elementor-templates/views/parts/header-parts/back":13,"elementor-templates/views/parts/header-parts/logo":14,"elementor-templates/views/parts/header-parts/menu":15,"elementor-templates/views/parts/header-parts/preview":16,"elementor-templates/views/parts/header-parts/save":17,"elementor-templates/views/parts/import":19,"elementor-templates/views/parts/loading":20,"elementor-templates/views/parts/preview":21,"elementor-templates/views/parts/save-template":22,"elementor-templates/views/parts/templates":23}],13:[function(require,module,exports){
 var TemplateLibraryHeaderBackView;
 
 TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-back',
 
-	id: 'elementor-template-library-header-preview-back-wrapper',
-
-	ui: {
-		backButton: '#elementor-template-library-header-preview-back'
-	},
+	id: 'elementor-template-library-header-preview-back',
 
 	events: {
-		'click @ui.backButton': 'onBackButtonClick'
+		'click': 'onClick'
 	},
 
-	onBackButtonClick: function() {
+	onClick: function() {
 		elementor.templates.showTemplates();
 	}
 } );
@@ -1090,7 +1114,15 @@ var TemplateLibraryHeaderLogoView;
 TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-logo',
 
-	id: 'elementor-template-library-header-logo'
+	id: 'elementor-template-library-header-logo',
+
+	events: {
+		'click': 'onClick'
+	},
+
+	onClick: function() {
+		elementor.templates.showTemplates();
+	}
 } );
 
 module.exports = TemplateLibraryHeaderLogoView;
@@ -1145,9 +1177,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( Backbone.$( item ) );
 
-		elementor.channels.templates
-			.reply( 'filter:type', item.dataset.templateType )
-			.trigger( 'filter:change' );
+		elementor.templates.setTemplatesType( item.dataset.templateType, true );
 	}
 } );
 
@@ -1177,9 +1207,9 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 module.exports = TemplateLibraryHeaderPreviewView;
 
 },{}],17:[function(require,module,exports){
-var TemplateLibraryHeaderSettingsView;
+var TemplateLibraryHeaderSaveView;
 
-TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderSaveView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-save',
 
 	id: 'elementor-template-library-header-save',
@@ -1187,15 +1217,15 @@ TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
 	className: 'elementor-template-library-header-item',
 
 	events: {
-		'click': 'onSaveButtonClick'
+		'click': 'onClick'
 	},
 
-	onSaveButtonClick: function() {
+	onClick: function() {
 		elementor.templates.getLayout().showSaveTemplateView();
 	}
 } );
 
-module.exports = TemplateLibraryHeaderSettingsView;
+module.exports = TemplateLibraryHeaderSaveView;
 
 },{}],18:[function(require,module,exports){
 var TemplateLibraryHeaderView;
@@ -1303,7 +1333,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-save-template',
 
 	ui: {
-		form: '#elementor-template-library-save-template-form'
+		form: '#elementor-template-library-save-template-form',
+		submitButton: '#elementor-template-library-save-template-submit'
 	},
 
 	events: {
@@ -1334,12 +1365,14 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			kind: saveType
 		} );
 
-		elementor.templates.getLayout().showLoadingView();
+		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		elementor.ajax.send( 'save_template', {
 			data: formData,
 			success: function( data ) {
 				elementor.templates.getTemplatesCollection().add( data );
+
+				elementor.templates.setTemplatesType( 'local' );
 
 				elementor.templates.showTemplates();
 			},

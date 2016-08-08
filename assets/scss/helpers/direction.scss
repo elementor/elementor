@@ -148,3 +148,12 @@
 
 	@return $value-for-left;
 }
+
+@function getInverseDirection() {
+
+	@if ($direction == rtl) {
+		@return ltr;
+	}
+
+	@return rtl;
+}

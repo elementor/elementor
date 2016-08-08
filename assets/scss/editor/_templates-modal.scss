@@ -56,6 +56,10 @@
 
 	> * {
 		float: getStartDirection();
+
+		> * {
+			vertical-align: middle;
+		}
 	}
 }
 
@@ -64,6 +68,7 @@
 	text-transform: uppercase;
 	color: $editor-darkest;
 	font-weight: bold;
+	cursor: pointer;
 
 	i {
 		@include padding-end(10px);
@@ -104,11 +109,14 @@
 
 .elementor-template-library-header-item {
 	position: relative;
-	color: $editor-light;
 	@include border-start(1px solid $editor-background);
 	height: 50px;
 	box-sizing: content-box;
 	cursor: pointer;
+
+	&:not(:hover) {
+		color: $editor-light;
+	}
 
 	> * {
 		position: absolute;
@@ -143,30 +151,33 @@
 	padding: 8px 0;
 }
 
-#elementor-template-library-header-preview-back-wrapper {
-	cursor: pointer;
-}
-
 #elementor-template-library-header-preview-back {
-	width: 100%;
+	@include padding(16.5px, 16.5px, 15px, 0);
+	@include border-end(1px solid $editor-background);
+	cursor: pointer;
+
+	&:not(:hover) {
+		color: $editor-light;
+	}
 
 	i {
 		@include padding-end(10px);
+		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\f053', '\f054' );
+			content: getValueByDirection( '\e908', '\e907' );
 		}
 	}
 }
 
 #elementor-template-library-loading {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
 
-	i {
-		font-size: 30px;
+	.elementor-loading-title {
+		color: $editor-light;
+	}
+
+	.elementor-loader-box {
+		background-color: $editor-lightest;
 	}
 }
 
@@ -282,30 +293,48 @@
 
 	.elementor-template-library-template-name {
 		font-size: 13px;
-		font-weight: bold;
+		font-weight: 500;
 		width: 35%;
 	}
 
 	.elementor-template-library-template-kind {
-		width: 20%;
 		color: $editor-light;
 	}
 
 	.elementor-template-library-template-controls {
+		width: 40%;
+		direction: getInverseDirection();
 
 		> * {
+			direction: $direction;
+		}
+
+		> div {
 			display: inline-block;
-			margin: 0 10px;
+			@include margin-start(15px);
 			cursor: pointer;
+			font-weight: 500;
+
+			&:not(:hover) {
+				color: $editor-light;
+			}
 		}
 	}
 
 	.elementor-template-library-template-control-title {
-		@include margin-start(8px);
+		@include margin-start(6px);
+	}
+
+	.elementor-template-library-template-delete {
+
+		&:hover {
+			color: $editor-warning;
+		}
 	}
 
 	.elementor-template-library-template-insert {
 		padding: 8px 18px;
+		margin: 0 20px;
 	}
 }
 
@@ -332,7 +361,7 @@
 	align-items: center;
 	justify-content: center;
 
-	input {
+	> * {
 		height: 60px;
 		font-size: 18px;
 	}
@@ -346,12 +375,20 @@
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
+
+	&:focus {
+		border: 1px solid $editor-background;
+	}
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	font-weight: 500;
+
+	&:hover {
+		box-shadow: none;
+	}
 }
 
 #elementor-template-library-save-template-footer {

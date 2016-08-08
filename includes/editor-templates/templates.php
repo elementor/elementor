@@ -8,18 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div id="elementor-template-library-header-menu-area"></div>
 	<div id="elementor-template-library-header-items-area">
 		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item" title="<?php _e( 'Close', 'elementor' ); ?>">
-			<i class="fa fa-times"></i>
+			<i class="eicon-close"></i>
 		</div>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-logo">
-	<i class="eicon-elementor-square"></i><?php _e( 'Library', 'elementor' ); ?>
+	<i class="eicon-elementor-square"></i><span><?php _e( 'Library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-save">
-	<i class="fa fa-floppy-o" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
+	<i class="eicon-save" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
@@ -30,19 +30,25 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
 		<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
-	<span id="elementor-template-library-header-preview-back">
-		<i class="fa"></i><?php _e( 'Back To library', 'elementor' ); ?>
-	</span>
+	<i class="eicon-"></i><span><?php _e( 'Back To library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-loading">
-	<i class="fa fa-spin fa-refresh"></i>
+	<div class="elementor-loader-wrapper">
+		<div class="elementor-loader">
+			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-box"></div>
+		</div>
+		<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ) ?></div>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
@@ -53,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<i class="fa fa-search-plus"></i>
 			</div>
 			<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-				<i class="fa fa-download"></i>
+				<i class="eicon-file-download"></i>
 				<?php _e( 'Insert', 'elementor' ); ?>
 			</button>
 		</div>
@@ -68,20 +74,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-template-library-template-name"><%= title %></div>
 	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
 	<div class="elementor-template-library-template-controls">
-		<div class="elementor-template-library-template-preview">
-			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
-		</div>
-		<div class="elementor-template-library-template-delete">
-			<i class="fa fa-trash-o"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Delete', 'elementor' ); ?></span>
-		</div>
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+		</button>
 		<div class="elementor-template-library-template-export">
 			<a href="<%- export_link %>">
 				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
 			</a>
 		</div>
-		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
-		</button>
+		<div class="elementor-template-library-template-delete">
+			<i class="fa fa-trash-o"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Delete', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-preview">
+			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
+		</div>
 	</div>
 </script>
 
@@ -89,8 +95,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div id="elementor-template-library-save-template-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
 	<div id="elementor-template-library-save-template-excerpt"><?php _e( 'Save and reuse your page designs with the Elementor Library', 'elementor' ); ?></div>
 	<form id="elementor-template-library-save-template-form">
-		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>">
-		<input id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success" type="submit" value="<?php _e( 'Save', 'elementor' ); ?>">
+		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>
+		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
+			<span class="elementor-state-icon">
+				<i class="fa fa-spin fa-circle-o-notch "></i>
+			</span>
+			<?php _e( 'Save', 'elementor' ); ?>
+		</button>
 	</form>
 	<div id="elementor-template-library-save-template-footer"><?php _e( 'Learn how to use the Elementor Library in our tutorial section.', 'elementor' ); ?></div>
 </script>
