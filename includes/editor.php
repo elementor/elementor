@@ -380,6 +380,13 @@ class Editor {
 		);
 
 		wp_register_style(
+			'google-font-roboto',
+			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_register_style(
 			'elementor-admin',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
@@ -387,6 +394,7 @@ class Editor {
 				'select2',
 				'elementor-icons',
 				'wp-auth-check',
+				'google-font-roboto',
 			],
 			Plugin::instance()->get_version()
 		);
