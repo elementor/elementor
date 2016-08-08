@@ -36,9 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
-	<span id="elementor-template-library-header-preview-back">
-		<i class="fa"></i><?php _e( 'Back To library', 'elementor' ); ?>
-	</span>
+	<i class="eicon-"></i><span><?php _e( 'Back To library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-loading">

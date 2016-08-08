@@ -143,18 +143,22 @@
 	padding: 8px 0;
 }
 
-#elementor-template-library-header-preview-back-wrapper {
-	cursor: pointer;
-}
-
 #elementor-template-library-header-preview-back {
-	width: 100%;
+	float: getStartDirection();
+	@include padding(16.5px, 16.5px, 15px, 0);
+	@include border-end(1px solid $editor-background);
+	cursor: pointer;
+
+	&:not(:hover) {
+		color: $editor-light;
+	}
 
 	i {
 		@include padding-end(10px);
+		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\f053', '\f054' );
+			content: getValueByDirection( '\e908', '\e907' );
 		}
 	}
 }
