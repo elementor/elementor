@@ -346,6 +346,8 @@ class Editor {
 					'save_your_template' => __( 'Save Your {0} As Template', 'elementor' ),
 					'page' => __( 'Page', 'elementor' ),
 					'section' => __( 'Section', 'elementor' ),
+					'delete_template' => __( 'Delete Template', 'elementor' ),
+					'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
 				],
 			]
 		);
