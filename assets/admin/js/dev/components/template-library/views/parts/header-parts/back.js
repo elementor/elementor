@@ -6,10 +6,10 @@ TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-preview-back',
 
 	events: {
-		'click': 'onBackButtonClick'
+		'click': 'onClick'
 	},
 
-	onBackButtonClick: function() {
+	onClick: function() {
 		elementor.templates.showTemplates();
 	}
 } );
