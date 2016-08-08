@@ -127,9 +127,11 @@ class Type_Local extends Type_Base {
 		$post = get_post( $item_id );
 
 		$user = get_user_by( 'id', $post->post_author );
+
 		return [
 			'id' => $post->ID,
 			'type' => $this->get_id(),
+			'kind' => get_post_meta( $post->ID, self::KIND_META_KEY, true ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
