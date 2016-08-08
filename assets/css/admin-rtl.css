@@ -191,18 +191,18 @@ body.elementor-editor-inactive #elementor-editor {
   text-decoration: none; }
   #elementor-go-to-edit-page-link.elementor-animate #elementor-editor-button {
     display: none; }
-  #elementor-go-to-edit-page-link:not(.elementor-animate) #elementor-loader-wrapper {
+  #elementor-go-to-edit-page-link:not(.elementor-animate) .elementor-loader-wrapper {
     display: none; }
 
-#elementor-loader-wrapper {
+.elementor-loader-wrapper {
   margin: auto;
   width: 80px; }
 
-#elementor-loader {
+.elementor-loader {
   height: 80px;
   position: relative; }
 
-#elementor-loading-title {
+.elementor-loading-title {
   color: #a4afb7;
   text-transform: uppercase;
   margin-top: 15px;

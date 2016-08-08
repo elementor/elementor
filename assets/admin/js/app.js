@@ -1333,7 +1333,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-save-template',
 
 	ui: {
-		form: '#elementor-template-library-save-template-form'
+		form: '#elementor-template-library-save-template-form',
+		submitButton: '#elementor-template-library-save-template-submit'
 	},
 
 	events: {
@@ -1364,7 +1365,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			kind: saveType
 		} );
 
-		elementor.templates.getLayout().showLoadingView();
+		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		elementor.ajax.send( 'save_template', {
 			data: formData,
