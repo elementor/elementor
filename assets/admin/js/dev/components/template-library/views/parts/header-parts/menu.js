@@ -47,9 +47,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( Backbone.$( item ) );
 
-		elementor.channels.templates
-			.reply( 'filter:type', item.dataset.templateType )
-			.trigger( 'filter:change' );
+		elementor.templates.setTemplatesType( item.dataset.templateType, true );
 	}
 } );
 
