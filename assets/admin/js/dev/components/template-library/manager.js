@@ -14,14 +14,19 @@ TemplateLibraryManager = function() {
 	};
 
 	this.deleteTemplate = function( templateModel ) {
+		layout.showLoadingView();
+
 		elementor.ajax.send( 'delete_template', {
 			data: {
 				type: templateModel.get( 'type' ),
 				item_id: templateModel.get( 'id' )
+			},
+			success: function() {
+				templatesCollection.remove( templateModel );
+
+				self.showTemplates();
 			}
 		} );
-
-		templatesCollection.remove( templateModel );
 	};
 
 	this.importTemplate = function( templateModel ) {
