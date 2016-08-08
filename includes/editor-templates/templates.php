@@ -18,16 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="eicon-elementor-square"></i><?php _e( 'Library', 'elementor' ); ?>
 </script>
 
-<script type="text/template" id="tmpl-elementor-template-library-header-settings">
-	<i class="fa fa-cog" title="<?php _e( 'Settings', 'elementor' ); ?>"></i>
-	<ul id="elementor-template-library-header-settings-menu">
-		<li class="elementor-template-library-header-settings-menu-item">
-			<a href="<?php echo admin_url( 'edit.php?post_type=' . TemplateLibrary\Type_Local::CPT );  ?>" target="_blank"><i class="fa fa-external-link"></i> <?php _e( 'Library Manager', 'elementor' ); ?></a>
-		</li>
-		<li id="elementor-template-library-header-settings-save" class="elementor-template-library-header-settings-menu-item">
-			<a><i class="fa fa-floppy-o"></i> <?php _e( 'Save Template', 'elementor' ); ?></a>
-		</li>
-	</ul>
+<script type="text/template" id="tmpl-elementor-template-library-header-save">
+	<i class="fa fa-floppy-o" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
