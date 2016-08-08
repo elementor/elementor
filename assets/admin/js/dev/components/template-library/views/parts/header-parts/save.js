@@ -1,6 +1,6 @@
-var TemplateLibraryHeaderSettingsView;
+var TemplateLibraryHeaderSaveView;
 
-TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
+TemplateLibraryHeaderSaveView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-save',
 
 	id: 'elementor-template-library-header-save',
@@ -8,12 +8,12 @@ TemplateLibraryHeaderSettingsView = Marionette.ItemView.extend( {
 	className: 'elementor-template-library-header-item',
 
 	events: {
-		'click': 'onSaveButtonClick'
+		'click': 'onClick'
 	},
 
-	onSaveButtonClick: function() {
+	onClick: function() {
 		elementor.templates.getLayout().showSaveTemplateView();
 	}
 } );
 
-module.exports = TemplateLibraryHeaderSettingsView;
+module.exports = TemplateLibraryHeaderSaveView;
