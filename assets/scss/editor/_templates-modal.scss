@@ -55,7 +55,10 @@
 	@include padding-start(15px);
 
 	> * {
-		float: getStartDirection();
+
+		> * {
+			vertical-align: middle;
+		}
 	}
 }
 
@@ -104,11 +107,14 @@
 
 .elementor-template-library-header-item {
 	position: relative;
-	color: $editor-light;
 	@include border-start(1px solid $editor-background);
 	height: 50px;
 	box-sizing: content-box;
 	cursor: pointer;
+
+	&:not(:hover) {
+		color: $editor-light;
+	}
 
 	> * {
 		position: absolute;
@@ -286,30 +292,48 @@
 
 	.elementor-template-library-template-name {
 		font-size: 13px;
-		font-weight: bold;
+		font-weight: 500;
 		width: 35%;
 	}
 
 	.elementor-template-library-template-kind {
-		width: 20%;
 		color: $editor-light;
 	}
 
 	.elementor-template-library-template-controls {
+		width: 40%;
+		direction: getInverseDirection();
 
 		> * {
+			direction: $direction;
+		}
+
+		> div {
 			display: inline-block;
-			margin: 0 10px;
+			@include margin-start(15px);
 			cursor: pointer;
+			font-weight: 500;
+
+			&:not(:hover) {
+				color: $editor-light;
+			}
 		}
 	}
 
 	.elementor-template-library-template-control-title {
-		@include margin-start(8px);
+		@include margin-start(6px);
+	}
+
+	.elementor-template-library-template-delete {
+
+		&:hover {
+			color: $editor-warning;
+		}
 	}
 
 	.elementor-template-library-template-insert {
 		padding: 8px 18px;
+		margin: 0 20px;
 	}
 }
 

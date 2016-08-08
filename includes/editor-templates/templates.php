@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-logo">
-	<i class="eicon-elementor-square"></i><?php _e( 'Library', 'elementor' ); ?>
+	<i class="eicon-elementor-square"></i><span><?php _e( 'Library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-save">
@@ -66,20 +66,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-template-library-template-name"><%= title %></div>
 	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
 	<div class="elementor-template-library-template-controls">
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+		</button>
+		<div class="elementor-template-library-template-export">
+			<a href="<%- export_link %>">
+				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
+			</a>
+		</div>
 		<div class="elementor-template-library-template-preview">
 			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-template-library-template-delete">
 			<i class="fa fa-trash-o"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Delete', 'elementor' ); ?></span>
 		</div>
-		<div class="elementor-template-library-template-export">
-			<a href="<%- export_link %>">
-				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
-			</a>
-		</div>
-		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
-		</button>
 	</div>
 </script>
 
