@@ -44,6 +44,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			success: function( data ) {
 				elementor.templates.getTemplatesCollection().add( data );
 
+				elementor.templates.setTemplatesType( 'local' );
+
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
