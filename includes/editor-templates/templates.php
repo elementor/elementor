@@ -40,7 +40,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-loading">
-	<i class="fa fa-spin fa-refresh"></i>
+	<div class="elementor-loader-wrapper">
+		<div class="elementor-loader">
+			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-box"></div>
+		</div>
+		<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ) ?></div>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">

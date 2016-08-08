@@ -171,13 +171,13 @@
 }
 
 #elementor-template-library-loading {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
 
-	i {
-		font-size: 30px;
+	.elementor-loading-title {
+		color: $editor-light;
+	}
+
+	.elementor-loader-box {
+		background-color: $editor-lightest;
 	}
 }
 
