@@ -55,6 +55,7 @@
 	@include padding-start(15px);
 
 	> * {
+		float: getStartDirection();
 
 		> * {
 			vertical-align: middle;
@@ -151,7 +152,6 @@
 }
 
 #elementor-template-library-header-preview-back {
-	float: getStartDirection();
 	@include padding(16.5px, 16.5px, 15px, 0);
 	@include border-end(1px solid $editor-background);
 	cursor: pointer;
