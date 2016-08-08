@@ -111,7 +111,7 @@ class Type_Local extends Type_Base {
 			return $post_id;
 		}
 
-		Plugin::instance()->db->save_builder( $post_id, json_decode( stripslashes( html_entity_decode( $template_data['data'] ) ), true ) );
+		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
 
 		update_post_meta( $post_id, self::KIND_META_KEY, $template_data['kind'] );
 
