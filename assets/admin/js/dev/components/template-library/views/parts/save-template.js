@@ -25,7 +25,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		var formData = this.ui.form.elementorSerializeObject(),
 			elementsData = elementor.helpers.cloneObject( elementor.elements.toJSON() ),
 			sectionID = this.getOption( 'sectionID' ),
-			saveType = sectionID ? 'section' : 'full';
+			saveType = sectionID ? 'section' : 'page';
 
 		if ( 'section' === saveType ) {
 			elementsData = [ _.findWhere( elementsData, { id: sectionID } ) ];

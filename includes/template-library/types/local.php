@@ -17,7 +17,7 @@ class Type_Local extends Type_Base {
 
 	public static function get_template_kinds() {
 		return [
-			'full',
+			'page',
 			'section',
 		];
 	}
