@@ -375,12 +375,20 @@
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
+
+	&:focus {
+		border: 1px solid $editor-background;
+	}
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	font-weight: 500;
+
+	&:hover {
+		box-shadow: none;
+	}
 }
 
 #elementor-template-library-save-template-footer {
