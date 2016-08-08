@@ -137,6 +137,16 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
+	this.setTemplatesType = function( type, trigger ) {
+		var channel = elementor.channels.templates;
+
+		channel.reply( 'filter:type', type );
+
+		if ( trigger ) {
+			channel.trigger( 'filter:change' );
+		}
+	};
+
 	this.showTemplates = function() {
 		layout.showTemplatesView( templatesCollection );
 	};
