@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
-	<div id="elementor-template-library-menu-pre-made-templates" class="elementor-template-library-menu-item" data-template-type="remote"><?php _e( 'Templates', 'elementor' ); ?></div>
+	<div id="elementor-template-library-menu-pre-made-templates" class="elementor-template-library-menu-item" data-template-type="remote"><?php _e( 'Predesigned Templates', 'elementor' ); ?></div>
 	<div id="elementor-template-library-menu-my-templates" class="elementor-template-library-menu-item" data-template-type="local"><?php _e( 'My Templates', 'elementor' ); ?></div>
 </script>
 
