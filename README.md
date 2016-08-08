@@ -160,7 +160,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ### 0.6.5 - 08.08.2016 ###
 * Tweak! - Added border and box shadow controls for Image widget
 * Tweak! - In new page don't create empty section
-* Tweak! - Embed Roboto font from Google Fonts at editor mode
+* Tweak! - Embed Roboto font from Google Fonts in editor mode
 * Fixed! - Reset structure or remove column after resize
 
 ### 0.6.4 - 04.08.2016 ###
