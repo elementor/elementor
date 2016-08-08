@@ -38,8 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
 		<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i>
-			<?php _e( 'Insert', 'elementor' ); ?>
+			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 	</div>
 </script>
@@ -89,8 +88,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</a>
 		</div>
 		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i>
-			<?php _e( 'Insert', 'elementor' ); ?>
+			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 	</div>
 </script>

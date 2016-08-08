@@ -31,6 +31,10 @@
 
 	.elementor-button-success {
 		text-transform: uppercase;
+
+		.elementor-button-title {
+			@include padding-start(8px);
+		}
 	}
 }
 
