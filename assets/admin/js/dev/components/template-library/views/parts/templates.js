@@ -1,8 +1,15 @@
-var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/template' ),
+var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
+	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
-	childView: TemplateLibraryTemplateView,
+	getChildView: function( childModel ) {
+		if ( 'remote' === childModel.get( 'type' ) ) {
+			return TemplateLibraryTemplateRemoteView;
+		}
+
+		return TemplateLibraryTemplateLocalView;
+	},
 
 	id: 'elementor-template-library-templates-container',
 
@@ -40,6 +47,10 @@ TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 
 	filter: function( childModel ) {
 		return this.filterByName( childModel ) && this.filterByType( childModel );
+	},
+
+	onRenderCollection: function() {
+		this.$el.attr( 'data-template-type', elementor.channels.templates.request( 'filter:type' ) );
 	}
 } );
 

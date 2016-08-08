@@ -18,28 +18,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="eicon-elementor-square"></i><?php _e( 'Library', 'elementor' ); ?>
 </script>
 
-<script type="text/template" id="tmpl-elementor-template-library-header-settings">
-	<i class="fa fa-cog" title="<?php _e( 'Settings', 'elementor' ); ?>"></i>
-	<ul id="elementor-template-library-header-settings-menu">
-		<li class="elementor-template-library-header-settings-menu-item">
-			<a href="<?php echo admin_url( 'edit.php?post_type=' . TemplateLibrary\Type_Local::CPT );  ?>" target="_blank"><i class="fa fa-external-link"></i> <?php _e( 'Library Manager', 'elementor' ); ?></a>
-		</li>
-		<li id="elementor-template-library-header-settings-save" class="elementor-template-library-header-settings-menu-item">
-			<a><i class="fa fa-floppy-o"></i> <?php _e( 'Save Template', 'elementor' ); ?></a>
-		</li>
-	</ul>
+<script type="text/template" id="tmpl-elementor-template-library-header-save">
+	<i class="fa fa-floppy-o" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
-	<div id="elementor-template-library-menu-pre-made-templates" class="elementor-template-library-menu-item" data-template-type="remote"><?php _e( 'Templates', 'elementor' ); ?></div>
+	<div id="elementor-template-library-menu-pre-made-templates" class="elementor-template-library-menu-item" data-template-type="remote"><?php _e( 'Predesigned Templates', 'elementor' ); ?></div>
 	<div id="elementor-template-library-menu-my-templates" class="elementor-template-library-menu-item" data-template-type="local"><?php _e( 'My Templates', 'elementor' ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
 		<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="fa fa-download"></i>
-			<?php _e( 'Insert', 'elementor' ); ?>
+			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 	</div>
 </script>
@@ -54,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<i class="fa fa-spin fa-refresh"></i>
 </script>
 
-<script type="text/template" id="tmpl-elementor-template-library-template">
+<script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
 		<div class="elementor-template-library-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>
 		<div class="elementor-template-library-template-controls">
@@ -68,6 +59,30 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 	<div class="elementor-template-library-template-name"><%= title %></div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-template-local">
+	<div class="elementor-template-library-template-icon">
+		<i class="fa fa-<%- 'page' === kind ? 'file-text-o' : 'columns' %>"></i>
+	</div>
+	<div class="elementor-template-library-template-name"><%= title %></div>
+	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
+	<div class="elementor-template-library-template-controls">
+		<div class="elementor-template-library-template-preview">
+			<i class="fa fa-pencil"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-delete">
+			<i class="fa fa-trash-o"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Delete', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-export">
+			<a href="<%- export_link %>">
+				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
+			</a>
+		</div>
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+			<i class="fa fa-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+		</button>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
