@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div id="elementor-template-library-header-menu-area"></div>
 	<div id="elementor-template-library-header-items-area">
 		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item" title="<?php _e( 'Close', 'elementor' ); ?>">
-			<i class="eicon-close"></i>
+			<i class="eicon-close" title="<?php _e( 'Close', 'elementor' ); ?>"></i>
 		</div>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-save">
-	<i class="eicon-save" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
+	<i class="eicon-save" title="<?php _e( 'Save Template', 'elementor' ); ?>"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
@@ -105,7 +105,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php _e( 'What is Library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -118,12 +118,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
 	<div id="elementor-template-library-templates-empty-icon">
-		<i class="eicon-pojome"></i>
+		<i class="eicon-nerd"></i>
 	</div>
 	<div class="elementor-template-library-blank-title"><?php _e( 'Haven’t Saved Templates Yet?', 'elementor' ); ?></div>
 	<div class="elementor-template-library-blank-excerpt"><?php _e( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ); ?></div>
 	<div class="elementor-template-library-blank-footer">
 		<?php _e( 'What is Library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
 	</div>
 </script>
