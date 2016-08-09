@@ -40,9 +40,9 @@ class Import_Images {
 	}
 
 	public function import( $attachment ) {
-		$save_image = $this->_return_saved_image( $attachment );
-		if ( $save_image )
-			return $save_image;
+		$saved_image = $this->_return_saved_image( $attachment );
+		if ( $saved_image )
+			return $saved_image;
 
 		/**
 		 * @var $wp_filesystem \WP_Filesystem_Base
@@ -52,10 +52,16 @@ class Import_Images {
 		// Extract the file name and extension from the url
 		$filename = basename( $attachment['url'] );
 
+		$file_content = $wp_filesystem->get_contents( $attachment['url'] );
+
+		if ( ! $file_content ) {
+			return false;
+		}
+
 		$upload = wp_upload_bits(
 			$filename,
 			null,
-			$wp_filesystem->get_contents( $attachment['url'] )
+			$file_content
 		);
 
 		$post = [
