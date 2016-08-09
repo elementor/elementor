@@ -4,7 +4,7 @@ TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		name: '',
 		title: '',
-		type: '',
+		source: '',
 		kind: '',
 		author: '',
 		thumbnail: '',

@@ -2,7 +2,7 @@ var TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: function() {
-		return 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'type' );
+		return 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
 	},
 
 	ui: function() {

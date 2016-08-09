@@ -10,7 +10,7 @@ TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
 	},
 
 	onClick: function() {
-		elementor.templates.setTemplatesType( 'remote' );
+		elementor.templates.setTemplatesSource( 'remote' );
 		elementor.templates.showTemplates();
 	}
 } );

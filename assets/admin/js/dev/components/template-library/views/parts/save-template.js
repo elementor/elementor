@@ -34,7 +34,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		_.extend( formData, {
 			data: JSON.stringify( elementsData ),
-			type: 'local',
+			source: 'local',
 			kind: saveType
 		} );
 
@@ -45,7 +45,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			success: function( data ) {
 				elementor.templates.getTemplatesCollection().add( data );
 
-				elementor.templates.setTemplatesType( 'local' );
+				elementor.templates.setTemplatesSource( 'local' );
 
 				elementor.templates.showTemplates();
 			},

@@ -36,10 +36,10 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentType = elementor.channels.templates.request( 'filter:type' ),
-			$typeItem = this.ui.menuItems.filter( '[data-template-type="' + currentType + '"]' );
+		var currentSource = elementor.channels.templates.request( 'filter:source' ),
+			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
-		this.activateMenuItem( $typeItem );
+		this.activateMenuItem( $sourceItem );
 	},
 
 	onMenuItemClick: function( event ) {
@@ -47,7 +47,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( Backbone.$( item ) );
 
-		elementor.templates.setTemplatesType( item.dataset.templateType, true );
+		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
 	}
 } );
 
