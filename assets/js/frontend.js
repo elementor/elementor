@@ -164,8 +164,8 @@
 	// Accordion Widget
 	elementorBindUI.addBindEvent( 'accordion', function() {
 		var $this = $( this ),
-			defaultActiveSection = $this.find( '.accordion' ).data( 'active-section' ),
-			$accordionTitles = $this.find( '.accordion-title' ),
+			defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
+			$accordionTitles = $this.find( '.elementor-accordion-title' ),
 			$activeTitle = $accordionTitles.filter( '.active' );
 
 		var activateSection = function( sectionIndex ) {

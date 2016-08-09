@@ -217,7 +217,6 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'section_style_caption',
 			[
