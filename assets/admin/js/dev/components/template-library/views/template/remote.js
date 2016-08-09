@@ -2,7 +2,11 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 	TemplateLibraryTemplateRemoteView;
 
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
-	template: '#tmpl-elementor-template-library-template-remote'
+	template: '#tmpl-elementor-template-library-template-remote',
+
+	onPreviewButtonClick: function() {
+		elementor.templates.getLayout().showPreviewView( this.model );
+	}
 } );
 
 module.exports = TemplateLibraryTemplateRemoteView;
