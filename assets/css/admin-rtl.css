@@ -209,6 +209,21 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 11px;
   letter-spacing: 5px; }
 
+#elementor-library-sync-button:before {
+  font: normal 20px/.5 dashicons;
+  speak: none;
+  display: inline-block;
+  padding: 0;
+  top: 8px;
+  left: -4px;
+  position: relative;
+  vertical-align: top;
+  content: "\f463"; }
+#elementor-library-sync-button.loading:before {
+  animation: rotation 1s infinite linear; }
+#elementor-library-sync-button.success:before {
+  content: "\f147"; }
+
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {

@@ -65,6 +65,21 @@
 					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' )
 				} );
 			} );
+
+			$( '#elementor-library-sync-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success' ).addClass( 'loading' );
+
+				$.post( ajaxurl, {
+					action: 'elementor_reset_library',
+					_nonce: $thisButton.data( 'nonce' )
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} );
+			} );
 		},
 
 		init: function() {
