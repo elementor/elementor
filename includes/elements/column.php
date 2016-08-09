@@ -380,7 +380,7 @@ class Element_Column extends Element_Base {
 					</li>
 					<li class="elementor-editor-element-setting elementor-editor-element-save">
 						<a href="#" title="<?php _e( 'Save', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Save Section', 'elementor' ); ?></span>
+							<span class="elementor-screen-only"><?php _e( 'Save to Library', 'elementor' ); ?></span>
 							<i class="fa fa-floppy-o"></i>
 						</a>
 					</li>
