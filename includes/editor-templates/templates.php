@@ -93,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div id="elementor-template-library-save-template-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
-	<div id="elementor-template-library-save-template-excerpt"><?php _e( 'Save and reuse your designs with the Elementor Library', 'elementor' ); ?></div>
+	<div id="elementor-template-library-save-template-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
 	<form id="elementor-template-library-save-template-form">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
@@ -103,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<?php _e( 'Save', 'elementor' ); ?>
 		</button>
 	</form>
-	<div id="elementor-template-library-save-template-footer"><?php _e( 'Learn how to use the Elementor Library in our tutorial section.', 'elementor' ); ?></div>
+	<div id="elementor-template-library-save-template-footer"><?php _e( 'What is Library? Read our tutorial on using Library templates.', 'elementor' ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-import">

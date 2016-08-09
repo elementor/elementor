@@ -343,7 +343,7 @@ class Editor {
 					'learn_more' => __( 'Learn More', 'elementor' ),
 					'an_error_occurred' => __( 'An error occurred', 'elementor' ),
 					'templates_request_error' => __( 'The following error occurred when processing the request:', 'elementor' ),
-					'save_your_template' => __( 'Save Your {0}', 'elementor' ),
+					'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
 					'page' => __( 'Page', 'elementor' ),
 					'section' => __( 'Section', 'elementor' ),
 					'delete_template' => __( 'Delete Template', 'elementor' ),
