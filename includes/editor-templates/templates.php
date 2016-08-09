@@ -92,8 +92,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
-	<div id="elementor-template-library-save-template-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
-	<div id="elementor-template-library-save-template-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
+	<div class="elementor-template-library-blank-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
 	<form id="elementor-template-library-save-template-form">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
