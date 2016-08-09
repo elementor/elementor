@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div id="elementor-template-library-header-menu-area"></div>
 	<div id="elementor-template-library-header-items-area">
 		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item" title="<?php _e( 'Close', 'elementor' ); ?>">
-			<i class="eicon-close"></i>
+			<i class="eicon-close" title="<?php _e( 'Close', 'elementor' ); ?>"></i>
 		</div>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-save">
-	<i class="eicon-save" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
+	<i class="eicon-save" title="<?php _e( 'Save Template', 'elementor' ); ?>"></i>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">

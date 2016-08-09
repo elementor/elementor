@@ -1685,6 +1685,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 15px; }
 #elementor-template-library-modal a, #elementor-template-library-modal a:hover {
   color: inherit; }
+#elementor-template-library-modal a.elementor-template-library-blank-footer-link {
+  transition: color .5s; }
+  #elementor-template-library-modal a.elementor-template-library-blank-footer-link:hover {
+    color: #9b0a46; }
 #elementor-template-library-modal .elementor-button-success, #elementor-template-library-modal #elementor-panel #elementor-panel-footer-save.elementor-save-active .elementor-button, #elementor-panel #elementor-panel-footer-save.elementor-save-active #elementor-template-library-modal .elementor-button {
   text-transform: uppercase; }
   #elementor-template-library-modal .elementor-button-success .elementor-button-title, #elementor-template-library-modal #elementor-panel #elementor-panel-footer-save.elementor-save-active .elementor-button .elementor-button-title, #elementor-panel #elementor-panel-footer-save.elementor-save-active #elementor-template-library-modal .elementor-button .elementor-button-title {
@@ -1791,10 +1795,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-templates-container[data-template-source="local"] {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     margin: 15px; }
-  #elementor-template-library-templates-container .elementor-template-library-blank-footer-link {
-    transition: color .5s; }
-    #elementor-template-library-templates-container .elementor-template-library-blank-footer-link:hover {
-      color: #9b0a46; }
 
 .elementor-template-library-template-remote {
   float: right;

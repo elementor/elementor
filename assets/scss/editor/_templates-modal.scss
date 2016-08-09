@@ -25,8 +25,17 @@
 
 	a {
 
-		&, &:hover {
+		&,
+		&:hover {
 			color: inherit;
+		}
+	}
+
+	a.elementor-template-library-blank-footer-link {
+		transition: color .5s;
+
+		&:hover {
+			color: $editor-accent;
 		}
 	}
 
@@ -190,14 +199,6 @@
 	&[data-template-source="local"] {
 		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 		margin: 15px;
-	}
-
-	.elementor-template-library-blank-footer-link {
-		transition: color .5s;
-
-		&:hover {
-			color: $editor-accent;
-		}
 	}
 }
 
