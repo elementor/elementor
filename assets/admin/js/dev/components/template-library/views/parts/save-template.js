@@ -35,7 +35,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		_.extend( formData, {
 			data: JSON.stringify( elementsData ),
 			source: 'local',
-			kind: saveType
+			type: saveType
 		} );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
