@@ -114,6 +114,7 @@
 	height: 50px;
 	box-sizing: content-box;
 	cursor: pointer;
+	transition: color .5s;
 
 	&:not(:hover) {
 		color: $editor-light;
@@ -156,6 +157,7 @@
 	@include padding(16.5px, 16.5px, 15px, 0);
 	@include border-end(1px solid $editor-background);
 	cursor: pointer;
+	transition: color .5s;
 
 	&:not(:hover) {
 		color: $editor-light;
@@ -213,7 +215,7 @@
 		&:not(:hover) {
 
 			.elementor-template-library-template-controls {
-				display: none;
+				opacity: 0;
 			}
 		}
 	}
@@ -231,6 +233,7 @@
 		width: 100%;
 		height: 100%;
 		background-color: rgba(0,0,0,.65);
+		transition: opacity .5s;
 	}
 
 	.elementor-template-library-template-insert {
@@ -241,6 +244,7 @@
 	.elementor-template-library-template-preview {
 		position: relative;
 		height: 180px;
+		cursor: pointer;
 
 		i {
 			font-size: 20px;
@@ -249,7 +253,6 @@
 			top: 50%;
 			left: 50%;
 			transform: translateX(-50%) translateY(-50%);
-			cursor: pointer;
 		}
 	}
 
@@ -276,6 +279,7 @@
 	width: 100%;
 	border-bottom: 1px solid $editor-lightest;
 	height: 50px;
+	transition: background-color .3s linear;
 
 	&:hover {
 		background-color: lighten($editor-background-light, 3%);
@@ -322,6 +326,7 @@
 			@include margin-start(15px);
 			cursor: pointer;
 			font-weight: 500;
+			transition: color .5s;
 
 			&:not(:hover) {
 				color: $editor-light;
@@ -407,13 +412,12 @@
 	color: $editor-light;
 	font-size: 13px;
 	font-style: italic;
-	font-weight: 500;
 }
 
 #elementor-template-library-templates-empty-icon {
 	font-size: 96px;
 	margin-top: 40px;
-	color: $editor-light;
+	color: $editor-lightest;
 }
 
 #elementor-template-library-error-dialog {
