@@ -170,6 +170,10 @@ body {
     .elementor-button-success:not([disabled]):active, #elementor-panel #elementor-panel-footer-save.elementor-save-active .elementor-button:not([disabled]):active {
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1); }
 
+label {
+  font-weight: bold;
+  line-height: 2.5; }
+
 input, select, textarea {
   border-radius: 3px;
   font-size: 12px;

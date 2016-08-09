@@ -10,9 +10,14 @@ class Widgets_Manager {
 	 */
 	protected $_register_widgets = null;
 
+	protected $widgets_folder_path = null;
+
 	private function _init_widgets() {
+
+		$this->widgets_folder_path = apply_filters( 'elementor/widgets/widgets_folder_path', ELEMENTOR_PATH . 'includes/widgets/' );
+
 		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
-		include( ELEMENTOR_PATH . 'includes/widgets/base.php' );
+		include( $this->widgets_folder_path . 'base.php' );
 
 		$build_widgets_filename = [
 			'heading',
@@ -50,16 +55,29 @@ class Widgets_Manager {
         *
         * @param array $build_widgets_filename.
         */
-        $build_widgets_filename = apply_filters( 'elementor_default_widgets_filename', $build_widgets_filename );
+        $build_widgets_filename = apply_filters( 'elementor/widgets/widget_filenames', $build_widgets_filename );
 
 		$this->_register_widgets = [];
+
 		foreach ( $build_widgets_filename as $widget_filename ) {
-			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
+
+			$widget_filename_path = $this->widgets_folder_path . $widget_filename . '.php';
+
+			$widget_filename_path = apply_filters( "elementor/widgets/{$widget_filename}_file_path", $widget_filename_path, $widget_filename );
+
+			if ( ! file_exists( $widget_filename_path ) ) {
+				continue;
+			}
+
+			include( $widget_filename_path );
 
 			$class_name = ucwords( $widget_filename );
 			$class_name = str_replace( '-', '_', $class_name );
+			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
 
-			$this->register_widget( __NAMESPACE__ . '\Widget_' . $class_name );
+			$class_name = apply_filters( "elementor/widgets/{$widget_filename}_class_name", $class_name, $widget_filename );
+
+			$this->register_widget( $class_name );
 		}
 
 		$this->_register_wp_widgets();
@@ -70,7 +88,11 @@ class Widgets_Manager {
 	private function _register_wp_widgets() {
 		global $wp_widget_factory;
 
-		include( ELEMENTOR_PATH . 'includes/widgets/wordpress.php' );
+		$widget_filename_path = $this->widgets_folder_path . 'wordpress.php';
+
+		$widget_filename_path = apply_filters( "elementor/widgets/wordpress_file_path", $widget_filename_path );
+
+		include( $widget_filename_path);
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 			// Skip Pojo widgets
@@ -91,7 +113,7 @@ class Widgets_Manager {
             *
             * @param array $allowed_widgets.
             */
-            $allowed_widgets = apply_filters( 'elementor_default_allowed_widgets', $allowed_widgets );
+            $allowed_widgets = apply_filters( 'elementor/widgets/allowed_widgets', $allowed_widgets );
 
 			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $allowed_widgets ) ) {
 				continue;

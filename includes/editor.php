@@ -333,6 +333,8 @@ class Editor {
 		);
 
 		Plugin::instance()->controls_manager->enqueue_control_scripts();
+
+		do_action( 'elementor_editor_scripts', Plugin::instance() );
 	}
 
 	public function enqueue_styles() {
@@ -374,6 +376,8 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-admin' );
+
+		do_action( 'elementor_editor_styles', Plugin::instance() );
 	}
 
 	protected function _get_wp_editor_config() {
