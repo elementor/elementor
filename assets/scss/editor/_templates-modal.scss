@@ -207,18 +207,18 @@
 	padding: 0 15px;
 	margin-top: 15px;
 
+	&:not(:hover) {
+
+		.elementor-template-library-template-controls {
+			opacity: 0;
+		}
+	}
+
 	.elementor-template-library-template-body {
 		height: 250px;
 		border: 3px solid #fff;
 		position: relative;
 		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
-
-		&:not(:hover) {
-
-			.elementor-template-library-template-controls {
-				opacity: 0;
-			}
-		}
 	}
 
 	.elementor-template-library-template-screenshot {
