@@ -116,6 +116,8 @@ class Api {
 	}
 
 	public function ajax_reset_api_data() {
+		check_ajax_referer( 'elementor_reset_library', '_nonce' );
+
 		self::_get_info_data( true );
 
 		wp_send_json_success();
