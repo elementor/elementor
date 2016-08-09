@@ -188,6 +188,13 @@
 		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 		margin: 15px;
 	}
+
+	.elementor-template-library-blank-footer-link {
+
+		&:hover {
+			color: $editor-accent;
+		}
+	}
 }
 
 .elementor-template-library-template-remote {

@@ -103,7 +103,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<?php _e( 'Save', 'elementor' ); ?>
 		</button>
 	</form>
-	<div id="elementor-template-library-save-template-footer"><?php _e( 'What is Library? Read our tutorial on using Library templates.', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-footer">
+		<?php _e( 'What is Library?', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-import">
