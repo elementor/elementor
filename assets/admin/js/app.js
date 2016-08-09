@@ -853,7 +853,7 @@ TemplateLibraryManager = function() {
 
 			elementor.ajax.send( 'delete_template', {
 				data: {
-					type: templateModel.get( 'type' ),
+					source: templateModel.get( 'source' ),
 					item_id: templateModel.get( 'id' )
 				},
 				success: function() {
@@ -872,7 +872,7 @@ TemplateLibraryManager = function() {
 
 		elementor.ajax.send( 'get_template_content', {
 			data: {
-				type: templateModel.get( 'type' ),
+				source: templateModel.get( 'source' ),
 				post_id: elementor.config.post_id,
 				item_id: templateModel.get( 'id' )
 			},
@@ -952,7 +952,7 @@ TemplateLibraryManager = function() {
 	this.startModal = function( onModalReady ) {
 		self.getModal().show();
 
-		self.setTemplatesType( 'remote' );
+		self.setTemplatesSource( 'remote' );
 
 		if ( ! layout ) {
 			initLayout();
@@ -967,10 +967,10 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.setTemplatesType = function( type, trigger ) {
+	this.setTemplatesSource = function( source, trigger ) {
 		var channel = elementor.channels.templates;
 
-		channel.reply( 'filter:type', type );
+		channel.reply( 'filter:source', source );
 
 		if ( trigger ) {
 			channel.trigger( 'filter:change' );
@@ -997,8 +997,8 @@ TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		name: '',
 		title: '',
+		source: '',
 		type: '',
-		kind: '',
 		author: '',
 		thumbnail: '',
 		url: '',
@@ -1121,7 +1121,7 @@ TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
 	},
 
 	onClick: function() {
-		elementor.templates.setTemplatesType( 'remote' );
+		elementor.templates.setTemplatesSource( 'remote' );
 		elementor.templates.showTemplates();
 	}
 } );
@@ -1167,10 +1167,10 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentType = elementor.channels.templates.request( 'filter:type' ),
-			$typeItem = this.ui.menuItems.filter( '[data-template-type="' + currentType + '"]' );
+		var currentSource = elementor.channels.templates.request( 'filter:source' ),
+			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
-		this.activateMenuItem( $typeItem );
+		this.activateMenuItem( $sourceItem );
 	},
 
 	onMenuItemClick: function( event ) {
@@ -1178,7 +1178,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( Backbone.$( item ) );
 
-		elementor.templates.setTemplatesType( item.dataset.templateType, true );
+		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
 	}
 } );
 
@@ -1362,8 +1362,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		_.extend( formData, {
 			data: JSON.stringify( elementsData ),
-			type: 'local',
-			kind: saveType
+			source: 'local',
+			type: saveType
 		} );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
@@ -1373,7 +1373,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			success: function( data ) {
 				elementor.templates.getTemplatesCollection().add( data );
 
-				elementor.templates.setTemplatesType( 'local' );
+				elementor.templates.setTemplatesSource( 'local' );
 
 				elementor.templates.showTemplates();
 			},
@@ -1409,7 +1409,7 @@ TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 	emptyView: TemplateLibraryTemplatesEmptyView,
 
 	getChildView: function( childModel ) {
-		if ( 'remote' === childModel.get( 'type' ) ) {
+		if ( 'remote' === childModel.get( 'source' ) ) {
 			return TemplateLibraryTemplateRemoteView;
 		}
 
@@ -1438,24 +1438,24 @@ TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 		} );
 	},
 
-	filterByType: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:type' );
+	filterBySource: function( model ) {
+		var filterValue = elementor.channels.templates.request( 'filter:source' );
 
 		if ( ! filterValue ) {
 			return true;
 		}
 
-		return filterValue === model.get( 'type' );
+		return filterValue === model.get( 'source' );
 	},
 
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterByType( childModel );
+		return this.filterByName( childModel ) && this.filterBySource( childModel );
 	},
 
 	onRenderCollection: function() {
 		var isEmpty = this.children.isEmpty();
 
-		this.$el.attr( 'data-template-type', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:type' ) );
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
 	}
 } );
 
@@ -1466,7 +1466,7 @@ var TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: function() {
-		return 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'type' );
+		return 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
 	},
 
 	ui: function() {

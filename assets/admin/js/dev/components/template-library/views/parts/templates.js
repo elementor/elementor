@@ -9,7 +9,7 @@ TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 	emptyView: TemplateLibraryTemplatesEmptyView,
 
 	getChildView: function( childModel ) {
-		if ( 'remote' === childModel.get( 'type' ) ) {
+		if ( 'remote' === childModel.get( 'source' ) ) {
 			return TemplateLibraryTemplateRemoteView;
 		}
 
@@ -38,24 +38,24 @@ TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 		} );
 	},
 
-	filterByType: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:type' );
+	filterBySource: function( model ) {
+		var filterValue = elementor.channels.templates.request( 'filter:source' );
 
 		if ( ! filterValue ) {
 			return true;
 		}
 
-		return filterValue === model.get( 'type' );
+		return filterValue === model.get( 'source' );
 	},
 
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterByType( childModel );
+		return this.filterByName( childModel ) && this.filterBySource( childModel );
 	},
 
 	onRenderCollection: function() {
 		var isEmpty = this.children.isEmpty();
 
-		this.$el.attr( 'data-template-type', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:type' ) );
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
 	}
 } );
 

@@ -34,8 +34,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		_.extend( formData, {
 			data: JSON.stringify( elementsData ),
-			type: 'local',
-			kind: saveType
+			source: 'local',
+			type: saveType
 		} );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
@@ -45,7 +45,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			success: function( data ) {
 				elementor.templates.getTemplatesCollection().add( data );
 
-				elementor.templates.setTemplatesType( 'local' );
+				elementor.templates.setTemplatesSource( 'local' );
 
 				elementor.templates.showTemplates();
 			},

@@ -9,13 +9,13 @@ use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Type_Local extends Type_Base {
+class Source_Local extends Source_Base {
 
 	const CPT = 'elementor_library';
 
-	const KIND_META_KEY = '_elementor_template_kind';
+	const TYPE_META_KEY = '_elementor_template_type';
 
-	public static function get_template_kinds() {
+	public static function get_template_types() {
 		return [
 			'page',
 			'section',
@@ -60,7 +60,7 @@ class Type_Local extends Type_Base {
 
 		register_post_type(
 			self::CPT,
-			apply_filters( 'elementor/template_library/types/local/register_post_type_args', $args )
+			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
 		);
 	}
 
@@ -95,8 +95,8 @@ class Type_Local extends Type_Base {
 	}
 
 	public function save_item( $template_data ) {
-		if ( ! empty( $template_data['kind'] ) && ! in_array( $template_data['kind'], self::get_template_kinds() ) ) {
-			return new \WP_Error( 'save_error', 'The specified template kind doesn\'t exists' );
+		if ( ! empty( $template_data['type'] ) && ! in_array( $template_data['type'], self::get_template_types() ) ) {
+			return new \WP_Error( 'save_error', 'The specified template type doesn\'t exists' );
 		}
 
 		$post_id = wp_insert_post(
@@ -113,7 +113,7 @@ class Type_Local extends Type_Base {
 
 		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
 
-		update_post_meta( $post_id, self::KIND_META_KEY, $template_data['kind'] );
+		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
 
 		return $post_id;
 	}
@@ -130,8 +130,8 @@ class Type_Local extends Type_Base {
 
 		return [
 			'id' => $post->ID,
-			'type' => $this->get_id(),
-			'kind' => get_post_meta( $post->ID, self::KIND_META_KEY, true ),
+			'source' => $this->get_id(),
+			'type' => get_post_meta( $post->ID, self::TYPE_META_KEY, true ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
@@ -170,7 +170,7 @@ class Type_Local extends Type_Base {
 		$export_data = [
 			'version' => DB::DB_VERSION,
 			'title' => get_the_title( $item_id ),
-			'kind' => get_post_meta( $item_id, self::KIND_META_KEY, true ),
+			'type' => get_post_meta( $item_id, self::TYPE_META_KEY, true ),
 			'data' => $template_data,
 		];
 
@@ -255,7 +255,7 @@ class Type_Local extends Type_Base {
 		$item_id = $this->save_item( [
 			'data' => $content_data,
 			'title' => $content['title'],
-			'kind' => $content['kind'],
+			'type' => $content['type'],
 		] );
 
 		if ( is_wp_error( $item_id ) )
@@ -313,7 +313,7 @@ class Type_Local extends Type_Base {
 		return add_query_arg(
 			[
 				'action' => 'elementor_export_template',
-				'type' => $this->get_id(),
+				'source' => $this->get_id(),
 				'item_id' => $item_id,
 			],
 			admin_url( 'admin-ajax.php' )

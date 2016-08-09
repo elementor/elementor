@@ -22,7 +22,7 @@ TemplateLibraryManager = function() {
 
 			elementor.ajax.send( 'delete_template', {
 				data: {
-					type: templateModel.get( 'type' ),
+					source: templateModel.get( 'source' ),
 					item_id: templateModel.get( 'id' )
 				},
 				success: function() {
@@ -41,7 +41,7 @@ TemplateLibraryManager = function() {
 
 		elementor.ajax.send( 'get_template_content', {
 			data: {
-				type: templateModel.get( 'type' ),
+				source: templateModel.get( 'source' ),
 				post_id: elementor.config.post_id,
 				item_id: templateModel.get( 'id' )
 			},
@@ -121,7 +121,7 @@ TemplateLibraryManager = function() {
 	this.startModal = function( onModalReady ) {
 		self.getModal().show();
 
-		self.setTemplatesType( 'remote' );
+		self.setTemplatesSource( 'remote' );
 
 		if ( ! layout ) {
 			initLayout();
@@ -136,10 +136,10 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.setTemplatesType = function( type, trigger ) {
+	this.setTemplatesSource = function( source, trigger ) {
 		var channel = elementor.channels.templates;
 
-		channel.reply( 'filter:type', type );
+		channel.reply( 'filter:source', source );
 
 		if ( trigger ) {
 			channel.trigger( 'filter:change' );

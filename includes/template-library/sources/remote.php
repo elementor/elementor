@@ -8,7 +8,7 @@ use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Type_Remote extends Type_Base {
+class Source_Remote extends Source_Base {
 
 	public function get_id() {
 		return 'remote';
@@ -40,7 +40,7 @@ class Type_Remote extends Type_Base {
 	public function get_item( $template_data ) {
 		return [
 			'id' => $template_data['id'],
-			'type' => $this->get_id(),
+			'source' => $this->get_id(),
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
 			'date' => date( get_option( 'date_format' ), $template_data['date'] ),
