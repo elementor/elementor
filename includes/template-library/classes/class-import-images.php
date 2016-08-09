@@ -45,7 +45,7 @@ class Import_Images {
 			return $saved_image;
 
 		/**
-		 * @var \WP_Filesystem_Direct $wp_filesystem
+		 * @var $wp_filesystem \WP_Filesystem_Base
 		 */
 		global $wp_filesystem;
 
