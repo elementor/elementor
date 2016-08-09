@@ -116,10 +116,8 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		self.ui.addSectionArea.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			onDragging: function( side ) {
-				if ( self.ui.addSectionArea.data( 'side' ) !== side ) {
-					self.ui.addSectionArea.attr( 'data-side', side );
-				}
+			onDragEnter: function( side ) {
+				self.ui.addSectionArea.attr( 'data-side', side );
 			},
 			onDragLeave: function() {
 				self.ui.addSectionArea.removeAttr( 'data-side' );
