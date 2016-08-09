@@ -40,9 +40,9 @@ class Import_Images {
 	}
 
 	public function import( $attachment ) {
-		$save_image = $this->_return_saved_image( $attachment );
-		if ( $save_image )
-			return $save_image;
+		$saved_image = $this->_return_saved_image( $attachment );
+		if ( $saved_image )
+			return $saved_image;
 
 		/**
 		 * @var $wp_filesystem \WP_Filesystem_Base
