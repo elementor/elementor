@@ -114,4 +114,18 @@ class Api {
 
 		return true;
 	}
+
+	public function ajax_reset_api_data() {
+		check_ajax_referer( 'elementor_reset_library', '_nonce' );
+
+		self::_get_info_data( true );
+
+		wp_send_json_success();
+	}
+
+	public static function init() {
+		add_action( 'wp_ajax_elementor_reset_library', [ __CLASS__, 'ajax_reset_api_data' ] );
+	}
 }
+
+Api::init();
