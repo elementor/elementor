@@ -80,6 +80,7 @@
 		var self = this,
 			settings = {},
 			elementsCache = {},
+			dragEntrances = 0,
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -109,11 +110,11 @@
 		};
 
 		var attachEvents = function() {
-			elementsCache.$element.on( 'dragover', settings.items, onDragOver );
-
-			elementsCache.$element.on( 'drop', settings.items, onDrop );
-
-			elementsCache.$element.on( 'dragleave drop', settings.items, onDragLeave );
+			elementsCache.$element
+				.on( 'dragenter', settings.items, onDragEnter )
+				.on( 'dragover', settings.items, onDragOver )
+				.on( 'drop', settings.items, onDrop )
+				.on( 'dragleave drop', settings.items, onDragLeave );
 		};
 
 		var checkHorizontal = function( offsetX, elementWidth ) {
@@ -237,6 +238,20 @@
 			return true;
 		};
 
+		var onDragEnter = function( event ) {
+			dragEntrances++;
+
+			var side = getSide( this, event );
+
+			if ( ! isDroppingAllowed( this, side, event ) || 1 !== dragEntrances ) {
+				return;
+			}
+
+			if ( $.isFunction( settings.onDragEnter ) ) {
+				settings.onDragEnter.call( this, side, event, self );
+			}
+		};
+
 		var onDragOver = function( event ) {
 			var side = getSide( this, event );
 
@@ -266,17 +281,18 @@
 		};
 
 		var onDragLeave = function( event ) {
-			if ( $.isFunction( settings.onDragLeave ) ) {
+			dragEntrances--;
+
+			if ( ! dragEntrances && $.isFunction( settings.onDragLeave ) ) {
 				settings.onDragLeave.call( this, event, self );
 			}
 		};
 
 		this.destroy = function() {
-			elementsCache.$element.off( 'dragover', settings.items, onDragOver );
-
-			elementsCache.$element.off( 'drop', settings.items, onDrop );
-
-			elementsCache.$element.off( 'dragleave drop', settings.items, onDragLeave );
+			elementsCache.$element
+				.off( 'dragover', settings.items, onDragOver )
+				.off( 'drop', settings.items, onDrop )
+				.off( 'dragleave drop', settings.items, onDragLeave );
 		};
 
 		init();
