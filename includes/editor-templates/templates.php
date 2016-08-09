@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
 	<div class="elementor-template-library-template-icon">
-		<i class="fa fa-<%- 'page' === kind ? 'file-text-o' : 'columns' %>"></i>
+		<i class="fa fa-<%- 'section' === kind ? 'columns' : 'file-text-o' %>"></i>
 	</div>
 	<div class="elementor-template-library-template-name"><%= title %></div>
 	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
