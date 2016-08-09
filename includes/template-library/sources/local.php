@@ -9,7 +9,7 @@ use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Type_Local extends Type_Base {
+class Source_Local extends Source_Base {
 
 	const CPT = 'elementor_library';
 
@@ -60,7 +60,7 @@ class Type_Local extends Type_Base {
 
 		register_post_type(
 			self::CPT,
-			apply_filters( 'elementor/template_library/types/local/register_post_type_args', $args )
+			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
 		);
 	}
 
@@ -130,7 +130,7 @@ class Type_Local extends Type_Base {
 
 		return [
 			'id' => $post->ID,
-			'type' => $this->get_id(),
+			'source' => $this->get_id(),
 			'kind' => get_post_meta( $post->ID, self::KIND_META_KEY, true ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
@@ -313,7 +313,7 @@ class Type_Local extends Type_Base {
 		return add_query_arg(
 			[
 				'action' => 'elementor_export_template',
-				'type' => $this->get_id(),
+				'source' => $this->get_id(),
 				'item_id' => $item_id,
 			],
 			admin_url( 'admin-ajax.php' )

@@ -3,7 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-abstract class Type_Base {
+abstract class Source_Base {
 
 	abstract public function get_id();
 	abstract public function get_title();

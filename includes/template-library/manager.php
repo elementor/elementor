@@ -6,164 +6,164 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Manager {
 
 	/**
-	 * @var Type_Base[]
+	 * @var Source_Base[]
 	 */
-	protected $_registered_types = [];
+	protected $_registered_sources = [];
 
 	public function init() {
 		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/types/base.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
 
-		$types = [
+		$sources = [
 			'local',
 			'remote',
 		];
 
-		foreach ( $types as $types_filename ) {
-			include( ELEMENTOR_PATH . 'includes/template-library/types/' . $types_filename . '.php' );
+		foreach ( $sources as $source_filename ) {
+			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
 
-			$class_name = ucwords( $types_filename );
+			$class_name = ucwords( $source_filename );
 			$class_name = str_replace( '-', '_', $class_name );
 
-			$this->register_type( __NAMESPACE__ . '\Type_' . $class_name );
+			$this->register_source( __NAMESPACE__ . '\Source_' . $class_name );
 		}
 	}
 
-	public function register_type( $type_class, $args = [] ) {
-		if ( ! class_exists( $type_class ) ) {
-			return new \WP_Error( 'type_class_name_not_exists' );
+	public function register_source( $source_class, $args = [] ) {
+		if ( ! class_exists( $source_class ) ) {
+			return new \WP_Error( 'source_class_name_not_exists' );
 		}
 
-		$type_instance = new $type_class( $args );
+		$source_instance = new $source_class( $args );
 
-		if ( ! $type_instance instanceof Type_Base ) {
-			return new \WP_Error( 'wrong_instance_type' );
+		if ( ! $source_instance instanceof Source_Base ) {
+			return new \WP_Error( 'wrong_instance_source' );
 		}
-		$this->_registered_types[ $type_instance->get_id() ] = $type_instance;
+		$this->_registered_sources[ $source_instance->get_id() ] = $source_instance;
 
 		return true;
 	}
 
-	public function unregister_type( $id ) {
-		if ( ! isset( $this->_registered_types[ $id ] ) ) {
+	public function unregister_source( $id ) {
+		if ( ! isset( $this->_registered_sources[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_registered_types[ $id ] );
+		unset( $this->_registered_sources[ $id ] );
 		return true;
 	}
 
-	public function get_registered_types() {
-		return $this->_registered_types;
+	public function get_registered_sources() {
+		return $this->_registered_sources;
 	}
 
-	public function get_type( $id ) {
-		$types = $this->get_registered_types();
+	public function get_source( $id ) {
+		$sources = $this->get_registered_sources();
 
-		if ( ! isset( $types[ $id ] ) ) {
+		if ( ! isset( $sources[ $id ] ) ) {
 			return false;
 		}
-		return $types[ $id ];
+		return $sources[ $id ];
 	}
 
 	public function get_templates() {
 		$templates = [];
-		foreach ( $this->get_registered_types() as $type ) {
-			$templates = array_merge( $templates, $type->get_items() );
+		foreach ( $this->get_registered_sources() as $source ) {
+			$templates = array_merge( $templates, $source->get_items() );
 		}
 		return $templates;
 	}
 
 	public function save_template() {
-		if ( empty( $_POST['type'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
+		if ( empty( $_POST['source'] ) ) {
+			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
-		$type = $this->get_type( $_POST['type'] );
+		$source = $this->get_source( $_POST['source'] );
 
-		if ( ! $type ) {
-			return new \WP_Error( 'template_error', 'Template type not found.' );
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
 		$_POST['data'] = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		$item_id = $type->save_item( $_POST );
+		$item_id = $source->save_item( $_POST );
 
 		if ( is_wp_error( $item_id ) ) {
 			return $item_id;
 		}
 
-		return $type->get_item( $item_id );
+		return $source->get_item( $item_id );
 	}
 
 	public function get_template_content() {
-		if ( empty( $_POST['type'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
+		if ( empty( $_POST['source'] ) ) {
+			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
 		if ( empty( $_POST['item_id'] ) || empty( $_POST['post_id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
+			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
 		}
 
 		// Override the global $post for the render
 		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
 
-		$type = $this->get_type( $_POST['type'] );
+		$source = $this->get_source( $_POST['source'] );
 
-		if ( ! $type ) {
-			return new \WP_Error( 'template_error', 'Template type not found.' );
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $type->get_content( $_POST['item_id'] );
+		return $source->get_content( $_POST['item_id'] );
 	}
 
 	public function delete_template() {
-		if ( empty( $_POST['type'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
+		if ( empty( $_POST['source'] ) ) {
+			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
 		if ( empty( $_POST['item_id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
+			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
 		}
 
-		$type = $this->get_type( $_POST['type'] );
+		$source = $this->get_source( $_POST['source'] );
 
-		if ( ! $type ) {
-			return new \WP_Error( 'template_error', 'Template type not found.' );
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$type->delete_template( $_POST['item_id'] );
+		$source->delete_template( $_POST['item_id'] );
 
 		return true;
 	}
 
 	public function export_template() {
 		// TODO: Add nonce for security
-		if ( empty( $_REQUEST['type'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type` was not specified.' );
+		if ( empty( $_REQUEST['source'] ) ) {
+			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
 		if ( empty( $_REQUEST['item_id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `type_id` was not specified.' );
+			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
 		}
 
-		$type = $this->get_type( $_REQUEST['type'] );
+		$source = $this->get_source( $_REQUEST['source'] );
 
-		if ( ! $type ) {
-			return new \WP_Error( 'template_error', 'Template type not found.' );
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $type->export_template( $_REQUEST['item_id'] );
+		return $source->export_template( $_REQUEST['item_id'] );
 	}
 
 	public function import_template() {
-		/** @var Type_Local $type */
-		$type = $this->get_type( 'local' );
+		/** @var Source_Local $source */
+		$source = $this->get_source( 'local' );
 
-		return $type->import_template();
+		return $source->import_template();
 	}
 
 	public function on_import_template_success() {
-		wp_redirect( admin_url( 'edit.php?post_type=' . Type_Local::CPT ) );
+		wp_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
 	}
 
 	public function on_import_template_error( \WP_Error $error ) {
