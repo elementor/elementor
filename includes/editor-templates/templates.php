@@ -112,3 +112,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<input type="submit">
 	</form>
 </script>
+
+<script type="text/template" id="tmpl-elementor-template-library-templates-empty">
+	<div id="elementor-template-library-templates-empty-icon">
+		<i class="eicon-pojome"></i>
+	</div>
+	<div class="elementor-template-library-blank-title"><?php _e( 'Haven’t Saved Templates Yet?', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-excerpt"><?php _e( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-footer">
+		<?php _e( 'What is Library?', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+	</div>
+</script>
