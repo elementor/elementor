@@ -225,6 +225,17 @@ class Type_Local extends Type_Base {
 					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
 						continue;
 
+					$imported_image = $import_images->import( $element['settings'][ $control['name'] ] );
+
+					if ( ! $imported_image ) {
+						$element['settings'][ $control['name'] ] = [
+							'id' => null,
+							'url' => Utils::get_placeholder_image_src(),
+						];
+
+						continue;
+					}
+
 					$element['settings'][ $control['name'] ] = $import_images->import( $element['settings'][ $control['name'] ] );
 				}
 
