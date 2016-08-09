@@ -1820,15 +1820,15 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 150px; }
   .elementor-template-library-template-remote .elementor-template-library-template-preview {
     position: relative;
-    height: 180px; }
+    height: 180px;
+    cursor: pointer; }
     .elementor-template-library-template-remote .elementor-template-library-template-preview i {
       font-size: 20px;
       color: #d5dadf;
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translateX(-50%) translateY(-50%);
-      cursor: pointer; }
+      transform: translateX(-50%) translateY(-50%); }
   .elementor-template-library-template-remote .elementor-template-library-template-insert {
     padding: 11px; }
     .elementor-template-library-template-remote .elementor-template-library-template-insert i {

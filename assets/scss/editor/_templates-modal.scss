@@ -241,6 +241,7 @@
 	.elementor-template-library-template-preview {
 		position: relative;
 		height: 180px;
+		cursor: pointer;
 
 		i {
 			font-size: 20px;
@@ -249,7 +250,6 @@
 			top: 50%;
 			left: 50%;
 			transform: translateX(-50%) translateY(-50%);
-			cursor: pointer;
 		}
 	}
 
