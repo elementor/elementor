@@ -69,10 +69,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
 	<div class="elementor-template-library-template-icon">
-		<i class="fa fa-<%- 'section' === kind ? 'columns' : 'file-text-o' %>"></i>
+		<i class="fa fa-<%- 'section' === type ? 'columns' : 'file-text-o' %>"></i>
 	</div>
 	<div class="elementor-template-library-template-name"><%= title %></div>
-	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
+	<div class="elementor-template-library-template-type"><%= elementor.translate( type ) %></div>
 	<div class="elementor-template-library-template-controls">
 		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
 			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
