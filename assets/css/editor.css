@@ -1791,8 +1791,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-templates-container[data-template-source="local"] {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     margin: 15px; }
-  #elementor-template-library-templates-container .elementor-template-library-blank-footer-link:hover {
-    color: #9b0a46; }
+  #elementor-template-library-templates-container .elementor-template-library-blank-footer-link {
+    transition: color .5s; }
+    #elementor-template-library-templates-container .elementor-template-library-blank-footer-link:hover {
+      color: #9b0a46; }
 
 .elementor-template-library-template-remote {
   float: left;
@@ -1816,7 +1818,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.65);
+    background-color: rgba(0, 0, 0, 0.5);
     transition: opacity .5s; }
   .elementor-template-library-template-remote .elementor-template-library-template-insert {
     font-size: 11px;

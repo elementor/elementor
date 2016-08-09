@@ -193,6 +193,7 @@
 	}
 
 	.elementor-template-library-blank-footer-link {
+		transition: color .5s;
 
 		&:hover {
 			color: $editor-accent;
@@ -232,7 +233,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0,0,0,.65);
+		background-color: rgba(0,0,0,.5);
 		transition: opacity .5s;
 	}
 
