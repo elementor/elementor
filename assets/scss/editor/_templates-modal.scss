@@ -9,6 +9,7 @@
 		padding: 0;
 		background-color: #fff;
 		box-shadow: $panel-bottom-shadow;
+		position: relative; // Show the shadow above the scrolled list
 	}
 
 	.dialog-buttons-wrapper {
@@ -188,6 +189,13 @@
 		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 		margin: 15px;
 	}
+
+	.elementor-template-library-blank-footer-link {
+
+		&:hover {
+			color: $editor-accent;
+		}
+	}
 }
 
 .elementor-template-library-template-remote {
@@ -343,12 +351,12 @@
 	height: 99%;
 }
 
-#elementor-template-library-save-template-title {
+.elementor-template-library-blank-title {
 	font-size: 30px;
 	margin-top: 55px;
 }
 
-#elementor-template-library-save-template-excerpt {
+.elementor-template-library-blank-excerpt {
 	font-size: 18px;
 	color: $editor-light;
 	margin-top: 20px;
@@ -391,7 +399,7 @@
 	}
 }
 
-#elementor-template-library-save-template-footer {
+.elementor-template-library-blank-footer {
 	position: absolute;
 	bottom: 90px;
 	left: 50%;
@@ -400,6 +408,12 @@
 	font-size: 13px;
 	font-style: italic;
 	font-weight: 500;
+}
+
+#elementor-template-library-templates-empty-icon {
+	font-size: 96px;
+	margin-top: 40px;
+	color: $editor-light;
 }
 
 #elementor-template-library-error-dialog {

@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
 	<div class="elementor-template-library-template-icon">
-		<i class="fa fa-<%- 'page' === kind ? 'file-text-o' : 'columns' %>"></i>
+		<i class="fa fa-<%- 'section' === kind ? 'columns' : 'file-text-o' %>"></i>
 	</div>
 	<div class="elementor-template-library-template-name"><%= title %></div>
 	<div class="elementor-template-library-template-kind"><%= elementor.translate( kind ) %></div>
@@ -92,8 +92,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
-	<div id="elementor-template-library-save-template-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
-	<div id="elementor-template-library-save-template-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
+	<div class="elementor-template-library-blank-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
 	<form id="elementor-template-library-save-template-form">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
@@ -103,7 +103,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<?php _e( 'Save', 'elementor' ); ?>
 		</button>
 	</form>
-	<div id="elementor-template-library-save-template-footer"><?php _e( 'What is Library? Read our tutorial on using Library templates.', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-footer">
+		<?php _e( 'What is Library?', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-import">
@@ -111,4 +114,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<input type="file" name="file" />
 		<input type="submit">
 	</form>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-templates-empty">
+	<div id="elementor-template-library-templates-empty-icon">
+		<i class="eicon-pojome"></i>
+	</div>
+	<div class="elementor-template-library-blank-title"><?php _e( 'Haven’t Saved Templates Yet?', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-excerpt"><?php _e( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-footer">
+		<?php _e( 'What is Library?', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+	</div>
 </script>

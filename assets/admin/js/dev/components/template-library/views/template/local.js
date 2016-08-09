@@ -18,6 +18,10 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	onDeleteButtonClick: function() {
 		elementor.templates.deleteTemplate( this.model );
+	},
+
+	onPreviewButtonClick: function() {
+		open( this.model.get( 'url' ), '_blank' );
 	}
 } );
 

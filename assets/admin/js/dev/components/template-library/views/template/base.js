@@ -21,10 +21,6 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 
 	onInsertButtonClick: function() {
 		elementor.templates.importTemplate( this.model );
-	},
-
-	onPreviewButtonClick: function() {
-		elementor.templates.getLayout().showPreviewView( this.model );
 	}
 } );
 
