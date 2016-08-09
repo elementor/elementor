@@ -52,10 +52,16 @@ class Import_Images {
 		// Extract the file name and extension from the url
 		$filename = basename( $attachment['url'] );
 
+		$file_content = $wp_filesystem->get_contents( $attachment['url'] );
+
+		if ( ! $file_content ) {
+			return false;
+		}
+
 		$upload = wp_upload_bits(
 			$filename,
 			null,
-			$wp_filesystem->get_contents( $attachment['url'] )
+			$file_content
 		);
 
 		$post = [
