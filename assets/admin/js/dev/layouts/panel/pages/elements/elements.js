@@ -102,10 +102,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.clearSearchInput();
 	},
 
-	onChildviewDragStart: function( childView ) {
-		elementor.channels.panelElements.reply( 'element:selected', childView );
-	},
-
 	onChildviewChildrenRender: function() {
 		this.updateElementsScrollbar();
 	},
