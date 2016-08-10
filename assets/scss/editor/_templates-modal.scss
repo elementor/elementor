@@ -25,8 +25,17 @@
 
 	a {
 
-		&, &:hover {
+		&,
+		&:hover {
 			color: inherit;
+		}
+	}
+
+	a.elementor-template-library-blank-footer-link {
+		transition: color .5s;
+
+		&:hover {
+			color: $editor-accent;
 		}
 	}
 
@@ -191,13 +200,6 @@
 		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 		margin: 15px;
 	}
-
-	.elementor-template-library-blank-footer-link {
-
-		&:hover {
-			color: $editor-accent;
-		}
-	}
 }
 
 .elementor-template-library-template-remote {
@@ -206,18 +208,18 @@
 	padding: 0 15px;
 	margin-top: 15px;
 
+	&:not(:hover) {
+
+		.elementor-template-library-template-controls {
+			opacity: 0;
+		}
+	}
+
 	.elementor-template-library-template-body {
 		height: 250px;
 		border: 3px solid #fff;
 		position: relative;
 		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
-
-		&:not(:hover) {
-
-			.elementor-template-library-template-controls {
-				opacity: 0;
-			}
-		}
 	}
 
 	.elementor-template-library-template-screenshot {
@@ -232,7 +234,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0,0,0,.65);
+		background-color: rgba(0,0,0,.5);
 		transition: opacity .5s;
 	}
 

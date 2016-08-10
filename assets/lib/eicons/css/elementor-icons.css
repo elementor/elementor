@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?1.5");
-  src: url("../fonts/eicons.eot?1.5#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.5") format("woff2"), url("../fonts/eicons.woff?1.5") format("woff"), url("../fonts/eicons.ttf?1.5") format("truetype"), url("../fonts/eicons.svg?1.5#eicon") format("svg");
+  src: url("../fonts/eicons.eot?1.6");
+  src: url("../fonts/eicons.eot?1.6#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.6") format("woff2"), url("../fonts/eicons.woff?1.6") format("woff"), url("../fonts/eicons.ttf?1.6") format("truetype"), url("../fonts/eicons.svg?1.6#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -355,5 +355,11 @@
 
 .eicon-zoom-in:before {
   content: '\e912'; }
+
+.eicon-shortcode:before {
+  content: '\e913'; }
+
+.eicon-nerd:before {
+  content: '\e914'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */
