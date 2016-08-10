@@ -5531,8 +5531,9 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
-		// Handle iframe droppable targets
-		this.listenTo( elementor.panelElements, 'element:drag:start', this.onPanelElementDragStart )
+		this
+			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
+			.listenTo( elementor.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
 	},
 
@@ -5606,6 +5607,10 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		} );
 
 		_.defer( _.bind( self.fixBlankPageOffset, this ) );
+	},
+
+	onCollectionChanged: function() {
+		elementor.setFlagEditorChange( true );
 	},
 
 	onPresetSelected: function( event ) {
