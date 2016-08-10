@@ -1,14 +1,16 @@
 var TemplateLibraryPreviewView;
 
 TemplateLibraryPreviewView = Marionette.ItemView.extend( {
-	tagName: 'iframe',
+	template: '#tmpl-elementor-template-library-preview',
 
 	id: 'elementor-template-library-preview',
 
-	template: false,
+	ui: {
+		iframe: '> iframe'
+	},
 
 	onRender: function() {
-		this.$el.attr( 'src', this.getOption( 'url' ) );
+		this.ui.iframe.attr( 'src', this.getOption( 'url' ) );
 	}
 } );
 

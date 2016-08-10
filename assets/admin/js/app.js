@@ -849,8 +849,6 @@ TemplateLibraryManager = function() {
 		var dialog = self.getDeleteDialog();
 
 		dialog.onConfirm = function() {
-			layout.showLoadingView();
-
 			elementor.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
@@ -858,8 +856,6 @@ TemplateLibraryManager = function() {
 				},
 				success: function() {
 					templatesCollection.remove( templateModel );
-
-					self.showTemplates();
 				}
 			} );
 		};
@@ -1312,14 +1308,16 @@ module.exports = TemplateLibraryLoadingView;
 var TemplateLibraryPreviewView;
 
 TemplateLibraryPreviewView = Marionette.ItemView.extend( {
-	tagName: 'iframe',
+	template: '#tmpl-elementor-template-library-preview',
 
 	id: 'elementor-template-library-preview',
 
-	template: false,
+	ui: {
+		iframe: '> iframe'
+	},
 
 	onRender: function() {
-		this.$el.attr( 'src', this.getOption( 'url' ) );
+		this.ui.iframe.attr( 'src', this.getOption( 'url' ) );
 	}
 } );
 
@@ -6292,7 +6290,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},
-
 	events: {
 		'click @ui.addSectionButton': 'onAddSectionButtonClick',
 		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
