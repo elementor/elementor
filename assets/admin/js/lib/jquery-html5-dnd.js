@@ -300,6 +300,7 @@
 
 		this.destroy = function() {
 			elementsCache.$element
+				.off( 'dragenter', settings.items, onDragEnter )
 				.off( 'dragover', settings.items, onDragOver )
 				.off( 'drop', settings.items, onDrop )
 				.off( 'dragleave drop', settings.items, onDragLeave );
