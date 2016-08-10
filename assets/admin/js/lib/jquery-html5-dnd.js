@@ -97,6 +97,7 @@
 				axis: [ 'vertical', 'horizontal' ],
 				groups: null,
 				isDroppingAllowed: null,
+				onDragEnter: null,
 				onDragging: null,
 				onDropping: null,
 				onDragLeave: null
