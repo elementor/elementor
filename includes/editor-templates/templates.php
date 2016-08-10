@@ -127,3 +127,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/"><?php _e( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-template-library-preview">
+	<iframe></iframe>
+</script>

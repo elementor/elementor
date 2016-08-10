@@ -352,8 +352,14 @@
 }
 
 #elementor-template-library-preview {
-	width: 100%;
-	height: 99%;
+	height: 100%;
+	overflow: hidden;
+
+	iframe {
+		width: 1440px;
+		height: 150%;
+		transform: scale(0.666) translateX(-25%) translateY(-25%);
+	}
 }
 
 .elementor-template-library-blank-title {
