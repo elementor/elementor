@@ -16,6 +16,9 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 					.trigger( 'element:drag:start' );
 			},
 
+			onDragEnd: function() {
+				elementor.panelElements.trigger( 'element:drag:end' );
+			},
 
 			groups: [ 'elementor-element' ]
 		} );
