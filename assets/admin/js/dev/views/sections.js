@@ -57,6 +57,9 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
+		// Handle iframe droppable targets
+		this.listenTo( elementor.panelElements, 'element:drag:start', this.onPanelElementDragStart )
+			.listenTo( elementor.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
 	},
 
 	addChildModel: function( model, options ) {
@@ -152,6 +155,48 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 
 		newSection.setStructure( selectedStructure );
 		newSection.redefineLayout();
+	},
+
+	onPanelElementDragStart: function() {
+		var $iframes = this.$el.find( 'iframe' );
+
+		if ( ! $iframes.length ) {
+			return;
+		}
+
+		$iframes.each( function() {
+			// Get the inline style only!
+			var currentPointerEvents = this.style.pointerEvents;
+
+			if ( 'none' === currentPointerEvents ) {
+				return;
+			}
+
+			Backbone.$( this )
+				.data( 'backup-pointer-events', currentPointerEvents )
+				.css( 'pointer-events', 'none' );
+		} );
+	},
+
+	onPanelElementDragEnd: function() {
+		var $iframes = this.$el.find( 'iframe' );
+
+		if ( ! $iframes.length ) {
+			return;
+		}
+
+		$iframes.each( function() {
+			var $this = Backbone.$( this ),
+				backupPointerEvents = $this.data( 'backup-pointer-events' );
+
+			if ( undefined === backupPointerEvents ) {
+				return;
+			}
+
+			$this
+				.removeData( 'backup-pointer-events' )
+				.css( 'pointer-events', backupPointerEvents );
+		} );
 	}
 } );
 
