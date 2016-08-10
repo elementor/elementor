@@ -32,19 +32,19 @@ class Source_Local extends Source_Base {
 
 	public function register_data() {
 		$labels = [
-			'name' => __( 'Library', 'elementor' ),
-			'singular_name' => __( 'Template', 'elementor' ),
-			'add_new' => __( 'Add New', 'elementor' ),
-			'add_new_item' => __( 'Add New Template', 'elementor' ),
-			'edit_item' => __( 'Edit Template', 'elementor' ),
-			'new_item' => __( 'New Template', 'elementor' ),
-			'all_items' => __( 'All Templates', 'elementor' ),
-			'view_item' => __( 'View Template', 'elementor' ),
-			'search_items' => __( 'Search Template', 'elementor' ),
-			'not_found' => __( 'No Templates found', 'elementor' ),
-			'not_found_in_trash' => __( 'No Templates found in Trash', 'elementor' ),
+			'name' => _x( 'Library', 'Template Library', 'elementor' ),
+			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
+			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
+			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
+			'edit_item' => _x( 'Edit Template', 'Template Library', 'elementor' ),
+			'new_item' => _x( 'New Template', 'Template Library', 'elementor' ),
+			'all_items' => _x( 'All Templates', 'Template Library', 'elementor' ),
+			'view_item' => _x( 'View Template', 'Template Library', 'elementor' ),
+			'search_items' => _x( 'Search Template', 'Template Library', 'elementor' ),
+			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
+			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Library', 'elementor' ),
+			'menu_name' => _x( 'Library', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
