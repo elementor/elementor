@@ -849,8 +849,6 @@ TemplateLibraryManager = function() {
 		var dialog = self.getDeleteDialog();
 
 		dialog.onConfirm = function() {
-			layout.showLoadingView();
-
 			elementor.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
@@ -858,8 +856,6 @@ TemplateLibraryManager = function() {
 				},
 				success: function() {
 					templatesCollection.remove( templateModel );
-
-					self.showTemplates();
 				}
 			} );
 		};
