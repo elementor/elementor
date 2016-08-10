@@ -5,10 +5,6 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 
 	className: 'elementor-element-wrapper',
 
-	triggers: {
-		dragend: 'drag:end'
-	},
-
 	onRender: function() {
 		this.$el.html5Draggable( {
 
