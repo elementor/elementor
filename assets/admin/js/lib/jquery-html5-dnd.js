@@ -23,7 +23,8 @@
 			defaultSettings = {
 				element: '',
 				groups: null,
-				onDragStart: null
+				onDragStart: null,
+				onDragEnd: null
 			};
 
 		var init = function() {
@@ -49,7 +50,9 @@
 		};
 
 		var attachEvents = function() {
-			elementsCache.$element.on( 'dragstart', onDragStart );
+			elementsCache.$element
+				.on( 'dragstart', onDragStart )
+				.on( 'dragend', onDragEnd );
 		};
 
 		var onDragStart = function( event ) {
@@ -64,6 +67,12 @@
 
 			if ( $.isFunction( settings.onDragStart ) ) {
 				settings.onDragStart.call( elementsCache.$element, event, self );
+			}
+		};
+
+		var onDragEnd = function( event ) {
+			if ( $.isFunction( settings.onDragEnd ) ) {
+				settings.onDragEnd.call( elementsCache.$element, event, self );
 			}
 		};
 
