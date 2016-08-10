@@ -10,9 +10,12 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 
 		this.$el.html5Draggable( {
 
-			onDragStart: _.bind( function() {
-				this.triggerMethod( 'drag:start' );
-			}, this ),
+			onDragStart: function() {
+				elementor.panelElements
+					.reply( 'element:selected', self )
+					.trigger( 'element:drag:start' );
+			},
+
 
 			groups: [ 'elementor-element' ]
 		} );
