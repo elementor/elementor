@@ -1,11 +1,11 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "0.6.3",
+	"version": "0.6.5",
 	"author": "Pojo Team",
 	"homepage": "http://pojo.me/",
 	"devDependencies": {
-		"browserify": "^13.0.1",
+		"browserify": "^13.1.0",
 		"browserify-shim": "^3.8.12",
 		"grunt": "^1.0.1",
 		"grunt-browserify": "^5.0.0",
@@ -15,7 +15,7 @@
 		"grunt-postcss": "~0.8.0",
 		"grunt-contrib-uglify": "~2.0.0",
 		"grunt-contrib-sass": "~1.0.0",
-		"autoprefixer": "~6.3.7",
+		"autoprefixer": "~6.4.0",
 		"cssnano": "~3.7.3",
 		"grunt-checktextdomain": "~1.0.1",
 		"grunt-wp-readme-to-markdown-with-extra": "~2.2.0",

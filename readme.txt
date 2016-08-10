@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.5
-Stable tag: 0.6.3
+Stable tag: 0.6.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -154,6 +154,18 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 4. Settings page.
 
 == Changelog ==
+
+= 0.6.5 - 08.08.2016 =
+* Tweak! - Added border and box shadow controls for Image widget
+* Tweak! - In new page don't create empty section
+* Tweak! - Embed Roboto font from Google Fonts in editor mode
+* Fixed! - Reset structure or remove column after resize
+
+= 0.6.4 - 04.08.2016 =
+* Tweak! - Google Fonts list updated ([#371](https://github.com/pojome/elementor/pull/371))
+* Fixed! - Content overflow in "fit to screen" sections for mobile ([#369](https://github.com/pojome/elementor/issues/369))
+* Fixed! - Icon Box Widget: Better support for Safari browser
+* Fixed! - Text Editor Widget: Added listening to undo & redo events ([#340](https://github.com/pojome/elementor/issues/340))
 
 = 0.6.3 - 01.08.2016 =
 * Tweak! - Show element title in delete dialog ([#337](https://github.com/pojome/elementor/pull/337))

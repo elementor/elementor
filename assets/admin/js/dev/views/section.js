@@ -202,11 +202,13 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var $nextElement = nextChildView.$el,
+		var MINIMUM_COLUMN_SIZE = 10,
+
+			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = this.getColumnPercentSize( $nextElement, $nextElement.width() ),
 			nextElementNewSize = nextElementCurrentSize - difference;
 
-		if ( newSize < 10 || newSize > 100 || ! difference || nextElementNewSize < 10 || nextElementNewSize > 100 ) {
+		if ( newSize < MINIMUM_COLUMN_SIZE || newSize > 100 || ! difference || nextElementNewSize < MINIMUM_COLUMN_SIZE || nextElementNewSize > 100 ) {
 			return;
 		}
 

@@ -295,7 +295,7 @@ class Editor {
 				'edit_post_link' => get_edit_post_link(),
 				'settings_page_link' => Settings::get_url(),
 				'elementor_site' => 'https://elementor.com/',
-				'help_the_content_url' => 'http://docs.elementor.com/article/56-content-area-not-found',
+				'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 				'assets_url' => ELEMENTOR_ASSETS_URL,
 				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
 				'locked_user' => $locked_user,
@@ -362,6 +362,13 @@ class Editor {
 		);
 
 		wp_register_style(
+			'google-font-roboto',
+			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+			[],
+			Plugin::instance()->get_version()
+		);
+
+		wp_register_style(
 			'elementor-admin',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
@@ -369,6 +376,7 @@ class Editor {
 				'select2',
 				'elementor-icons',
 				'wp-auth-check',
+				'google-font-roboto',
 			],
 			Plugin::instance()->get_version()
 		);

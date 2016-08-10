@@ -57,14 +57,14 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
-		if ( 1 > this.collection.length ) {
-			this.addChildModel( {
-				id: elementor.helpers.getUniqueID(),
-				elType: 'section',
-				settings: {},
-				elements: []
-			} );
-		}
+		//if ( 1 > this.collection.length ) {
+		//	this.addChildModel( {
+		//		id: elementor.helpers.getUniqueID(),
+		//		elType: 'section',
+		//		settings: {},
+		//		elements: []
+		//	} );
+		//}
 	},
 
 	addChildModel: function( model, options ) {
@@ -161,7 +161,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
-
 		newSection.redefineLayout();
 	}
 } );
