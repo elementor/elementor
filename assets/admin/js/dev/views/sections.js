@@ -65,6 +65,8 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		//		elements: []
 		//	} );
 		//}
+
+		this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 	},
 
 	addChildModel: function( model, options ) {
@@ -139,6 +141,10 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		} );
 
 		_.defer( _.bind( self.fixBlankPageOffset, this ) );
+	},
+
+	onCollectionChanged: function() {
+		elementor.setFlagEditorChange( true );
 	},
 
 	onPresetSelected: function( event ) {
