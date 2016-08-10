@@ -134,10 +134,11 @@ ColumnView = BaseElementView.extend( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
+			onDragEnter: function() {
+				self.$el.addClass( 'elementor-dragging-on-child' );
+			},
 			onDragging: function( side, event ) {
 				event.stopPropagation();
-
-				self.$el.addClass( 'elementor-dragging-on-child' );
 
 				if ( this.dataset.side !== side ) {
 					Backbone.$( this ).attr( 'data-side', side );
