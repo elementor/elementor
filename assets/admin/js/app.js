@@ -6290,7 +6290,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},
-
 	events: {
 		'click @ui.addSectionButton': 'onAddSectionButtonClick',
 		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
