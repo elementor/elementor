@@ -51,6 +51,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-template-library-templates">
+	<div id="elementor-template-library-templates-container"></div>
+	<div id="elementor-template-library-footer-banner">
+		<i class="eicon-nerd"></i>
+		<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
+	</div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
 		<div class="elementor-template-library-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>

@@ -200,6 +200,10 @@
 	&[data-template-source="local"] {
 		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 		margin: 15px;
+
+		+ #elementor-template-library-footer-banner {
+			display: none;
+		}
 	}
 }
 
@@ -421,6 +425,22 @@
 	color: $editor-light;
 	font-size: 13px;
 	font-style: italic;
+}
+
+#elementor-template-library-footer-banner {
+
+	i {
+		color: $editor-lighter;
+		font-size: 56px;
+		margin-top: 40px;
+	}
+
+	.elementor-excerpt {
+		color: $editor-light;
+		font-size: 15px;
+		font-weight: 500;
+		margin: 20px 0;
+	}
 }
 
 #elementor-template-library-templates-empty-icon {

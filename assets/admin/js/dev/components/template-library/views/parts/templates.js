@@ -3,8 +3,12 @@ var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/templ
 	TemplateLibraryTemplatesEmptyView = require( 'elementor-templates/views/parts/templates-empty' ),
 	TemplateLibraryCollectionView;
 
-TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
-	id: 'elementor-template-library-templates-container',
+TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+	template: '#tmpl-elementor-template-library-templates',
+
+	id: 'elementor-template-library-templates',
+
+	childViewContainer: '#elementor-template-library-templates-container',
 
 	emptyView: TemplateLibraryTemplatesEmptyView,
 
@@ -55,7 +59,7 @@ TemplateLibraryCollectionView = Marionette.CollectionView.extend( {
 	onRenderCollection: function() {
 		var isEmpty = this.children.isEmpty();
 
-		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+		this.$childViewContainer.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
 	}
 } );
 
