@@ -10,6 +10,7 @@
 		background-color: #fff;
 		box-shadow: $panel-bottom-shadow;
 		position: relative; // Show the shadow above the scrolled list
+		z-index: 1;
 	}
 
 	.dialog-buttons-wrapper {
