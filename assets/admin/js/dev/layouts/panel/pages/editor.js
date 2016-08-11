@@ -48,7 +48,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		var controls = elementor.getElementControls( this.model.get( 'settings' ) );
 
 		if ( ! controls ) {
-			throw new Error( 'No found editor controls' );
+			throw new Error( 'Editor controls not found' );
 		}
 
 		// Create new instance of that collection
