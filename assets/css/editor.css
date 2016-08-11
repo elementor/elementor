@@ -1669,11 +1669,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 0;
   background-color: #fff;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  position: relative; }
+  position: relative;
+  z-index: 1; }
 #elementor-template-library-modal .dialog-buttons-wrapper {
   display: none; }
 #elementor-template-library-modal .dialog-message {
-  height: 600px;
+  height: 630px;
   max-height: 85vh;
   overflow: auto;
   padding: 15px; }
@@ -1789,6 +1790,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-templates-container[data-template-source="local"] {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     margin: 15px; }
+    #elementor-template-library-templates-container[data-template-source="local"] + #elementor-template-library-footer-banner {
+      display: none; }
 
 .elementor-template-library-template-remote {
   float: left;
@@ -1833,7 +1836,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     .elementor-template-library-template-remote .elementor-template-library-template-insert i {
       padding-right: 5px; }
   .elementor-template-library-template-remote .elementor-template-library-template-name {
-    padding-top: 8px;
+    margin: 13px 0 10px;
     font-size: 12px;
     text-align: center;
     color: #6d7882; }
@@ -1940,6 +1943,16 @@ body.elementor-editor-preview #elementor-mode-switcher {
   color: #a4afb7;
   font-size: 13px;
   font-style: italic; }
+
+#elementor-template-library-footer-banner i {
+  color: #c2cbd2;
+  font-size: 56px;
+  margin-top: 40px; }
+#elementor-template-library-footer-banner .elementor-excerpt {
+  color: #a4afb7;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 20px 0; }
 
 #elementor-template-library-templates-empty-icon {
   font-size: 96px;
