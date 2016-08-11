@@ -155,6 +155,13 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
+	getNextColumn: function( columnView ) {
+		var modelIndex = this.collection.indexOf( columnView.model ),
+			nextModel = this.collection.at( modelIndex + 1 );
+
+		return this.children.findByModelCid( nextModel.cid );
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -177,6 +184,30 @@ SectionView = BaseElementView.extend( {
 		this.resetLayout();
 	},
 
+	onChildviewRequestResizeStart: function( childView ) {
+		var nextChildView = this.getNextColumn( childView );
+
+		if ( ! nextChildView ) {
+			return;
+		}
+
+		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+
+		elementor.helpers.disableElementEvents( $iframes );
+	},
+
+	onChildviewRequestResizeStop: function( childView ) {
+		var nextChildView = this.getNextColumn( childView );
+
+		if ( ! nextChildView ) {
+			return;
+		}
+
+		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+
+		elementor.helpers.enableElementEvents( $iframes );
+	},
+
 	onChildviewRequestResize: function( childView, ui ) {
 		// Get current column details
 		var currentSize = childView.model.getSetting( '_inline_size' );
@@ -195,9 +226,7 @@ SectionView = BaseElementView.extend( {
 		} );
 
 		// Get next column details
-		var modelIndex = this.collection.indexOf( childView.model ),
-			nextModel = this.collection.at( modelIndex + 1 ),
-			nextChildView = this.children.findByModelCid( nextModel.cid );
+		var nextChildView = this.getNextColumn( childView );
 
 		if ( ! nextChildView ) {
 			return;

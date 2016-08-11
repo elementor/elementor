@@ -600,6 +600,7 @@ body {
 		}
 
 		#elementor-add-new-section {
+			display: inline-block; // For smooth dragging above
 
 			.elementor-button {
 				color: #fff;

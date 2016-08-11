@@ -295,8 +295,10 @@ class Widget_Social_Icons extends Widget_Base {
 				$has_link = ! empty( $item['link']['url'] );
 				$social = str_replace( 'fa fa-', '', $item['social'] );
 
-				if ( $has_link ) : ?>
-					<a class="elementor-social-icon-link" href="<?php echo esc_attr( $item['link']['url'] ); ?>">
+				if ( $has_link ) :
+					$target = ! empty( $item['link']['is_external'] ) ? ' target="_blank"' : '';
+					?>
+					<a class="elementor-social-icon-link" href="<?php echo esc_attr( $item['link']['url'] ); ?>"<?php echo $target; ?>>
 				<?php endif; ?>
 				<div class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social ); ?>">
 					<i class="<?php echo $item['social']; ?>"></i>
