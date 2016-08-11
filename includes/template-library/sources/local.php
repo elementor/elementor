@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Source_Local extends Source_Base {
 
 	const CPT = 'elementor_library';
+	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -32,19 +33,19 @@ class Source_Local extends Source_Base {
 
 	public function register_data() {
 		$labels = [
-			'name' => __( 'Library', 'elementor' ),
-			'singular_name' => __( 'Template', 'elementor' ),
-			'add_new' => __( 'Add New', 'elementor' ),
-			'add_new_item' => __( 'Add New Template', 'elementor' ),
-			'edit_item' => __( 'Edit Template', 'elementor' ),
-			'new_item' => __( 'New Template', 'elementor' ),
-			'all_items' => __( 'All Templates', 'elementor' ),
-			'view_item' => __( 'View Template', 'elementor' ),
-			'search_items' => __( 'Search Template', 'elementor' ),
-			'not_found' => __( 'No Templates found', 'elementor' ),
-			'not_found_in_trash' => __( 'No Templates found in Trash', 'elementor' ),
+			'name' => _x( 'Library', 'Template Library', 'elementor' ),
+			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
+			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
+			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
+			'edit_item' => _x( 'Edit Template', 'Template Library', 'elementor' ),
+			'new_item' => _x( 'New Template', 'Template Library', 'elementor' ),
+			'all_items' => _x( 'All Templates', 'Template Library', 'elementor' ),
+			'view_item' => _x( 'View Template', 'Template Library', 'elementor' ),
+			'search_items' => _x( 'Search Template', 'Template Library', 'elementor' ),
+			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
+			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Library', 'elementor' ),
+			'menu_name' => _x( 'Library', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
@@ -61,6 +62,23 @@ class Source_Local extends Source_Base {
 		register_post_type(
 			self::CPT,
 			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
+		);
+
+		$args = [
+			'hierarchical' => false,
+			'show_ui' => false,
+			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
+			'query_var' => is_admin(),
+			'rewrite' => false,
+			'public' => false,
+			'label' => _x( 'Type', 'Template Library', 'elementor' ),
+		];
+
+		register_taxonomy(
+			self::TAXONOMY_TYPE_SLUG,
+			self::CPT,
+			apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args )
 		);
 	}
 
@@ -112,8 +130,10 @@ class Source_Local extends Source_Base {
 		}
 
 		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
+		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
+		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
 
 		return $post_id;
 	}
@@ -266,7 +286,8 @@ class Source_Local extends Source_Base {
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( $this->_is_base_templates_screen() ) {
-			$actions[] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			unset( $actions['inline hide-if-no-js'] );
 		}
 
 		return $actions;
