@@ -170,45 +170,11 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onPanelElementDragStart: function() {
-		var $iframes = this.$el.find( 'iframe' );
-
-		if ( ! $iframes.length ) {
-			return;
-		}
-
-		$iframes.each( function() {
-			// Get the inline style only!
-			var currentPointerEvents = this.style.pointerEvents;
-
-			if ( 'none' === currentPointerEvents ) {
-				return;
-			}
-
-			Backbone.$( this )
-				.data( 'backup-pointer-events', currentPointerEvents )
-				.css( 'pointer-events', 'none' );
-		} );
+		elementor.helpers.disableElementEvents( this.$el.find( 'iframe' ) );
 	},
 
 	onPanelElementDragEnd: function() {
-		var $iframes = this.$el.find( 'iframe' );
-
-		if ( ! $iframes.length ) {
-			return;
-		}
-
-		$iframes.each( function() {
-			var $this = Backbone.$( this ),
-				backupPointerEvents = $this.data( 'backup-pointer-events' );
-
-			if ( undefined === backupPointerEvents ) {
-				return;
-			}
-
-			$this
-				.removeData( 'backup-pointer-events' )
-				.css( 'pointer-events', backupPointerEvents );
-		} );
+		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
 	}
 } );
 

@@ -132,6 +132,35 @@ helpers = {
 		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/ );
 
 		return videoIDParts && videoIDParts[1];
+	},
+
+	disableElementEvents: function( $element ) {
+		$element.each( function() {
+			var currentPointerEvents = this.style.pointerEvents;
+
+			if ( 'none' === currentPointerEvents ) {
+				return;
+			}
+
+			Backbone.$( this )
+				.data( 'backup-pointer-events', currentPointerEvents )
+				.css( 'pointer-events', 'none' );
+		} );
+	},
+
+	enableElementEvents: function( $element ) {
+		$element.each( function() {
+			var $this = Backbone.$( this ),
+				backupPointerEvents = $this.data( 'backup-pointer-events' );
+
+			if ( undefined === backupPointerEvents ) {
+				return;
+			}
+
+			$this
+				.removeData( 'backup-pointer-events' )
+				.css( 'pointer-events', backupPointerEvents );
+		} );
 	}
 };
 
