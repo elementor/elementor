@@ -155,6 +155,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.6.6 - 11.08.2016 =
+* Tweak! - Improved Drag & Drop area to new section
+* Tweak! - Make changes in new section
+* Fixed! - Resize columns with Widgets using iframe (YouTube, Google Maps, etc)
+* Fixed! - Adding columns widget in 'Add new Section' area
+* Fixed! - Allow blank target link for social-icons widget
+
 = 0.6.5 - 08.08.2016 =
 * Tweak! - Added border and box shadow controls for Image widget
 * Tweak! - In new page don't create empty section
