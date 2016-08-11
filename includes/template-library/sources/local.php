@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Source_Local extends Source_Base {
 
 	const CPT = 'elementor_library';
+	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -61,6 +62,23 @@ class Source_Local extends Source_Base {
 		register_post_type(
 			self::CPT,
 			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
+		);
+
+		$args = [
+			'hierarchical' => false,
+			'show_ui' => false,
+			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
+			'query_var' => is_admin(),
+			'rewrite' => false,
+			'public' => false,
+			'label' => _x( 'Type', 'Template Library', 'elementor' ),
+		];
+
+		register_taxonomy(
+			self::TAXONOMY_TYPE_SLUG,
+			self::CPT,
+			apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args )
 		);
 	}
 
@@ -114,6 +132,7 @@ class Source_Local extends Source_Base {
 		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
+		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
 
 		return $post_id;
 	}
@@ -266,7 +285,8 @@ class Source_Local extends Source_Base {
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( $this->_is_base_templates_screen() ) {
-			$actions[] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			unset( $actions['inline hide-if-no-js'] );
 		}
 
 		return $actions;
