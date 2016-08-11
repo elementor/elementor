@@ -10,7 +10,9 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'resize': 'onResize'
+		resizestart: 'onResizeStart',
+		resizestop: 'onResizeStop',
+		resize: 'onResize'
 	},
 
 	initialize: function() {
@@ -54,6 +56,18 @@ ResizableBehavior = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.deactivate();
+	},
+
+	onResizeStart: function( event ) {
+		event.stopPropagation();
+
+		this.view.triggerMethod( 'request:resize:start' );
+	},
+
+	onResizeStop: function( event ) {
+		event.stopPropagation();
+
+		this.view.triggerMethod( 'request:resize:stop' );
 	},
 
 	onResize: function( event, ui ) {
