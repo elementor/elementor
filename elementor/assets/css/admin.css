@@ -1,0 +1,425 @@
+.dialog-widget {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999; }
+
+.dialog-widget-content {
+  background-color: #fff;
+  position: absolute;
+  border-radius: 3px;
+  box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
+  overflow: hidden; }
+
+.dialog-widget-header, .dialog-message {
+  text-align: center; }
+
+.dialog-message {
+  font-size: 12px; }
+
+.dialog-buttons-wrapper {
+  border-top: 1px solid #e6e9ec;
+  text-align: center; }
+  .dialog-buttons-wrapper > button {
+    border: none;
+    background: none;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 13px 0;
+    outline: none; }
+    .dialog-buttons-wrapper > button:first-child {
+      color: #6d7882; }
+    .dialog-buttons-wrapper > button.dialog-ok {
+      color: #b01b1b; }
+    .dialog-buttons-wrapper > button.dialog-take_over {
+      color: #39b54a; }
+    .dialog-buttons-wrapper > button:active {
+      background-color: rgba(230, 233, 236, 0.5); }
+
+.dialog-widget-header {
+  padding: 20px 0;
+  font-weight: 500; }
+
+.dialog-options-widget .dialog-widget-header,
+.dialog-confirm-widget .dialog-widget-header {
+  font-size: 15px;
+  color: #495157; }
+.dialog-options-widget .dialog-buttons-wrapper > button,
+.dialog-confirm-widget .dialog-buttons-wrapper > button {
+  width: 50%; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:first-child,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
+    border-right: 1px solid #e6e9ec; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:hover,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:hover {
+    background-color: #f4f6f7; }
+
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+  -webkit-user-select: none;
+  -moz-user-select: none; }
+  .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+    margin: auto;
+    width: 350px; }
+  .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+    padding: 0 20px;
+    min-height: 50px; }
+
+.dialog-alert-widget .dialog-buttons-wrapper > button {
+  width: 100%; }
+
+.dialog-popup-message {
+  height: 155px;
+  width: 155px;
+  background-color: #fff;
+  border-radius: 10px; }
+
+.elementor-dialog-message {
+  padding: 15px; }
+  .elementor-dialog-message .fa {
+    font-size: 85px;
+    padding: 10px; }
+
+.elementor-dialog-message-text {
+  text-transform: uppercase; }
+
+.dialog-elementor-modal-close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 16px;
+  color: #a4afb7; }
+
+body.elementor-editor-active .elementor-switch-mode-off {
+  display: none; }
+body.elementor-editor-active #elementor-switch-mode-button {
+  background-color: #f7f7f7;
+  color: #555;
+  border-color: #ccc;
+  box-shadow: 0 1px 0 #ccc; }
+  body.elementor-editor-active #elementor-switch-mode-button:hover {
+    background-color: #e9e9e9; }
+  body.elementor-editor-active #elementor-switch-mode-button:active {
+    box-shadow: inset 0 1px 0 #ccc;
+    transform: translateY(1px); }
+body.elementor-editor-active #elementor-editor {
+  display: table; }
+body.elementor-editor-active #postdivrich {
+  display: none !important; }
+body.elementor-editor-inactive .elementor-switch-mode-on {
+  display: none; }
+body.elementor-editor-inactive #elementor-editor {
+  display: none; }
+
+.elementor-editor-inactive #elementor-switch-mode-button, #elementor-editor-button {
+  background-color: #9b0a46;
+  color: #fff;
+  border-color: #7c1337;
+  box-shadow: 0 1px 0 #7c1337; }
+  .elementor-editor-inactive #elementor-switch-mode-button:hover, #elementor-editor-button:hover {
+    background-color: #a0124a; }
+  .elementor-editor-inactive #elementor-switch-mode-button:active, #elementor-editor-button:active {
+    box-shadow: inset 0 1px 0 #7c1337;
+    transform: translateY(1px); }
+
+#adminmenu #toplevel_page_elementor div.wp-menu-image:before {
+  content: "\e800";
+  font-family: eicon;
+  font-size: 14px;
+  margin-top: 3px; }
+
+#elementor-switch-mode {
+  margin: 15px 0; }
+
+.elementor-button {
+  padding: 12.5px 25px;
+  display: inline-block;
+  line-height: 1;
+  border: 1px solid;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer; }
+  .elementor-button .eicon-elementor {
+    margin-right: 5px; }
+
+#elementor-editor {
+  background-color: #F7F7F7;
+  border: 1px solid #DDD;
+  height: 300px;
+  width: 100%;
+  transition: all 0.5s ease; }
+  #elementor-editor:hover {
+    background-color: #ffffff; }
+  #elementor-editor .elementor-loader-box {
+    position: absolute;
+    animation: load 1.8s linear infinite; }
+    #elementor-editor .elementor-loader-box:nth-of-type(1) {
+      width: 20%;
+      height: 100%;
+      left: 0;
+      top: 0; }
+    #elementor-editor .elementor-loader-box:not(:nth-of-type(1)) {
+      right: 0;
+      height: 20%;
+      width: 60%; }
+    #elementor-editor .elementor-loader-box:nth-of-type(2) {
+      top: 0;
+      animation-delay: -0.45s; }
+    #elementor-editor .elementor-loader-box:nth-of-type(3) {
+      top: 40%;
+      animation-delay: -0.9s; }
+    #elementor-editor .elementor-loader-box:nth-of-type(4) {
+      bottom: 0;
+      animation-delay: -1.35s; }
+@keyframes load {
+  0% {
+    opacity: .3; }
+  50% {
+    opacity: 1; }
+  100% {
+    opacity: .3; } }
+  #elementor-editor .elementor-loader-box {
+    background-color: #a4afb7; }
+
+#elementor-go-to-edit-page-link {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  text-decoration: none; }
+  #elementor-go-to-edit-page-link.elementor-animate #elementor-editor-button {
+    display: none; }
+  #elementor-go-to-edit-page-link:not(.elementor-animate) .elementor-loader-wrapper {
+    display: none; }
+
+.elementor-loader-wrapper {
+  margin: auto;
+  width: 80px; }
+
+.elementor-loader {
+  height: 80px;
+  position: relative; }
+
+.elementor-loading-title {
+  color: #a4afb7;
+  text-transform: uppercase;
+  margin-top: 15px;
+  font-size: 11px;
+  letter-spacing: 5px; }
+
+#elementor-library-sync-button:before {
+  font: normal 20px/.5 dashicons;
+  speak: none;
+  display: inline-block;
+  padding: 0;
+  top: 8px;
+  left: -4px;
+  position: relative;
+  vertical-align: top;
+  content: "\f463"; }
+#elementor-library-sync-button.loading:before {
+  animation: rotation 1s infinite linear; }
+#elementor-library-sync-button.success:before {
+  content: "\f147"; }
+
+/*= Elementor Message
+---------------------------------------*/
+.notice.elementor-message {
+  border-left-color: #9b0a46 !important;
+  padding: 20px; }
+  .notice.elementor-message .elementor-message-inner {
+    display: table;
+    width: 100%; }
+    .notice.elementor-message .elementor-message-inner .elementor-message-icon,
+    .notice.elementor-message .elementor-message-inner .elementor-message-content,
+    .notice.elementor-message .elementor-message-inner .elementor-update-now {
+      display: table-cell;
+      vertical-align: middle; }
+  .notice.elementor-message .elementor-message-icon {
+    color: #9b0a46;
+    font-size: 50px;
+    width: 50px; }
+  .notice.elementor-message .elementor-message-content {
+    padding: 0 20px; }
+  .notice.elementor-message p {
+    padding: 0;
+    margin: 0; }
+  .notice.elementor-message h3 {
+    margin: 0 0 5px; }
+  .notice.elementor-message .elementor-update-now {
+    text-align: center; }
+    .notice.elementor-message .elementor-update-now .elementor-button {
+      background-color: #9b0a46;
+      color: #fff;
+      border-color: #7c1337;
+      box-shadow: 0 1px 0 #7c1337;
+      padding: 5px 30px;
+      height: auto;
+      line-height: 20px;
+      text-transform: capitalize; }
+      .notice.elementor-message .elementor-update-now .elementor-button i {
+        padding-right: 5px; }
+      .notice.elementor-message .elementor-update-now .elementor-button:hover {
+        background-color: #a0124a; }
+      .notice.elementor-message .elementor-update-now .elementor-button:active {
+        box-shadow: inset 0 1px 0 #7c1337;
+        transform: translateY(1px); }
+
+@media (max-width: 767px) {
+  .notice.elementor-message {
+    padding: 10px; }
+    .notice.elementor-message .elementor-message-inner {
+      display: block; }
+      .notice.elementor-message .elementor-message-inner .elementor-message-content {
+        display: block;
+        padding: 0; }
+      .notice.elementor-message .elementor-message-inner .elementor-message-icon,
+      .notice.elementor-message .elementor-message-inner .elementor-update-now {
+        display: none; } }
+/*= Elementor System Info
+---------------------------------------*/
+#elementor-system-info {
+  padding: 15px; }
+  #elementor-system-info .elementor-system-info-section {
+    margin-bottom: 10px; }
+    #elementor-system-info .elementor-system-info-section > .elementor-system-info-report-name {
+      padding-left: 10px;
+      border-bottom: 1px solid #e1e1e1; }
+  #elementor-system-info .elementor-system-info-report-name {
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 0;
+    line-height: 2; }
+  #elementor-system-info .elementor-system-info-report-row {
+    overflow: hidden;
+    padding: 5px 0; }
+    #elementor-system-info .elementor-system-info-report-row > * {
+      float: left; }
+  #elementor-system-info .elementor-system-info-report-field, #elementor-system-info .elementor-system-info-field-recommendation {
+    padding-left: 10px;
+    color: #7F7F7F; }
+  #elementor-system-info .elementor-system-info-report-fields {
+    padding-left: 20px; }
+  #elementor-system-info .elementor-system-info-plugin-name {
+    color: #000; }
+  #elementor-system-info .elementor-system-info-plugin-properties {
+    padding: 10px; }
+  #elementor-system-info #elementor-system-info-raw-code {
+    width: 100%;
+    height: 200px; }
+  #elementor-system-info #elementor-system-info-raw-code-label {
+    padding: 5px;
+    display: block; }
+
+/*= Elementor Feedback
+---------------------------------------*/
+@keyframes elementor-rotation {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+#elementor-deactivate-feedback-dialog-wrapper {
+  display: none; }
+
+#elementor-deactivate-feedback-modal .dialog-widget-content {
+  width: 550px; }
+#elementor-deactivate-feedback-modal .dialog-close-button i:before {
+  content: '\f335';
+  font: 20px dashicons; }
+#elementor-deactivate-feedback-modal .dialog-widget-header {
+  padding: 18px 15px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  text-align: left; }
+#elementor-deactivate-feedback-modal .dialog-message {
+  padding: 30px 30px 0;
+  text-align: left; }
+#elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input {
+  float: left;
+  margin: 0 15px 0 0;
+  box-shadow: none; }
+  #elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-input:not(:checked) ~ .elementor-feedback-text {
+    display: none; }
+#elementor-deactivate-feedback-modal .elementor-deactivate-feedback-dialog-label {
+  display: block;
+  font-size: 13px;
+  color: #6d7882; }
+#elementor-deactivate-feedback-modal .elementor-feedback-text {
+  margin: 10px 0 0 30px;
+  padding: 5px;
+  font-size: 13px;
+  box-shadow: none;
+  background-color: #fff;
+  width: 92%; }
+#elementor-deactivate-feedback-modal .dialog-buttons-wrapper {
+  border-top: none;
+  text-align: left;
+  padding: 20px 30px 30px; }
+#elementor-deactivate-feedback-modal .dialog-submit {
+  background-color: #9b0a46;
+  border-radius: 3px;
+  color: #fff;
+  line-height: 1;
+  padding: 12px 20px;
+  font-size: 14px;
+  width: 180px;
+  height: 38px; }
+  #elementor-deactivate-feedback-modal .dialog-submit.elementor-loading:before {
+    display: inline-block;
+    content: '\f463';
+    font: 18px dashicons;
+    animation: elementor-rotation 2s infinite linear; }
+#elementor-deactivate-feedback-modal .dialog-skip {
+  font-size: 12px;
+  color: #a4afb7;
+  background: none;
+  float: right; }
+
+#elementor-deactivate-feedback-dialog-header i {
+  color: #9b0a46;
+  font-size: 19px; }
+
+#elementor-deactivate-feedback-dialog-header-title {
+  font-size: 15px;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-left: 5px; }
+
+#elementor-deactivate-feedback-dialog-form-caption {
+  font-weight: bold;
+  font-size: 15px;
+  color: #495157;
+  line-height: 1.4; }
+
+#elementor-deactivate-feedback-dialog-form-body {
+  padding-top: 30px; }
+
+.elementor-deactivate-feedback-dialog-input-wrapper {
+  line-height: 1.3;
+  overflow: hidden;
+  margin-bottom: 15px; }
+
+#elementor-hidden-area {
+  display: none; }
+
+#elementor-import-template-trigger {
+  cursor: pointer; }
+
+#elementor-import-template-area {
+  display: none;
+  margin: 50px 0 30px;
+  text-align: center; }
+
+#elementor-import-template-form {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 30px 50px;
+  background-color: #FFFFFF;
+  border: 1px solid #e5e5e5; }
+
+#elementor-import-template-title {
+  font-size: 18px;
+  color: #555d66; }
+
+/*# sourceMappingURL=admin.css.map */
