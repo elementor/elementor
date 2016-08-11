@@ -130,6 +130,7 @@ class Source_Local extends Source_Base {
 		}
 
 		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
+		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
 		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
