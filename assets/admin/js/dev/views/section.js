@@ -154,6 +154,13 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
+	getNextColumn: function( columnView ) {
+		var modelIndex = this.collection.indexOf( columnView.model ),
+			nextModel = this.collection.at( modelIndex + 1 );
+
+		return this.children.findByModelCid( nextModel.cid );
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -194,9 +201,7 @@ SectionView = BaseElementView.extend( {
 		} );
 
 		// Get next column details
-		var modelIndex = this.collection.indexOf( childView.model ),
-			nextModel = this.collection.at( modelIndex + 1 ),
-			nextChildView = this.children.findByModelCid( nextModel.cid );
+		var nextChildView = this.getNextColumn( childView );
 
 		if ( ! nextChildView ) {
 			return;
