@@ -599,6 +599,10 @@ body {
 			padding: 40px 0;
 		}
 
+		#elementor-add-new-section {
+			display: inline-block; // For smooth dragging above
+		}
+
 		#elementor-add-section-button {
 			background-color: $editor-accent;
 			background-image: none; // Reset for some themes
