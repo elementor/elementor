@@ -57,7 +57,10 @@ TemplateLibraryManager = function() {
 			deleteDialog = elementor.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-template-library-delete-dialog',
 				headerMessage: elementor.translate( 'delete_template' ),
-				message: elementor.translate( 'delete_template_confirm' )
+				message: elementor.translate( 'delete_template_confirm' ),
+				strings: {
+					confirm: elementor.translate( 'delete' )
+				}
 			} );
 		}
 
