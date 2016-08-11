@@ -89,7 +89,6 @@
 		var self = this,
 			settings = {},
 			elementsCache = {},
-			dragEntrances = 0,
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -249,11 +248,26 @@
 		};
 
 		var onDragEnter = function( event ) {
-			dragEntrances++;
+			if ( event.target !== this ) {
+				return;
+			}
+
+			// Avoid internal elements event firing
+			$( this ).children().each( function() {
+				var currentPointerEvents = this.style.pointerEvents;
+
+				if ( 'none' === currentPointerEvents ) {
+					return;
+				}
+
+				$( this )
+					.data( 'backup-pointer-events', currentPointerEvents )
+					.css( 'pointer-events', 'none' );
+			} );
 
 			var side = getSide( this, event );
 
-			if ( ! isDroppingAllowed( this, side, event ) || 1 !== dragEntrances ) {
+			if ( ! isDroppingAllowed( this, side, event ) ) {
 				return;
 			}
 
@@ -291,9 +305,21 @@
 		};
 
 		var onDragLeave = function( event ) {
-			dragEntrances--;
+			// Avoid internal elements event firing
+			$(this).children().each( function() {
+				var $this = $( this ),
+					backupPointerEvents = $this.data( 'backup-pointer-events' );
 
-			if ( ! dragEntrances && $.isFunction( settings.onDragLeave ) ) {
+				if ( undefined === backupPointerEvents ) {
+					return;
+				}
+
+				$this
+					.removeData( 'backup-pointer-events' )
+					.css( 'pointer-events', backupPointerEvents );
+			} );
+
+			if ( $.isFunction( settings.onDragLeave ) ) {
 				settings.onDragLeave.call( this, event, self );
 			}
 		};

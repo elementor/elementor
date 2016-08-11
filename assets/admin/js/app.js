@@ -533,7 +533,9 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'resize': 'onResize'
+		resizestart: 'onResizeStart',
+		resizestop: 'onResizeStop',
+		resize: 'onResize'
 	},
 
 	initialize: function() {
@@ -577,6 +579,18 @@ ResizableBehavior = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.deactivate();
+	},
+
+	onResizeStart: function( event ) {
+		event.stopPropagation();
+
+		this.view.triggerMethod( 'request:resize:start' );
+	},
+
+	onResizeStop: function( event ) {
+		event.stopPropagation();
+
+		this.view.triggerMethod( 'request:resize:stop' );
 	},
 
 	onResize: function( event, ui ) {
@@ -1117,7 +1131,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		var controls = elementor.getElementControls( this.model.get( 'settings' ) );
 
 		if ( ! controls ) {
-			throw new Error( 'No found editor controls' );
+			throw new Error( 'Editor controls not found' );
 		}
 
 		// Create new instance of that collection
@@ -2716,6 +2730,35 @@ helpers = {
 		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/ );
 
 		return videoIDParts && videoIDParts[1];
+	},
+
+	disableElementEvents: function( $element ) {
+		$element.each( function() {
+			var currentPointerEvents = this.style.pointerEvents;
+
+			if ( 'none' === currentPointerEvents ) {
+				return;
+			}
+
+			Backbone.$( this )
+				.data( 'backup-pointer-events', currentPointerEvents )
+				.css( 'pointer-events', 'none' );
+		} );
+	},
+
+	enableElementEvents: function( $element ) {
+		$element.each( function() {
+			var $this = Backbone.$( this ),
+				backupPointerEvents = $this.data( 'backup-pointer-events' );
+
+			if ( undefined === backupPointerEvents ) {
+				return;
+			}
+
+			$this
+				.removeData( 'backup-pointer-events' )
+				.css( 'pointer-events', backupPointerEvents );
+		} );
 	}
 };
 
@@ -5397,6 +5440,13 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
+	getNextColumn: function( columnView ) {
+		var modelIndex = this.collection.indexOf( columnView.model ),
+			nextModel = this.collection.at( modelIndex + 1 );
+
+		return this.children.findByModelCid( nextModel.cid );
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -5419,6 +5469,30 @@ SectionView = BaseElementView.extend( {
 		this.resetLayout();
 	},
 
+	onChildviewRequestResizeStart: function( childView ) {
+		var nextChildView = this.getNextColumn( childView );
+
+		if ( ! nextChildView ) {
+			return;
+		}
+
+		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+
+		elementor.helpers.disableElementEvents( $iframes );
+	},
+
+	onChildviewRequestResizeStop: function( childView ) {
+		var nextChildView = this.getNextColumn( childView );
+
+		if ( ! nextChildView ) {
+			return;
+		}
+
+		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+
+		elementor.helpers.enableElementEvents( $iframes );
+	},
+
 	onChildviewRequestResize: function( childView, ui ) {
 		// Get current column details
 		var currentSize = childView.model.getSetting( '_inline_size' );
@@ -5437,9 +5511,7 @@ SectionView = BaseElementView.extend( {
 		} );
 
 		// Get next column details
-		var modelIndex = this.collection.indexOf( childView.model ),
-			nextModel = this.collection.at( modelIndex + 1 ),
-			nextChildView = this.children.findByModelCid( nextModel.cid );
+		var nextChildView = this.getNextColumn( childView );
 
 		if ( ! nextChildView ) {
 			return;
@@ -5594,15 +5666,22 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 			},
 			onDropping: function() {
 				var elementView = elementor.panelElements.request( 'element:selected' ),
-					newSection = self.addSection();
+					newSection = self.addSection(),
+					elType = elementView.model.get( 'elType' );
 
-				var widgetData = {
+				var elementData = {
 					id: elementor.helpers.getUniqueID(),
-					elType: 'widget',
-					widgetType: elementView.model.get( 'widgetType' )
+					elType: elType
 				};
 
-				newSection.triggerMethod( 'request:add', widgetData );
+				if ( 'widget' === elType ) {
+					elementData.widgetType = elementView.model.get( 'widgetType' );
+				} else {
+					elementData.elements = [];
+					elementData.isInner = true;
+				}
+
+				newSection.triggerMethod( 'request:add', elementData );
 			}
 		} );
 
@@ -5637,45 +5716,11 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onPanelElementDragStart: function() {
-		var $iframes = this.$el.find( 'iframe' );
-
-		if ( ! $iframes.length ) {
-			return;
-		}
-
-		$iframes.each( function() {
-			// Get the inline style only!
-			var currentPointerEvents = this.style.pointerEvents;
-
-			if ( 'none' === currentPointerEvents ) {
-				return;
-			}
-
-			Backbone.$( this )
-				.data( 'backup-pointer-events', currentPointerEvents )
-				.css( 'pointer-events', 'none' );
-		} );
+		elementor.helpers.disableElementEvents( this.$el.find( 'iframe' ) );
 	},
 
 	onPanelElementDragEnd: function() {
-		var $iframes = this.$el.find( 'iframe' );
-
-		if ( ! $iframes.length ) {
-			return;
-		}
-
-		$iframes.each( function() {
-			var $this = Backbone.$( this ),
-				backupPointerEvents = $this.data( 'backup-pointer-events' );
-
-			if ( undefined === backupPointerEvents ) {
-				return;
-			}
-
-			$this
-				.removeData( 'backup-pointer-events' )
-				.css( 'pointer-events', backupPointerEvents );
-		} );
+		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
 	}
 } );
 
