@@ -120,15 +120,22 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 			},
 			onDropping: function() {
 				var elementView = elementor.panelElements.request( 'element:selected' ),
-					newSection = self.addSection();
+					newSection = self.addSection(),
+					elType = elementView.model.get( 'elType' );
 
-				var widgetData = {
+				var elementData = {
 					id: elementor.helpers.getUniqueID(),
-					elType: 'widget',
-					widgetType: elementView.model.get( 'widgetType' )
+					elType: elType
 				};
 
-				newSection.triggerMethod( 'request:add', widgetData );
+				if ( 'widget' === elType ) {
+					elementData.widgetType = elementView.model.get( 'widgetType' );
+				} else {
+					elementData.elements = [];
+					elementData.isInner = true;
+				}
+
+				newSection.triggerMethod( 'request:add', elementData );
 			}
 		} );
 
