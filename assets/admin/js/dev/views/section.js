@@ -183,6 +183,30 @@ SectionView = BaseElementView.extend( {
 		this.resetLayout();
 	},
 
+	onChildviewRequestResizeStart: function( childView ) {
+		var nextChildView = this.getNextColumn( childView );
+
+		if ( ! nextChildView ) {
+			return;
+		}
+
+		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+
+		elementor.helpers.disableElementEvents( $iframes );
+	},
+
+	onChildviewRequestResizeStop: function( childView ) {
+		var nextChildView = this.getNextColumn( childView );
+
+		if ( ! nextChildView ) {
+			return;
+		}
+
+		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+
+		elementor.helpers.enableElementEvents( $iframes );
+	},
+
 	onChildviewRequestResize: function( childView, ui ) {
 		// Get current column details
 		var currentSize = childView.model.getSetting( '_inline_size' );
