@@ -43,7 +43,7 @@ class Source_Remote extends Source_Base {
 			'source' => $this->get_id(),
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
-			'date' => date( get_option( 'date_format' ), $template_data['date'] ),
+			'date' => date( get_option( 'date_format' ), $template_data['tmpl_created'] ),
 			'author' => $template_data['author'],
 			'categories' => [],
 			'keywords' => [],
