@@ -330,30 +330,22 @@ class Widget_Icon extends Widget_Base {
 			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
 		}
 
+		if ( ! empty( $instance['link']['url'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'href', $instance['link']['url'] );
+
+			if ( ! empty( $instance['link']['is_external'] ) ) {
+				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
+			}
+		}
+
 		if ( ! empty( $instance['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
 		}
-
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
-
-			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$this->add_render_attribute( 'link', 'target', '_blank' );
-			}
-		}
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<?php if ( ! empty( $instance['icon'] ) ) : ?>
-				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
-					<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-				<?php endif;?>
-					<div <?php echo $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-						<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
-					</div>
-				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
-					</a>
-				<?php endif; ?>
-			<?php endif; ?>
+			<a <?php echo $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
+				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
+			</a>
 		</div>
 		<?php
 	}
@@ -361,19 +353,9 @@ class Widget_Icon extends Widget_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-icon-wrapper">
-			<% if ( settings.icon ) {
-			var hasLink = settings.link && settings.link.url;
-			%>
-			<% if ( hasLink ) { %>
-			<a class="elementor-icon-link" href="<%- settings.link.url %>">
-				<% } %>
-				<div class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
-					<i class="<%- settings.icon %>"></i>
-				</div>
-				<% if ( hasLink ) { %>
+			<a class="elementor-icon elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
+				<i class="<%- settings.icon %>"></i>
 			</a>
-			<% } %>
-			<% } %>
 		</div>
 		<?php
 	}
