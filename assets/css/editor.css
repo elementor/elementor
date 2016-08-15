@@ -1790,8 +1790,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-templates-container[data-template-source="local"] {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     margin: 15px; }
-    #elementor-template-library-templates-container[data-template-source="local"] + #elementor-template-library-footer-banner {
-      display: none; }
+  #elementor-template-library-templates-container:not([data-template-source="remote"]) + #elementor-template-library-footer-banner {
+    display: none; }
 
 .elementor-template-library-template-remote {
   float: left;
