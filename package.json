@@ -26,7 +26,6 @@
 		"grunt-banner": "~0.6.0",
 		"grunt-contrib-copy": "~1.0.0",
 		"grunt-contrib-clean": "~1.0.0",
-		"grunt-wp-deploy": "~1.2.0",
 		"remapify": "2.1.0",
 		"matchdep": "~1.0.1"
 	},

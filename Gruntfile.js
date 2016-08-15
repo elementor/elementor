@@ -356,17 +356,6 @@ module.exports = function( grunt ) {
 			main: [
 				'build'
 			]
-		},
-
-		wp_deploy: {
-			deploy:{
-				options: {
-					plugin_slug: '<%= pkg.slug %>',
-					svn_user: 'KingYes',
-					build_dir: 'build/',
-					assets_dir: 'wp-assets/'
-				}
-			}
 		}
 	} );
 
