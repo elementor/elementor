@@ -149,7 +149,7 @@ class Source_Local extends Source_Base {
 		$user = get_user_by( 'id', $post->post_author );
 
 		return [
-			'id' => $post->ID,
+			'template_id' => $post->ID,
 			'source' => $this->get_id(),
 			'type' => get_post_meta( $post->ID, self::TYPE_META_KEY, true ),
 			'title' => $post->post_title,

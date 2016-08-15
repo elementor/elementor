@@ -86,13 +86,13 @@ class Manager {
 
 		$_POST['data'] = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		$item_id = $source->save_item( $_POST );
+		$template_id = $source->save_item( $_POST );
 
-		if ( is_wp_error( $item_id ) ) {
-			return $item_id;
+		if ( is_wp_error( $template_id ) ) {
+			return $template_id;
 		}
 
-		return $source->get_item( $item_id );
+		return $source->get_item( $template_id );
 	}
 
 	public function get_template_content() {
@@ -100,7 +100,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
-		if ( empty( $_POST['item_id'] ) || empty( $_POST['post_id'] ) ) {
+		if ( empty( $_POST['template_id'] ) || empty( $_POST['post_id'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
 		}
 
@@ -113,7 +113,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->get_content( $_POST['item_id'] );
+		return $source->get_content( $_POST['template_id'] );
 	}
 
 	public function delete_template() {
@@ -121,7 +121,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
-		if ( empty( $_POST['item_id'] ) ) {
+		if ( empty( $_POST['template_id'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
 		}
 
@@ -131,7 +131,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$source->delete_template( $_POST['item_id'] );
+		$source->delete_template( $_POST['template_id'] );
 
 		return true;
 	}
@@ -142,7 +142,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
 		}
 
-		if ( empty( $_REQUEST['item_id'] ) ) {
+		if ( empty( $_REQUEST['template_id'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
 		}
 
@@ -152,7 +152,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->export_template( $_REQUEST['item_id'] );
+		return $source->export_template( $_REQUEST['template_id'] );
 	}
 
 	public function import_template() {

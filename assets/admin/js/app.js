@@ -866,7 +866,7 @@ TemplateLibraryManager = function() {
 			elementor.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
-					item_id: templateModel.get( 'id' )
+					template_id: templateModel.get( 'template_id' )
 				},
 				success: function() {
 					templatesCollection.remove( templateModel, { silent: true } );
@@ -886,7 +886,7 @@ TemplateLibraryManager = function() {
 			data: {
 				source: templateModel.get( 'source' ),
 				post_id: elementor.config.post_id,
-				item_id: templateModel.get( 'id' )
+				template_id: templateModel.get( 'template_id' )
 			},
 			success: function( data ) {
 				self.getModal().hide();
@@ -1010,6 +1010,7 @@ var TemplateLibraryTemplateModel;
 
 TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
+		template_id: 0,
 		name: '',
 		title: '',
 		source: '',
