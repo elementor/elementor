@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<div id="elementor-select-preset-close">
 					<i class="fa fa-times"></i>
 				</div>
-				<div id="elementor-select-preset-title"><?php _e( 'SELECT YOUR STRUCTURE', 'elementor' ); ?></div>
+				<div id="elementor-select-preset-title"><?php _e( 'Select your Structure', 'elementor' ); ?></div>
 				<ul id="elementor-select-preset-list">
 					<%
 					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
