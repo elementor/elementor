@@ -25,6 +25,8 @@ TemplateLibraryManager = function() {
 				},
 				success: function() {
 					templatesCollection.remove( templateModel, { silent: true } );
+
+					self.showTemplates();
 				}
 			} );
 		};
