@@ -200,6 +200,9 @@
 	&[data-template-source="local"] {
 		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 		margin: 15px;
+	}
+
+	&:not([data-template-source="remote"]) {
 
 		+ #elementor-template-library-footer-banner {
 			display: none;

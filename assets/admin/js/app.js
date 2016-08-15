@@ -869,7 +869,9 @@ TemplateLibraryManager = function() {
 					template_id: templateModel.get( 'template_id' )
 				},
 				success: function() {
-					templatesCollection.remove( templateModel );
+					templatesCollection.remove( templateModel, { silent: true } );
+
+					self.showTemplates();
 				}
 			} );
 		};
