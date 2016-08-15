@@ -2,6 +2,7 @@ var TemplateLibraryTemplateModel;
 
 TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
+		template_id: 0,
 		name: '',
 		title: '',
 		source: '',

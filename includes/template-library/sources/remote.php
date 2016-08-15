@@ -39,7 +39,7 @@ class Source_Remote extends Source_Base {
 	 */
 	public function get_item( $template_data ) {
 		return [
-			'id' => $template_data['id'],
+			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
