@@ -19,14 +19,18 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
 		buttonPublish: '#elementor-panel-footer-publish',
-		watchTutorial: '#elementor-panel-footer-watch-tutorial'
+		watchTutorial: '#elementor-panel-footer-watch-tutorial',
+		showTemplates: '#elementor-panel-footer-templates-modal',
+		saveTemplate: '#elementor-panel-footer-save-template'
 	},
 
 	events: {
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.watchTutorial': 'onClickWatchTutorial'
+		'click @ui.watchTutorial': 'onClickWatchTutorial',
+		'click @ui.showTemplates': 'onClickShowTemplates',
+		'click @ui.saveTemplate': 'onClickSaveTemplate'
 	},
 
 	initialize: function() {
@@ -34,7 +38,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
 
-		this.listenTo( elementor.editor, 'editor:changed', this.onEditorChanged );
+		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged );
 	},
 
 	_initDialog: function() {
@@ -108,8 +112,9 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		this.getCurrentDeviceModeButton().addClass( 'active' );
 
-		elementor.deviceMode.reply( 'currentMode', this.currentDeviceMode );
-		elementor.deviceMode.trigger( 'change' );
+		elementor.channels.deviceMode
+		         .reply( 'currentMode', this.currentDeviceMode )
+		         .trigger( 'change' );
 	},
 
 	getCurrentDeviceModeButton: function() {
@@ -159,6 +164,18 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	onClickWatchTutorial: function() {
 		elementor.introduction.startIntroduction();
+	},
+
+	onClickShowTemplates: function() {
+		elementor.templates.startModal( function() {
+			elementor.templates.showTemplates();
+		} );
+	},
+
+	onClickSaveTemplate: function() {
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView();
+		} );
 	}
 } );
 

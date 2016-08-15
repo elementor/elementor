@@ -181,13 +181,13 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
-		elementor.data.trigger( 'scrollbar:update' );
+		elementor.channels.data.trigger( 'scrollbar:update' );
 	},
 
 	onControlSwitchTab: function( activeTab ) {
 		this.$el.toggleClass( 'elementor-active-tab', ( activeTab === this.model.get( 'tab' ) ) );
 
-		elementor.data.trigger( 'scrollbar:update' );
+		elementor.channels.data.trigger( 'scrollbar:update' );
 	},
 
 	onReady: function() {},

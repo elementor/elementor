@@ -10,7 +10,7 @@ input, select, textarea {
 	box-shadow: none;
 	color: $editor-darkest;
 	border: 1px solid;
-	margin: 0;
+	outline: none;
 
 	&:not(:focus) {
 		border-color: $editor-lightest;
@@ -48,7 +48,6 @@ input[type="radio"] {
 	height: 16px;
 	margin: -4px 4px 0 0;
 	outline: 0;
-	padding: 0;
 	text-align: center;
 	vertical-align: middle;
 	width: 16px;

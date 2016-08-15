@@ -157,7 +157,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			view.$el.addClass( openedClass );
 		} );
 
-		elementor.data.trigger( 'scrollbar:update' );
+		elementor.channels.data.trigger( 'scrollbar:update' );
 	}
 } );
 

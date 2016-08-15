@@ -66,7 +66,20 @@ class Editor {
 			return true;
 		}
 
-		if ( isset( $_REQUEST['action'] ) && 'elementor_render_widget' === $_REQUEST['action'] ) {
+		// Ajax request as Editor mode
+		$actions = [
+			'elementor_render_widget',
+
+			// Templates
+			'elementor_get_templates',
+			'elementor_save_template',
+			'elementor_get_template',
+			'elementor_delete_template',
+			'elementor_export_template',
+			'elementor_import_template',
+		];
+
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions ) ) {
 			return true;
 		}
 
@@ -103,7 +116,7 @@ class Editor {
 	}
 
 	public function print_panel_html() {
-		include( 'editor-templates/editor-wrapper-template.php' );
+		include( 'editor-templates/editor-wrapper.php' );
 	}
 
 	public function enqueue_scripts() {
@@ -294,7 +307,7 @@ class Editor {
 				'post_permalink' => get_the_permalink(),
 				'edit_post_link' => get_edit_post_link(),
 				'settings_page_link' => Settings::get_url(),
-				'elementor_site' => 'https://elementor.com/',
+				'elementor_site' => 'https://go.elementor.com/about-elementor/',
 				'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 				'assets_url' => ELEMENTOR_ASSETS_URL,
 				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
@@ -328,6 +341,13 @@ class Editor {
 					'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 					'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 					'learn_more' => __( 'Learn More', 'elementor' ),
+					'an_error_occurred' => __( 'An error occurred', 'elementor' ),
+					'templates_request_error' => __( 'The following error occurred when processing the request:', 'elementor' ),
+					'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
+					'page' => __( 'Page', 'elementor' ),
+					'section' => __( 'Section', 'elementor' ),
+					'delete_template' => __( 'Delete Template', 'elementor' ),
+					'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
 				],
 			]
 		);
@@ -407,10 +427,11 @@ class Editor {
 		Plugin::instance()->widgets_manager->render_widgets_content();
 		Plugin::instance()->elements_manager->render_elements_content();
 
-		include( 'editor-templates/global-template.php' );
+		include( 'editor-templates/global.php' );
 		include( 'editor-templates/panel.php' );
 		include( 'editor-templates/panel-elements.php' );
-		include( 'editor-templates/repeater-template.php' );
+		include( 'editor-templates/repeater.php' );
+		include( 'editor-templates/templates.php' );
 	}
 
 	public function __construct() {

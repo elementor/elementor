@@ -73,12 +73,12 @@ ColumnView = BaseElementView.extend( {
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( elementor.data, 'widget:drag:start', this.onWidgetDragStart );
-		this.listenTo( elementor.data, 'widget:drag:end', this.onWidgetDragEnd );
+		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
+		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
 
 	isDroppingAllowed: function( side, event ) {
-		var elementView = elementor.panelElements.request( 'element:selected' ),
+		var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			elType = elementView.model.get( 'elType' );
 
 		if ( 'section' === elType ) {
@@ -152,7 +152,7 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
-				var elementView = elementor.panelElements.request( 'element:selected' ),
+				var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 					newIndex = Backbone.$( this ).index();
 
 				if ( 'bottom' === side ) {

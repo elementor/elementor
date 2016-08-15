@@ -14,13 +14,15 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		addSectionArea: '#elementor-add-section',
 		addNewSection: '#elementor-add-new-section',
 		closePresetsIcon: '#elementor-select-preset-close',
-		addIcon: '#elementor-add-section-button',
+		addSectionButton: '#elementor-add-section-button',
+		addTemplateButton: '#elementor-add-template-button',
 		selectPreset: '#elementor-select-preset',
 		presets: '.elementor-preset'
 	},
 
 	events: {
-		'click @ui.addIcon': 'showSelectPresets',
+		'click @ui.addSectionButton': 'onAddSectionButtonClick',
+		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 		'click @ui.closePresetsIcon': 'closeSelectPresets',
 		'click @ui.presets': 'onPresetSelected'
 	},
@@ -59,8 +61,8 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	initialize: function() {
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
-			.listenTo( elementor.panelElements, 'element:drag:start', this.onPanelElementDragStart )
-			.listenTo( elementor.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
+			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
+			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
 	},
 
 	addChildModel: function( model, options ) {
@@ -84,11 +86,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		return this.children.findByModelCid( newModel.cid );
 	},
 
-	showSelectPresets: function() {
-		this.ui.addNewSection.hide();
-		this.ui.selectPreset.show();
-	},
-
 	closeSelectPresets: function() {
 		this.ui.addNewSection.show();
 		this.ui.selectPreset.hide();
@@ -106,6 +103,17 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
+	onAddSectionButtonClick: function() {
+		this.ui.addNewSection.hide();
+		this.ui.selectPreset.show();
+	},
+
+	onAddTemplateButtonClick: function() {
+		elementor.templates.startModal( function() {
+			elementor.templates.showTemplates();
+		} );
+	},
+
 	onRender: function() {
 		var self = this;
 
@@ -119,7 +127,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 				self.ui.addSectionArea.removeAttr( 'data-side' );
 			},
 			onDropping: function() {
-				var elementView = elementor.panelElements.request( 'element:selected' ),
+				var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 					newSection = self.addSection(),
 					elType = elementView.model.get( 'elType' );
 

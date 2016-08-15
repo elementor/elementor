@@ -27,7 +27,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	elementEvents: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove'
+		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove',
+		'click .elementor-editor-section-settings-list .elementor-editor-element-save': 'onClickSave'
 	},
 
 	behaviors: {
@@ -252,6 +253,14 @@ SectionView = BaseElementView.extend( {
 
 	onStructureChanged: function() {
 		this.redefineLayout();
+	},
+
+	onClickSave: function() {
+		var sectionID = this.model.get( 'id' );
+
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView( sectionID );
+		} );
 	}
 } );
 
