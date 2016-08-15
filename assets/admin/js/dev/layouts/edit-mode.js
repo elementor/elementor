@@ -28,13 +28,14 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChange: function() {
-		var oldEditMode = elementor.dataEditMode.request( 'activeMode' ),
+		var dataEditMode = elementor.channels.dataEditMode,
+			oldEditMode = dataEditMode.request( 'activeMode' ),
 			currentMode = this.getCurrentMode();
 
-		elementor.dataEditMode.reply( 'activeMode', currentMode );
+		dataEditMode.reply( 'activeMode', currentMode );
 
 		if ( currentMode !== oldEditMode ) {
-			elementor.dataEditMode.trigger( 'switch' );
+			dataEditMode.trigger( 'switch' );
 
 			var title = 'preview' === currentMode ? 'Back to Editor' : 'Preview';
 

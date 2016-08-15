@@ -15,13 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div id="elementor-add-section-inner">
 			<div id="elementor-add-new-section">
 				<button id="elementor-add-section-button" class="elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>
+				<button id="elementor-add-template-button" class="elementor-button"><?php _e( 'Add Template', 'elementor' ); ?></button>
 				<div id="elementor-add-section-drag-title"><?php _e( 'Or drag widget here', 'elementor' ); ?></div>
 			</div>
 			<div id="elementor-select-preset">
 				<div id="elementor-select-preset-close">
 					<i class="fa fa-times"></i>
 				</div>
-				<div id="elementor-select-preset-title"><?php _e( 'SELECT YOUR STRUCTURE', 'elementor' ); ?></div>
+				<div id="elementor-select-preset-title"><?php _e( 'Select your Structure', 'elementor' ); ?></div>
 				<ul id="elementor-select-preset-list">
 					<%
 					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];

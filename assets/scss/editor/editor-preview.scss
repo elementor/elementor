@@ -601,33 +601,41 @@ body {
 
 		#elementor-add-new-section {
 			display: inline-block; // For smooth dragging above
+
+			.elementor-button {
+				color: #fff;
+				background-image: none; // Reset for some themes
+				font-size: 13px;
+				font-family: Arial, Helvetica, sans-serif;
+				font-weight: normal;
+				font-style: normal;
+				line-height: 1;
+				text-transform: uppercase;
+				height: 40px;
+				width: 170px;
+				padding: 0;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+
+				&:hover {
+					opacity: 0.85;
+					box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
+				}
+
+				&:active {
+					box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
+				}
+			}
 		}
 
 		#elementor-add-section-button {
 			background-color: $editor-accent;
-			background-image: none; // Reset for some themes
-			color: #fff;
-			font-size: 13px;
-			font-family: Arial, Helvetica, sans-serif;
-			font-weight: normal;
-			font-style: normal;
-			line-height: 1;
-			text-transform: uppercase;
-			height: 40px;
-			width: 170px;
-			padding: 0;
-			border: none;
-			border-radius: 3px;
-			cursor: pointer;
+		}
 
-			&:hover {
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
-			}
-
-			&:active {
-				box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
-			}
+		#elementor-add-template-button {
+			background-color: $editor-dark;
+			margin-left: 25px;
 		}
 
 		#elementor-add-section-drag-title {
@@ -637,7 +645,7 @@ body {
 			font-style: italic;
 			line-height: 1;
 			color: $editor-darker;
-			margin-top: 10px;
+			margin-top: 15px;
 		}
 
 		#elementor-select-preset-close {
@@ -655,6 +663,7 @@ body {
 			font-size: 13px;
 			font-weight: 500;
 			font-style: normal;
+			text-transform: uppercase;
 			color: $editor-darker;
 		}
 

@@ -102,14 +102,14 @@ class Admin {
 			        <i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 		        </div>
-		        <div id="elementor-loader-wrapper">
-			        <div id="elementor-loader">
+		        <div class="elementor-loader-wrapper">
+			        <div class="elementor-loader">
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 			        </div>
-			        <div id="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+			        <div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
 		        </div>
 	        </a>
 		</div>
@@ -170,7 +170,6 @@ class Admin {
 
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
 			$post = get_post();
-
 			$current_mode = Plugin::instance()->db->get_edit_mode( $post->ID );
 
 			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';

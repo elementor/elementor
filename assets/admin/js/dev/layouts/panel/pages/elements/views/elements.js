@@ -7,11 +7,11 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	id: 'elementor-panel-elements',
 
 	initialize: function() {
-		this.listenTo( elementor.panelElements, 'change', this.onFilterChanged );
+		this.listenTo( elementor.channels.panelElements, 'change', this.onFilterChanged );
 	},
 
 	filter: function( childModel ) {
-		var filterValue = elementor.panelElements.request( 'filter:value' );
+		var filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
 			return true;

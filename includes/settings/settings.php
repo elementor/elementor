@@ -36,7 +36,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'checkbox_list_cpt',
 				'std' => [ 'page', 'post' ],
-				'exclude' => [ 'attachment' ],
+				'exclude' => [ 'attachment', TemplateLibrary\Source_Local::CPT ],
 			]
 		);
 
@@ -136,6 +136,29 @@ class Settings {
 		);
 
 		register_setting( self::PAGE_ID, $field_id );
+
+		$tools_section = 'elementor_tools_section';
+		add_settings_section(
+			$tools_section,
+			__( 'Tools', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_raw_reset_api_data';
+		add_settings_field(
+			$field_id,
+			__( 'Sync Library', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$tools_section,
+			[
+				'id' => $field_id,
+				'type' => 'raw_html',
+				'html' => sprintf( '<button data-nonce="%s" class="button" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
+				'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
+			]
+		);
 	}
 
 	public function register_admin_menu() {

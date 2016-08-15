@@ -147,23 +147,18 @@ ElementModel = Backbone.Model.extend( {
 
 		var data = this.toJSON();
 
-		this._jqueryXhr = Backbone.$.ajax( {
-			type: 'POST',
-			url: elementor.config.ajaxurl,
+		this._jqueryXhr = elementor.ajax.send( 'render_widget', {
 			data: {
-				action: 'elementor_render_widget',
 				post_id: elementor.config.post_id,
 				data: JSON.stringify( data ),
 				_nonce: elementor.config.nonce
 			},
-			dataType: 'json'
-		} )
-
-			.done( _.bind( this.onRemoteGetHtml, this ) );
+			success: _.bind( this.onRemoteGetHtml, this )
+		} );
 	},
 
 	onRemoteGetHtml: function( data ) {
-		this.setHtmlCache( data.data.render );
+		this.setHtmlCache( data.render );
 		this.trigger( 'remote:render' );
 	},
 

@@ -98,4 +98,16 @@ class Settings_Controls {
 
 		self::_checkbox_list( $field );
 	}
+
+	private static function _raw_html( $field = [] ) {
+		if ( empty( $field['html'] ) )
+			return;
+		?>
+		<div><?php echo $field['html']; ?></div>
+
+		<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
+		<?php if ( ! empty( $field['desc'] ) ) : ?>
+			<p class="description"><?php echo $field['desc']; ?></p>
+		<?php endif;
+	}
 }

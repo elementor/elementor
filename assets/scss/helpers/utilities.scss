@@ -2,10 +2,6 @@
 // Utilities
 //
 
-.elementor-clearfix {
-	@include clearfix;
-}
-
 .elementor-screen-only,
 .screen-reader-text, // wp - common.css
 .screen-reader-text span, // wp - common.css

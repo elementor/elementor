@@ -174,12 +174,12 @@ class Widgets_Manager {
 		$widget_obj = $this->get_widget( $widget_type );
 
 		if ( ! $widget_obj instanceof Widget_WordPress ) {
-			die;
+			wp_send_json_error();
 		}
 
 		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-		echo $widget_obj->get_form( $data );
-		die;
+
+		wp_send_json_success( $widget_obj->get_form( $data ) );
 	}
 
 	public function render_widgets_content() {

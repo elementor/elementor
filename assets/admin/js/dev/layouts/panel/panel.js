@@ -94,8 +94,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow: function() {
-		elementor.filterState.reply( 'get', { type: 'parent', term: '' } );
-
 		var PanelFooterItemView = require( 'elementor-layouts/panel/footer' ),
 			PanelHeaderItemView = require( 'elementor-layouts/panel/header' );
 
@@ -119,7 +117,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		// Set default page to elements
 		this.setPage( 'elements' );
 
-		this.listenTo( elementor.data, 'scrollbar:update', this.updateScrollbar );
+		this.listenTo( elementor.channels.data, 'scrollbar:update', this.updateScrollbar );
 	},
 
 	onEditorBeforeShow: function() {

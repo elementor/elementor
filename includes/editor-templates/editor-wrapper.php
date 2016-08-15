@@ -22,14 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <div id="elementor-editor-wrapper">
 	<div id="elementor-preview">
 		<div id="elementor-loading">
-			<div id="elementor-loader-wrapper">
-				<div id="elementor-loader">
+			<div class="elementor-loader-wrapper">
+				<div class="elementor-loader">
 					<div class="elementor-loader-box"></div>
 					<div class="elementor-loader-box"></div>
 					<div class="elementor-loader-box"></div>
 					<div class="elementor-loader-box"></div>
 				</div>
-				<div id="elementor-loading-title"><?php _e( 'Loading', 'elementor' ) ?></div>
+				<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ) ?></div>
 			</div>
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">

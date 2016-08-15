@@ -11,13 +11,13 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 		this.$el.html5Draggable( {
 
 			onDragStart: function() {
-				elementor.panelElements
+				elementor.channels.panelElements
 					.reply( 'element:selected', self )
 					.trigger( 'element:drag:start' );
 			},
 
 			onDragEnd: function() {
-				elementor.panelElements.trigger( 'element:drag:end' );
+				elementor.channels.panelElements.trigger( 'element:drag:end' );
 			},
 
 			groups: [ 'elementor-element' ]

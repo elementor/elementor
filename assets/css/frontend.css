@@ -322,12 +322,6 @@
 @media (max-width: 767px) {
   .elementor-column {
     width: 100%; } }
-.elementor-clearfix:before, .elementor-clearfix:after {
-  content: " ";
-  display: table; }
-.elementor-clearfix:after {
-  clear: both; }
-
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,

@@ -108,6 +108,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/admin/js/dev/layouts/panel',
 							src: '**/*.js',
 							expose: 'elementor-panel'
+						},
+						{
+							cwd: 'assets/admin/js/dev/components/template-library',
+							src: '**/*.js',
+							expose: 'elementor-templates'
 						}
 					] );
 				}
@@ -351,17 +356,6 @@ module.exports = function( grunt ) {
 			main: [
 				'build'
 			]
-		},
-
-		wp_deploy: {
-			deploy:{
-				options: {
-					plugin_slug: '<%= pkg.slug %>',
-					svn_user: 'KingYes',
-					build_dir: 'build/',
-					assets_dir: 'wp-assets/'
-				}
-			}
 		}
 	} );
 
