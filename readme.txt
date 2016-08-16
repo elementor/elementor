@@ -157,7 +157,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Save your pages and sections to template library
 * New! - 20+ beautifully pre-designed templates
 * New! - Export / Import templates
-* Fixed! - Changed code structure in Icon/Icon-Box/Social-Icons widgets template
+* Fixed! - Changed code structure in Icon/Icon-Box/Social-Icons widget templates
 * Fixed! - Screen size for hidden tablet class
 * Fixed! - Blank page detection in empty pages for editing
 
