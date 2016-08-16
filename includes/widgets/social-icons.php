@@ -293,10 +293,9 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
 				$social = str_replace( 'fa fa-', '', $item['social'] );
-				$link = ! empty( $item['link']['url'] ) ? $item['link']['url'] : '';
 				$target = $item['link']['is_external'] ? ' target="_blank"' : '';
 				?>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social ); ?>" href="<?php echo $link; ?>"<?php echo $target; ?>>
+				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social ); ?>" href="<?php echo esc_attr( $item['link']['url'] ); ?>"<?php echo $target; ?>>
 					<i class="<?php echo $item['social']; ?>"></i>
 				</a>
 			<?php endforeach; ?>
