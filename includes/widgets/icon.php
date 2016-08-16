@@ -341,21 +341,25 @@ class Widget_Icon extends Widget_Base {
 		if ( ! empty( $instance['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
 		}
+
+		$icon_tag = ! empty( $instance['link']['url'] ) ? 'a' : 'div';
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<a <?php echo $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
+			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
 				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
-			</a>
+			</<?php echo $icon_tag; ?>>
 		</div>
 		<?php
 	}
 
 	protected function content_template() {
 		?>
+		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconTag = link ? 'a' : 'div'; %>
 		<div class="elementor-icon-wrapper">
-			<a class="elementor-icon elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
+			<<%= iconTag %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>" <%= link %>>
 				<i class="<%- settings.icon %>"></i>
-			</a>
+			</<%= iconTag %>>
 		</div>
 		<?php
 	}
