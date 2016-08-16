@@ -290,7 +290,7 @@ class Frontend {
 
 	protected function _parse_schemes_css_code() {
 		$return = '';
-		foreach ( Plugin::instance()->widgets_manager->get_register_widgets() as $widget_obj ) {
+		foreach ( Plugin::instance()->widgets_manager->get_registered_widgets() as $widget_obj ) {
 			foreach ( $widget_obj->get_scheme_controls() as $control ) {
 				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 				if ( empty( $scheme_value ) )
