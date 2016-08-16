@@ -334,7 +334,6 @@ class Widget_Icon extends Widget_Base {
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$this->add_render_attribute( 'icon-wrapper', 'href', $instance['link']['url'] );
-
 			$icon_tag = 'a';
 
 			if ( ! empty( $instance['link']['is_external'] ) ) {
@@ -346,7 +345,6 @@ class Widget_Icon extends Widget_Base {
 			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
 		}
 
-		$icon_tag = ! empty( $instance['link']['url'] ) ? 'a' : 'div';
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
