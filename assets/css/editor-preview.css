@@ -222,6 +222,8 @@ body.elementor-editor-active #elementor {
   @media (max-width: 1023px) {
     body.elementor-editor-active #elementor .elementor-column > .ui-resizable-e, body.elementor-editor-active #elementor .elementor-column > .ui-resizable-w {
       display: none !important; } }
+body.elementor-editor-active #elementor-inner {
+  overflow: hidden; }
 @media (min-width: 768px) {
   body.elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
     padding: 10px; } }
@@ -340,22 +342,22 @@ body.elementor-editor-active #elementor-select-preset-title {
   font-style: normal;
   text-transform: uppercase;
   color: #556068; }
-body.elementor-editor-active ul#elementor-select-preset-list {
+body.elementor-editor-active #elementor-select-preset-list {
   list-style: none;
   padding: 0 25px;
   margin: 20px auto 0;
   overflow: hidden;
   max-width: 700px; }
-  body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset {
+  body.elementor-editor-active #elementor-select-preset-list .elementor-preset {
     cursor: pointer;
     margin: 0;
     padding: 10px;
     float: left; }
-    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset:hover path {
+    body.elementor-editor-active #elementor-select-preset-list .elementor-preset:hover path {
       fill: #6d7882; }
-    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset:not(:hover) path {
+    body.elementor-editor-active #elementor-select-preset-list .elementor-preset:not(:hover) path {
       fill: #d5dadf; }
-    body.elementor-editor-active ul#elementor-select-preset-list li.elementor-preset svg {
+    body.elementor-editor-active #elementor-select-preset-list .elementor-preset svg {
       height: 50px; }
 body.elementor-editor-preview .elementor-element-overlay,
 body.elementor-editor-preview .elementor-editor-widget-settings,
