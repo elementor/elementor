@@ -155,7 +155,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 0.7.0 - 16.08.2016 ###
-* New! - Template Library ([Post Release](https://elementor.com/introducing-template-library/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme))
+* New! - Template Library ([Release Post](https://elementor.com/introducing-template-library/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme))
 * New! - Save your pages and sections to template library
 * New! - 20+ beautifully pre-designed templates
 * New! - Export / Import templates
