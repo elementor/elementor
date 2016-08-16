@@ -671,14 +671,14 @@ body {
 			color: $editor-darker;
 		}
 
-		ul#elementor-select-preset-list {
+		#elementor-select-preset-list {
 			list-style: none;
 			padding: 0 25px;
 			margin: 20px auto 0;
 			overflow: hidden;
 			max-width: 700px;
 
-			li.elementor-preset {
+			.elementor-preset {
 				cursor: pointer;
 				margin: 0;
 				padding: 10px;
