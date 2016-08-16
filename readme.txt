@@ -11,34 +11,27 @@ The most advanced frontend drag & drop page builder. Create high-end, pixel perf
 
 == Description ==
 
-Elementor is the fastest free page builder, that enables you to design pages like never before possible.
-
 https://www.youtube.com/watch?v=kB4U67tiQLA
 
-With Elementor, we set out to create a unique page builder, with various advantages that set it apart.
+It’s about time for a live page builder, with no limits of design. A page builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
-= Instant drag and drop =
-The most frustrating thing about drag and drop, is the lag that occurs after the drop. We created the elementor so all dragging and dropping is perfect. No lags. No Jumps.
+It's time for **Elementor Page Builder**.
 
-= Advanced design capabilities =
-Create pages that have "the designer touch", by including features like parallax scroll, full width background images, advanced buttons, custom headers, slide in forms and more.
+= Faster. Much faster. =
+Instant reaction was a key feature we wanted to achieve. Instant drag & drop, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
-= Responsive design =
-No designer should work twice on the same page. With Elementor, there's no need to create a separate version for mobile. This saves half the work and still results in 100% responsive design.
+= Live design. Truly live. =
+Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the page and simultaneously see exactly how it looks like. Elementor features live editing that is truly live, with no need to press update or go to preview mode.
 
-= Works on the Frontend =
-Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the site and simultaneously see how the exact site looks like.
+= Surprises you won't see anywhere else. =
+Create pages that have "the designer touch", by including unique features like box shadows, background overlays, hover and entrance animations, advanced buttons and more. We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface. You no longer need to use code, HTML, CSS or shortcode.
 
-= Gives total control with no hassle =
-We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface. You no longer need to use code, HTML, CSS or shortcode.
-
-= Works on any theme =
-Elementor works on any old or new theme. Switching between themes is no problem.
-
-= RTL supported, multilingual and translatable =
-We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
+= NEW! Template Library. =
+We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
 
 = 27 widgets and counting =
+We packed 27 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
 - **Text Editor**. A wysiwyg text editor, just like the WordPress editor.
@@ -61,12 +54,15 @@ We've integrated RTL and multi language support within the framework of Elemento
 - **HTML**. Insert code into the page.
 - **Menu Anchor**. Link any menu to this anchor.
 - **Sidebar**. Include any sidebar you create into the page.
-- **GoogleMaps**. Embed maps into the page.
+- **Google Maps**. Embed maps into the page.
 - **SoundCloud**. Add audio bits from SoundCloud.
 - **Divider**. A line that divides different elements in the page.
 - **Spacer**. A space that divides the various elements.
 - **Columns**. Create inner columns within the column.
 - **And counting...**
+
+= Multilingual & RTL supported. =
+We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Translations =
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
@@ -148,10 +144,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Screenshots ==
 
-1. Elementor's intuitive and user friendly page builder panel lets you edit the page live and real time.
-2. Control every element of styling for the Heading widget.
-3. Choose which column structure you wish to add to a new section.
-4. Settings page.
+1. **Drag & Drop.** Our instant drag & drop lets you easily place every element anywhere on the page.
+2. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
+3. **Resize Columns.** Set the column width exactly how you want it by dragging its corner left and right.
+4. **Responsive Design.** Switch between desktop, tablet & mobile displays to view the page across devices.
+5. **Template Library.** Choose one of our pre-designed templates, crafted to fit every purpose.
 
 == Changelog ==
 
