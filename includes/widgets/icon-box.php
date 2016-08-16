@@ -508,27 +508,31 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$this->add_render_attribute( 'a', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
+		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
 
 		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'a', 'href', $instance['link']['url'] );
+			$this->add_render_attribute( 'icon', 'href', $instance['link']['url'] );
 		}
 
 		if ( ! empty( $instance['link']['is_external'] ) ) {
-			$this->add_render_attribute( 'a', 'target', '_blank' );
+			$this->add_render_attribute( 'icon', 'target', '_blank' );
 		}
 
 		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
+
+		$icon_tag = ! empty( $instance['link']['url'] ) ? 'a' : 'div';
+
+		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
-				<a <?php echo $this->get_render_attribute_string( 'a' ); ?>>
+				<<?php echo $icon_tag . ' ' . $icon_attributes; ?>>
 					<i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
-				</a>
+				</<?php echo $icon_tag; ?>>
 			</div>
 			<div class="elementor-icon-box-content">
 				<<?php echo $instance['title_size']; ?> class="elementor-icon-box-title">
-					<a <?php echo $this->get_render_attribute_string( 'a' ); ?>><?php echo $instance['title_text']; ?></a>
+					<<?php echo $icon_tag . ' ' . $icon_attributes; ?>><?php echo $instance['title_text']; ?></<?php echo $icon_tag; ?>>
 				</<?php echo $instance['title_size']; ?>>
 				<p class="elementor-icon-box-description"><?php echo $instance['description_text']; ?></p>
 			</div>
@@ -538,16 +542,17 @@ class Widget_Icon_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : ''; %>
+		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconTag = link ? 'a' : 'div'; %>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
-				<a <%- link %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
+				<<%= iconTag + ' ' + link %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
 					<i class="<%- settings.icon %>"></i>
-				</a>
+				</<%= iconTag %>>
 			</div>
 			<div class="elementor-icon-box-content">
 				<<%= settings.title_size %> class="elementor-icon-box-title">
-					<a <%- link %>><%= settings.title_text %></a>
+					<<%= iconTag + ' ' + link %>><%= settings.title_text %></<%= iconTag %>>
 				</<%= settings.title_size %>>
 				<p class="elementor-icon-box-description"><%= settings.description_text %></p>
 			</div>
