@@ -466,6 +466,10 @@ body {
 			}
 		}
 
+		#elementor-inner {
+			overflow: hidden; // For blank page detection
+		}
+
 		.elementor-column-wrap {
 
 			&.elementor-element-empty {
