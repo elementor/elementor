@@ -518,7 +518,7 @@ class Widget_Icon_box extends Widget_Base {
 			$this->add_render_attribute( 'a', 'target', '_blank' );
 		}
 
-		$this->add_render_attribute( 'i', 'class', $instance['icon'] )
+		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
