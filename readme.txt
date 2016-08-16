@@ -13,7 +13,7 @@ The most advanced frontend drag & drop page builder. Create high-end, pixel perf
 
 https://www.youtube.com/watch?v=kB4U67tiQLA
 
-It’s about time for a live page builder, with no limits of design. A page builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
+It's about time for a live page builder, with no limits of design. A page builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
 It's time for **Elementor Page Builder**.
 
