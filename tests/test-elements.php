@@ -7,11 +7,11 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 	}
 
 	public function test_getElements() {
-		$this->assertNotEmpty( Elementor\Plugin::instance()->elements_manager->get_register_elements() );
+		$this->assertNotEmpty( Elementor\Plugin::instance()->elements_manager->get_registered_elements() );
 	}
 
 	public function test_elementMethods() {
-		foreach ( \Elementor\Plugin::instance()->elements_manager->get_register_elements() as $element ) {
+		foreach ( \Elementor\Plugin::instance()->elements_manager->get_registered_elements() as $element ) {
 			$this->assertNotEmpty( $element->get_title() );
 			$this->assertNotEmpty( $element->get_type() );
 			$this->assertNotEmpty( $element->get_id() );
@@ -71,7 +71,7 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 		$wrapper_text = '{{WRAPPER}}';
 		$wrapper_text_length = strlen( $wrapper_text );
 
-		foreach ( Elementor\Plugin::instance()->elements_manager->get_register_elements() as $element ) {
+		foreach ( Elementor\Plugin::instance()->elements_manager->get_registered_elements() as $element ) {
 			foreach ( $element->get_style_controls() as $control ) {
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					foreach ( explode( ',', $selector ) as $item ) {
@@ -83,7 +83,7 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 	}
 
 	public function test_controlsDefaultData() {
-		foreach ( Elementor\Plugin::instance()->elements_manager->get_register_elements() as $element ) {
+		foreach ( Elementor\Plugin::instance()->elements_manager->get_registered_elements() as $element ) {
 			foreach ( $element->get_controls() as $control ) {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
 					continue;

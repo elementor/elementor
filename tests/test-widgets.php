@@ -7,11 +7,11 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_getWidgets() {
-		$this->assertNotEmpty( Elementor\Plugin::instance()->widgets_manager->get_register_widgets() );
+		$this->assertNotEmpty( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() );
 	}
 
 	public function test_elementMethods() {
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_register_widgets() as $widget ) {
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
 			$this->assertNotEmpty( $widget->get_title() );
 			$this->assertNotEmpty( $widget->get_type() );
 			$this->assertNotEmpty( $widget->get_id() );
@@ -45,7 +45,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 		$wrapper_text = '{{WRAPPER}}';
 		$wrapper_text_length = strlen( $wrapper_text );
 
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_register_widgets() as $widget ) {
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
 			foreach ( $widget->get_style_controls() as $control ) {
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					foreach ( explode( ',', $selector ) as $item ) {
@@ -57,7 +57,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_controlsDefaultData() {
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_register_widgets() as $widget ) {
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
 			foreach ( $widget->get_controls() as $control ) {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
 					continue;

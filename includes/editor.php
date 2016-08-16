@@ -295,7 +295,7 @@ class Editor {
 				'elements_categories' => Plugin::instance()->elements_manager->get_categories(),
 				'controls' => Plugin::instance()->controls_manager->get_controls_data(),
 				'elements' => Plugin::instance()->elements_manager->get_register_elements_data(),
-				'widgets' => Plugin::instance()->widgets_manager->get_register_widgets_data(),
+				'widgets' => Plugin::instance()->widgets_manager->get_registered_widgets_data(),
 				'schemes' => [
 					'items' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
 					'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
