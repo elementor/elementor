@@ -510,17 +510,18 @@ class Widget_Icon_box extends Widget_Base {
 	protected function render( $instance = [] ) {
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
 
+		$icon_tag = 'div';
+
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$this->add_render_attribute( 'icon', 'href', $instance['link']['url'] );
-		}
+			$icon_tag = 'a';
 
-		if ( ! empty( $instance['link']['is_external'] ) ) {
-			$this->add_render_attribute( 'icon', 'target', '_blank' );
+			if ( ! empty( $instance['link']['is_external'] ) ) {
+				$this->add_render_attribute( 'icon', 'target', '_blank' );
+			}
 		}
 
 		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
-
-		$icon_tag = ! empty( $instance['link']['url'] ) ? 'a' : 'div';
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		?>

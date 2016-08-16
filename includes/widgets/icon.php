@@ -330,8 +330,12 @@ class Widget_Icon extends Widget_Base {
 			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
 		}
 
+		$icon_tag = 'div';
+
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$this->add_render_attribute( 'icon-wrapper', 'href', $instance['link']['url'] );
+
+			$icon_tag = 'a';
 
 			if ( ! empty( $instance['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
