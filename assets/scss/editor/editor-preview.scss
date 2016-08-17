@@ -601,6 +601,10 @@ body {
 			&[data-side] {
 				border: 3px dashed $editor-info;
 			}
+
+			@media (max-width: $screen-xs-max) {
+				display: none;
+			}
 		}
 
 		#elementor-add-section-inner {
