@@ -161,6 +161,8 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents = this.$preview.contents();
 
+		this.viewport.init();
+
 		elementorBindUI.setScopeWindow( this.$preview[0].contentWindow );
 
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
