@@ -36,7 +36,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'checkbox_list_cpt',
 				'std' => [ 'page', 'post' ],
-				'exclude' => [ 'attachment', TemplateLibrary\Source_Local::CPT ],
+				'exclude' => [ 'attachment', 'elementor_library' ],
 			]
 		);
 
