@@ -5,6 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Settings;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -314,6 +315,13 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	public function block_template_frontend() {
+		if ( is_singular( self::CPT ) && ! User::is_current_user_can_edit() ) {
+			wp_redirect( site_url(), 301 );
+			die;
+		}
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -347,5 +355,7 @@ class Source_Local extends Source_Base {
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 		}
+
+		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 	}
 }
