@@ -3,7 +3,7 @@
 //
 .elementor-widget-icon-box {
 
-	@media (min-width: $screen-md-min) {
+	.elementor-screen-md-min & {
 
 		&.elementor-position- {
 
@@ -67,7 +67,7 @@
 		}
 	}
 
-	@media (max-width: $screen-sm-max) {
+	.elementor-screen-sm-max & {
 
 		// TEMP code to override the icon spacing
 		.elementor-icon-box-icon {

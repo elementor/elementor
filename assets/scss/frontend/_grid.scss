@@ -67,7 +67,7 @@
 		}
 	}
 
-	@media(min-width: $screen-md-min) {
+	.elementor-screen-md-min & {
 
 		// Section Full Height
 		&.elementor-section-height-full {
@@ -86,7 +86,7 @@
 	display: flex;
 
 	/* In dragging mode it's causing a columns fall */
-	@media(max-width: $screen-sm-max) {
+	.elementor-screen-sm-max & {
 		flex-wrap: wrap;
 	}
 }
@@ -143,20 +143,20 @@
 // Responsive Grid
 .elementor-column {
 
-	@media (max-width: $screen-xs-max) {
+	.elementor-screen-xs-max & {
 		@include elementor-responsive(xs);
 	}
 
-	@media (max-width: $screen-sm-max) {
+	.elementor-screen-sm-max & {
 		@include elementor-responsive(sm);
 	}
 
-	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	.elementor-screen-md-min.elementor-screen-md-max & {
 		@include elementor-responsive(md);
 	}
 }
 
-@media (min-width: $screen-md-min) {
+.elementor-screen-md-min {
 	.elementor-column {
 		@include elementor-grid-classes;
 	}
@@ -198,7 +198,7 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
+.elementor-screen-sm-max {
 	.elementor-column {
 		width: 100%;
 	}
