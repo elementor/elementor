@@ -223,13 +223,15 @@
 			return;
 		}
 
-		var defaultOptions = {
+		var savedOptions = $carousel.data( 'slider_options' ),
+			tabletSlides = 1 === savedOptions.slidesToShow ? 1 : 2,
+			defaultOptions = {
 				responsive: [
 					{
 						breakpoint: 767,
 						settings: {
-							slidesToShow: 2,
-							slidesToScroll: 2
+							slidesToShow: tabletSlides,
+							slidesToScroll: tabletSlides
 						}
 					},
 					{
