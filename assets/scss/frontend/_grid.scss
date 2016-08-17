@@ -7,12 +7,63 @@
 	position: relative;
 	// Container
 	.elementor-container {
+		display: flex;
 		margin-right: auto;
 		margin-left: auto;
 		position: relative;
 
 		&.elementor-container-fluid {
 			max-width: 100%;
+		}
+	}
+
+	// In section min-height / fit to screen mode
+	&.elementor-section-items- {
+
+		&top {
+
+			> .elementor-container {
+				align-items: flex-start;
+			}
+		}
+
+		&middle {
+
+			> .elementor-container {
+				align-items: center;
+			}
+		}
+
+		&bottom {
+
+			> .elementor-container {
+				align-items: flex-end;
+			}
+		}
+	}
+
+	// In columns stretch mode
+	&.elementor-section-content- {
+
+		&top {
+
+			.elementor-column-wrap {
+				align-items: flex-start;
+			}
+		}
+
+		&middle {
+
+			.elementor-column-wrap {
+				align-items: center;
+			}
+		}
+
+		&bottom {
+
+			.elementor-column-wrap {
+				align-items: flex-end;
+			}
 		}
 	}
 
@@ -24,58 +75,6 @@
 
 			> .elementor-container {
 				height: 100%;
-			}
-		}
-
-		> .elementor-container {
-			display: flex;
-		}
-
-		&.elementor-section-items- {
-
-			&top {
-
-				> .elementor-container {
-					align-items: flex-start;
-				}
-			}
-
-			&middle {
-
-				> .elementor-container {
-					align-items: center;
-				}
-			}
-
-			&bottom {
-
-				> .elementor-container {
-					align-items: flex-end;
-				}
-			}
-		}
-
-		&.elementor-section-content- {
-
-			&top {
-
-				.elementor-column-wrap {
-					align-items: flex-start;
-				}
-			}
-
-			&middle {
-
-				.elementor-column-wrap {
-					align-items: center;
-				}
-			}
-
-			&bottom {
-
-				.elementor-column-wrap {
-					align-items: flex-end;
-				}
 			}
 		}
 	}
@@ -95,10 +94,7 @@
 // Widget
 .elementor-column-wrap {
 	width: 100%;
-
-	@media(min-width: $screen-md-min) {
-		display: flex;
-	}
+	display: flex;
 }
 
 .elementor-widget-wrap {
