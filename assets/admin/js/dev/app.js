@@ -10,6 +10,7 @@ App = Marionette.Application.extend( {
 	introduction: require( 'elementor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-utils/ajax' ),
+	viewport: require( 'elementor-utils/viewport' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
