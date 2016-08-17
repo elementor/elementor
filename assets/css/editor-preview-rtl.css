@@ -222,9 +222,10 @@ body.elementor-editor-active #elementor {
   @media (max-width: 1023px) {
     body.elementor-editor-active #elementor .elementor-column > .ui-resizable-e, body.elementor-editor-active #elementor .elementor-column > .ui-resizable-w {
       display: none !important; } }
-body.elementor-editor-active #elementor-inner {
-  margin-top: -1px;
-  padding-top: 1px; }
+body.elementor-editor-active #elementor-inner:before {
+  content: '';
+  display: table;
+  clear: both; }
 @media (min-width: 768px) {
   body.elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
     padding: 10px; } }
