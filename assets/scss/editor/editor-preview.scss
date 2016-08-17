@@ -467,7 +467,13 @@ body {
 		}
 
 		#elementor-inner {
-			overflow: hidden; // For blank page detection
+
+			// Force keeping in top for blank page detection
+			&:before {
+				content: '';
+				display: table;
+				clear: both;
+			}
 		}
 
 		.elementor-column-wrap {

@@ -513,27 +513,28 @@ class Widget_Icon_box extends Widget_Base {
 		$icon_tag = 'div';
 
 		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'icon', 'href', $instance['link']['url'] );
+			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
 			$icon_tag = 'a';
 
 			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$this->add_render_attribute( 'icon', 'target', '_blank' );
+				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
 		}
 
 		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
+		$link_attributes = $this->get_render_attribute_string( 'link' );
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
-				<<?php echo $icon_tag . ' ' . $icon_attributes; ?>>
+				<<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
 					<i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
 				</<?php echo $icon_tag; ?>>
 			</div>
 			<div class="elementor-icon-box-content">
 				<<?php echo $instance['title_size']; ?> class="elementor-icon-box-title">
-					<<?php echo $icon_tag . ' ' . $icon_attributes; ?>><?php echo $instance['title_text']; ?></<?php echo $icon_tag; ?>>
+					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $instance['title_text']; ?></<?php echo $icon_tag; ?>>
 				</<?php echo $instance['title_size']; ?>>
 				<p class="elementor-icon-box-description"><?php echo $instance['description_text']; ?></p>
 			</div>
