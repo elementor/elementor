@@ -101,7 +101,7 @@ class Manager {
 		}
 
 		if ( empty( $_POST['template_id'] ) || empty( $_POST['post_id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
+			return new \WP_Error( 'template_error', '`template_id` was not specified.' );
 		}
 
 		// Override the global $post for the render
@@ -143,7 +143,7 @@ class Manager {
 		}
 
 		if ( empty( $_REQUEST['template_id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
+			return new \WP_Error( 'template_error', '`template_id` was not specified.' );
 		}
 
 		$source = $this->get_source( $_REQUEST['source'] );
