@@ -128,13 +128,7 @@ App = Marionette.Application.extend( {
 
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
-		this.$preview.on( 'load', _.bind( function() {
-			this.$previewContents = this.$preview.contents();
-
-			elementorBindUI.setScopeWindow( this.$preview[0].contentWindow );
-
-			this.triggerMethod( 'preview:loaded' );
-		}, this ) );
+		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
 	},
 
 	onStart: function() {
@@ -164,6 +158,10 @@ App = Marionette.Application.extend( {
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		this.$previewContents = this.$preview.contents();
+
+		elementorBindUI.setScopeWindow( this.$preview[0].contentWindow );
 
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
