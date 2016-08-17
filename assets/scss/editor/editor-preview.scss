@@ -466,6 +466,12 @@ body {
 			}
 		}
 
+		// Force keeping in top for blank page detection
+		#elementor-inner {
+			margin-top: -1px;
+			padding-top: 1px;
+		}
+
 		.elementor-column-wrap {
 
 			&.elementor-element-empty {
