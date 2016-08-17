@@ -343,7 +343,7 @@ class Source_Local extends Source_Base {
 			[
 				'action' => 'elementor_export_template',
 				'source' => $this->get_id(),
-				'item_id' => $item_id,
+				'template_id' => $item_id,
 			],
 			admin_url( 'admin-ajax.php' )
 		);
