@@ -155,7 +155,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 = 0.7.1 - 17.08.2016 =
 * Tweak! - Added column/content position for inner section
 * Tweak! - Block template library in the frontend
-* Fixed! - Export template
+* Fixed! - Export template ([topic](https://wordpress.org/support/topic/template-export-not-working-in-070))
 * Fixed! - Fatal Error during update plugin ([#412](https://github.com/pojome/elementor/issues/412))
 * Fixed! - Separating link attributes from classes attributes in Icon Box widget ([#414](https://github.com/pojome/elementor/issues/414))
 * Fixed! - Allow column and content position for mobile
