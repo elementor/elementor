@@ -92,12 +92,12 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	fixBlankPageOffset: function() {
-		var sectionHandleHeight = 26,
+		var sectionHandleHeight = 27,
 			elTopOffset = this.$el.offset().top,
 			elTopOffsetRange = sectionHandleHeight - elTopOffset;
 
 		if ( 0 < elTopOffsetRange ) {
-			var $style = Backbone.$( '<style>' ).text( 'body.elementor-editor-active #elementor-inner{margin-top: ' + elTopOffsetRange + 'px; padding-top: 0}' );
+			var $style = Backbone.$( '<style>' ).text( '.elementor-editor-active #elementor-inner{margin-top: ' + elTopOffsetRange + 'px' );
 
 			elementor.$previewContents.children().children( 'head' ).append( $style );
 		}
