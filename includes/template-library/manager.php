@@ -170,6 +170,10 @@ class Manager {
 		echo $error->get_error_message();
 	}
 
+	public function on_export_template_error( \WP_Error $error ) {
+		_default_wp_die_handler( $error->get_error_message(), 'Elementor Library' );
+	}
+
 	private function handle_ajax_request( $ajax_request, $args ) {
 		$result = call_user_func_array( [ $this, $ajax_request ], $args );
 

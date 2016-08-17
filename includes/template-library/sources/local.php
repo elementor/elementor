@@ -185,7 +185,7 @@ class Source_Local extends Source_Base {
 	public function export_template( $item_id ) {
 		$template_data = $this->get_content( $item_id, 'raw' );
 		if ( empty( $template_data ) )
-			wp_die( 'The template does not exist', 'elementor' );
+			return new \WP_Error( '404', 'The template does not exist' );
 
 		// TODO: More fields to export?
 		$export_data = [
