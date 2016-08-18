@@ -131,7 +131,7 @@ class Editor {
 		// Hack for waypoint with editor mode.
 		wp_register_script(
 			'waypoints',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/waypoints-for-editor.js',
+			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints-for-editor.js',
 			[
 				'jquery',
 			],
@@ -179,16 +179,6 @@ class Editor {
 				'jquery',
 			],
 			'1.3.2',
-			true
-		);
-
-		wp_register_script(
-			'jquery-elementor-serialize-object',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery-serialize-object.js',
-			[
-				'jquery',
-			],
-			'1.0.0',
 			true
 		);
 
@@ -251,7 +241,6 @@ class Editor {
 				'backbone-radio',
 				'perfect-scrollbar',
 				'jquery-easing',
-				'jquery-elementor-serialize-object',
 				'nprogress',
 				'tipsy',
 				'imagesloaded',

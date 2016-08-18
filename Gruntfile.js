@@ -121,7 +121,9 @@ module.exports = function( grunt ) {
 			dist: {
 				files: {
 					'assets/js/editor.js': [
-						'assets/admin/js/lib/jquery-html5-dnd.js',
+						'assets/dev/js/editor/utils/jquery-html5-dnd.js',
+						'assets/dev/js/editor/utils/jquery-serialize-object.js',
+
 						'assets/dev/js/editor/editor.js'
 					],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
