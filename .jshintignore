@@ -1,7 +1,6 @@
 assets/admin/js/lib/*.js
 assets/lib/**/*.js
-assets/js/admin-feedback.js
-assets/admin/js/editor.js
+assets/js/*.js
 **/*.min.js
 **/node_modules/**
 **/vendor/**

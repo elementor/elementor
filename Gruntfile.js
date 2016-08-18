@@ -122,7 +122,8 @@ module.exports = function( grunt ) {
 				files: {
 					'assets/js/editor.js': [ 'assets/dev/js/editor/editor.js' ],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
-					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ]
+					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
+					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
 				options: pkgInfo.browserify
 			}
@@ -136,7 +137,8 @@ module.exports = function( grunt ) {
 				files: {
 					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
 					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
-					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ]
+					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
+					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
 				}
 			}
 		},
@@ -184,10 +186,7 @@ module.exports = function( grunt ) {
 			},
 			all: [
 				'Gruntfile.js',
-				'assets/admin/js/dev/**/*.js',
-				'assets/js/dev/**/*.js',
-				'assets/js/admin.js',
-				'assets/js/frontend.js'
+				'assets/js/dev/**/*.js'
 			]
 		},
 
