@@ -174,7 +174,7 @@ class Editor {
 
 		wp_register_script(
 			'jquery-easing',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery.easing.js',
+			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery.easing' . $suffix . '.js',
 			[
 				'jquery',
 			],
