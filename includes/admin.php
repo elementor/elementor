@@ -266,7 +266,7 @@ class Admin {
 
 		wp_register_script(
 			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],

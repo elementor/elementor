@@ -82,7 +82,7 @@ class Frontend {
 
 		wp_register_script(
 			'waypoints',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/waypoints.js',
+			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -92,7 +92,7 @@ class Frontend {
 
 		wp_register_script(
 			'jquery-numerator',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery.numerator.js',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-numerator/jquery-numerator' . $suffix . '.js',
 			[
 				'jquery',
 			],

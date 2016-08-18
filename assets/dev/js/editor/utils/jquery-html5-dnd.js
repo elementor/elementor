@@ -1,7 +1,6 @@
 /**
  * HTML5 - Drag and Drop
  */
-
 ;(function( $ ) {
 
 	var hasFullDataTransferSupport = function( event ) {

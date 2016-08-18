@@ -131,7 +131,7 @@ class Editor {
 		// Hack for waypoint with editor mode.
 		wp_register_script(
 			'waypoints',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/waypoints-for-editor.js',
+			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints-for-editor.js',
 			[
 				'jquery',
 			],
@@ -144,7 +144,7 @@ class Editor {
 
 		wp_register_script(
 			'backbone-marionette',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/backbone.marionette' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
 			[
 				'backbone',
 			],
@@ -154,7 +154,7 @@ class Editor {
 
 		wp_register_script(
 			'backbone-radio',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/backbone.radio' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.radio' . $suffix . '.js',
 			[
 				'backbone',
 			],
@@ -164,17 +164,17 @@ class Editor {
 
 		wp_register_script(
 			'perfect-scrollbar',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/perfect-scrollbar.jquery.min.js',
+			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/perfect-scrollbar.jquery' . $suffix . '.js',
 			[
 				'jquery',
 			],
-			'0.6.7',
+			'0.6.12',
 			true
 		);
 
 		wp_register_script(
 			'jquery-easing',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery.easing.js',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-easing/jquery-easing' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -183,18 +183,8 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-elementor-serialize-object',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery-serialize-object.js',
-			[
-				'jquery',
-			],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'nprogress',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/nprogress.js',
+			ELEMENTOR_ASSETS_URL . 'lib/nprogress/nprogress' . $suffix . '.js',
 			[],
 			'0.2.0',
 			true
@@ -202,7 +192,7 @@ class Editor {
 
 		wp_register_script(
 			'tipsy',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/tipsy.min.js',
+			ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -212,7 +202,7 @@ class Editor {
 
 		wp_register_script(
 			'imagesloaded',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/imagesloaded.js',
+			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -221,18 +211,8 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-html5-dnd',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery-html5-dnd' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],
@@ -251,18 +231,16 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor',
-			ELEMENTOR_ASSETS_URL . 'admin/js/app' . $suffix . '.js',
+			'elementor-editor',
+			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
-				'jquery-html5-dnd',
 				'backbone-marionette',
 				'backbone-radio',
 				'perfect-scrollbar',
 				'jquery-easing',
-				'jquery-elementor-serialize-object',
 				'nprogress',
 				'tipsy',
 				'imagesloaded',
@@ -273,7 +251,7 @@ class Editor {
 			Plugin::instance()->get_version(),
 			true
 		);
-		wp_enqueue_script( 'elementor' );
+		wp_enqueue_script( 'elementor-editor' );
 
 		$post_id = get_the_ID();
 
@@ -286,7 +264,7 @@ class Editor {
 		}
 
 		wp_localize_script(
-			'elementor',
+			'elementor-editor',
 			'ElementorConfig',
 			[
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
