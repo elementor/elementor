@@ -251,8 +251,8 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor',
-			ELEMENTOR_ASSETS_URL . 'admin/js/app' . $suffix . '.js',
+			'elementor-editor',
+			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
 				'wp-auth-check',
 				'jquery-ui-sortable',
@@ -273,7 +273,7 @@ class Editor {
 			Plugin::instance()->get_version(),
 			true
 		);
-		wp_enqueue_script( 'elementor' );
+		wp_enqueue_script( 'elementor-editor' );
 
 		$post_id = get_the_ID();
 
@@ -286,7 +286,7 @@ class Editor {
 		}
 
 		wp_localize_script(
-			'elementor',
+			'elementor-editor',
 			'ElementorConfig',
 			[
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
