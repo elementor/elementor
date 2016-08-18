@@ -386,20 +386,20 @@
 
 	// Make sure it's a global variable
 	window.elementorBindUI = elementorBindUI;
-
-	$( function( $ ) {
-		// Enqueue YouTube API
-		var scriptTag = document.createElement( 'script' ),
-			firstElementScript = document.getElementsByTagName( 'script' )[0];
-
-		scriptTag.src = 'https://www.youtube.com/iframe_api';
-		firstElementScript.parentNode.insertBefore( scriptTag, firstElementScript );
-
-		$( '.elementor-element' ).each( function() {
-			elementorBindUI.runReadyTrigger( $( this ) );
-		} );
-	} );
 } )( jQuery, window );
+
+$( function( $ ) {
+	// Enqueue YouTube API
+	var scriptTag = document.createElement( 'script' ),
+		firstElementScript = document.getElementsByTagName( 'script' )[0];
+
+	scriptTag.src = 'https://www.youtube.com/iframe_api';
+	firstElementScript.parentNode.insertBefore( scriptTag, firstElementScript );
+
+	$( '.elementor-element' ).each( function() {
+		elementorBindUI.runReadyTrigger( $( this ) );
+	} );
+} );
 
 },{}]},{},[1])
 //# sourceMappingURL=frontend.js.map
