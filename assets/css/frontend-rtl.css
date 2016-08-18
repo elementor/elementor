@@ -1005,9 +1005,6 @@ body.elementor-page .elementor-widget-menu-anchor {
 .slick-arrow.slick-hidden {
   display: none; }
 
-.slick-loading .slick-list {
-  background: #fff url("../images/ajax-loader.gif") center center no-repeat; }
-
 .slick-prev,
 .slick-next {
   font-size: 0;
@@ -1122,13 +1119,6 @@ ul.slick-dots {
       opacity: .75;
       color: black; }
 
-.slick-slider .slick-prev,
-.slick-slider .slick-next {
-  z-index: 1; }
-
-.slick-slide img {
-  margin: auto; }
-
 .slick-arrows-inside .slick-prev {
   left: 20px; }
   [dir="rtl"] .slick-arrows-inside .slick-prev {
@@ -1144,6 +1134,14 @@ ul.slick-dots {
   bottom: 5px; }
 .slick-dots-inside.slick-dotted.slick-slider {
   margin-bottom: 0; }
+
+.elementor-slick-slider .slick-loading .slick-list {
+  background: #fff url("../images/ajax-loader.gif") center center no-repeat; }
+.elementor-slick-slider .slick-slider .slick-prev,
+.elementor-slick-slider .slick-slider .slick-next {
+  z-index: 1; }
+.elementor-slick-slider .slick-slide img {
+  margin: auto; }
 
 .animated {
   animation-duration: 1.25s; }

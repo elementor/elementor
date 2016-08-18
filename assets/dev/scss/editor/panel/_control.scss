@@ -31,6 +31,7 @@
 					background-color: $editor-background;
 				}
 
+				// WP Widgets
 				&.elementor-control-wp {
 					margin-top: 15px;
 
@@ -88,6 +89,15 @@
 				font-weight: bold;
 				margin: 0;
 			}
+		}
+	}
+
+	// WP Widgets
+	.elementor-control-wp {
+		line-height: 1.5;
+
+		p {
+			margin: 15px 0;
 		}
 	}
 
