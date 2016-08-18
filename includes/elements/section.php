@@ -245,7 +245,6 @@ class Element_Section extends Element_Base {
 				'prefix_class' => 'elementor-section-content-',
 				'condition' => [
 					'height' => [ 'full', 'min-height' ],
-					'column_position' => 'stretch',
 				],
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
@@ -333,7 +332,6 @@ class Element_Section extends Element_Base {
 				'prefix_class' => 'elementor-section-content-',
 				'condition' => [
 					'height_inner' => [ 'full', 'min-height' ],
-					'column_position_inner' => 'stretch',
 				],
 				'section' => 'section_layout',
 				'hide_in_top' => true,
