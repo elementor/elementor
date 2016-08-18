@@ -1,3 +1,4 @@
+/*! elementor - v0.7.1 - 18-08-2016 */
 /*!
  * jQuery Serialize Object v1.0.1
  * https://github.com/cobicarmel/jquery-serialize-object/

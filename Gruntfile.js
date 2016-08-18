@@ -171,10 +171,10 @@ module.exports = function( grunt ) {
 				},
 				files: {
 					src: [
-						'assets/admin/js/app.min.js',
-						'assets/js/admin.min.js',
-						'assets/js/admin-feedback.min.js',
-						'assets/js/frontend.min.js'
+						'assets/js/*.js',
+						'assets/css/*.css',
+
+						'!assets/css/animations.min.css'
 					]
 				}
 			}
@@ -230,15 +230,12 @@ module.exports = function( grunt ) {
 				files: [
 					'assets/dev/scss/**/*.scss'
 				],
-				tasks: ['styles']
+				tasks: [ 'styles' ]
 			},
 
 			scripts: {
 				files: [
-					'assets/js/admin.js',
-					'assets/js/frontend.js',
-					'assets/js/dev/**/*.js',
-					'assets/admin/js/dev/**/*.js'
+					'assets/dev/js/**/*.js'
 				],
 				tasks: [ 'scripts' ]
 			}
@@ -341,8 +338,6 @@ module.exports = function( grunt ) {
 					'!.gitignore',
 					'!.gitmodules',
 
-					'!assets/admin/js/dev/**',
-					'!assets/js/dev/**',
 					'!assets/dev/**',
 					'!assets/**/*.map',
 					'!*~'
@@ -376,8 +371,7 @@ module.exports = function( grunt ) {
 		'jshint',
 		'browserify',
 		'exorcise',
-		'uglify',
-		'usebanner'
+		'uglify'
 	] );
 
 	grunt.registerTask( 'styles', [
@@ -387,6 +381,7 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'build', [
 		'default',
+		'usebanner',
 		'clean',
 		'copy'
 	] );
