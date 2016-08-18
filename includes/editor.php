@@ -184,7 +184,7 @@ class Editor {
 
 		wp_register_script(
 			'nprogress',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/nprogress.js',
+			ELEMENTOR_ASSETS_URL . 'admin/js/lib/nprogress' . $suffix . '.js',
 			[],
 			'0.2.0',
 			true
