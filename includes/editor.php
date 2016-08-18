@@ -174,7 +174,7 @@ class Editor {
 
 		wp_register_script(
 			'jquery-easing',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery.easing' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-easing/jquery-easing' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -192,7 +192,7 @@ class Editor {
 
 		wp_register_script(
 			'tipsy',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/tipsy.min.js',
+			ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -212,7 +212,7 @@ class Editor {
 
 		wp_register_script(
 			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],
