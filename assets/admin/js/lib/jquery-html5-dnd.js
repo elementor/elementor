@@ -1,4 +1,3 @@
-/*! elementor - v0.7.1 - 18-08-2016 */
 /**
  * HTML5 - Drag and Drop
  */

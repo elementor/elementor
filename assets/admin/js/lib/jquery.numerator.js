@@ -1,4 +1,3 @@
-/*! elementor - v0.7.1 - 18-08-2016 */
 /* 
  *   jQuery Numerator Plugin 0.2.0
  *   https://github.com/garethdn/jquery-numerator

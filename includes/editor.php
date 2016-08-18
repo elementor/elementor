@@ -221,16 +221,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-html5-dnd',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/jquery-html5-dnd' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
 			[
@@ -257,7 +247,6 @@ class Editor {
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
-				'jquery-html5-dnd',
 				'backbone-marionette',
 				'backbone-radio',
 				'perfect-scrollbar',

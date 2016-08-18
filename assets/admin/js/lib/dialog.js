@@ -1,4 +1,3 @@
-/*! elementor - v0.7.1 - 18-08-2016 */
 /*!
  * Dialogs Manager v3.0.0
  * https://github.com/cobicarmel/dialogs-manager/
