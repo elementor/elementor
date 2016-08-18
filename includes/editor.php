@@ -164,11 +164,11 @@ class Editor {
 
 		wp_register_script(
 			'perfect-scrollbar',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/perfect-scrollbar.jquery.min.js',
+			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/perfect-scrollbar.jquery' . $suffix . '.js',
 			[
 				'jquery',
 			],
-			'0.6.7',
+			'0.6.12',
 			true
 		);
 
@@ -184,7 +184,7 @@ class Editor {
 
 		wp_register_script(
 			'nprogress',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/nprogress' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/nprogress/nprogress' . $suffix . '.js',
 			[],
 			'0.2.0',
 			true
