@@ -113,7 +113,6 @@
 	top: 50%;
 	display: block;
 	width: 20px;
-	//height: 20px;
 	padding: 0;
 	transform: translate(0, -50%);
 	cursor: pointer;
@@ -249,6 +248,7 @@ ul.slick-dots {
 //  Custom Style for Elementor
 //
 .slick-arrows-inside {
+
 	.slick-prev {
 		left: 20px;
 		[dir="rtl"] & {
@@ -267,6 +267,7 @@ ul.slick-dots {
 }
 
 .slick-dots-inside {
+
 	.slick-dots {
 		bottom: 5px;
 	}
@@ -276,6 +277,7 @@ ul.slick-dots {
 	}
 }
 
+// Hack for compatibility other themes
 .elementor-slick-slider {
 
 	.slick-loading .slick-list {
