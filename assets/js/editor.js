@@ -3660,16 +3660,6 @@ module.exports = new Introduction();
 				onDragEnd: null
 			};
 
-		var init = function() {
-			initSettings();
-
-			initElementsCache();
-
-			buildElements();
-
-			attachEvents();
-		};
-
 		var initSettings = function() {
 			$.extend( true, settings, defaultSettings, userSettings );
 		};
@@ -3682,10 +3672,10 @@ module.exports = new Introduction();
 			elementsCache.$element.attr( 'draggable', true );
 		};
 
-		var attachEvents = function() {
-			elementsCache.$element
-				.on( 'dragstart', onDragStart )
-				.on( 'dragend', onDragEnd );
+		var onDragEnd = function( event ) {
+			if ( $.isFunction( settings.onDragEnd ) ) {
+				settings.onDragEnd.call( elementsCache.$element, event, self );
+			}
 		};
 
 		var onDragStart = function( event ) {
@@ -3703,10 +3693,20 @@ module.exports = new Introduction();
 			}
 		};
 
-		var onDragEnd = function( event ) {
-			if ( $.isFunction( settings.onDragEnd ) ) {
-				settings.onDragEnd.call( elementsCache.$element, event, self );
-			}
+		var attachEvents = function() {
+			elementsCache.$element
+				.on( 'dragstart', onDragStart )
+				.on( 'dragend', onDragEnd );
+		};
+
+		var init = function() {
+			initSettings();
+
+			initElementsCache();
+
+			buildElements();
+
+			attachEvents();
 		};
 
 		this.destroy = function() {
@@ -3735,14 +3735,6 @@ module.exports = new Introduction();
 				onDragLeave: null
 			};
 
-		var init = function() {
-			initSettings();
-
-			initElementsCache();
-
-			attachEvents();
-		};
-
 		var initSettings = function() {
 			$.extend( settings, defaultSettings, userSettings );
 		};
@@ -3751,12 +3743,12 @@ module.exports = new Introduction();
 			elementsCache.$element = $( settings.element );
 		};
 
-		var attachEvents = function() {
-			elementsCache.$element
-				.on( 'dragenter', settings.items, onDragEnter )
-				.on( 'dragover', settings.items, onDragOver )
-				.on( 'drop', settings.items, onDrop )
-				.on( 'dragleave drop', settings.items, onDragLeave );
+		var hasHorizontalDetection = function() {
+			return -1 !== settings.axis.indexOf( 'horizontal' );
+		};
+
+		var hasVerticalDetection = function() {
+			return -1 !== settings.axis.indexOf( 'vertical' );
 		};
 
 		var checkHorizontal = function( offsetX, elementWidth ) {
@@ -3792,14 +3784,6 @@ module.exports = new Introduction();
 			}
 
 			return false;
-		};
-
-		var hasHorizontalDetection = function() {
-			return -1 !== settings.axis.indexOf( 'horizontal' );
-		};
-
-		var hasVerticalDetection = function() {
-			return -1 !== settings.axis.indexOf( 'vertical' );
 		};
 
 		var getSide = function( element, event ) {
@@ -3939,7 +3923,7 @@ module.exports = new Introduction();
 
 		var onDragLeave = function( event ) {
 			// Avoid internal elements event firing
-			$(this).children().each( function() {
+			$( this ).children().each( function() {
 				var $this = $( this ),
 					backupPointerEvents = $this.data( 'backup-pointer-events' );
 
@@ -3955,6 +3939,22 @@ module.exports = new Introduction();
 			if ( $.isFunction( settings.onDragLeave ) ) {
 				settings.onDragLeave.call( this, event, self );
 			}
+		};
+
+		var attachEvents = function() {
+			elementsCache.$element
+				.on( 'dragenter', settings.items, onDragEnter )
+				.on( 'dragover', settings.items, onDragOver )
+				.on( 'drop', settings.items, onDrop )
+				.on( 'dragleave drop', settings.items, onDragLeave );
+		};
+
+		var init = function() {
+			initSettings();
+
+			initElementsCache();
+
+			attachEvents();
 		};
 
 		this.destroy = function() {
