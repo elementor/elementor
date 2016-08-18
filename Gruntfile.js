@@ -388,7 +388,8 @@ module.exports = function( grunt ) {
 		'default',
 		'usebanner',
 		'clean',
-		'copy'
+		'copy',
+		'default' // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', [
