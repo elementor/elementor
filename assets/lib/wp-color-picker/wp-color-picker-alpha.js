@@ -264,7 +264,7 @@
 						'rgb(' + color.r + ',' + color.g + ',' + color.b + ') 0%',
 						'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0) 100%'
 					],
-					defaultWidth = self.options.defaultWidth,
+					//defaultWidth = self.options.defaultWidth,
 					target = self.picker.closest('.wp-picker-container').find( '.wp-color-result' );
 
 				// Generate background slider alpha, only for CSS3 old browser fuck!! :)

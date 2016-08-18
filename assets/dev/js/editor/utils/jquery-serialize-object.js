@@ -1,14 +1,7 @@
 /*!
  * jQuery Serialize Object v1.0.1
- * https://github.com/cobicarmel/jquery-serialize-object/
- *
- * Copyright Kobi Zaltzberg
- * Released under the MIT license
- * https://github.com/cobicarmel/jquery-serialize-object/blob/master/LICENSE.txt
  */
-
 (function( $ ) {
-	
 	$.fn.elementorSerializeObject = function() {
 		var serializedArray = this.serializeArray(),
 			data = {};
@@ -19,16 +12,14 @@
 				keyName = key.replace( /\[.*/, '' );
 
 			if ( isArrayKey ) {
-				if ( !dataContainer[ keyName ] ) {
+				if ( ! dataContainer[ keyName ] ) {
 					dataContainer[ keyName ] = [];
 				}
-			}
-			else {
+			} else {
 				if ( ! isObjectKey ) {
 					if ( dataContainer.push ) {
 						dataContainer.push( value );
-					}
-					else {
+					} else {
 						dataContainer[ keyName ] = value;
 					}
 

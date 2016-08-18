@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.7.0
+Stable tag: 0.7.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -151,6 +151,19 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Template Library.** Choose one of our pre-designed templates, crafted to fit every purpose.
 
 == Changelog ==
+
+= 0.7.1 - 17.08.2016 =
+* Tweak! - Added column/content position for inner section
+* Tweak! - Block template library in the frontend
+* Fixed! - Export template ([topic](https://wordpress.org/support/topic/template-export-not-working-in-070))
+* Fixed! - Fatal Error during update plugin ([#412](https://github.com/pojome/elementor/issues/412))
+* Fixed! - Separating link attributes from classes attributes in Icon Box widget ([#414](https://github.com/pojome/elementor/issues/414))
+* Fixed! - Allow column and content position for mobile
+* Fixed! - Removed `overflow: hidden` from `#elementor-inner` ([#415](https://github.com/pojome/elementor/issues/415))
+* Fixed! - Aspect ratio issue for Video widget ([topic](https://wordpress.org/support/topic/video-embeds-have-black-bars-top-and-bottom))
+* Fixed! - Image Carousel "slides to show" on tablet ([#372](https://github.com/pojome/elementor/issues/372))
+* Fixed! - RTL style for library
+* Fixed! - Handle errors on wrong export action
 
 = 0.7.0 - 16.08.2016 =
 * New! - Template Library ([Release Post](https://elementor.com/introducing-template-library/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme))
