@@ -290,6 +290,9 @@ body.elementor-editor-active #elementor-add-section {
     border: 2px dashed #d5dadf; }
   body.elementor-editor-active #elementor-add-section[data-side] {
     border: 3px dashed #71d7f7; }
+  @media (max-width: 479px) {
+    body.elementor-editor-active #elementor-add-section {
+      display: none; } }
 body.elementor-editor-active #elementor-add-section-inner {
   text-align: center;
   margin-top: 10px;
