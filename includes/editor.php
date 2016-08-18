@@ -144,7 +144,7 @@ class Editor {
 
 		wp_register_script(
 			'backbone-marionette',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/backbone.marionette' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
 			[
 				'backbone',
 			],
@@ -154,7 +154,7 @@ class Editor {
 
 		wp_register_script(
 			'backbone-radio',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/backbone.radio' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.radio' . $suffix . '.js',
 			[
 				'backbone',
 			],

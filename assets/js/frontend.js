@@ -388,7 +388,7 @@
 	window.elementorBindUI = elementorBindUI;
 } )( jQuery, window );
 
-$( function( $ ) {
+jQuery( function( $ ) {
 	// Enqueue YouTube API
 	var scriptTag = document.createElement( 'script' ),
 		firstElementScript = document.getElementsByTagName( 'script' )[0];
