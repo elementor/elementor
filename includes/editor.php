@@ -202,7 +202,7 @@ class Editor {
 
 		wp_register_script(
 			'imagesloaded',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/imagesloaded.js',
+			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
 			[
 				'jquery',
 			],
