@@ -154,6 +154,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.7.2 - 18.08.2016 ###
+* Tweak! - Hide add section area for mobile device
+* Tweak! - Optimization assets files
+* Fixed! - Intrusive Slick Carousel CSS ([#424](https://github.com/pojome/elementor/issues/424))
+* Fixed! - Display content position for custom height section option
+
 ### 0.7.1 - 17.08.2016 ###
 * Tweak! - Added column/content position for inner section
 * Tweak! - Block template library in the frontend
