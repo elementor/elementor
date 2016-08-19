@@ -154,6 +154,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.7.3 - 19.08.2016 ###
+* Fixed! - Allow columns gap on mobile
+* Fixed! - Content position for section
+
 ### 0.7.2 - 18.08.2016 ###
 * Tweak! - Hide add section area for mobile device
 * Tweak! - Optimization assets files
