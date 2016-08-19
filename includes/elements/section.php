@@ -208,47 +208,6 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'column_position',
-			[
-				'label' => __( 'Column Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'middle',
-				'options' => [
-					'stretch' => __( 'Stretch', 'elementor' ),
-					'top' => __( 'Top', 'elementor' ),
-					'middle' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-				],
-				'tab' => self::TAB_LAYOUT,
-				'prefix_class' => 'elementor-section-items-',
-				'condition' => [
-					'height' => [ 'full', 'min-height' ],
-				],
-				'section' => 'section_layout',
-				'hide_in_inner' => true,
-			]
-		);
-
-		$this->add_control(
-			'content_position',
-			[
-				'label' => __( 'Content Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'top' => __( 'Top', 'elementor' ),
-					'middle' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-				],
-				'tab' => self::TAB_LAYOUT,
-				'prefix_class' => 'elementor-section-content-',
-				'section' => 'section_layout',
-				'hide_in_inner' => true,
-			]
-		);
-
-		$this->add_control(
 			'height_inner',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -292,7 +251,7 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'column_position_inner',
+			'column_position',
 			[
 				'label' => __( 'Column Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -306,15 +265,14 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-items-',
 				'condition' => [
-					'height_inner' => [ 'full', 'min-height' ],
+					'height' => [ 'full', 'min-height' ],
 				],
 				'section' => 'section_layout',
-				'hide_in_top' => true,
 			]
 		);
 
 		$this->add_control(
-			'content_position_inner',
+			'content_position',
 			[
 				'label' => __( 'Content Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -327,11 +285,7 @@ class Element_Section extends Element_Base {
 				],
 				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-content-',
-				'condition' => [
-					'height_inner' => [ 'full', 'min-height' ],
-				],
 				'section' => 'section_layout',
-				'hide_in_top' => true,
 			]
 		);
 
