@@ -8,16 +8,21 @@
 
 .elementor-progress-wrapper {
 	position: relative;
-	background-color: $progress-bg;
-	color: $progress-text;
 	height: 30px;
 	line-height: 30px;
-	border-radius: 2px;
+
+	.elementor-progress-background {
+		display: block;
+		height: 100%;
+		background-color: $progress-bg;
+		border-radius: 2px;
+	}
 
 	.elementor-progress-bar {
-		display: inline-block;
+		display: block;
 		height: 100%;
 		width: 0;
+		background-color: $progress-bar;
 		border-radius: 2px;
 		transition: width 1s ease-in-out;
 	}
@@ -26,6 +31,7 @@
 		display: inline-block;
 		position: absolute;
 		@include start(0);
+		color: $progress-text;
 		padding: 0 15px;
 		font-size: 11px;
 		width: 0;

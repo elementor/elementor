@@ -112,7 +112,7 @@
 		$( this ).find( '.elementor-progress-bar' ).waypoint( function() {
 			var $progressbar = $( this ),
 				max = parseInt( $progressbar.data( 'max' ), 10 ),
-				$inner = $progressbar.next(),
+				$inner = $progressbar.parent().siblings( '.elementor-progress-inner-text' ),
 				$innerTextWrap = $inner.find( '.elementor-progress-text' ),
 				$percent = $inner.find( '.elementor-progress-percentage' ),
 				innerText = $inner.data( 'inner' ) ? $inner.data( 'inner' ) : '';

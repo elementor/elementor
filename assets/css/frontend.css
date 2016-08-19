@@ -516,21 +516,25 @@
 
 .elementor-progress-wrapper {
   position: relative;
-  background-color: #eeeeee;
-  color: #ffffff;
   height: 30px;
-  line-height: 30px;
-  border-radius: 2px; }
+  line-height: 30px; }
+  .elementor-progress-wrapper .elementor-progress-background {
+    display: block;
+    height: 100%;
+    background-color: #eeeeee;
+    border-radius: 2px; }
   .elementor-progress-wrapper .elementor-progress-bar {
-    display: inline-block;
+    display: block;
     height: 100%;
     width: 0;
+    background-color: #999999;
     border-radius: 2px;
     transition: width 1s ease-in-out; }
   .elementor-progress-wrapper .elementor-progress-inner-text {
     display: inline-block;
     position: absolute;
     left: 0;
+    color: #ffffff;
     padding: 0 15px;
     font-size: 11px;
     width: 0;
