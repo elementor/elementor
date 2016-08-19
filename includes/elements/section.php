@@ -243,9 +243,6 @@ class Element_Section extends Element_Base {
 				],
 				'tab' => self::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-content-',
-				'condition' => [
-					'height' => [ 'full', 'min-height' ],
-				],
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
 			]
