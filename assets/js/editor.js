@@ -1315,7 +1315,7 @@ App = Marionette.Application.extend( {
 		this.$preview.on( 'load', _.bind( function() {
 			this.$previewContents = this.$preview.contents();
 
-			elementorBindUI.setScopeWindow( this.$preview[0].contentWindow );
+			elementorFrontend.elementsHandler.setScopeWindow( this.$preview[0].contentWindow );
 
 			this.triggerMethod( 'preview:loaded' );
 		}, this ) );
@@ -1332,7 +1332,7 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		elementorBindUI.setEditorMode( true );
+		elementorFrontend.elementsHandler.setEditorMode( true );
 
 		// Init Base elements collection from the server
 		var ElementModel = require( 'elementor-models/element' );
@@ -4590,7 +4590,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	runReadyTrigger: function() {
 		_.defer( _.bind( function() {
-			elementorBindUI.runReadyTrigger( this.$el );
+			elementorFrontend.elementsHandler.runReadyTrigger( this.$el );
 		}, this ) );
 	},
 

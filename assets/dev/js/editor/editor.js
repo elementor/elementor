@@ -142,7 +142,7 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		elementorBindUI.setEditorMode( true );
+		elementorFrontend.elementsHandler.setEditorMode( true );
 
 		// Init Base elements collection from the server
 		var ElementModel = require( 'elementor-models/element' );
@@ -163,7 +163,7 @@ App = Marionette.Application.extend( {
 
 		this.viewport.init();
 
-		elementorBindUI.setScopeWindow( this.$preview[0].contentWindow );
+		elementorFrontend.elementsHandler.setScopeWindow( this.$preview[0].contentWindow );
 
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
