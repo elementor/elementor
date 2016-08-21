@@ -58,8 +58,7 @@ module.exports = ElementsHandler;
 	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
-		var self = this,
-			elements = {};
+		var self = this;
 
 		var elementsDefaultHandlers = {
 			accordion: require( 'elementor-frontend/handlers/accordion' ),
@@ -74,10 +73,6 @@ module.exports = ElementsHandler;
 			video: require( 'elementor-frontend/handlers/video' )
 		};
 
-		var initElements = function() {
-			elements.$elementorElements = $( '.elementor-element' );
-		};
-
 		var addGlobalHandlers = function() {
 			self.elementsHandler.addGlobalHandler( require( 'elementor-frontend/handlers/global' ) );
 		};
@@ -89,7 +84,7 @@ module.exports = ElementsHandler;
 		};
 
 		var runElementsHandlers = function() {
-			elements.$elementorElements.each( function() {
+			$( '.elementor-element' ).each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
 		};
@@ -99,8 +94,6 @@ module.exports = ElementsHandler;
 		this.utils = new Utils( $ );
 
 		this.init = function() {
-			initElements();
-
 			addGlobalHandlers();
 
 			addElementsHandlers();

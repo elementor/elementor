@@ -3,8 +3,7 @@
 	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
-		var self = this,
-			elements = {};
+		var self = this;
 
 		var elementsDefaultHandlers = {
 			accordion: require( 'elementor-frontend/handlers/accordion' ),
@@ -19,10 +18,6 @@
 			video: require( 'elementor-frontend/handlers/video' )
 		};
 
-		var initElements = function() {
-			elements.$elementorElements = $( '.elementor-element' );
-		};
-
 		var addGlobalHandlers = function() {
 			self.elementsHandler.addGlobalHandler( require( 'elementor-frontend/handlers/global' ) );
 		};
@@ -34,7 +29,7 @@
 		};
 
 		var runElementsHandlers = function() {
-			elements.$elementorElements.each( function() {
+			$( '.elementor-element' ).each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
 		};
@@ -44,8 +39,6 @@
 		this.utils = new Utils( $ );
 
 		this.init = function() {
-			initElements();
-
 			addGlobalHandlers();
 
 			addElementsHandlers();
