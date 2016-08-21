@@ -1893,7 +1893,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-preview iframe {
     width: 1440px;
     height: 150%;
-    transform: scale(0.666) translateX(-25%) translateY(-25%); }
+    transform: scale(0.666) translateX(25%) translateY(-25%); }
 
 .elementor-template-library-blank-title {
   font-size: 30px;
