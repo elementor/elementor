@@ -1,405 +1,455 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-( function( $, window ) {
-	'use strict';
+var ElementsHandler;
 
-	// The closest window
-	var scopeWindow = window;
+ElementsHandler = function( $ ) {
+	var registeredHandlers = {},
+		registeredGlobalHandlers = [],
+		flagEditorMode = false,
+		scopeWindow = window;
 
-	var elementorBindUI = ( function() {
-		var _registeredBindEvent = {},
-			_registeredGlobalHandlers = [],
-			_flagEditorMode = false,
+	var runGlobalHandlers = function( $scope ) {
+		$.each( registeredGlobalHandlers, function() {
+			this.call( $scope, $, scopeWindow );
+		} );
+	};
 
-			_setEditorMode = function( mode ) {
-				_flagEditorMode = mode;
-			},
+	this.setEditorMode = function( mode ) {
+		flagEditorMode = mode;
+	};
 
-			_setScopeWindow = function( window ) {
-				scopeWindow = window;
-			},
+	this.setScopeWindow = function( window ) {
+		scopeWindow = window;
+	};
 
-			_isEditorMode = function() {
-				return _flagEditorMode;
-			},
+	this.isEditorMode = function() {
+		return flagEditorMode;
+	};
 
-			_addBindEvent = function( widgetType, callback ) {
-				_registeredBindEvent[ widgetType ] = callback;
-			},
+	this.addHandler = function( widgetType, callback ) {
+		registeredHandlers[ widgetType ] = callback;
+	};
 
-			_addGlobalHandler = function( callback ) {
-				_registeredGlobalHandlers.push( callback );
-			},
+	this.addGlobalHandler = function( callback ) {
+		registeredGlobalHandlers.push( callback );
+	};
 
-			_runGlobalHandlers = function( $scope ) {
-				$.each( _registeredGlobalHandlers, function() {
-					this.call( $scope );
-				} );
-			},
+	this.runReadyTrigger = function( $scope ) {
+		var elementType = $scope.data( 'element_type' );
 
-			_runReadyTrigger = function( $scope ) {
-				var elementType = $scope.data( 'element_type' );
+		if ( ! elementType ) {
+			return;
+		}
 
-				if ( ! elementType ) {
-					return;
-				}
+		runGlobalHandlers( $scope );
 
-				_runGlobalHandlers( $scope );
+		if ( ! registeredHandlers[ elementType ] ) {
+			return;
+		}
 
-				if ( ! _registeredBindEvent[ elementType ] ) {
-					return;
-				}
+		registeredHandlers[ elementType ].call( $scope, $, scopeWindow );
+	};
+};
 
-				_registeredBindEvent[ elementType ].call( $scope );
-			};
+module.exports = ElementsHandler;
 
-		// Public Members
-		return {
-			isEditorMode: _isEditorMode,
-			setEditorMode: _setEditorMode,
-			setScopeWindow: _setScopeWindow,
-			addBindEvent: _addBindEvent,
-			addGlobalHandler: _addGlobalHandler,
-			runReadyTrigger: _runReadyTrigger
+},{}],2:[function(require,module,exports){
+( function( $ ) {
+	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
+	    Utils = require( 'elementor-frontend/utils' );
+
+	var ElementorFrontend = function() {
+		var self = this,
+			elements = {};
+
+		var elementsDefaultHandlers = {
+			accordion: require( 'elementor-frontend/handlers/accordion' ),
+			alert: require( 'elementor-frontend/handlers/alert' ),
+			counter: require( 'elementor-frontend/handlers/counter' ),
+			'image-carousel': require( 'elementor-frontend/handlers/image-carousel' ),
+			'menu-anchor': require( 'elementor-frontend/handlers/menu-anchor' ),
+			progress: require( 'elementor-frontend/handlers/progress' ),
+			section: require( 'elementor-frontend/handlers/section' ),
+			tabs: require( 'elementor-frontend/handlers/tabs' ),
+			toggle: require( 'elementor-frontend/handlers/toggle' ),
+			video: require( 'elementor-frontend/handlers/video' )
 		};
-	} )();
 
-	var onYoutubeApiReady = function( callback ) {
+		var initElements = function() {
+			elements.$elementorElements = $( '.elementor-element' );
+		};
+
+		var addGlobalHandlers = function() {
+			self.elementsHandler.addGlobalHandler( require( 'elementor-frontend/handlers/global' ) );
+		};
+
+		var addElementsHandlers = function() {
+			$.each( elementsDefaultHandlers, function( elementName ) {
+				self.elementsHandler.addHandler( elementName, this );
+			} );
+		};
+
+		var runElementsHandlers = function() {
+			elements.$elementorElements.each( function() {
+				self.elementsHandler.runReadyTrigger( $( this ) );
+			} );
+		};
+
+		this.elementsHandler = new ElementsHandler( $ );
+
+		this.utils = new Utils( $ );
+
+		this.init = function() {
+			initElements();
+
+			addGlobalHandlers();
+
+			addElementsHandlers();
+
+			self.utils.insertYTApi();
+
+			runElementsHandlers();
+		};
+	};
+
+	window.elementorFrontend = new ElementorFrontend();
+} )( jQuery );
+
+jQuery( elementorFrontend.init );
+
+},{"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14}],3:[function(require,module,exports){
+module.exports = function( $ ) {
+	var $this = $( this ),
+		defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
+		$accordionTitles = $this.find( '.elementor-accordion-title' ),
+		$activeTitle = $accordionTitles.filter( '.active' );
+
+	var activateSection = function( sectionIndex ) {
+		var $requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
+			isRequestedActive = $requestedTitle.hasClass( 'active' );
+
+		$activeTitle
+			.removeClass( 'active' )
+			.next()
+			.slideUp();
+
+		if ( ! isRequestedActive ) {
+			$requestedTitle
+				.addClass( 'active' )
+				.next()
+				.slideDown();
+
+			$activeTitle = $requestedTitle;
+		}
+	};
+
+	if ( ! defaultActiveSection ) {
+		defaultActiveSection = 1;
+	}
+
+	activateSection( defaultActiveSection );
+
+	$accordionTitles.on( 'click', function() {
+		activateSection( this.dataset.section );
+	} );
+};
+
+},{}],4:[function(require,module,exports){
+module.exports = function( $ ) {
+	$( this ).find( '.elementor-alert-dismiss' ).on( 'click', function() {
+		$( this ).parent().fadeOut();
+	});
+};
+
+},{}],5:[function(require,module,exports){
+module.exports = function( $ ) {
+	this.find( '.elementor-counter-number' ).waypoint( function() {
+		var $number = $( this );
+
+		$number.numerator( {
+			duration: $number.data( 'duration' )
+		} );
+	}, { offset: '90%' } );
+};
+
+},{}],6:[function(require,module,exports){
+module.exports = function() {
+	if ( elementorFrontend.elementsHandler.isEditorMode() ) {
+		return;
+	}
+
+	var $element = this,
+		animation = $element.data( 'animation' );
+
+	if ( ! animation ) {
+		return;
+	}
+
+	$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+	$element.waypoint( function() {
+		$element.removeClass( 'elementor-invisible' ).addClass( animation );
+	}, { offset: '90%' } );
+
+};
+
+},{}],7:[function(require,module,exports){
+module.exports = function( $ ) {
+	var $carousel = $( this ).find( '.elementor-image-carousel' );
+	if ( ! $carousel.length ) {
+		return;
+	}
+
+	var savedOptions = $carousel.data( 'slider_options' ),
+		tabletSlides = 1 === savedOptions.slidesToShow ? 1 : 2,
+		defaultOptions = {
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: tabletSlides,
+						slidesToScroll: tabletSlides
+					}
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}
+			]
+		},
+
+		slickOptions = $.extend( {}, defaultOptions, $carousel.data( 'slider_options' ) );
+
+	$carousel.slick( slickOptions );
+};
+
+},{}],8:[function(require,module,exports){
+module.exports = function( $ ) {
+	if ( elementorFrontend.elementsHandler.isEditorMode() ) {
+		return;
+	}
+
+	var $anchor = this.find( '.elementor-menu-anchor' ),
+		anchorID = $anchor.attr( 'id' ),
+		$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
+		$scrollable = $( 'html, body' ),
+		adminBarHeight = $( '#wpadminbar' ).height();
+
+	$anchorLinks.on( 'click', function( event ) {
+		var isSamePathname = ( location.pathname === this.pathname ),
+			isSameHostname = ( location.hostname === this.hostname );
+
+		if ( ! isSameHostname || ! isSamePathname ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		$scrollable.animate( {
+			scrollTop: $anchor.offset().top - adminBarHeight
+		}, 1000 );
+	} );
+};
+
+},{}],9:[function(require,module,exports){
+module.exports = function( $ ) {
+	var interval = 80;
+
+	$( this ).find( '.elementor-progress-bar' ).waypoint( function() {
+		var $progressbar = $( this ),
+			max = parseInt( $progressbar.data( 'max' ), 10 ),
+			$inner = $progressbar.next(),
+			$innerTextWrap = $inner.find( '.elementor-progress-text' ),
+			$percent = $inner.find( '.elementor-progress-percentage' ),
+			innerText = $inner.data( 'inner' ) ? $inner.data( 'inner' ) : '';
+
+		$progressbar.css( 'width', max + '%' );
+		$inner.css( 'width', max + '%' );
+		$innerTextWrap.html( innerText + '' );
+		$percent.html(  max + '%' );
+
+	}, { offset: '90%' } );
+};
+
+},{}],10:[function(require,module,exports){
+module.exports = function( $, scopeWindow ) {
+	var player,
+		ui = {
+			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
+		},
+		isYTVideo = false;
+
+	if ( ! ui.backgroundVideoContainer.length ) {
+		return;
+	}
+
+	ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
+
+	var calcVideosSize = function() {
+		var containerWidth = ui.backgroundVideoContainer.outerWidth(),
+			containerHeight = ui.backgroundVideoContainer.outerHeight(),
+			aspectRatioSetting = '16:9', //TEMP
+			aspectRatioArray = aspectRatioSetting.split( ':' ),
+			aspectRatio = aspectRatioArray[0] / aspectRatioArray[1],
+			ratioWidth = containerWidth / aspectRatio,
+			ratioHeight = containerHeight * aspectRatio,
+			isWidthFixed = containerWidth / containerHeight > aspectRatio;
+
+		return {
+			width: isWidthFixed ? containerWidth : ratioHeight,
+			height: isWidthFixed ? ratioWidth : containerHeight
+		};
+	};
+
+	var changeVideoSize = function() {
+		var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
+			size = calcVideosSize();
+
+		$video.width( size.width ).height( size.height );
+	};
+
+	var prepareYTVideo = function( YT, videoID ) {
+
+		player = new YT.Player( ui.backgroundVideo[0], {
+			videoId: videoID,
+			events: {
+				onReady: function() {
+					player.mute();
+
+					changeVideoSize();
+
+					player.playVideo();
+				},
+				onStateChange: function( event ) {
+					if ( event.data === YT.PlayerState.ENDED ) {
+						player.seekTo( 0 );
+					}
+				}
+			},
+			playerVars: {
+				controls: 0,
+				showinfo: 0
+			}
+		} );
+
+	};
+
+	var videoID = ui.backgroundVideo.data( 'video-id' );
+
+	if ( videoID ) {
+		isYTVideo = true;
+
+		elementorFrontend.utils.onYoutubeApiReady( function( YT ) {
+			setTimeout( function() {
+				prepareYTVideo( YT, videoID );
+			}, 1 );
+		} );
+	} else {
+		ui.backgroundVideo.one( 'canplay', changeVideoSize );
+	}
+
+	$( scopeWindow ).on( 'resize', changeVideoSize );
+};
+
+},{}],11:[function(require,module,exports){
+module.exports = function( $ ) {
+	var $this = $( this ),
+		defaultActiveTab = $this.find( '.elementor-tabs' ).data( 'active-tab' ),
+		$tabsTitles = $this.find( '.elementor-tab-title' ),
+		$tabs = $this.find( '.elementor-tab-content' ),
+		$active,
+		$content;
+
+	if ( ! defaultActiveTab ) {
+		defaultActiveTab = 1;
+	}
+
+	var activateTab = function( tabIndex ) {
+		if ( $active ) {
+			$active.removeClass( 'active' );
+
+			$content.hide();
+		}
+
+		$active = $tabsTitles.filter( '[data-tab="' + tabIndex + '"]' );
+
+		$active.addClass( 'active' );
+
+		$content = $tabs.filter( '[data-tab="' + tabIndex + '"]' );
+
+		$content.show();
+	};
+
+	activateTab( defaultActiveTab );
+
+	$tabsTitles.on( 'click', function() {
+		activateTab( this.dataset.tab );
+	} );
+};
+
+},{}],12:[function(require,module,exports){
+module.exports = function( $ ) {
+	var $toggleTitles = $( this ).find( '.elementor-toggle-title' );
+
+	$toggleTitles.on( 'click', function() {
+		var $active = $( this ),
+			$content = $active.next();
+
+		if ( $active.hasClass( 'active' ) ) {
+			$active.removeClass( 'active' );
+			$content.slideUp();
+		} else {
+			$active.addClass( 'active' );
+			$content.slideDown();
+		}
+	} );
+};
+
+},{}],13:[function(require,module,exports){
+module.exports = function( $ ) {
+	var $this = $( this ),
+		$imageOverlay = $this.find( '.elementor-custom-embed-image-overlay' ),
+		$videoFrame = $this.find( 'iframe' );
+
+	if ( ! $imageOverlay.length ) {
+		return;
+	}
+
+	$imageOverlay.on( 'click', function() {
+		$imageOverlay.remove();
+		var newSourceUrl = $videoFrame[0].src;
+		// Remove old autoplay if exists
+		newSourceUrl = newSourceUrl.replace( '&autoplay=0', '' );
+
+		$videoFrame[0].src = newSourceUrl + '&autoplay=1';
+	} );
+};
+
+},{}],14:[function(require,module,exports){
+var Utils;
+
+Utils = function( $ ) {
+	var self = this;
+
+	this.onYoutubeApiReady = function( callback ) {
 		if ( window.YT && YT.loaded ) {
 			callback( YT );
 		} else {
 			// If not ready check again by timeout..
 			setTimeout( function() {
-				onYoutubeApiReady( callback );
+				self.onYoutubeApiReady( callback );
 			}, 350 );
 		}
 	};
 
-	elementorBindUI.addGlobalHandler( function() {
-		if ( elementorBindUI.isEditorMode() ) {
-			return;
-		}
+	this.insertYTApi = function() {
+		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
+	};
+};
 
-		var $element = this,
-			animation = $element.data( 'animation' );
+module.exports = Utils;
 
-		if ( ! animation ) {
-			return;
-		}
-
-		$element.addClass( 'elementor-invisible' ).removeClass( animation );
-
-		$element.waypoint( function() {
-			$element.removeClass( 'elementor-invisible' ).addClass( animation );
-		}, { offset: '90%' } );
-
-	} );
-	/**
-	 * Add JS widgets here
-	 */
-	elementorBindUI.addBindEvent( 'counter', function() {
-		this.find( '.elementor-counter-number' ).waypoint( function() {
-			var $number = $( this );
-
-			$number.numerator( {
-				duration: $number.data( 'duration' )
-			} );
-		}, { offset: '90%' } );
-	} );
-
-	// Progress Bar Widget
-	elementorBindUI.addBindEvent( 'progress', function() {
-		var interval = 80;
-
-		$( this ).find( '.elementor-progress-bar' ).waypoint( function() {
-			var $progressbar = $( this ),
-				max = parseInt( $progressbar.data( 'max' ), 10 ),
-				$inner = $progressbar.next(),
-				$innerTextWrap = $inner.find( '.elementor-progress-text' ),
-				$percent = $inner.find( '.elementor-progress-percentage' ),
-				innerText = $inner.data( 'inner' ) ? $inner.data( 'inner' ) : '';
-
-			$progressbar.css( 'width', max + '%' );
-			$inner.css( 'width', max + '%' );
-			$innerTextWrap.html( innerText + '' );
-			$percent.html(  max + '%' );
-
-		}, { offset: '90%' } );
-	} );
-
-	// Tabs Widget
-	elementorBindUI.addBindEvent( 'tabs', function() {
-		var $this = $( this ),
-			defaultActiveTab = $this.find( '.elementor-tabs' ).data( 'active-tab' ),
-			$tabsTitles = $this.find( '.elementor-tab-title' ),
-			$tabs = $this.find( '.elementor-tab-content' ),
-			$active,
-			$content;
-
-		if ( ! defaultActiveTab ) {
-			defaultActiveTab = 1;
-		}
-
-		var activateTab = function( tabIndex ) {
-			if ( $active ) {
-				$active.removeClass( 'active' );
-
-				$content.hide();
-			}
-
-			$active = $tabsTitles.filter( '[data-tab="' + tabIndex + '"]' );
-
-			$active.addClass( 'active' );
-
-			$content = $tabs.filter( '[data-tab="' + tabIndex + '"]' );
-
-			$content.show();
-		};
-
-		activateTab( defaultActiveTab );
-
-		$tabsTitles.on( 'click', function() {
-			activateTab( this.dataset.tab );
-		} );
-	} );
-
-	// Accordion Widget
-	elementorBindUI.addBindEvent( 'accordion', function() {
-		var $this = $( this ),
-			defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
-			$accordionTitles = $this.find( '.elementor-accordion-title' ),
-			$activeTitle = $accordionTitles.filter( '.active' );
-
-		var activateSection = function( sectionIndex ) {
-			var $requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
-				isRequestedActive = $requestedTitle.hasClass( 'active' );
-
-			$activeTitle
-				.removeClass( 'active' )
-				.next()
-				.slideUp();
-
-			if ( ! isRequestedActive ) {
-				$requestedTitle
-					.addClass( 'active' )
-					.next()
-					.slideDown();
-
-				$activeTitle = $requestedTitle;
-			}
-		};
-
-		if ( ! defaultActiveSection ) {
-			defaultActiveSection = 1;
-		}
-
-		activateSection( defaultActiveSection );
-
-		$accordionTitles.on( 'click', function() {
-			activateSection( this.dataset.section );
-		} );
-	} );
-
-	// Toggle Widget
-	elementorBindUI.addBindEvent( 'toggle', function() {
-		var $toggleTitles = $( this ).find( '.elementor-toggle-title' );
-
-		$toggleTitles.on( 'click', function() {
-			var $active = $( this ),
-				$content = $active.next();
-
-			if ( $active.hasClass( 'active' ) ) {
-				$active.removeClass( 'active' );
-				$content.slideUp();
-			} else {
-				$active.addClass( 'active' );
-				$content.slideDown();
-			}
-		} );
-	} );
-
-	// Carousel Widget
-	elementorBindUI.addBindEvent( 'image-carousel', function() {
-		var $carousel = $( this ).find( '.elementor-image-carousel' );
-		if ( ! $carousel.length ) {
-			return;
-		}
-
-		var savedOptions = $carousel.data( 'slider_options' ),
-			tabletSlides = 1 === savedOptions.slidesToShow ? 1 : 2,
-			defaultOptions = {
-				responsive: [
-					{
-						breakpoint: 767,
-						settings: {
-							slidesToShow: tabletSlides,
-							slidesToScroll: tabletSlides
-						}
-					},
-					{
-						breakpoint: 480,
-						settings: {
-							slidesToShow: 1,
-							slidesToScroll: 1
-						}
-					}
-				]
-			},
-
-			slickOptions = $.extend( {}, defaultOptions, $carousel.data( 'slider_options' ) );
-
-		$carousel.slick( slickOptions );
-	} );
-
-	// Alert Widget
-	elementorBindUI.addBindEvent( 'alert', function() {
-		$( this ).find( '.elementor-alert-dismiss' ).on( 'click', function() {
-			$( this ).parent().fadeOut();
-		});
-	} );
-
-	// Section
-	elementorBindUI.addBindEvent( 'section', function() {
-		var player,
-			ui = {
-				backgroundVideoContainer: this.find( '.elementor-background-video-container' )
-			},
-			isYTVideo = false;
-
-		if ( ! ui.backgroundVideoContainer.length ) {
-			return;
-		}
-
-		ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
-
-		var calcVideosSize = function() {
-			var containerWidth = ui.backgroundVideoContainer.outerWidth(),
-				containerHeight = ui.backgroundVideoContainer.outerHeight(),
-				aspectRatioSetting = '16:9', //TEMP
-				aspectRatioArray = aspectRatioSetting.split( ':' ),
-				aspectRatio = aspectRatioArray[0] / aspectRatioArray[1],
-				ratioWidth = containerWidth / aspectRatio,
-				ratioHeight = containerHeight * aspectRatio,
-				isWidthFixed = containerWidth / containerHeight > aspectRatio;
-
-			return {
-				width: isWidthFixed ? containerWidth : ratioHeight,
-				height: isWidthFixed ? ratioWidth : containerHeight
-			};
-		};
-
-		var changeVideoSize = function() {
-			var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
-				size = calcVideosSize();
-
-			$video.width( size.width ).height( size.height );
-		};
-
-		var prepareYTVideo = function( YT, videoID ) {
-
-			player = new YT.Player( ui.backgroundVideo[0], {
-				videoId: videoID,
-				events: {
-					onReady: function() {
-						player.mute();
-
-						changeVideoSize();
-
-						player.playVideo();
-					},
-					onStateChange: function( event ) {
-						if ( event.data === YT.PlayerState.ENDED ) {
-							player.seekTo( 0 );
-						}
-					}
-				},
-				playerVars: {
-					controls: 0,
-					showinfo: 0
-				}
-			} );
-
-		};
-
-		var videoID = ui.backgroundVideo.data( 'video-id' );
-
-		if ( videoID ) {
-			isYTVideo = true;
-
-			onYoutubeApiReady( function( YT ) {
-				setTimeout( function() {
-					prepareYTVideo( YT, videoID );
-				}, 1 );
-			} );
-		} else {
-			ui.backgroundVideo.one( 'canplay', changeVideoSize );
-		}
-
-		$( scopeWindow ).on( 'resize', changeVideoSize );
-	} );
-
-	// Video Widget
-	elementorBindUI.addBindEvent( 'video', function() {
-		var $this = $( this ),
-			$imageOverlay = $this.find( '.elementor-custom-embed-image-overlay' ),
-			$videoFrame = $this.find( 'iframe' );
-
-		if ( ! $imageOverlay.length ) {
-			return;
-		}
-
-		$imageOverlay.on( 'click', function() {
-			$imageOverlay.remove();
-			var newSourceUrl = $videoFrame[0].src;
-			// Remove old autoplay if exists
-			newSourceUrl = newSourceUrl.replace( '&autoplay=0', '' );
-
-			$videoFrame[0].src = newSourceUrl + '&autoplay=1';
-		} );
-	} );
-
-	elementorBindUI.addBindEvent( 'menu-anchor', function() {
-		if ( elementorBindUI.isEditorMode() ) {
-			return;
-		}
-
-		var $anchor = this.find( '.elementor-menu-anchor' ),
-			anchorID = $anchor.attr( 'id' ),
-			$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
-			$scrollable = $( 'html, body' ),
-			adminBarHeight = $( '#wpadminbar' ).height();
-
-		$anchorLinks.on( 'click', function( event ) {
-			var isSamePathname = ( location.pathname === this.pathname ),
-				isSameHostname = ( location.hostname === this.hostname );
-
-			if ( ! isSameHostname || ! isSamePathname ) {
-				return;
-			}
-
-			event.preventDefault();
-
-			$scrollable.animate( {
-				scrollTop: $anchor.offset().top - adminBarHeight
-			}, 1000 );
-		} );
-	} );
-
-	// Make sure it's a global variable
-	window.elementorBindUI = elementorBindUI;
-} )( jQuery, window );
-
-jQuery( function( $ ) {
-	// Enqueue YouTube API
-	var scriptTag = document.createElement( 'script' ),
-		firstElementScript = document.getElementsByTagName( 'script' )[0];
-
-	scriptTag.src = 'https://www.youtube.com/iframe_api';
-	firstElementScript.parentNode.insertBefore( scriptTag, firstElementScript );
-
-	$( '.elementor-element' ).each( function() {
-		elementorBindUI.runReadyTrigger( $( this ) );
-	} );
-} );
-
-},{}]},{},[1])
+},{}]},{},[2])
 //# sourceMappingURL=frontend.js.map

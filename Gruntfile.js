@@ -113,6 +113,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/editor/components/template-library',
 							src: '**/*.js',
 							expose: 'elementor-templates'
+						},
+						{
+							cwd: 'assets/dev/js/frontend',
+							src: '**/*.js',
+							expose: 'elementor-frontend'
 						}
 					] );
 				}
