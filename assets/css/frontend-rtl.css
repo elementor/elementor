@@ -663,9 +663,9 @@
   display: inline-block;
   line-height: 1;
   transition: all 0.5s;
-  color: inherit; }
+  color: #fff; }
   .elementor-icon:hover {
-    color: inherit; }
+    color: #fff; }
   .elementor-icon i {
     font-size: 50px;
     width: 1em;
