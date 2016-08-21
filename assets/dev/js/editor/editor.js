@@ -130,7 +130,7 @@ App = Marionette.Application.extend( {
 		this.$preview.on( 'load', _.bind( function() {
 			this.$previewContents = this.$preview.contents();
 
-			elementorBindUI.setScopeWindow( this.$preview[0].contentWindow );
+			elementorFrontend.elementsHandler.setScopeWindow( this.$preview[0].contentWindow );
 
 			this.triggerMethod( 'preview:loaded' );
 		}, this ) );
@@ -147,7 +147,7 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		elementorBindUI.setEditorMode( true );
+		elementorFrontend.elementsHandler.setEditorMode( true );
 
 		// Init Base elements collection from the server
 		var ElementModel = require( 'elementor-models/element' );
