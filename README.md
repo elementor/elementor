@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.7.1  
+**Stable tag:** 0.7.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -153,6 +153,16 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Template Library.** Choose one of our pre-designed templates, crafted to fit every purpose.
 
 ## Changelog ##
+
+### 0.7.3 - 19.08.2016 ###
+* Fixed! - Allow columns gap on mobile
+* Fixed! - Content position for section
+
+### 0.7.2 - 18.08.2016 ###
+* Tweak! - Hide add section area for mobile device
+* Tweak! - Optimization assets files
+* Fixed! - Intrusive Slick Carousel CSS ([#424](https://github.com/pojome/elementor/issues/424))
+* Fixed! - Display content position for custom height section option
 
 ### 0.7.1 - 17.08.2016 ###
 * Tweak! - Added column/content position for inner section

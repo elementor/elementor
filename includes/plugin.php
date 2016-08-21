@@ -124,6 +124,8 @@ class Plugin {
 		if ( is_admin() ) {
 			new Admin();
 		}
+
+		do_action( 'elementor/loaded' );
 	}
 }
 

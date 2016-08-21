@@ -101,13 +101,8 @@
 }
 
 //
-// Slick Default Theme
+// Slick Elementor Theme
 //
-
-// Slider
-.slick-loading .slick-list {
-	background: #fff url('../images/ajax-loader.gif') center center no-repeat;
-}
 
 // Arrows
 .slick-prev,
@@ -118,7 +113,6 @@
 	top: 50%;
 	display: block;
 	width: 20px;
-	//height: 20px;
 	padding: 0;
 	transform: translate(0, -50%);
 	cursor: pointer;
@@ -253,22 +247,8 @@ ul.slick-dots {
 //
 //  Custom Style for Elementor
 //
-
-.slick-slider {
-
-	.slick-prev,
-	.slick-next {
-		z-index: 1;
-	}
-}
-
-.slick-slide {
-	img {
-		margin: auto;
-	}
-}
-
 .slick-arrows-inside {
+
 	.slick-prev {
 		left: 20px;
 		[dir="rtl"] & {
@@ -287,11 +267,34 @@ ul.slick-dots {
 }
 
 .slick-dots-inside {
+
 	.slick-dots {
 		bottom: 5px;
 	}
 
 	&.slick-dotted.slick-slider {
 		margin-bottom: 0;
+	}
+}
+
+// Hack for compatibility other themes
+.elementor-slick-slider {
+
+	.slick-loading .slick-list {
+		background: #fff url('../images/ajax-loader.gif') center center no-repeat;
+	}
+
+	.slick-slider {
+
+		.slick-prev,
+		.slick-next {
+			z-index: 1;
+		}
+	}
+
+	.slick-slide {
+		img {
+			margin: auto;
+		}
 	}
 }
