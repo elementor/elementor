@@ -190,7 +190,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	runReadyTrigger: function() {
 		_.defer( _.bind( function() {
-			elementorBindUI.runReadyTrigger( this.$el );
+			elementorFrontend.elementsHandler.runReadyTrigger( this.$el );
 		}, this ) );
 	},
 
