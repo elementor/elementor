@@ -90,12 +90,10 @@ module.exports = ElementsHandler;
 		};
 
 		this.elementsHandler = new ElementsHandler( $ );
-
 		this.utils = new Utils( $ );
 
 		this.init = function() {
 			addGlobalHandlers();
-
 			addElementsHandlers();
 
 			self.utils.insertYTApi();
