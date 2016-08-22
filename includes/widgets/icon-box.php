@@ -47,7 +47,7 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Choose Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-bullhorn',
+				'default' => 'fa fa-smile-o',
 				'section' => 'section_icon',
 			]
 		);
@@ -510,7 +510,7 @@ class Widget_Icon_box extends Widget_Base {
 	protected function render( $instance = [] ) {
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
 
-		$icon_tag = 'div';
+		$icon_tag = 'span';
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
@@ -545,7 +545,7 @@ class Widget_Icon_box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconTag = link ? 'a' : 'div'; %>
+				iconTag = link ? 'a' : 'span'; %>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
 				<<%= iconTag + ' ' + link %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
