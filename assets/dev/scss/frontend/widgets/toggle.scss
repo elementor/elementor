@@ -3,7 +3,7 @@
 //
 
 .elementor-toggle {
-	text-align: getStartDirection();
+	text-align: $start;
 
 	.elementor-toggle-title {
 		font-weight: bold;

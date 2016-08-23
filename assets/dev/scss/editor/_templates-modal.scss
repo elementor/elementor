@@ -62,11 +62,11 @@
 
 #elementor-template-library-header-logo-area {
 	width: 35%;
-	text-align: getStartDirection();
+	text-align: $start;
 	@include padding-start(15px);
 
 	> * {
-		float: getStartDirection();
+		float: $start;
 
 		> * {
 			vertical-align: middle;
@@ -107,14 +107,14 @@
 	width: 35%;
 
 	> * {
-		float: getEndDirection();
+		float: $end;
 	}
 }
 
 #elementor-template-library-header-tools {
 
 	> * {
-		float: getEndDirection();
+		float: $end;
 	}
 }
 
@@ -149,7 +149,7 @@
 #elementor-template-library-header-preview {
 
 	> * {
-		float: getEndDirection();
+		float: $end;
 	}
 }
 
@@ -211,7 +211,7 @@
 }
 
 .elementor-template-library-template-remote {
-	float: getStartDirection();
+	float: $start;
 	width: 25%;
 	padding: 0 15px;
 	margin-top: 15px;
