@@ -90,12 +90,10 @@ module.exports = ElementsHandler;
 		};
 
 		this.elementsHandler = new ElementsHandler( $ );
-
 		this.utils = new Utils( $ );
 
 		this.init = function() {
 			addGlobalHandlers();
-
 			addElementsHandlers();
 
 			self.utils.insertYTApi();
@@ -150,7 +148,7 @@ module.exports = function( $ ) {
 module.exports = function( $ ) {
 	$( this ).find( '.elementor-alert-dismiss' ).on( 'click', function() {
 		$( this ).parent().fadeOut();
-	});
+	} );
 };
 
 },{}],5:[function(require,module,exports){

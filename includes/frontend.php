@@ -324,6 +324,9 @@ class Frontend {
 
 	public function apply_builder_in_content( $content ) {
 		$post_id = get_the_ID();
+		if ( post_password_required( $post_id ) )
+			return $content;
+
 		$data = Plugin::instance()->db->get_plain_builder( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
 
