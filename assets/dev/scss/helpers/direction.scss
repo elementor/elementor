@@ -1,4 +1,16 @@
 //
+// Variables
+//
+
+$start: left;
+$end: right;
+
+@if ($direction == rtl) {
+	$start: right;
+	$end: left;
+}
+
+//
 // Internal Mixins
 //
 
@@ -121,24 +133,6 @@
 //
 // Functions
 //
-
-@function getStartDirection() {
-
-	@if ($direction == rtl) {
-		@return right;
-	}
-
-	@return left;
-}
-
-@function getEndDirection() {
-
-	@if ($direction == rtl) {
-		@return left;
-	}
-
-	@return right;
-}
 
 @function getValueByDirection($value-for-left, $value-for-right) {
 
