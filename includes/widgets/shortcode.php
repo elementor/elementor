@@ -14,7 +14,7 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'coding';
+		return 'shortcode';
 	}
 
 	protected function _register_controls() {
@@ -29,8 +29,9 @@ class Widget_Shortcode extends Widget_Base {
 		$this->add_control(
 			'shortcode',
 			[
-				'label' => '',
+				'label' => __( 'Insert your shortcode here', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
 				'section' => 'section_shortcode',
 			]
