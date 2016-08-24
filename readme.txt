@@ -152,6 +152,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.7.4 - 24.08.2016 =
+* New! - Added Shortcode widget
+* Tweak! - Now compatible with password protected pages
+* Fixed! - Library RTL bug in template preview
+* Fixed! - Bug with `p` tag in Icon Box widget
+* Fixed! - Style in Icon widget
+* Fixed! - HTML widget now is working
+
 = 0.7.3 - 19.08.2016 =
 * Fixed! - Allow columns gap on mobile
 * Fixed! - Content position for section
