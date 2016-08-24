@@ -677,7 +677,8 @@
 
 .elementor-view-framed .elementor-icon {
   color: #000;
-  border: 3px solid #000; }
+  border: 3px solid #000;
+  background-color: #fff; }
 
 .elementor-align-right .elementor-icon-wrapper {
   text-align: right; }
@@ -921,6 +922,8 @@
     background-color: #21759b; }
   .elementor-social-icon-youtube {
     background-color: #cd201f; }
+  .elementor-social-icon i {
+    font-size: 25px; }
 
 .elementor-widget-social-icons.elementor-align-right {
   text-align: right; }
