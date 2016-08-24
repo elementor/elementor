@@ -48,7 +48,7 @@ class Widget_Icon extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'label_block' => true,
-				'default' => 'fa fa-smile-o',
+				'default' => 'fa fa-star',
 				'section' => 'section_icon',
 			]
 		);
