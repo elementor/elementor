@@ -197,16 +197,16 @@
 
 	.elementor-slider-input {
 		width: 33%;
-		float: getEndDirection();
+		float: $end;
 
 		input {
 			width: 80%;
-			float: getEndDirection();
+			float: $end;
 		}
 	}
 
 	.elementor-units-choices {
-		float: getEndDirection();
+		float: $end;
 
 		input {
 			display: none;
@@ -518,7 +518,7 @@
 	.wp-picker-container {
 
 		&:not(.wp-picker-active) {
-			float: getEndDirection();
+			float: $end;
 		}
 
 		&.wp-picker-active {
@@ -668,7 +668,7 @@
 			height: 40px;
 			background-size: cover;
 			background-position: 50% 50%;
-			float: getStartDirection();
+			float: $start;
 			margin-bottom: 10px;
 
 			&:not(:nth-child(5n)) {
@@ -822,7 +822,7 @@
 
 		.elementor-image-dimensions-field {
 			width: 70px;
-			float: getStartDirection();
+			float: $start;
 
 			input {
 
@@ -838,7 +838,7 @@
 		.elementor-image-dimensions-separator {
 			width: 20px;
 			text-align: center;
-			float: getStartDirection();
+			float: $start;
 			padding-top: 4px;
 		}
 
@@ -851,7 +851,7 @@
 		}
 
 		.elementor-image-dimensions-apply-button {
-			float: getEndDirection();
+			float: $end;
 			height: 27px;
 			width: 70px;
 		}

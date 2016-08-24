@@ -3,7 +3,7 @@
 //
 
 .elementor-tabs {
-	text-align: getStartDirection();
+	text-align: $start;
 
 	.elementor-tabs-wrapper {
 		overflow: hidden;

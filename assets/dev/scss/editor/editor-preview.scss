@@ -257,7 +257,7 @@ body {
 				border-radius: 3px 3px 0 0;
 
 				.elementor-editor-element-settings-list {
-					float: getStartDirection();
+					float: $start;
 					background-color: $editor-darkest;
 
 					.elementor-editor-element-setting {
@@ -692,7 +692,7 @@ body {
 				cursor: pointer;
 				margin: 0;
 				padding: 10px;
-				float: getStartDirection();
+				float: $start;
 
 				&:hover {
 

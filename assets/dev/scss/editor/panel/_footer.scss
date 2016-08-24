@@ -96,13 +96,13 @@
 	}
 
 	.elementor-title {
-		text-align: getStartDirection();
+		text-align: $start;
 		color: $editor-lightest;
 	}
 
 	.elementor-description {
 		width: 95px;
-		text-align: getStartDirection();
+		text-align: $start;
 		font-size: 11px;
 		font-style: italic;
 		color: $editor-light;
@@ -110,7 +110,7 @@
 }
 
 #elementor-panel-footer-help-title {
-	text-align: getStartDirection();
+	text-align: $start;
 	padding: 10px 0;
 	color: $editor-lightest;
 }

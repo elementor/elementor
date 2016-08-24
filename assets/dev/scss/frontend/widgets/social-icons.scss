@@ -50,6 +50,10 @@
 		&wordpress		{ background-color: $wordpress; }
 		&youtube		{ background-color: $youtube; }
 	}
+
+	i {
+		font-size: 25px;
+	}
 }
 
 .elementor-widget-social-icons {
