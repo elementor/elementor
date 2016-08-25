@@ -25,8 +25,8 @@ class Elements_Manager {
 	}
 
 	public function get_categories() {
-		// TODO: Need to filter
-		return [
+		
+		$categories = [
 			'basic' => [
 				'title' => __( 'Elements', 'elementor' ),
 				'icon' => 'font',
@@ -40,6 +40,9 @@ class Elements_Manager {
 				'icon' => 'wordpress',
 			],
 		];
+
+		return apply_filters( 'elementor/elements/categories', $categories );
+
 	}
 
 	public function register_element( $element_class ) {
