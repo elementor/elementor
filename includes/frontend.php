@@ -122,6 +122,9 @@ class Frontend {
 			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
+
+		do_action( 'elementor/frontend/scripts', Plugin::instance() );
+
 	}
 
 	public function enqueue_styles() {
@@ -163,6 +166,9 @@ class Frontend {
 
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
+
+		do_action( 'elementor/frontend/styles', Plugin::instance() );
+
 	}
 
 	public function print_css() {
