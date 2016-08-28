@@ -29,8 +29,8 @@ Create pages that have "the designer touch", by including unique features like b
 = NEW! Template Library. =
 We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
 
-= 27 widgets and counting =
-We packed 27 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+= 28 widgets and counting =
+We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
@@ -52,6 +52,7 @@ We packed 27 of the most useful widgets into Elementor. True, that's way more th
 - **Toggle**. Like Accordion, for FAQ pages.
 - **Alert**. A colored alert box to draw the attention of the visitor.
 - **HTML**. Insert code into the page.
+- **Shortcode**. Easily insert shortcodes from any plugin into the page.
 - **Menu Anchor**. Link any menu to this anchor.
 - **Sidebar**. Include any sidebar you create into the page.
 - **Google Maps**. Embed maps into the page.
