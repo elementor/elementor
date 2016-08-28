@@ -1,0 +1,464 @@
+#elementor-template-library-modal {
+
+	.dialog-widget-content {
+		width: 990px;
+		background-color: $editor-background-light;
+	}
+
+	.dialog-widget-header {
+		padding: 0;
+		background-color: #fff;
+		box-shadow: $panel-bottom-shadow;
+		position: relative; // Show the shadow above the scrolled list
+		z-index: 1;
+	}
+
+	.dialog-buttons-wrapper {
+		display: none;
+	}
+
+	.dialog-message {
+		height: 630px;
+		max-height: 85vh;
+		overflow: auto;
+		padding: 15px;
+	}
+
+	a {
+
+		&,
+		&:hover {
+			color: inherit;
+		}
+	}
+
+	a.elementor-template-library-blank-footer-link {
+		transition: color .5s;
+
+		&:hover {
+			color: $editor-accent;
+		}
+	}
+
+	.elementor-button-success {
+		text-transform: uppercase;
+
+		.elementor-button-title {
+			@include padding-start(8px);
+		}
+	}
+}
+
+#elementor-template-library-header {
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+	}
+}
+
+#elementor-template-library-header-logo-area {
+	width: 35%;
+	text-align: $start;
+	@include padding-start(15px);
+
+	> * {
+		float: $start;
+
+		> * {
+			vertical-align: middle;
+		}
+	}
+}
+
+#elementor-template-library-header-logo {
+	font-size: 15px;
+	text-transform: uppercase;
+	color: $editor-darkest;
+	font-weight: bold;
+	cursor: pointer;
+
+	i {
+		@include padding-end(10px);
+		color: $editor-accent;
+		font-size: 20px;
+	}
+}
+
+#elementor-template-library-header-menu {
+	text-align: center;
+}
+
+.elementor-template-library-menu-item {
+	display: inline-block;
+	padding: 17px;
+	cursor: pointer;
+
+	&.elementor-active {
+		background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+		border-bottom: 3px solid #9b0a46;
+	}
+}
+
+#elementor-template-library-header-items-area {
+	width: 35%;
+
+	> * {
+		float: $end;
+	}
+}
+
+#elementor-template-library-header-tools {
+
+	> * {
+		float: $end;
+	}
+}
+
+.elementor-template-library-header-item {
+	position: relative;
+	@include border-start(1px solid $editor-background);
+	height: 50px;
+	box-sizing: content-box;
+	cursor: pointer;
+	transition: color .5s;
+
+	&:not(:hover) {
+		color: $editor-light;
+	}
+
+	> * {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+	}
+
+	> i {
+		font-size: 18px;
+	}
+}
+
+#elementor-template-library-header-close-modal, #elementor-template-library-header-save {
+	width: 56px;
+}
+
+#elementor-template-library-header-preview {
+
+	> * {
+		float: $end;
+	}
+}
+
+#elementor-template-library-header-preview-insert-wrapper {
+	width: 100px;
+	cursor: default;
+}
+
+#elementor-template-library-header-preview-insert {
+	width: 80%;
+	padding: 8px 0;
+}
+
+#elementor-template-library-header-preview-back {
+	@include padding(16.5px, 16.5px, 15px, 0);
+	@include border-end(1px solid $editor-background);
+	cursor: pointer;
+	transition: color .5s;
+
+	&:not(:hover) {
+		color: $editor-light;
+	}
+
+	i {
+		@include padding-end(10px);
+		font-size: 18px;
+
+		&:before {
+			content: getValueByDirection( '\e908', '\e907' );
+		}
+	}
+}
+
+#elementor-template-library-loading {
+
+	.elementor-loading-title {
+		color: $editor-light;
+	}
+
+	.elementor-loader-box {
+		background-color: $editor-lightest;
+	}
+}
+
+#elementor-template-library-templates-container {
+	overflow: hidden;
+
+	&[data-template-source="local"] {
+		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
+		margin: 15px;
+	}
+
+	&:not([data-template-source="remote"]) {
+
+		+ #elementor-template-library-footer-banner {
+			display: none;
+		}
+	}
+}
+
+.elementor-template-library-template-remote {
+	float: $start;
+	width: 25%;
+	padding: 0 15px;
+	margin-top: 15px;
+
+	&:not(:hover) {
+
+		.elementor-template-library-template-controls {
+			opacity: 0;
+		}
+	}
+
+	.elementor-template-library-template-body {
+		height: 250px;
+		border: 3px solid #fff;
+		position: relative;
+		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+	}
+
+	.elementor-template-library-template-screenshot {
+		height: 100%;
+		background-size: cover;
+		background-position-x: 50%;
+	}
+
+	.elementor-template-library-template-controls {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,.5);
+		transition: opacity .5s;
+	}
+
+	.elementor-template-library-template-insert {
+		font-size: 11px;
+		width: 150px;
+	}
+
+	.elementor-template-library-template-preview {
+		position: relative;
+		height: 180px;
+		cursor: pointer;
+
+		i {
+			font-size: 20px;
+			color: $editor-lightest;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+		}
+	}
+
+	.elementor-template-library-template-insert {
+		padding: 11px;
+
+		i {
+			@include padding-end(5px);
+		}
+	}
+
+	.elementor-template-library-template-name {
+		margin: 13px 0 10px;
+		font-size: 12px;
+		text-align: center;
+		color: $editor-dark;
+	}
+}
+
+.elementor-template-library-template-local {
+	background-color: #fff;
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+	border-bottom: 1px solid $editor-lightest;
+	height: 50px;
+	transition: background-color .3s linear;
+
+	&:hover {
+		background-color: lighten($editor-background-light, 3%);
+	}
+
+	&:not(:hover) {
+
+		.elementor-template-library-template-controls {
+			visibility: hidden;
+		}
+	}
+
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+		text-align: start;
+	}
+
+	.elementor-template-library-template-icon {
+		text-align: center;
+		width: 6%;
+	}
+
+	.elementor-template-library-template-name {
+		font-size: 13px;
+		font-weight: 500;
+		width: 35%;
+	}
+
+	.elementor-template-library-template-type {
+		color: $editor-light;
+	}
+
+	.elementor-template-library-template-controls {
+		width: 42%;
+		direction: getInverseDirection();
+
+		> * {
+			direction: $direction;
+		}
+
+		> div {
+			display: inline-block;
+			@include margin-start(15px);
+			cursor: pointer;
+			font-weight: 500;
+			transition: color .5s;
+
+			&:not(:hover) {
+				color: $editor-light;
+			}
+		}
+	}
+
+	.elementor-template-library-template-control-title {
+		@include margin-start(6px);
+	}
+
+	.elementor-template-library-template-delete {
+
+		&:hover {
+			color: $editor-warning;
+		}
+	}
+
+	.elementor-template-library-template-insert {
+		padding: 8px 18px;
+		margin: 0 20px;
+	}
+}
+
+#elementor-template-library-preview {
+	height: 100%;
+	overflow: hidden;
+
+	iframe {
+		width: 1440px;
+		height: 150%;
+		transform: scale(0.666) translateX(getValueByDirection(-25%, 25%)) translateY(-25%);
+	}
+}
+
+.elementor-template-library-blank-title {
+	font-size: 30px;
+	margin-top: 55px;
+}
+
+.elementor-template-library-blank-excerpt {
+	font-size: 18px;
+	color: $editor-light;
+	margin-top: 20px;
+	font-weight: 300;
+}
+
+#elementor-template-library-save-template-form {
+	margin-top: 55px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	> * {
+		height: 60px;
+		font-size: 18px;
+	}
+}
+
+#elementor-template-library-save-template-name {
+	width: 460px;
+	background-color: #fff;
+	font-weight: 300;
+	color: $editor-light;
+	@include padding-start(25px);
+	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+	border: none;
+
+	&:focus {
+		border: 1px solid $editor-background;
+	}
+}
+
+#elementor-template-library-save-template-submit {
+	width: 150px;
+	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	font-weight: 500;
+
+	&:hover {
+		box-shadow: none;
+	}
+}
+
+.elementor-template-library-blank-footer {
+	position: absolute;
+	bottom: 90px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: $editor-light;
+	font-size: 13px;
+	font-style: italic;
+}
+
+#elementor-template-library-footer-banner {
+
+	i {
+		color: $editor-lighter;
+		font-size: 56px;
+		margin-top: 40px;
+	}
+
+	.elementor-excerpt {
+		color: $editor-light;
+		font-size: 15px;
+		font-weight: 500;
+		margin: 20px 0;
+	}
+}
+
+#elementor-template-library-templates-empty-icon {
+	font-size: 96px;
+	margin-top: 40px;
+	color: $editor-lightest;
+}
+
+#elementor-template-library-error-dialog {
+
+	.dialog-message {
+		text-align: start;
+	}
+}
+
+#elementor-template-library-error-info {
+	margin-top: 10px;
+}

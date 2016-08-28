@@ -34,6 +34,7 @@ class Widget_Html extends Widget_Base {
 				'default' => '',
 				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
 				'section' => 'section_title',
+				'show_label' => false,
 			]
 		);
 	}
@@ -44,7 +45,7 @@ class Widget_Html extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<%= settings.code %>
+		<%= settings.html %>
 		<?php
 	}
 }

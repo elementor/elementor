@@ -1,0 +1,73 @@
+//
+// Icon
+//
+
+// For the all elements with icon options
+
+.elementor-icon {
+	display: inline-block;
+	line-height: 1;
+	transition: $transition-hover;
+	color: #fff;
+
+	&:hover {
+		color: #fff;
+	}
+
+	i {
+		font-size: 50px;
+		width: 1em;
+		height: 1em;
+	}
+}
+
+.elementor-view-stacked {
+
+	.elementor-icon {
+		background-color: #000;
+		color: #fff;
+	}
+}
+
+.elementor-view-framed {
+
+	.elementor-icon {
+		color: #000;
+		border: 3px solid #000;
+		background-color: #fff;
+	}
+}
+
+.elementor-align- {
+
+	&right {
+
+		.elementor-icon-wrapper {
+			text-align: right;
+		}
+	}
+
+	&left {
+
+		.elementor-icon-wrapper {
+			text-align: left;
+		}
+	}
+
+	&center {
+
+		.elementor-icon-wrapper {
+			text-align: center;
+		}
+	}
+}
+
+.elementor-shape- {
+
+	&circle {
+
+		.elementor-icon {
+			border-radius: 50%;
+		}
+	}
+}

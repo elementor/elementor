@@ -25,6 +25,8 @@ class Heartbeat {
 			} else {
 				$response['locked_user'] = $locked_user->display_name;
 			}
+
+			$response['elementor_nonce'] = wp_create_nonce( 'elementor-editing' );
 		}
 		return $response;
 	}

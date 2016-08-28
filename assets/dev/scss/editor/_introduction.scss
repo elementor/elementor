@@ -1,0 +1,31 @@
+#elementor-introduction {
+
+	.dialog-widget-header {
+		padding: 40px 0 0;
+	}
+
+	.dialog-widget-content {
+		width: 700px;
+		max-width: 100%;
+	}
+
+	.elementor-video-wrapper {
+		padding-bottom: 62.4%;
+	}
+
+	.dialog-message {
+		margin-top: 40px;
+	}
+}
+
+#elementor-introduction-title {
+	color: $editor-accent;
+	font-size: 27px;
+	font-weight: bold;
+}
+
+#elementor-introduction-subtitle {
+	margin-top: 12px;
+	font-size: 16px;
+	color: $editor-light;
+}

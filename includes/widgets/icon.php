@@ -48,7 +48,7 @@ class Widget_Icon extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'label_block' => true,
-				'default' => 'fa fa-bullhorn',
+				'default' => 'fa fa-star',
 				'section' => 'section_icon',
 			]
 		);
@@ -127,7 +127,6 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
-				'alpha' => true,
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
@@ -149,11 +148,6 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
-				],
-				'alpha' => true,
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
 				],
 			]
 		);
@@ -311,6 +305,16 @@ class Widget_Icon extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+			]
+		);
 	}
 
 	protected function render( $instance = [] ) {
@@ -318,50 +322,42 @@ class Widget_Icon extends Widget_Base {
 
 		$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
 
+		if ( ! empty( $instance['hover_animation'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		}
+
+		$icon_tag = 'div';
+
+		if ( ! empty( $instance['link']['url'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'href', $instance['link']['url'] );
+			$icon_tag = 'a';
+
+			if ( ! empty( $instance['link']['is_external'] ) ) {
+				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
+			}
+		}
+
 		if ( ! empty( $instance['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
 		}
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
-
-			if ( ! empty( $instance['link']['is_external'] ) ) {
-				$this->add_render_attribute( 'link', 'target', '_blank' );
-			}
-		}
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<?php if ( ! empty( $instance['icon'] ) ) : ?>
-				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
-					<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-				<?php endif;?>
-					<div <?php echo $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-						<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
-					</div>
-				<?php if ( ! empty( $instance['link']['url'] ) ) : ?>
-					</a>
-				<?php endif; ?>
-			<?php endif; ?>
+			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
+				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
+			</<?php echo $icon_tag; ?>>
 		</div>
 		<?php
 	}
 
 	protected function content_template() {
 		?>
+		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconTag = link ? 'a' : 'div'; %>
 		<div class="elementor-icon-wrapper">
-			<% if ( settings.icon ) {
-			var hasLink = settings.link && settings.link.url;
-			%>
-			<% if ( hasLink ) { %>
-			<a class="elementor-icon-link" href="<%- settings.link.url %>">
-				<% } %>
-				<div class="elementor-icon">
-					<i class="<%- settings.icon %>"></i>
-				</div>
-				<% if ( hasLink ) { %>
-			</a>
-			<% } %>
-			<% } %>
+			<<%= iconTag %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>" <%= link %>>
+				<i class="<%- settings.icon %>"></i>
+			</<%= iconTag %>>
 		</div>
 		<?php
 	}

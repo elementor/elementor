@@ -95,6 +95,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 	</div>
+	<div id="elementor-panel-footer-templates" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Templates', 'elementor' ); ?>">
+		<span class="elementor-screen-only"><?php _e( 'Templates', 'elementor' ); ?></span>
+		<i class="fa fa-folder"></i>
+		<div class="elementor-panel-footer-sub-menu-wrapper">
+			<div class="elementor-panel-footer-sub-menu">
+				<div id="elementor-panel-footer-templates-modal" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-folder"></i>
+					<span class="elementor-title"><?php _e( 'Templates Library', 'elementor' ); ?></span>
+				</div>
+				<div id="elementor-panel-footer-save-template" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-save"></i>
+					<span class="elementor-title"><?php _e( 'Save Template', 'elementor' ); ?></span>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div id="elementor-panel-footer-save" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">
 		<button class="elementor-button">
 			<span class="elementor-state-icon">
@@ -161,7 +177,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-panel-scheme-items"></div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-schemes-colors">
+<script type="text/template" id="tmpl-elementor-panel-schemes-color">
 	<div class="elementor-panel-scheme-buttons">
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
 			<button class="elementor-button">
@@ -214,6 +230,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<?php endforeach; ?>
 		</div>
 	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
+	<%= '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) %>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">

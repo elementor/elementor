@@ -1,3 +1,4 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 ( function( $, window, document ) {
 	'use strict';
 
@@ -10,7 +11,7 @@
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
 				$switchModeInput: $( '#elementor-switch-mode-input' ),
 				$switchModeButton: $( '#elementor-switch-mode-button' ),
-				$elementorLoader: $( '#elementor-loader' ),
+				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' )
 			};
 		},
@@ -56,11 +57,57 @@
 			self.cache.$goToEditLink.on( 'click', function() {
 				self.animateLoader();
 			} );
+
+			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss', function( event ) {
+				event.preventDefault();
+
+				$.post( ajaxurl, {
+					action: 'elementor_set_admin_notice_viewed',
+					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' )
+				} );
+			} );
+
+			$( '#elementor-library-sync-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success' ).addClass( 'loading' );
+
+				$.post( ajaxurl, {
+					action: 'elementor_reset_library',
+					_nonce: $thisButton.data( 'nonce' )
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} );
+			} );
 		},
 
 		init: function() {
 			this.cacheElements();
 			this.bindEvents();
+
+			this.initTemplatesImport();
+		},
+
+		initTemplatesImport: function() {
+			if ( ! this.cache.$body.hasClass( 'post-type-elementor_library' ) ) {
+				return;
+			}
+
+			var self = this,
+				$importButton = self.cache.$importButton = $( '#elementor-import-template-trigger' ),
+				$importArea = self.cache.$importArea = $( '#elementor-import-template-area' );
+
+			self.cache.$formAnchor = $( 'h1' );
+
+			$( '#wpbody-content' ).find( '.page-title-action' ).after( $importButton );
+
+			self.cache.$formAnchor.after( self.cache.$importArea );
+
+			$importButton.on( 'click', function() {
+				$importArea.toggle();
+			} );
 		},
 
 		getEditMode: function() {
@@ -77,3 +124,6 @@
 	} );
 
 }( jQuery, window, document ) );
+
+},{}]},{},[1])
+//# sourceMappingURL=admin.js.map

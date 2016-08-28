@@ -14,19 +14,17 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 		$scripts = [
 			'jquery-ui-sortable',
 			'jquery-ui-resizable',
-			'jquery-html5-dnd',
 			'backbone-marionette',
 			'backbone-radio',
 			'perfect-scrollbar',
 			'jquery-easing',
-			'jquery-elementor-serialize-object',
 			'nprogress',
 			'tipsy',
 			'imagesloaded',
 			'heartbeat',
-			'dialog',
+			'elementor-dialog',
 
-			'elementor',
+			'elementor-editor',
 		];
 
 		foreach ( $scripts as $script ) {
@@ -39,6 +37,11 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 
 		$scripts = [
 			'font-awesome',
+			'select2',
+			'elementor-icons',
+			'wp-auth-check',
+			'google-font-roboto',
+
 			'elementor-admin',
 		];
 

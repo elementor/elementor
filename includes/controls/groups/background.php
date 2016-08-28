@@ -56,7 +56,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'label' => _x( 'Color', 'Background Control', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'alpha' => true,
 				'tab' => $args['tab'],
 				'title' => _x( 'Background Color', 'Background Control', 'elementor' ),
 				'selectors' => [
@@ -154,6 +153,7 @@ class Group_Control_Background extends Group_Control_Base {
 					'' => _x( 'None', 'Background Control', 'elementor' ),
 					'auto' => _x( 'Auto', 'Background Control', 'elementor' ),
 					'cover' => _x( 'Cover', 'Background Control', 'elementor' ),
+					'contain' => _x( 'Contain', 'Background Control', 'elementor' ),
 				],
 				'selectors' => [
 					$args['selector'] => 'background-size: {{VALUE}};',

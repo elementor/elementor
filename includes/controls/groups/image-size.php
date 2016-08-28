@@ -9,6 +9,27 @@ class Group_Control_Image_size extends Group_Control_Base {
 		return 'image-size';
 	}
 
+	public static function get_all_image_sizes() {
+		global $_wp_additional_image_sizes;
+
+		$default_image_sizes = [ 'thumbnail', 'medium', 'medium_large', 'large' ];
+
+		$image_sizes = [];
+		foreach ( $default_image_sizes as $size ) {
+			$image_sizes[ $size ] = [
+				'width' => (int) get_option( $size . '_size_w' ),
+				'height' => (int) get_option( $size . '_size_h' ),
+				'crop' => (bool) get_option( $size . '_crop' ),
+			];
+		}
+
+		if ( $_wp_additional_image_sizes ) {
+			$image_sizes = array_merge( $image_sizes, $_wp_additional_image_sizes );
+		}
+
+		return $image_sizes;
+	}
+
 	protected function _get_child_default_args() {
 		return [
 			'include' => [],
@@ -17,20 +38,19 @@ class Group_Control_Image_size extends Group_Control_Base {
 	}
 
 	private function _get_image_sizes() {
-		$wp_image_sizes = get_intermediate_image_sizes();
+		$wp_image_sizes = self::get_all_image_sizes();
 
 		$args = $this->get_args();
 
 		if ( $args['include'] ) {
-			$wp_image_sizes = array_intersect( $wp_image_sizes, $args['include'] );
+			$wp_image_sizes = array_intersect_key( $wp_image_sizes, array_flip( $args['include'] ) );
 		} elseif ( $args['exclude'] ) {
-			$wp_image_sizes = array_diff( $wp_image_sizes, $args['exclude'] );
+			$wp_image_sizes = array_diff_key( $wp_image_sizes, array_flip( $args['exclude'] ) );
 		}
 
 		$image_sizes = [];
-
-		foreach ( $wp_image_sizes as $image_size ) {
-			$image_sizes[ $image_size ] = ucwords( str_replace( '_', ' ', $image_size ) );
+		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
+			$image_sizes[ $size_key ] = ucwords( str_replace( '_', ' ', $size_key ) ) . sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
 		}
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );

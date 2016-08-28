@@ -1,0 +1,206 @@
+//
+// Grid
+//
+
+// Section
+.elementor-section {
+	position: relative;
+	// Container
+	.elementor-container {
+		display: flex;
+		margin-right: auto;
+		margin-left: auto;
+		position: relative;
+
+		&.elementor-container-fluid {
+			max-width: 100%;
+		}
+	}
+
+	// In section min-height / fit to screen mode
+	&.elementor-section-items- {
+
+		&top {
+
+			> .elementor-container {
+				align-items: flex-start;
+			}
+		}
+
+		&middle {
+
+			> .elementor-container {
+				align-items: center;
+			}
+		}
+
+		&bottom {
+
+			> .elementor-container {
+				align-items: flex-end;
+			}
+		}
+	}
+
+	// In columns stretch mode
+	&.elementor-section-content- {
+
+		&top {
+
+			.elementor-column-wrap {
+				align-items: flex-start;
+			}
+		}
+
+		&middle {
+
+			.elementor-column-wrap {
+				align-items: center;
+			}
+		}
+
+		&bottom {
+
+			.elementor-column-wrap {
+				align-items: flex-end;
+			}
+		}
+	}
+
+	@media(min-width: $screen-md-min) {
+
+		// Section Full Height
+		&.elementor-section-height-full {
+			height: 100vh;
+
+			> .elementor-container {
+				height: 100%;
+			}
+		}
+	}
+}
+
+// Row
+.elementor-row {
+	width: 100%;
+	display: flex;
+
+	/* In dragging mode it's causing a columns fall */
+	@media(max-width: $screen-sm-max) {
+		flex-wrap: wrap;
+	}
+}
+
+// Widget
+.elementor-column-wrap {
+	width: 100%;
+	display: flex;
+}
+
+.elementor-widget-wrap {
+	position: relative;
+	width: 100%;
+	z-index: 1;
+}
+
+.elementor-widget {
+	position: relative;
+
+	&:not(:last-child) {
+		margin-bottom: 20px;
+	}
+}
+
+// Columns
+.elementor-column {
+	position: relative;
+	min-height: 1px;
+	display: flex;
+}
+
+@mixin elementor-grid-classes {
+
+	@each $sizeKey, $size in $column-sizes {
+
+		&.elementor-col-#{$sizeKey}, &[data-col="#{$sizeKey}"] {
+			width: $size;
+		}
+	}
+}
+
+@mixin elementor-responsive($breakpoint-name) {
+
+	@each $size-name, $size in $column-sizes {
+
+		&.elementor-#{$breakpoint-name}-#{$size-name} {
+			width: $size;
+		}
+	}
+
+}
+
+// Columns Gap
+.elementor-column-gap-default {
+
+	.elementor-element-populated {
+		padding: 10px;
+	}
+}
+
+.elementor-column-gap-narrow {
+
+	.elementor-element-populated {
+		padding: 5px;
+	}
+}
+
+.elementor-column-gap-extended {
+
+	.elementor-element-populated {
+		padding: 15px;
+	}
+}
+
+.elementor-column-gap-wide {
+
+	.elementor-element-populated {
+		padding: 20px;
+	}
+}
+
+.elementor-column-gap-wider {
+
+	.elementor-element-populated {
+		padding: 30px;
+	}
+}
+
+// Responsive Grid
+.elementor-column {
+
+	@media (max-width: $screen-xs-max) {
+		@include elementor-responsive(xs);
+	}
+
+	@media (max-width: $screen-sm-max) {
+		@include elementor-responsive(sm);
+	}
+
+	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+		@include elementor-responsive(md);
+	}
+}
+
+@media (min-width: $screen-md-min) {
+
+	.elementor-column {
+		@include elementor-grid-classes;
+	}
+}
+
+@media (max-width: $screen-sm-max) {
+
+	.elementor-column {
+		width: 100%;
+	}
+}

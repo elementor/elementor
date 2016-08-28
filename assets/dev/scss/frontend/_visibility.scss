@@ -1,0 +1,25 @@
+//
+// Visibility by Devices (based on breakpoints)
+//
+
+@media (max-width: $screen-sm-max) {
+	.elementor-hidden-phone {
+		display: none;
+	}
+}
+
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	.elementor-hidden-tablet {
+		display: none;
+	}
+}
+
+@media (min-width: $screen-lg-min) {
+	.elementor-hidden-desktop {
+		display: none;
+	}
+}
+
+.elementor-hidden {
+	display: none;
+}

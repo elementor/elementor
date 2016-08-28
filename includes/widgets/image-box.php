@@ -53,7 +53,7 @@ class Widget_Image_box extends Widget_Base {
 		$this->add_control(
 			'description_text',
 			[
-				'label' => '',
+				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Your Description', 'elementor' ),
@@ -61,6 +61,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_image',
 				'separator' => 'none',
 				'rows' => 10,
+				'show_label' => false,
 			]
 		);
 
@@ -213,6 +214,16 @@ class Widget_Image_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+			]
+		);
+
+		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -354,7 +365,15 @@ class Widget_Image_box extends Widget_Base {
 		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $instance['image']['url'] ) ) {
-			$image_html = sprintf( '<img src="%s" alt="%s" title="%s" />', esc_attr( $instance['image']['url'] ), $this->get_image_alt( $instance ), $this->get_image_title( $instance ) );
+			$this->add_render_attribute( 'image', 'src', $instance['image']['url'] );
+			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $instance['image'] ) );
+			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $instance['image'] ) );
+
+			if ( $instance['hover_animation'] ) {
+				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+			}
+
+			$image_html = '<img ' . $this->get_render_attribute_string( 'image' ) . '>';
 
 			if ( ! empty( $instance['link']['url'] ) ) {
 				$target = '';
@@ -404,7 +423,7 @@ class Widget_Image_box extends Widget_Base {
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
-			var imageHtml = '<img src="' + settings.image.url + '" />';
+			var imageHtml = '<img src="' + settings.image.url + '" class="elementor-animation-' + settings.hover_animation + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
@@ -440,34 +459,5 @@ class Widget_Image_box extends Widget_Base {
 		print( html );
 		%>
 		<?php
-	}
-
-	private function get_image_alt( $instance ) {
-		$post_id = $instance['image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$alt = get_post_meta( $post_id, '_wp_attachment_image_alt', true );
-		if ( ! $alt ) {
-			$attachment = get_post( $post_id );
-			$alt = $attachment->post_excerpt;
-			if ( ! $alt ) {
-				$alt = $attachment->post_title;
-			}
-		}
-		return trim( strip_tags( $alt ) );
-	}
-
-	private function get_image_title( $instance ) {
-		$post_id = $instance['image']['id'];
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$attachment = get_post( $post_id );
-		return trim( strip_tags( $attachment->post_title ) );
 	}
 }

@@ -69,9 +69,11 @@ class Plugin {
 	private function _includes() {
 		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
 		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
+		include( ELEMENTOR_PATH . 'includes/api.php' );
 		include( ELEMENTOR_PATH . 'includes/utils.php' );
 		include( ELEMENTOR_PATH . 'includes/user.php' );
 		include( ELEMENTOR_PATH . 'includes/fonts.php' );
+		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
 		include( ELEMENTOR_PATH . 'includes/controls-manager.php' );
@@ -86,6 +88,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -116,10 +119,13 @@ class Plugin {
 		$heartbeat = new Heartbeat();
 
 		$this->system_info = new System_Info\Main();
+		$this->templates_manager = new TemplateLibrary\Manager();
 
 		if ( is_admin() ) {
 			new Admin();
 		}
+
+		do_action( 'elementor/loaded' );
 	}
 }
 

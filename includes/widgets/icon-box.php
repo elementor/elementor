@@ -47,7 +47,7 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Choose Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-bullhorn',
+				'default' => 'fa fa-star',
 				'section' => 'section_icon',
 			]
 		);
@@ -93,6 +93,7 @@ class Widget_Icon_box extends Widget_Base {
 				'section' => 'section_icon',
 				'rows' => 10,
 				'separator' => 'none',
+				'show_label' => false,
 			]
 		);
 
@@ -179,7 +180,6 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -198,7 +198,6 @@ class Widget_Icon_box extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -363,6 +362,16 @@ class Widget_Icon_box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_hover',
+			]
+		);
+
+		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -444,7 +453,6 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -484,7 +492,6 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
 				],
-				'alpha' => true,
 			]
 		);
 
@@ -501,98 +508,57 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	protected function render( $instance = [] ) {
-		$html = '<div class="elementor-icon-box-wrapper">';
+		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
 
-		if ( ! empty( $instance['icon'] ) ) {
-			$icon_html = sprintf( '<i class="%s"></i>', esc_attr( $instance['icon'] ) );
+		$icon_tag = 'span';
 
-			if ( ! empty( $instance['link']['url'] ) ) {
-				$target = '';
+		if ( ! empty( $instance['link']['url'] ) ) {
+			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
+			$icon_tag = 'a';
 
-				if ( ! empty( $instance['link']['is_external'] ) ) {
-					$target = ' target="_blank"';
-				}
-
-				$icon_html = sprintf( '<a href="%s"%s>%s</a>', esc_attr( $instance['link']['url'] ), $target, $icon_html );
+			if ( ! empty( $instance['link']['is_external'] ) ) {
+				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
-
-			$html .= '<div class="elementor-icon-box-icon"><div class="elementor-icon">' . $icon_html . '</div></div>';
 		}
 
-		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
+		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
 
-		if ( $has_content ) {
-			$html .= '<div class="elementor-icon-box-content">';
-
-			if ( ! empty( $instance['title_text'] ) ) {
-				$title_html = $instance['title_text'];
-
-				if ( ! empty( $instance['link']['url'] ) ) {
-					$target = '';
-
-					if ( ! empty( $instance['link']['is_external'] ) ) {
-						$target = ' target="_blank"';
-					}
-
-					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
-				}
-
-				$html .= sprintf( '<%1$s class="elementor-icon-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
-			}
-
-			if ( ! empty( $instance['description_text'] ) ) {
-				$html .= sprintf( '<p class="elementor-icon-box-description">%s</p>', $instance['description_text'] );
-			}
-
-			$html .= '</div>';
-		}
-
-		$html .= '</div>';
-
-		echo $html;
+		$icon_attributes = $this->get_render_attribute_string( 'icon' );
+		$link_attributes = $this->get_render_attribute_string( 'link' );
+		?>
+		<div class="elementor-icon-box-wrapper">
+			<div class="elementor-icon-box-icon">
+				<<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
+					<i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
+				</<?php echo $icon_tag; ?>>
+			</div>
+			<div class="elementor-icon-box-content">
+				<<?php echo $instance['title_size']; ?> class="elementor-icon-box-title">
+					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $instance['title_text']; ?></<?php echo $icon_tag; ?>>
+				</<?php echo $instance['title_size']; ?>>
+				<p class="elementor-icon-box-description"><?php echo $instance['description_text']; ?></p>
+			</div>
+		</div>
+		<?php
 	}
 
 	protected function content_template() {
 		?>
-		<%
-		var html = '<div class="elementor-icon-box-wrapper">';
-
-		if ( settings.icon ) {
-			var icon_html = '<i class="' + settings.icon + '"></i>';
-
-			if ( settings.link.url ) {
-				icon_html = '<a href="' + settings.link.url + '">' + icon_html + '</a>';
-			}
-			
-			html += '<div class="elementor-icon-box-icon"><div class="elementor-icon">' + icon_html + '</div></div>';
-		}
-
-		var hasContent = !! ( settings.title_text || settings.description_text );
-
-		if ( hasContent ) {
-			html += '<div class="elementor-icon-box-content">';
-
-			if ( settings.title_text ) {
-				var title_html = settings.title_text;
-
-				if ( settings.link.url ) {
-					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
-				}
-
-				html += '<' + settings.title_size  + ' class="elementor-icon-box-title">' + title_html + '</' + settings.title_size  + '>';
-			}
-	
-			if ( settings.description_text ) {
-				html += '<p class="elementor-icon-box-description">' + settings.description_text + '</p>';
-			}
-
-			html += '</div>';
-		}
-
-		html += '</div>';
-
-		print( html );
-		%>
+		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconTag = link ? 'a' : 'span'; %>
+		<div class="elementor-icon-box-wrapper">
+			<div class="elementor-icon-box-icon">
+				<<%= iconTag + ' ' + link %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
+					<i class="<%- settings.icon %>"></i>
+				</<%= iconTag %>>
+			</div>
+			<div class="elementor-icon-box-content">
+				<<%= settings.title_size %> class="elementor-icon-box-title">
+					<<%= iconTag + ' ' + link %>><%= settings.title_text %></<%= iconTag %>>
+				</<%= settings.title_size %>>
+				<p class="elementor-icon-box-description"><%= settings.description_text %></p>
+			</div>
+		</div>
 		<?php
 	}
 }

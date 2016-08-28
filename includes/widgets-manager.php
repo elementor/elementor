@@ -8,9 +8,10 @@ class Widgets_Manager {
 	/**
 	 * @var Widget_Base[]
 	 */
-	protected $_register_widgets = [];
+	protected $_registered_widgets = null;
 
-	public function init() {
+	private function _init_widgets() {
+		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
 		include( ELEMENTOR_PATH . 'includes/widgets/base.php' );
 
 		$build_widgets_filename = [
@@ -37,16 +38,14 @@ class Widgets_Manager {
 			'social-icons',
 			'alert',
 			'audio',
+			'shortcode',
 			'html',
 			'menu-anchor',
 			'sidebar',
 			'person',
 		];
 
-		if ( Utils::is_development_mode() ) {
-
-		}
-
+		$this->_registered_widgets = [];
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
 
@@ -70,6 +69,7 @@ class Widgets_Manager {
 			// Skip Pojo widgets
 			$allowed_widgets = [
 				'Pojo_Widget_Recent_Posts',
+				'Pojo_Widget_Posts_Group',
 				'Pojo_Widget_Gallery',
 				'Pojo_Widget_Recent_Galleries',
 				'Pojo_Slideshow_Widget',
@@ -95,25 +95,28 @@ class Widgets_Manager {
 		if ( ! $widget_instance instanceof Widget_Base ) {
 			return new \WP_Error( 'wrong_instance_widget' );
 		}
-		$this->_register_widgets[ $widget_instance->get_id() ] = $widget_instance;
+		$this->_registered_widgets[ $widget_instance->get_id() ] = $widget_instance;
 
 		return true;
 	}
 
 	public function unregister_widget( $id ) {
-		if ( ! isset( $this->_register_widgets[ $id ] ) ) {
+		if ( ! isset( $this->_registered_widgets[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_register_widgets[ $id ] );
+		unset( $this->_registered_widgets[ $id ] );
 		return true;
 	}
 
-	public function get_register_widgets() {
-		return $this->_register_widgets;
+	public function get_registered_widgets() {
+		if ( is_null( $this->_registered_widgets ) ) {
+			$this->_init_widgets();
+		}
+		return $this->_registered_widgets;
 	}
 
 	public function get_widget( $id ) {
-		$widgets = $this->get_register_widgets();
+		$widgets = $this->get_registered_widgets();
 
 		if ( ! isset( $widgets[ $id ] ) ) {
 			return false;
@@ -121,19 +124,25 @@ class Widgets_Manager {
 		return $widgets[ $id ];
 	}
 
-	public function get_register_widgets_data() {
+	public function get_registered_widgets_data() {
 		$data = [];
-		foreach ( $this->get_register_widgets() as $widget ) {
+		foreach ( $this->get_registered_widgets() as $widget ) {
 			$data[ $widget->get_id() ] = $widget->get_data();
 		}
 		return $data;
 	}
 
 	public function ajax_render_widget() {
-		ob_start();
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
 
 		if ( empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id', __( 'No post_id', 'elementor' ) ) );
+			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
+		}
+
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
 		// Override the global $post for the render
@@ -141,6 +150,8 @@ class Widgets_Manager {
 
 		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
+		// Start buffering
+		ob_start();
 		$widget = $this->get_widget( $data['widgetType'] );
 		if ( false !== $widget ) {
 			$data['settings'] = $widget->get_parse_values( $data['settings'] );
@@ -157,27 +168,29 @@ class Widgets_Manager {
 	}
 
 	public function ajax_get_wp_widget_form() {
+		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
+			die;
+		}
+
 		$widget_type = $_POST['widget_type'];
 		$widget_obj = $this->get_widget( $widget_type );
 
 		if ( ! $widget_obj instanceof Widget_WordPress ) {
-			die;
+			wp_send_json_error();
 		}
 
 		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-		echo $widget_obj->get_form( $data );
-		die;
+
+		wp_send_json_success( $widget_obj->get_form( $data ) );
 	}
 
 	public function render_widgets_content() {
-		foreach ( $this->get_register_widgets() as $widget ) {
+		foreach ( $this->get_registered_widgets() as $widget ) {
 			$widget->print_template();
 		}
 	}
 
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
-
 		add_action( 'wp_ajax_elementor_render_widget', [ $this, 'ajax_render_widget' ] );
 		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}

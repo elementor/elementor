@@ -1,0 +1,62 @@
+//
+// Toggle
+//
+
+.elementor-toggle {
+	text-align: $start;
+
+	.elementor-toggle-title {
+		font-weight: bold;
+		line-height: 1;
+		padding: 15px;
+		border-bottom: 1px solid $gray-light;
+		cursor: pointer;
+
+		.elementor-toggle-icon {
+			display: inline-block;
+			width: 1em;
+
+			.fa {
+
+				&:before {
+					content: getValueByDirection('\f0da', '\f0d9');
+				}
+			}
+		}
+
+		&.active {
+			border-bottom: none;
+
+			.elementor-toggle-icon {
+
+				.fa {
+
+					&:before {
+						content: '\f0d7';
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-toggle-content {
+	    padding: 0 15px 15px;
+		border-bottom: 1px solid $gray-light;
+	    display: none;
+	}
+}
+
+// Responsive mode
+@media (max-width: $screen-sm-max) {
+
+	.elementor-toggle {
+
+		.elementor-toggle-title {
+			padding: 12px;
+		}
+
+		.elementor-toggle-content {
+			padding: 0 12px 10px;
+		}
+	}
+}

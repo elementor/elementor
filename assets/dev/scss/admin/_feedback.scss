@@ -1,0 +1,139 @@
+
+/*= Elementor Feedback
+---------------------------------------*/
+
+@keyframes elementor-rotation {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+}
+
+#elementor-deactivate-feedback-dialog-wrapper {
+	display: none;
+}
+
+#elementor-deactivate-feedback-modal {
+
+	.dialog-widget-content {
+		width: 550px;
+	}
+
+	.dialog-close-button {
+
+		i {
+
+			&:before {
+				content: '\f335';
+				font: 20px dashicons;
+			}
+		}
+	}
+
+	.dialog-widget-header {
+		padding: 18px 15px;
+		box-shadow: $panel-bottom-shadow;
+		text-align: $start;
+	}
+
+	.dialog-message {
+		padding: 30px 30px 0;
+		text-align: $start;
+	}
+
+	.elementor-deactivate-feedback-dialog-input {
+		float: $start;
+		@include margin(0, 15px, 0, 0);
+		box-shadow: none;
+
+		&:not(:checked) {
+
+			~ .elementor-feedback-text {
+				display: none;
+			}
+		}
+	}
+
+	.elementor-deactivate-feedback-dialog-label {
+		display: block;
+		font-size: 13px;
+		color: $editor-dark;
+	}
+
+	.elementor-feedback-text {
+		@include margin(10px, 0, 0, 30px);
+		padding: 5px;
+		font-size: 13px;
+		box-shadow: none;
+		background-color: #fff;
+		width: 92%;
+	}
+
+	.dialog-buttons-wrapper {
+		border-top: none;
+		text-align: $start;
+		padding: 20px 30px 30px;
+	}
+
+	.dialog-submit {
+		background-color: $editor-accent;
+		border-radius: 3px;
+		color: #fff;
+		line-height: 1;
+		padding: 12px 20px;
+		font-size: 14px;
+		width: 180px;
+		height: 38px;
+
+		&.elementor-loading {
+
+			&:before {
+				display: inline-block;
+				content: '\f463';
+				font: 18px dashicons;
+				animation: elementor-rotation 2s infinite linear;
+			}
+		}
+	}
+
+	.dialog-skip {
+		font-size: 12px;
+		color: $editor-light;
+		background: none;
+		float: $end;
+	}
+}
+
+#elementor-deactivate-feedback-dialog-header {
+
+	i {
+		color: $editor-accent;
+		font-size: 19px;
+	}
+}
+
+#elementor-deactivate-feedback-dialog-header-title {
+	font-size: 15px;
+	text-transform: uppercase;
+	font-weight: bold;
+	@include padding-start(5px);
+}
+
+#elementor-deactivate-feedback-dialog-form-caption {
+	font-weight: bold;
+	font-size: 15px;
+	color: $editor-darkest;
+	line-height: 1.4;
+}
+
+#elementor-deactivate-feedback-dialog-form-body {
+	padding-top: 30px;
+}
+
+.elementor-deactivate-feedback-dialog-input-wrapper {
+	line-height: 1.3;
+	overflow: hidden;
+	margin-bottom: 15px;
+}

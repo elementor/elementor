@@ -47,6 +47,20 @@ class Element_Section extends Element_Base {
 					'preset' => [ 66, 33 ],
 				],
 			],
+			3 => [
+				[
+					'preset' => [ 25, 25, 50 ],
+				],
+				[
+					'preset' => [ 50, 25, 25 ],
+				],
+				[
+					'preset' => [ 25, 50, 25 ],
+				],
+				[
+					'preset' => [ 16, 66, 16 ],
+				],
+			],
 		];
 
 		foreach ( range( 1, 10 ) as $columns_count ) {
@@ -386,8 +400,17 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_border',
 				'selectors' => [
-					'{{WRAPPER}}' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}, {{WRAPPER}} > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow',
+				'section' => 'section_border',
+				'tab' => self::TAB_STYLE,
 			]
 		);
 
@@ -530,6 +553,39 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'animation',
+			[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'default' => '',
+				'prefix_class' => 'animated ',
+				'tab' => self::TAB_ADVANCED,
+				'label_block' => true,
+				'section' => 'section_advanced',
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'tab' => self::TAB_ADVANCED,
+				'section' => 'section_advanced',
+				'condition' => [
+					'animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
@@ -538,6 +594,8 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -649,15 +707,14 @@ class Element_Section extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$wrapper_classes = [
+		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+
+		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-section',
 			'elementor-element',
 			'elementor-element-' . $element_id,
-		];
-
-		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
-
-		$wrapper_classes[] = 'elementor-' . $section_type . '-section';
+			'elementor-' . $section_type . '-section',
+		] );
 
 		foreach ( $this->get_class_controls() as $control ) {
 			if ( empty( $instance[ $control['name'] ] ) )
@@ -666,10 +723,16 @@ class Element_Section extends Element_Base {
 			if ( ! $this->is_control_visible( $instance, $control ) )
 				continue;
 
-			$wrapper_classes[] = $control['prefix_class'] . $instance[ $control['name'] ];
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
 		}
+
+		if ( ! empty( $instance['animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
+		}
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
 		?>
-		<section class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>" data-element_type="<?php echo $this->get_id(); ?>">
+		<section <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<?php
 			if ( 'video' === $instance['background_background'] ) :
 				if ( $instance['background_video_link'] ) :
@@ -679,7 +742,7 @@ class Element_Section extends Element_Base {
 						<?php if ( $video_id ) : ?>
 							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
 						<?php else : ?>
-							<video class="elementor-background-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
+							<video class="elementor-background-video elementor-html5-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
 				<?php endif;

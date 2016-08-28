@@ -1,0 +1,153 @@
+//
+// Variables
+//
+
+$start: left;
+$end: right;
+
+@if ($direction == rtl) {
+	$start: right;
+	$end: left;
+}
+
+//
+// Internal Mixins
+//
+
+@mixin _dimension($dimension, $top, $right, $bottom, $left){
+
+	@if ($direction == rtl) {
+		#{$dimension}: $top $left $bottom $right;
+	} @else {
+		#{$dimension}: $top $right $bottom $left;
+	}
+}
+
+@mixin _dimension_side($dimension, $side, $value) {
+
+	@if ($direction == rtl and $side == start) or ($direction == ltr and $side == end) {
+		#{$dimension}-right: $value;
+	} @else {
+		#{$dimension}-left: $value;
+	}
+}
+
+@mixin _dimension_side_property($dimension, $side, $property, $value) {
+
+	@if ($direction == rtl and $side == start) or ($direction == ltr and $side == end) {
+		#{$dimension}-right-#{$property}: $value;
+	} @else {
+		#{$dimension}-left-#{$property}: $value;
+	}
+}
+
+//
+// Mixins
+//
+
+@mixin start($value) {
+
+	@if $direction == rtl {
+		right: $value;
+	} @else {
+		left: $value;
+	}
+}
+
+@mixin end($value) {
+
+	@if $direction == rtl {
+		left: $value;
+	} @else {
+		right: $value;
+	}
+}
+
+// Padding Mixins
+
+@mixin padding($top, $right, $bottom, $left) {
+
+	@include _dimension(padding, $top, $right, $bottom, $left);
+}
+
+@mixin padding-start($value) {
+
+	@include _dimension_side(padding, start, $value);
+}
+
+@mixin padding-end($value) {
+
+	@include _dimension_side(padding, end, $value);
+}
+
+// Margin Mixins
+
+@mixin margin($top, $right, $bottom, $left) {
+
+	@include _dimension(margin, $top, $right, $bottom, $left);
+}
+
+@mixin margin-start($value) {
+
+	@include _dimension_side(margin, start, $value);
+}
+
+@mixin margin-end($value) {
+
+	@include _dimension_side(margin, end, $value);
+}
+
+// Border Mixins
+
+@mixin border-start($value) {
+
+	@include _dimension_side(border, start, $value);
+}
+
+@mixin border-end($value) {
+
+	@include _dimension_side(border, end, $value);
+}
+
+@mixin border-start-property($property, $value){
+
+	@include _dimension_side_property(border, start, $property, $value);
+}
+
+@mixin border-end-property($property, $value){
+
+	@include _dimension_side_property(border, end, $property, $value);
+}
+
+// Box-Shadow Mixins
+
+@mixin direction-box-shadow($x, $extra-values) {
+
+	@if $direction == rtl {
+		$x: -$x;
+	}
+
+	box-shadow: $x $extra-values;
+}
+
+//
+// Functions
+//
+
+@function getValueByDirection($value-for-left, $value-for-right) {
+
+	@if ($direction == rtl) {
+		@return $value-for-right;
+	}
+
+	@return $value-for-left;
+}
+
+@function getInverseDirection() {
+
+	@if ($direction == rtl) {
+		@return ltr;
+	}
+
+	@return rtl;
+}

@@ -44,7 +44,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 										$author = $plugin['Author'];
 									endif;
 
-									printf( __( 'By %s', 'elementor' ), $author );
+									echo "By $author";
 								endif; ?></td>
 							<td></td>
 						</tr>

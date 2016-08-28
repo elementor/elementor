@@ -110,8 +110,8 @@ class Tracker {
 	}
 
 	public static function admin_notices() {
-		// Show tracker notice after one hour from installed time.
-		if ( self::_get_installed_time() > strtotime( '-1 hour' ) )
+		// Show tracker notice after 12 hours from installed time.
+		if ( self::_get_installed_time() > strtotime( '-12 hours' ) )
 			return;
 
 		if ( '1' === get_option( 'elementor_tracker_notice' ) )

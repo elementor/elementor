@@ -1,0 +1,67 @@
+//
+// Alert
+//
+.elementor-alert {
+	padding: 15px;
+	border-left: 5px solid transparent;
+	position: relative;
+	text-align: $start;
+
+	.elementor-alert-title {
+		display: block;
+		font-weight: bold;
+	}
+
+	.elementor-alert-description {
+		font-size: 13px;
+	}
+
+	button.elementor-alert-dismiss {
+		position: absolute;
+		@include end(10px);
+		top: 10px;
+		padding: 3px;
+		font-size: 13px;
+		line-height: 1;
+		background: transparent;
+		color: inherit;
+		border: none;
+	}
+
+	&.elementor-alert-info {
+		color: $info-text;
+		background-color: $info-bg;
+		border-color: $info-border;
+	}
+
+	&.elementor-alert-success {
+		color: $success-text;
+		background-color: $success-bg;
+		border-color: $success-border;
+	}
+
+	&.elementor-alert-warning {
+		color: $warning-text;
+		background-color: $warning-bg;
+		border-color: $warning-border;
+	}
+
+	&.elementor-alert-danger {
+		color: $danger-text;
+		background-color: $danger-bg;
+		border-color: $danger-border;
+	}
+}
+
+// Responsive mode
+@media (max-width: $screen-sm-max) {
+
+	.elementor-alert {
+		padding: 10px;
+
+		button.elementor-alert-dismiss {
+			right: 7px;
+			top: 7px;
+		}
+	}
+}

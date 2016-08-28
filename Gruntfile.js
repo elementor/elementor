@@ -54,7 +54,7 @@ module.exports = function( grunt ) {
 			dist: {
 				files: [ {
 					expand: true,
-					cwd: 'assets/scss/direction',
+					cwd: 'assets/dev/scss/direction',
 					src: '*.scss',
 					dest: 'assets/css',
 					ext: '.css'
@@ -70,44 +70,54 @@ module.exports = function( grunt ) {
 				preBundleCB: function( bundle ) {
 					bundle.plugin( remapify, [
 						{
-							cwd: 'assets/admin/js/dev/behaviors',
+							cwd: 'assets/dev/js/editor/behaviors',
 							src: '**/*.js',
 							expose: 'elementor-behaviors'
 						},
 						{
-							cwd: 'assets/admin/js/dev/layouts',
+							cwd: 'assets/dev/js/editor/layouts',
 							src: '**/*.js',
 							expose: 'elementor-layouts'
 						},
 						{
-							cwd: 'assets/admin/js/dev/models',
+							cwd: 'assets/dev/js/editor/models',
 							src: '**/*.js',
 							expose: 'elementor-models'
 						},
 						{
-							cwd: 'assets/admin/js/dev/collections',
+							cwd: 'assets/dev/js/editor/collections',
 							src: '**/*.js',
 							expose: 'elementor-collections'
 						},
 						{
-							cwd: 'assets/admin/js/dev/views',
+							cwd: 'assets/dev/js/editor/views',
 							src: '**/*.js',
 							expose: 'elementor-views'
 						},
 						{
-							cwd: 'assets/admin/js/dev/components',
+							cwd: 'assets/dev/js/editor/components',
 							src: '**/*.js',
 							expose: 'elementor-components'
 						},
 						{
-							cwd: 'assets/admin/js/dev/utils',
+							cwd: 'assets/dev/js/editor/utils',
 							src: '**/*.js',
 							expose: 'elementor-utils'
 						},
 						{
-							cwd: 'assets/admin/js/dev/layouts/panel',
+							cwd: 'assets/dev/js/editor/layouts/panel',
 							src: '**/*.js',
 							expose: 'elementor-panel'
+						},
+						{
+							cwd: 'assets/dev/js/editor/components/template-library',
+							src: '**/*.js',
+							expose: 'elementor-templates'
+						},
+						{
+							cwd: 'assets/dev/js/frontend',
+							src: '**/*.js',
+							expose: 'elementor-frontend'
 						}
 					] );
 				}
@@ -115,7 +125,15 @@ module.exports = function( grunt ) {
 
 			dist: {
 				files: {
-					'assets/admin/js/app.js': ['assets/admin/js/dev/app.js']
+					'assets/js/editor.js': [
+						'assets/dev/js/editor/utils/jquery-html5-dnd.js',
+						'assets/dev/js/editor/utils/jquery-serialize-object.js',
+
+						'assets/dev/js/editor/editor.js'
+					],
+					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
+					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
+					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
 				options: pkgInfo.browserify
 			}
@@ -127,7 +145,31 @@ module.exports = function( grunt ) {
 			bundle: {
 				options: {},
 				files: {
-					'assets/admin/js/app.js.map': ['assets/admin/js/app.js']
+					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
+					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
+					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
+					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
+				}
+			}
+		},
+
+		uglify: {
+			//pkg: grunt.file.readJSON( 'package.json' ),
+			options: {},
+			dist: {
+				files: {
+					'assets/js/editor.min.js': [
+						'assets/js/editor.js'
+					],
+					'assets/js/admin.min.js': [
+						'assets/js/admin.js'
+					],
+					'assets/js/admin-feedback.min.js': [
+						'assets/js/admin-feedback.js'
+					],
+					'assets/js/frontend.min.js': [
+						'assets/js/frontend.js'
+					]
 				}
 			}
 		},
@@ -139,9 +181,10 @@ module.exports = function( grunt ) {
 				},
 				files: {
 					src: [
-						'assets/admin/js/app.min.js',
-						'assets/js/admin.min.js',
-						'assets/js/frontend.min.js'
+						'assets/js/*.js',
+						'assets/css/*.css',
+
+						'!assets/css/animations.min.css'
 					]
 				}
 			}
@@ -153,7 +196,7 @@ module.exports = function( grunt ) {
 			},
 			all: [
 				'Gruntfile.js',
-				'assets/admin/js/dev/**/*.js'
+				'assets/js/dev/**/*.js'
 			]
 		},
 
@@ -192,38 +235,17 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		uglify: {
-			//pkg: grunt.file.readJSON( 'package.json' ),
-			options: {},
-			dist: {
-				files: {
-					'assets/admin/js/app.min.js': [
-						'assets/admin/js/app.js'
-					],
-					'assets/js/admin.min.js': [
-						'assets/js/admin.js'
-					],
-					'assets/js/frontend.min.js': [
-						'assets/js/frontend.js'
-					]
-				}
-			}
-		},
-
 		watch:  {
 			styles: {
 				files: [
-					'assets/scss/**/*.scss'
+					'assets/dev/scss/**/*.scss'
 				],
-				tasks: ['styles']
+				tasks: [ 'styles' ]
 			},
 
 			scripts: {
 				files: [
-					'assets/js/*.js',
-					'!assets/js/*.min.js',
-					'assets/js/dev/**/*.js',
-					'assets/admin/js/dev/**/*.js'
+					'assets/dev/js/**/*.js'
 				],
 				tasks: [ 'scripts' ]
 			}
@@ -323,12 +345,11 @@ module.exports = function( grunt ) {
 					'!npm-debug.log',
 					'!composer.json',
 					'!composer.lock',
-					'!wp-assets/**',
 					'!.gitignore',
 					'!.gitmodules',
 
-					'!assets/admin/js/dev/**',
-					'!assets/scss/**',
+					'!assets/dev/**',
+					'!assets/**/*.map',
 					'!*~'
 				],
 				expand: true,
@@ -341,17 +362,6 @@ module.exports = function( grunt ) {
 			main: [
 				'build'
 			]
-		},
-
-		wp_deploy: {
-			deploy:{
-				options: {
-					plugin_slug: '<%= pkg.slug %>',
-					svn_user: 'KingYes',
-					build_dir: 'build/',
-					assets_dir: 'wp-assets/'
-				}
-			}
 		}
 	} );
 
@@ -371,8 +381,7 @@ module.exports = function( grunt ) {
 		'jshint',
 		'browserify',
 		'exorcise',
-		'uglify',
-		'usebanner'
+		'uglify'
 	] );
 
 	grunt.registerTask( 'styles', [
@@ -382,8 +391,10 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'build', [
 		'default',
+		'usebanner',
 		'clean',
-		'copy'
+		'copy',
+		'default' // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', [
