@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Api {
 
-	private static $_api_info_url = 'http://my.elementor.com/api/v1/info/';
-	private static $_api_feedback_url = 'http://my.elementor.com/api/v1/feedback/';
-	private static $_api_get_template_content_url = 'http://my.elementor.com/api/v1/templates/%d';
+	public static $api_info_url = 'http://my.elementor.com/api/v1/info/';
+	private static $api_feedback_url = 'http://my.elementor.com/api/v1/feedback/';
+	private static $api_get_template_content_url = 'http://my.elementor.com/api/v1/templates/%d';
 
 	/**
 	 * This function notifies the user of upgrade notices, new templates and contributors
@@ -21,7 +21,7 @@ class Api {
 		$info_data = get_transient( $cache_key );
 
 		if ( $force || false === $info_data ) {
-			$response = wp_remote_post( self::$_api_info_url, [
+			$response = wp_remote_post( self::$api_info_url, [
 				'timeout' => 25,
 				'body' => [
 					// Which API version is used
@@ -73,7 +73,7 @@ class Api {
 	}
 
 	public static function get_template_content( $template_id ) {
-		$url = sprintf( self::$_api_get_template_content_url, $template_id );
+		$url = sprintf( self::$api_get_template_content_url, $template_id );
 		$response = wp_remote_get( $url, [
 			'timeout' => 40,
 			'body' => [
@@ -101,7 +101,7 @@ class Api {
 	}
 
 	public static function send_feedback( $feedback_key, $feedback_text ) {
-		$response = wp_remote_post( self::$_api_feedback_url, [
+		$response = wp_remote_post( self::$api_feedback_url, [
 			'timeout' => 30,
 			'body' => [
 				'api_version' => ELEMENTOR_VERSION,
