@@ -1,0 +1,60 @@
+//
+// Person
+//
+.elementor-person-wrapper {
+	text-align: center;
+
+	&.elementor-person-text-align- {
+		&center {
+			text-align: center;
+		}
+
+		&right {
+			text-align: right;
+		}
+
+		&left {
+			text-align: left;
+		}
+
+		&justify {
+			text-align: justify;
+		}
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	&:hover > .elementor-person-content .elementor-person-detailes {
+		opacity: 1;
+	}
+
+	&:hover > .elementor-person-content .elementor-person-image {
+		opacity: 0.2;
+	}
+
+	.elementor-person-content {
+		position: relative;
+
+		.elementor-person-detailes {
+			opacity: 0;
+			background-color: transparent;
+			position: absolute;
+			color: #000;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 100%;
+			transition: $transition-hover;
+
+			.elementor-person-social-icons {
+				.elementor-person-social-icon {
+					display: inline-block;
+					padding: 0 15px 0 0;
+				}
+			}
+
+		}
+	}
+}
