@@ -21,7 +21,7 @@ class Server_Reporter extends Base_Reporter {
 			'php_max_input_vars' => 'PHP Max Input Vars',
 			'php_max_post_size' => 'PHP Max Post Size',
 			'gd_installed' => 'GD Installed',
-			'elementor_library_connected' => 'Elementor Library Connected',
+			'elementor_library' => 'Elementor Library',
 		];
 	}
 
@@ -75,7 +75,7 @@ class Server_Reporter extends Base_Reporter {
 		];
 	}
 
-	public function get_elementor_library_connected() {
+	public function get_elementor_library() {
 		$response = wp_remote_post( Api::$api_info_url, [
 			'timeout' => 25,
 			'body' => [
