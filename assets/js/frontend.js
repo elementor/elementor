@@ -117,7 +117,6 @@ module.exports = ElementsHandler;
 
 jQuery( function() {
 	if ( ! elementorFrontend.isEditMode() ) {
-		console.log( 'is edit' );
 		elementorFrontend.init();
 	}
 } );
