@@ -931,11 +931,11 @@ body.elementor-page .elementor-widget-menu-anchor {
   box-sizing: border-box;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   -ms-touch-action: pan-y;
-  touch-action: pan-y;
+      touch-action: pan-y;
   -webkit-tap-highlight-color: transparent; }
 
 .slick-list {
@@ -947,8 +947,7 @@ body.elementor-page .elementor-widget-menu-anchor {
   .slick-list:focus {
     outline: none; }
   .slick-list.dragging {
-    cursor: pointer;
-    cursor: hand; }
+    cursor: pointer; }
 
 .slick-slider .slick-track,
 .slick-slider .slick-list {
