@@ -1312,13 +1312,13 @@ App = Marionette.Application.extend( {
 
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
-		this.$preview.on( 'load', _.bind( function() {
-			this.$previewContents = this.$preview.contents();
+		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+	},
 
-			elementorFrontend.elementsHandler.setScopeWindow( this.$preview[0].contentWindow );
+	initFrontend: function() {
+		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
-			this.triggerMethod( 'preview:loaded' );
-		}, this ) );
+		elementorFrontend.init();
 	},
 
 	onStart: function() {
@@ -1331,8 +1331,6 @@ App = Marionette.Application.extend( {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementorFrontend.elementsHandler.setEditorMode( true );
 
 		// Init Base elements collection from the server
 		var ElementModel = require( 'elementor-models/element' );
@@ -1348,6 +1346,10 @@ App = Marionette.Application.extend( {
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		this.initFrontend();
+
+		this.$previewContents = this.$preview.contents();
 
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );

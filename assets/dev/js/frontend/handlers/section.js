@@ -1,4 +1,4 @@
-module.exports = function( $, scopeWindow ) {
+module.exports = function( $ ) {
 	var player,
 		ui = {
 			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
@@ -74,5 +74,5 @@ module.exports = function( $, scopeWindow ) {
 		ui.backgroundVideo.one( 'canplay', changeVideoSize );
 	}
 
-	$( scopeWindow ).on( 'resize', changeVideoSize );
+	$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 };

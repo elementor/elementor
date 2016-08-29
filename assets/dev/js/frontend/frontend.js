@@ -1,9 +1,12 @@
+/* global elementorFrontendConfig */
 ( function( $ ) {
 	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	    Utils = require( 'elementor-frontend/utils' );
+	    Utils = require( 'elementor-frontend/utils' ),
+		Viewport = require( 'elementor-frontend/viewport' );
 
 	var ElementorFrontend = function() {
-		var self = this;
+		var self = this,
+			scopeWindow = window;
 
 		var elementsDefaultHandlers = {
 			accordion: require( 'elementor-frontend/handlers/accordion' ),
@@ -34,20 +37,89 @@
 			} );
 		};
 
+		this.config = elementorFrontendConfig;
+
+		this.getScopeWindow = function() {
+			return scopeWindow;
+		};
+
+		this.setScopeWindow = function( window ) {
+			scopeWindow = window;
+		};
+
+		this.isEditMode = function() {
+			return self.config.isEditMode;
+		};
+
 		this.elementsHandler = new ElementsHandler( $ );
+
 		this.utils = new Utils( $ );
+
+		this.viewport = new Viewport( $ );
 
 		this.init = function() {
 			addGlobalHandlers();
+
 			addElementsHandlers();
 
 			self.utils.insertYTApi();
 
 			runElementsHandlers();
+
+			self.viewport.init();
+		};
+
+		// Based on underscore function
+		this.throttle = function( func, wait ) {
+			var timeout,
+				context,
+				args,
+				result,
+				previous = 0;
+
+			var later = function() {
+				previous = Date.now();
+				timeout = null;
+				result = func.apply( context, args );
+
+				if ( ! timeout ) {
+					context = args = null;
+				}
+			};
+
+			return function() {
+				var now = Date.now(),
+					remaining = wait - ( now - previous );
+
+				context = this;
+				args = arguments;
+
+				if ( remaining <= 0 || remaining > wait ) {
+					if ( timeout ) {
+						clearTimeout( timeout );
+						timeout = null;
+					}
+
+					previous = now;
+					result = func.apply( context, args );
+
+					if ( ! timeout ) {
+						context = args = null;
+					}
+				} else if ( ! timeout ) {
+					timeout = setTimeout( later, remaining );
+				}
+
+				return result;
+			};
 		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
 } )( jQuery );
 
-jQuery( elementorFrontend.init );
+jQuery( function() {
+	if ( ! elementorFrontend.isEditMode() ) {
+		elementorFrontend.init();
+	}
+} );

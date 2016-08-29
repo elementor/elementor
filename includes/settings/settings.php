@@ -58,24 +58,6 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
-		$field_id = 'elementor_allow_tracking';
-		add_settings_field(
-			$field_id,
-			__( 'Usage Data Tracking', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$main_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox',
-				'value' => 'yes',
-				'default' => '',
-				'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
-
 		// Style section
 		$style_section = 'elementor_style_section';
 
@@ -137,6 +119,65 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		// Responsive section
+		$responsive_section = 'elementor_responsive_section';
+
+		add_settings_section(
+			$responsive_section,
+			__( 'Responsive Breakpoints', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_viewport_sm';
+		add_settings_field(
+			$field_id,
+			__( 'Mobile Breakpoint', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$responsive_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '480',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_viewport_md';
+		add_settings_field(
+			$field_id,
+			__( 'Tablet Breakpoint', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$responsive_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '768',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_viewport_lg';
+		add_settings_field(
+			$field_id,
+			__( 'Desktop Breakpoint', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$responsive_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '1024',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		// Tools section
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(
 			$tools_section,
@@ -159,6 +200,24 @@ class Settings {
 				'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
 			]
 		);
+
+		$field_id = 'elementor_allow_tracking';
+		add_settings_field(
+			$field_id,
+			__( 'Usage Data Tracking', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$tools_section,
+			[
+				'id' => $field_id,
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'default' => '',
+				'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
 	}
 
 	public function register_admin_menu() {

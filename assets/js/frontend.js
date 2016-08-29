@@ -3,26 +3,12 @@ var ElementsHandler;
 
 ElementsHandler = function( $ ) {
 	var registeredHandlers = {},
-		registeredGlobalHandlers = [],
-		flagEditorMode = false,
-		scopeWindow = window;
+		registeredGlobalHandlers = [];
 
 	var runGlobalHandlers = function( $scope ) {
 		$.each( registeredGlobalHandlers, function() {
-			this.call( $scope, $, scopeWindow );
+			this.call( $scope, $ );
 		} );
-	};
-
-	this.setEditorMode = function( mode ) {
-		flagEditorMode = mode;
-	};
-
-	this.setScopeWindow = function( window ) {
-		scopeWindow = window;
-	};
-
-	this.isEditorMode = function() {
-		return flagEditorMode;
 	};
 
 	this.addHandler = function( widgetType, callback ) {
@@ -46,19 +32,22 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		registeredHandlers[ elementType ].call( $scope, $, scopeWindow );
+		registeredHandlers[ elementType ].call( $scope, $ );
 	};
 };
 
 module.exports = ElementsHandler;
 
 },{}],2:[function(require,module,exports){
+/* global elementorFrontendConfig */
 ( function( $ ) {
 	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	    Utils = require( 'elementor-frontend/utils' );
+	    Utils = require( 'elementor-frontend/utils' ),
+		Viewport = require( 'elementor-frontend/viewport' );
 
 	var ElementorFrontend = function() {
-		var self = this;
+		var self = this,
+			scopeWindow = window;
 
 		var elementsDefaultHandlers = {
 			accordion: require( 'elementor-frontend/handlers/accordion' ),
@@ -89,25 +78,94 @@ module.exports = ElementsHandler;
 			} );
 		};
 
+		this.config = elementorFrontendConfig;
+
+		this.getScopeWindow = function() {
+			return scopeWindow;
+		};
+
+		this.setScopeWindow = function( window ) {
+			scopeWindow = window;
+		};
+
+		this.isEditMode = function() {
+			return self.config.isEditMode;
+		};
+
 		this.elementsHandler = new ElementsHandler( $ );
+
 		this.utils = new Utils( $ );
+
+		this.viewport = new Viewport( $ );
 
 		this.init = function() {
 			addGlobalHandlers();
+
 			addElementsHandlers();
 
 			self.utils.insertYTApi();
 
 			runElementsHandlers();
+
+			self.viewport.init();
+		};
+
+		// Based on underscore function
+		this.throttle = function( func, wait ) {
+			var timeout,
+				context,
+				args,
+				result,
+				previous = 0;
+
+			var later = function() {
+				previous = Date.now();
+				timeout = null;
+				result = func.apply( context, args );
+
+				if ( ! timeout ) {
+					context = args = null;
+				}
+			};
+
+			return function() {
+				var now = Date.now(),
+					remaining = wait - ( now - previous );
+
+				context = this;
+				args = arguments;
+
+				if ( remaining <= 0 || remaining > wait ) {
+					if ( timeout ) {
+						clearTimeout( timeout );
+						timeout = null;
+					}
+
+					previous = now;
+					result = func.apply( context, args );
+
+					if ( ! timeout ) {
+						context = args = null;
+					}
+				} else if ( ! timeout ) {
+					timeout = setTimeout( later, remaining );
+				}
+
+				return result;
+			};
 		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
 } )( jQuery );
 
-jQuery( elementorFrontend.init );
+jQuery( function() {
+	if ( ! elementorFrontend.isEditMode() ) {
+		elementorFrontend.init();
+	}
+} );
 
-},{"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14}],3:[function(require,module,exports){
+},{"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14,"elementor-frontend/viewport":15}],3:[function(require,module,exports){
 module.exports = function( $ ) {
 	var $this = $( this ),
 		defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
@@ -164,7 +222,7 @@ module.exports = function( $ ) {
 
 },{}],6:[function(require,module,exports){
 module.exports = function() {
-	if ( elementorFrontend.elementsHandler.isEditorMode() ) {
+	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
@@ -218,7 +276,7 @@ module.exports = function( $ ) {
 
 },{}],8:[function(require,module,exports){
 module.exports = function( $ ) {
-	if ( elementorFrontend.elementsHandler.isEditorMode() ) {
+	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
@@ -265,7 +323,7 @@ module.exports = function( $ ) {
 };
 
 },{}],10:[function(require,module,exports){
-module.exports = function( $, scopeWindow ) {
+module.exports = function( $ ) {
 	var player,
 		ui = {
 			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
@@ -341,7 +399,7 @@ module.exports = function( $, scopeWindow ) {
 		ui.backgroundVideo.one( 'canplay', changeVideoSize );
 	}
 
-	$( scopeWindow ).on( 'resize', changeVideoSize );
+	$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 };
 
 },{}],11:[function(require,module,exports){
@@ -441,6 +499,114 @@ Utils = function( $ ) {
 };
 
 module.exports = Utils;
+
+},{}],15:[function(require,module,exports){
+var Viewport;
+
+Viewport = function( $ ) {
+	var self = this,
+		settings = {},
+		elements = {};
+
+	var initSettings = function() {
+		$.extend( settings, {
+			breakpoints: elementorFrontend.config.viewportBreakpoints,
+			classTemplate: 'elementor-screen-{breakpoint}-{endpoint}',
+			classMatchRegex: /^elementor-screen-([a-z]{2})-(min|max)$/
+		} );
+	};
+
+	var initElements = function() {
+		elements.previewWindow = elementorFrontend.getScopeWindow();
+		elements.previewBody = elements.previewWindow.document.body;
+	};
+
+	this.addBodyClasses = function() {
+		var bodyClasses = elements.previewBody.classList,
+			breakpointsNames = Object.keys( settings.breakpoints ),
+			newClassesStack = [];
+
+		bodyClasses.forEach( function( className ) {
+			var matches = className.match( settings.classMatchRegex );
+
+			if ( ! matches || -1 === breakpointsNames.indexOf( matches[1] )  ) {
+				newClassesStack.push( className );
+			}
+		} );
+
+		elements.previewBody.className = '';
+
+		newClassesStack = newClassesStack.concat( self.getViewportClasses() );
+
+		bodyClasses.add.apply( bodyClasses, newClassesStack );
+	};
+
+	var attachEvents = function() {
+		$( elements.previewWindow ).on( 'resize', elementorFrontend.throttle( self.addBodyClasses, 300 ) );
+	};
+
+	var getBreakpointClass = function( breakpointName, endpoint ) {
+		return settings.classTemplate
+			.replace( '{breakpoint}', breakpointName )
+			.replace( '{endpoint}', endpoint );
+	};
+
+	this.init = function() {
+		initSettings();
+		initElements();
+		attachEvents();
+	};
+
+	// Return true when window width
+	// is not less than breakpoint width
+	this.isMinBreakpoint = function( breakpointName ) {
+		return elements.previewWindow.innerWidth >= settings.breakpoints[ breakpointName ];
+	};
+
+	// Return true when window width
+	// is not greater than breakpoint highest width
+	this.isMaxBreakpoint = function( breakpointName ) {
+		var breakpointNames = Object.keys( settings.breakpoints ),
+			breakpointNameIndex = breakpointNames.indexOf( breakpointName ),
+			nextBreakpointName = breakpointNames[ breakpointNameIndex + 1 ],
+			nextBreakpointValue = settings.breakpoints[ nextBreakpointName ];
+
+		return elements.previewWindow.innerWidth < nextBreakpointValue;
+	};
+
+	this.getCurrentBreakpoints = function( endpoint ) {
+		var breakpoints = {};
+
+		$.each( settings.breakpoints, function( breakpointName ) {
+			if (
+				'min' === endpoint && self.isMinBreakpoint( breakpointName ) ||
+				'max' === endpoint && self.isMaxBreakpoint( breakpointName ) ||
+				self.isMinBreakpoint( breakpointName ) && self.isMaxBreakpoint( breakpointName )
+			) {
+				breakpoints[ breakpointName ] = this;
+			}
+		} );
+
+		return breakpoints;
+	};
+
+	this.getViewportClasses = function() {
+		var classes = [];
+
+		$.each( [ 'min', 'max' ], function() {
+			var endpoint = this.toString(),
+				breakpoints = self.getCurrentBreakpoints( endpoint );
+
+			$.each( breakpoints, function( breakpointName ) {
+				classes.push( getBreakpointClass( breakpointName, endpoint ) );
+			} );
+		} );
+
+		return classes;
+	};
+};
+
+module.exports = Viewport;
 
 },{}]},{},[2])
 //# sourceMappingURL=frontend.js.map
