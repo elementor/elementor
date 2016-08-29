@@ -1,5 +1,5 @@
 module.exports = function( $ ) {
-	if ( elementorFrontend.isEditorMode() ) {
+	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
