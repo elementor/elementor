@@ -39,7 +39,7 @@ Viewport = function( $ ) {
 	};
 
 	var attachEvents = function() {
-		$( elements.previewWindow ).on( 'resize', self.addBodyClasses );
+		$( elements.previewWindow ).on( 'resize', elementorFrontend.throttle( self.addBodyClasses, 300 ) );
 	};
 
 	var getBreakpointClass = function( breakpointName, endpoint ) {
