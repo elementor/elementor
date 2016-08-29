@@ -74,4 +74,9 @@
 	window.elementorFrontend = new ElementorFrontend();
 } )( jQuery );
 
-jQuery( elementorFrontend.init );
+jQuery( function() {
+	if ( ! elementorFrontend.isEditMode() ) {
+		console.log( 'is edit' );
+		elementorFrontend.init();
+	}
+} );
