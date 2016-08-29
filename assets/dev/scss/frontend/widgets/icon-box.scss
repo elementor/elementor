@@ -21,7 +21,7 @@
 			&right {
 
 				.elementor-icon-box-wrapper {
-					text-align: getEndDirection();
+					text-align: $end;
 					flex-direction: getValueByDirection(row-reverse, row);
 				}
 			}
@@ -29,7 +29,7 @@
 			&left {
 
 				.elementor-icon-box-wrapper {
-					text-align: getStartDirection();
+					text-align: $start;
 					flex-direction: getValueByDirection(row, row-reverse);
 				}
 			}

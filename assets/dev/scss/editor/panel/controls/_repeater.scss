@@ -66,7 +66,7 @@
 		}
 
 		.elementor-repeater-row-item-title {
-			text-align: getStartDirection();
+			text-align: $start;
 			padding: 0 20px;
 			white-space: nowrap;
 			overflow: hidden;

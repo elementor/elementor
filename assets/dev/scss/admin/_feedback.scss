@@ -35,16 +35,16 @@
 	.dialog-widget-header {
 		padding: 18px 15px;
 		box-shadow: $panel-bottom-shadow;
-		text-align: getStartDirection();
+		text-align: $start;
 	}
 
 	.dialog-message {
 		padding: 30px 30px 0;
-		text-align: getStartDirection();
+		text-align: $start;
 	}
 
 	.elementor-deactivate-feedback-dialog-input {
-		float: getStartDirection();
+		float: $start;
 		@include margin(0, 15px, 0, 0);
 		box-shadow: none;
 
@@ -73,7 +73,7 @@
 
 	.dialog-buttons-wrapper {
 		border-top: none;
-		text-align: getStartDirection();
+		text-align: $start;
 		padding: 20px 30px 30px;
 	}
 
@@ -102,7 +102,7 @@
 		font-size: 12px;
 		color: $editor-light;
 		background: none;
-		float: getEndDirection();
+		float: $end;
 	}
 }
 

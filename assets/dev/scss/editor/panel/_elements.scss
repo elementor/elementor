@@ -13,7 +13,7 @@
 }
 
 .elementor-element-wrapper {
-	float: getStartDirection();
+	float: $start;
 	width: 50%;
 	padding: 5px;
 	text-align: center;

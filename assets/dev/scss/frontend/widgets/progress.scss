@@ -3,7 +3,7 @@
 //
 
 .elementor-widget-progress {
-	text-align: getStartDirection();
+	text-align: $start;
 }
 
 .elementor-progress-wrapper {
@@ -33,7 +33,7 @@
 
 		.elementor-progress-percentage {
 			position: relative;
-			float: getEndDirection();
+			float: $end;
 		}
 	}
 }

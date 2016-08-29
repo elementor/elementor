@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.7.3
+Stable tag: 0.7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -151,6 +151,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Template Library.** Choose one of our pre-designed templates, crafted to fit every purpose.
 
 == Changelog ==
+
+= 0.7.4 - 24.08.2016 =
+* New! - Added Shortcode widget
+* Tweak! - Now compatible with password protected pages
+* Fixed! - Library RTL bug in template preview
+* Fixed! - Bug with `p` tag in Icon Box widget
+* Fixed! - Style in Icon widget
+* Fixed! - HTML widget now is working
 
 = 0.7.3 - 19.08.2016 =
 * Fixed! - Allow columns gap on mobile

@@ -48,7 +48,7 @@ class Widget_Icon extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'label_block' => true,
-				'default' => 'fa fa-bullhorn',
+				'default' => 'fa fa-star',
 				'section' => 'section_icon',
 			]
 		);
@@ -148,10 +148,6 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
 				],
 			]
 		);

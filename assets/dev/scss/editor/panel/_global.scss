@@ -118,7 +118,7 @@
 	position: relative;
 	font-size: 12px;
 	line-height: 1.5;
-	text-align: getStartDirection();
+	text-align: $start;
 
 	&.panel-alert-info {
 		color: $info-text;

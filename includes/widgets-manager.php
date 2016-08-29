@@ -38,6 +38,7 @@ class Widgets_Manager {
 			'social-icons',
 			'alert',
 			'audio',
+			'shortcode',
 			'html',
 			'menu-anchor',
 			'sidebar',

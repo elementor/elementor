@@ -93,6 +93,6 @@ body {
 #elementor-preview, #elementor-panel {
 
 	&:not(.ui-resizable-resizing) {
-		transition: getStartDirection() .5s, width 0.5s;
+		transition: $start .5s, width 0.5s;
 	}
 }
