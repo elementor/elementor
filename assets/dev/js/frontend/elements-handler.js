@@ -2,26 +2,12 @@ var ElementsHandler;
 
 ElementsHandler = function( $ ) {
 	var registeredHandlers = {},
-		registeredGlobalHandlers = [],
-		flagEditorMode = false,
-		scopeWindow = window;
+		registeredGlobalHandlers = [];
 
 	var runGlobalHandlers = function( $scope ) {
 		$.each( registeredGlobalHandlers, function() {
 			this.call( $scope, $, scopeWindow );
 		} );
-	};
-
-	this.setEditorMode = function( mode ) {
-		flagEditorMode = mode;
-	};
-
-	this.setScopeWindow = function( window ) {
-		scopeWindow = window;
-	};
-
-	this.isEditorMode = function() {
-		return flagEditorMode;
 	};
 
 	this.addHandler = function( widgetType, callback ) {

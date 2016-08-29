@@ -3,7 +3,9 @@
 	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
-		var self = this;
+		var self = this,
+			flagEditorMode = false,
+			scopeWindow = window;
 
 		var elementsDefaultHandlers = {
 			accordion: require( 'elementor-frontend/handlers/accordion' ),
@@ -32,6 +34,22 @@
 			$( '.elementor-element' ).each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
+		};
+
+		this.getScopeWindow = function() {
+			return scopeWindow;
+		};
+
+		this.setEditorMode = function( mode ) {
+			flagEditorMode = mode;
+		};
+
+		this.setScopeWindow = function( window ) {
+			scopeWindow = window;
+		};
+
+		this.isEditorMode = function() {
+			return flagEditorMode;
 		};
 
 		this.elementsHandler = new ElementsHandler( $ );
