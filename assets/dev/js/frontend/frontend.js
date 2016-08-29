@@ -58,7 +58,6 @@
 		this.viewport = new Viewport( $ );
 
 		this.init = function() {
-
 			addGlobalHandlers();
 
 			addElementsHandlers();

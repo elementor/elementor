@@ -99,7 +99,6 @@ module.exports = ElementsHandler;
 		this.viewport = new Viewport( $ );
 
 		this.init = function() {
-
 			addGlobalHandlers();
 
 			addElementsHandlers();
