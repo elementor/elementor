@@ -37,6 +37,8 @@
 			} );
 		};
 
+		this.config = elementorFrontendConfig;
+
 		this.getScopeWindow = function() {
 			return scopeWindow;
 		};
@@ -56,7 +58,6 @@
 		this.viewport = new Viewport( $ );
 
 		this.init = function() {
-			self.config = elementorFrontendConfig;
 
 			addGlobalHandlers();
 
