@@ -109,6 +109,51 @@ module.exports = ElementsHandler;
 
 			self.viewport.init();
 		};
+
+		// Based on underscore function
+		this.throttle = function( func, wait ) {
+			var timeout,
+				context,
+				args,
+				result,
+				previous = 0;
+
+			var later = function() {
+				previous = Date.now();
+				timeout = null;
+				result = func.apply( context, args );
+
+				if ( ! timeout ) {
+					context = args = null;
+				}
+			};
+
+			return function() {
+				var now = Date.now(),
+					remaining = wait - ( now - previous );
+
+				context = this;
+				args = arguments;
+
+				if ( remaining <= 0 || remaining > wait ) {
+					if ( timeout ) {
+						clearTimeout( timeout );
+						timeout = null;
+					}
+
+					previous = now;
+					result = func.apply( context, args );
+
+					if ( ! timeout ) {
+						context = args = null;
+					}
+				} else if ( ! timeout ) {
+					timeout = setTimeout( later, remaining );
+				}
+
+				return result;
+			};
+		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
@@ -497,7 +542,7 @@ Viewport = function( $ ) {
 	};
 
 	var attachEvents = function() {
-		$( elements.previewWindow ).on( 'resize', self.addBodyClasses );
+		$( elements.previewWindow ).on( 'resize', elementorFrontend.throttle( self.addBodyClasses, 300 ) );
 	};
 
 	var getBreakpointClass = function( breakpointName, endpoint ) {
