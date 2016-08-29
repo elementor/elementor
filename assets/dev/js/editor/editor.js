@@ -130,6 +130,12 @@ App = Marionette.Application.extend( {
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
 	},
 
+	initFrontend: function() {
+		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
+
+		elementorFrontend.init();
+	},
+
 	onStart: function() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -156,10 +162,9 @@ App = Marionette.Application.extend( {
 	onPreviewLoaded: function() {
 		NProgress.done();
 
+		this.initFrontend();
+
 		this.$previewContents = this.$preview.contents();
-
-		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
-
 
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
