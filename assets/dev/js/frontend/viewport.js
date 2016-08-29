@@ -1,29 +1,30 @@
 var Viewport;
 
-Viewport = function() {
+Viewport = function( $ ) {
 	var self = this,
 		settings = {},
 		elements = {};
 
 	var initSettings = function() {
-		_.extend( settings, {
-			breakpoints: elementor.config.viewport_breakpoints,
+		$.extend( settings, {
+			breakpoints: elementorFrontend.config.viewport_breakpoints,
 			classTemplate: 'elementor-screen-{breakpoint}-{endpoint}',
 			classMatchRegex: /^elementor-screen-([a-z]{2})-(min|max)$/
 		} );
 	};
 
 	var initElements = function() {
-		_.extend( elements, {
+		$.extend( elements, {
 			previewWindow: elementor.$preview[0].contentWindow,
 			previewBody: elementor.$previewContents[0].body
 		} );
 	};
 
-	var addBodyClasses = function() {
+	this.addBodyClasses = function() {
 		var bodyClasses = elements.previewBody.classList,
 			breakpointsNames = Object.keys( settings.breakpoints ),
 			newClassesStack = [];
+
 		bodyClasses.forEach( function( className ) {
 			var matches = className.match( settings.classMatchRegex );
 
@@ -40,7 +41,7 @@ Viewport = function() {
 	};
 
 	var attachEvents = function() {
-		Backbone.$( elements.previewWindow ).on( 'resize', _.throttle( addBodyClasses, 200 ) );
+		$( elements.previewWindow ).on( 'resize', _.throttle( self.addBodyClasses, 200 ) );
 	};
 
 	var getBreakpointClass = function( breakpointName, endpoint ) {
@@ -88,10 +89,11 @@ Viewport = function() {
 	this.getViewportClasses = function() {
 		var classes = [];
 
-		_.each( [ 'min', 'max' ], function( endpoint ) {
-			var breakpoints = self.getCurrentBreakpoints( endpoint );
+		$.each( [ 'min', 'max' ], function() {
+			var endpoint = this.toString(),
+				breakpoints = self.getCurrentBreakpoints( endpoint );
 
-			_.each( breakpoints, function( breakpointValue, breakpointName ) {
+			$.each( breakpoints, function( breakpointName ) {
 				classes.push( getBreakpointClass( breakpointName, endpoint ) );
 			} );
 		} );
@@ -100,4 +102,4 @@ Viewport = function() {
 	};
 };
 
-module.exports = new Viewport();
+module.exports = Viewport;
