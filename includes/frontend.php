@@ -129,9 +129,9 @@ class Frontend {
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
 				'viewportBreakpoints' => [
 					'xs' => 0,
-					'sm' => 480,
-					'md' => 768,
-					'lg' => 1024,
+					'sm' => get_option( 'elementor_viewport_sm', 480 ),
+					'md' => get_option( 'elementor_viewport_md', 768 ),
+					'lg' => get_option( 'elementor_viewport_lg', 1024 ),
 				],
 			]
 		);

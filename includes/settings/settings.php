@@ -137,6 +137,55 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		$field_id = 'elementor_viewport_sm';
+		add_settings_field(
+			$field_id,
+			__( 'Mobile Breakpoint', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '480',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_viewport_md';
+		add_settings_field(
+			$field_id,
+			__( 'Tablet Breakpoint', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '768',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_viewport_lg';
+		add_settings_field(
+			$field_id,
+			__( 'Desktop Breakpoint', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '1024',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		// Tools section
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(
 			$tools_section,
