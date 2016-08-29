@@ -6,7 +6,6 @@
 
 	var ElementorFrontend = function() {
 		var self = this,
-			flagEditorMode = false,
 			scopeWindow = window;
 
 		var elementsDefaultHandlers = {
@@ -42,16 +41,12 @@
 			return scopeWindow;
 		};
 
-		this.setEditorMode = function( mode ) {
-			flagEditorMode = mode;
-		};
-
 		this.setScopeWindow = function( window ) {
 			scopeWindow = window;
 		};
 
-		this.isEditorMode = function() {
-			return flagEditorMode;
+		this.isEditMode = function() {
+			return self.config.isEditMode;
 		};
 
 		this.elementsHandler = new ElementsHandler( $ );

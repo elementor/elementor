@@ -126,7 +126,8 @@ class Frontend {
 		wp_localize_script(
 			'elementor-frontend',
 			'elementorFrontendConfig', [
-				'viewport_breakpoints' => [
+				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
+				'viewportBreakpoints' => [
 					'xs' => 0,
 					'sm' => 480,
 					'md' => 768,

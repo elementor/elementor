@@ -141,8 +141,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		elementorFrontend.setEditorMode( true );
-
 		// Init Base elements collection from the server
 		var ElementModel = require( 'elementor-models/element' );
 
