@@ -7,17 +7,15 @@ Viewport = function( $ ) {
 
 	var initSettings = function() {
 		$.extend( settings, {
-			breakpoints: elementorFrontend.config.viewport_breakpoints,
+			breakpoints: elementorFrontend.config.viewportBreakpoints,
 			classTemplate: 'elementor-screen-{breakpoint}-{endpoint}',
 			classMatchRegex: /^elementor-screen-([a-z]{2})-(min|max)$/
 		} );
 	};
 
 	var initElements = function() {
-		$.extend( elements, {
-			previewWindow: elementor.$preview[0].contentWindow,
-			previewBody: elementor.$previewContents[0].body
-		} );
+		elements.previewWindow = elementorFrontend.getScopeWindow();
+		elements.previewBody = elements.previewWindow.document.body;
 	};
 
 	this.addBodyClasses = function() {
@@ -41,7 +39,7 @@ Viewport = function( $ ) {
 	};
 
 	var attachEvents = function() {
-		$( elements.previewWindow ).on( 'resize', _.throttle( self.addBodyClasses, 200 ) );
+		$( elements.previewWindow ).on( 'resize', self.addBodyClasses );
 	};
 
 	var getBreakpointClass = function( breakpointName, endpoint ) {
@@ -74,16 +72,19 @@ Viewport = function( $ ) {
 	};
 
 	this.getCurrentBreakpoints = function( endpoint ) {
-		return _.pick(
-			settings.breakpoints,
-			function( breakpointValue, breakpointName ) {
-				return (
-					'min' === endpoint ? self.isMinBreakpoint( breakpointName ) :
-					'max' === endpoint ? self.isMaxBreakpoint( breakpointName ) :
-					self.isMinBreakpoint( breakpointName ) || self.isMaxBreakpoint( breakpointName )
-				);
+		var breakpoints = {};
+
+		$.each( settings.breakpoints, function( breakpointName ) {
+			if (
+				'min' === endpoint && self.isMinBreakpoint( breakpointName ) ||
+				'max' === endpoint && self.isMaxBreakpoint( breakpointName ) ||
+				self.isMinBreakpoint( breakpointName ) && self.isMaxBreakpoint( breakpointName )
+			) {
+				breakpoints[ breakpointName ] = this;
 			}
-		);
+		} );
+
+		return breakpoints;
 	};
 
 	this.getViewportClasses = function() {
