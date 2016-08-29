@@ -6,7 +6,7 @@ ElementsHandler = function( $ ) {
 
 	var runGlobalHandlers = function( $scope ) {
 		$.each( registeredGlobalHandlers, function() {
-			this.call( $scope, $, scopeWindow );
+			this.call( $scope, $ );
 		} );
 	};
 
@@ -31,7 +31,7 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		registeredHandlers[ elementType ].call( $scope, $, scopeWindow );
+		registeredHandlers[ elementType ].call( $scope, $ );
 	};
 };
 
