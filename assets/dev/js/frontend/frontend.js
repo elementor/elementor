@@ -1,6 +1,7 @@
 ( function( $ ) {
 	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	    Utils = require( 'elementor-frontend/utils' );
+	    Utils = require( 'elementor-frontend/utils' ),
+		Viewport = require( 'elementor-frontend/viewport' );
 
 	var ElementorFrontend = function() {
 		var self = this,
@@ -53,8 +54,10 @@
 		};
 
 		this.elementsHandler = new ElementsHandler( $ );
+
 		this.utils = new Utils( $ );
 
+		this.viewport = new Viewport( $ );
 		this.init = function() {
 			addGlobalHandlers();
 			addElementsHandlers();
@@ -62,6 +65,8 @@
 			self.utils.insertYTApi();
 
 			runElementsHandlers();
+
+			self.viewport.init();
 		};
 	};
 

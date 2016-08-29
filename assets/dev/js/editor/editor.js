@@ -10,7 +10,6 @@ App = Marionette.Application.extend( {
 	introduction: require( 'elementor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-utils/ajax' ),
-	viewport: require( 'elementor-utils/viewport' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -161,7 +160,6 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents = this.$preview.contents();
 
-		this.viewport.init();
 		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
 
