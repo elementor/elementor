@@ -137,13 +137,23 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		// Responsive section
+		$responsive_section = 'elementor_responsive_section';
+
+		add_settings_section(
+			$responsive_section,
+			__( 'Responsive Breakpoints', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
 		$field_id = 'elementor_viewport_sm';
 		add_settings_field(
 			$field_id,
 			__( 'Mobile Breakpoint', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$style_section,
+			$responsive_section,
 			[
 				'id' => $field_id,
 				'type' => 'text',
@@ -159,7 +169,7 @@ class Settings {
 			__( 'Tablet Breakpoint', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$style_section,
+			$responsive_section,
 			[
 				'id' => $field_id,
 				'type' => 'text',
@@ -175,7 +185,7 @@ class Settings {
 			__( 'Desktop Breakpoint', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$style_section,
+			$responsive_section,
 			[
 				'id' => $field_id,
 				'type' => 'text',
