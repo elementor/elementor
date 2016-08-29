@@ -1,3 +1,4 @@
+/* global elementorFrontendConfig */
 ( function( $ ) {
 	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' ),
@@ -58,8 +59,12 @@
 		this.utils = new Utils( $ );
 
 		this.viewport = new Viewport( $ );
+
 		this.init = function() {
+			self.config = elementorFrontendConfig;
+
 			addGlobalHandlers();
+
 			addElementsHandlers();
 
 			self.utils.insertYTApi();

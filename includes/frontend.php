@@ -122,6 +122,19 @@ class Frontend {
 			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
+
+		wp_localize_script(
+			'elementor-frontend',
+			'elementorFrontendConfig', [
+				'viewport_breakpoints' => [
+					'xs' => 0,
+					'sm' => 480,
+					'md' => 768,
+					'lg' => 1024,
+				],
+			]
+		);
+
 	}
 
 	public function enqueue_styles() {
