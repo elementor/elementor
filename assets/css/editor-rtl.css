@@ -765,17 +765,19 @@ select {
         background-color: #d5dadf; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-hidden-label .elementor-control-title {
       display: none; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-hidden-control {
+    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-hidden-control {
       display: none; }
-    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section {
+    #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-under-section:not(.elementor-open) {
       display: none; }
-      #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section.elementor-open {
-        display: block; }
-        #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-active-tab.elementor-control-under-section.elementor-open.elementor-hidden-control {
-          display: none; }
     #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-type-heading .elementor-control-title {
       font-weight: bold;
       margin: 0; }
+    body:not(.elementor-device-desktop) #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-responsive-desktop {
+      display: none; }
+    body:not(.elementor-device-tablet) #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-responsive-tablet {
+      display: none; }
+    body:not(.elementor-device-mobile) #elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-responsive-mobile {
+      display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-wp {
     line-height: 1.5; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-wp p {
