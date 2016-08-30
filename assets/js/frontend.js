@@ -543,7 +543,9 @@ Viewport = function( $ ) {
 	};
 
 	var attachEvents = function() {
-		$( elements.previewWindow ).on( 'resize', elementorFrontend.throttle( self.addBodyClasses, 300 ) );
+		$( elements.previewWindow )
+			.on( 'resize', elementorFrontend.throttle( self.addBodyClasses, 300 ) )
+			.trigger( 'resize' );
 	};
 
 	var getBreakpointClass = function( breakpointName, endpoint ) {
