@@ -80,7 +80,8 @@
     display: flex;
     margin-right: auto;
     margin-left: auto;
-    position: relative; }
+    position: relative;
+    max-width: 1140px; }
     .elementor-section .elementor-container.elementor-container-fluid {
       max-width: 100%; }
   .elementor-section.elementor-section-items-top > .elementor-container {
