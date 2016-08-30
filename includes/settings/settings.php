@@ -129,53 +129,31 @@ class Settings {
 			self::PAGE_ID
 		);
 
-		$field_id = 'elementor_viewport_sm';
-		add_settings_field(
-			$field_id,
-			__( 'Mobile Breakpoint', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$responsive_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'placeholder' => '480',
-			]
-		);
-
 		register_setting( self::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_viewport_md';
-		add_settings_field(
-			$field_id,
-			__( 'Tablet Breakpoint', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$responsive_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'placeholder' => '768',
-			]
-		);
+		$responsive_labels = [
+			'md' => __( 'Mobile Breakpoint', 'elementor' ),
+			'lg' => __( 'Tablet Breakpoint', 'elementor' ),
+		];
 
-		register_setting( self::PAGE_ID, $field_id );
+		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_name => $breakpoint_value ) {
+			$field_id = 'elementor_viewport_' . $breakpoint_name;
 
-		$field_id = 'elementor_viewport_lg';
-		add_settings_field(
-			$field_id,
-			__( 'Desktop Breakpoint', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$responsive_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'placeholder' => '1024',
-			]
-		);
+			add_settings_field(
+				$field_id,
+				$responsive_labels[ $breakpoint_name ],
+				[ $controls_class_name, 'render' ],
+				self::PAGE_ID,
+				$responsive_section,
+				[
+					'id' => $field_id,
+					'type' => 'text',
+					'placeholder' => $breakpoint_value,
+				]
+			);
 
-		register_setting( self::PAGE_ID, $field_id );
+			register_setting( self::PAGE_ID, $field_id );
+		}
 
 		// Tools section
 		$tools_section = 'elementor_tools_section';

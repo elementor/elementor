@@ -127,15 +127,9 @@ class Frontend {
 			'elementor-frontend',
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
-				'viewportBreakpoints' => [
-					'xs' => 0,
-					'sm' => get_option( 'elementor_viewport_sm', 480 ),
-					'md' => get_option( 'elementor_viewport_md', 768 ),
-					'lg' => get_option( 'elementor_viewport_lg', 1024 ),
-				],
+				'viewportBreakpoints' => Responsive::get_breakpoints(),
 			]
 		);
-
 	}
 
 	public function enqueue_styles() {
