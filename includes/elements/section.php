@@ -124,9 +124,6 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1140,
-				],
 				'range' => [
 					'px' => [
 						'min' => 500,
