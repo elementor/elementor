@@ -143,10 +143,6 @@
 // Responsive Grid
 .elementor-column {
 
-	.elementor-screen-xs-max & {
-		@include elementor-responsive(xs);
-	}
-
 	.elementor-screen-sm-max & {
 		@include elementor-responsive(sm);
 	}
