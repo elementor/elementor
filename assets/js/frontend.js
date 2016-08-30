@@ -526,11 +526,11 @@ Viewport = function( $ ) {
 			breakpointsNames = Object.keys( settings.breakpoints ),
 			newClassesStack = [];
 
-		bodyClasses.forEach( function( className ) {
-			var matches = className.match( settings.classMatchRegex );
+		$.each( bodyClasses, function() {
+			var matches = this.match( settings.classMatchRegex );
 
 			if ( ! matches || -1 === breakpointsNames.indexOf( matches[1] )  ) {
-				newClassesStack.push( className );
+				newClassesStack.push( this );
 			}
 		} );
 
