@@ -1448,7 +1448,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
     #elementor-preview:not(.elementor-device-desktop) #elementor-preview-responsive-wrapper {
       border-radius: 30px;
       background-color: #111;
-      margin: 30px auto 80px; }
+      margin: 30px auto 80px;
+      box-sizing: content-box; }
 
 #elementor-preview-responsive-wrapper {
   position: absolute;
