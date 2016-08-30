@@ -8,7 +8,8 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 	buttons: {
 		moveToAdvanced: {
-			wp_help: 'fullscreen'
+			wp_help: 'fullscreen',
+			alignjustify: 'hr'
 		}
 	},
 
