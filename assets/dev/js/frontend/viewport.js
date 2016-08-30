@@ -23,10 +23,11 @@ Viewport = function( $ ) {
 			breakpointsNames = Object.keys( settings.breakpoints ),
 			newClassesStack = [];
 
-		bodyClasses.forEach( function( className ) {
-			var matches = className.match( settings.classMatchRegex );
+		$.each( bodyClasses, function() {
+			var className = this,
+				matches = className.match( settings.classMatchRegex );
 
-			if ( ! matches || -1 === breakpointsNames.indexOf( matches[1] )  ) {
+			if ( ! matches || -1 === breakpointsNames.indexOf( matches[1] ) ) {
 				newClassesStack.push( className );
 			}
 		} );
