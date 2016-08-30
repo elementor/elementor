@@ -63,23 +63,14 @@
 			}
 		}
 
-		&.elementor-active-tab {
-			// Hidden Control
-			// FIXME: Better hide field here?
-			&.elementor-hidden-control {
+		&.elementor-hidden-control {
+			display: none;
+		}
+
+		&.elementor-control-under-section {
+
+			&:not(.elementor-open) {
 				display: none;
-			}
-
-			&.elementor-control-under-section {
-				display: none;
-
-				&.elementor-open {
-					display: block;
-
-					&.elementor-hidden-control {
-						display: none;
-					}
-				}
 			}
 		}
 
