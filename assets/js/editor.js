@@ -1715,7 +1715,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		this.getCurrentDeviceModeButton().removeClass( 'active' );
 
-		elementor.$previewWrapper
+		Backbone.$( 'body' )
 		    .removeClass( 'elementor-device-' + this.currentDeviceMode )
 		    .addClass( 'elementor-device-' + newDeviceMode );
 
