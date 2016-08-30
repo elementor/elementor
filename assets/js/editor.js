@@ -4989,7 +4989,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	className: function() {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
-			modelClasses = this.model.get( 'classes' );
+			modelClasses = this.model.get( 'classes' ),
+			responsiveControl = this.model.get( 'responsive' );
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
@@ -4997,6 +4998,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		if ( ! _.isEmpty( this.model.get( 'section' ) ) ) {
 			classes += ' elementor-control-under-section';
+		}
+
+		if ( ! _.isEmpty( responsiveControl ) ) {
+			classes += ' elementor-control-responsive-' + responsiveControl;
 		}
 
 		return classes;

@@ -11,6 +11,10 @@ abstract class Element_Base {
 	const TAB_RESPONSIVE = 'responsive';
 	const TAB_LAYOUT = 'layout';
 
+	const RESPONSIVE_DESKTOP = 'desktop';
+	const RESPONSIVE_TABLET = 'tablet';
+	const RESPONSIVE_MOBILE = 'mobile';
+
 	private static $_available_tabs_controls;
 
 	private $_controls = [];
@@ -107,6 +111,41 @@ abstract class Element_Base {
 
 	public function add_group_control( $group_name, $args = [] ) {
 		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ $this, $args ] );
+	}
+
+	public function add_responsive_control( $id, $args = [] ) {
+		// Desktop
+		$control_args = $args;
+		$control_args['responsive'] = self::RESPONSIVE_DESKTOP;
+		$this->add_control(
+			$id,
+			$control_args
+		);
+
+		// Tablet
+		$control_args = $args;
+		$control_args['selectors'] = [];
+		foreach ( $args['selectors'] as $selector => $css_property ) {
+			$control_args['selectors'][ '.elementor-screen-md-max ' . $selector ] = $css_property;
+		}
+		$control_args['responsive'] = self::RESPONSIVE_TABLET;
+		$this->add_control(
+			$id . '_tablet',
+			$control_args
+		);
+
+		// Mobile
+		$control_args = $args;
+		$control_args['selectors'] = [];
+		foreach ( $args['selectors'] as $selector => $css_property ) {
+			$control_args['selectors'][ '.elementor-screen-sm-max ' . $selector ] = $css_property;
+		}
+
+		$control_args['responsive'] = self::RESPONSIVE_MOBILE;
+		$this->add_control(
+			$id . '_mobile',
+			$control_args
+		);
 	}
 
 	/**
