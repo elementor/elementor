@@ -6388,16 +6388,8 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	},
 
 	buttons: {
-		keepInBasic: [
-			'bold',
-			'italic',
-			'link',
-			'unlink',
-			'wp_adv',
-			'fullscreen'
-		],
-		moveToBasic: {
-			underline: 'italic'
+		moveToAdvanced: {
+			wp_help: 'fullscreen'
 		}
 	},
 
@@ -6453,21 +6445,21 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	rearrangeButtons: function() {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
-			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' ),
-			buttonsToKeepInBasic = Array.prototype.slice.call( this.buttons.keepInBasic ),
-			buttonsToMoveToAdvanced = _.difference( editorBasicToolbarButtons, buttonsToKeepInBasic ),
-			buttonsToKeepInAdvanced = _.difference( editorAdvancedToolbarButtons, Object.keys( this.buttons.moveToBasic ) );
+			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
 
-		_.each( this.buttons.moveToBasic, function( afterButton, button ) {
-			var afterButtonIndex = buttonsToKeepInBasic.indexOf( afterButton );
+		_.each( this.buttons.moveToAdvanced, function( button, afterButton ) {
+			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
+				afterButtonIndex = editorAdvancedToolbarButtons.indexOf( afterButton );
+
+			editorBasicToolbarButtons.splice( buttonIndex, 1 );
 
 			if ( -1 !== afterButtonIndex ) {
-				buttonsToKeepInBasic.splice( afterButtonIndex + 1, 0, button );
+				editorAdvancedToolbarButtons.splice( afterButtonIndex + 1, 0, button );
 			}
 		} );
 
-		editorProps.toolbar1 = buttonsToKeepInBasic.join( ',' );
-		editorProps.toolbar2 = buttonsToMoveToAdvanced + ',' + buttonsToKeepInAdvanced;
+		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
+		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
 	onBeforeDestroy: function() {
