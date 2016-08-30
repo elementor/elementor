@@ -160,6 +160,9 @@
 .elementor-column-gap-wider .elementor-element-populated {
   padding: 30px; }
 
+.elementor-inner-section .elementor-column-gap-no .elementor-element-populated {
+  padding: 0; }
+
 @media (max-width: 479px) {
   .elementor-column.elementor-xs-10 {
     width: 10%; }
