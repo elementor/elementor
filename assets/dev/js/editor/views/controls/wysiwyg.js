@@ -14,7 +14,8 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			wp_more: 'wp_help'
 		},
 		moveToBasic: {
-			underline: 'italic'
+			underline: 'italic',
+			alignjustify: 'alignright'
 		}
 	},
 
