@@ -32,22 +32,10 @@
 		height: 100%;
 	}
 
-	.elementor-device-laptop & {
-		width: $screen-lg-min;
-		height: $screen-md-min;
-		padding: 10px 70px 10px 40px;
-	}
-
 	.elementor-device-tablet & {
 		width: $screen-md-min;
 		height: $screen-lg-min;
 		padding: 40px 10px 70px;
-	}
-
-	.elementor-device-mobile-landscape & {
-		width: 640px;
-		height: 360px;
-		padding: 10px 70px 10px 40px;
 	}
 
 	.elementor-device-mobile & {

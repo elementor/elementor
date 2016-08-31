@@ -55,24 +55,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 					<span class="elementor-title"><?php _e( 'Desktop', 'elementor' ); ?></span>
 					<span class="elementor-description"><?php _e( '1024px > Up', 'elementor' ); ?></span>
 				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="laptop">
-					<i class="elementor-icon fa fa-laptop"></i>
-					<span class="elementor-title"><?php _e( 'Laptop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '1024px > 768px', 'elementor' ); ?></span>
-				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
 					<i class="elementor-icon fa fa-tablet"></i>
 					<span class="elementor-title"><?php _e( 'Tablet', 'elementor' ); ?></span>
 					<span class="elementor-description"><?php _e( '768px > 1024px', 'elementor' ); ?></span>
 				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile-landscape">
-					<i class="elementor-icon fa fa-mobile"></i>
-					<span class="elementor-title"><?php _e( 'Mobile Landscape', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '767px > Down', 'elementor' ); ?></span>
-				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
 					<i class="elementor-icon fa fa-mobile"></i>
-					<span class="elementor-title"><?php _e( 'Mobile Portrait', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php _e( 'Mobile', 'elementor' ); ?></span>
 					<span class="elementor-description"><?php _e( '479px > Down', 'elementor' ); ?></span>
 				</div>
 			</div>
