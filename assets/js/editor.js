@@ -1765,7 +1765,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this._publishBuilder();
 	},
 
-	
 	onClickButtonPublish: function( event ) {
 		// Prevent click on save button
 		event.stopPropagation();
