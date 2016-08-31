@@ -904,13 +904,6 @@
   .elementor-social-icon i {
     font-size: 25px; }
 
-.elementor-widget-social-icons.elementor-align-right {
-  text-align: right; }
-.elementor-widget-social-icons.elementor-align-left {
-  text-align: left; }
-.elementor-widget-social-icons.elementor-align-center {
-  text-align: center; }
-
 .elementor-shape-rounded .elementor-icon.elementor-social-icon {
   border-radius: 10%; }
 
