@@ -296,7 +296,7 @@ App = Marionette.Application.extend( {
 					.removeClass( 'ui-resizable-resizing' )
 					.css( 'pointer-events', '' );
 
-				elementor.data.trigger( 'scrollbar:update' );
+				elementor.channels.data.trigger( 'scrollbar:update' );
 			},
 			resize: function( event, ui ) {
 				self.$previewWrapper

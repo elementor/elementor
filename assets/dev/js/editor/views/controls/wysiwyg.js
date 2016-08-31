@@ -6,9 +6,16 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		'keyup textarea.elementor-wp-editor': 'updateElementModel'
 	},
 
+	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
 		moveToAdvanced: {
-			wp_help: 'fullscreen'
+			fullscreen: 'wp_help',
+			hr: 'wp_help',
+			wp_more: 'wp_help'
+		},
+		moveToBasic: {
+			underline: 'italic',
+			alignjustify: 'alignright'
 		}
 	},
 
@@ -66,7 +73,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
 			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
 
-		_.each( this.buttons.moveToAdvanced, function( button, afterButton ) {
+		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
 			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
 				afterButtonIndex = editorAdvancedToolbarButtons.indexOf( afterButton );
 
@@ -74,6 +81,17 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 			if ( -1 !== afterButtonIndex ) {
 				editorAdvancedToolbarButtons.splice( afterButtonIndex + 1, 0, button );
+			}
+		} );
+
+		_.each( this.buttons.moveToBasic, function( afterButton, button ) {
+			var buttonIndex = editorAdvancedToolbarButtons.indexOf( button ),
+				afterButtonIndex = editorBasicToolbarButtons.indexOf( afterButton );
+
+			editorAdvancedToolbarButtons.splice( buttonIndex, 1 );
+
+			if ( -1 !== afterButtonIndex ) {
+				editorBasicToolbarButtons.splice( afterButtonIndex + 1, 0, button );
 			}
 		} );
 
