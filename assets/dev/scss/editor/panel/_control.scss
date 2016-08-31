@@ -63,23 +63,14 @@
 			}
 		}
 
-		&.elementor-active-tab {
-			// Hidden Control
-			// FIXME: Better hide field here?
-			&.elementor-hidden-control {
+		&.elementor-hidden-control {
+			display: none;
+		}
+
+		&.elementor-control-under-section {
+
+			&:not(.elementor-open) {
 				display: none;
-			}
-
-			&.elementor-control-under-section {
-				display: none;
-
-				&.elementor-open {
-					display: block;
-
-					&.elementor-hidden-control {
-						display: none;
-					}
-				}
 			}
 		}
 
@@ -88,6 +79,30 @@
 			.elementor-control-title {
 				font-weight: bold;
 				margin: 0;
+			}
+		}
+
+		&.elementor-control-responsive- {
+
+			&desktop {
+
+				body:not(.elementor-device-desktop) & {
+					display: none;
+				}
+			}
+
+			&tablet {
+
+				body:not(.elementor-device-tablet) & {
+					display: none;
+				}
+			}
+
+			&mobile {
+
+				body:not(.elementor-device-mobile) & {
+					display: none;
+				}
 			}
 		}
 	}
