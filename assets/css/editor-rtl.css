@@ -1439,18 +1439,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
     min-width: 1024px;
     width: 100%;
     height: 100%; }
-  .elementor-device-laptop #elementor-preview-responsive-wrapper {
-    width: 1024px;
-    height: 768px;
-    padding: 10px 70px 10px 40px; }
   .elementor-device-tablet #elementor-preview-responsive-wrapper {
     width: 768px;
     height: 1024px;
     padding: 40px 10px 70px; }
-  .elementor-device-mobile-landscape #elementor-preview-responsive-wrapper {
-    width: 640px;
-    height: 360px;
-    padding: 10px 70px 10px 40px; }
   .elementor-device-mobile #elementor-preview-responsive-wrapper {
     width: 360px;
     height: 640px;
