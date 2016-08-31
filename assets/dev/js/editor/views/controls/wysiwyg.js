@@ -6,17 +6,16 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		'keyup textarea.elementor-wp-editor': 'updateElementModel'
 	},
 
+	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
-		keepInBasic: [
-			'bold',
-			'italic',
-			'link',
-			'unlink',
-			'wp_adv',
-			'fullscreen'
-		],
+		moveToAdvanced: {
+			fullscreen: 'wp_help',
+			hr: 'wp_help',
+			wp_more: 'wp_help'
+		},
 		moveToBasic: {
-			underline: 'italic'
+			underline: 'italic',
+			alignjustify: 'alignright'
 		}
 	},
 
@@ -72,21 +71,32 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	rearrangeButtons: function() {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
-			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' ),
-			buttonsToKeepInBasic = Array.prototype.slice.call( this.buttons.keepInBasic ),
-			buttonsToMoveToAdvanced = _.difference( editorBasicToolbarButtons, buttonsToKeepInBasic ),
-			buttonsToKeepInAdvanced = _.difference( editorAdvancedToolbarButtons, Object.keys( this.buttons.moveToBasic ) );
+			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
 
-		_.each( this.buttons.moveToBasic, function( afterButton, button ) {
-			var afterButtonIndex = buttonsToKeepInBasic.indexOf( afterButton );
+		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
+			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
+				afterButtonIndex = editorAdvancedToolbarButtons.indexOf( afterButton );
+
+			editorBasicToolbarButtons.splice( buttonIndex, 1 );
 
 			if ( -1 !== afterButtonIndex ) {
-				buttonsToKeepInBasic.splice( afterButtonIndex + 1, 0, button );
+				editorAdvancedToolbarButtons.splice( afterButtonIndex + 1, 0, button );
 			}
 		} );
 
-		editorProps.toolbar1 = buttonsToKeepInBasic.join( ',' );
-		editorProps.toolbar2 = buttonsToMoveToAdvanced + ',' + buttonsToKeepInAdvanced;
+		_.each( this.buttons.moveToBasic, function( afterButton, button ) {
+			var buttonIndex = editorAdvancedToolbarButtons.indexOf( button ),
+				afterButtonIndex = editorBasicToolbarButtons.indexOf( afterButton );
+
+			editorAdvancedToolbarButtons.splice( buttonIndex, 1 );
+
+			if ( -1 !== afterButtonIndex ) {
+				editorBasicToolbarButtons.splice( afterButtonIndex + 1, 0, button );
+			}
+		} );
+
+		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
+		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
 	onBeforeDestroy: function() {

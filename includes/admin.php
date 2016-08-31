@@ -195,6 +195,10 @@ class Admin {
 		if ( ! current_user_can( 'update_plugins' ) )
 			return;
 
+		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ] ) ) {
+			return;
+		}
+
 		// Check if have any upgrades
 		$update_plugins = get_site_transient( 'update_plugins' );
 		if ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) ) {
