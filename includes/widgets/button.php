@@ -77,7 +77,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
