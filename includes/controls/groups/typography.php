@@ -102,6 +102,7 @@ class Group_Control_Typography extends Group_Control_Base {
 					'min' => 1,
 				],
 			],
+			'responsive' => true,
 			'size_units' => [ 'px', 'em' ],
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
 		];
@@ -116,6 +117,7 @@ class Group_Control_Typography extends Group_Control_Base {
 					'step' => 0.1,
 				],
 			],
+			'responsive' => true,
 			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
 		];
 
