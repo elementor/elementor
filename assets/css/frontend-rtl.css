@@ -70,6 +70,51 @@
   .elementor .elementor-invisible {
     visibility: hidden; }
 
+.elementor-align-center {
+  text-align: center; }
+  .elementor-align-center .elementor-button {
+    width: auto; }
+.elementor-align-right {
+  text-align: right; }
+  .elementor-align-right .elementor-button {
+    width: auto; }
+.elementor-align-left {
+  text-align: left; }
+  .elementor-align-left .elementor-button {
+    width: auto; }
+.elementor-align-justify .elementor-button {
+  width: 100%; }
+
+.elementor-screen-md-max .elementor-tablet-align-center {
+  text-align: center; }
+  .elementor-screen-md-max .elementor-tablet-align-center .elementor-button {
+    width: auto; }
+.elementor-screen-md-max .elementor-tablet-align-right {
+  text-align: right; }
+  .elementor-screen-md-max .elementor-tablet-align-right .elementor-button {
+    width: auto; }
+.elementor-screen-md-max .elementor-tablet-align-left {
+  text-align: left; }
+  .elementor-screen-md-max .elementor-tablet-align-left .elementor-button {
+    width: auto; }
+.elementor-screen-md-max .elementor-tablet-align-justify .elementor-button {
+  width: 100%; }
+
+.elementor-screen-sm-max .elementor-mobile-align-center {
+  text-align: center; }
+  .elementor-screen-sm-max .elementor-mobile-align-center .elementor-button {
+    width: auto; }
+.elementor-screen-sm-max .elementor-mobile-align-right {
+  text-align: right; }
+  .elementor-screen-sm-max .elementor-mobile-align-right .elementor-button {
+    width: auto; }
+.elementor-screen-sm-max .elementor-mobile-align-left {
+  text-align: left; }
+  .elementor-screen-sm-max .elementor-mobile-align-left .elementor-button {
+    width: auto; }
+.elementor-screen-sm-max .elementor-mobile-align-justify .elementor-button {
+  width: 100%; }
+
 #elementor-select-preset {
   display: none; }
 
@@ -379,15 +424,6 @@
   max-width: 50%; }
 .elementor-screen-xs-max .elementor-image-gallery .gallery-item {
   max-width: 100%; }
-
-.elementor-button-wrapper.elementor-align-center {
-  text-align: center; }
-.elementor-button-wrapper.elementor-align-right {
-  text-align: right; }
-.elementor-button-wrapper.elementor-align-left {
-  text-align: left; }
-.elementor-button-wrapper.elementor-align-justify .elementor-button {
-  width: 100%; }
 
 .elementor-button {
   display: inline-block;
