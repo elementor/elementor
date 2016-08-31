@@ -102,7 +102,9 @@ class Widget_Icon extends Widget_Base {
 					],
 				],
 				'default' => 'center',
-				'prefix_class' => 'elementor-align-',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-wrapper' => 'text-align: {{VALUE}};',
+				],
 			]
 		);
 
@@ -228,24 +230,6 @@ class Widget_Icon extends Widget_Base {
 				],
 			]
 		);
-
-		/* TEMP - border color come from primary color
-		$this->add_control(
-			'border_color',
-			[
-				'label' => __( 'Border Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon' => 'border-color: {{VALUE}};',
-				],
-				'condition' => [
-					'view' => 'framed',
-				],
-			]
-		);
-		*/
 
 		$this->add_control(
 			'border_radius',

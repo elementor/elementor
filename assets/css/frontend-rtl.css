@@ -670,13 +670,6 @@
   border: 3px solid #000;
   background-color: #fff; }
 
-.elementor-align-right .elementor-icon-wrapper {
-  text-align: right; }
-.elementor-align-left .elementor-icon-wrapper {
-  text-align: left; }
-.elementor-align-center .elementor-icon-wrapper {
-  text-align: center; }
-
 .elementor-shape-circle .elementor-icon {
   border-radius: 50%; }
 
