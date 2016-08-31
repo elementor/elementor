@@ -38,6 +38,7 @@ class Group_Control_Typography extends Group_Control_Base {
 					'max' => 200,
 				],
 			],
+			'responsive' => true,
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
