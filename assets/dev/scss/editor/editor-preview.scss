@@ -565,7 +565,8 @@ body {
 			}
 		}
 
-		.elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
+		.elementor-column:not(.elementor-inner-column) > .elementor-column-wrap > .elementor-draggable-over > .elementor-empty-view > .elementor-first-add,
+		.elementor-column.elementor-inner-column .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) .elementor-first-add,
 		.elementor-first-add[data-side] {
 
 			&:after {
