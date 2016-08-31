@@ -53,17 +53,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
 					<i class="elementor-icon fa fa-desktop"></i>
 					<span class="elementor-title"><?php _e( 'Desktop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '1024px > Up', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Default Preview', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
 					<i class="elementor-icon fa fa-tablet"></i>
 					<span class="elementor-title"><?php _e( 'Tablet', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '768px > 1024px', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Preview for 768px', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
 					<i class="elementor-icon fa fa-mobile"></i>
 					<span class="elementor-title"><?php _e( 'Mobile', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '479px > Down', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Preview for 360px', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
