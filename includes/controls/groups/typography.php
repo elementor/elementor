@@ -35,6 +35,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'range' => [
 				'px' => [
 					'min' => 1,
+					'max' => 200,
 				],
 			],
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
