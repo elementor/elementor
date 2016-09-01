@@ -86,6 +86,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/frontend.php' );
 		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
 		include( ELEMENTOR_PATH . 'includes/responsive.php' );
+		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
 
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
