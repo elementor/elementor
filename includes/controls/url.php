@@ -25,7 +25,7 @@ class Control_URL extends Control_Base_Multiple {
 
 	public function content_template() {
 		?>
-		<div class="elementor-control-field elementor-control-url-external-{{ data.show_external ? 'show' : 'hide' }}">
+		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<input type="url" data-setting="url" placeholder="{{ data.placeholder }}" />
