@@ -31,7 +31,7 @@ class Control_Slider extends Control_Base_Units {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-slider"></div>
 				<div class="elementor-slider-input">
-					<input type="number" min="{{{ data.min }}}" max="{{{ data.max }}}" step="{{{ data.step }}}" data-setting="size" />
+					<input type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
 				</div>
 			</div>
 		</div>

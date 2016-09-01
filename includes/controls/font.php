@@ -20,7 +20,7 @@ class Control_Font extends Control_Base {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<select class="elementor-control-font-family" data-setting="{{{ data.name }}}">
+				<select class="elementor-control-font-family" data-setting="{{ data.name }}">
 					<option value=""><?php _e( 'Default', 'elementor' ); ?></option>
 					<optgroup label="<?php _e( 'System', 'elementor' ); ?>">
 						<# _.each( getFontsByGroups( 'system' ), function( fontType, fontName ) { #>

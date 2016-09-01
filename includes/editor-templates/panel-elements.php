@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-element-library-element">
 	<div class="elementor-element">
 		<div class="icon">
-			<i class="eicon-{{{ icon }}}"></i>
+			<i class="eicon-{{ icon }}"></i>
 		</div>
 		<div class="elementor-element-title-wrapper">
 			<div class="title">{{{ title }}}</div>

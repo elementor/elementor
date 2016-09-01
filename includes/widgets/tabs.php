@@ -254,7 +254,7 @@ class Widget_Tabs extends Widget_Base {
 				var counter = 1; #>
 				<div class="elementor-tabs-wrapper">
 					<#
-					_.each( settings.tabs, function( item ){ #>
+					_.each( settings.tabs, function( item ) { #>
 						<div class="elementor-tab-title" data-tab="{{ counter }}"><span>{{{ item.tab_title }}}</span></div>
 					<#
 						counter++;
@@ -264,7 +264,7 @@ class Widget_Tabs extends Widget_Base {
 				<# counter = 1; #>
 				<div class="elementor-tabs-content-wrapper">
 					<#
-					_.each( settings.tabs, function( item ){ #>
+					_.each( settings.tabs, function( item ) { #>
 						<div class="elementor-tab-content" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
 					<#
 					counter++;

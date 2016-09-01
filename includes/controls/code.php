@@ -14,7 +14,7 @@ class Control_Code extends Control_Base {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<textarea rows="{{{ data.rows || 5 }}}" data-setting="{{{ data.name }}}" placeholder="{{{ data.placeholder }}}"></textarea>
+				<textarea rows="{{ data.rows || 5 }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
 			</div>
 		</div>
 		<?php

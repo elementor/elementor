@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
-		<i class="fa fa-{{{ icon }}}"></i>
+		<i class="fa fa-{{ icon }}"></i>
 	</div>
 	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 </script>
@@ -146,7 +146,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<ul>
 			<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
 			<li class="elementor-tab-control-{{ tabSlug }}">
-				<a href="#" data-tab="{{{ tabSlug }}}">
+				<a href="#" data-tab="{{ tabSlug }}">
 					{{{ tabTitle }}}
 				</a>
 			</li>
@@ -238,7 +238,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
 	<div class="elementor-panel-scheme-color-input-wrapper">
-		<input type="text" class="elementor-panel-scheme-color-value" value="{{{ value }}}" />
+		<input type="text" class="elementor-panel-scheme-color-value" value="{{ value }}" />
 	</div>
 	<div class="elementor-panel-scheme-color-title">{{{ title }}}</div>
 </script>

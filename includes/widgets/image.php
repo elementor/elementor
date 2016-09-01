@@ -328,7 +328,7 @@ class Widget_Image extends Widget_Base {
 	protected function content_template() {
 		?>
 		<# if ( '' !== settings.image.url ) { #>
-			<div class="elementor-image{{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}}">
+			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">
 				<#
 				var imgClass = '', image_html = '',
 					hasCaption = '' !== settings.caption,

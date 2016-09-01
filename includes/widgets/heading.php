@@ -180,9 +180,9 @@ class Widget_Heading extends Widget_Base {
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$url = sprintf( '<a href="%s">%s</a>', $instance['link']['url'], $instance['title'] );
-			$title_html = sprintf( '<#1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
+			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
 		} else {
-			$title_html = sprintf( '<#1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $instance['title'] );
+			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $instance['title'] );
 		}
 
 		echo $title_html;

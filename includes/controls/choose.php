@@ -16,9 +16,9 @@ class Control_Choose extends Control_Base {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<# _.each( data.options, function( options, value ) { #>
-					<input id="elementor-choose-{{{ data._cid + data.name + value }}}" type="radio" name="elementor-choose-{{{ data.name }}}" value="{{{ value }}}">
-					<label class="elementor-choices-label tooltip-target" for="elementor-choose-{{{ data._cid + data.name + value }}}" data-tooltip="{{{ options.title }}}" title="{{{ options.title }}}">
-						<i class="fa fa-{{{ options.icon }}}"></i>
+					<input id="elementor-choose-{{ data._cid + data.name + value }}" type="radio" name="elementor-choose-{{ data.name }}" value="{{ value }}">
+					<label class="elementor-choices-label tooltip-target" for="elementor-choose-{{ data._cid + data.name + value }}" data-tooltip="{{ options.title }}" title="{{ options.title }}">
+						<i class="fa fa-{{ options.icon }}"></i>
 					</label>
 					<# } ); #>
 				</div>

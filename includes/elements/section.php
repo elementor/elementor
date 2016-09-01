@@ -682,9 +682,9 @@ class Element_Section extends Element_Base {
 
 				<div class="elementor-background-video-container elementor-hidden-phone">
 					<# if ( videoID ) { #>
-						<div class="elementor-background-video" data-video-id="{{{ videoID }}}"></div>
+						<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
 					<# } else { #>
-						<video class="elementor-background-video" src="{{{ videoLink }}}" autoplay loop muted></video>
+						<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
 					<# } #>
 				</div>
 			<# }

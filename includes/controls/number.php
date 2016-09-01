@@ -14,7 +14,7 @@ class Control_Number extends Control_Base {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input type="number" min="{{{ data.min }}}" max="{{{ data.max }}}" step="{{{ data.step }}}" class="tooltip-target" data-tooltip="{{{ data.title }}}" title="{{{ data.title }}}" data-setting="{{{ data.name }}}" placeholder="{{{ data.placeholder }}}" />
+				<input type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
 			</div>
 		</div>
 		<# if ( data.description ) { #>

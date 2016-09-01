@@ -13,7 +13,7 @@ class Control_Checkbox extends Control_Base {
 		?>
 		<label class="elementor-control-title">
 			<span>{{{ data.label }}}</span>
-			<input type="checkbox" data-setting="{{{ data.name }}}" />
+			<input type="checkbox" data-setting="{{ data.name }}" />
 		</label>
 		<# if ( data.description ) { #>
 		<div class="elementor-control-description">{{{ data.description }}}</div>

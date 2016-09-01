@@ -13,7 +13,7 @@ class Control_Wysiwyg extends Control_Base {
 		?>
 		<label>
 			<span class="elementor-control-title">{{{ data.label }}}</span>
-			<textarea data-setting="{{{ data.name }}}"></textarea>
+			<textarea data-setting="{{ data.name }}"></textarea>
 		</label>
 		<?php
 	}
