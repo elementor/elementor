@@ -116,6 +116,11 @@ abstract class Element_Base {
 	public function add_responsive_control( $id, $args = [] ) {
 		// Desktop
 		$control_args = $args;
+
+		if ( ! empty( $args['prefix_class'] ) ) {
+			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '' );
+		}
+
 		$control_args['responsive'] = self::RESPONSIVE_DESKTOP;
 		$this->add_control(
 			$id,
@@ -124,10 +129,17 @@ abstract class Element_Base {
 
 		// Tablet
 		$control_args = $args;
-		$control_args['selectors'] = [];
-		foreach ( $args['selectors'] as $selector => $css_property ) {
-			$control_args['selectors'][ '.elementor-screen-md-max ' . $selector ] = $css_property;
+		if ( ! empty( $args['selectors'] ) ) {
+			$control_args['selectors'] = [];
+			foreach ( $args['selectors'] as $selector => $css_property ) {
+				$control_args['selectors'][ '.elementor-screen-md-max ' . $selector ] = $css_property;
+			}
 		}
+
+		if ( ! empty( $args['prefix_class'] ) ) {
+			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_TABLET );
+		}
+
 		$control_args['responsive'] = self::RESPONSIVE_TABLET;
 		$this->add_control(
 			$id . '_tablet',
@@ -136,9 +148,15 @@ abstract class Element_Base {
 
 		// Mobile
 		$control_args = $args;
-		$control_args['selectors'] = [];
-		foreach ( $args['selectors'] as $selector => $css_property ) {
-			$control_args['selectors'][ '.elementor-screen-sm-max ' . $selector ] = $css_property;
+		if ( ! empty( $args['selectors'] ) ) {
+			$control_args['selectors'] = [];
+			foreach ( $args['selectors'] as $selector => $css_property ) {
+				$control_args['selectors'][ '.elementor-screen-sm-max ' . $selector ] = $css_property;
+			}
+		}
+
+		if ( ! empty( $args['prefix_class'] ) ) {
+			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_MOBILE );
 		}
 
 		$control_args['responsive'] = self::RESPONSIVE_MOBILE;

@@ -77,7 +77,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -101,65 +101,7 @@ class Widget_Button extends Widget_Base {
 						'icon' => 'align-justify',
 					],
 				],
-				'prefix_class' => 'elementor-align-',
-				'default' => '',
-			]
-		);
-
-		$this->add_control(
-			'align_tablet',
-			[
-				'label' => __( 'Alignment (Tablet)', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_button',
-				'options' => [
-					'left'    => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
-					],
-				],
-				'prefix_class' => 'elementor-tablet-align-',
-				'default' => '',
-			]
-		);
-
-		$this->add_control(
-			'align_mobile',
-			[
-				'label' => __( 'Alignment (Mobile)', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_button',
-				'options' => [
-					'left'    => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
-					],
-				],
-				'prefix_class' => 'elementor-mobile-align-',
+				'prefix_class' => 'elementor%s-align-',
 				'default' => '',
 			]
 		);
