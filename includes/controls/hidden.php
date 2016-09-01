@@ -11,7 +11,7 @@ class Control_Hidden extends Control_Base {
 
 	public function content_template() {
 		?>
-		<input type="hidden" data-setting="<%= data.name %>" />
+		<input type="hidden" data-setting="{{{ data.name }}}" />
 		<?php
 	}
 }

@@ -11,10 +11,10 @@ class Control_Raw_html extends Control_Base {
 
 	public function content_template() {
 		?>
-		<% if ( data.label ) { %>
-		<span class="elementor-control-title"><%= data.label %></span>
-		<% } %>
-		<div class="elementor-control-raw-html <%- data.classes %>"><%= data.raw %></div>
+		<# if ( data.label ) { #>
+		<span class="elementor-control-title">{{{ data.label }}}</span>
+		<# } #>
+		<div class="elementor-control-raw-html {{ data.classes }}">{{{ data.raw }}}</div>
 		<?php
 	}
 

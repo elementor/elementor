@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
-		<i class="fa fa-<%= icon %>"></i>
+		<i class="fa fa-{{{ icon }}}"></i>
 	</div>
-	<div class="elementor-panel-menu-item-title"><%= title %></div>
+	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-header">
@@ -144,13 +144,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-tabs-controls">
 		<ul>
-			<% _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { %>
-			<li class="elementor-tab-control-<%- tabSlug %>">
-				<a href="#" data-tab="<%= tabSlug %>">
-					<%= tabTitle %>
+			<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
+			<li class="elementor-tab-control-{{ tabSlug }}">
+				<a href="#" data-tab="{{{ tabSlug }}}">
+					{{{ tabTitle }}}
 				</a>
 			</li>
-			<% } ); %>
+			<# } ); #>
 		</ul>
 	</div>
 	<div class="elementor-controls"></div>
@@ -233,14 +233,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<%= '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) %>
+	{{{ '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) }}}
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
 	<div class="elementor-panel-scheme-color-input-wrapper">
-		<input type="text" class="elementor-panel-scheme-color-value" value="<%= value %>" />
+		<input type="text" class="elementor-panel-scheme-color-value" value="{{{ value }}}" />
 	</div>
-	<div class="elementor-panel-scheme-color-title"><%= title %></div>
+	<div class="elementor-panel-scheme-color-title">{{{ title }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-typography-item">
@@ -248,7 +248,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-panel-heading-toggle">
 			<i class="fa"></i>
 		</div>
-		<div class="elementor-panel-heading-title"><%= title %></div>
+		<div class="elementor-panel-heading-title">{{{ title }}}</div>
 	</div>
 	<div class="elementor-panel-scheme-typography-items elementor-panel-box-content">
 		<?php

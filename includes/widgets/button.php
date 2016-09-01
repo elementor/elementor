@@ -376,15 +376,15 @@ class Widget_Button extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-button-wrapper elementor-align-<%- settings.align %>">
-			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %> elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
+		<div class="elementor-button-wrapper elementor-align-{{ settings.align }}">
+			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
 				<span class="elementor-button-content-wrapper">
-					<% if ( settings.icon ) { %>
-					<span class="elementor-button-icon elementor-align-icon-<%- settings.icon_align %>">
-						<i class="<%- settings.icon %>"></i>
+					<# if ( settings.icon ) { #>
+					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
+						<i class="{{ settings.icon }}"></i>
 					</span>
-					<% } %>
-					<span class="elementor-button-text"><%= settings.text %></span>
+					<# } #>
+					<span class="elementor-button-text">{{{ settings.text }}}</span>
 				</span>
 			</a>
 		</div>

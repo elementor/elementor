@@ -24,16 +24,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				</div>
 				<div id="elementor-select-preset-title"><?php _e( 'Select your Structure', 'elementor' ); ?></div>
 				<ul id="elementor-select-preset-list">
-					<%
+					<#
 					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
 
 					_.each( structures, function( structure ) {
-						var preset = elementor.presetsFactory.getPresetByStructure( structure ); %>
+						var preset = elementor.presetsFactory.getPresetByStructure( structure ); #>
 
-						<li class="elementor-preset elementor-column elementor-col-16" data-structure="<%- structure %>">
-							<%= elementor.presetsFactory.getPresetSVG( preset.preset ).outerHTML %>
+						<li class="elementor-preset elementor-column elementor-col-16" data-structure="{{ structure }}">
+							{{{ elementor.presetsFactory.getPresetSVG( preset.preset ).outerHTML }}}
 						</li>
-					<% } ); %>
+					<# } ); #>
 				</ul>
 			</div>
 		</div>
