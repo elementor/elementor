@@ -2,31 +2,6 @@
 // Button
 //
 
-.elementor-button-wrapper {
-
-	&.elementor-align- {
-
-		&center {
-			text-align: center;
-		}
-
-		&right {
-			text-align: right;
-		}
-
-		&left {
-			text-align: left;
-		}
-
-		&justify {
-
-			.elementor-button {
-				width: 100%;
-			}
-		}
-	}
-}
-
 .elementor-button {
 	display: inline-block;
 	line-height: 1;
