@@ -1626,6 +1626,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	ui: {
 		menuButtons: '.elementor-panel-footer-tool',
+		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
@@ -1709,14 +1710,16 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	changeDeviceMode: function( newDeviceMode ) {
-		if ( this.currentDeviceMode === newDeviceMode ) {
+		var oldDeviceMode = this.currentDeviceMode;
+
+		if ( oldDeviceMode === newDeviceMode ) {
 			return;
 		}
 
 		this.getCurrentDeviceModeButton().removeClass( 'active' );
 
 		Backbone.$( 'body' )
-		    .removeClass( 'elementor-device-' + this.currentDeviceMode )
+		    .removeClass( 'elementor-device-' + oldDeviceMode )
 		    .addClass( 'elementor-device-' + newDeviceMode );
 
 		this.currentDeviceMode = newDeviceMode;
@@ -1724,8 +1727,11 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this.getCurrentDeviceModeButton().addClass( 'active' );
 
 		elementor.channels.deviceMode
-		         .reply( 'currentMode', this.currentDeviceMode )
+		         .reply( 'currentMode', newDeviceMode )
 		         .trigger( 'change' );
+
+		// Change the footer icon
+		this.ui.deviceModeIcon.removeClass( 'fa-' + oldDeviceMode ).addClass( 'fa-' + newDeviceMode );
 	},
 
 	getCurrentDeviceModeButton: function() {

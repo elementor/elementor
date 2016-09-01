@@ -101,6 +101,65 @@ class Widget_Button extends Widget_Base {
 						'icon' => 'align-justify',
 					],
 				],
+				'prefix_class' => 'elementor-align-',
+				'default' => '',
+			]
+		);
+
+		$this->add_control(
+			'align_tablet',
+			[
+				'label' => __( 'Alignment (Tablet)', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'section' => 'section_button',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'align-justify',
+					],
+				],
+				'prefix_class' => 'elementor-tablet-align-',
+				'default' => '',
+			]
+		);
+
+		$this->add_control(
+			'align_mobile',
+			[
+				'label' => __( 'Alignment (Mobile)', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'section' => 'section_button',
+				'options' => [
+					'left'    => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'align-right',
+					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'align-justify',
+					],
+				],
+				'prefix_class' => 'elementor-mobile-align-',
 				'default' => '',
 			]
 		);
@@ -328,9 +387,9 @@ class Widget_Button extends Widget_Base {
 	protected function render( $instance = [] ) {
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
-		if ( ! empty( $instance['align'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-align-' . $instance['align'] );
-		}
+		//if ( ! empty( $instance['align'] ) ) {
+		//	$this->add_render_attribute( 'wrapper', 'class', 'elementor-align-' . $instance['align'] );
+		//}
 
 		if ( ! empty( $instance['link']['url'] ) ) {
 			$this->add_render_attribute( 'button', 'href', $instance['link']['url'] );
@@ -376,7 +435,7 @@ class Widget_Button extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-button-wrapper elementor-align-<%- settings.align %>">
+		<div class="elementor-button-wrapper">
 			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %> elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
 				<span class="elementor-button-content-wrapper">
 					<% if ( settings.icon ) { %>
