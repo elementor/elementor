@@ -22,6 +22,13 @@
   clip: rect(0, 0, 0, 0);
   border: 0; }
 
+.elementor-clearfix:after {
+  content: '';
+  display: block;
+  clear: both;
+  width: 0;
+  height: 0; }
+
 *, :before, :after {
   margin: 0;
   padding: 0;
@@ -988,8 +995,6 @@ select {
         background-color: #a4afb7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-choices, #elementor-panel #elementor-panel-page-editor .elementor-control-align .elementor-choices, #elementor-panel #elementor-panel-page-editor .elementor-control-position .elementor-choices {
     direction: ltr; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-slider .elementor-control-input-wrapper {
-    overflow: hidden; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
