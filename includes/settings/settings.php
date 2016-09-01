@@ -136,7 +136,7 @@ class Settings {
 			'lg' => __( 'Tablet Breakpoint', 'elementor' ),
 		];
 
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_name => $breakpoint_value ) {
+		foreach ( array_reverse( Responsive::get_editable_breakpoints() ) as $breakpoint_name => $breakpoint_value ) {
 			$field_id = 'elementor_viewport_' . $breakpoint_name;
 
 			add_settings_field(
