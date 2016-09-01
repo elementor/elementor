@@ -61,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
-		<div class="elementor-template-library-template-screenshot" style="background-image: url(<%- thumbnail %>);"></div>
+		<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
 		<div class="elementor-template-library-template-controls">
 			<div class="elementor-template-library-template-preview">
 				<i class="fa fa-search-plus"></i>
@@ -72,21 +72,21 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</button>
 		</div>
 	</div>
-	<div class="elementor-template-library-template-name"><%= title %></div>
+	<div class="elementor-template-library-template-name">{{{ title }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
 	<div class="elementor-template-library-template-icon">
-		<i class="fa fa-<%- 'section' === type ? 'columns' : 'file-text-o' %>"></i>
+		<i class="fa fa-{{ 'section' === type ? 'columns' : 'file-text-o' }}"></i>
 	</div>
-	<div class="elementor-template-library-template-name"><%= title %></div>
-	<div class="elementor-template-library-template-type"><%= elementor.translate( type ) %></div>
+	<div class="elementor-template-library-template-name">{{{ title }}}</div>
+	<div class="elementor-template-library-template-type">{{{ elementor.translate( type ) }}}</div>
 	<div class="elementor-template-library-template-controls">
 		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
 			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-template-library-template-export">
-			<a href="<%- export_link %>">
+			<a href="{{ export_link }}">
 				<i class="fa fa-sign-out"></i><span class="elementor-template-library-template-control-title"><?php echo __( 'Export', 'elementor' ); ?></span>
 			</a>
 		</div>
@@ -100,7 +100,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
-	<div class="elementor-template-library-blank-title"><%= elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) %></div>
+	<div class="elementor-template-library-blank-title">{{{ elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) }}}</div>
 	<div class="elementor-template-library-blank-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
 	<form id="elementor-template-library-save-template-form">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>

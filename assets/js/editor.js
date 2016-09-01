@@ -84,7 +84,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var currentIndex = this.view.collection.indexOf( childView.model ),
+		var currentIndex = 'section' === childView.model.get( 'elType' ) ? childView.$el.index() + 1 : this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
 		this.view.addChildModel( newModel, { at: currentIndex } );
@@ -1185,6 +1185,16 @@ module.exports = TemplateLibraryTemplateRemoteView;
 },{"elementor-templates/views/template/base":24}],27:[function(require,module,exports){
 /* global ElementorConfig */
 var App;
+
+Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
+	options = {
+		evaluate: /<#([\s\S]+?)#>/g,
+		interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
+		escape: /\{\{([^\}]+?)\}\}(?!\})/g
+	};
+
+	return _.template( rawTemplate, options );
+};
 
 App = Marionette.Application.extend( {
 	helpers: require( 'elementor-utils/helpers' ),

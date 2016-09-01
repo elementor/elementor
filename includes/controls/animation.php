@@ -75,9 +75,9 @@ class Control_Animation extends Control_Base {
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><%= data.label %></label>
+			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<select data-setting="<%= data.name %>">
+				<select data-setting="{{ data.name }}">
 					<option value=""><?php _e( 'None', 'elementor' ); ?></option>
 					<?php foreach ( self::get_animations() as $animations_group_name => $animations_group ) : ?>
 						<optgroup label="<?php echo $animations_group_name; ?>">
@@ -89,9 +89,9 @@ class Control_Animation extends Control_Base {
 				</select>
 			</div>
 		</div>
-		<% if ( data.description ) { %>
-		<div class="elementor-control-description"><%= data.description %></div>
-		<% } %>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 }

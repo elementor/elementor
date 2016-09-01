@@ -1,6 +1,16 @@
 /* global ElementorConfig */
 var App;
 
+Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
+	options = {
+		evaluate: /<#([\s\S]+?)#>/g,
+		interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
+		escape: /\{\{([^\}]+?)\}\}(?!\})/g
+	};
+
+	return _.template( rawTemplate, options );
+};
+
 App = Marionette.Application.extend( {
 	helpers: require( 'elementor-utils/helpers' ),
 	heartbeat: require( 'elementor-utils/heartbeat' ),

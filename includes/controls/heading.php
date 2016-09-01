@@ -17,7 +17,7 @@ class Control_Heading extends Control_Base {
 
 	public function content_template() {
 		?>
-		<h3 class="elementor-control-title"><%= data.label %></h3>
+		<h3 class="elementor-control-title">{{ data.label }}</h3>
 		<?php
 	}
 }

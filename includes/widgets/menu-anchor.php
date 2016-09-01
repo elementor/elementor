@@ -61,7 +61,7 @@ class Widget_Menu_anchor extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-menu-anchor"<%= settings.anchor ? ' id="' + settings.anchor + '"' : '' %>></div>
+		<div class="elementor-menu-anchor"{{{ settings.anchor ? ' id="' + settings.anchor + '"' : '' }}}></div>
 		<?php
 	}
 }

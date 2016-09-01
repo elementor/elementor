@@ -419,7 +419,7 @@ class Widget_Image_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<%
+		<#
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
@@ -457,7 +457,7 @@ class Widget_Image_box extends Widget_Base {
 		html += '</div>';
 
 		print( html );
-		%>
+		#>
 		<?php
 	}
 }

@@ -122,7 +122,7 @@ class Widget_Text_editor extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-text-editor"><%= settings.editor %></div>
+		<div class="elementor-text-editor">{{{ settings.editor }}}</div>
 		<?php
 	}
 }

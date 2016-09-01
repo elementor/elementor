@@ -233,7 +233,7 @@ class Widget_Progress extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<%
+		<#
 		var html = '';
 
 		if ( '' !== settings.title ) {
@@ -260,7 +260,7 @@ class Widget_Progress extends Widget_Base {
 		html += '</span></div>';
 
 		print( html );
-		%>
+		#>
 		<?php
 	}
 }
