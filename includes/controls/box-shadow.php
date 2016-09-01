@@ -31,7 +31,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 
 	public function content_template() {
 		?>
-		<%
+		<#
 		var defaultColorValue = '';
 
 		if ( data.default.color ) {
@@ -43,11 +43,11 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 
 			defaultColorValue = ' data-default-color=' + defaultColorValue; // Quotes added automatically.
 		}
-		%>
+		#>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title"><?php _e( 'Color', 'elementor' ); ?></label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="color" class="elementor-box-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"<%= defaultColorValue %> />
+				<input data-setting="color" class="elementor-box-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
 			</div>
 		</div>
 		<?php foreach ( $this->get_sliders() as $slider ) : ?>
@@ -56,7 +56,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 				<div class="elementor-control-input-wrapper">
 					<div class="elementor-slider" data-input="<?php echo $slider['type']; ?>"></div>
 					<div class="elementor-slider-input">
-						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" step="<%- data.step %>" data-setting="<?php echo $slider['type']; ?>"/>
+						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" step="{{ data.step }}" data-setting="<?php echo $slider['type']; ?>"/>
 					</div>
 				</div>
 			</div>

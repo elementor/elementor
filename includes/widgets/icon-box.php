@@ -544,19 +544,19 @@ class Widget_Icon_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconTag = link ? 'a' : 'span'; %>
+		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconTag = link ? 'a' : 'span'; #>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
-				<<%= iconTag + ' ' + link %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>">
-					<i class="<%- settings.icon %>"></i>
-				</<%= iconTag %>>
+				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
+					<i class="{{ settings.icon }}"></i>
+				</{{{ iconTag }}}>
 			</div>
 			<div class="elementor-icon-box-content">
-				<<%= settings.title_size %> class="elementor-icon-box-title">
-					<<%= iconTag + ' ' + link %>><%= settings.title_text %></<%= iconTag %>>
-				</<%= settings.title_size %>>
-				<p class="elementor-icon-box-description"><%= settings.description_text %></p>
+				<{{{ settings.title_size }}} class="elementor-icon-box-title">
+					<{{{ iconTag + ' ' + link }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
+				</{{{ settings.title_size }}}>
+				<p class="elementor-icon-box-description">{{{ settings.description_text }}}</p>
 			</div>
 		</div>
 		<?php

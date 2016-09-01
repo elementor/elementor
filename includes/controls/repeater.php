@@ -35,7 +35,7 @@ class Control_Repeater extends Control_Base {
 	public function content_template() {
 		?>
 		<label>
-			<span class="elementor-control-title"><%= data.label %></span>
+			<span class="elementor-control-title">{{{ data.label }}}</span>
 		</label>
 		<div class="elementor-repeater-fields"></div>
 		<div class="elementor-button-wrapper">

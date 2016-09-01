@@ -358,7 +358,7 @@ class Widget_Testimonial extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<%
+		<#
 		var imageUrl = false, hasImage = '';
 		if ( '' !== settings.testimonial_image.url ) {
 			imageUrl = settings.testimonial_image.url;
@@ -367,36 +367,36 @@ class Widget_Testimonial extends Widget_Base {
 
 		var testimonial_alignment = settings.testimonial_alignment ? ' elementor-testimonial-text-align-' + settings.testimonial_alignment : '';
 		var testimonial_image_position = settings.testimonial_image_position ? ' elementor-testimonial-image-position-' + settings.testimonial_image_position : '';
-		%>
-		<div class="elementor-testimonial-wrapper<%- testimonial_alignment %>">
+		#>
+		<div class="elementor-testimonial-wrapper{{ testimonial_alignment }}">
 
-			<% if ( '' !== settings.testimonial_content ) { %>
+			<# if ( '' !== settings.testimonial_content ) { #>
 				<div class="elementor-testimonial-content">
-					<%= settings.testimonial_content %>
+					{{{ settings.testimonial_content }}}
 				</div>
-		    <% } %>
+		    <# } #>
 
-			<div class="elementor-testimonial-meta<%- hasImage %><%- testimonial_image_position %>">
+			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">
-					<% if ( imageUrl ) { %>
+					<# if ( imageUrl ) { #>
 					<div class="elementor-testimonial-image">
-						<img src="<%- imageUrl %>" alt="testimonial" />
+						<img src="{{ imageUrl }}" alt="testimonial" />
 					</div>
-					<% } %>
+					<# } #>
 
 					<div class="elementor-testimonial-details">
 
-						<% if ( '' !== settings.testimonial_name ) { %>
+						<# if ( '' !== settings.testimonial_name ) { #>
 						<div class="elementor-testimonial-name">
-							<%= settings.testimonial_name %>
+							{{{ settings.testimonial_name }}}
 						</div>
-						<% } %>
+						<# } #>
 
-						<% if ( '' !== settings.testimonial_job ) { %>
+						<# if ( '' !== settings.testimonial_job ) { #>
 						<div class="elementor-testimonial-job">
-							<%= settings.testimonial_job %>
+							{{{ settings.testimonial_job }}}
 						</div>
-						<% } %>
+						<# } #>
 
 					</div>
 				</div>

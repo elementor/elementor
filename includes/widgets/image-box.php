@@ -402,7 +402,7 @@ class Widget_Image_box extends Widget_Base {
 					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
 				}
 
-				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
+				$html .= sprintf( '<#1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
 			}
 
 			if ( ! empty( $instance['description_text'] ) ) {
@@ -419,7 +419,7 @@ class Widget_Image_box extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<%
+		<#
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
@@ -457,7 +457,7 @@ class Widget_Image_box extends Widget_Base {
 		html += '</div>';
 
 		print( html );
-		%>
+		#>
 		<?php
 	}
 }

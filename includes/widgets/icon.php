@@ -352,12 +352,12 @@ class Widget_Icon extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconTag = link ? 'a' : 'div'; %>
+		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconTag = link ? 'a' : 'div'; #>
 		<div class="elementor-icon-wrapper">
-			<<%= iconTag %> class="elementor-icon elementor-animation-<%- settings.hover_animation %>" <%= link %>>
-				<i class="<%- settings.icon %>"></i>
-			</<%= iconTag %>>
+			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
+				<i class="{{ settings.icon }}"></i>
+			</{{{ iconTag }}}>
 		</div>
 		<?php
 	}
