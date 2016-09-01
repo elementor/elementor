@@ -111,8 +111,6 @@ html.elementor-html {
       text-align: center;
       padding: 0;
       margin: 0; }
-      .elementor-screen-md-max.elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-setting:not(.elementor-editor-element-edit) {
-        display: none; }
       .elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-setting > a {
         padding: 8.5px 0;
         display: inline-block;
