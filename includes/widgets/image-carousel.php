@@ -492,6 +492,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
+			// Allow themes to modify the individual slider HTML layout.
+			$image_html = apply_filters('elementor/widgets/image_carousel/image_html', $image_html, $instance, $attachment);
+
 			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '</div></div>';
 		}
 
@@ -516,6 +519,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			'dots' => $show_dots,
 			'rtl' => $is_rtl,
 		];
+
+		// Allow themes to change slick slider options.
+		$slick_options = apply_filters('elementor/widgets/image_carousel/slick_options', $slick_options, $instance);
 
 		$carousel_classes = [ 'elementor-image-carousel' ];
 
