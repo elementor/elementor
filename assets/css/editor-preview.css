@@ -3,7 +3,8 @@ body.layout-section .entry-content {
   overflow: visible; }
 
 #elementor .animated {
-  animation-fill-mode: none !important; }
+  -webkit-animation-fill-mode: none !important;
+          animation-fill-mode: none !important; }
 #elementor .elementor-editor-element-settings-list {
   word-break: normal; }
 
@@ -66,8 +67,10 @@ html.elementor-html {
   .elementor-screen-md-max.elementor-editor-active #elementor .elementor-element > .elementor-element-overlay .column-title {
     display: none; }
   .elementor-editor-active #elementor .elementor-element[data-side] {
-    animation: increase-border .6s;
-    animation-timing-function: ease-out; }
+    -webkit-animation: increase-border .6s;
+            animation: increase-border .6s;
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out; }
   .elementor-editor-active #elementor .elementor-element[data-side="top"], .elementor-editor-active #elementor .elementor-element[data-side="bottom"] + .elementor-element {
     border-top: 4px solid #71d7f7; }
   .elementor-editor-active #elementor .elementor-element[data-side="bottom"]:last-child {
@@ -125,7 +128,8 @@ html.elementor-html {
     z-index: 1;
     bottom: 100%;
     margin-bottom: 1px;
-    transform: translateY(1px);
+    -webkit-transform: translateY(1px);
+            transform: translateY(1px);
     border-radius: 3px 3px 0 0; }
     .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-settings-list {
       float: left;
@@ -224,6 +228,7 @@ html.elementor-html {
 .elementor-editor-active .elementor-widget.elementor-loading {
   opacity: .3; }
 .elementor-editor-active .elementor-widget:not(.elementor-loading):not(.elementor-widget-menu-anchor) {
+  -webkit-transition: all .1s;
   transition: all .1s; }
 .elementor-editor-active .elementor-widget.elementor-element-editable, .elementor-editor-active .elementor-widget:hover {
   outline: 1px solid #71d7f7; }
@@ -235,7 +240,8 @@ html.elementor-html {
   display: none; }
 .elementor-editor-active .elementor-sortable-placeholder {
   background: #71d7f7;
-  transition-timing-function: ease-out; }
+  -webkit-transition-timing-function: ease-out;
+          transition-timing-function: ease-out; }
   .elementor-editor-active .elementor-sortable-placeholder:not(.elementor-column) {
     height: 5px; }
   .elementor-editor-active .elementor-sortable-placeholder.elementor-column {
