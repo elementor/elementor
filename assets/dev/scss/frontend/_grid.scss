@@ -11,9 +11,14 @@
 		margin-right: auto;
 		margin-left: auto;
 		position: relative;
-		max-width: 1140px;
-
-		&.elementor-container-fluid {
+	}
+	&.elementor-section-boxed{
+		.elementor-container{
+			max-width: 1140px;
+		}
+	}
+	&.elementor-section-full_width{
+		.elementor-container{
 			max-width: 100%;
 		}
 	}

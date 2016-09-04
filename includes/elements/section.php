@@ -114,6 +114,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-section-',
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
