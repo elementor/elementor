@@ -244,21 +244,21 @@ class Widget_Toggle extends Widget_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-toggle">
-			<%
+			<#
 			if ( settings.tabs ) {
 				var counter = 1;
-				_.each(settings.tabs, function(item){ %>
-					<div class="elementor-toggle-title" data-tab="<% counter %>">
+				_.each(settings.tabs, function( item ) { #>
+					<div class="elementor-toggle-title" data-tab="{{ counter }}">
 						<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
-						<%= item.tab_title %>
+						{{{ item.tab_title }}}
 					</div>
-					<div class="elementor-toggle-content" data-tab="<% counter %>"><%= item.tab_content %></div>
-				<%
+					<div class="elementor-toggle-content" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+				<#
 					counter++;
 				} );
-			} %>
+			} #>
 		</div>
 		<?php
 	}

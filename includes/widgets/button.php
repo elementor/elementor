@@ -77,7 +77,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -101,65 +101,7 @@ class Widget_Button extends Widget_Base {
 						'icon' => 'align-justify',
 					],
 				],
-				'prefix_class' => 'elementor-align-',
-				'default' => '',
-			]
-		);
-
-		$this->add_control(
-			'align_tablet',
-			[
-				'label' => __( 'Alignment (Tablet)', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_button',
-				'options' => [
-					'left'    => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
-					],
-				],
-				'prefix_class' => 'elementor-tablet-align-',
-				'default' => '',
-			]
-		);
-
-		$this->add_control(
-			'align_mobile',
-			[
-				'label' => __( 'Alignment (Mobile)', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_button',
-				'options' => [
-					'left'    => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
-					],
-				],
-				'prefix_class' => 'elementor-mobile-align-',
+				'prefix_class' => 'elementor%s-align-',
 				'default' => '',
 			]
 		);
@@ -436,14 +378,14 @@ class Widget_Button extends Widget_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-button-<%- settings.button_type %> elementor-size-<%- settings.size %> elementor-animation-<%- settings.hover_animation %>" href="<%- settings.link.url %>">
+			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
 				<span class="elementor-button-content-wrapper">
-					<% if ( settings.icon ) { %>
-					<span class="elementor-button-icon elementor-align-icon-<%- settings.icon_align %>">
-						<i class="<%- settings.icon %>"></i>
+					<# if ( settings.icon ) { #>
+					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
+						<i class="{{ settings.icon }}"></i>
 					</span>
-					<% } %>
-					<span class="elementor-button-text"><%= settings.text %></span>
+					<# } #>
+					<span class="elementor-button-text">{{{ settings.text }}}</span>
 				</span>
 			</a>
 		</div>

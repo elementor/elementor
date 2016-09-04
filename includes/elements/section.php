@@ -674,30 +674,30 @@ class Element_Section extends Element_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( 'video' === settings.background_background ) {
+		<# if ( 'video' === settings.background_background ) {
 			var videoLink = settings.background_video_link;
 
 			if ( videoLink ) {
-				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); %>
+				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); #>
 
 				<div class="elementor-background-video-container elementor-hidden-phone">
-					<% if ( videoID ) { %>
-						<div class="elementor-background-video" data-video-id="<%= videoID %>"></div>
-					<% } else { %>
-						<video class="elementor-background-video" src="<%= videoLink %>" autoplay loop muted></video>
-					<% } %>
+					<# if ( videoID ) { #>
+						<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
+					<# } else { #>
+						<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
+					<# } #>
 				</div>
-			<% }
+			<# }
 
-			if ( settings.background_video_fallback ) { %>
-				<div class="elementor-background-video-fallback" style="background-image: url(<%- settings.background_video_fallback.url %>)"></div>
-			<% }
+			if ( settings.background_video_fallback ) { #>
+				<div class="elementor-background-video-fallback" style="background-image: url({{ settings.background_video_fallback.url }})"></div>
+			<# }
 		}
 
-		if ( 'classic' === settings.background_overlay_background ) { %>
+		if ( 'classic' === settings.background_overlay_background ) { #>
 			<div class="elementor-background-overlay"></div>
-		<% } %>
-		<div class="elementor-container elementor-column-gap-<%- settings.gap %>">
+		<# } #>
+		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
 		<?php

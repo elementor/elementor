@@ -36,7 +36,7 @@ class Control_Dimensions extends Control_Base_Units {
 		];
 		?>
 		<label class="elementor-control-title">
-			<%= data.label %>
+			{{{ data.label }}}
 			<?php $this->print_units_template(); ?>
 		</label>
 		<div class="elementor-control-input-wrapper">
@@ -44,17 +44,17 @@ class Control_Dimensions extends Control_Base_Units {
 				<?php foreach ( $dimensions as $dimension_key => $dimension_title ) : ?>
 					<li class="elementor-control-dimension">
 						<input type="number" data-setting="<?php echo esc_attr( $dimension_key ); ?>"
-						       placeholder="<%
+						       placeholder="<#
 						       if ( _.isObject( data.placeholder ) ) {
 						        if ( ! _.isUndefined( data.placeholder.<?php echo $dimension_key; ?> ) ) {
 						            print( data.placeholder.<?php echo $dimension_key; ?> );
 						        }
 						       } else {
 						        print( data.placeholder );
-						       } %>"
-						<% if ( -1 === _.indexOf( allowed_dimensions, '<?php echo $dimension_key; ?>' ) ) { %>
+						       } #>"
+						<# if ( -1 === _.indexOf( allowed_dimensions, '<?php echo $dimension_key; ?>' ) ) { #>
 						disabled
-						<% } %>
+						<# } #>
 						/>
 						<span><?php echo $dimension_title; ?></span>
 					</li>
@@ -67,9 +67,9 @@ class Control_Dimensions extends Control_Base_Units {
 				</li>
 			</ul>
 		</div>
-		<% if ( data.description ) { %>
-		<div class="elementor-control-description"><%= data.description %></div>
-		<% } %>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 }

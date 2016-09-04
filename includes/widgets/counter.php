@@ -183,7 +183,7 @@ class Widget_Counter extends Widget_Base {
 		?>
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
-				<%
+				<#
 				var prefix = '',
 					suffix = '';
 
@@ -198,11 +198,11 @@ class Widget_Counter extends Widget_Base {
 				}
 
 				print( prefix + duration + suffix );
-				%>
+				#>
 			</div>
-			<% if ( settings.title ) { %>
-				<div class="elementor-counter-title"><%= settings.title %></div>
-			<% } %>
+			<# if ( settings.title ) { #>
+				<div class="elementor-counter-title">{{{ settings.title }}}</div>
+			<# } #>
 		</div>
 		<?php
 	}

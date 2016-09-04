@@ -43,22 +43,22 @@ class Control_Media extends Control_Base_Multiple {
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><%= data.label %></label>
+			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<% if ( data.description ) { %>
-				<div class="elementor-control-description"><%= data.description %></div>
-				<% } %>
+				<# if ( data.description ) { #>
+				<div class="elementor-control-description">{{{ data.description }}}</div>
+				<# } #>
 				<div class="elementor-control-media">
 					<div class="elementor-control-media-upload-button">
 						<i class="fa fa-plus-circle"></i>
 					</div>
 					<div class="elementor-control-media-image-area">
-						<div class="elementor-control-media-image" style="background-image: url(<%= data.controlValue.url %>);"></div>
+						<div class="elementor-control-media-image" style="background-image: url({{ data.controlValue.url }});"></div>
 						<div class="elementor-control-media-delete"><?php _e( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
 			</div>
-			<input type="hidden" data-setting="<%= data.name %>" />
+			<input type="hidden" data-setting="{{ data.name }}" />
 		</div>
 		<?php
 	}

@@ -651,19 +651,19 @@ class Control_Icon extends Control_Base {
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><%= data.label %></label>
+			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<select class="elementor-control-icon" data-setting="<%= data.name %>" data-placeholder="<?php _e( 'Select Icon', 'elementor' ); ?>">
+				<select class="elementor-control-icon" data-setting="{{ data.name }}" data-placeholder="<?php _e( 'Select Icon', 'elementor' ); ?>">
 					<option value=""><?php _e( 'Select Icon', 'elementor' ); ?></option>
-					<% _.each( data.icons, function( option_title, option_value ) { %>
-					<option value="<%= option_value %>"><%= option_title %></option>
-					<% } ); %>
+					<# _.each( data.icons, function( option_title, option_value ) { #>
+					<option value="{{ option_value }}">{{{ option_title }}}</option>
+					<# } ); #>
 				</select>
 			</div>
 		</div>
-		<% if ( data.description ) { %>
-		<div class="elementor-control-description"><%= data.description %></div>
-		<% } %>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-description">{{ data.description }}</div>
+		<# } #>
 		<?php
 	}
 }
