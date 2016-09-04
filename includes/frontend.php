@@ -20,7 +20,7 @@ class Frontend {
 			return;
 		}
 
-		$this->stylesheet = new Stylesheet();
+		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
@@ -30,6 +30,14 @@ class Frontend {
 
 		// Add Edit with the Elementor in Admin Bar
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
+	}
+
+	private function _init_stylesheet() {
+		$this->stylesheet = new Stylesheet();
+
+		$this->stylesheet
+			->add_device( 'mobile', 767 )
+			->add_device( 'tablet', 1023 );
 	}
 
 	protected function _print_section( $section_data ) {
