@@ -5161,6 +5161,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		this.$el.addClass( elClasses );
+		this.renderResponsiveSwitchers();
 
 		this.triggerMethod( 'ready' );
 		this.toggleControlVisibility();
@@ -5170,6 +5171,16 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.updateElementModel( event );
 
 		this.triggerMethod( 'input:change', event );
+	},
+
+	renderResponsiveSwitchers: function() {
+		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
+			return;
+		}
+
+		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switcher' ).html();
+
+		this.$el.find( 'label.elementor-control-title' ).after( templateHtml );
 	},
 
 	toggleControlVisibility: function() {
