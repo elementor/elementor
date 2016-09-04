@@ -12,14 +12,11 @@
 		margin-left: auto;
 		position: relative;
 	}
-	&.elementor-section-boxed{
-		.elementor-container{
+
+	// Max-width of container depending on section settings
+	&.elementor-section-boxed {
+		& > .elementor-container {
 			max-width: 1140px;
-		}
-	}
-	&.elementor-section-full_width{
-		.elementor-container{
-			max-width: 100%;
 		}
 	}
 

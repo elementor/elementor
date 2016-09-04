@@ -126,10 +126,8 @@
     margin-right: auto;
     margin-left: auto;
     position: relative; }
-  .elementor-section.elementor-section-boxed .elementor-container {
+  .elementor-section.elementor-section-boxed > .elementor-container {
     max-width: 1140px; }
-  .elementor-section.elementor-section-full_width .elementor-container {
-    max-width: 100%; }
   .elementor-section.elementor-section-items-top > .elementor-container {
     -ms-flex-align: start;
         -ms-grid-row-align: flex-start;
