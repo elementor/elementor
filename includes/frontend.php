@@ -298,7 +298,9 @@ class Frontend {
 					continue;
 				}
 
-				$this->stylesheet->add_rules( $output_selector, $output_css_property );
+				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
+
+				$this->stylesheet->add_rules( $output_selector, $output_css_property, $device );
 			}
 		}
 

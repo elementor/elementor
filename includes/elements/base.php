@@ -129,12 +129,6 @@ abstract class Element_Base {
 
 		// Tablet
 		$control_args = $args;
-		if ( ! empty( $args['selectors'] ) ) {
-			$control_args['selectors'] = [];
-			foreach ( $args['selectors'] as $selector => $css_property ) {
-				$control_args['selectors'][ '.elementor-screen-md-max ' . $selector ] = $css_property;
-			}
-		}
 
 		if ( ! empty( $args['prefix_class'] ) ) {
 			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_TABLET );
@@ -148,12 +142,6 @@ abstract class Element_Base {
 
 		// Mobile
 		$control_args = $args;
-		if ( ! empty( $args['selectors'] ) ) {
-			$control_args['selectors'] = [];
-			foreach ( $args['selectors'] as $selector => $css_property ) {
-				$control_args['selectors'][ '.elementor-screen-sm-max ' . $selector ] = $css_property;
-			}
-		}
 
 		if ( ! empty( $args['prefix_class'] ) ) {
 			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_MOBILE );
