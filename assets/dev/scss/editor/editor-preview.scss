@@ -106,7 +106,7 @@ html.elementor-html {
 				}
 			}
 
-			@at-root .elementor-screen-md-max#{&} {
+			@media (max-width: $screen-md-max) {
 
 				> .elementor-element-overlay {
 
@@ -139,7 +139,7 @@ html.elementor-html {
 
 					&.elementor-element-empty {
 
-						@at-root .elementor-screen-md-min#{&} {
+						@media (min-width: $screen-md-min) {
 
 							&, .elementor-widget-wrap {
 								position: absolute;
@@ -351,7 +351,7 @@ html.elementor-html {
 
 			&:not(.elementor-editor-element-edit) {
 
-				@at-root .elementor-screen-md-max#{&} {
+				@media (max-width: $screen-md-max) {
 					display: none;
 				}
 			}
@@ -449,7 +449,7 @@ html.elementor-html {
 				}
 			}
 
-			@at-root .elementor-screen-md-max#{&} {
+			@media (max-width: $screen-md-max) {
 				> .ui-resizable-e, > .ui-resizable-w {
 					display: none !important;
 				}
@@ -473,7 +473,7 @@ html.elementor-html {
 
 			.elementor-widget-wrap {
 
-				@at-root .elementor-screen-md-min#{&} {
+				@media (min-width: $screen-md-min) {
 					padding: 10px;
 				}
 			}
