@@ -9,10 +9,25 @@ class Stylesheet {
 
 	private $devices = [];
 
+	/**
+	 * @param string $device_name
+	 * @param string $device_max_point
+	 *
+	 * @return $this
+	 */
 	public function add_device( $device_name, $device_max_point ) {
 		$this->devices[ $device_name ] = $device_max_point;
+
+		return $this;
 	}
 
+	/**
+	 * @param string $selector
+	 * @param array|string $rules
+	 * @param string $device
+	 *
+	 * @return $this
+	 */
 	public function add_rules( $selector, $rules, $device = 'desktop' ) {
 		if ( ! isset( $this->rules[ $device ][ $selector ] ) ) {
 			$this->rules[ $device ][ $selector ] = [];
@@ -21,10 +36,18 @@ class Stylesheet {
 		if ( is_string( $rules ) ) {
 			$rules = explode( ';', $rules );
 		}
+
 		$this->rules[ $device ][ $selector ] = array_merge( $this->rules[ $device ][ $selector ], $rules );
+
+		return $this;
 	}
 
-	public function parse_rules( $rules ) {
+	/**
+	 * @param array $rules
+	 *
+	 * @return string
+	 */
+	public function parse_rules( array $rules ) {
 		$parsed_rules = '';
 
 		foreach ( $rules as $selector => $properties ) {
@@ -38,7 +61,12 @@ class Stylesheet {
 		return $parsed_rules;
 	}
 
-	public function parse_properties( $properties ) {
+	/**
+	 * @param array $properties
+	 *
+	 * @return string
+	 */
+	public function parse_properties( array $properties ) {
 		$parsed_properties = '';
 
 		foreach ( $properties as $property_key => $property_value ) {
