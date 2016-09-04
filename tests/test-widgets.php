@@ -43,13 +43,12 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 
 	public function test_controlsSelectorsData() {
 		$wrapper_text = '{{WRAPPER}}';
-		$wrapper_text_length = strlen( $wrapper_text );
 
 		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
 			foreach ( $widget->get_style_controls() as $control ) {
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					foreach ( explode( ',', $selector ) as $item ) {
-						$this->assertEquals( $wrapper_text, substr( trim( $item ), 0, $wrapper_text_length ) );
+						$this->assertTrue( false !== strpos( $item, $wrapper_text ) );
 					}
 				}
 			}
