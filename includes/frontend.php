@@ -144,7 +144,6 @@ class Frontend {
 			'elementor-frontend',
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
-				'viewportBreakpoints' => Responsive::get_breakpoints(),
 			]
 		);
 	}
