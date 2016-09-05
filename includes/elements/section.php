@@ -114,6 +114,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-section-',
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
@@ -664,6 +665,23 @@ class Element_Section extends Element_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'reverse_order_mobile',
+			[
+				'label' => __( 'Reverse column order on Mobile', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'options' => [
+					'' => __( 'No', 'elementor' ),
+					'reverse-mobile' => __( 'Yes', 'elementor' ),
+				],
+			]
+		);
+
 	}
 
 	protected function render_settings() {

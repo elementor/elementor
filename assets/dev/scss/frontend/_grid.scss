@@ -11,10 +11,12 @@
 		margin-right: auto;
 		margin-left: auto;
 		position: relative;
-		max-width: 1140px;
+	}
 
-		&.elementor-container-fluid {
-			max-width: 100%;
+	// Max-width of container depending on section settings
+	&.elementor-section-boxed {
+		& > .elementor-container {
+			max-width: 1140px;
 		}
 	}
 
@@ -213,5 +215,9 @@
 @media (max-width: $screen-sm-max) {
 	.elementor-column {
 		width: 100%;
+	}
+
+	.elementor-reverse-mobile > .elementor-container > .elementor-row {
+		flex-direction: column-reverse;
 	}
 }
