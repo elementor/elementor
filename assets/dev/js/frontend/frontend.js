@@ -1,8 +1,7 @@
 /* global elementorFrontendConfig */
 ( function( $ ) {
 	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	    Utils = require( 'elementor-frontend/utils' ),
-		Viewport = require( 'elementor-frontend/viewport' );
+	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
 		var self = this,
@@ -55,8 +54,6 @@
 
 		this.utils = new Utils( $ );
 
-		this.viewport = new Viewport( $ );
-
 		this.init = function() {
 			addGlobalHandlers();
 
@@ -65,8 +62,6 @@
 			self.utils.insertYTApi();
 
 			runElementsHandlers();
-
-			self.viewport.init();
 		};
 
 		// Based on underscore function

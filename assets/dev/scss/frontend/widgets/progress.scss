@@ -76,7 +76,7 @@
 }
 
 // Responsive mode
-.elementor-screen-sm-max {
+@media (max-width: $screen-sm-max) {
 
 	.elementor-progress-wrapper {
 		height: 25px;
