@@ -37,14 +37,6 @@ class Stylesheet {
 		$parsed_properties = '';
 
 		foreach ( $properties as $property_key => $property_value ) {
-			if ( is_numeric( $property_key ) ) {
-				$property = explode( ':', $property_value );
-
-				$property_key = trim( $property[0] );
-
-				$property_value = trim( $property[1], ' ;' );
-			}
-
 			if ( $property_value ) {
 				$parsed_properties .= $property_key . ':' . $property_value . ';';
 			}
@@ -78,7 +70,17 @@ class Stylesheet {
 		}
 
 		if ( is_string( $rules ) ) {
-			$rules = explode( ';', $rules );
+			$rules = array_filter( explode( ';', $rules ) );
+
+			$ordered_rules = [];
+
+			foreach ( $rules as $rule ) {
+				$property = explode( ':', $rule );
+
+				$ordered_rules[ trim( $property[0] ) ] = trim( $property[1], ' ;' );
+			}
+
+			$rules = $ordered_rules;
 		}
 
 		$this->rules[ $device ][ $selector ] = array_merge( $this->rules[ $device ][ $selector ], $rules );
