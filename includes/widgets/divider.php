@@ -102,7 +102,7 @@ class Widget_Divider extends Widget_Base {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => __( 'Align', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'section' => 'section_divider',
 				'options' => [
