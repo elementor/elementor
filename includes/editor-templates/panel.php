@@ -283,10 +283,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-control-responsive-switcher">
-	<div class="elementor-control-responsive-switcher">
-		<a href="#" class="elementor-desktop">D</a> |
-		<a href="#" class="elementor-tablet">T</a> |
-		<a href="#" class="elementor-mobile">M</a>
-	</div>
+<script type="text/template" id="tmpl-elementor-control-responsive-switchers">
+	<span class="elementor-control-responsive-switchers">
+		<a class="elementor-responsive-switcher elementor-responsive-switcher-desktop" data-device="desktop">
+			<i class="fa fa-desktop"></i>
+		</a>
+		<a class="elementor-responsive-switcher elementor-responsive-switcher-tablet" data-device="tablet">
+			<i class="fa fa-tablet"></i>
+		</a>
+		<a class="elementor-responsive-switcher elementor-responsive-switcher-mobile" data-device="mobile">
+			<i class="fa fa-mobile"></i>
+		</a>
+	</span>
 </script>
