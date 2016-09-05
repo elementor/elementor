@@ -378,6 +378,7 @@ module.exports = function( $ ) {
 			}
 		} );
 
+		$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 	};
 
 	var videoID = ui.backgroundVideo.data( 'video-id' );
@@ -393,8 +394,6 @@ module.exports = function( $ ) {
 	} else {
 		ui.backgroundVideo.one( 'canplay', changeVideoSize );
 	}
-
-	$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 };
 
 },{}],11:[function(require,module,exports){
