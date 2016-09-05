@@ -10,10 +10,17 @@ class Frontend {
 
 	private $_column_widths = [];
 
+	/**
+	 * @var Stylesheet
+	 */
+	private $stylesheet;
+
 	public function init() {
 		if ( is_admin() || Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
 			return;
 		}
+
+		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
@@ -23,6 +30,14 @@ class Frontend {
 
 		// Add Edit with the Elementor in Admin Bar
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
+	}
+
+	private function _init_stylesheet() {
+		$this->stylesheet = new Stylesheet();
+
+		$this->stylesheet
+			->add_device( 'mobile', 767 )
+			->add_device( 'tablet', 1023 );
 	}
 
 	protected function _print_section( $section_data ) {
@@ -181,11 +196,13 @@ class Frontend {
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return;
 
-		$css_code = $this->_parse_schemes_css_code();
+		$this->_parse_schemes_css_code();
 
 		foreach ( $data as $section ) {
-			$css_code .= $this->_parse_style_item( $section );
+			$this->_parse_style_item( $section );
 		}
+
+		$css_code = $this->stylesheet;
 
 		if ( ! empty( $this->_column_widths ) ) {
 			$css_code .= '@media (min-width: 768px) {';
@@ -199,7 +216,7 @@ class Frontend {
 			return;
 
 		?>
-		<style><?php echo $css_code; ?></style>
+		<style id="elementor-frontend-stylesheet"><?php echo $css_code; ?></style>
 		<?php
 
 		// Enqueue used fonts
@@ -234,8 +251,6 @@ class Frontend {
 	}
 
 	protected function _parse_style_item( $element ) {
-		$return = '';
-
 		if ( 'widget' === $element['elType'] ) {
 			$element_obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
 		} else {
@@ -243,7 +258,7 @@ class Frontend {
 		}
 
 		if ( ! $element_obj )
-			return '';
+			return;
 
 		$element_instance = $element_obj->get_parse_values( $element['settings'] );
 		$element_unique_class = '.elementor-element.elementor-element-' . $element['id'];
@@ -283,21 +298,20 @@ class Frontend {
 					continue;
 				}
 
-				$return .= $output_selector . '{' . $output_css_property . '}';
+				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
+
+				$this->stylesheet->add_rules( $output_selector, $output_css_property, $device );
 			}
 		}
 
 		if ( ! empty( $element['elements'] ) ) {
 			foreach ( $element['elements'] as $child_element ) {
-				$return .= $this->_parse_style_item( $child_element );
+				$this->_parse_style_item( $child_element );
 			}
 		}
-
-		return $return;
 	}
 
 	protected function _parse_schemes_css_code() {
-		$return = '';
 		foreach ( Plugin::instance()->widgets_manager->get_registered_widgets() as $widget_obj ) {
 			foreach ( $widget_obj->get_scheme_controls() as $control ) {
 				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
@@ -322,12 +336,10 @@ class Frontend {
 					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
 					$output_css_property = $control_obj->get_replace_style_values( $css_property, $scheme_value );
 
-					$return .= $output_selector . '{' . $output_css_property . '}';
+					$this->stylesheet->add_rules( $output_selector, $output_css_property );
 				}
 			}
 		}
-
-		return $return;
 	}
 
 	public function apply_builder_in_content( $content ) {
