@@ -7,7 +7,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			checkbox: 'input[data-setting][type="checkbox"]',
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
-			textarea: 'textarea[data-setting]'
+			textarea: 'textarea[data-setting]',
+			controlTitle: '.elementor-control-title',
+			responsiveSwitchers: '.elementor-responsive-switcher',
+			switcherDesktop: '.elementor-responsive-switcher-desktop'
 		};
 	},
 
@@ -52,7 +55,9 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		'change @ui.checkbox': 'onBaseInputChange',
 		'change @ui.radio': 'onBaseInputChange',
 		'input @ui.textarea': 'onBaseInputChange',
-		'change @ui.select': 'onBaseInputChange'
+		'change @ui.select': 'onBaseInputChange',
+		'click @ui.switcherDesktop': 'onSwitcherDesktopClick',
+		'click @ui.responsiveSwitchers': 'onSwitcherClick'
 	},
 
 	childEvents: {},
@@ -182,14 +187,24 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
+	onSwitcherClick: function( event ) {
+		var device = Backbone.$( event.currentTarget ).data( 'device' );
+
+		elementor.changeDeviceMode( device );
+	},
+
+	onSwitcherDesktopClick: function() {
+		elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+	},
+
 	renderResponsiveSwitchers: function() {
 		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
 			return;
 		}
 
-		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switcher' ).html();
+		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
 
-		this.$el.find( 'label.elementor-control-title' ).after( templateHtml );
+		this.ui.controlTitle.append( templateHtml );
 	},
 
 	toggleControlVisibility: function() {
