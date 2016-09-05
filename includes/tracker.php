@@ -172,7 +172,7 @@ class Tracker {
 
 		$usage = [];
 
-		$results =  $wpdb->get_results(
+		$results = $wpdb->get_results(
 			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits` 
 				FROM {$wpdb->posts} `p`
 				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
@@ -181,9 +181,9 @@ class Tracker {
 				GROUP BY `post_type`, `post_status`;"
 		);
 
-		if( $results ){
+		if ( $results ) {
 			foreach ( $results as $result ) {
-				$usage[$result->post_type][$result->post_status] = $result->hits;
+				$usage[ $result->post_type ][ $result->post_status ] = $result->hits;
 			}
 		}
 
@@ -205,9 +205,9 @@ class Tracker {
 				GROUP BY `post_type`, `meta_value`;"
 		);
 
-		if( $results ){
+		if ( $results ) {
 			foreach ( $results as $result ) {
-				$usage[$result->meta_value] = $result->hits;
+				$usage[ $result->meta_value ] = $result->hits;
 			}
 		}
 
