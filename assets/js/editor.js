@@ -1218,6 +1218,8 @@ App = Marionette.Application.extend( {
 	// Private Members
 	_controlsItemView: null,
 
+	_defaultDeviceMode: 'desktop',
+
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
 
@@ -1418,6 +1420,8 @@ App = Marionette.Application.extend( {
 
 		this.setResizablePanel();
 
+		this.changeDeviceMode( this._defaultDeviceMode );
+
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		this.introduction.startOnLoadIntroduction();
@@ -1549,6 +1553,23 @@ App = Marionette.Application.extend( {
         } );
 	},
 
+	changeDeviceMode: function( newDeviceMode ) {
+		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
+
+		if ( oldDeviceMode === newDeviceMode ) {
+			return;
+		}
+
+		Backbone.$( 'body' )
+			.removeClass( 'elementor-device-' + oldDeviceMode )
+			.addClass( 'elementor-device-' + newDeviceMode );
+
+		this.channels.deviceMode
+			.reply( 'previousMode', oldDeviceMode )
+			.reply( 'currentMode', newDeviceMode )
+			.trigger( 'change' );
+	},
+
 	translate: function( stringKey, templateArgs ) {
 		var string = this.config.i18n[ stringKey ];
 
@@ -1628,10 +1649,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	id: 'elementor-panel-footer-tools',
 
-	defaultDeviceMode: 'desktop',
-
-	currentDeviceMode: '',
-
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
@@ -1660,7 +1677,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
 
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged );
+		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
+			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	_initDialog: function() {
@@ -1715,37 +1733,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		elementor.saveBuilder();
 	},
 
-	onRender: function() {
-		this.changeDeviceMode( this.defaultDeviceMode );
-	},
-
-	changeDeviceMode: function( newDeviceMode ) {
-		var oldDeviceMode = this.currentDeviceMode;
-
-		if ( oldDeviceMode === newDeviceMode ) {
-			return;
-		}
-
-		this.getCurrentDeviceModeButton().removeClass( 'active' );
-
-		Backbone.$( 'body' )
-		    .removeClass( 'elementor-device-' + oldDeviceMode )
-		    .addClass( 'elementor-device-' + newDeviceMode );
-
-		this.currentDeviceMode = newDeviceMode;
-
-		this.getCurrentDeviceModeButton().addClass( 'active' );
-
-		elementor.channels.deviceMode
-		         .reply( 'currentMode', newDeviceMode )
-		         .trigger( 'change' );
-
-		// Change the footer icon
-		this.ui.deviceModeIcon.removeClass( 'fa-' + oldDeviceMode ).addClass( 'fa-' + newDeviceMode );
-	},
-
-	getCurrentDeviceModeButton: function() {
-		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + this.currentDeviceMode + '"]' );
+	getDeviceModeButton: function( deviceMode ) {
+		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
 	onDocumentClick: function( event ) {
@@ -1770,6 +1759,18 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this.ui.buttonSave.toggleClass( 'elementor-save-active', elementor.isEditorChanged() );
 	},
 
+	onDeviceModeChange: function() {
+		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
+			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+
+		this.getDeviceModeButton( previousDeviceMode ).removeClass( 'active' );
+
+		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
+
+		// Change the footer icon
+		this.ui.deviceModeIcon.removeClass( 'fa-' + previousDeviceMode ).addClass( 'fa-' + currentDeviceMode );
+	},
+
 	onClickButtonSave: function() {
 		//this._saveBuilderDraft();
 		this._publishBuilder();
@@ -1786,7 +1787,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var $clickedButton = this.$( event.currentTarget ),
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
-		this.changeDeviceMode( newDeviceMode );
+		elementor.changeDeviceMode( newDeviceMode );
 	},
 
 	onClickWatchTutorial: function() {
@@ -1874,6 +1875,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		'click @ui.tabs a': 'onClickTabControl'
 	},
 
+	initialize: function() {
+		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
 		return elementor.getControlItemView( controlType );
@@ -1943,6 +1948,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this.model.get( 'settings' ).trigger( 'control:switch:tab', $thisTab.data( 'tab' ) );
 
 		this.openFirstSectionInCurrentTab( $thisTab.data( 'tab' ) );
+	},
+
+	onDeviceModeChange: function() {
+		this.$el.removeClass( 'elementor-responsive-switchers-open' );
 	},
 
 	/**
@@ -5177,7 +5186,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			checkbox: 'input[data-setting][type="checkbox"]',
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
-			textarea: 'textarea[data-setting]'
+			textarea: 'textarea[data-setting]',
+			controlTitle: '.elementor-control-title',
+			responsiveSwitchers: '.elementor-responsive-switcher',
+			switcherDesktop: '.elementor-responsive-switcher-desktop'
 		};
 	},
 
@@ -5222,7 +5234,9 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		'change @ui.checkbox': 'onBaseInputChange',
 		'change @ui.radio': 'onBaseInputChange',
 		'input @ui.textarea': 'onBaseInputChange',
-		'change @ui.select': 'onBaseInputChange'
+		'change @ui.select': 'onBaseInputChange',
+		'click @ui.switcherDesktop': 'onSwitcherDesktopClick',
+		'click @ui.responsiveSwitchers': 'onSwitcherClick'
 	},
 
 	childEvents: {},
@@ -5352,14 +5366,24 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
+	onSwitcherClick: function( event ) {
+		var device = Backbone.$( event.currentTarget ).data( 'device' );
+
+		elementor.changeDeviceMode( device );
+	},
+
+	onSwitcherDesktopClick: function() {
+		elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+	},
+
 	renderResponsiveSwitchers: function() {
 		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
 			return;
 		}
 
-		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switcher' ).html();
+		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
 
-		this.$el.find( 'label.elementor-control-title' ).after( templateHtml );
+		this.ui.controlTitle.append( templateHtml );
 	},
 
 	toggleControlVisibility: function() {

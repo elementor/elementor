@@ -7,10 +7,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	id: 'elementor-panel-footer-tools',
 
-	defaultDeviceMode: 'desktop',
-
-	currentDeviceMode: '',
-
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
@@ -39,7 +35,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
 
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged );
+		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
+			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	_initDialog: function() {
@@ -94,37 +91,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		elementor.saveBuilder();
 	},
 
-	onRender: function() {
-		this.changeDeviceMode( this.defaultDeviceMode );
-	},
-
-	changeDeviceMode: function( newDeviceMode ) {
-		var oldDeviceMode = this.currentDeviceMode;
-
-		if ( oldDeviceMode === newDeviceMode ) {
-			return;
-		}
-
-		this.getCurrentDeviceModeButton().removeClass( 'active' );
-
-		Backbone.$( 'body' )
-		    .removeClass( 'elementor-device-' + oldDeviceMode )
-		    .addClass( 'elementor-device-' + newDeviceMode );
-
-		this.currentDeviceMode = newDeviceMode;
-
-		this.getCurrentDeviceModeButton().addClass( 'active' );
-
-		elementor.channels.deviceMode
-		         .reply( 'currentMode', newDeviceMode )
-		         .trigger( 'change' );
-
-		// Change the footer icon
-		this.ui.deviceModeIcon.removeClass( 'fa-' + oldDeviceMode ).addClass( 'fa-' + newDeviceMode );
-	},
-
-	getCurrentDeviceModeButton: function() {
-		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + this.currentDeviceMode + '"]' );
+	getDeviceModeButton: function( deviceMode ) {
+		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
 	onDocumentClick: function( event ) {
@@ -149,6 +117,18 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this.ui.buttonSave.toggleClass( 'elementor-save-active', elementor.isEditorChanged() );
 	},
 
+	onDeviceModeChange: function() {
+		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
+			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+
+		this.getDeviceModeButton( previousDeviceMode ).removeClass( 'active' );
+
+		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
+
+		// Change the footer icon
+		this.ui.deviceModeIcon.removeClass( 'fa-' + previousDeviceMode ).addClass( 'fa-' + currentDeviceMode );
+	},
+
 	onClickButtonSave: function() {
 		//this._saveBuilderDraft();
 		this._publishBuilder();
@@ -165,7 +145,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var $clickedButton = this.$( event.currentTarget ),
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
-		this.changeDeviceMode( newDeviceMode );
+		elementor.changeDeviceMode( newDeviceMode );
 	},
 
 	onClickWatchTutorial: function() {
