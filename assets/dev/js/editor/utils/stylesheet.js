@@ -48,8 +48,8 @@
 
 			var deviceNames = Object.keys( devices );
 
-			if ( deviceNames < 2 ) {
-				return;
+			if ( deviceNames.length < 2 ) {
+				return self;
 			}
 
 			// Sort the devices from narrowest to widest
@@ -85,6 +85,16 @@
 
 			if ( 'string' === typeof styleRules ) {
 				styleRules = styleRules.split( ';' ).filter( String );
+
+				var orderedRules = {};
+
+				$.each( styleRules, function() {
+					var property = this.split( ':' );
+
+					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
+				} );
+
+				styleRules = orderedRules;
 			}
 
 			$.extend( rules[ queryHash ][ selector ], styleRules );
@@ -131,18 +141,8 @@
 		var parsedProperties = '';
 
 		$.each( properties, function( propertyKey ) {
-			var propertyValue = this;
-
-			if ( ! isNaN( +propertyKey ) ) {
-				var property = propertyValue.split( ':' );
-
-				propertyKey = property[0].trim();
-
-				propertyValue = property[1].trim().replace( ';', '' );
-			}
-
-			if ( propertyValue ) {
-				parsedProperties += propertyKey + ':' + propertyValue + ';';
+			if ( this ) {
+				parsedProperties += propertyKey + ':' + this + ';';
 			}
 		} );
 
