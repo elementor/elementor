@@ -33,6 +33,8 @@ App = Marionette.Application.extend( {
 	// Private Members
 	_controlsItemView: null,
 
+	_defaultDeviceMode: 'desktop',
+
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
 
@@ -233,6 +235,8 @@ App = Marionette.Application.extend( {
 
 		this.setResizablePanel();
 
+		this.changeDeviceMode( this._defaultDeviceMode );
+
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		this.introduction.startOnLoadIntroduction();
@@ -362,6 +366,23 @@ App = Marionette.Application.extend( {
 				}
 			}
         } );
+	},
+
+	changeDeviceMode: function( newDeviceMode ) {
+		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
+
+		if ( oldDeviceMode === newDeviceMode ) {
+			return;
+		}
+
+		Backbone.$( 'body' )
+			.removeClass( 'elementor-device-' + oldDeviceMode )
+			.addClass( 'elementor-device-' + newDeviceMode );
+
+		this.channels.deviceMode
+			.reply( 'previousMode', oldDeviceMode )
+			.reply( 'currentMode', newDeviceMode )
+			.trigger( 'change' );
 	},
 
 	translate: function( stringKey, templateArgs ) {
