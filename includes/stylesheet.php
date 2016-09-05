@@ -10,6 +10,50 @@ class Stylesheet {
 	private $devices = [];
 
 	/**
+	 * @param array $rules
+	 *
+	 * @return string
+	 */
+	public static function parse_rules( array $rules ) {
+		$parsed_rules = '';
+
+		foreach ( $rules as $selector => $properties ) {
+			$selector_content = self::parse_properties( $properties );
+
+			if ( $selector_content ) {
+				$parsed_rules .= $selector . '{' . $selector_content . '}';
+			}
+		}
+
+		return $parsed_rules;
+	}
+
+	/**
+	 * @param array $properties
+	 *
+	 * @return string
+	 */
+	public static function parse_properties( array $properties ) {
+		$parsed_properties = '';
+
+		foreach ( $properties as $property_key => $property_value ) {
+			if ( is_numeric( $property_key ) ) {
+				$property = explode( ':', $property_value );
+
+				$property_key = trim( $property[0] );
+
+				$property_value = trim( $property[1], ' ;' );
+			}
+
+			if ( $property_value ) {
+				$parsed_properties .= $property_key . ':' . $property_value . ';';
+			}
+		}
+
+		return $parsed_properties;
+	}
+
+	/**
 	 * @param string $device_name
 	 * @param string $device_max_point
 	 *
@@ -42,55 +86,11 @@ class Stylesheet {
 		return $this;
 	}
 
-	/**
-	 * @param array $rules
-	 *
-	 * @return string
-	 */
-	public function parse_rules( array $rules ) {
-		$parsed_rules = '';
-
-		foreach ( $rules as $selector => $properties ) {
-			$selector_content = $this->parse_properties( $properties );
-
-			if ( $selector_content ) {
-				$parsed_rules .= $selector . '{' . $selector_content . '}';
-			}
-		}
-
-		return $parsed_rules;
-	}
-
-	/**
-	 * @param array $properties
-	 *
-	 * @return string
-	 */
-	public function parse_properties( array $properties ) {
-		$parsed_properties = '';
-
-		foreach ( $properties as $property_key => $property_value ) {
-			if ( is_numeric( $property_key ) ) {
-				$property = explode( ':', $property_value );
-
-				$property_key = trim( $property[0] );
-
-				$property_value = trim( $property[1], ' ;' );
-			}
-
-			if ( $property_value ) {
-				$parsed_properties .= $property_key . ':' . $property_value . ';';
-			}
-		}
-
-		return $parsed_properties;
-	}
-
 	public function __toString() {
 		$style_text = '';
 
 		foreach ( $this->rules as $device_name => $rules ) {
-			$device_text = $this->parse_rules( $rules );
+			$device_text = self::parse_rules( $rules );
 
 			if ( $device_text && isset( $this->devices[ $device_name ] ) ) {
 				$device_text = '@media(max-width: ' . $this->devices[ $device_name ] . 'px){' . $device_text . '}';

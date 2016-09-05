@@ -1,4 +1,5 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	Stylesheet = require( 'elementor-utils/stylesheet' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -22,6 +23,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	baseEvents: {},
 
 	elementEvents: {},
+
+	stylesheet: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -58,6 +61,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} );
 
 		this.initRemoveDialog();
+
+		this.initStylesheet();
 	},
 
 	addChildModel: function( model, options ) {
@@ -97,6 +102,17 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	initStylesheet: function() {
+		this.stylesheet = new Stylesheet();
+
+		var viewportBreakpoints = elementor.config.viewportBreakpoints;
+
+		this.stylesheet
+			.addDevice( 'mobile', 0 )
+			.addDevice( 'tablet', viewportBreakpoints.md )
+			.addDevice( 'desktop', viewportBreakpoints.lg );
+	},
+
 	enqueueFonts: function() {
 		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = this.model.getSetting( control.name );
@@ -115,7 +131,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	renderStyles: function() {
 		var self = this,
-			styleHtml = '',
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
 			styleControls = self.model.get( 'settings' ).getStyleControls();
 
@@ -132,23 +147,31 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 
 			_.each( control.selectors, function( cssProperty, selector ) {
-				var outputSelector = selector.replace( /\{\{WRAPPER\}\}/g, '#' + self.getElementUniqueClass() ),
-					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue );
+				var outputSelector = selector.replace( /\{\{WRAPPER}}/g, '#' + self.getElementUniqueClass() ),
+					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue ),
+					query;
 
 				if ( _.isEmpty( outputCssProperty ) ) {
 					return;
 				}
 
-				styleHtml += outputSelector + '{' + outputCssProperty + '}';
+				if ( control.responsive && 'desktop' !== control.responsive ) {
+					query = { max: control.responsive };
+				}
+
+				self.stylesheet.addRules( outputSelector, outputCssProperty, query );
 			} );
 		} );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = self.model.getSetting( '_inline_size' );
+
 			if ( ! _.isEmpty( inlineSize ) ) {
-				styleHtml += '@media (min-width: 768px) {#' + self.getElementUniqueClass() + '{width:' + inlineSize + '%;}';
+				self.stylesheet.addRules( '#' + self.getElementUniqueClass(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
+
+		var styleHtml = self.stylesheet.toString();
 
 		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
 			return;
