@@ -35,9 +35,11 @@ class Frontend {
 	private function _init_stylesheet() {
 		$this->stylesheet = new Stylesheet();
 
+		$breakpoints = Responsive::get_breakpoints();
+
 		$this->stylesheet
-			->add_device( 'mobile', 767 )
-			->add_device( 'tablet', 1023 );
+			->add_device( 'mobile', $breakpoints['md'] - 1 )
+			->add_device( 'tablet', $breakpoints['lg'] - 1 );
 	}
 
 	protected function _print_section( $section_data ) {
@@ -142,7 +144,6 @@ class Frontend {
 			'elementor-frontend',
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
-				'viewportBreakpoints' => Responsive::get_breakpoints(),
 			]
 		);
 	}

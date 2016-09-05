@@ -114,24 +114,25 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	renderStyles: function() {
-		var styleHtml = '',
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid ),
-			styleControls = this.model.get( 'settings' ).getStyleControls();
+		var self = this,
+			styleHtml = '',
+			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
+			styleControls = self.model.get( 'settings' ).getStyleControls();
 
-		_.each( styleControls, _.bind( function( control ) {
-			var controlValue = this.model.getSetting( control.name );
+		_.each( styleControls, function( control ) {
+			var controlValue = self.model.getSetting( control.name );
 
 			if ( ! _.isNumber( controlValue ) && _.isEmpty( controlValue ) ) {
 				return;
 			}
 
-			var isVisibility = elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) );
-			if ( ! isVisibility ) {
+			var isVisible = elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) );
+			if ( ! isVisible ) {
 				return;
 			}
 
-			_.each( control.selectors, _.bind( function( cssProperty, selector ) {
-				var outputSelector = selector.replace( /\{\{WRAPPER\}\}/g, '#' + this.getElementUniqueClass() ),
+			_.each( control.selectors, function( cssProperty, selector ) {
+				var outputSelector = selector.replace( /\{\{WRAPPER\}\}/g, '#' + self.getElementUniqueClass() ),
 					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue );
 
 				if ( _.isEmpty( outputCssProperty ) ) {
@@ -139,13 +140,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 				}
 
 				styleHtml += outputSelector + '{' + outputCssProperty + '}';
-			}, this ) );
-		}, this ) );
+			} );
+		} );
 
-		if ( 'column' === this.model.get( 'elType' ) ) {
-			var inlineSize = this.model.getSetting( '_inline_size' );
+		if ( 'column' === self.model.get( 'elType' ) ) {
+			var inlineSize = self.model.getSetting( '_inline_size' );
 			if ( ! _.isEmpty( inlineSize ) ) {
-				styleHtml += '@media (min-width: 768px) {#' + this.getElementUniqueClass() + '{width:' + inlineSize + '%;}';
+				styleHtml += '@media (min-width: 768px) {#' + self.getElementUniqueClass() + '{width:' + inlineSize + '%;}';
 			}
 		}
 
@@ -154,8 +155,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! $stylesheet.length ) {
-			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
+			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + self.model.cid + '"></style>' );
+			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid );
 		}
 
 		$stylesheet.html( styleHtml );
