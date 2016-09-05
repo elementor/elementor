@@ -520,9 +520,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			'rtl' => $is_rtl,
 		];
 
-		// Allow themes to change slick slider options.
-		$slick_options = apply_filters( 'elementor/widgets/image_carousel/slick_options', $slick_options, $instance );
-
 		$carousel_classes = [ 'elementor-image-carousel' ];
 
 		if ( $show_arrows ) {
@@ -542,6 +539,9 @@ class Widget_Image_Carousel extends Widget_Base {
 		} else {
 			$slick_options['fade'] = ( 'fade' === $instance['effect'] );
 		}
+
+		// Allow themes to change slick slider options.
+		$slick_options = apply_filters( 'elementor/widgets/image_carousel/slick_options', $slick_options, $instance );
 
 		?>
 		<div class="elementor-image-carousel-wrapper elementor-slick-slider" dir="<?php echo $direction; ?>">
