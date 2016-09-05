@@ -295,6 +295,7 @@ class Admin {
 			'elementor-admin-feedback',
 			'ElementorAdminFeedbackArgs',
 			[
+				'is_tracker_opted_in' => Tracker::is_allow_track(),
 				'i18n' => [
 					'submit_n_deactivate' => __( 'Submit & Deactivate', 'elementor' ),
 					'skip_n_deactivate' => __( 'Skip & Deactivate', 'elementor' ),

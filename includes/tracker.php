@@ -65,7 +65,10 @@ class Tracker {
 			'system' => self::_get_system_reports_data(),
 			'site_lang' => get_bloginfo( 'language' ),
 			'email' => get_option( 'admin_email' ),
-			'usages' => [],
+			'usages' => [
+				'posts' => self::_get_posts_usage(),
+				'library' => self::_get_library_usage(),
+			],
 		];
 
 		add_filter( 'https_ssl_verify', '__return_false' );
@@ -162,6 +165,54 @@ class Tracker {
 	 */
 	private static function _get_last_send_time() {
 		return apply_filters( 'elementor/tracker/last_send_time', get_option( 'elementor_tracker_last_send', false ) );
+	}
+
+	private static function _get_posts_usage() {
+		global $wpdb;
+
+		$usage = [];
+
+		$results = $wpdb->get_results(
+			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits` 
+				FROM {$wpdb->posts} `p`
+				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
+				WHERE `post_type` != 'elementor_library'
+					AND `meta_key` = '_elementor_edit_mode' AND `meta_value` = 'builder'
+				GROUP BY `post_type`, `post_status`;"
+		);
+
+		if ( $results ) {
+			foreach ( $results as $result ) {
+				$usage[ $result->post_type ][ $result->post_status ] = $result->hits;
+			}
+		}
+
+		return $usage;
+
+	}
+
+	private static function _get_library_usage() {
+		global $wpdb;
+
+		$usage = [];
+
+		$results = $wpdb->get_results(
+			"SELECT `meta_value`, COUNT(`ID`) `hits` 
+				FROM {$wpdb->posts} `p`
+				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
+				WHERE `post_type` = 'elementor_library'
+					AND `meta_key` = '_elementor_template_type'
+				GROUP BY `post_type`, `meta_value`;"
+		);
+
+		if ( $results ) {
+			foreach ( $results as $result ) {
+				$usage[ $result->meta_value ] = $result->hits;
+			}
+		}
+
+		return $usage;
+
 	}
 }
 Tracker::init();
