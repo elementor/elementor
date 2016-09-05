@@ -51,13 +51,15 @@
 								callback: _.bind( self.sendFeedback, self )
 							} );
 
-							this.addButton( {
-								name: 'skip',
-								text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
-								callback: function() {
-									self.deactivate();
-								}
-							} );
+							if ( ! ElementorAdminFeedbackArgs.is_tracker_opted_in ) {
+								this.addButton( {
+									name: 'skip',
+									text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
+									callback: function() {
+										self.deactivate();
+									}
+								} );
+							}
 						}
 					} );
 				}
