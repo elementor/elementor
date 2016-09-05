@@ -216,4 +216,8 @@
 	.elementor-column {
 		width: 100%;
 	}
+
+	.elementor-reverse-mobile > .elementor-container > .elementor-row {
+		flex-direction: column-reverse;
+	}
 }
