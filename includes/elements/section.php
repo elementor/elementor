@@ -608,6 +608,34 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'reverse_order_mobile',
+			[
+				'label' => __( 'Column Order', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'options' => [
+					'' => __( 'No', 'elementor' ),
+					'reverse-mobile' => __( 'Yes', 'elementor' ),
+				],
+				'description' => __( 'Reverse column order on Mobile', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'heading_visibility',
+			[
+				'label' => __( 'Visibility', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'responsive_description',
 			[
 				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
@@ -665,23 +693,6 @@ class Element_Section extends Element_Base {
 				],
 			]
 		);
-
-		$this->add_control(
-			'reverse_order_mobile',
-			[
-				'label' => __( 'Reverse column order on Mobile', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_ADVANCED,
-				'section' => '_section_responsive',
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'No', 'elementor' ),
-					'reverse-mobile' => __( 'Yes', 'elementor' ),
-				],
-			]
-		);
-
 	}
 
 	protected function render_settings() {
