@@ -4466,8 +4466,8 @@ module.exports = new Schemes();
 
 			var deviceNames = Object.keys( devices );
 
-			if ( deviceNames < 2 ) {
-				return;
+			if ( deviceNames.length < 2 ) {
+				return self;
 			}
 
 			// Sort the devices from narrowest to widest
