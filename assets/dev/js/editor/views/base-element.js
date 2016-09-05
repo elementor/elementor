@@ -126,8 +126,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			var isVisibility = elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) );
-			if ( ! isVisibility ) {
+			var isVisible = elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) );
+			if ( ! isVisible ) {
 				return;
 			}
 
