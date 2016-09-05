@@ -243,6 +243,49 @@
 		}
 	}
 
+	.elementor-control-responsive-switchers {
+		@include margin-start(15px);
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.elementor-responsive-switcher {
+		display: inline-block;
+		height: 25px;
+		width: 25px;
+		border-radius: 50%;
+		background-color: $editor-background;
+		cursor: pointer;
+		position: relative;
+		@include margin-start(5px);
+
+		i {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			color: #fff;
+		}
+	}
+
+	@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
+		display: none;
+	}
+
+	.elementor-responsive-switcher-mobile {
+
+		.elementor-device-mobile & {
+			background-color: $editor-info;
+		}
+	}
+
+	.elementor-responsive-switcher-tablet {
+
+		.elementor-device-tablet & {
+			background-color: $editor-info;
+		}
+	}
+
 	// Media Control
 	.elementor-control-type-media {
 
