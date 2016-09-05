@@ -33,6 +33,7 @@ class Control_Choose extends Control_Base {
 
 	protected function get_default_settings() {
 		return [
+			'label_block' => true,
 			'toggle' => true,
 		];
 	}
