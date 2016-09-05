@@ -20,11 +20,9 @@ class User_Reporter extends Base_Reporter {
 	}
 
 	public function get_role() {
-
 		$role = null;
 
 		$current_user = wp_get_current_user();
-
 		if ( ! empty( $current_user->roles ) ) {
 			$role = $current_user->roles[0];
 		}
