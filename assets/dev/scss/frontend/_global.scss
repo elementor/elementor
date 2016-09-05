@@ -128,7 +128,7 @@
 }
 
 // Alignment for Tablet
-.elementor-screen-md-max {
+@media (max-width: $screen-md-max) {
 
 	.elementor-tablet-align- {
 
@@ -166,7 +166,7 @@
 }
 
 // Alignment for Mobile
-.elementor-screen-sm-max {
+@media (max-width: $screen-sm-max) {
 
 	.elementor-mobile-align- {
 

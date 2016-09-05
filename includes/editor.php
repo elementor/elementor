@@ -292,6 +292,7 @@ class Editor {
 				'locked_user' => $locked_user,
 				'is_rtl' => is_rtl(),
 				'introduction' => User::get_introduction(),
+				'viewportBreakpoints' => Responsive::get_breakpoints(),
 				'i18n' => [
 					'elementor' => __( 'Elementor', 'elementor' ),
 					'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),

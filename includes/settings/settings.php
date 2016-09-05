@@ -131,30 +131,6 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
-		$responsive_labels = [
-			'md' => __( 'Mobile Breakpoint', 'elementor' ),
-			'lg' => __( 'Tablet Breakpoint', 'elementor' ),
-		];
-
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_name => $breakpoint_value ) {
-			$field_id = 'elementor_viewport_' . $breakpoint_name;
-
-			add_settings_field(
-				$field_id,
-				$responsive_labels[ $breakpoint_name ],
-				[ $controls_class_name, 'render' ],
-				self::PAGE_ID,
-				$responsive_section,
-				[
-					'id' => $field_id,
-					'type' => 'text',
-					'placeholder' => $breakpoint_value,
-				]
-			);
-
-			register_setting( self::PAGE_ID, $field_id );
-		}
-
 		// Tools section
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(

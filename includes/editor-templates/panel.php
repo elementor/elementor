@@ -282,3 +282,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php endforeach; ?>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-control-responsive-switcher">
+	<div class="elementor-control-responsive-switcher">
+		<a href="#" class="elementor-desktop">D</a> |
+		<a href="#" class="elementor-tablet">T</a> |
+		<a href="#" class="elementor-mobile">M</a>
+	</div>
+</script>
