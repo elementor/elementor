@@ -119,18 +119,6 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
-		// Responsive section
-		$responsive_section = 'elementor_responsive_section';
-
-		add_settings_section(
-			$responsive_section,
-			__( 'Responsive Breakpoints', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
-			self::PAGE_ID
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
 		// Tools section
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(
