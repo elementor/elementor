@@ -187,8 +187,10 @@ html.elementor-html {
 
 					.elementor-editor-element-setting {
 
-						&:not(:last-child) {
-							@include border-end(1px solid $editor-lighter);
+						@media (min-width: $screen-lg-min) {
+							&:not(:last-child) {
+								@include border-end(1px solid $editor-lighter);
+							}
 						}
 
 						&.elementor-editor-element-trigger {
@@ -276,25 +278,31 @@ html.elementor-html {
 				}
 
 				> a {
-					cursor: move;
 					padding: 8.5px;
-
-					&:hover {
-
-						&:after {
-							content: getValueByDirection('\f105', '\f104');
-							font-family: 'FontAwesome';
-							@include margin-start(5px);
-						}
-					}
 				}
 
-				&.elementor-active {
+				@media(min-width: $screen-lg-min) {
+
 					> a {
-						&:after {
-							content: getValueByDirection('\f105', '\f104');
-							font-family: 'FontAwesome';
-							@include margin-start(5px);
+						cursor: move;
+
+						&:hover {
+
+							&:after {
+								content: getValueByDirection('\f105', '\f104');
+								font-family: 'FontAwesome';
+								@include margin-start(5px);
+							}
+						}
+					}
+
+					&.elementor-active {
+						> a {
+							&:after {
+								content: getValueByDirection('\f105', '\f104');
+								font-family: 'FontAwesome';
+								@include margin-start(5px);
+							}
 						}
 					}
 				}
@@ -349,7 +357,7 @@ html.elementor-html {
 
 		.elementor-editor-element-setting {
 
-			&:not(.elementor-editor-element-edit) {
+			&:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
 
 				@media (max-width: $screen-md-max) {
 					display: none;
