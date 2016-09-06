@@ -101,8 +101,9 @@ html.elementor-html {
       line-height: 1; }
       .elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list {
         background-color: #a4afb7; }
-        .elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:not(:last-child) {
-          border-left: 1px solid #c2cbd2; }
+        @media (min-width: 1024px) {
+          .elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:not(:last-child) {
+            border-left: 1px solid #c2cbd2; } }
         .elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting.elementor-editor-element-trigger:not(.elementor-active) {
           border: none; }
         .elementor-editor-active #elementor .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting > a:hover {
@@ -143,16 +144,18 @@ html.elementor-html {
     .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
       display: none; }
     .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger > a {
-      cursor: move;
       padding: 8.5px; }
-      .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger > a:hover:after {
+    @media (min-width: 1024px) {
+      .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger > a {
+        cursor: move; }
+        .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger > a:hover:after {
+          content: "";
+          font-family: 'FontAwesome';
+          margin-right: 5px; }
+      .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger.elementor-active > a:after {
         content: "";
         font-family: 'FontAwesome';
-        margin-right: 5px; }
-    .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-trigger.elementor-active > a:after {
-      content: "";
-      font-family: 'FontAwesome';
-      margin-right: 5px; }
+        margin-right: 5px; } }
   .elementor-editor-active #elementor .elementor-editor-widget-settings {
     z-index: 2;
     top: 2px;
@@ -174,7 +177,7 @@ html.elementor-html {
     .elementor-editor-active #elementor .elementor-editor-widget-settings .elementor-editor-element-edit a {
       cursor: move; }
   @media (max-width: 1023px) {
-    .elementor-editor-active #elementor .elementor-editor-element-setting:not(.elementor-editor-element-edit) {
+    .elementor-editor-active #elementor .elementor-editor-element-setting:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
       display: none; } }
   .elementor-editor-active #elementor .elementor-section-filled .elementor-editor-column-settings .elementor-editor-element-add, .elementor-editor-active #elementor .elementor-section-filled .elementor-editor-column-settings .elementor-editor-element-duplicate {
     display: none; }
