@@ -169,6 +169,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Set different alignment for tablet or mobile in Divider widget
 * New! - Set different alignment for tablet or mobile in Icon List widget
 * Tweak! - Show status connection with Elementor library in System info
+* Tweak! - Column width option for mobile portrait is deprecated, now use with Mobile Width option instead
 * Tweak! - Moved default content-width from panel to CSS
 * Tweak! - Removed Default font size in custom option
 * Tweak! - Hide update notice from outside Elementor
@@ -183,7 +184,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Fixed! - Gap for Columns Widget (Inner section)
 * Fixed! - Preview mode with real sizes for mobile and tablet
 * Fixed! - Sortable inner section not showing placeholder
-* Fixed! - Network plugins report ing System Info
+* Fixed! - Network plugins included in System Info
 
 = 0.7.4 - 24.08.2016 =
 * New! - Added Shortcode widget
