@@ -765,11 +765,12 @@
 		}
 
 		.elementor-control-structure-current-preset {
-			height: 80px;
 			margin-top: 15px;
 
+			// For Safari
 			svg {
-				width: 100%; // For safari
+				display: block;
+				width: 100%;
 			}
 		}
 
