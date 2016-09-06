@@ -255,8 +255,10 @@ html.elementor-html {
 
 				.elementor-editor-element-setting {
 
-					&:not(:last-child) {
-						@include border-end(1px solid $editor-darker);
+					@media (min-width: $screen-lg-min) {
+						&:not(:last-child) {
+							@include border-end(1px solid $editor-darker);
+						}
 					}
 
 					> a {
