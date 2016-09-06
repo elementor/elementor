@@ -937,21 +937,39 @@ select {
       text-transform: uppercase;
       font-size: 9px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-responsive-switchers {
-    margin-right: 10px; }
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin-right: 5px; }
   #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher {
     display: inline-block;
     border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    background-color: #a4afb7;
     cursor: pointer;
     position: relative;
     margin-right: 5px;
-    color: #a4afb7;
+    color: #fff;
+    font-size: 8px;
+    text-align: center;
+    -webkit-transition: background-color .5s;
+    transition: background-color .5s; }
+    #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher:hover {
+      background-color: #c2cbd2; }
+    #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher i {
+      line-height: 18px; }
+  .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+    color: #c2cbd2;
+    background: none;
     font-size: 10px; }
-  .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
-    display: none; }
+    .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
+      display: none; }
   .elementor-device-mobile #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-mobile {
-    color: #71d7f7; }
+    background-color: #71d7f7; }
   .elementor-device-tablet #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-tablet {
-    color: #71d7f7; }
+    background-color: #71d7f7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
