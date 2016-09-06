@@ -284,7 +284,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
-	<span class="elementor-control-responsive-switchers">
+	<div class="elementor-control-responsive-switchers">
 		<a class="elementor-responsive-switcher elementor-responsive-switcher-desktop" data-device="desktop">
 			<i class="fa fa-desktop"></i>
 		</a>
@@ -294,5 +294,5 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<a class="elementor-responsive-switcher elementor-responsive-switcher-mobile" data-device="mobile">
 			<i class="fa fa-mobile"></i>
 		</a>
-	</span>
+	</div>
 </script>

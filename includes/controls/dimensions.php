@@ -35,10 +35,8 @@ class Control_Dimensions extends Control_Base_Units {
 			'left' => __( 'Left', 'elementor' ),
 		];
 		?>
-		<label class="elementor-control-title">
-			{{{ data.label }}}
-			<?php $this->print_units_template(); ?>
-		</label>
+		<label class="elementor-control-title">{{{ data.label }}}</label>
+		<?php $this->print_units_template(); ?>
 		<div class="elementor-control-input-wrapper">
 			<ul class="elementor-control-dimensions">
 				<?php foreach ( $dimensions as $dimension_key => $dimension_title ) : ?>
