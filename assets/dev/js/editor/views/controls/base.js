@@ -7,14 +7,18 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			checkbox: 'input[data-setting][type="checkbox"]',
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
-			textarea: 'textarea[data-setting]'
+			textarea: 'textarea[data-setting]',
+			controlTitle: '.elementor-control-title',
+			responsiveSwitchers: '.elementor-responsive-switcher',
+			switcherDesktop: '.elementor-responsive-switcher-desktop'
 		};
 	},
 
 	className: function() {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
-			modelClasses = this.model.get( 'classes' );
+			modelClasses = this.model.get( 'classes' ),
+			responsiveControl = this.model.get( 'responsive' );
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
@@ -22,6 +26,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		if ( ! _.isEmpty( this.model.get( 'section' ) ) ) {
 			classes += ' elementor-control-under-section';
+		}
+
+		if ( ! _.isEmpty( responsiveControl ) ) {
+			classes += ' elementor-control-responsive-' + responsiveControl;
 		}
 
 		return classes;
@@ -47,7 +55,9 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		'change @ui.checkbox': 'onBaseInputChange',
 		'change @ui.radio': 'onBaseInputChange',
 		'input @ui.textarea': 'onBaseInputChange',
-		'change @ui.select': 'onBaseInputChange'
+		'change @ui.select': 'onBaseInputChange',
+		'click @ui.switcherDesktop': 'onSwitcherDesktopClick',
+		'click @ui.responsiveSwitchers': 'onSwitcherClick'
 	},
 
 	childEvents: {},
@@ -165,6 +175,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		this.$el.addClass( elClasses );
+		this.renderResponsiveSwitchers();
 
 		this.triggerMethod( 'ready' );
 		this.toggleControlVisibility();
@@ -174,6 +185,26 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.updateElementModel( event );
 
 		this.triggerMethod( 'input:change', event );
+	},
+
+	onSwitcherClick: function( event ) {
+		var device = Backbone.$( event.currentTarget ).data( 'device' );
+
+		elementor.changeDeviceMode( device );
+	},
+
+	onSwitcherDesktopClick: function() {
+		elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+	},
+
+	renderResponsiveSwitchers: function() {
+		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
+			return;
+		}
+
+		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
+
+		this.ui.controlTitle.after( templateHtml );
 	},
 
 	toggleControlVisibility: function() {

@@ -1,4 +1,4 @@
-module.exports = function( $, scopeWindow ) {
+module.exports = function( $ ) {
 	var player,
 		ui = {
 			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
@@ -58,6 +58,7 @@ module.exports = function( $, scopeWindow ) {
 			}
 		} );
 
+		$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 	};
 
 	var videoID = ui.backgroundVideo.data( 'video-id' );
@@ -73,6 +74,4 @@ module.exports = function( $, scopeWindow ) {
 	} else {
 		ui.backgroundVideo.one( 'canplay', changeVideoSize );
 	}
-
-	$( scopeWindow ).on( 'resize', changeVideoSize );
 };

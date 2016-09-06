@@ -202,7 +202,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Fixed! - Allow blank target link for social-icons widget
 
 = 0.6.5 - 08.08.2016 =
-* Tweak! - Added border and box shadow controls for Image widget
+* Tweak! - Added border and box shadow controls for Image widget ([#224](https://github.com/pojome/elementor/issues/244))
 * Tweak! - In new page don't create empty section
 * Tweak! - Embed Roboto font from Google Fonts in editor mode
 * Fixed! - Reset structure or remove column after resize

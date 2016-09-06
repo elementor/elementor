@@ -1218,6 +1218,8 @@ App = Marionette.Application.extend( {
 	// Private Members
 	_controlsItemView: null,
 
+	_defaultDeviceMode: 'desktop',
+
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
 
@@ -1322,13 +1324,13 @@ App = Marionette.Application.extend( {
 
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
-		this.$preview.on( 'load', _.bind( function() {
-			this.$previewContents = this.$preview.contents();
+		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+	},
 
-			elementorFrontend.elementsHandler.setScopeWindow( this.$preview[0].contentWindow );
+	initFrontend: function() {
+		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
-			this.triggerMethod( 'preview:loaded' );
-		}, this ) );
+		elementorFrontend.init();
 	},
 
 	onStart: function() {
@@ -1341,8 +1343,6 @@ App = Marionette.Application.extend( {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementorFrontend.elementsHandler.setEditorMode( true );
 
 		// Init Base elements collection from the server
 		var ElementModel = require( 'elementor-models/element' );
@@ -1358,6 +1358,10 @@ App = Marionette.Application.extend( {
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		this.initFrontend();
+
+		this.$previewContents = this.$preview.contents();
 
 		var SectionsCollectionView = require( 'elementor-views/sections' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
@@ -1415,6 +1419,8 @@ App = Marionette.Application.extend( {
 		    .addClass( 'elementor-editor-active' );
 
 		this.setResizablePanel();
+
+		this.changeDeviceMode( this._defaultDeviceMode );
 
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
@@ -1547,6 +1553,23 @@ App = Marionette.Application.extend( {
         } );
 	},
 
+	changeDeviceMode: function( newDeviceMode ) {
+		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
+
+		if ( oldDeviceMode === newDeviceMode ) {
+			return;
+		}
+
+		Backbone.$( 'body' )
+			.removeClass( 'elementor-device-' + oldDeviceMode )
+			.addClass( 'elementor-device-' + newDeviceMode );
+
+		this.channels.deviceMode
+			.reply( 'previousMode', oldDeviceMode )
+			.reply( 'currentMode', newDeviceMode )
+			.trigger( 'change' );
+	},
+
 	translate: function( stringKey, templateArgs ) {
 		var string = this.config.i18n[ stringKey ];
 
@@ -1566,7 +1589,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"elementor-layouts/panel/panel":50,"elementor-models/element":53,"elementor-templates/manager":9,"elementor-utils/ajax":57,"elementor-utils/heartbeat":58,"elementor-utils/helpers":59,"elementor-utils/introduction":60,"elementor-utils/modals":63,"elementor-utils/presets-factory":64,"elementor-utils/schemes":65,"elementor-views/controls/animation":68,"elementor-views/controls/base":71,"elementor-views/controls/box-shadow":72,"elementor-views/controls/choose":73,"elementor-views/controls/color":74,"elementor-views/controls/dimensions":75,"elementor-views/controls/font":76,"elementor-views/controls/gallery":77,"elementor-views/controls/icon":78,"elementor-views/controls/image-dimensions":79,"elementor-views/controls/media":80,"elementor-views/controls/repeater":82,"elementor-views/controls/section":83,"elementor-views/controls/select2":84,"elementor-views/controls/slider":85,"elementor-views/controls/structure":86,"elementor-views/controls/url":87,"elementor-views/controls/wp_widget":88,"elementor-views/controls/wysiwyg":89,"elementor-views/sections":92}],28:[function(require,module,exports){
+},{"elementor-layouts/panel/panel":50,"elementor-models/element":53,"elementor-templates/manager":9,"elementor-utils/ajax":57,"elementor-utils/heartbeat":58,"elementor-utils/helpers":59,"elementor-utils/introduction":60,"elementor-utils/modals":63,"elementor-utils/presets-factory":64,"elementor-utils/schemes":65,"elementor-views/controls/animation":69,"elementor-views/controls/base":72,"elementor-views/controls/box-shadow":73,"elementor-views/controls/choose":74,"elementor-views/controls/color":75,"elementor-views/controls/dimensions":76,"elementor-views/controls/font":77,"elementor-views/controls/gallery":78,"elementor-views/controls/icon":79,"elementor-views/controls/image-dimensions":80,"elementor-views/controls/media":81,"elementor-views/controls/repeater":83,"elementor-views/controls/section":84,"elementor-views/controls/select2":85,"elementor-views/controls/slider":86,"elementor-views/controls/structure":87,"elementor-views/controls/url":88,"elementor-views/controls/wp_widget":89,"elementor-views/controls/wysiwyg":90,"elementor-views/sections":93}],28:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -1626,14 +1649,11 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	id: 'elementor-panel-footer-tools',
 
-	defaultDeviceMode: 'desktop',
-
-	currentDeviceMode: '',
-
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
 		menuButtons: '.elementor-panel-footer-tool',
+		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
@@ -1657,7 +1677,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
 
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged );
+		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
+			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	_initDialog: function() {
@@ -1712,32 +1733,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		elementor.saveBuilder();
 	},
 
-	onRender: function() {
-		this.changeDeviceMode( this.defaultDeviceMode );
-	},
-
-	changeDeviceMode: function( newDeviceMode ) {
-		if ( this.currentDeviceMode === newDeviceMode ) {
-			return;
-		}
-
-		this.getCurrentDeviceModeButton().removeClass( 'active' );
-
-		elementor.$previewWrapper
-		    .removeClass( 'elementor-device-' + this.currentDeviceMode )
-		    .addClass( 'elementor-device-' + newDeviceMode );
-
-		this.currentDeviceMode = newDeviceMode;
-
-		this.getCurrentDeviceModeButton().addClass( 'active' );
-
-		elementor.channels.deviceMode
-		         .reply( 'currentMode', this.currentDeviceMode )
-		         .trigger( 'change' );
-	},
-
-	getCurrentDeviceModeButton: function() {
-		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + this.currentDeviceMode + '"]' );
+	getDeviceModeButton: function( deviceMode ) {
+		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
 	onDocumentClick: function( event ) {
@@ -1762,6 +1759,18 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this.ui.buttonSave.toggleClass( 'elementor-save-active', elementor.isEditorChanged() );
 	},
 
+	onDeviceModeChange: function() {
+		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
+			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+
+		this.getDeviceModeButton( previousDeviceMode ).removeClass( 'active' );
+
+		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
+
+		// Change the footer icon
+		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
+	},
+
 	onClickButtonSave: function() {
 		//this._saveBuilderDraft();
 		this._publishBuilder();
@@ -1778,7 +1787,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var $clickedButton = this.$( event.currentTarget ),
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
-		this.changeDeviceMode( newDeviceMode );
+		elementor.changeDeviceMode( newDeviceMode );
 	},
 
 	onClickWatchTutorial: function() {
@@ -1866,6 +1875,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		'click @ui.tabs a': 'onClickTabControl'
 	},
 
+	initialize: function() {
+		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
 		return elementor.getControlItemView( controlType );
@@ -1935,6 +1948,19 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this.model.get( 'settings' ).trigger( 'control:switch:tab', $thisTab.data( 'tab' ) );
 
 		this.openFirstSectionInCurrentTab( $thisTab.data( 'tab' ) );
+	},
+
+	onDeviceModeChange: function() {
+		var self = this;
+
+		self.$el.removeClass( 'elementor-responsive-switchers-open' );
+
+		// Timeout according to preview resize css animation duration
+		setTimeout( function() {
+			elementor.$previewContents.find( 'html, body' ).animate( {
+				scrollTop: self.getOption( 'editedElementView' ).$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
+			} );
+		}, 500 );
 	},
 
 	/**
@@ -4408,7 +4434,208 @@ Schemes = function() {
 module.exports = new Schemes();
 
 },{}],66:[function(require,module,exports){
+( function( $ ) {
+
+	var Stylesheet = function() {
+		var self = this,
+			rules = {},
+			devices = {};
+
+		var getDeviceMaxValue = function( deviceName ) {
+			var deviceNames = Object.keys( devices ),
+				deviceNameIndex = deviceNames.indexOf( deviceName ),
+				nextIndex = deviceNameIndex + 1;
+
+			if ( nextIndex >= deviceNames.length ) {
+				throw new RangeError( 'Max value for this device is out of range.' );
+			}
+
+			return devices[ deviceNames[ nextIndex ] ] - 1;
+		};
+
+		var queryToHash = function( query ) {
+			var hash = [];
+
+			$.each( query, function( endPoint ) {
+				hash.push( endPoint + '_' + this );
+			} );
+
+			return hash.join( '-' );
+		};
+
+		var hashToQuery = function( hash ) {
+			var query = {};
+
+			hash = hash.split( '-' ).filter( String );
+
+			hash.forEach( function( singleQuery ) {
+				var queryParts = singleQuery.split( '_' ),
+					endPoint = queryParts[0],
+					deviceName = queryParts[1];
+
+				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
+			} );
+
+			return query;
+		};
+
+		var addQueryHash = function( queryHash ) {
+			rules[ queryHash ] = {};
+
+			var hashes = Object.keys( rules );
+
+			if ( hashes.length < 2 ) {
+				return;
+			}
+
+			// Sort the devices from narrowest to widest
+			hashes.sort( function( a, b ) {
+				if ( 'all' === a ) {
+					return -1;
+				}
+
+				if ( 'all' === b ) {
+					return 1;
+				}
+
+				var aQuery = hashToQuery( a ),
+					bQuery = hashToQuery( b );
+
+				return bQuery.max - aQuery.max;
+			} );
+
+			var sortedRules = {};
+
+			hashes.forEach( function( deviceName ) {
+				sortedRules[ deviceName ] = rules[ deviceName ];
+			} );
+
+			rules = sortedRules;
+		};
+
+		this.addDevice = function( deviceName, deviceValue ) {
+			devices[ deviceName ] = deviceValue;
+
+			var deviceNames = Object.keys( devices );
+
+			if ( deviceNames.length < 2 ) {
+				return self;
+			}
+
+			// Sort the devices from narrowest to widest
+			deviceNames.sort( function( a, b ) {
+				return devices[ a ] - devices[ b ];
+			} );
+
+			var sortedDevices = {};
+
+			deviceNames.forEach( function( deviceName ) {
+				sortedDevices[ deviceName ] = devices[ deviceName ];
+			} );
+
+			devices = sortedDevices;
+
+			return self;
+		};
+
+		var getQueryHashStyleFormat = function( queryHash ) {
+			var query = hashToQuery( queryHash ),
+				styleFormat = [];
+
+			$.each( query, function( endPoint ) {
+				styleFormat.push( '(' + endPoint + '-width:' + this + 'px)' );
+			} );
+
+			return '@media' + styleFormat.join( ' and ' );
+		};
+
+		this.addRules = function( selector, styleRules, query ) {
+			var queryHash = 'all';
+
+			if ( query ) {
+				queryHash = queryToHash( query );
+			}
+
+			if ( ! rules[ queryHash ] ) {
+				addQueryHash( queryHash );
+			}
+
+			if ( ! rules[ queryHash ][ selector ] ) {
+				rules[ queryHash ][ selector ] = {};
+			}
+
+			if ( 'string' === typeof styleRules ) {
+				styleRules = styleRules.split( ';' ).filter( String );
+
+				var orderedRules = {};
+
+				$.each( styleRules, function() {
+					var property = this.split( /:(.*)?/ );
+
+					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
+				} );
+
+				styleRules = orderedRules;
+			}
+
+			$.extend( rules[ queryHash ][ selector ], styleRules );
+
+			return self;
+		};
+
+		this.empty = function() {
+			rules = {};
+		};
+
+		this.toString = function() {
+			var styleText = '';
+
+			$.each( rules, function( queryHash ) {
+				var deviceText = Stylesheet.parseRules( this );
+
+				if ( 'all' !== queryHash ) {
+					deviceText = getQueryHashStyleFormat( queryHash ) + '{' + deviceText + '}';
+				}
+
+				styleText += deviceText;
+			} );
+
+			return styleText;
+		};
+	};
+
+	Stylesheet.parseRules = function( rules ) {
+		var parsedRules = '';
+
+		$.each( rules, function( selector ) {
+			var selectorContent = Stylesheet.parseProperties( this );
+
+			if ( selectorContent ) {
+				parsedRules += selector + '{' + selectorContent + '}';
+			}
+		} );
+
+		return parsedRules;
+	};
+
+	Stylesheet.parseProperties = function( properties ) {
+		var parsedProperties = '';
+
+		$.each( properties, function( propertyKey ) {
+			if ( this ) {
+				parsedProperties += propertyKey + ':' + this + ';';
+			}
+		} );
+
+		return parsedProperties;
+	};
+
+	module.exports = Stylesheet;
+} )( jQuery );
+
+},{}],67:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
+	Stylesheet = require( 'elementor-utils/stylesheet' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -4432,6 +4659,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	baseEvents: {},
 
 	elementEvents: {},
+
+	stylesheet: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -4468,6 +4697,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} );
 
 		this.initRemoveDialog();
+
+		this.initStylesheet();
 	},
 
 	addChildModel: function( model, options ) {
@@ -4507,6 +4738,17 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	initStylesheet: function() {
+		this.stylesheet = new Stylesheet();
+
+		var viewportBreakpoints = elementor.config.viewportBreakpoints;
+
+		this.stylesheet
+			.addDevice( 'mobile', 0 )
+			.addDevice( 'tablet', viewportBreakpoints.md )
+			.addDevice( 'desktop', viewportBreakpoints.lg );
+	},
+
 	enqueueFonts: function() {
 		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = this.model.getSetting( control.name );
@@ -4524,48 +4766,58 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	renderStyles: function() {
-		var styleHtml = '',
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid ),
-			styleControls = this.model.get( 'settings' ).getStyleControls();
+		var self = this,
+			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
+			styleControls = self.model.get( 'settings' ).getStyleControls();
 
-		_.each( styleControls, _.bind( function( control ) {
-			var controlValue = this.model.getSetting( control.name );
+		self.stylesheet.empty();
+
+		_.each( styleControls, function( control ) {
+			var controlValue = self.model.getSetting( control.name );
 
 			if ( ! _.isNumber( controlValue ) && _.isEmpty( controlValue ) ) {
 				return;
 			}
 
-			var isVisibility = elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) );
-			if ( ! isVisibility ) {
+			var isVisible = elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) );
+			if ( ! isVisible ) {
 				return;
 			}
 
-			_.each( control.selectors, _.bind( function( cssProperty, selector ) {
-				var outputSelector = selector.replace( /\{\{WRAPPER\}\}/g, '#' + this.getElementUniqueClass() ),
-					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue );
+			_.each( control.selectors, function( cssProperty, selector ) {
+				var outputSelector = selector.replace( /\{\{WRAPPER}}/g, '#' + self.getElementUniqueClass() ),
+					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue ),
+					query;
 
 				if ( _.isEmpty( outputCssProperty ) ) {
 					return;
 				}
 
-				styleHtml += outputSelector + '{' + outputCssProperty + '}';
-			}, this ) );
-		}, this ) );
+				if ( control.responsive && 'desktop' !== control.responsive ) {
+					query = { max: control.responsive };
+				}
 
-		if ( 'column' === this.model.get( 'elType' ) ) {
-			var inlineSize = this.model.getSetting( '_inline_size' );
+				self.stylesheet.addRules( outputSelector, outputCssProperty, query );
+			} );
+		} );
+
+		if ( 'column' === self.model.get( 'elType' ) ) {
+			var inlineSize = self.model.getSetting( '_inline_size' );
+
 			if ( ! _.isEmpty( inlineSize ) ) {
-				styleHtml += '@media (min-width: 768px) {#' + this.getElementUniqueClass() + '{width:' + inlineSize + '%;}';
+				self.stylesheet.addRules( '#' + self.getElementUniqueClass(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
+
+		var styleHtml = self.stylesheet.toString();
 
 		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
 			return;
 		}
 
 		if ( ! $stylesheet.length ) {
-			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + this.model.cid + '"></style>' );
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + this.model.cid );
+			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + self.model.cid + '"></style>' );
+			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid );
 		}
 
 		$stylesheet.html( styleHtml );
@@ -4656,7 +4908,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 module.exports = BaseElementView;
 
-},{"elementor-models/base-settings":51}],67:[function(require,module,exports){
+},{"elementor-models/base-settings":51,"elementor-utils/stylesheet":66}],68:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
 	WidgetView = require( 'elementor-views/widget' ),
@@ -4861,7 +5113,7 @@ ColumnView = BaseElementView.extend( {
 
 module.exports = ColumnView;
 
-},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/handle-edit-mode":4,"elementor-behaviors/handle-editor":5,"elementor-behaviors/resizable":6,"elementor-behaviors/sortable":7,"elementor-views/base-element":66,"elementor-views/element-empty":90,"elementor-views/section":91,"elementor-views/widget":93}],68:[function(require,module,exports){
+},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/handle-edit-mode":4,"elementor-behaviors/handle-editor":5,"elementor-behaviors/resizable":6,"elementor-behaviors/sortable":7,"elementor-views/base-element":67,"elementor-views/element-empty":91,"elementor-views/section":92,"elementor-views/widget":94}],69:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlAnimationItemView;
 
@@ -4874,7 +5126,7 @@ ControlAnimationItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlAnimationItemView;
 
-},{"elementor-views/controls/base":71}],69:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],70:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlBaseMultipleItemView;
 
@@ -4957,7 +5209,7 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlBaseMultipleItemView;
 
-},{"elementor-views/controls/base":71}],70:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],71:[function(require,module,exports){
 var ControlBaseMultipleItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlBaseUnitsItemView;
 
@@ -4980,7 +5232,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 module.exports = ControlBaseUnitsItemView;
 
-},{"elementor-views/controls/base-multiple":69}],71:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":70}],72:[function(require,module,exports){
 var ControlBaseItemView;
 
 ControlBaseItemView = Marionette.CompositeView.extend( {
@@ -4990,14 +5242,18 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			checkbox: 'input[data-setting][type="checkbox"]',
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
-			textarea: 'textarea[data-setting]'
+			textarea: 'textarea[data-setting]',
+			controlTitle: '.elementor-control-title',
+			responsiveSwitchers: '.elementor-responsive-switcher',
+			switcherDesktop: '.elementor-responsive-switcher-desktop'
 		};
 	},
 
 	className: function() {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
-			modelClasses = this.model.get( 'classes' );
+			modelClasses = this.model.get( 'classes' ),
+			responsiveControl = this.model.get( 'responsive' );
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
@@ -5005,6 +5261,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		if ( ! _.isEmpty( this.model.get( 'section' ) ) ) {
 			classes += ' elementor-control-under-section';
+		}
+
+		if ( ! _.isEmpty( responsiveControl ) ) {
+			classes += ' elementor-control-responsive-' + responsiveControl;
 		}
 
 		return classes;
@@ -5030,7 +5290,9 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		'change @ui.checkbox': 'onBaseInputChange',
 		'change @ui.radio': 'onBaseInputChange',
 		'input @ui.textarea': 'onBaseInputChange',
-		'change @ui.select': 'onBaseInputChange'
+		'change @ui.select': 'onBaseInputChange',
+		'click @ui.switcherDesktop': 'onSwitcherDesktopClick',
+		'click @ui.responsiveSwitchers': 'onSwitcherClick'
 	},
 
 	childEvents: {},
@@ -5148,6 +5410,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		this.$el.addClass( elClasses );
+		this.renderResponsiveSwitchers();
 
 		this.triggerMethod( 'ready' );
 		this.toggleControlVisibility();
@@ -5157,6 +5420,26 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.updateElementModel( event );
 
 		this.triggerMethod( 'input:change', event );
+	},
+
+	onSwitcherClick: function( event ) {
+		var device = Backbone.$( event.currentTarget ).data( 'device' );
+
+		elementor.changeDeviceMode( device );
+	},
+
+	onSwitcherDesktopClick: function() {
+		elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+	},
+
+	renderResponsiveSwitchers: function() {
+		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
+			return;
+		}
+
+		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
+
+		this.ui.controlTitle.after( templateHtml );
 	},
 
 	toggleControlVisibility: function() {
@@ -5189,7 +5472,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 module.exports = ControlBaseItemView;
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlBoxShadowItemView;
 
@@ -5276,7 +5559,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlBoxShadowItemView;
 
-},{"elementor-views/controls/base-multiple":69}],73:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":70}],74:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlChooseItemView;
 
@@ -5329,7 +5612,7 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlChooseItemView;
 
-},{"elementor-views/controls/base":71}],74:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],75:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlColorItemView;
 
@@ -5368,7 +5651,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlColorItemView;
 
-},{"elementor-views/controls/base":71}],75:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],76:[function(require,module,exports){
 var ControlBaseUnitsItemView = require( 'elementor-views/controls/base-units' ),
 	ControlDimensionsItemView;
 
@@ -5532,7 +5815,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
 module.exports = ControlDimensionsItemView;
 
-},{"elementor-views/controls/base-units":70}],76:[function(require,module,exports){
+},{"elementor-views/controls/base-units":71}],77:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlFontItemView;
 
@@ -5565,7 +5848,7 @@ ControlFontItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlFontItemView;
 
-},{"elementor-views/controls/base":71}],77:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],78:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlMediaItemView;
 
@@ -5731,7 +6014,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlMediaItemView;
 
-},{"elementor-views/controls/base":71}],78:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],79:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlIconItemView;
 
@@ -5793,7 +6076,7 @@ ControlIconItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlIconItemView;
 
-},{"elementor-views/controls/base":71}],79:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],80:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlImageDimensionsItemView;
 
@@ -5824,7 +6107,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlImageDimensionsItemView;
 
-},{"elementor-views/controls/base-multiple":69}],80:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":70}],81:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -5914,7 +6197,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlMediaItemView;
 
-},{"elementor-views/controls/base-multiple":69}],81:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":70}],82:[function(require,module,exports){
 var RepeaterRowView;
 
 RepeaterRowView = Marionette.CompositeView.extend( {
@@ -5997,7 +6280,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 module.exports = RepeaterRowView;
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
 	ControlRepeaterItemView;
@@ -6146,7 +6429,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlRepeaterItemView;
 
-},{"elementor-views/controls/base":71,"elementor-views/controls/repeater-row":81}],83:[function(require,module,exports){
+},{"elementor-views/controls/base":72,"elementor-views/controls/repeater-row":82}],84:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSectionItemView;
 
@@ -6166,7 +6449,7 @@ ControlSectionItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlSectionItemView;
 
-},{"elementor-views/controls/base":71}],84:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],85:[function(require,module,exports){
 // Attention: DO NOT use this control since it has bugs
 // TODO: This control is unused
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
@@ -6199,7 +6482,7 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlSelect2ItemView;
 
-},{"elementor-views/controls/base":71}],85:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],86:[function(require,module,exports){
 var ControlBaseUnitsItemView = require( 'elementor-views/controls/base-units' ),
 	ControlSliderItemView;
 
@@ -6259,7 +6542,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 module.exports = ControlSliderItemView;
 
-},{"elementor-views/controls/base-units":70}],86:[function(require,module,exports){
+},{"elementor-views/controls/base-units":71}],87:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlStructureItemView;
 
@@ -6309,7 +6592,7 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlStructureItemView;
 
-},{"elementor-views/controls/base":71}],87:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],88:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlUrlItemView;
 
@@ -6347,7 +6630,7 @@ ControlUrlItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlUrlItemView;
 
-},{"elementor-views/controls/base-multiple":69}],88:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":70}],89:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlWPWidgetItemView;
 
@@ -6388,7 +6671,7 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlWPWidgetItemView;
 
-},{"elementor-views/controls/base":71}],89:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],90:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlWysiwygItemView;
 
@@ -6503,7 +6786,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlWysiwygItemView;
 
-},{"elementor-views/controls/base":71}],90:[function(require,module,exports){
+},{"elementor-views/controls/base":72}],91:[function(require,module,exports){
 var ElementEmptyView;
 
 ElementEmptyView = Marionette.ItemView.extend( {
@@ -6522,7 +6805,7 @@ ElementEmptyView = Marionette.ItemView.extend( {
 
 module.exports = ElementEmptyView;
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ColumnView = require( 'elementor-views/column' ),
 	SectionView;
@@ -6791,7 +7074,7 @@ SectionView = BaseElementView.extend( {
 
 module.exports = SectionView;
 
-},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/handle-edit-mode":4,"elementor-behaviors/handle-editor":5,"elementor-behaviors/sortable":7,"elementor-views/base-element":66,"elementor-views/column":67}],92:[function(require,module,exports){
+},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/handle-edit-mode":4,"elementor-behaviors/handle-editor":5,"elementor-behaviors/sortable":7,"elementor-views/base-element":67,"elementor-views/column":68}],93:[function(require,module,exports){
 var SectionView = require( 'elementor-views/section' ),
 	SectionsCollectionView;
 
@@ -6982,7 +7265,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 
 module.exports = SectionsCollectionView;
 
-},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/sortable":7,"elementor-views/section":91}],93:[function(require,module,exports){
+},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/sortable":7,"elementor-views/section":92}],94:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	WidgetView;
 
@@ -7101,5 +7384,5 @@ WidgetView = BaseElementView.extend( {
 
 module.exports = WidgetView;
 
-},{"elementor-behaviors/handle-edit-mode":4,"elementor-behaviors/handle-editor":5,"elementor-views/base-element":66}]},{},[61,62,27])
+},{"elementor-behaviors/handle-edit-mode":4,"elementor-behaviors/handle-editor":5,"elementor-views/base-element":67}]},{},[61,62,27])
 //# sourceMappingURL=editor.js.map

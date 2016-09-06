@@ -104,7 +104,8 @@ body.elementor-editor-active #elementor-switch-mode-button {
     background-color: #e9e9e9; }
   body.elementor-editor-active #elementor-switch-mode-button:active {
     box-shadow: inset 0 1px 0 #ccc;
-    transform: translateY(1px); }
+    -webkit-transform: translateY(1px);
+            transform: translateY(1px); }
 body.elementor-editor-active #elementor-editor {
   display: table; }
 body.elementor-editor-active #postdivrich {
@@ -123,7 +124,8 @@ body.elementor-editor-inactive #elementor-editor {
     background-color: #a0124a; }
   .elementor-editor-inactive #elementor-switch-mode-button:active, #elementor-editor-button:active {
     box-shadow: inset 0 1px 0 #7c1337;
-    transform: translateY(1px); }
+    -webkit-transform: translateY(1px);
+            transform: translateY(1px); }
 
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
   content: "\e800";
@@ -150,12 +152,14 @@ body.elementor-editor-inactive #elementor-editor {
   border: 1px solid #DDD;
   height: 300px;
   width: 100%;
+  -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease; }
   #elementor-editor:hover {
     background-color: #ffffff; }
   #elementor-editor .elementor-loader-box {
     position: absolute;
-    animation: load 1.8s linear infinite; }
+    -webkit-animation: load 1.8s linear infinite;
+            animation: load 1.8s linear infinite; }
     #elementor-editor .elementor-loader-box:nth-of-type(1) {
       width: 20%;
       height: 100%;
@@ -167,13 +171,23 @@ body.elementor-editor-inactive #elementor-editor {
       width: 60%; }
     #elementor-editor .elementor-loader-box:nth-of-type(2) {
       top: 0;
-      animation-delay: -0.45s; }
+      -webkit-animation-delay: -0.45s;
+              animation-delay: -0.45s; }
     #elementor-editor .elementor-loader-box:nth-of-type(3) {
       top: 40%;
-      animation-delay: -0.9s; }
+      -webkit-animation-delay: -0.9s;
+              animation-delay: -0.9s; }
     #elementor-editor .elementor-loader-box:nth-of-type(4) {
       bottom: 0;
-      animation-delay: -1.35s; }
+      -webkit-animation-delay: -1.35s;
+              animation-delay: -1.35s; }
+@-webkit-keyframes load {
+  0% {
+    opacity: .3; }
+  50% {
+    opacity: 1; }
+  100% {
+    opacity: .3; } }
 @keyframes load {
   0% {
     opacity: .3; }
@@ -220,6 +234,7 @@ body.elementor-editor-inactive #elementor-editor {
   vertical-align: top;
   content: "\f463"; }
 #elementor-library-sync-button.loading:before {
+  -webkit-animation: rotation 1s infinite linear;
   animation: rotation 1s infinite linear; }
 #elementor-library-sync-button.success:before {
   content: "\f147"; }
@@ -265,7 +280,8 @@ body.elementor-editor-inactive #elementor-editor {
         background-color: #a0124a; }
       .notice.elementor-message .elementor-update-now .elementor-button:active {
         box-shadow: inset 0 1px 0 #7c1337;
-        transform: translateY(1px); }
+        -webkit-transform: translateY(1px);
+                transform: translateY(1px); }
 
 @media (max-width: 767px) {
   .notice.elementor-message {
@@ -315,11 +331,20 @@ body.elementor-editor-inactive #elementor-editor {
 
 /*= Elementor Feedback
 ---------------------------------------*/
+@-webkit-keyframes elementor-rotation {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg); } }
 @keyframes elementor-rotation {
   0% {
-    transform: rotate(0deg); }
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
   100% {
-    transform: rotate(359deg); } }
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg); } }
 #elementor-deactivate-feedback-dialog-wrapper {
   display: none; }
 
@@ -369,7 +394,8 @@ body.elementor-editor-inactive #elementor-editor {
     display: inline-block;
     content: '\f463';
     font: 18px dashicons;
-    animation: elementor-rotation 2s infinite linear; }
+    -webkit-animation: elementor-rotation 2s infinite linear;
+            animation: elementor-rotation 2s infinite linear; }
 #elementor-deactivate-feedback-modal .dialog-skip {
   font-size: 12px;
   color: #a4afb7;

@@ -11,10 +11,12 @@
 		margin-right: auto;
 		margin-left: auto;
 		position: relative;
-		max-width: 1140px;
+	}
 
-		&.elementor-container-fluid {
-			max-width: 100%;
+	// Max-width of container depending on section settings
+	&.elementor-section-boxed {
+		& > .elementor-container {
+			max-width: 1140px;
 		}
 	}
 
@@ -68,7 +70,7 @@
 		}
 	}
 
-	@media(min-width: $screen-md-min) {
+	@media (min-width: $screen-md-min) {
 
 		// Section Full Height
 		&.elementor-section-height-full {
@@ -87,7 +89,7 @@
 	display: flex;
 
 	/* In dragging mode it's causing a columns fall */
-	@media(max-width: $screen-sm-max) {
+	@media (max-width: $screen-sm-max) {
 		flex-wrap: wrap;
 	}
 }
@@ -117,6 +119,7 @@
 	position: relative;
 	min-height: 1px;
 	display: flex;
+
 }
 
 @mixin elementor-grid-classes {
@@ -138,42 +141,6 @@
 		}
 	}
 
-}
-
-// Columns Gap
-.elementor-column-gap-default {
-
-	.elementor-element-populated {
-		padding: 10px;
-	}
-}
-
-.elementor-column-gap-narrow {
-
-	.elementor-element-populated {
-		padding: 5px;
-	}
-}
-
-.elementor-column-gap-extended {
-
-	.elementor-element-populated {
-		padding: 15px;
-	}
-}
-
-.elementor-column-gap-wide {
-
-	.elementor-element-populated {
-		padding: 20px;
-	}
-}
-
-.elementor-column-gap-wider {
-
-	.elementor-element-populated {
-		padding: 30px;
-	}
 }
 
 // Columns Gap (Inner section supported)
@@ -204,15 +171,53 @@
 }
 
 @media (min-width: $screen-md-min) {
-
 	.elementor-column {
 		@include elementor-grid-classes;
+	}
+
+	// Columns Gap
+	.elementor-column-gap-default {
+
+		.elementor-element-populated {
+			padding: 10px;
+		}
+	}
+
+	.elementor-column-gap-narrow {
+
+		.elementor-element-populated {
+			padding: 5px;
+		}
+	}
+
+	.elementor-column-gap-extended {
+
+		.elementor-element-populated {
+			padding: 15px;
+		}
+	}
+
+	.elementor-column-gap-wide {
+
+		.elementor-element-populated {
+			padding: 20px;
+		}
+	}
+
+	.elementor-column-gap-wider {
+
+		.elementor-element-populated {
+			padding: 30px;
+		}
 	}
 }
 
 @media (max-width: $screen-sm-max) {
-
 	.elementor-column {
 		width: 100%;
+	}
+
+	.elementor-reverse-mobile > .elementor-container > .elementor-row {
+		flex-direction: column-reverse;
 	}
 }

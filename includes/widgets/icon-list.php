@@ -132,7 +132,7 @@ class Widget_Icon_list extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'icon_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -140,7 +140,7 @@ class Widget_Icon_list extends Widget_Base {
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'options' => [
-					'left'    => [
+					'left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
 					],

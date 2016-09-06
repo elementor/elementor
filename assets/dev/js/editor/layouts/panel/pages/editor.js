@@ -25,6 +25,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		'click @ui.tabs a': 'onClickTabControl'
 	},
 
+	initialize: function() {
+		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
 		return elementor.getControlItemView( controlType );
@@ -94,6 +98,19 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this.model.get( 'settings' ).trigger( 'control:switch:tab', $thisTab.data( 'tab' ) );
 
 		this.openFirstSectionInCurrentTab( $thisTab.data( 'tab' ) );
+	},
+
+	onDeviceModeChange: function() {
+		var self = this;
+
+		self.$el.removeClass( 'elementor-responsive-switchers-open' );
+
+		// Timeout according to preview resize css animation duration
+		setTimeout( function() {
+			elementor.$previewContents.find( 'html, body' ).animate( {
+				scrollTop: self.getOption( 'editedElementView' ).$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
+			} );
+		}, 500 );
 	},
 
 	/**

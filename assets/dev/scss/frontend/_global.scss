@@ -92,8 +92,118 @@
 	}
 }
 
-// TEMP CODE
+// Alignment Classes
+.elementor-align- {
 
+	&center {
+		text-align: center;
+
+		.elementor-button {
+			width: auto;
+		}
+	}
+
+	&right {
+		text-align: right;
+
+		.elementor-button {
+			width: auto;
+		}
+	}
+
+	&left {
+		text-align: left;
+
+		.elementor-button {
+			width: auto;
+		}
+	}
+
+	&justify {
+
+		.elementor-button {
+			width: 100%;
+		}
+	}
+}
+
+// Alignment for Tablet
+@media (max-width: $screen-md-max) {
+
+	.elementor-tablet-align- {
+
+		&center {
+			text-align: center;
+
+			.elementor-button {
+				width: auto;
+			}
+		}
+
+		&right {
+			text-align: right;
+
+			.elementor-button {
+				width: auto;
+			}
+		}
+
+		&left {
+			text-align: left;
+
+			.elementor-button {
+				width: auto;
+			}
+		}
+
+		&justify {
+
+			.elementor-button {
+				width: 100%;
+			}
+		}
+	}
+}
+
+// Alignment for Mobile
+@media (max-width: $screen-sm-max) {
+
+	.elementor-mobile-align- {
+
+		&center {
+			text-align: center;
+
+			.elementor-button {
+				width: auto;
+			}
+		}
+
+		&right {
+			text-align: right;
+
+			.elementor-button {
+				width: auto;
+			}
+		}
+
+		&left {
+			text-align: left;
+
+			.elementor-button {
+				width: auto;
+			}
+		}
+
+		&justify {
+
+			.elementor-button {
+				width: 100%;
+			}
+		}
+	}
+}
+
+// TEMP CODE
 #elementor-select-preset {
 	 display: none;
 }
