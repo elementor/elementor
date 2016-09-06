@@ -620,7 +620,7 @@ class Element_Section extends Element_Base {
 					'' => __( 'No', 'elementor' ),
 					'reverse-mobile' => __( 'Yes', 'elementor' ),
 				],
-				'description' => __( 'Reverse column order on Mobile (Make lest column appear at the top, when collapsing to mobile view)', 'elementor' ),
+				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
 			]
 		);
 
