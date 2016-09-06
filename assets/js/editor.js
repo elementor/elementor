@@ -4426,15 +4426,6 @@ module.exports = new Schemes();
 
 },{}],66:[function(require,module,exports){
 ( function( $ ) {
-	var getQueryHash = function( query ) {
-		var hash = [];
-
-		$.each( query, function( endPoint ) {
-			hash.push( endPoint + '_' + this );
-		} );
-
-		return hash.join( '-' );
-	};
 
 	var Stylesheet = function() {
 		var self = this,
@@ -4453,21 +4444,64 @@ module.exports = new Schemes();
 			return devices[ deviceNames[ nextIndex ] ] - 1;
 		};
 
-		var getQueryHashStyleFormat = function( queryHash ) {
-			var styleFormat = [];
+		var queryToHash = function( query ) {
+			var hash = [];
 
-			queryHash = queryHash.split( '-' ).filter( String );
-
-			queryHash.forEach( function( singleQuery ) {
-				var queryParts = singleQuery.split( '_' ),
-					endPoint = queryParts[0],
-					deviceName = queryParts[1],
-					queryValue = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
-
-				styleFormat.push( '(' + endPoint + '-width:' + queryValue + 'px)' );
+			$.each( query, function( endPoint ) {
+				hash.push( endPoint + '_' + this );
 			} );
 
-			return '@media' + styleFormat.join( ' and ' );
+			return hash.join( '-' );
+		};
+
+		var hashToQuery = function( hash ) {
+			var query = {};
+
+			hash = hash.split( '-' ).filter( String );
+
+			hash.forEach( function( singleQuery ) {
+				var queryParts = singleQuery.split( '_' ),
+					endPoint = queryParts[0],
+					deviceName = queryParts[1];
+
+				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
+			} );
+
+			return query;
+		};
+
+		var addQueryHash = function( queryHash ) {
+			rules[ queryHash ] = {};
+
+			var hashes = Object.keys( rules );
+
+			if ( hashes.length < 2 ) {
+				return;
+			}
+
+			// Sort the devices from narrowest to widest
+			hashes.sort( function( a, b ) {
+				if ( 'all' === a ) {
+					return -1;
+				}
+
+				if ( 'all' === b ) {
+					return 1;
+				}
+
+				var aQuery = hashToQuery( a ),
+					bQuery = hashToQuery( b );
+
+				return bQuery.max - aQuery.max;
+			} );
+
+			var sortedRules = {};
+
+			hashes.forEach( function( deviceName ) {
+				sortedRules[ deviceName ] = rules[ deviceName ];
+			} );
+
+			rules = sortedRules;
 		};
 
 		this.addDevice = function( deviceName, deviceValue ) {
@@ -4495,15 +4529,26 @@ module.exports = new Schemes();
 			return self;
 		};
 
+		var getQueryHashStyleFormat = function( queryHash ) {
+			var query = hashToQuery( queryHash ),
+				styleFormat = [];
+
+			$.each( query, function( endPoint ) {
+				styleFormat.push( '(' + endPoint + '-width:' + this + 'px)' );
+			} );
+
+			return '@media' + styleFormat.join( ' and ' );
+		};
+
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
 
 			if ( query ) {
-				queryHash = getQueryHash( query );
+				queryHash = queryToHash( query );
 			}
 
 			if ( ! rules[ queryHash ] ) {
-				rules[ queryHash ] = {};
+				addQueryHash( queryHash );
 			}
 
 			if ( ! rules[ queryHash ][ selector ] ) {
@@ -4516,7 +4561,7 @@ module.exports = new Schemes();
 				var orderedRules = {};
 
 				$.each( styleRules, function() {
-					var property = this.split( ':' );
+					var property = this.split( /:(.*)?/ );
 
 					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
 				} );
@@ -5384,7 +5429,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
-		
+
 		this.ui.controlTitle.after( templateHtml );
 	},
 

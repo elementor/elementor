@@ -933,29 +933,21 @@ select {
       text-transform: uppercase;
       font-size: 9px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-responsive-switchers {
-    margin-right: 15px; }
+    margin-right: 10px; }
   #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher {
     display: inline-block;
-    height: 25px;
-    width: 25px;
     border-radius: 50%;
-    background-color: #e6e9ec;
     cursor: pointer;
     position: relative;
-    margin-right: 5px; }
-    #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher i {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      -webkit-transform: translateX(-50%) translateY(-50%);
-              transform: translateX(-50%) translateY(-50%);
-      color: #fff; }
+    margin-right: 5px;
+    color: #a4afb7;
+    font-size: 10px; }
   .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
     display: none; }
   .elementor-device-mobile #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-mobile {
-    background-color: #71d7f7; }
+    color: #71d7f7; }
   .elementor-device-tablet #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-tablet {
-    background-color: #71d7f7; }
+    color: #71d7f7; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
