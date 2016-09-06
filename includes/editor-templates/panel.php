@@ -47,21 +47,21 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
-		<i class="fa fa-desktop"></i>
+		<i class="eicon-device-desktop"></i>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
-					<i class="elementor-icon fa fa-desktop"></i>
+					<i class="elementor-icon eicon-device-desktop"></i>
 					<span class="elementor-title"><?php _e( 'Desktop', 'elementor' ); ?></span>
 					<span class="elementor-description"><?php _e( 'Default Preview', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
-					<i class="elementor-icon fa fa-tablet"></i>
+					<i class="elementor-icon eicon-device-tablet"></i>
 					<span class="elementor-title"><?php _e( 'Tablet', 'elementor' ); ?></span>
 					<span class="elementor-description"><?php _e( 'Preview for 768px', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
-					<i class="elementor-icon fa fa-mobile"></i>
+					<i class="elementor-icon eicon-device-mobile"></i>
 					<span class="elementor-title"><?php _e( 'Mobile', 'elementor' ); ?></span>
 					<span class="elementor-description"><?php _e( 'Preview for 360px', 'elementor' ); ?></span>
 				</div>
@@ -286,13 +286,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
 	<div class="elementor-control-responsive-switchers">
 		<a class="elementor-responsive-switcher elementor-responsive-switcher-desktop" data-device="desktop">
-			<i class="fa fa-desktop"></i>
+			<i class="eicon-device-desktop"></i>
 		</a>
 		<a class="elementor-responsive-switcher elementor-responsive-switcher-tablet" data-device="tablet">
-			<i class="fa fa-tablet"></i>
+			<i class="eicon-device-tablet"></i>
 		</a>
 		<a class="elementor-responsive-switcher elementor-responsive-switcher-mobile" data-device="mobile">
-			<i class="fa fa-mobile"></i>
+			<i class="eicon-device-mobile"></i>
 		</a>
 	</div>
 </script>
