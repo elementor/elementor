@@ -178,7 +178,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Rearrange TinyMCE buttons ([#444](https://github.com/pojome/elementor/issues/444))
 * Tweak! - Changed range for font size control
 * Tweak! - Compatibility with `asp_tags`
-* Tweak! - Compatibility for old webkit version ([#484](https://github.com/pojome/elementor/issues/484), [#403](https://github.com/pojome/elementor/issues/403), (#370](https://github.com/pojome/elementor/issues/370))
+* Tweak! - Compatibility for old webkit version ([#484](https://github.com/pojome/elementor/issues/484), [#403](https://github.com/pojome/elementor/issues/403), [#370](https://github.com/pojome/elementor/issues/370))
 * Fixed! - Removed style from gallery caption
 * Fixed! - Wrong index in section sorting
 * Fixed! - Column indication on inner section dragging
