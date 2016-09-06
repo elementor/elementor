@@ -610,7 +610,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'reverse_order_mobile',
 			[
-				'label' => __( 'Column Order', 'elementor' ),
+				'label' => __( 'Reverse Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
@@ -620,7 +620,7 @@ class Element_Section extends Element_Base {
 					'' => __( 'No', 'elementor' ),
 					'reverse-mobile' => __( 'Yes', 'elementor' ),
 				],
-				'description' => __( 'Reverse column order on Mobile', 'elementor' ),
+				'description' => __( 'Reverse column order on Mobile (Make lest column appear at the top, when collapsing to mobile view)', 'elementor' ),
 			]
 		);
 
