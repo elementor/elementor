@@ -293,9 +293,7 @@
 	}
 
 	@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
-		color: $editor-lighter;
-		background: none;
-		font-size: 10px;
+		background: $editor-lighter;
 
 		&:not(.elementor-responsive-switcher-desktop) {
 			display: none;
