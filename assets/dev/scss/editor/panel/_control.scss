@@ -56,6 +56,14 @@
 			}
 		}
 
+		&.elementor-control-deprecated {
+			color: $editor-warning;
+
+			.elementor-control-description {
+				color: $editor-warning;
+			}
+		}
+
 		&.elementor-control-hidden-label {
 
 			.elementor-control-title {

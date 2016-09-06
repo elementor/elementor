@@ -261,13 +261,16 @@ class Element_Column extends Element_Base {
 
 		$responsive_points = [
 			'screen_sm' => [
-				'title' => __( 'Mobile', 'elementor' ),
+				'title' => __( 'Mobile Width', 'elementor' ),
 				'class_prefix' => 'elementor-sm-',
+				'classes' => '',
+				'description' => '',
 			],
 			'screen_xs' => [
-				'title' => __( 'Mobile Portrait (Deprecated)', 'elementor' ),
+				'title' => __( 'Mobile Portrait', 'elementor' ),
 				'class_prefix' => 'elementor-xs-',
-				'description' => __('Mobile Portrait control is no longer supported. Please use the Mobile instead.', 'elementor')
+				'classes' => 'elementor-control-deprecated',
+				'description' => __('Deprecated: Mobile Portrait control is no longer supported. Please use the Mobile Width instead.', 'elementor')
 			],
 		];
 
@@ -285,6 +288,7 @@ class Element_Column extends Element_Base {
 					],
 					'tab' => self::TAB_ADVANCED,
 					'description' => $point_data['description'],
+					'classes' => $point_data['classes'],
 				]
 			);
 
