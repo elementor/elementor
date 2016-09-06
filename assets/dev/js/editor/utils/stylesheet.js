@@ -134,7 +134,7 @@
 				var orderedRules = {};
 
 				$.each( styleRules, function() {
-					var property = this.split( ':' );
+					var property = this.split( /:(.*)?/ );
 
 					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
 				} );
