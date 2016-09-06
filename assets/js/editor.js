@@ -1768,7 +1768,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
 
 		// Change the footer icon
-		this.ui.deviceModeIcon.removeClass( 'fa-' + previousDeviceMode ).addClass( 'fa-' + currentDeviceMode );
+		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
 	},
 
 	onClickButtonSave: function() {
