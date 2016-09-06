@@ -75,7 +75,7 @@ class Stylesheet {
 			$ordered_rules = [];
 
 			foreach ( $rules as $rule ) {
-				$property = explode( ':', $rule );
+				$property = explode( ':', $rule, 2 );
 
 				$ordered_rules[ trim( $property[0] ) ] = trim( $property[1], ' ;' );
 			}

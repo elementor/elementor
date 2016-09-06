@@ -121,9 +121,19 @@
 		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
 
 			.elementor-control-title {
-				display: block;
-				margin-bottom: 10px;
+
 			}
+		}
+
+		.elementor-control-field {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.elementor-control-input-wrapper {
+			flex-basis: 100%;
+			margin-top: 5px;
 		}
 	}
 
@@ -221,7 +231,8 @@
 	}
 
 	.elementor-units-choices {
-		float: $end;
+		flex-grow: 1;
+		text-align: $end;
 
 		input {
 			display: none;
@@ -244,28 +255,17 @@
 	}
 
 	.elementor-control-responsive-switchers {
-		@include margin-start(15px);
-		display: inline-block;
-		vertical-align: middle;
+		@include margin-start(10px);
 	}
 
 	.elementor-responsive-switcher {
 		display: inline-block;
-		height: 25px;
-		width: 25px;
 		border-radius: 50%;
-		background-color: $editor-background;
 		cursor: pointer;
 		position: relative;
 		@include margin-start(5px);
-
-		i {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-			color: #fff;
-		}
+		color: $editor-light;
+		font-size: 10px;
 	}
 
 	@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
@@ -275,14 +275,14 @@
 	.elementor-responsive-switcher-mobile {
 
 		.elementor-device-mobile & {
-			background-color: $editor-info;
+			color: $editor-info;
 		}
 	}
 
 	.elementor-responsive-switcher-tablet {
 
 		.elementor-device-tablet & {
-			background-color: $editor-info;
+			color: $editor-info;
 		}
 	}
 

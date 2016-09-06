@@ -204,7 +204,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
 
-		this.ui.controlTitle.append( templateHtml );
+		this.ui.controlTitle.after( templateHtml );
 	},
 
 	toggleControlVisibility: function() {

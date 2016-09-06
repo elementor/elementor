@@ -134,6 +134,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
 			styleControls = self.model.get( 'settings' ).getStyleControls();
 
+		self.stylesheet.empty();
+
 		_.each( styleControls, function( control ) {
 			var controlValue = self.model.getSetting( control.name );
 
