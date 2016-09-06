@@ -56,6 +56,14 @@
 			}
 		}
 
+		&.elementor-control-deprecated {
+			color: $editor-warning;
+
+			.elementor-control-description {
+				color: $editor-warning;
+			}
+		}
+
 		&.elementor-control-hidden-label {
 
 			.elementor-control-title {
@@ -63,23 +71,14 @@
 			}
 		}
 
-		&.elementor-active-tab {
-			// Hidden Control
-			// FIXME: Better hide field here?
-			&.elementor-hidden-control {
+		&.elementor-hidden-control {
+			display: none;
+		}
+
+		&.elementor-control-under-section {
+
+			&:not(.elementor-open) {
 				display: none;
-			}
-
-			&.elementor-control-under-section {
-				display: none;
-
-				&.elementor-open {
-					display: block;
-
-					&.elementor-hidden-control {
-						display: none;
-					}
-				}
 			}
 		}
 
@@ -88,6 +87,30 @@
 			.elementor-control-title {
 				font-weight: bold;
 				margin: 0;
+			}
+		}
+
+		&.elementor-control-responsive- {
+
+			&desktop {
+
+				body:not(.elementor-device-desktop) & {
+					display: none;
+				}
+			}
+
+			&tablet {
+
+				body:not(.elementor-device-tablet) & {
+					display: none;
+				}
+			}
+
+			&mobile {
+
+				body:not(.elementor-device-mobile) & {
+					display: none;
+				}
 			}
 		}
 	}
@@ -106,9 +129,19 @@
 		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
 
 			.elementor-control-title {
-				display: block;
-				margin-bottom: 10px;
+
 			}
+		}
+
+		.elementor-control-field {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.elementor-control-input-wrapper {
+			flex-basis: 100%;
+			margin-top: 10px;
 		}
 	}
 
@@ -131,13 +164,13 @@
 
 	.elementor-control-description {
 		margin-top: 10px;
-		font-size: 11px;
-		font-style: italic;
 	}
 
+	.elementor-control-description,
 	.elementor-control-descriptor {
 		font-size: 11px;
 		font-style: italic;
+		line-height: 1.2;
 		color: $editor-light;
 	}
 
@@ -206,7 +239,8 @@
 	}
 
 	.elementor-units-choices {
-		float: $end;
+		flex-grow: 1;
+		text-align: $end;
 
 		input {
 			display: none;
@@ -225,6 +259,60 @@
 			padding: 0 2px;
 			text-transform: uppercase;
 			font-size: 9px;
+		}
+	}
+
+	.elementor-control-responsive-switchers {
+		display: flex;
+		@include margin-start(5px);
+	}
+
+	.elementor-responsive-switcher {
+		$icon-size: 18px;
+
+		display: inline-block;
+		border-radius: 50%;
+		height: $icon-size;
+		width: $icon-size;
+		background-color: $editor-light;
+		cursor: pointer;
+		position: relative;
+		@include margin-start(5px);
+		color: #fff;
+		font-size: 8px;
+		text-align: center;
+		transition: background-color .5s;
+
+		&:hover {
+			background-color: $editor-lighter;
+		}
+
+		i {
+			line-height: $icon-size;
+		}
+	}
+
+	@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+		color: $editor-lighter;
+		background: none;
+		font-size: 10px;
+
+		&:not(.elementor-responsive-switcher-desktop) {
+			display: none;
+		}
+	}
+
+	.elementor-responsive-switcher-mobile {
+
+		.elementor-device-mobile & {
+			background-color: $editor-info;
+		}
+	}
+
+	.elementor-responsive-switcher-tablet {
+
+		.elementor-device-tablet & {
+			background-color: $editor-info;
 		}
 	}
 
@@ -489,14 +577,6 @@
 		}
 	}
 
-	// Slider control
-	.elementor-control-type-slider {
-
-		.elementor-control-input-wrapper {
-			overflow: hidden;
-		}
-	}
-
 	// Section control
 	.elementor-control-type-section {
 		margin-top: 10px;
@@ -715,11 +795,12 @@
 		}
 
 		.elementor-control-structure-current-preset {
-			height: 80px;
 			margin-top: 15px;
 
+			// For Safari
 			svg {
-				width: 100%; // For safari
+				display: block;
+				width: 100%;
 			}
 		}
 

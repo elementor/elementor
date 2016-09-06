@@ -3,26 +3,12 @@ var ElementsHandler;
 
 ElementsHandler = function( $ ) {
 	var registeredHandlers = {},
-		registeredGlobalHandlers = [],
-		flagEditorMode = false,
-		scopeWindow = window;
+		registeredGlobalHandlers = [];
 
 	var runGlobalHandlers = function( $scope ) {
 		$.each( registeredGlobalHandlers, function() {
-			this.call( $scope, $, scopeWindow );
+			this.call( $scope, $ );
 		} );
-	};
-
-	this.setEditorMode = function( mode ) {
-		flagEditorMode = mode;
-	};
-
-	this.setScopeWindow = function( window ) {
-		scopeWindow = window;
-	};
-
-	this.isEditorMode = function() {
-		return flagEditorMode;
 	};
 
 	this.addHandler = function( widgetType, callback ) {
@@ -46,19 +32,21 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		registeredHandlers[ elementType ].call( $scope, $, scopeWindow );
+		registeredHandlers[ elementType ].call( $scope, $ );
 	};
 };
 
 module.exports = ElementsHandler;
 
 },{}],2:[function(require,module,exports){
+/* global elementorFrontendConfig */
 ( function( $ ) {
 	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
-		var self = this;
+		var self = this,
+			scopeWindow = window;
 
 		var elementsDefaultHandlers = {
 			accordion: require( 'elementor-frontend/handlers/accordion' ),
@@ -89,23 +77,88 @@ module.exports = ElementsHandler;
 			} );
 		};
 
+		this.config = elementorFrontendConfig;
+
+		this.getScopeWindow = function() {
+			return scopeWindow;
+		};
+
+		this.setScopeWindow = function( window ) {
+			scopeWindow = window;
+		};
+
+		this.isEditMode = function() {
+			return self.config.isEditMode;
+		};
+
 		this.elementsHandler = new ElementsHandler( $ );
+
 		this.utils = new Utils( $ );
 
 		this.init = function() {
 			addGlobalHandlers();
+
 			addElementsHandlers();
 
 			self.utils.insertYTApi();
 
 			runElementsHandlers();
 		};
+
+		// Based on underscore function
+		this.throttle = function( func, wait ) {
+			var timeout,
+				context,
+				args,
+				result,
+				previous = 0;
+
+			var later = function() {
+				previous = Date.now();
+				timeout = null;
+				result = func.apply( context, args );
+
+				if ( ! timeout ) {
+					context = args = null;
+				}
+			};
+
+			return function() {
+				var now = Date.now(),
+					remaining = wait - ( now - previous );
+
+				context = this;
+				args = arguments;
+
+				if ( remaining <= 0 || remaining > wait ) {
+					if ( timeout ) {
+						clearTimeout( timeout );
+						timeout = null;
+					}
+
+					previous = now;
+					result = func.apply( context, args );
+
+					if ( ! timeout ) {
+						context = args = null;
+					}
+				} else if ( ! timeout ) {
+					timeout = setTimeout( later, remaining );
+				}
+
+				return result;
+			};
+		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
 } )( jQuery );
 
-jQuery( elementorFrontend.init );
+jQuery( function() {
+	if ( ! elementorFrontend.isEditMode() ) {
+		elementorFrontend.init();
+	}
+} );
 
 },{"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14}],3:[function(require,module,exports){
 module.exports = function( $ ) {
@@ -164,7 +217,7 @@ module.exports = function( $ ) {
 
 },{}],6:[function(require,module,exports){
 module.exports = function() {
-	if ( elementorFrontend.elementsHandler.isEditorMode() ) {
+	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
@@ -218,7 +271,7 @@ module.exports = function( $ ) {
 
 },{}],8:[function(require,module,exports){
 module.exports = function( $ ) {
-	if ( elementorFrontend.elementsHandler.isEditorMode() ) {
+	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
@@ -265,7 +318,7 @@ module.exports = function( $ ) {
 };
 
 },{}],10:[function(require,module,exports){
-module.exports = function( $, scopeWindow ) {
+module.exports = function( $ ) {
 	var player,
 		ui = {
 			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
@@ -325,6 +378,7 @@ module.exports = function( $, scopeWindow ) {
 			}
 		} );
 
+		$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 	};
 
 	var videoID = ui.backgroundVideo.data( 'video-id' );
@@ -340,8 +394,6 @@ module.exports = function( $, scopeWindow ) {
 	} else {
 		ui.backgroundVideo.one( 'canplay', changeVideoSize );
 	}
-
-	$( scopeWindow ).on( 'resize', changeVideoSize );
 };
 
 },{}],11:[function(require,module,exports){

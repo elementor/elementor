@@ -29,7 +29,7 @@ abstract class Widget_Base extends Element_Base {
 			]
 		);
 
-	    $this->add_control(
+	    $this->add_responsive_control(
 	        '_margin',
 	        [
 	            'label' => __( 'Margin', 'elementor' ),
@@ -43,7 +43,7 @@ abstract class Widget_Base extends Element_Base {
 	        ]
 	    );
 
-	    $this->add_control(
+	    $this->add_responsive_control(
 	        '_padding',
 	        [
 	            'label' => __( 'Padding', 'elementor' ),

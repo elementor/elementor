@@ -114,6 +114,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-section-',
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
@@ -514,7 +515,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
@@ -535,7 +536,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
@@ -603,6 +604,34 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Responsive', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'reverse_order_mobile',
+			[
+				'label' => __( 'Reverse Columns', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'options' => [
+					'' => __( 'No', 'elementor' ),
+					'reverse-mobile' => __( 'Yes', 'elementor' ),
+				],
+				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'heading_visibility',
+			[
+				'label' => __( 'Visibility', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'separator' => 'before',
 			]
 		);
 
