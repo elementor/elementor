@@ -154,7 +154,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 0.8.0 - 06.09.2016 =
+= 0.8.0 - 07.09.2016 =
 * New! - Added columns ordering on mobile normal / reverse
 * New! - Now you can edit section and column in tablet or mobile mode
 * New! - Set different font size for tablet or mobile
