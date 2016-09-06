@@ -56,6 +56,14 @@
 			}
 		}
 
+		&.elementor-control-deprecated {
+			color: $editor-warning;
+
+			.elementor-control-description {
+				color: $editor-warning;
+			}
+		}
+
 		&.elementor-control-hidden-label {
 
 			.elementor-control-title {
@@ -156,13 +164,13 @@
 
 	.elementor-control-description {
 		margin-top: 10px;
-		font-size: 11px;
-		font-style: italic;
 	}
 
+	.elementor-control-description,
 	.elementor-control-descriptor {
 		font-size: 11px;
 		font-style: italic;
+		line-height: 1.2;
 		color: $editor-light;
 	}
 
