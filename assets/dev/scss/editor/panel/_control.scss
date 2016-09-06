@@ -263,34 +263,56 @@
 	}
 
 	.elementor-control-responsive-switchers {
-		@include margin-start(10px);
+		display: flex;
+		@include margin-start(5px);
 	}
 
 	.elementor-responsive-switcher {
+		$icon-size: 18px;
+
 		display: inline-block;
 		border-radius: 50%;
+		height: $icon-size;
+		width: $icon-size;
+		background-color: $editor-light;
 		cursor: pointer;
 		position: relative;
 		@include margin-start(5px);
-		color: $editor-light;
-		font-size: 10px;
+		color: #fff;
+		font-size: 8px;
+		text-align: center;
+		transition: background-color .5s;
+
+		&:hover {
+			background-color: $editor-lighter;
+		}
+
+		i {
+			line-height: $icon-size;
+		}
 	}
 
-	@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
-		display: none;
+	@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+		color: $editor-lighter;
+		background: none;
+		font-size: 10px;
+
+		&:not(.elementor-responsive-switcher-desktop) {
+			display: none;
+		}
 	}
 
 	.elementor-responsive-switcher-mobile {
 
 		.elementor-device-mobile & {
-			color: $editor-info;
+			background-color: $editor-info;
 		}
 	}
 
 	.elementor-responsive-switcher-tablet {
 
 		.elementor-device-tablet & {
-			color: $editor-info;
+			background-color: $editor-info;
 		}
 	}
 
