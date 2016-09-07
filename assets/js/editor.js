@@ -5567,7 +5567,7 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.inputs = '[type=radio]';
+		ui.inputs = '[type="radio"]';
 
 		return ui;
 	},
@@ -5603,7 +5603,7 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 		var currentValue = this.getControlValue();
 
 		if ( currentValue ) {
-			this.ui.inputs.filter( '[value=' + currentValue + ']' ).prop( 'checked', true );
+			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
 		} else if ( ! this.model.get( 'toggle' ) ) {
 			this.ui.inputs.first().prop( 'checked', true ).trigger( 'change' );
 		}
