@@ -270,7 +270,7 @@ class Element_Column extends Element_Base {
 				'title' => __( 'Mobile Portrait', 'elementor' ),
 				'class_prefix' => 'elementor-xs-',
 				'classes' => 'elementor-control-deprecated',
-				'description' => __('Deprecated: Mobile Portrait control is no longer supported. Please use the Mobile Width instead.', 'elementor')
+				'description' => __( 'Deprecated: Mobile Portrait control is no longer supported. Please use the Mobile Width instead.', 'elementor' ),
 			],
 		];
 
