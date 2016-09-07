@@ -157,7 +157,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 = 0.8.0 - 07.09.2016 =
 * New! - Added columns ordering on mobile normal / reverse
 * New! - Now you can edit section and column in tablet or mobile mode
-* New! - Set font size per device
+* New! - Set font-size per device
 * New! - Set line-height per device
 * New! - Set letter-spacing per device
 * New! - Set padding per device
@@ -165,9 +165,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Heading widget - Set alignment per device
 * New! - Button widget - Set alignment per device
 * New! - Image widget - Set alignment per device
-* New! - Icon widget - Set alignment per device 
+* New! - Icon widget - Set alignment per device
 * New! - Divider widget - Set alignment per device
-* New! - Icon List Widget - Set Alignment per device
+* New! - Icon List Widget - Set alignment per device
 * Tweak! - Elementor Library connection status indicator added in System Info
 * Tweak! - Column width option for mobile portrait is deprecated, now use with Mobile Width option instead
 * Tweak! - Default content-width is now set by css and not by the panel
