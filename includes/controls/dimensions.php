@@ -59,9 +59,9 @@ class Control_Dimensions extends Control_Base_Units {
 						</li>
 					<?php endforeach; ?>
 					<li>
-						<button class="elementor-link-dimensions">
-							<span class="elementor-linked tooltip-target" data-tooltip-pos="s" data-tooltip="<?php _e( 'Link', 'elementor' ); ?>"><i class="fa fa-link"></i></span>
-							<span class="elementor-unlinked tooltip-target" data-tooltip-pos="s" data-tooltip="<?php _e( 'Unlink', 'elementor' ); ?>"><i class="fa fa-chain-broken"></i></span>
+						<button class="elementor-link-dimensions tooltip-target" data-tooltip="<?php _e( 'Link values together', 'elementor' ); ?>">
+							<span class="elementor-linked"><i class="fa fa-link"></i></span>
+							<span class="elementor-unlinked"><i class="fa fa-chain-broken"></i></span>
 						</button>
 					</li>
 				</ul>
