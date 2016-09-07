@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.7.4  
+**Stable tag:** 0.8.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -156,36 +156,38 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 0.8.0 - 06.09.2016 ###
+### 0.8.0 - 07.09.2016 ###
 * New! - Added columns ordering on mobile normal / reverse
 * New! - Now you can edit section and column in tablet or mobile mode
-* New! - Set different font size for tablet or mobile
-* New! - Set different line-height for tablet or mobile
-* New! - Set different letter-spacing for tablet or mobile
-* New! - Set different padding for tablet or mobile
-* New! - Set different margin for tablet or mobile
-* New! - Set different alignment for tablet or mobile in Heading widget
-* New! - Set different alignment for tablet or mobile in Button widget
-* New! - Set different alignment for tablet or mobile in Image widget
-* New! - Set different alignment for tablet or mobile in Icon widget
-* New! - Set different alignment for tablet or mobile in Divider widget
-* New! - Set different alignment for tablet or mobile in Icon List widget
-* Tweak! - Show status connection with Elementor library in System info
-* Tweak! - Moved default content-width from panel to CSS
+* New! - Set font-size per device in Typography control
+* New! - Set line-height per device in Typography control
+* New! - Set letter-spacing per device in Typography control
+* New! - Set padding per device in Advanced tab
+* New! - Set margin per device in Advanced tab
+* New! - Heading widget - Set alignment per device
+* New! - Button widget - Set alignment per device
+* New! - Image widget - Set alignment per device
+* New! - Icon widget - Set alignment per device
+* New! - Divider widget - Set alignment per device
+* New! - Icon List Widget - Set alignment per device
+* Tweak! - Elementor Library connection status indicator added in System Info
+* Tweak! - Default content-width is now set by css and not by the panel
+* Tweak! - Added shortcode and oEmbed support for Tabs / Accordion / Toggle / Text Editor widgets
 * Tweak! - Removed Default font size in custom option
 * Tweak! - Hide update notice from outside Elementor
 * Tweak! - Removed mobile-landscape and laptop sizes from preview mode
 * Tweak! - Rearrange TinyMCE buttons ([#444](https://github.com/pojome/elementor/issues/444))
 * Tweak! - Changed range for font size control
 * Tweak! - Compatibility with `asp_tags`
-* Tweak! - Compatibility for old webkit version ([#484](https://github.com/pojome/elementor/issues/484), [#403](https://github.com/pojome/elementor/issues/403), [#370](https://github.com/pojome/elementor/issues/370))
+* Tweak! - Improved compatibility for old webkit browsers ([#484](https://github.com/pojome/elementor/issues/484), [#403](https://github.com/pojome/elementor/issues/403), [#370](https://github.com/pojome/elementor/issues/370))
 * Fixed! - Removed style from gallery caption
 * Fixed! - Wrong index in section sorting
 * Fixed! - Column indication on inner section dragging
-* Fixed! - Gap for Columns Widget (Inner section)
+* Fixed! - Gap for Columns Widget (nested section)
 * Fixed! - Preview mode with real sizes for mobile and tablet
 * Fixed! - Sortable inner section not showing placeholder
-* Fixed! - Network plugins report ing System Info
+* Fixed! - Network plugins included in System Info
+* Deprecated! - Column width option for mobile portrait is deprecated. Use Mobile Width option instead
 
 ### 0.7.4 - 24.08.2016 ###
 * New! - Added Shortcode widget
