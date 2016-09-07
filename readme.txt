@@ -171,6 +171,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Show status connection with Elementor library in System info
 * Tweak! - Column width option for mobile portrait is deprecated, now use with Mobile Width option instead
 * Tweak! - Moved default content-width from panel to CSS
+* Tweak! - Added shortcode and oEmbed support for Tabs / Accordion / Toggle / Text Editor widgets
 * Tweak! - Removed Default font size in custom option
 * Tweak! - Hide update notice from outside Elementor
 * Tweak! - Removed mobile-landscape and laptop sizes from preview mode
