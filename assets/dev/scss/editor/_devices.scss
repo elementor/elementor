@@ -30,6 +30,7 @@
 		min-width: map_get($breakpoints, lg);
 		width: 100%;
 		height: 100%;
+		overflow: hidden;
 	}
 
 	.elementor-device-tablet & {
