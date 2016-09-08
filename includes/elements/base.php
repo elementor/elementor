@@ -22,6 +22,12 @@ abstract class Element_Base {
 
 	private $_render_attributes = [];
 
+	/**
+	 * @var null $_current_section - Holds the current section while render a set of controls sections
+	 */
+
+	private $_current_section = null;
+
 	abstract public function get_id();
 
 	abstract public function get_title();
@@ -202,8 +208,20 @@ abstract class Element_Base {
 		$args = array_merge( $default_args, $args );
 
 		if ( isset( $this->_controls[ $id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
+			wp_die( __CLASS__ . '::' . __FUNCTION__ .': ' . __( 'Cannot redeclare control with same name.', 'elementor' ) );
 			return false;
+		}
+
+		if( $args['type'] != Controls_Manager::SECTION ) {
+
+			/* TODO: unsure that all widgets uses start_controls_section. Mati, 2016-09-08*/
+//			if( $this->_current_section == null ) {
+//				wp_die( __CLASS__ . '::' . __FUNCTION__ .': ' . __( 'Cannot add a control outside a section (use `start_controls_section`).', 'elementor' ) );
+//			}
+			/* TODO: remove the if statement. Mati, 2016-09-08 */
+			if( $this->_current_section != null ) {
+				$args = array_merge( $args, $this->_current_section );
+			}
 		}
 
 		$available_tabs = $this->_get_available_tabs_controls();
@@ -318,6 +336,25 @@ abstract class Element_Base {
 			<?php echo $content_template; ?>
 		</script>
 		<?php
+	}
+
+	function start_controls_section($id, $args) {
+		$args['type'] = Controls_Manager::SECTION;
+
+		$this->add_control( $id, $args );
+
+		if( $this->_current_section != null ) {
+			wp_die( sprintf( __( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', 'elementor' ), $this->_current_section['section'] ) );
+		}
+
+		$this->_current_section = [
+			'section' => $id,
+			'tab' => $this->_controls[ $id ]['tab']
+		];
+	}
+
+	function end_controls_section(){
+		$this->_current_section = null;
 	}
 
 	public function __construct( $args = [] ) {
