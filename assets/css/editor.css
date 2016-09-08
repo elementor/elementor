@@ -9,6 +9,14 @@
     height: 100%;
     width: 100%; }
 
+.elementor-full-width-placeholder {
+  border: 0; }
+
+.elementor-section.elementor-force-full-width {
+  position: absolute;
+  left: 0;
+  right: 0; }
+
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,
@@ -1559,7 +1567,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-device-desktop #elementor-preview-responsive-wrapper {
     min-width: 1024px;
     width: 100%;
-    height: 100%; }
+    height: 100%;
+    overflow: hidden; }
   .elementor-device-tablet #elementor-preview-responsive-wrapper {
     width: 768px;
     height: 1024px;

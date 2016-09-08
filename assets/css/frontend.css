@@ -9,6 +9,14 @@
     height: 100%;
     width: 100%; }
 
+.elementor-full-width-placeholder {
+  border: 0; }
+
+.elementor-section.elementor-force-full-width {
+  position: absolute;
+  left: 0;
+  right: 0; }
+
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
   content: "\e800";
   font-family: eicon;
