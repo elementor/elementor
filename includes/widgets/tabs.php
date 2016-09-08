@@ -21,7 +21,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'section_title',
 			[
-				'label' => __( 'Tabs Style', 'elementor' ),
+				'label' => __( 'Tabs', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
