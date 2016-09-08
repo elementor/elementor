@@ -6,6 +6,7 @@ module.exports = function( $ ) {
 
 		var $section = this,
 			existingMarginTop = $section.css( 'margin-top' ),
+			existingMarginBottom = $section.css( 'margin-bottom' ),
 			placeHolder = '<hr class="elementor-full-width-placeholder">',
 			$offsetParent = $section.offsetParent();
 
@@ -13,8 +14,8 @@ module.exports = function( $ ) {
 
 		function fixHeight() {
 			var sectionHeight = $section.css( 'height' );
-			$section.prev( 'hr' ).css( 'padding-top', sectionHeight );
-			$section.css('margin-top', 'calc( ' + existingMarginTop + ' - ' + sectionHeight + ')');
+			$section.prev( 'hr' ).css( 'padding-top', 'calc( ' + existingMarginTop + ' + ' + sectionHeight + ' + ' + existingMarginBottom + ')' );
+			$section.css('margin-top', 'calc( -' + sectionHeight + ' - ' + existingMarginBottom + ')' );
 		}
 
 		function fixWidth() {
