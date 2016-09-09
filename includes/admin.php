@@ -102,14 +102,14 @@ class Admin {
 			        <i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 		        </div>
-		        <div id="elementor-loader-wrapper">
-			        <div id="elementor-loader">
+		        <div class="elementor-loader-wrapper">
+			        <div class="elementor-loader">
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 				        <div class="elementor-loader-box"></div>
 			        </div>
-			        <div id="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+			        <div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
 		        </div>
 	        </a>
 		</div>
@@ -170,7 +170,6 @@ class Admin {
 
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
 			$post = get_post();
-
 			$current_mode = Plugin::instance()->db->get_edit_mode( $post->ID );
 
 			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';
@@ -195,6 +194,10 @@ class Admin {
 
 		if ( ! current_user_can( 'update_plugins' ) )
 			return;
+
+		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ] ) ) {
+			return;
+		}
 
 		// Check if have any upgrades
 		$update_plugins = get_site_transient( 'update_plugins' );
@@ -267,7 +270,7 @@ class Admin {
 
 		wp_register_script(
 			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/dialog' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],
@@ -292,6 +295,7 @@ class Admin {
 			'elementor-admin-feedback',
 			'ElementorAdminFeedbackArgs',
 			[
+				'is_tracker_opted_in' => Tracker::is_allow_track(),
 				'i18n' => [
 					'submit_n_deactivate' => __( 'Submit & Deactivate', 'elementor' ),
 					'skip_n_deactivate' => __( 'Skip & Deactivate', 'elementor' ),

@@ -17,6 +17,19 @@ abstract class Widget_Base extends Element_Base {
 		return $this->get_title();
 	}
 
+	protected function parse_text_editor( $content, $instance = [] ) {
+		$content = apply_filters( 'widget_text', $content, $instance );
+
+		$content = shortcode_unautop( $content );
+		$content = do_shortcode( $content );
+
+		if ( $GLOBALS['wp_embed'] instanceof \WP_Embed ) {
+			$content = $GLOBALS['wp_embed']->autoembed( $content );
+		}
+
+		return $content;
+	}
+
 	protected function _after_register_controls() {
 		parent::_after_register_controls();
 
@@ -29,7 +42,7 @@ abstract class Widget_Base extends Element_Base {
 			]
 		);
 
-	    $this->add_control(
+	    $this->add_responsive_control(
 	        '_margin',
 	        [
 	            'label' => __( 'Margin', 'elementor' ),
@@ -43,7 +56,7 @@ abstract class Widget_Base extends Element_Base {
 	        ]
 	    );
 
-	    $this->add_control(
+	    $this->add_responsive_control(
 	        '_padding',
 	        [
 	            'label' => __( 'Padding', 'elementor' ),

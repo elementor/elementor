@@ -85,9 +85,12 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
 		include( ELEMENTOR_PATH . 'includes/frontend.php' );
 		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
+		include( ELEMENTOR_PATH . 'includes/responsive.php' );
+		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
 
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -118,10 +121,13 @@ class Plugin {
 		$heartbeat = new Heartbeat();
 
 		$this->system_info = new System_Info\Main();
+		$this->templates_manager = new TemplateLibrary\Manager();
 
 		if ( is_admin() ) {
 			new Admin();
 		}
+
+		do_action( 'elementor/loaded' );
 	}
 }
 

@@ -1,0 +1,76 @@
+//
+// Element Edit
+//
+
+#elementor-panel-page-editor {
+	.elementor-tabs-controls {
+		background-color: $white;
+		box-shadow: $panel-bottom-shadow;
+
+		ul {
+			display: table;
+			table-layout: fixed;
+			width: 100%;
+
+			li {
+				display: table-cell;
+
+				&.elementor-tab-control-content {
+					a:before {
+						content: '\f040';
+					}
+				}
+
+				&.elementor-tab-control-style {
+					a:before {
+						content: '\f042';
+					}
+				}
+
+				&.elementor-tab-control-advanced {
+					a:before {
+						content: '\f013';
+					}
+				}
+
+				&.elementor-tab-control-responsive {
+					a:before {
+						content: '\f10a';
+					}
+				}
+
+				&.elementor-tab-control-layout {
+					a:before {
+						content: '\f0db';
+					}
+				}
+
+				&.elementor-tab-control-column {
+					a:before {
+						content: '\f0db';
+					}
+				}
+
+				&.active {
+					background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+					border-bottom: 3px solid $editor-accent;
+				}
+
+				a {
+					display: block;
+					text-align: center;
+					padding: 12px 0 8px;
+					font-size: 10px;
+					color: $editor-dark;
+
+					&:before {
+						font-family: FontAwesome;
+						font-size: 16px;
+						display: block;
+						margin-bottom: 6px;
+					}
+				}
+			}
+		}
+	}
+}

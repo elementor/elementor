@@ -1,0 +1,103 @@
+//
+// Repeater
+//
+
+.elementor-control-type-repeater {
+
+	&, .elementor-control {
+		padding: 0 10px 15px;
+	}
+
+	.elementor-control {
+
+		&:before {
+			display: none;
+		}
+	}
+
+	&.elementor-repeater-has-minimum-rows {
+
+		.elementor-repeater-tool-remove {
+			display: none;
+		}
+	}
+
+	.repeater-fields {
+		margin: 10px 0;
+	}
+
+	.elementor-repeater-row-controls {
+		border: 1px solid $editor-lightest;
+		border-top-width: 0;
+		padding-top: 15px;
+
+		&:not(.editable) {
+			display: none;
+		}
+	}
+
+	.elementor-repeater-row-tools {
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+		color: $editor-darker;
+		background-color: $editor-lightest;
+		height: 40px;
+		border-spacing: 1px;
+		transition: all .5s;
+
+		&:hover {
+			background-color: $editor-light;
+		}
+
+		> div {
+			display: table-cell;
+			text-align: center;
+			vertical-align: middle;
+			cursor: pointer;
+
+			&:not(.elementor-repeater-row-handle-sortable) {
+				background-color: #fff;
+			}
+
+			&:hover {
+				opacity: .95;
+			}
+		}
+
+		.elementor-repeater-row-item-title {
+			text-align: $start;
+			padding: 0 20px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.elementor-repeater-row-tool {
+			width: 40px;
+		}
+
+		.elementor-repeater-row-handle-sortable {
+			cursor: move;
+			width: 10px;
+			color: #fff;
+		}
+	}
+
+	.elementor-button-wrapper {
+		text-align: center;
+		padding: 10px;
+	}
+
+	.elementor-repeater-add {
+		background-color: $editor-light;
+		color: #fff;
+		font-size: 11px;
+		text-transform: uppercase;
+		padding: 6.5px 15px;
+
+		&:hover {
+			background-color: $editor-dark;
+		}
+	}
+}

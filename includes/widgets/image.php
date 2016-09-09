@@ -38,7 +38,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -182,6 +182,41 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'image_border',
+				'label' => __( 'Image Border', 'elementor' ),
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'selector' => '{{WRAPPER}} .elementor-image img',
+			]
+		);
+
+		$this->add_control(
+			'image_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'tab' => self::TAB_STYLE,
+				'section' => 'section_style_image',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'section' => 'section_style_image',
+				'tab' => self::TAB_STYLE,
+				'selector' => '{{WRAPPER}} .elementor-image img',
+			]
+		);
+
 		$this->add_control(
 			'section_style_caption',
 			[
@@ -292,9 +327,9 @@ class Widget_Image extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( '' !== settings.image.url ) { %>
-			<div class="elementor-image<%= settings.shape ? ' elementor-image-shape-' + settings.shape : '' %>">
-				<%
+		<# if ( '' !== settings.image.url ) { #>
+			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">
+				<#
 				var imgClass = '', image_html = '',
 					hasCaption = '' !== settings.caption,
 					image_html = '';
@@ -331,9 +366,9 @@ class Widget_Image extends Widget_Base {
 				}
 
 				print( image_html );
-				%>
+				#>
 			</div>
-		<% } %>
+		<# } #>
 		<?php
 	}
 

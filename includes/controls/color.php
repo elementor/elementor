@@ -10,6 +10,8 @@ class Control_Color extends Control_Base {
 	}
 
 	public function enqueue() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		wp_register_script( 'iris', admin_url( '/js/iris.min.js' ), [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
 		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker.min.js' ), [ 'iris' ], false, true );
 
@@ -26,7 +28,7 @@ class Control_Color extends Control_Base {
 
 		wp_register_script(
 			'wp-color-picker-alpha',
-			ELEMENTOR_ASSETS_URL . 'admin/js/lib/wp-color-picker-alpha.js',
+			ELEMENTOR_ASSETS_URL . 'lib/wp-color-picker/wp-color-picker-alpha' . $suffix . '.js',
 			[
 				'wp-color-picker',
 			],
@@ -40,7 +42,7 @@ class Control_Color extends Control_Base {
 
 	public function content_template() {
 		?>
-		<% var defaultValue = '', dataAlpha = '';
+		<# var defaultValue = '', dataAlpha = '';
 			if ( data.default ) {
 				if ( '#' !== data.default.substring( 0, 1 ) ) {
 					defaultValue = '#' + data.default;
@@ -51,18 +53,18 @@ class Control_Color extends Control_Base {
 			}
 			if ( data.alpha ) {
 				dataAlpha = ' data-alpha="true"';
-			} %>
+			} #>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">
-				<% if ( data.label ) { %>
-				<%- data.label %>
-				<% } %>
-				<% if ( data.description ) { %>
-				<span class="elementor-control-description"><%- data.description %></span>
-				<% } %>
+				<# if ( data.label ) { #>
+					{{{ data.label }}}
+				<# } #>
+				<# if ( data.description ) { #>
+					<span class="elementor-control-description">{{{ data.description }}}</span>
+				<# } #>
 			</label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="<%= name %>" class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" <%= defaultValue %><%= dataAlpha %> />
+				<input data-setting="{{ name }}" class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
 			</div>
 		</div>
 		<?php

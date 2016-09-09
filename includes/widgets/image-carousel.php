@@ -538,7 +538,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		?>
-		<div class="elementor-image-carousel-wrapper" dir="<?php echo $direction; ?>">
+		<div class="elementor-image-carousel-wrapper elementor-slick-slider" dir="<?php echo $direction; ?>">
 			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo wp_json_encode( $slick_options ); ?>'>
 				<?php echo implode( '', $slides ); ?>
 			</div>

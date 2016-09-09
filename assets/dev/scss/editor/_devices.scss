@@ -1,0 +1,59 @@
+//
+// Switcher Preview by Devices
+//
+#elementor-preview {
+	background-color: #333;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	right: 0;
+	border: 0;
+
+	&.elementor-device-desktop {
+		overflow-y: hidden;
+	}
+
+	&:not(.elementor-device-desktop) {
+		overflow-y: auto;
+	}
+}
+
+#elementor-preview-responsive-wrapper {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	transition: all .5s ease 0s;
+
+	.elementor-device-desktop & {
+		min-width: map_get($breakpoints, lg);
+		width: 100%;
+		height: 100%;
+	}
+
+	.elementor-device-tablet & {
+		width: $screen-md-min;
+		height: $screen-lg-min;
+		padding: 40px 10px 70px;
+	}
+
+	.elementor-device-mobile & {
+		width: 360px;
+		height: 640px;
+		padding: 40px 10px 70px;
+	}
+
+	body:not(.elementor-device-desktop) & {
+		border-radius: 30px;
+		background-color: #111;
+		margin: 30px auto 80px;
+		box-sizing: content-box;
+	}
+}
+
+#elementor-preview-iframe {
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+}

@@ -46,14 +46,14 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 
 	protected function print_units_template() {
 		?>
-		<% if ( data.size_units.length > 1 ) { %>
+		<# if ( data.size_units.length > 1 ) { #>
 		<div class="elementor-units-choices">
-			<% _.each( data.size_units, function( unit ) { %>
-			<input id="elementor-choose-<%= data._cid + data.name + unit %>" type="radio" name="elementor-choose-<%= data.name %>" data-setting="unit" value="<%= unit %>">
-			<label class="elementor-units-choices-label" for="elementor-choose-<%= data._cid + data.name + unit %>"><%= unit %></label>
-			<% } ); %>
+			<# _.each( data.size_units, function( unit ) { #>
+			<input id="elementor-choose-{{ data._cid + data.name + unit }}" type="radio" name="elementor-choose-{{ data.name }}" data-setting="unit" value="{{ unit }}">
+			<label class="elementor-units-choices-label" for="elementor-choose-{{ data._cid + data.name + unit }}">{{{ unit }}}</label>
+			<# } ); #>
 		</div>
-		<% } %>
+		<# } #>
 		<?php
 	}
 }

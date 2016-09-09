@@ -32,11 +32,11 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 			return;
 		endif;
 		?>
-		<% if ( data.description ) { %>
-			<div class="elementor-control-description"><%= data.description %></div>
-		<% } %>
+		<# if ( data.description ) { #>
+			<div class="elementor-control-description">{{{ data.description }}}</div>
+		<# } #>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><%= data.label %></label>
+			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-image-dimensions-field">
 					<input type="text" data-setting="width" />

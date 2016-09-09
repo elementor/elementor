@@ -251,7 +251,7 @@ class Widget_Accordion extends Widget_Base {
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
-					<div class="elementor-accordion-content" data-section="<?php echo $counter; ?>"><?php echo $item['tab_content']; ?></div>
+					<div class="elementor-accordion-content" data-section="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'], $item ); ?></div>
 				</div>
 			<?php
 				$counter++;
@@ -262,24 +262,24 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
-			<%
+		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
+			<#
 			if ( settings.tabs ) {
 				var counter = 1;
-				_.each( settings.tabs, function( item ) { %>
+				_.each( settings.tabs, function( item ) { #>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-section="<%- counter %>">
-							<span class="elementor-accordion-icon elementor-accordion-icon-<%- settings.icon_align %>">
+						<div class="elementor-accordion-title" data-section="{{ counter }}">
+							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
-							<%= item.tab_title %>
+							{{{ item.tab_title }}}
 						</div>
-						<div class="elementor-accordion-content" data-section="<%- counter %>"><%= item.tab_content %></div>
+						<div class="elementor-accordion-content" data-section="{{ counter }}">{{{ item.tab_content }}}</div>
 					</div>
-				<%
+				<#
 					counter++;
 				} );
-			} %>
+			} #>
 		</div>
 		<?php
 	}

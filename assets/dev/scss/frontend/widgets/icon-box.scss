@@ -1,0 +1,94 @@
+//
+// Icon Box
+//
+.elementor-widget-icon-box {
+
+	@media (min-width: $screen-md-min) {
+
+		&.elementor-position- {
+
+			&left, &right {
+
+				.elementor-icon-box-wrapper {
+					display: flex;
+				}
+
+				.elementor-icon-box-icon {
+					flex: 0 0 auto; // Hack for Safari
+				}
+			}
+
+			&right {
+
+				.elementor-icon-box-wrapper {
+					text-align: $end;
+					flex-direction: getValueByDirection(row-reverse, row);
+				}
+			}
+
+			&left {
+
+				.elementor-icon-box-wrapper {
+					text-align: $start;
+					flex-direction: getValueByDirection(row, row-reverse);
+				}
+			}
+
+			&top {
+
+				.elementor-icon-box-img {
+					margin: auto;
+				}
+			}
+		}
+
+		&.elementor-vertical-align- {
+
+			&top {
+
+				.elementor-icon-box-wrapper {
+					align-items: flex-start;
+				}
+			}
+
+			&middle {
+
+				.elementor-icon-box-wrapper {
+					align-items: center;
+				}
+			}
+
+			&bottom {
+
+				.elementor-icon-box-wrapper {
+					align-items: flex-end;
+				}
+			}
+		}
+	}
+
+	@media (max-width: $screen-sm-max) {
+
+		// TEMP code to override the icon spacing
+		.elementor-icon-box-icon {
+			margin-left: auto !important;
+			margin-right: auto !important;
+			margin-bottom: 15px;
+		}
+	}
+
+	.elementor-icon-box-wrapper {
+		text-align: center;
+	}
+
+	.elementor-icon-box-title {
+
+		a {
+			color: inherit;
+		}
+	}
+
+	.elementor-icon-box-description {
+		margin: 0;
+	}
+}

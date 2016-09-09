@@ -174,7 +174,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
@@ -188,7 +188,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
@@ -261,12 +261,16 @@ class Element_Column extends Element_Base {
 
 		$responsive_points = [
 			'screen_sm' => [
-				'title' => __( 'Mobile Landscape', 'elementor' ),
+				'title' => __( 'Mobile Width', 'elementor' ),
 				'class_prefix' => 'elementor-sm-',
+				'classes' => '',
+				'description' => '',
 			],
 			'screen_xs' => [
 				'title' => __( 'Mobile Portrait', 'elementor' ),
 				'class_prefix' => 'elementor-xs-',
+				'classes' => 'elementor-control-deprecated',
+				'description' => __( 'Deprecated: Mobile Portrait control is no longer supported. Please use the Mobile Width instead.', 'elementor' ),
 			],
 		];
 
@@ -283,6 +287,8 @@ class Element_Column extends Element_Base {
 						'custom' => __( 'Custom', 'elementor' ),
 					],
 					'tab' => self::TAB_ADVANCED,
+					'description' => $point_data['description'],
+					'classes' => $point_data['classes'],
 				]
 			);
 
@@ -376,6 +382,12 @@ class Element_Column extends Element_Base {
 						<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
 							<span class="elementor-screen-only"><?php _e( 'Duplicate Section', 'elementor' ); ?></span>
 							<i class="fa fa-files-o"></i>
+						</a>
+					</li>
+					<li class="elementor-editor-element-setting elementor-editor-element-save">
+						<a href="#" title="<?php _e( 'Save', 'elementor' ); ?>">
+							<span class="elementor-screen-only"><?php _e( 'Save to Library', 'elementor' ); ?></span>
+							<i class="fa fa-floppy-o"></i>
 						</a>
 					</li>
 					<li class="elementor-editor-element-setting elementor-editor-element-remove">

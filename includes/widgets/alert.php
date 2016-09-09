@@ -238,7 +238,7 @@ class Widget_Alert extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<%
+		<#
 		var html = '<div class="elementor-alert elementor-alert-' + settings.alert_type + '" role="alert">';
 		if ( '' !== settings.title ) {
 			html += '<span class="elementor-alert-title">' + settings.alert_title + '</span>';
@@ -253,7 +253,7 @@ class Widget_Alert extends Widget_Base {
 
 			print( html );
 		}
-		%>
+		#>
 		<?php
 	}
 }

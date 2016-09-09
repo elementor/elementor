@@ -8,7 +8,7 @@ class Widgets_Manager {
 	/**
 	 * @var Widget_Base[]
 	 */
-	protected $_register_widgets = null;
+	protected $_registered_widgets = null;
 
 	private function _init_widgets() {
 		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
@@ -38,12 +38,13 @@ class Widgets_Manager {
 			'social-icons',
 			'alert',
 			'audio',
+			'shortcode',
 			'html',
 			'menu-anchor',
 			'sidebar',
 		];
 
-		$this->_register_widgets = [];
+		$this->_registered_widgets = [];
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
 
@@ -93,28 +94,28 @@ class Widgets_Manager {
 		if ( ! $widget_instance instanceof Widget_Base ) {
 			return new \WP_Error( 'wrong_instance_widget' );
 		}
-		$this->_register_widgets[ $widget_instance->get_id() ] = $widget_instance;
+		$this->_registered_widgets[ $widget_instance->get_id() ] = $widget_instance;
 
 		return true;
 	}
 
 	public function unregister_widget( $id ) {
-		if ( ! isset( $this->_register_widgets[ $id ] ) ) {
+		if ( ! isset( $this->_registered_widgets[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_register_widgets[ $id ] );
+		unset( $this->_registered_widgets[ $id ] );
 		return true;
 	}
 
-	public function get_register_widgets() {
-		if ( is_null( $this->_register_widgets ) ) {
+	public function get_registered_widgets() {
+		if ( is_null( $this->_registered_widgets ) ) {
 			$this->_init_widgets();
 		}
-		return $this->_register_widgets;
+		return $this->_registered_widgets;
 	}
 
 	public function get_widget( $id ) {
-		$widgets = $this->get_register_widgets();
+		$widgets = $this->get_registered_widgets();
 
 		if ( ! isset( $widgets[ $id ] ) ) {
 			return false;
@@ -122,9 +123,9 @@ class Widgets_Manager {
 		return $widgets[ $id ];
 	}
 
-	public function get_register_widgets_data() {
+	public function get_registered_widgets_data() {
 		$data = [];
-		foreach ( $this->get_register_widgets() as $widget ) {
+		foreach ( $this->get_registered_widgets() as $widget ) {
 			$data[ $widget->get_id() ] = $widget->get_data();
 		}
 		return $data;
@@ -174,16 +175,16 @@ class Widgets_Manager {
 		$widget_obj = $this->get_widget( $widget_type );
 
 		if ( ! $widget_obj instanceof Widget_WordPress ) {
-			die;
+			wp_send_json_error();
 		}
 
 		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
-		echo $widget_obj->get_form( $data );
-		die;
+
+		wp_send_json_success( $widget_obj->get_form( $data ) );
 	}
 
 	public function render_widgets_content() {
-		foreach ( $this->get_register_widgets() as $widget ) {
+		foreach ( $this->get_registered_widgets() as $widget ) {
 			$widget->print_template();
 		}
 	}

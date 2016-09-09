@@ -21,7 +21,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'section_title',
 			[
-				'label' => __( 'Tabs Style', 'elementor' ),
+				'label' => __( 'Tabs', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -237,7 +237,7 @@ class Widget_Tabs extends Widget_Base {
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper">
 				<?php foreach ( $instance['tabs'] as $item ) : ?>
-					<div class="elementor-tab-content" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_content']; ?></div>
+					<div class="elementor-tab-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'], $item ); ?></div>
 				<?php
 					$counter++;
 				endforeach; ?>
@@ -248,29 +248,29 @@ class Widget_Tabs extends Widget_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-tabs" data-active-tab="<%- editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 %>">
-			<%
+		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
+			<#
 			if ( settings.tabs ) {
-				var counter = 1; %>
+				var counter = 1; #>
 				<div class="elementor-tabs-wrapper">
-					<%
-					_.each( settings.tabs, function( item ){ %>
-						<div class="elementor-tab-title" data-tab="<%- counter %>"><span><%= item.tab_title %></span></div>
-					<%
+					<#
+					_.each( settings.tabs, function( item ) { #>
+						<div class="elementor-tab-title" data-tab="{{ counter }}"><span>{{{ item.tab_title }}}</span></div>
+					<#
 						counter++;
-					} ); %>
+					} ); #>
 				</div>
 
-				<% counter = 1; %>
+				<# counter = 1; #>
 				<div class="elementor-tabs-content-wrapper">
-					<%
-					_.each( settings.tabs, function( item ){ %>
-						<div class="elementor-tab-content" data-tab="<%- counter %>"><%= item.tab_content %></div>
-					<%
+					<#
+					_.each( settings.tabs, function( item ) { #>
+						<div class="elementor-tab-content" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+					<#
 					counter++;
-					} ); %>
+					} ); #>
 				</div>
-			<% } %>
+			<# } #>
 		</div>
 		<?php
 	}

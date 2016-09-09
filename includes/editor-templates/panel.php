@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
-		<i class="fa fa-<%= icon %>"></i>
+		<i class="fa fa-{{ icon }}"></i>
 	</div>
-	<div class="elementor-panel-menu-item-title"><%= title %></div>
+	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-header">
@@ -47,33 +47,23 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
-		<i class="fa fa-desktop"></i>
+		<i class="eicon-device-desktop"></i>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
-					<i class="elementor-icon fa fa-desktop"></i>
+					<i class="elementor-icon eicon-device-desktop"></i>
 					<span class="elementor-title"><?php _e( 'Desktop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '1024px > Up', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="laptop">
-					<i class="elementor-icon fa fa-laptop"></i>
-					<span class="elementor-title"><?php _e( 'Laptop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '1024px > 768px', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Default Preview', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
-					<i class="elementor-icon fa fa-tablet"></i>
+					<i class="elementor-icon eicon-device-tablet"></i>
 					<span class="elementor-title"><?php _e( 'Tablet', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '768px > 1024px', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile-landscape">
-					<i class="elementor-icon fa fa-mobile"></i>
-					<span class="elementor-title"><?php _e( 'Mobile Landscape', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '767px > Down', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Preview for 768px', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
-					<i class="elementor-icon fa fa-mobile"></i>
-					<span class="elementor-title"><?php _e( 'Mobile Portrait', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php _e( '479px > Down', 'elementor' ); ?></span>
+					<i class="elementor-icon eicon-device-mobile"></i>
+					<span class="elementor-title"><?php _e( 'Mobile', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Preview for 360px', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
@@ -91,6 +81,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				<div class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-external-link"></i>
 					<a class="elementor-title" href="https://go.elementor.com/docs" target="_blank"><?php _e( 'Go to the Documentation', 'elementor' ); ?></a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="elementor-panel-footer-templates" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Templates', 'elementor' ); ?>">
+		<span class="elementor-screen-only"><?php _e( 'Templates', 'elementor' ); ?></span>
+		<i class="fa fa-folder"></i>
+		<div class="elementor-panel-footer-sub-menu-wrapper">
+			<div class="elementor-panel-footer-sub-menu">
+				<div id="elementor-panel-footer-templates-modal" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-folder"></i>
+					<span class="elementor-title"><?php _e( 'Templates Library', 'elementor' ); ?></span>
+				</div>
+				<div id="elementor-panel-footer-save-template" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-save"></i>
+					<span class="elementor-title"><?php _e( 'Save Template', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
@@ -128,13 +134,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-tabs-controls">
 		<ul>
-			<% _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { %>
-			<li class="elementor-tab-control-<%- tabSlug %>">
-				<a href="#" data-tab="<%= tabSlug %>">
-					<%= tabTitle %>
+			<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
+			<li class="elementor-tab-control-{{ tabSlug }}">
+				<a href="#" data-tab="{{ tabSlug }}">
+					{{{ tabTitle }}}
 				</a>
 			</li>
-			<% } ); %>
+			<# } ); #>
 		</ul>
 	</div>
 	<div class="elementor-controls"></div>
@@ -217,14 +223,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<%= '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) %>
+	{{{ '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) }}}
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
 	<div class="elementor-panel-scheme-color-input-wrapper">
-		<input type="text" class="elementor-panel-scheme-color-value" value="<%= value %>" />
+		<input type="text" class="elementor-panel-scheme-color-value" value="{{ value }}" />
 	</div>
-	<div class="elementor-panel-scheme-color-title"><%= title %></div>
+	<div class="elementor-panel-scheme-color-title">{{{ title }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-typography-item">
@@ -232,7 +238,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-panel-heading-toggle">
 			<i class="fa"></i>
 		</div>
-		<div class="elementor-panel-heading-title"><%= title %></div>
+		<div class="elementor-panel-heading-title">{{{ title }}}</div>
 	</div>
 	<div class="elementor-panel-scheme-typography-items elementor-panel-box-content">
 		<?php
@@ -274,5 +280,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				</div>
 			</div>
 		<?php endforeach; ?>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-control-responsive-switchers">
+	<div class="elementor-control-responsive-switchers">
+		<a class="elementor-responsive-switcher elementor-responsive-switcher-desktop" data-device="desktop">
+			<i class="eicon-device-desktop"></i>
+		</a>
+		<a class="elementor-responsive-switcher elementor-responsive-switcher-tablet" data-device="tablet">
+			<i class="eicon-device-tablet"></i>
+		</a>
+		<a class="elementor-responsive-switcher elementor-responsive-switcher-mobile" data-device="mobile">
+			<i class="eicon-device-mobile"></i>
+		</a>
 	</div>
 </script>

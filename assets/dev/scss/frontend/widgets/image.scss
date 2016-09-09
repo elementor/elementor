@@ -1,0 +1,21 @@
+//
+// Image
+//
+
+.elementor-widget-image {
+
+	.elementor-image {
+		//overflow: hidden; // TEMP removing for Box Shadow
+
+		img {
+			vertical-align: middle;
+		}
+
+		&.elementor-image-shape- {
+
+			&circle {
+				border-radius: 50%;
+			}
+		}
+	}
+}

@@ -24,20 +24,18 @@ class Control_Slider extends Control_Base_Units {
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">
-				<%= data.label %>
-				<?php $this->print_units_template(); ?>
-			</label>
-			<div class="elementor-control-input-wrapper">
+			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<?php $this->print_units_template(); ?>
+			<div class="elementor-control-input-wrapper elementor-clearfix">
 				<div class="elementor-slider"></div>
 				<div class="elementor-slider-input">
-					<input type="number" min="<%= data.min %>" max="<%= data.max %>" step="<%= data.step %>" data-setting="size" />
+					<input type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
 				</div>
 			</div>
 		</div>
-		<% if ( data.description ) { %>
-		<div class="elementor-control-description"><%= data.description %></div>
-		<% } %>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 }

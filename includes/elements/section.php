@@ -114,6 +114,7 @@ class Element_Section extends Element_Base {
 					'boxed' => __( 'Boxed', 'elementor' ),
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-section-',
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
@@ -124,9 +125,6 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1140,
-				],
 				'range' => [
 					'px' => [
 						'min' => 500,
@@ -517,7 +515,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
@@ -538,7 +536,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
@@ -610,6 +608,34 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'reverse_order_mobile',
+			[
+				'label' => __( 'Reverse Columns', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'options' => [
+					'' => __( 'No', 'elementor' ),
+					'reverse-mobile' => __( 'Yes', 'elementor' ),
+				],
+				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'heading_visibility',
+			[
+				'label' => __( 'Visibility', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'tab' => self::TAB_ADVANCED,
+				'section' => '_section_responsive',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'responsive_description',
 			[
 				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
@@ -677,30 +703,30 @@ class Element_Section extends Element_Base {
 
 	protected function content_template() {
 		?>
-		<% if ( 'video' === settings.background_background ) {
+		<# if ( 'video' === settings.background_background ) {
 			var videoLink = settings.background_video_link;
 
 			if ( videoLink ) {
-				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); %>
+				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); #>
 
 				<div class="elementor-background-video-container elementor-hidden-phone">
-					<% if ( videoID ) { %>
-						<div class="elementor-background-video" data-video-id="<%= videoID %>"></div>
-					<% } else { %>
-						<video class="elementor-background-video" src="<%= videoLink %>" autoplay loop muted></video>
-					<% } %>
+					<# if ( videoID ) { #>
+						<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
+					<# } else { #>
+						<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
+					<# } #>
 				</div>
-			<% }
+			<# }
 
-			if ( settings.background_video_fallback ) { %>
-				<div class="elementor-background-video-fallback" style="background-image: url(<%- settings.background_video_fallback.url %>)"></div>
-			<% }
+			if ( settings.background_video_fallback ) { #>
+				<div class="elementor-background-video-fallback" style="background-image: url({{ settings.background_video_fallback.url }})"></div>
+			<# }
 		}
 
-		if ( 'classic' === settings.background_overlay_background ) { %>
+		if ( 'classic' === settings.background_overlay_background ) { #>
 			<div class="elementor-background-overlay"></div>
-		<% } %>
-		<div class="elementor-container elementor-column-gap-<%- settings.gap %>">
+		<# } #>
+		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
 		<?php
