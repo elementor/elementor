@@ -339,6 +339,9 @@ abstract class Element_Base {
 	}
 
 	function start_controls_section($id, $args) {
+
+		do_action('elementor/element/before_section_start', $this, $id, $args);
+
 		$args['type'] = Controls_Manager::SECTION;
 
 		$this->add_control( $id, $args );
@@ -351,9 +354,14 @@ abstract class Element_Base {
 			'section' => $id,
 			'tab' => $this->_controls[ $id ]['tab']
 		];
+
+		do_action('elementor/element/after_section_start', $this, $id, $args);
 	}
 
 	function end_controls_section(){
+
+		do_action('elementor/element/after_section_end', $this, $this->_current_section['section'], ['tab' => $this->_current_section['tab']] );
+
 		$this->_current_section = null;
 	}
 
