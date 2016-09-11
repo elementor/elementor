@@ -34,8 +34,6 @@ add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
 
 if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ini_get( 'asp_tags' ) ) {
-	add_action( 'admin_notices', 'elementor_fail_server_configuration_problem' );
 } else {
 	require( ELEMENTOR_PATH . 'includes/plugin.php' );
 }
@@ -60,12 +58,6 @@ function elementor_load_plugin_textdomain() {
  */
 function elementor_fail_php_version() {
 	$message = esc_html__( 'Elementor requires PHP version 5.4+, plugin is currently NOT ACTIVE.', 'elementor' );
-	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
-	echo wp_kses_post( $html_message );
-}
-
-function elementor_fail_server_configuration_problem() {
-	$message = esc_html__( 'Server Configuration Problem: asp_tags is enabled, but is not compatible with Elementor. You can disable `asp_tags` in `.htaccess` or `php.ini` file.', 'elementor' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
