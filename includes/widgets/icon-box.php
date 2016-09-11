@@ -435,6 +435,26 @@ class Widget_Icon_box extends Widget_Base {
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_bottom_space',
+			[
+				'label' => __( 'Title Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'section' => 'section_style_content',
+				'tab' => self::TAB_STYLE,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -474,6 +494,7 @@ class Widget_Icon_box extends Widget_Base {
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
+				'separator' => 'before',
 			]
 		);
 
