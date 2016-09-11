@@ -69,15 +69,15 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-        $this->end_controls_section();
+		$this->end_controls_section();
 
-        $this->start_controls_section(
-            'section_title_style',
-            [
-                'label' => __( 'Accordion', 'elementor' ),
-                'tab' => self::TAB_STYLE,
-            ]
-        );
+		$this->start_controls_section(
+			'section_title_style',
+			[
+				'label' => __( 'Accordion', 'elementor' ),
+				'tab' => self::TAB_STYLE,
+			]
+		);
 
 		$this->add_control(
 			'icon_align',
@@ -221,6 +221,8 @@ class Widget_Accordion extends Widget_Base {
 				],
 			]
 		);
+
+		$this->end_controls_section();
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
