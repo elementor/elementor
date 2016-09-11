@@ -360,10 +360,12 @@ abstract class Element_Base {
 	}
 
 	function end_controls_section(){
-
-		do_action('elementor/element/after_section_end', $this, $this->_current_section['section'], ['tab' => $this->_current_section['tab']] );
+		/* save the current section for the action */
+		$current_section = $this->_current_section;
 
 		$this->_current_section = null;
+
+		do_action('elementor/element/after_section_end', $this, $current_section['section'], ['tab' => $current_section['tab']] );
 	}
 
 	public function __construct( $args = [] ) {
