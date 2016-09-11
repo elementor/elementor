@@ -143,6 +143,23 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'force_full_width',
+			[
+				'label' => __( 'Section Layout', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Normal', 'elementor' ),
+					'elementor-force-full-width' => __( 'Stretched', 'elementor' ),
+				],
+				'prefix_class' => '',
+				'tab' => self::TAB_LAYOUT,
+				'section' => 'section_layout',
+				//'title' => __( 'Stretch the section to the full width of the page using JS. Ideally use a theme that has a full-width template.' ),
+			]
+		);
+
+		$this->add_control(
 			'gap',
 			[
 				'label' => __( 'Columns Gap', 'elementor' ),

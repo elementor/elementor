@@ -319,6 +319,44 @@ module.exports = function( $ ) {
 
 },{}],10:[function(require,module,exports){
 module.exports = function( $ ) {
+
+	//Force section full-width for non full-width templates
+
+	if ( this.hasClass( 'elementor-force-full-width' ) ) {
+
+		var $section = this,
+			existingMarginTop = $section.css( 'margin-top' ),
+			existingMarginBottom = $section.css( 'margin-bottom' ),
+			placeHolder = '<hr class="elementor-full-width-placeholder">',
+			$offsetParent = $section.offsetParent();
+
+		$section.before( placeHolder );
+
+		function fixHeight() {
+			var sectionHeight = $section.css( 'height' );
+			$section.prev( 'hr' ).css( 'padding-top', 'calc( ' + existingMarginTop + ' + ' + sectionHeight + ' + ' + existingMarginBottom + ')' );
+			$section.css('margin-top', 'calc( -' + sectionHeight + ' - ' + existingMarginBottom + ')' );
+		}
+
+		function fixWidth() {
+			if ( $offsetParent.length ){
+				var documentWidth = $section.parents( 'body' ).css( 'width' );
+				$section.css( 'width', documentWidth );
+				$section.css( 'left', '-' + $offsetParent.offset().left + 'px' );
+			}
+		}
+
+		$(window).on( "resize" , function () {
+			fixHeight();
+			fixWidth();
+		});
+
+		fixHeight();
+		fixWidth();
+
+	}
+
+
 	var player,
 		ui = {
 			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
