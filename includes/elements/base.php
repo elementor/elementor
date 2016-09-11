@@ -208,7 +208,8 @@ abstract class Element_Base {
 		$args = array_merge( $default_args, $args );
 
 		if ( isset( $this->_controls[ $id ] ) ) {
-			wp_die( __CLASS__ . '::' . __FUNCTION__ .': ' . __( 'Cannot redeclare control with same name.', 'elementor' ) );
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ) . ' - ' . $id, '1.0.0' );
+
 			return false;
 		}
 
