@@ -5,37 +5,44 @@ module.exports = function( $ ) {
 	if ( this.hasClass( 'elementor-force-full-width' ) ) {
 
 		var $section = this,
+			scopeWindow = elementorFrontend.getScopeWindow(),
 			existingMarginTop = $section.css( 'margin-top' ),
 			existingMarginBottom = $section.css( 'margin-bottom' ),
-			placeHolder = '<hr class="elementor-full-width-placeholder">',
+			$placeHolder = $( '<hr class="elementor-full-width-placeholder">' ),
 			$offsetParent = $section.offsetParent();
 
-		$section.before( placeHolder );
+		$section.before( $placeHolder );
 
-		function fixHeight() {
+		var fixHeight = function() {
 			var sectionHeight = $section.css( 'height' );
-			$section.prev( 'hr' ).css( 'padding-top', 'calc( ' + existingMarginTop + ' + ' + sectionHeight + ' + ' + existingMarginBottom + ')' );
-			$section.css('margin-top', 'calc( -' + sectionHeight + ' - ' + existingMarginBottom + ')' );
-		}
+			$placeHolder.css( {
+				'padding-top': sectionHeight,
+				'margin-top': existingMarginTop,
+				'margin-bottom': existingMarginBottom
+			} );
+			$section.css( 'margin-top', 'calc( -' + sectionHeight + ' - ' + existingMarginBottom + ')' );
+		};
 
-		function fixWidth() {
-			if ( $offsetParent.length ){
-				var documentWidth = $section.parents( 'body' ).css( 'width' );
-				$section.css( 'width', documentWidth );
-				$section.css( 'left', '-' + $offsetParent.offset().left + 'px' );
+		var fixWidth = function() {
+			if ( $offsetParent.length ) {
+				var scopeWindowWidth = scopeWindow.innerWidth;
+
+				$section.css( {
+					'width': scopeWindowWidth + 'px',
+					'left': '-' + $offsetParent.offset().left + 'px'
+				} );
 			}
-		}
+		};
 
-		$(window).on( "resize" , function () {
+		$( scopeWindow ).on( 'resize', function() {
 			fixHeight();
 			fixWidth();
-		});
+		} );
 
 		fixHeight();
 		fixWidth();
 
 	}
-
 
 	var player,
 		ui = {
@@ -54,7 +61,7 @@ module.exports = function( $ ) {
 			containerHeight = ui.backgroundVideoContainer.outerHeight(),
 			aspectRatioSetting = '16:9', //TEMP
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
-			aspectRatio = aspectRatioArray[0] / aspectRatioArray[1],
+			aspectRatio = aspectRatioArray[ 0 ] / aspectRatioArray[ 1 ],
 			ratioWidth = containerWidth / aspectRatio,
 			ratioHeight = containerHeight * aspectRatio,
 			isWidthFixed = containerWidth / containerHeight > aspectRatio;
@@ -74,7 +81,7 @@ module.exports = function( $ ) {
 
 	var prepareYTVideo = function( YT, videoID ) {
 
-		player = new YT.Player( ui.backgroundVideo[0], {
+		player = new YT.Player( ui.backgroundVideo[ 0 ], {
 			videoId: videoID,
 			events: {
 				onReady: function() {
