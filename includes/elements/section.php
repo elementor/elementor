@@ -296,12 +296,14 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'background_overlay_title',
+		$this->end_controls_section();
+
+		// Background Overlay
+		$this->start_controls_section(
+			'background_overlay_section',
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'tab' => self::TAB_STYLE,
 				'condition' => [
 					'background_background' => [ 'classic', 'video' ],
 				],
