@@ -611,15 +611,13 @@ class Element_Section extends Element_Base {
 			'reverse_order_mobile',
 			[
 				'label' => __( 'Reverse Columns', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
-				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'No', 'elementor' ),
-					'reverse-mobile' => __( 'Yes', 'elementor' ),
-				],
+				'label_on' => __( 'yes', 'elementor' ),
+				'label_off' => __( 'no', 'elementor' ),
+				'return_value' => 'reverse-mobile',
 				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
 			]
 		);
@@ -650,15 +648,14 @@ class Element_Section extends Element_Base {
 			'hide_desktop',
 			[
 				'label' => __( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'hidden-desktop' => __( 'Hide', 'elementor' ),
-				],
+				'label_on' => __( 'hide', 'elementor' ),
+				'label_off' => __( 'show', 'elementor' ),
+				'return_value' => 'hidden-desktop',
 			]
 		);
 
@@ -666,15 +663,14 @@ class Element_Section extends Element_Base {
 			'hide_tablet',
 			[
 				'label' => __( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'hidden-tablet' => __( 'Hide', 'elementor' ),
-				],
+				'label_on' => __( 'hide', 'elementor' ),
+				'label_off' => __( 'show', 'elementor' ),
+				'return_value' => 'hidden-tablet',
 			]
 		);
 
@@ -682,15 +678,14 @@ class Element_Section extends Element_Base {
 			'hide_mobile',
 			[
 				'label' => __( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'hidden-phone' => __( 'Hide', 'elementor' ),
-				],
+				'label_on' => __( 'hide', 'elementor' ),
+				'label_off' => __( 'show', 'elementor' ),
+				'return_value' => 'hidden-phone',
 			]
 		);
 	}
