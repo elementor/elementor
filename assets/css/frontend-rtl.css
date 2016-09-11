@@ -860,6 +860,8 @@
     margin-left: auto !important;
     margin-right: auto !important;
     margin-bottom: 15px; } }
+.elementor-widget-image-box .elementor-image-box-img {
+  display: inline-block; }
 .elementor-widget-image-box .elementor-image-box-title a {
   color: inherit; }
 .elementor-widget-image-box .elementor-image-box-wrapper {
