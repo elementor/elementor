@@ -232,7 +232,7 @@ class Widget_Image_box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -258,7 +258,7 @@ class Widget_Image_box extends Widget_Base {
 				'section' => 'section_style_content',
 				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-content' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-wrapper' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
