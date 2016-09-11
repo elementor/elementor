@@ -1543,9 +1543,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
   top: 0;
   right: 0;
   border: 0; }
-  #elementor-preview.elementor-device-desktop {
+  .elementor-device-desktop #elementor-preview {
     overflow-y: hidden; }
-  #elementor-preview:not(.elementor-device-desktop) {
+  body:not(.elementor-device-desktop) #elementor-preview {
     overflow-y: auto; }
 
 #elementor-preview-responsive-wrapper {
