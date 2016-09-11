@@ -29,6 +29,9 @@ Create pages that have "the designer touch", by including unique features like b
 = NEW! Template Library. =
 We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
 
+= NEW! Mobile Editing. =
+Elementor comes with an exclusive toolset, that lets you create a truly responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
+
 = 28 widgets and counting =
 We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
@@ -149,8 +152,8 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 1. **Drag & Drop.** Our instant drag & drop lets you easily place every element anywhere on the page.
 2. **Resize Columns.** Set the column width exactly how you want it by dragging its corner left and right.
 3. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
-4. **Template Library.** Choose one of our pre-designed templates, crafted to fit every purpose.
-5. **Responsive Design.** Switch between desktop, tablet & mobile displays to view the page across devices.
+4. **Template Library.** Save your pages or sections as template, so you can easily reuse them again, or choose one of our beautiful pre-designed templates.
+5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
 
