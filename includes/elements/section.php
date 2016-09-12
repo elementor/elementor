@@ -615,8 +615,8 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'prefix_class' => 'elementor-',
-				'label_on' => __( 'yes', 'elementor' ),
-				'label_off' => __( 'no', 'elementor' ),
+				'label_on' => __( 'Yes', 'elementor' ),
+				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'reverse-mobile',
 				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
 			]
@@ -653,8 +653,8 @@ class Element_Section extends Element_Base {
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => __( 'hide', 'elementor' ),
-				'label_off' => __( 'show', 'elementor' ),
+				'label_on' => __( 'Hide', 'elementor' ),
+				'label_off' => __( 'Show', 'elementor' ),
 				'return_value' => 'hidden-desktop',
 			]
 		);
@@ -668,8 +668,8 @@ class Element_Section extends Element_Base {
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => __( 'hide', 'elementor' ),
-				'label_off' => __( 'show', 'elementor' ),
+				'label_on' => __( 'Hide', 'elementor' ),
+				'label_off' => __( 'Show', 'elementor' ),
 				'return_value' => 'hidden-tablet',
 			]
 		);
@@ -683,8 +683,8 @@ class Element_Section extends Element_Base {
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => __( 'hide', 'elementor' ),
-				'label_off' => __( 'show', 'elementor' ),
+				'label_on' => __( 'Hide', 'elementor' ),
+				'label_off' => __( 'Show', 'elementor' ),
 				'return_value' => 'hidden-phone',
 			]
 		);

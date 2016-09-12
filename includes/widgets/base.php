@@ -199,8 +199,8 @@ abstract class Widget_Base extends Element_Base {
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => 'hide',
-				'label_off' => 'show',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
 				'return_value' => 'hidden-desktop',
 			]
 		);
@@ -214,8 +214,8 @@ abstract class Widget_Base extends Element_Base {
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => 'hide',
-				'label_off' => 'show',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
 				'return_value' => 'hidden-tablet',
 			]
 		);
@@ -229,8 +229,8 @@ abstract class Widget_Base extends Element_Base {
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => 'hide',
-				'label_off' => 'show',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
 				'return_value' => 'hidden-phone',
 			]
 		);
