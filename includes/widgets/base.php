@@ -241,13 +241,11 @@ abstract class Widget_Base extends Element_Base {
 
 	final public function print_template() {
 
-		$content_template = apply_filters( 'elementor/widget/print_template', '',  $this );
+        ob_start();
+        $this->content_template();
+        $content_template = ob_get_clean();
 
-		if( '' === $content_template ) {
-			ob_start();
-			$this->content_template();
-			$content_template = ob_get_clean();
-		}
+        $content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
 
 		if ( empty( $content_template ) ) {
 			return;
