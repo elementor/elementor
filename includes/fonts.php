@@ -5,15 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Fonts {
 
-	private static $_font_faces = null;
-
 	const SYSTEM = 'system';
 	const GOOGLE = 'googlefonts';
 	const EARLYACCESS = 'earlyaccess';
 	const LOCAL = 'local';
 
-	protected static function _build_font_faces() {
-		self::$_font_faces = [
+	public static function get_fonts() {
+		return [
 			// System fonts.
 			'Arial' => self::SYSTEM,
 			'Tahoma' => self::SYSTEM,
@@ -837,13 +835,6 @@ class Fonts {
 			'Yrsa' => self::GOOGLE,
 			'Zeyada' => self::GOOGLE,
 		];
-	}
-
-	public static function get_fonts() {
-		if ( is_null( self::$_font_faces ) ) {
-			self::_build_font_faces();
-		}
-		return self::$_font_faces;
 	}
 
 	public static function get_font_type( $name ) {

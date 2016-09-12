@@ -9,11 +9,11 @@
 	right: 0;
 	border: 0;
 
-	&.elementor-device-desktop {
+	.elementor-device-desktop & {
 		overflow-y: hidden;
 	}
 
-	&:not(.elementor-device-desktop) {
+	body:not(.elementor-device-desktop) & {
 		overflow-y: auto;
 	}
 }
