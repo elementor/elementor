@@ -1,9 +1,8 @@
 module.exports = function( $ ) {
 
-	//Force section full-width for non full-width templates
+	// Force section full-width for non full-width templates
 
 	if ( this.hasClass( 'elementor-force-full-width' ) ) {
-
 		var $section = this,
 			scopeWindow = elementorFrontend.getScopeWindow(),
 			existingMarginTop = $section.css( 'margin-top' ),
@@ -41,7 +40,6 @@ module.exports = function( $ ) {
 
 		fixHeight();
 		fixWidth();
-
 	}
 
 	var player,
