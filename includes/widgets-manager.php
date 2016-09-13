@@ -11,7 +11,7 @@ class Widgets_Manager {
 	protected $_registered_widgets = null;
 
 	private function _init_widgets() {
-		include( ELEMENTOR_PATH . 'includes/widgets/base.php' );
+		require ELEMENTOR_PATH . 'includes/widgets/base.php';
 
 		$build_widgets_filename = [
 			'heading',
