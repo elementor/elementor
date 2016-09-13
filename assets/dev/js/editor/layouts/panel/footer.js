@@ -84,11 +84,11 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		self.ui.buttonSaveButton.addClass( 'elementor-button-state' );
 
-		elementor.saveBuilder( options );
+		elementor.saveEditor( options );
 	},
 
 	_saveBuilderDraft: function() {
-		elementor.saveBuilder();
+		elementor.saveEditor();
 	},
 
 	getDeviceModeButton: function( deviceMode ) {

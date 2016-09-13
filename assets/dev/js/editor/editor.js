@@ -342,7 +342,7 @@ App = Marionette.Application.extend( {
 		    .addClass( 'elementor-editor-active' );
 	},
 
-	saveBuilder: function( options ) {
+	saveEditor: function( options ) {
 		options = _.extend( {
 			revision: 'draft',
 			onSuccess: null
