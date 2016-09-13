@@ -11,9 +11,12 @@ html.elementor-html {
 	margin-top: 0 !important;
 }
 
+#elementor{
+	position: relative;
+}
+
 .elementor-editor-active {
 	#elementor {
-		position: relative;
 
 		.elementor-element-empty {
 
