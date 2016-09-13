@@ -48,8 +48,7 @@ class Widgets_Manager {
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
 
-			$class_name = ucwords( $widget_filename );
-			$class_name = str_replace( '-', '_', $class_name );
+			$class_name = str_replace( '-', '_', $widget_filename );
 
 			$this->register_widget( __NAMESPACE__ . '\Widget_' . $class_name );
 		}
