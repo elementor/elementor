@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Image_box extends Widget_Base {
+class Widget_Image_Box extends Widget_Base {
 
 	public function get_id() {
 		return 'image-box';

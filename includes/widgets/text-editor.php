@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Text_editor extends Widget_Base {
+class Widget_Text_Editor extends Widget_Base {
 
 	public function get_id() {
 		return 'text-editor';

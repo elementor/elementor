@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Menu_anchor extends Widget_Base {
+class Widget_Menu_Anchor extends Widget_Base {
 
 	public function get_id() {
 		return 'menu-anchor';
