@@ -182,6 +182,7 @@ abstract class Element_Base {
 
 	public function get_data() {
 		return [
+			'elType' => $this->get_type(),
 			'title' => $this->get_title(),
 			'controls' => $this->get_controls(),
 			'tabs_controls' => $this->get_tabs_controls(),
