@@ -245,7 +245,7 @@ html.elementor-html {
   display: none; }
 .elementor-editor-active .elementor-column.elementor-dragging div.elementor-column-wrap {
   min-height: 50px; }
-.elementor-editor-active div.handle {
+.elementor-editor-active .handle {
   display: none; }
 .elementor-editor-active .elementor-sortable-placeholder {
   background: #71d7f7;
