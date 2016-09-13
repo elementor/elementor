@@ -10,7 +10,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'font';
+		return 'apps';
 	}
 
 	public function get_short_title() {
