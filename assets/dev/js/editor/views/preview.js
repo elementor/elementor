@@ -1,14 +1,12 @@
-var SectionView = require( 'elementor-views/section' ),
-	SectionsCollectionView;
+var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
+	Preview;
 
-SectionsCollectionView = Marionette.CompositeView.extend( {
+Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
 
 	id: 'elementor-inner',
 
 	childViewContainer: '#elementor-section-wrap',
-
-	childView: SectionView,
 
 	ui: {
 		addSectionArea: '#elementor-add-section',
@@ -25,65 +23,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 		'click @ui.closePresetsIcon': 'closeSelectPresets',
 		'click @ui.presets': 'onPresetSelected'
-	},
-
-	behaviors: {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'section'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAdd: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		},
-		HandleElementsRelation: {
-			behaviorClass: require( 'elementor-behaviors/elements-relation' )
-		}
-	},
-
-	getSortableOptions: function() {
-		return {
-			handle: '> .elementor-container > .elementor-row > .elementor-column > .elementor-element-overlay .elementor-editor-section-settings-list .elementor-editor-element-trigger',
-			items: '> .elementor-section'
-		};
-	},
-
-	getChildType: function() {
-		return [ 'section' ];
-	},
-
-	isCollectionFilled: function() {
-		return false;
-	},
-
-	initialize: function() {
-		this
-			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
-			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
-			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
-	},
-
-	addChildModel: function( model, options ) {
-		return this.collection.add( model, options, true );
-	},
-
-	addSection: function( properties ) {
-		var newSection = {
-			id: elementor.helpers.getUniqueID(),
-			elType: 'section',
-			settings: {},
-			elements: []
-		};
-
-		if ( properties ) {
-			_.extend( newSection, properties );
-		}
-
-		var newModel = this.addChildModel( newSection );
-
-		return this.children.findByModelCid( newModel.cid );
 	},
 
 	closeSelectPresets: function() {
@@ -150,10 +89,6 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 		_.defer( _.bind( self.fixBlankPageOffset, this ) );
 	},
 
-	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
-	},
-
 	onPresetSelected: function( event ) {
 		this.closeSelectPresets();
 
@@ -175,15 +110,7 @@ SectionsCollectionView = Marionette.CompositeView.extend( {
 
 		newSection.setStructure( selectedStructure );
 		newSection.redefineLayout();
-	},
-
-	onPanelElementDragStart: function() {
-		elementor.helpers.disableElementEvents( this.$el.find( 'iframe' ) );
-	},
-
-	onPanelElementDragEnd: function() {
-		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
 	}
 } );
 
-module.exports = SectionsCollectionView;
+module.exports = Preview;
