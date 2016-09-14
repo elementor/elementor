@@ -5,12 +5,52 @@ module.exports = function( $ ) {
 	if ( this.hasClass( 'elementor-force-full-width' ) ) {
 		var $section = this,
 			scopeWindow = elementorFrontend.getScopeWindow(),
+			$scopeWindow = $( scopeWindow ),
+			sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer,
+			$sectionContainer = $( scopeWindow.document ).find( sectionContainerSelector ),
 			existingMarginTop = $section.css( 'margin-top' ),
 			existingMarginBottom = $section.css( 'margin-bottom' ),
 			$placeHolder = $( '<hr class="elementor-full-width-placeholder">' ),
 			$offsetParent = $section.offsetParent();
 
-		$section.before( $placeHolder );
+			if ( $offsetParent.is( 'html' ) ) {
+				$offsetParent = null;
+			}
+			if ( ! $section.prev( 'hr.elementor-full-width-placeholder' ).length ) {
+				$section.before( $placeHolder );
+			}
+
+		var fixWidth = function() {
+			if ( $offsetParent || sectionContainerSelector ) {
+				var sectionContainerWidth,
+					sectionOffset = '0';
+
+				if ( sectionContainerSelector ) {
+					sectionContainerWidth = $sectionContainer.innerWidth();
+				} else {
+					sectionContainerWidth = scopeWindow.innerWidth;
+				}
+				$section.css( 'width', sectionContainerWidth + 'px' );
+
+				if ( sectionContainerSelector ) {
+					if ( $offsetParent ) {
+						console.log( $offsetParent );
+						if ( $offsetParent.offset().left >= $sectionContainer.offset().left ) {
+							sectionOffset = '-' + ( $offsetParent.offset().left - $sectionContainer.offset().left ) + 'px';
+						} else {
+							sectionOffset = $sectionContainer.offset().left + 'px';
+						}
+					} else {
+						sectionOffset = $sectionContainer.offset().left + 'px';
+					}
+				} else {
+					sectionOffset = '-' + $offsetParent.offset().left + 'px';
+				}
+
+				$section.css( 'left', sectionOffset );
+
+			}
+		};
 
 		var fixHeight = function() {
 			var sectionHeight = $section.css( 'height' );
@@ -22,24 +62,19 @@ module.exports = function( $ ) {
 			$section.css( 'margin-top', 'calc( -' + sectionHeight + ' - ' + existingMarginBottom + ')' );
 		};
 
-		var fixWidth = function() {
-			if ( $offsetParent.length ) {
-				var scopeWindowWidth = scopeWindow.innerWidth;
-
-				$section.css( {
-					'width': scopeWindowWidth + 'px',
-					'left': '-' + $offsetParent.offset().left + 'px'
-				} );
-			}
-		};
-
-		$( scopeWindow ).on( 'resize', function() {
-			fixHeight();
+		$scopeWindow.on( 'resize', function() {
 			fixWidth();
+			fixHeight();
 		} );
 
-		fixHeight();
 		fixWidth();
+		fixHeight();
+
+	// When removing the class in edit mode
+
+	} else if ( elementorFrontend.isEditMode() ) {
+		this.removeAttr( 'style' );
+		this.prev( 'hr.elementor-full-width-placeholder' ).remove();
 	}
 
 	var player,
