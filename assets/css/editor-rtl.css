@@ -9,14 +9,6 @@
     height: 100%;
     width: 100%; }
 
-.elementor-full-width-placeholder {
-  border: 0; }
-
-.elementor-section.elementor-force-full-width {
-  position: absolute;
-  left: 0;
-  right: 0; }
-
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,

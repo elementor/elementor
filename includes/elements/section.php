@@ -105,14 +105,14 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'force_full_width',
+			'stretch_section',
 			[
 				'label' => __( 'Stretch Section', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'label_on' => __( 'Yes', 'elementor' ),
 				'label_off' => __( 'No', 'elementor' ),
-				'return_value' => 'force-full-width',
+				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
 				'force_render' => 'js',
 				'tab' => self::TAB_LAYOUT,

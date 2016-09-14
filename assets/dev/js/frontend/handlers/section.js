@@ -1,54 +1,50 @@
 module.exports = function( $ ) {
 
-	// Force section full-width for non full-width templates
+	/*
+	 * Force section full-width for non full-width templates
+	 */
+	// Clear any previously existing html/css associated with this script
+	this.removeAttr( 'style' );
+	this.prev( 'hr.elementor-section-stretched-placeholder' ).remove();
 
-	if ( this.hasClass( 'elementor-force-full-width' ) ) {
+	if ( this.hasClass( 'elementor-section-stretched' ) ) {
 		var $section = this,
 			scopeWindow = elementorFrontend.getScopeWindow(),
 			$scopeWindow = $( scopeWindow ),
-			sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer,
+			sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer, // User-defined parent container selector
 			$sectionContainer = $( scopeWindow.document ).find( sectionContainerSelector ),
+			$offsetParent = $section.offsetParent(),
 			existingMarginTop = $section.css( 'margin-top' ),
 			existingMarginBottom = $section.css( 'margin-bottom' ),
-			$placeHolder = $( '<hr class="elementor-full-width-placeholder">' ),
-			$offsetParent = $section.offsetParent();
+			$placeHolder = $( '<hr class="elementor-section-stretched-placeholder">' ),
+			sectionOffset = '0';
 
-			if ( $offsetParent.is( 'html' ) ) {
-				$offsetParent = null;
-			}
-			if ( ! $section.prev( 'hr.elementor-full-width-placeholder' ).length ) {
-				$section.before( $placeHolder );
-			}
+		if ( $offsetParent.is( 'html' ) ) {
+			$offsetParent = null;
+		}
+
+		$section.before( $placeHolder );
 
 		var fixWidth = function() {
 			if ( $offsetParent || sectionContainerSelector ) {
-				var sectionContainerWidth,
-					sectionOffset = '0';
-
-				if ( sectionContainerSelector ) {
-					sectionContainerWidth = $sectionContainer.innerWidth();
-				} else {
-					sectionContainerWidth = scopeWindow.innerWidth;
+				var sectionWidth = scopeWindow.innerWidth,
+					parentOffset;
+				if ( $offsetParent ) {
+					parentOffset = $offsetParent.offset().left;
 				}
-				$section.css( 'width', sectionContainerWidth + 'px' );
-
+				sectionOffset = '-' + parentOffset;
 				if ( sectionContainerSelector ) {
-					if ( $offsetParent ) {
-						console.log( $offsetParent );
-						if ( $offsetParent.offset().left >= $sectionContainer.offset().left ) {
-							sectionOffset = '-' + ( $offsetParent.offset().left - $sectionContainer.offset().left ) + 'px';
-						} else {
-							sectionOffset = $sectionContainer.offset().left + 'px';
-						}
-					} else {
-						sectionOffset = $sectionContainer.offset().left + 'px';
+					var containerOffset = $sectionContainer.offset().left;
+					sectionWidth = $sectionContainer.innerWidth();
+					sectionOffset = containerOffset;
+					if ( $offsetParent && ( parentOffset >= containerOffset ) ) {
+						sectionOffset = '-' + ( parentOffset - containerOffset );
 					}
-				} else {
-					sectionOffset = '-' + $offsetParent.offset().left + 'px';
 				}
-
-				$section.css( 'left', sectionOffset );
-
+				$section.css( {
+					'width': sectionWidth + 'px',
+					'left': sectionOffset + 'px'
+				} );
 			}
 		};
 
@@ -69,12 +65,6 @@ module.exports = function( $ ) {
 
 		fixWidth();
 		fixHeight();
-
-	// When removing the class in edit mode
-
-	} else if ( elementorFrontend.isEditMode() ) {
-		this.removeAttr( 'style' );
-		this.prev( 'hr.elementor-full-width-placeholder' ).remove();
 	}
 
 	var player,
