@@ -83,7 +83,7 @@ class Widget_Google_maps extends Widget_Base {
 			[
 				'label' => __( 'Prevent Scroll', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '',
+				'default' => 'yes',
 				'options' => [
 					'' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),

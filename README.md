@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.8.0  
+**Stable tag:** 0.8.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -30,6 +30,9 @@ Create pages that have "the designer touch", by including unique features like b
 
 ### NEW! Template Library. ###
 We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
+
+### NEW! Mobile Editing. ###
+Elementor comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
 
 ### 28 widgets and counting ###
 We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
@@ -149,12 +152,23 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Screenshots ##
 
 1. **Drag & Drop.** Our instant drag & drop lets you easily place every element anywhere on the page.
-2. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
-3. **Resize Columns.** Set the column width exactly how you want it by dragging its corner left and right.
-4. **Responsive Design.** Switch between desktop, tablet & mobile displays to view the page across devices.
-5. **Template Library.** Choose one of our pre-designed templates, crafted to fit every purpose.
+2. **Resize Columns.** Set the column width exactly how you want it by dragging its corner left and right.
+3. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
+4. **Template Library.** Save your pages or sections as templates, so you can easily reuse them again, or choose one of our beautiful pre-designed templates.
+5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 0.8.1 - 11.09.2016 ###
+* Fix! - Correcting title link color in Image Box widget ([#531](https://github.com/pojome/elementor/issues/531))
+* Fix! - Resolved responsive bug in Image Gallery widget
+* Fix! - Resolved bug in editor for safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
+* Tweak! - Changed prevent scroll default to `Yes` for Maps widget
+* Tweak! - Removed `asp_tags` requirements
+* Tweak! - Added alignment responsive support for Image Box and Icon Box widgets
+* Tweak! - Added mobile editing for Spacer widget
+* Tweak! - Added title spacing for Image Box and Icon Box
+* Tweak! - Removed quick link to Edit with Elementor for non-Elementor pages ([#539](https://github.com/pojome/elementor/issues/539))
 
 ### 0.8.0 - 07.09.2016 ###
 * New! - Added columns ordering on mobile normal / reverse
@@ -180,94 +194,94 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Changed range for font size control
 * Tweak! - Compatibility with `asp_tags`
 * Tweak! - Improved compatibility for old webkit browsers ([#484](https://github.com/pojome/elementor/issues/484), [#403](https://github.com/pojome/elementor/issues/403), [#370](https://github.com/pojome/elementor/issues/370))
-* Fixed! - Removed style from gallery caption
-* Fixed! - Wrong index in section sorting
-* Fixed! - Column indication on inner section dragging
-* Fixed! - Gap for Columns Widget (nested section)
-* Fixed! - Preview mode with real sizes for mobile and tablet
-* Fixed! - Sortable inner section not showing placeholder
-* Fixed! - Network plugins included in System Info
+* Fix! - Removed style from gallery caption
+* Fix! - Wrong index in section sorting
+* Fix! - Column indication on inner section dragging
+* Fix! - Gap for Columns Widget (nested section)
+* Fix! - Preview mode with real sizes for mobile and tablet
+* Fix! - Sortable inner section not showing placeholder
+* Fix! - Network plugins included in System Info
 * Deprecated! - Column width option for mobile portrait is deprecated. Use Mobile Width option instead
 
 ### 0.7.4 - 24.08.2016 ###
 * New! - Added Shortcode widget
 * Tweak! - Now compatible with password protected pages
-* Fixed! - Library RTL bug in template preview
-* Fixed! - Bug with `p` tag in Icon Box widget
-* Fixed! - Style in Icon widget
-* Fixed! - HTML widget now is working
+* Fix! - Library RTL bug in template preview
+* Fix! - Bug with `p` tag in Icon Box widget
+* Fix! - Style in Icon widget
+* Fix! - HTML widget now is working
 
 ### 0.7.3 - 19.08.2016 ###
-* Fixed! - Allow columns gap on mobile
-* Fixed! - Content position for section
+* Fix! - Allow columns gap on mobile
+* Fix! - Content position for section
 
 ### 0.7.2 - 18.08.2016 ###
 * Tweak! - Hide add section area for mobile device
 * Tweak! - Optimization assets files
-* Fixed! - Intrusive Slick Carousel CSS ([#424](https://github.com/pojome/elementor/issues/424))
-* Fixed! - Display content position for custom height section option
+* Fix! - Intrusive Slick Carousel CSS ([#424](https://github.com/pojome/elementor/issues/424))
+* Fix! - Display content position for custom height section option
 
 ### 0.7.1 - 17.08.2016 ###
 * Tweak! - Added column/content position for inner section
 * Tweak! - Block template library in the frontend
-* Fixed! - Export template ([topic](https://wordpress.org/support/topic/template-export-not-working-in-070))
-* Fixed! - Fatal Error during update plugin ([#412](https://github.com/pojome/elementor/issues/412))
-* Fixed! - Separating link attributes from classes attributes in Icon Box widget ([#414](https://github.com/pojome/elementor/issues/414))
-* Fixed! - Allow column and content position for mobile
-* Fixed! - Removed `overflow: hidden` from `#elementor-inner` ([#415](https://github.com/pojome/elementor/issues/415))
-* Fixed! - Aspect ratio issue for Video widget ([topic](https://wordpress.org/support/topic/video-embeds-have-black-bars-top-and-bottom))
-* Fixed! - Image Carousel "slides to show" on tablet ([#372](https://github.com/pojome/elementor/issues/372))
-* Fixed! - RTL style for library
-* Fixed! - Handle errors on wrong export action
+* Fix! - Export template ([topic](https://wordpress.org/support/topic/template-export-not-working-in-070))
+* Fix! - Fatal Error during update plugin ([#412](https://github.com/pojome/elementor/issues/412))
+* Fix! - Separating link attributes from classes attributes in Icon Box widget ([#414](https://github.com/pojome/elementor/issues/414))
+* Fix! - Allow column and content position for mobile
+* Fix! - Removed `overflow: hidden` from `#elementor-inner` ([#415](https://github.com/pojome/elementor/issues/415))
+* Fix! - Aspect ratio issue for Video widget ([topic](https://wordpress.org/support/topic/video-embeds-have-black-bars-top-and-bottom))
+* Fix! - Image Carousel "slides to show" on tablet ([#372](https://github.com/pojome/elementor/issues/372))
+* Fix! - RTL style for library
+* Fix! - Handle errors on wrong export action
 
 ### 0.7.0 - 16.08.2016 ###
 * New! - Template Library ([Release Post](https://elementor.com/introducing-template-library/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme))
 * New! - Save your pages and sections to template library
 * New! - 20+ beautifully pre-designed templates
 * New! - Export / Import templates
-* Fixed! - Changed code structure in Icon/Icon-Box/Social-Icons widget templates
-* Fixed! - Screen size for hidden tablet class
-* Fixed! - Blank page detection in empty pages for editing
+* Fix! - Changed code structure in Icon/Icon-Box/Social-Icons widget templates
+* Fix! - Screen size for hidden tablet class
+* Fix! - Blank page detection in empty pages for editing
 
 ### 0.6.6 - 11.08.2016 ###
 * Tweak! - Improved Drag & Drop area to new section
 * Tweak! - Make changes in new section
-* Fixed! - Resize columns with Widgets using iframe (YouTube, Google Maps, etc)
-* Fixed! - Adding columns widget in 'Add new Section' area
-* Fixed! - Allow blank target link for social-icons widget
+* Fix! - Resize columns with Widgets using iframe (YouTube, Google Maps, etc)
+* Fix! - Adding columns widget in 'Add new Section' area
+* Fix! - Allow blank target link for social-icons widget
 
 ### 0.6.5 - 08.08.2016 ###
 * Tweak! - Added border and box shadow controls for Image widget ([#224](https://github.com/pojome/elementor/issues/244))
 * Tweak! - In new page don't create empty section
 * Tweak! - Embed Roboto font from Google Fonts in editor mode
-* Fixed! - Reset structure or remove column after resize
+* Fix! - Reset structure or remove column after resize
 
 ### 0.6.4 - 04.08.2016 ###
 * Tweak! - Google Fonts list updated ([#371](https://github.com/pojome/elementor/pull/371))
-* Fixed! - Content overflow in "fit to screen" sections for mobile ([#369](https://github.com/pojome/elementor/issues/369))
-* Fixed! - Icon Box Widget: Better support for Safari browser
-* Fixed! - Text Editor Widget: Added listening to undo & redo events ([#340](https://github.com/pojome/elementor/issues/340))
+* Fix! - Content overflow in "fit to screen" sections for mobile ([#369](https://github.com/pojome/elementor/issues/369))
+* Fix! - Icon Box Widget: Better support for Safari browser
+* Fix! - Text Editor Widget: Added listening to undo & redo events ([#340](https://github.com/pojome/elementor/issues/340))
 
 ### 0.6.3 - 01.08.2016 ###
 * Tweak! - Show element title in delete dialog ([#337](https://github.com/pojome/elementor/pull/337))
 * Tweak! - Added responsive support for Image Gallery widget ([topic](https://wordpress.org/support/topic/galery-not-responsive))
 * Tweak! - CSS files for entrance animation and hover animations combine to `animations.min.css` file
-* Fixed! - Columns resize cannot be repeated ([#349](https://github.com/pojome/elementor/issues/349))
-* Fixed! - Anchor Menu widget in Safari browser
-* Fixed! - Bug when global font set as a default ([topic](https://wordpress.org/support/topic/font-family-bug))
+* Fix! - Columns resize cannot be repeated ([#349](https://github.com/pojome/elementor/issues/349))
+* Fix! - Anchor Menu widget in Safari browser
+* Fix! - Bug when global font set as a default ([topic](https://wordpress.org/support/topic/font-family-bug))
 
 ### 0.6.2 - 27.07.2016 ###
 * Tweak! - Improve the way using attachment details
 * Tweak! - Verifies the AJAX request to prevent processing requests external of the editor
-* Fixed! - Hover animation classes in Image widget
-* Fixed! - Icon spacing on mobile in Icon Box widget
-* Fixed! - Image spacing on mobile in Image Box widget
+* Fix! - Hover animation classes in Image widget
+* Fix! - Icon spacing on mobile in Icon Box widget
+* Fix! - Image spacing on mobile in Image Box widget
 
 ### 0.6.1 - 26.07.2016 ###
 * Tweak! - Improved editor UI for blank pages
-* Fixed! - Hide empty widgets in preview mode
-* Fixed! - Bug with Section background overlay and background video ([#323](https://github.com/pojome/elementor/issues/323))
-* Fixed! - Minor security issue
+* Fix! - Hide empty widgets in preview mode
+* Fix! - Bug with Section background overlay and background video ([#323](https://github.com/pojome/elementor/issues/323))
+* Fix! - Minor security issue
 
 ### 0.6.0 - 25.07.2016 ###
 * New! - Added 27 Hover Animations for Image / Icon / Button widgets
@@ -281,12 +295,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added compatibility for NextGen Gallery plugin ([#296](https://github.com/pojome/elementor/issues/296))
 * Tweak! - Print JS scripts in the footer
 * Tweak! - Set color picker control `alpha` for all widgets
-* Fixed! - Remove `maxlength` attribute from color picker input ([#298](https://github.com/pojome/elementor/issues/298))
-* Fixed! - Background video: Set object-fit only HTML5 player (solved Safari YouTube issue)
-* Fixed! - Bug with target blank link in Icon List widget
-* Fixed! - Bug with alignment in Icon List widget ([#283](https://github.com/pojome/elementor/issues/283))
-* Fixed! - Improved responsive in Tabs widget ([#279](https://github.com/pojome/elementor/issues/279))
-* Fixed! - RTL bug in Alert widget ([#287](https://github.com/pojome/elementor/issues/287))
+* Fix! - Remove `maxlength` attribute from color picker input ([#298](https://github.com/pojome/elementor/issues/298))
+* Fix! - Background video: Set object-fit only HTML5 player (solved Safari YouTube issue)
+* Fix! - Bug with target blank link in Icon List widget
+* Fix! - Bug with alignment in Icon List widget ([#283](https://github.com/pojome/elementor/issues/283))
+* Fix! - Improved responsive in Tabs widget ([#279](https://github.com/pojome/elementor/issues/279))
+* Fix! - RTL bug in Alert widget ([#287](https://github.com/pojome/elementor/issues/287))
 
 ### 0.5.2 - 17.07.2016 ###
 * New! - Added Animation Duration control for all elements
@@ -294,11 +308,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ### 0.5.1 - 14.07.2016 ###
 * Tweak! - Added details image sizes in Image Sizes control
-* Fixed! - Chrome bug with flex mode in Image Box widget 
-* Fixed! - Textarea control: set `label_block` to `true` by default
-* Fixed! - Textarea control style for Icon Box Widget
-* Fixed! - Removed translations from system-info for better understanding support 
-* Fixed! - Design fixes for Icon List widget
+* Fix! - Chrome bug with flex mode in Image Box widget 
+* Fix! - Textarea control: set `label_block` to `true` by default
+* Fix! - Textarea control style for Icon Box Widget
+* Fix! - Removed translations from system-info for better understanding support 
+* Fix! - Design fixes for Icon List widget
 
 ### 0.5.0 - 13.07.2016 ###
 * New! - Added more than 35 Entrance Animations to all elements
@@ -313,14 +327,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Updated Font Awesome v4.6.3
 * Tweak! - Changed Textarea control markup according to the general concept
 * Tweak! - Fixed modal RTL style
-* Fixed! - Fade effect in Image Carousel widget ([#245](https://github.com/pojome/elementor/issues/245), [#253](https://github.com/pojome/elementor/issues/253))
-* Fixed! - Don't print anything when no have link in Video widget
+* Fix! - Fade effect in Image Carousel widget ([#245](https://github.com/pojome/elementor/issues/245), [#253](https://github.com/pojome/elementor/issues/253))
+* Fix! - Don't print anything when no have link in Video widget
 
 ### 0.4.1 - 05.07.2016 ###
 * Tweak! - Default structure presets changed for new section
 * Tweak! - Added more strings to translate
-* Fixed! - Fixed alignment for Image widget
-* Fixed! - Some compatible to underscore 1.6.0 (Bundle from WordPress v4.4)
+* Fix! - Fixed alignment for Image widget
+* Fix! - Some compatible to underscore 1.6.0 (Bundle from WordPress v4.4)
 
 ### 0.4.0 - 04.07.2016 ###
 * New! - Section: Background Overlay for image and video background 
@@ -331,7 +345,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Assign a field to be used as the item title for Repeater control 
 * Tweak! - Rearrange column settings panel
 * Tweak! - Add link to carousel widget
-* Fixed! - Bug carousel widget with `dir="rtl"`
+* Fix! - Bug carousel widget with `dir="rtl"`
 
 ### 0.3.2 - 27.06.2016 ###
 * Tweak! - Added fully compatible for Cache plugins
@@ -351,30 +365,30 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Enqueue YouTube API from JS (Better compatible for more themes)
 * Tweak! - Added compatible to WooCommerce widgets
 * Tweak! - Fixes re-render elements performance
-* Fixed! - Border & Radius options for Image Carousel widget
+* Fix! - Border & Radius options for Image Carousel widget
 
 ### 0.3.0 - 21.06.2016 ###
 * New! - Added Image Gallery widget
 * New! - Added Image Carousel widget
 * Tweak! - Fixed schemes area
 * Tweak! - Added spacing icon in Button widget
-* Fixed! - Themes without `the_content()` stop the Editor
-* Fixed! - Height option in Columns widget
+* Fix! - Themes without `the_content()` stop the Editor
+* Fix! - Height option in Columns widget
 
 ### 0.2.5 - 16.06.2016 ###
 * Tweak! - Added Vimeo support for widget Video
 * Tweak! - Improved UI in admin area and panel
 * Tweak! - Added body class `elementor-page` in frontend ([#58](https://github.com/pojome/elementor/issues/58))
-* Fixed! - Elementor seems to get stuck while loading ([#77](https://github.com/pojome/elementor/issues/77))
-* Fixed! - WP Widgets with multiple checkboxes ([#90](https://github.com/pojome/elementor/issues/90))
+* Fix! - Elementor seems to get stuck while loading ([#77](https://github.com/pojome/elementor/issues/77))
+* Fix! - WP Widgets with multiple checkboxes ([#90](https://github.com/pojome/elementor/issues/90))
 
 ### 0.2.4 - 13.06.2016 ###
 * Tweak! - Added some compatible to Cache plugins
 * Tweak! - Added shortcode support in Text Editor widget
 * Tweak! - Added title attribute for Image and Image Box widgets
-* Fixed! - Replace icon for Icon Box widget with the right icon
-* Fixed! - Scroll issue in Safari browser ([topic](https://wordpress.org/support/topic/scroll-issue-in-safri))
-* Fixed! - Text alignment justify ([topic](https://wordpress.org/support/topic/on-text-aligning))
+* Fix! - Replace icon for Icon Box widget with the right icon
+* Fix! - Scroll issue in Safari browser ([topic](https://wordpress.org/support/topic/scroll-issue-in-safri))
+* Fix! - Text alignment justify ([topic](https://wordpress.org/support/topic/on-text-aligning))
 
 ### 0.2.3 - 08.06.2016 ###
 * Tweak! - Added HTML tag control for icon box title
@@ -392,14 +406,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ### 0.1.7 - 06.06.2016 ###
 * Tweak! - Changed default image size control
-* Fixed! - Custom CSS Classes in frontend
+* Fix! - Custom CSS Classes in frontend
 
 ### 0.1.6 - 05.06.2016 ###
 * Tweak! - Improved speed live edit
 * Tweak! - Background Control: Removed default image
 * Tweak! - Add responsive tab on section element
 * Tweak! - Responsive mode: fixed included visibility style
-* Fixed! - Tabs & Accordion Widgets: indexes detection fixed
+* Fix! - Tabs & Accordion Widgets: indexes detection fixed
 
 ### 0.1.5 - 03.06.2016 ###
 * Tweak! - Add check for `asp_tags` php config
@@ -410,28 +424,28 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added size and opacity controls for Image widget
 * Tweak! - Added fallback font for custom fonts
 * Tweak! - Added development mode flag (filter `elementor/utils/is_development_mode`)
-* Fixed! - Issue with duplicate after element sort
+* Fix! - Issue with duplicate after element sort
 
 ### 0.1.3 - 01.06.2016 ###
 * New! - Added background video for all formats
 * Tweak! - Pojo Framework & Themes supported
 * Tweak! - Updated Elementor Icons v1.1
 * Tweak! - Added elements categories in the panel
-* Fixed! - UI bug with WordPress widgets (panel)
-* Fixed! - Remove fallback image placeholder in background video
+* Fix! - UI bug with WordPress widgets (panel)
+* Fix! - Remove fallback image placeholder in background video
 
 ### 0.1.2 - 31.05.2016 ###
 * Tweak! - Added structure control for section element
 * Tweak! - Elementor Icons moved to lib (standalone)
-* Fixed! - Better check if YouTube API is loaded
-* Fixed! - Fixed applying value in dimensions
-* Fixed! - Bug in resize columns
+* Fix! - Better check if YouTube API is loaded
+* Fix! - Fixed applying value in dimensions
+* Fix! - Bug in resize columns
 
 ### 0.1.1 - 30.05.2016 ###
 * Tweak! - Added alpha for background color (Button Widget)
 * Tweak! - Added string context and moved to WP translate repo
 * Tweak! - Icon Box: removed alt text control
-* Fixed! - content position in full height section
+* Fix! - content position in full height section
 
 ### 0.1.0 - 30.05.2016 ###
 * Initial Public Beta Release
