@@ -114,6 +114,7 @@ class Element_Section extends Element_Base {
 				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'force-full-width',
 				'prefix_class' => 'elementor-',
+				'force_render' => 'js',
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 				'description' => __( 'Stretch the section to the full width of the page using JS. Ideally use a theme that has a full-width template.' ),
@@ -551,6 +552,7 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'margin-top: {{TOP}}{{UNIT}}; margin-bottom: {{BOTTOM}}{{UNIT}};',
 				],
+				'force_render' => 'js',
 			]
 		);
 
