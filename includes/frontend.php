@@ -144,6 +144,7 @@ class Frontend {
 			'elementor-frontend',
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
+				'stretchedSectionContainer' => get_option( 'elementor_streched_section_container', '' ),
 			]
 		);
 	}
