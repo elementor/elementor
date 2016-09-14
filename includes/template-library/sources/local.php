@@ -55,6 +55,7 @@ class Source_Local extends Source_Base {
 			'rewrite' => false,
 			'show_ui' => true,
 			'show_in_menu' => false,
+			'show_in_nav_menus' => false,
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
