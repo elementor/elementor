@@ -8,10 +8,10 @@
 	display: inline-block;
 	line-height: 1;
 	transition: $transition-hover;
-	color: #fff;
+	color: $gray;
 
 	&:hover {
-		color: #fff;
+		color: $gray;
 	}
 
 	i {
@@ -24,7 +24,7 @@
 .elementor-view-stacked {
 
 	.elementor-icon {
-		background-color: #000;
+		background-color: $gray;
 		color: #fff;
 	}
 }
@@ -32,9 +32,9 @@
 .elementor-view-framed {
 
 	.elementor-icon {
-		color: #000;
-		border: 3px solid #000;
-		background-color: #fff;
+		color: $gray;
+		border: 3px solid $gray;
+		background-color: transparent;
 	}
 }
 
