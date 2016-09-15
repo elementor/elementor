@@ -90,10 +90,10 @@ WidgetView = BaseElementView.extend( {
 			html = htmlCache;
 		}
 
-		this.$el.html( html );
-		//_.defer( _.bind( function() {
-		//	elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
-		//}, this ) );
+		//this.$el.html( html );
+		_.defer( _.bind( function() {
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
+		}, this ) );
 
 		return this;
 	},

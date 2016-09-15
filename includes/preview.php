@@ -80,7 +80,7 @@ class Preview {
 	 */
 	public function enqueue_styles() {
 		// Hold-on all jQuery plugins after all HTML markup render
-		//wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
+		wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
 
 		Plugin::instance()->frontend->enqueue_styles();
 
