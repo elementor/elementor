@@ -20,7 +20,7 @@ class Control_Select2 extends Control_Base {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<# var multiple = !( data.multiple ) ? 'multiple' : ''; #>
+				<# var multiple = ( data.multiple ) ? 'multiple' : ''; #>
 				<select class="elementor-select2" type="select2" {{ multiple }} data-setting="{{ data.name }}">
 					<# _.each( data.options, function( option_title, option_value ) {
 						var value = data.controlValue;
