@@ -194,15 +194,14 @@ abstract class Widget_Base extends Element_Base {
 			'hide_desktop',
 			[
 				'label' => __( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'hidden-desktop' => __( 'Hide', 'elementor' ),
-				],
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-desktop',
 			]
 		);
 
@@ -210,15 +209,14 @@ abstract class Widget_Base extends Element_Base {
 			'hide_tablet',
 			[
 				'label' => __( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'hidden-tablet' => __( 'Hide', 'elementor' ),
-				],
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-tablet',
 			]
 		);
 
@@ -226,15 +224,14 @@ abstract class Widget_Base extends Element_Base {
 			'hide_mobile',
 			[
 				'label' => __( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'tab' => self::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'hidden-phone' => __( 'Hide', 'elementor' ),
-				],
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-phone',
 			]
 		);
 	}

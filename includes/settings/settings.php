@@ -119,6 +119,23 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		$field_id = 'elementor_streched_section_container';
+		add_settings_field(
+			$field_id,
+			__( 'Stretched sections container', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => 'body',
+				'sub_desc' => __( 'Enter parent element selector that stretched sections fit to (leave blank if you want them to stretch to the full width of the page)', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
 		// Tools section
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(

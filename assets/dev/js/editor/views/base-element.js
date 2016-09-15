@@ -234,12 +234,24 @@ BaseElementView = Marionette.CompositeView.extend( {
 			elementor.setFlagEditorChange( true );
 		}
 
+		var forceRender;
+
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && settings.getControl( settingKey ) ) {
+				var control = settings.getControl( settingKey );
+
+				if ( control.force_render ) {
+					if ( ! forceRender || 'remote' === control.force_render ) {
+						forceRender = control.force_render;
+					}
+
+					isContentChanged = true;
+				}
+
+				if ( control && ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
 					isContentChanged = true;
 				}
 			} );
@@ -251,14 +263,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		// Re-render the template
-		switch ( this.getTemplateType() ) {
-			case 'js' :
-				this.model.setHtmlCache();
-				this.render();
-				break;
+		var templateType = this.getTemplateType();
 
-			default :
-				this.model.renderRemoteServer();
+		if ( 'js' === templateType && 'remote' !== forceRender ) {
+			this.model.setHtmlCache();
+			this.render();
+		} else {
+			this.model.renderRemoteServer( forceRender );
 		}
 	},
 

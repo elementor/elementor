@@ -131,6 +131,10 @@
     position: relative; }
   .elementor-section.elementor-section-boxed > .elementor-container {
     max-width: 1140px; }
+  .elementor-section.elementor-section-stretched {
+    position: absolute;
+    left: 0;
+    right: 0; }
   .elementor-section.elementor-section-items-top > .elementor-container {
     -webkit-box-align: start;
     -webkit-align-items: flex-start;
@@ -172,6 +176,19 @@
       height: 100vh; }
       .elementor-section.elementor-section-height-full > .elementor-container {
         height: 100%; } }
+
+.elementor-section-stretched-placeholder, .elementor-section-stretched-placeholder:before, .elementor-section-stretched-placeholder:after {
+  border: 0;
+  outline: 0;
+  height: 0;
+  line-height: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  box-sizing: content-box; }
 
 .elementor-row {
   width: 100%;

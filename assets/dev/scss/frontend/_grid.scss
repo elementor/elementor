@@ -5,6 +5,7 @@
 // Section
 .elementor-section {
 	position: relative;
+
 	// Container
 	.elementor-container {
 		display: flex;
@@ -18,6 +19,13 @@
 		& > .elementor-container {
 			max-width: 1140px;
 		}
+	}
+
+	// Stretched section settings
+	&.elementor-section-stretched {
+		position: absolute;
+		left: 0;
+		right: 0;
 	}
 
 	// In section min-height / fit to screen mode
@@ -80,6 +88,25 @@
 				height: 100%;
 			}
 		}
+	}
+}
+
+// Stretched section placeholder (gets inserted before a stretched section)
+.elementor-section-stretched-placeholder {
+	&,
+	&:before,
+	&:after {
+		border: 0;
+		outline: 0;
+		height: 0;
+		line-height: 0;
+		padding: 0;
+		margin: 0;
+		background: none;
+		display: block;
+		overflow: hidden;
+		visibility: hidden;
+		box-sizing: content-box;
 	}
 }
 
