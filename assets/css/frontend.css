@@ -495,12 +495,13 @@
   line-height: 1;
   border-radius: 3px;
   padding: 12px 24px;
+  background-color: #818a91;
   color: #fff;
   text-align: center;
   -webkit-transition: all 0.5s;
   transition: all 0.5s; }
   .elementor-button:hover, .elementor-button:focus, .elementor-button:visited {
-    color: #FFFFFF;
+    color: #fff;
     opacity: .9; }
   .elementor-button.elementor-size-small {
     font-size: 13px;
@@ -758,22 +759,22 @@
   line-height: 1;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
-  color: #fff; }
+  color: #818a91; }
   .elementor-icon:hover {
-    color: #fff; }
+    color: #818a91; }
   .elementor-icon i {
     font-size: 50px;
     width: 1em;
     height: 1em; }
 
 .elementor-view-stacked .elementor-icon {
-  background-color: #000;
+  background-color: #818a91;
   color: #fff; }
 
 .elementor-view-framed .elementor-icon {
-  color: #000;
-  border: 3px solid #000;
-  background-color: #fff; }
+  color: #818a91;
+  border: 3px solid #818a91;
+  background-color: transparent; }
 
 .elementor-shape-circle .elementor-icon {
   border-radius: 50%; }

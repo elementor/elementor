@@ -7,6 +7,7 @@
 	line-height: 1;
 	border-radius: 3px;
 	padding: 12px 24px;
+	background-color: $gray;
 	color: #fff;
 	text-align: center;
 	transition: $transition-hover;
@@ -14,7 +15,7 @@
 	&:hover,
 	&:focus,
 	&:visited {
-		color: #FFFFFF;
+		color: #fff;
 		opacity: .9;
 	}
 
