@@ -69,7 +69,9 @@ module.exports = function( $ ) {
 			if ( $section.hasClass( 'elementor-hidden-phone' ) ) {
 				visibilityClasses += 'elementor-hidden-phone ';
 			}
-			$placeHolder.addClass( visibilityClasses );
+			if ( ' ' !== visibilityClasses ) {
+				$placeHolder.addClass( visibilityClasses );
+			}
 		};
 
 		$scopeWindow.on( 'resize', function() {
