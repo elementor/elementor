@@ -1406,17 +1406,16 @@ select {
     transition-property: opacity, background; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:before, #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:after {
     position: absolute;
-    top: 50%;
+    top: 0;
     width: 50%;
     text-align: center;
-    margin-top: -.35em;
-    line-height: 1;
+    line-height: 20px;
     -webkit-transition: inherit;
     transition: inherit; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:before {
     content: attr(data-off);
     right: 3px;
-    color: #aaa;
+    color: #a4afb7;
     text-shadow: 0 1px rgba(255, 255, 255, 0.5); }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:after {
     content: attr(data-on);
@@ -1425,12 +1424,12 @@ select {
     text-shadow: 0 1px rgba(0, 0, 0, 0.2);
     opacity: 0; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label {
-    background: #495157;
+    background: #71d7f7;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:before {
-    opacity: 0; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:after {
-    opacity: 1; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:before {
+      opacity: 0; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:after {
+      opacity: 1; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-handle {
     position: absolute;
     top: 1px;
