@@ -1424,9 +1424,9 @@ App = Marionette.Application.extend( {
 
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
-		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
-		} );
+		//_.defer( function() {
+		//	elementorFrontend.getScopeWindow().jQuery.holdReady( false );
+		//} );
 
 		this.introduction.startOnLoadIntroduction();
 	},
@@ -7371,10 +7371,10 @@ WidgetView = BaseElementView.extend( {
 			html = htmlCache;
 		}
 
-		//this.$el.html( html );
-		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
-		}, this ) );
+		this.$el.html( html );
+		//_.defer( _.bind( function() {
+		//	elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
+		//}, this ) );
 
 		return this;
 	},
