@@ -1424,6 +1424,10 @@ App = Marionette.Application.extend( {
 
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
+		_.defer( function() {
+			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
+		} );
+
 		this.introduction.startOnLoadIntroduction();
 	},
 

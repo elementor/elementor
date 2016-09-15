@@ -79,6 +79,9 @@ class Preview {
 	 * @return void
 	 */
 	public function enqueue_styles() {
+		// Hold-on all jQuery plugins after all HTML markup render
+		wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
+
 		Plugin::instance()->frontend->enqueue_styles();
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
