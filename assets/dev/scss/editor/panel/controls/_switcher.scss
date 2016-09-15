@@ -47,11 +47,10 @@
 		&:before,
 		&:after {
 			position: absolute;
-			top: 50%;
+			top: 0;
 			width: 50%;
 			text-align: center;
-			margin-top: -.35em;
-			line-height: 1;
+			line-height: 20px;
 			transition: inherit;
 		}
 
@@ -72,7 +71,7 @@
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-label {
-		background: $editor-info;
+		background: $editor-darker;
 		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
 
 		&:before {
