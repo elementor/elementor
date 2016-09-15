@@ -17,7 +17,8 @@ module.exports = function( $ ) {
 			existingMarginTop = $section.css( 'margin-top' ),
 			existingMarginBottom = $section.css( 'margin-bottom' ),
 			$placeHolder = $( '<hr class="elementor-section-stretched-placeholder">' ),
-			sectionOffset = '0';
+			sectionOffset = '0',
+			visibilityClasses = ' ';
 
 		if ( $offsetParent.is( 'html' ) ) {
 			$offsetParent = null;
@@ -58,11 +59,28 @@ module.exports = function( $ ) {
 			$section.css( 'margin-top', 'calc( -' + sectionHeight + ' - ' + existingMarginBottom + ')' );
 		};
 
+		var sectionVisibility = function() {
+			if ( $section.hasClass( 'elementor-hidden-desktop' ) ) {
+				visibilityClasses += 'elementor-hidden-desktop ';
+			}
+			if ( $section.hasClass( 'elementor-hidden-tablet' ) ) {
+				visibilityClasses += 'elementor-hidden-tablet ';
+			}
+			if ( $section.hasClass( 'elementor-hidden-phone' ) ) {
+				visibilityClasses += 'elementor-hidden-phone ';
+			}
+			if ( ' ' !== visibilityClasses ) {
+				$placeHolder.addClass( visibilityClasses );
+			}
+		};
+
 		$scopeWindow.on( 'resize', function() {
+			sectionVisibility();
 			fixWidth();
 			fixHeight();
 		} );
 
+		sectionVisibility();
 		fixWidth();
 		fixHeight();
 	}
