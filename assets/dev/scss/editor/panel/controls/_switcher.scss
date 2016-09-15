@@ -93,9 +93,9 @@
 		border-radius: 10px;
 		transition: left 0.15s ease-out;
 	}
+
 	.elementor-switch-input:checked ~ .elementor-switch-handle {
 		left: 30px;
 		box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
 	}
-
 }
