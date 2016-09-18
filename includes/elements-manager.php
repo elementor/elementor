@@ -11,17 +11,19 @@ class Elements_Manager {
 	protected $_registered_elements = null;
 
 	private function _init_elements() {
-		include_once( ELEMENTOR_PATH . 'includes/elements/base.php' );
-
-		include( ELEMENTOR_PATH . 'includes/elements/column.php' );
-		include( ELEMENTOR_PATH . 'includes/elements/section.php' );
-
 		$this->_registered_elements = [];
 
 		$this->register_element( __NAMESPACE__ . '\Element_Column' );
 		$this->register_element( __NAMESPACE__ . '\Element_Section' );
 
 		do_action( 'elementor/elements/elements_registered' );
+	}
+
+	private function require_files() {
+		require_once ELEMENTOR_PATH . 'includes/elements/base.php';
+
+		require ELEMENTOR_PATH . 'includes/elements/column.php';
+		require ELEMENTOR_PATH . 'includes/elements/section.php';
 	}
 
 	public function get_categories() {
@@ -124,6 +126,8 @@ class Elements_Manager {
 	}
 
 	public function __construct() {
+		$this->require_files();
+
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 }

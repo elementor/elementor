@@ -11,8 +11,6 @@ class Widgets_Manager {
 	protected $_registered_widgets = null;
 
 	private function _init_widgets() {
-		require_once ELEMENTOR_PATH . 'includes/elements/base.php';
-		require ELEMENTOR_PATH . 'includes/widgets/base.php';
 
 		$build_widgets_filename = [
 			'heading',
@@ -81,6 +79,12 @@ class Widgets_Manager {
 
 			$this->register_widget( __NAMESPACE__ . '\Widget_WordPress', [ 'widget_name' => $widget_class ] );
 		}
+	}
+
+	private function _require_files() {
+		require_once ELEMENTOR_PATH . 'includes/elements/base.php';
+		require ELEMENTOR_PATH . 'includes/widgets/base.php';
+		require ELEMENTOR_PATH . 'includes/widgets/multi-section-base.php';
 	}
 
 	public function register_widget( $widget_class, $args = [] ) {
@@ -189,6 +193,8 @@ class Widgets_Manager {
 	}
 
 	public function __construct() {
+		$this->_require_files();
+
 		add_action( 'wp_ajax_elementor_render_widget', [ $this, 'ajax_render_widget' ] );
 		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
