@@ -160,15 +160,15 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 0.8.1 - 11.09.2016 ###
-* Fix! - Correcting title link color in Image Box widget ([#531](https://github.com/pojome/elementor/issues/531))
-* Fix! - Resolved responsive bug in Image Gallery widget
-* Fix! - Resolved bug in editor for safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
 * Tweak! - Changed prevent scroll default to `Yes` for Maps widget
 * Tweak! - Removed `asp_tags` requirements
 * Tweak! - Added alignment responsive support for Image Box and Icon Box widgets
 * Tweak! - Added mobile editing for Spacer widget
 * Tweak! - Added title spacing for Image Box and Icon Box
 * Tweak! - Removed quick link to Edit with Elementor for non-Elementor pages ([#539](https://github.com/pojome/elementor/issues/539))
+* Fix! - Correcting title link color in Image Box widget ([#531](https://github.com/pojome/elementor/issues/531))
+* Fix! - Resolved responsive bug in Image Gallery widget
+* Fix! - Resolved bug in editor for safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
 
 ### 0.8.0 - 07.09.2016 ###
 * New! - Added columns ordering on mobile normal / reverse
