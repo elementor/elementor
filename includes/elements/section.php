@@ -671,7 +671,7 @@ class Element_Section extends Element_Base {
 		if ( 'classic' === settings.background_overlay_background ) { #>
 			<div class="elementor-background-overlay"></div>
 		<# } #>
-		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
+		<div class="elementor-container elementor-column-gap-{{ settings.gap }}" <# if ( settings.get_render_attribute_string ) { #>{{{ settings.get_render_attribute_string( 'wrapper' ) }}} <# } #> >
 			<div class="elementor-row"></div>
 		</div>
 		<?php
