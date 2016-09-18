@@ -99,7 +99,7 @@ App = Marionette.Application.extend( {
 				checkbox_list: require( 'elementor-views/controls/checkbox-list' )
 			};
 
-			this.channels.editor.trigger( 'editor:controls:initialize', this );
+			this.channels.editor.trigger( 'editor:controls:initialize' );
 		}
 
 		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
