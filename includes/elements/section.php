@@ -791,4 +791,8 @@ class Element_Section extends Element_Base {
 		</section>
 		<?php
 	}
+
+	protected function _get_child_class( array $element_data ) {
+	    return Element_Column::get_class_name();
+	}
 }

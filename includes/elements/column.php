@@ -454,4 +454,10 @@ class Element_Column extends Element_Base {
 		</div>
 		<?php
 	}
+
+	protected function _get_child_class( array $element_data ) {
+		$widget_data = Plugin::instance()->widgets_manager->get_widget( $element_data['widgetType'] );
+
+		return $widget_data['class'];
+	}
 }
