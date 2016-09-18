@@ -456,6 +456,10 @@ class Element_Column extends Element_Base {
 	}
 
 	protected function _get_child_class( array $element_data ) {
+		if ( 'section' === $element_data['elType'] ) {
+			return Element_Section::get_class_name();
+		}
+
 		$widget_data = Plugin::instance()->widgets_manager->get_widget( $element_data['widgetType'] );
 
 		return $widget_data['class'];
