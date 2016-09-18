@@ -20,10 +20,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * @param Element_Base $element
+	 * @param Element_Base $element_class
 	 * @param $user_args
 	 */
-	final public function add_controls( $element, $user_args ) {
+	final public function add_controls( $element_class, $user_args ) {
 		$this->_init_args( $user_args );
 
 		// Filter witch controls to display
@@ -42,9 +42,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			if ( ! empty( $control_args['responsive'] ) ) {
 				unset( $control_args['responsive'] );
 
-				$element->add_responsive_control( $id, $control_args );
+				$element_class::add_responsive_control( $id, $control_args );
 			} else {
-				$element->add_control( $id , $control_args );
+				$element_class::add_control( $id , $control_args );
 			}
 		}
 	}
