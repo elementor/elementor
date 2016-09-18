@@ -102,11 +102,11 @@ class Widgets_Manager {
 		return true;
 	}
 
-	public function unregister_widget( $id ) {
-		if ( ! isset( $this->_registered_widgets[ $id ] ) ) {
+	public function unregister_widget( $name ) {
+		if ( ! isset( $this->_registered_widgets[ $name ] ) ) {
 			return false;
 		}
-		unset( $this->_registered_widgets[ $id ] );
+		unset( $this->_registered_widgets[ $name ] );
 		return true;
 	}
 
@@ -114,16 +114,18 @@ class Widgets_Manager {
 		if ( is_null( $this->_registered_widgets ) ) {
 			$this->_init_widgets();
 		}
+
 		return $this->_registered_widgets;
 	}
 
-	public function get_widget( $id ) {
+	public function get_widget( $name ) {
 		$widgets = $this->get_registered_widgets();
 
-		if ( ! isset( $widgets[ $id ] ) ) {
+		if ( ! isset( $widgets[ $name ] ) ) {
 			return false;
 		}
-		return $widgets[ $id ];
+
+		return $widgets[ $name ];
 	}
 
 	public function get_registered_widgets_config() {
