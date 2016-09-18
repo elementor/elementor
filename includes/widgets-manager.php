@@ -126,12 +126,17 @@ class Widgets_Manager {
 		return $widgets[ $id ];
 	}
 
-	public function get_registered_widgets_data() {
-		$data = [];
-		foreach ( $this->get_registered_widgets() as $widget ) {
-			$data[ $widget->get_id() ] = $widget->get_data();
+	public function get_registered_widgets_config() {
+		$config = [];
+
+		foreach ( $this->get_registered_widgets() as $widget_data ) {
+			/** @var Widget_Base $class */
+			$class = $widget_data['class'];
+
+			$config[ $class::get_name() ] = $class::get_config();
 		}
-		return $data;
+
+		return $config;
 	}
 
 	public function ajax_render_widget() {
