@@ -122,7 +122,7 @@ class Settings {
 		$field_id = 'elementor_streched_section_container';
 		add_settings_field(
 			$field_id,
-			__( 'Stretched sections container', 'elementor' ),
+			__( 'Stretched section fit to', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
 			$style_section,
@@ -130,7 +130,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'text',
 				'placeholder' => 'body',
-				'sub_desc' => __( 'Enter parent element selector that stretched sections fit to (leave blank if you want them to stretch to the full width of the page)', 'elementor' ),
+				'sub_desc' => __( 'Enter parent element selector, to which stretched sections will fit to (e.g. #primary / .content-wrapper / main etc). Leave blank if you want them to fit to the full width of the page.', 'elementor' ),
 			]
 		);
 
