@@ -277,22 +277,17 @@ abstract class Widget_Base extends Element_Base {
 		);
 	}
 
-	final public function print_template() {
-		ob_start();
-		$this->content_template();
-		$content_template = ob_get_clean();
+	protected function parse_text_editor( $content ) {
+		$content = apply_filters( 'widget_text', $content, $this );
 
-		if ( empty( $content_template ) ) {
-			return;
+		$content = shortcode_unautop( $content );
+		$content = do_shortcode( $content );
+
+		if ( $GLOBALS['wp_embed'] instanceof \WP_Embed ) {
+			$content = $GLOBALS['wp_embed']->autoembed( $content );
 		}
-		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_id() ); ?>-content">
-			<?php $this->render_settings(); ?>
-			<div class="elementor-widget-container">
-				<?php echo $content_template; ?>
-			</div>
-		</script>
-		<?php
+
+		return $content;
 	}
 
 	public function render_content() {
@@ -308,35 +303,8 @@ abstract class Widget_Base extends Element_Base {
 		<?php
 	}
 
-	public function render_plain_content( $instance = [] ) {
-		$this->render_content( $instance );
-	}
-
-	protected function render_settings() {
-		?>
-		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_id() ); ?>-settings">
-			<ul class="elementor-editor-element-settings-list">
-				<li class="elementor-editor-element-setting elementor-editor-element-edit">
-					<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-						<i class="fa fa-pencil"></i>
-					</a>
-				</li>
-				<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-					<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-						<i class="fa fa-files-o"></i>
-					</a>
-				</li>
-				<li class="elementor-editor-element-setting elementor-editor-element-remove">
-					<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-						<i class="fa fa-times"></i>
-					</a>
-				</li>
-			</ul>
-		</div>
-		<?php
+	public function render_plain_content() {
+		$this->render_content();
 	}
 
 	public function before_render() {
@@ -373,6 +341,38 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		</div>
 		<?php
+	}
+
+	public function print_element() {
+		$this->before_render();
+		$this->render_content();
+		$this->after_render();
+	}
+
+	public function get_raw_data( $with_html_content = false ) {
+		$data = parent::get_raw_data( $with_html_content );
+
+		unset( $data['isInner'] );
+
+		$data['widgetType'] = $this->get_data( 'widgetType' );
+
+		if ( $with_html_content ) {
+			ob_start();
+
+			$this->render_content();
+
+			$data['htmlCache'] = ob_get_clean();
+		}
+
+		return $data;
+	}
+
+	protected function get_default_data() {
+		$data = parent::get_default_data();
+
+		$data['widgetType'] = '';
+
+		return $data;
 	}
 
 	protected function _get_child_class( array $element_data ) {
