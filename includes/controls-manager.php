@@ -4,6 +4,11 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Controls_Manager {
+	const TAB_CONTENT = 'content';
+	const TAB_STYLE = 'style';
+	const TAB_ADVANCED = 'advanced';
+	const TAB_RESPONSIVE = 'responsive';
+	const TAB_LAYOUT = 'layout';
 
 	const TEXT = 'text';
 	const NUMBER = 'number';
