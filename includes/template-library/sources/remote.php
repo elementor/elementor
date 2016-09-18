@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Controls_Manager;
+use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -72,15 +73,18 @@ class Source_Remote extends Source_Base {
 			$element['id'] = Utils::generate_random_string();
 
 			if ( 'widget' === $element['elType'] ) {
-				$obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
+				$element_data = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
 			} else {
-				$obj = Plugin::instance()->elements_manager->get_element( $element['elType'] );
+				$element_data = Plugin::instance()->elements_manager->get_element( $element['elType'] );
 			}
 
-			if ( ! $obj )
+			if ( ! $element_data )
 				return $element;
 
-			foreach ( $obj->get_controls() as $control ) {
+			/** @var Element_Base $element_class */
+			$element_class = $element_data['class'];
+
+			foreach ( $element_class::get_controls() as $control ) {
 				if ( Controls_Manager::MEDIA === $control['type'] ) {
 					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
 						continue;
