@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Carousel extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'image-carousel';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Image Carousel', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'slider-push';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_image_carousel',
 			[
 				'label' => __( 'Image Carousel', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'carousel',
 			[
 				'label' => __( 'Add Images', 'elementor' ),
@@ -36,7 +36,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
@@ -47,7 +47,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_to_show = range( 1, 10 );
 		$slides_to_show = array_combine( $slides_to_show, $slides_to_show );
 
-		$this->add_control(
+		self::add_control(
 			'slides_to_show',
 			[
 				'label' => __( 'Slides to Show', 'elementor' ),
@@ -58,7 +58,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'slides_to_scroll',
 			[
 				'label' => __( 'Slides to Scroll', 'elementor' ),
@@ -72,7 +72,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_stretch',
 			[
 				'label' => __( 'Image Stretch', 'elementor' ),
@@ -86,7 +86,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'navigation',
 			[
 				'label' => __( 'Navigation', 'elementor' ),
@@ -102,7 +102,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link_to',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -117,7 +117,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => 'Link to',
@@ -131,7 +131,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -141,7 +141,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_additional_options',
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
@@ -149,7 +149,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'pause_on_hover',
 			[
 				'label' => __( 'Pause on Hover', 'elementor' ),
@@ -163,7 +163,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -177,7 +177,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'autoplay_speed',
 			[
 				'label' => __( 'Autoplay Speed', 'elementor' ),
@@ -187,7 +187,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'infinite',
 			[
 				'label' => __( 'Infinite Loop', 'elementor' ),
@@ -201,7 +201,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'effect',
 			[
 				'label' => __( 'Effect', 'elementor' ),
@@ -218,7 +218,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'speed',
 			[
 				'label' => __( 'Animation Speed', 'elementor' ),
@@ -228,7 +228,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'direction',
 			[
 				'label' => __( 'Direction', 'elementor' ),
@@ -242,24 +242,24 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_navigation',
 			[
 				'label' => __( 'Navigation', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'navigation' => [ 'arrows', 'dots', 'both' ],
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_style_arrows',
 			[
 				'label' => __( 'Arrows', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_navigation',
 				'separator' => 'before',
 				'condition' => [
@@ -268,14 +268,14 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'arrows_position',
 			[
 				'label' => __( 'Arrows Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'inside',
 				'section' => 'section_style_navigation',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'options' => [
 					'inside' => __( 'Inside', 'elementor' ),
 					'outside' => __( 'Outside', 'elementor' ),
@@ -286,13 +286,13 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'arrows_size',
 			[
 				'label' => __( 'Arrows Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'section' => 'section_style_navigation',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'range' => [
 					'px' => [
 						'min' => 20,
@@ -308,12 +308,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'arrows_color',
 			[
 				'label' => __( 'Arrows Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_navigation',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
@@ -324,12 +324,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_style_dots',
 			[
 				'label' => __( 'Dots', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_navigation',
 				'separator' => 'before',
 				'condition' => [
@@ -338,13 +338,13 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'dots_position',
 			[
 				'label' => __( 'Dots Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'outside',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_navigation',
 				'options' => [
 					'outside' => __( 'Outside', 'elementor' ),
@@ -356,12 +356,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'dots_size',
 			[
 				'label' => __( 'Dots Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_navigation',
 				'range' => [
 					'px' => [
@@ -378,12 +378,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'dots_color',
 			[
 				'label' => __( 'Dots Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_navigation',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
@@ -394,21 +394,21 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_spacing',
 			[
 				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
@@ -421,12 +421,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_spacing_custom',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'range' => [
 					'px' => [
@@ -448,23 +448,23 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -546,7 +546,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	<?php
 	}
 
-	protected function content_template() {}
+	protected static function _content_template() {}
 
 	private function get_link_url( $attachment, $instance ) {
 		if ( 'none' === $instance['link_to'] ) {

@@ -5,15 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Button extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'button';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Button', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'button';
 	}
 
@@ -27,8 +27,8 @@ class Widget_Button extends Widget_Base {
 		];
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_button',
 			[
 				'label' => __( 'Button', 'elementor' ),
@@ -36,7 +36,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'button_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
@@ -53,7 +53,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'text',
 			[
 				'label' => __( 'Text', 'elementor' ),
@@ -64,7 +64,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -77,7 +77,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -106,7 +106,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'size',
 			[
 				'label' => __( 'Size', 'elementor' ),
@@ -117,7 +117,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -128,7 +128,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_align',
 			[
 				'label' => __( 'Icon Position', 'elementor' ),
@@ -144,7 +144,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_indent',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
@@ -164,7 +164,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -174,21 +174,21 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style',
 			[
 				'label' => __( 'Button', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'button_text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'default' => '',
 				'selectors' => [
@@ -197,24 +197,24 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'background_color',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -226,12 +226,12 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
 				'label' => __( 'Border', 'elementor' ),
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'placeholder' => '1px',
 				'default' => '1px',
 				'section' => 'section_style',
@@ -239,13 +239,13 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -253,13 +253,13 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'text_padding',
 			[
 				'label' => __( 'Text Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -267,21 +267,21 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_hover',
 			[
 				'label' => __( 'Button Hover', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'color: {{VALUE}};',
@@ -289,12 +289,12 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'button_background_hover_color',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
@@ -302,12 +302,12 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'button_hover_border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
@@ -315,12 +315,12 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 			]
 		);
@@ -375,7 +375,7 @@ class Widget_Button extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<div class="elementor-button-wrapper">
 			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">

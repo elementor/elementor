@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Menu_Anchor extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'menu-anchor';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Menu Anchor', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'anchor';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_anchor',
 			[
 				'label' => __( 'Anchor', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'anchor_description',
 			[
 				'raw' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
@@ -36,7 +36,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'anchor',
 			[
 				'label' => __( 'The ID of Menu Anchor.', 'elementor' ),
@@ -59,7 +59,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<div class="elementor-menu-anchor"{{{ settings.anchor ? ' id="' + settings.anchor + '"' : '' }}}></div>
 		<?php

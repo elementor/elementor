@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Counter extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'counter';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Counter', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'counter';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_counter',
 			[
 				'label' => __( 'Counter', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'starting_number',
 			[
 				'label' => __( 'Starting Number', 'elementor' ),
@@ -37,7 +37,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'ending_number',
 			[
 				'label' => __( 'Ending Number', 'elementor' ),
@@ -48,7 +48,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'prefix',
 			[
 				'label' => __( 'Number Prefix', 'elementor' ),
@@ -59,7 +59,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'suffix',
 			[
 				'label' => __( 'Number Suffix', 'elementor' ),
@@ -70,7 +70,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'duration',
 			[
 				'label' => __( 'Animation Duration', 'elementor' ),
@@ -82,7 +82,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -94,7 +94,7 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -104,16 +104,16 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_number',
 			[
 				'label' => __( 'Number', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'number_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -122,7 +122,7 @@ class Widget_Counter extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_number',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'color: {{VALUE}};',
@@ -130,27 +130,27 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography_number',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_number',
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -159,7 +159,7 @@ class Widget_Counter extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_2,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'color: {{VALUE}};',
@@ -167,19 +167,19 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography_title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
 			]
 		);
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">

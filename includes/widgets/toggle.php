@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Toggle extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'toggle';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Toggle', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'toggle';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_title',
 			[
 				'label' => __( 'Toggle', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'tabs',
 			[
 				'label' => __( 'Toggle Items', 'elementor' ),
@@ -62,7 +62,7 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -72,16 +72,16 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_title_style',
 			[
 				'label' => __( 'Toggle', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
@@ -95,7 +95,7 @@ class Widget_Toggle extends Widget_Base {
 						'max' => 10,
 					],
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -104,12 +104,12 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-bottom-color: {{VALUE}};',
@@ -118,12 +118,12 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_background',
 			[
 				'label' => __( 'Title Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'background-color: {{VALUE}};',
@@ -132,12 +132,12 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'color: {{VALUE}};',
@@ -149,12 +149,12 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'tab_active_color',
 			[
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title.active' => 'color: {{VALUE}};',
@@ -166,24 +166,24 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'label' => __( 'Title Typography', 'elementor' ),
 				'name' => 'title_typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_background_color',
 			[
 				'label' => __( 'Content Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'background-color: {{VALUE}};',
@@ -192,12 +192,12 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_color',
 			[
 				'label' => __( 'Content Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'color: {{VALUE}};',
@@ -209,12 +209,12 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
 				'label' => 'Content Typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -241,7 +241,7 @@ class Widget_Toggle extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<div class="elementor-toggle">
 			<#

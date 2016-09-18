@@ -7,15 +7,15 @@ class Element_Section extends Element_Base {
 
 	private static $presets = [];
 
-	public function get_id() {
+	public static function get_name() {
 		return 'section';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Section', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'columns';
 	}
 
@@ -94,17 +94,17 @@ class Element_Section extends Element_Base {
 		return $data;
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_layout',
 			[
 				'label' => __( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'layout',
 			[
 				'label' => __( 'Width', 'elementor' ),
@@ -115,12 +115,12 @@ class Element_Section extends Element_Base {
 					'full_width' => __( 'Full Width', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-section-',
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_width',
 			[
 				'label' => __( 'Content Width', 'elementor' ),
@@ -137,12 +137,12 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'gap',
 			[
 				'label' => __( 'Columns Gap', 'elementor' ),
@@ -156,12 +156,12 @@ class Element_Section extends Element_Base {
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'height',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -172,14 +172,14 @@ class Element_Section extends Element_Base {
 					'full' => __( 'Fit To Screen', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'custom_height',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -193,7 +193,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -205,7 +205,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'height_inner',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -215,14 +215,14 @@ class Element_Section extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-height-',
 				'section' => 'section_layout',
 				'hide_in_top' => true,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'custom_height_inner',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -236,7 +236,7 @@ class Element_Section extends Element_Base {
 						'max' => 1440,
 					],
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -248,7 +248,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'column_position',
 			[
 				'label' => __( 'Column Position', 'elementor' ),
@@ -260,7 +260,7 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-items-',
 				'condition' => [
 					'height' => [ 'full', 'min-height' ],
@@ -269,7 +269,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_position',
 			[
 				'label' => __( 'Content Position', 'elementor' ),
@@ -281,49 +281,49 @@ class Element_Section extends Element_Base {
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'prefix_class' => 'elementor-section-content-',
 				'section' => 'section_layout',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'structure',
 			[
 				'label' => __( 'Structure', 'elementor' ),
 				'type' => Controls_Manager::STRUCTURE,
 				'default' => '10',
-				'tab' => self::TAB_LAYOUT,
+				'tab' => Controls_Manager::TAB_LAYOUT,
 				'section' => 'section_layout',
 			]
 		);
 
 		// Section background
-		$this->add_control(
+		self::add_control(
 			'section_background',
 			[
 				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'types' => [ 'classic', 'video' ],
 				'section' => 'section_background',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'background_overlay_title',
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_background',
 				'separator' => 'before',
 				'condition' => [
@@ -332,11 +332,11 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_background',
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
 				'condition' => [
@@ -345,7 +345,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'background_overlay_opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
@@ -359,7 +359,7 @@ class Element_Section extends Element_Base {
 						'step' => 0.01,
 					],
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_background',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-background-overlay' => 'opacity: {{SIZE}};',
@@ -371,31 +371,31 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section border
-		$this->add_control(
+		self::add_control(
 			'section_border',
 			[
 				'label' => __( 'Border', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_border',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_border',
 				'selectors' => [
 					'{{WRAPPER}}, {{WRAPPER}} > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -403,26 +403,26 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
 				'section' => 'section_border',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		// Section Typography
-		$this->add_control(
+		self::add_control(
 			'section_typo',
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'color_text',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -431,12 +431,12 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_typo',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_color',
 			[
 				'label' => __( 'Heading Color', 'elementor' ),
@@ -445,12 +445,12 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_typo',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'color_link',
 			[
 				'label' => __( 'Link Color', 'elementor' ),
@@ -459,12 +459,12 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container a' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_typo',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'color_link_hover',
 			[
 				'label' => __( 'Link Hover Color', 'elementor' ),
@@ -473,17 +473,17 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container a:hover' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_typo',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'text_align',
 			[
 				'label' => __( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_typo',
 				'options' => [
 					'left' => [
@@ -506,23 +506,23 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section Advanced
-		$this->add_control(
+		self::add_control(
 			'section_advanced',
 			[
 				'label' => __( 'Advanced', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'section' => 'section_advanced',
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'allowed_dimensions' => 'vertical',
 				'placeholder' => [
 					'top' => '',
@@ -536,34 +536,34 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'section' => 'section_advanced',
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'label_block' => true,
 				'section' => 'section_advanced',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'animation_duration',
 			[
 				'label' => __( 'Animation Duration', 'elementor' ),
@@ -575,7 +575,7 @@ class Element_Section extends Element_Base {
 					'fast' => __( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => 'section_advanced',
 				'condition' => [
 					'animation!' => '',
@@ -583,13 +583,13 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'section' => 'section_advanced',
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
 				'label_block' => true,
@@ -598,21 +598,21 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section Responsive
-		$this->add_control(
+		self::add_control(
 			'_section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'reverse_order_mobile',
 			[
 				'label' => __( 'Reverse Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -624,34 +624,34 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_visibility',
 			[
 				'label' => __( 'Visibility', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'separator' => 'before',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'responsive_description',
 			[
 				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'classes' => 'elementor-control-descriptor',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hide_desktop',
 			[
 				'label' => __( 'Hide On Desktop', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -662,12 +662,12 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hide_tablet',
 			[
 				'label' => __( 'Hide On Tablet', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -678,12 +678,12 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hide_mobile',
 			[
 				'label' => __( 'Hide On Mobile', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 				'section' => '_section_responsive',
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -695,7 +695,7 @@ class Element_Section extends Element_Base {
 		);
 	}
 
-	protected function render_settings() {
+	protected static function _render_settings() {
 		?>
 		<div class="elementor-element-overlay"></div>
 		<?php

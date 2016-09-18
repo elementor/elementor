@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Text_Editor extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'text-editor';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Text Editor', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'align-left';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_editor',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'editor',
 			[
 				'label' => '',
@@ -36,21 +36,21 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'options' => [
 					'left' => [
@@ -76,12 +76,12 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-	    $this->add_control(
+	    self::add_control(
 	        'text_color',
 	        [
 	            'label' => __( 'Text Color', 'elementor' ),
 	            'type' => Controls_Manager::COLOR,
-	            'tab' => self::TAB_STYLE,
+	            'tab' => Controls_Manager::TAB_STYLE,
 	            'section' => 'section_style',
 	            'default' => '',
 	            'selectors' => [
@@ -94,12 +94,12 @@ class Widget_Text_Editor extends Widget_Base {
 	        ]
 	    );
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
 				'section' => 'section_style',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
@@ -117,7 +117,7 @@ class Widget_Text_Editor extends Widget_Base {
 		echo $instance['editor'];
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<div class="elementor-text-editor">{{{ settings.editor }}}</div>
 		<?php

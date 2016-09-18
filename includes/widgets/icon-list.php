@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Icon_List extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'icon-list';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Icon List', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'bullet-list';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_icon',
 			[
 				'label' => __( 'Icon List', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_list',
 			[
 				'label' => '',
@@ -74,7 +74,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -84,21 +84,21 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_icon_style',
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_color',
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'default' => '',
 				'selectors' => [
@@ -111,12 +111,12 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_size',
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'default' => [
 					'size' => 14,
@@ -132,12 +132,12 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'icon_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'options' => [
 					'left' => [
@@ -159,21 +159,21 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_text_style',
 			[
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'text_indent',
 			[
 				'label' => __( 'Text Indent', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_text_style',
 				'range' => [
 					'px' => [
@@ -186,12 +186,12 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_text_style',
 				'default' => '',
 				'selectors' => [
@@ -204,12 +204,12 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_text_style',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -247,7 +247,7 @@ class Widget_Icon_List extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<ul class="elementor-icon-list-items">
 			<#

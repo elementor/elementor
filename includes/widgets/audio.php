@@ -6,20 +6,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Widget_Audio extends Widget_Base {
 	protected $_current_instance = [];
 
-	public function get_id() {
+	public static function get_name() {
 		return 'audio';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'SoundCloud', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'headphones';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_audio',
 			[
 				'label' => __( 'SoundCloud', 'elementor' ),
@@ -27,7 +27,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -40,7 +40,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'visual',
 			[
 				'label' => __( 'Visual Player', 'elementor' ),
@@ -54,7 +54,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_sc_options',
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
@@ -64,7 +64,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_auto_play',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -78,7 +78,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_buying',
 			[
 				'label' => __( 'Buy Button', 'elementor' ),
@@ -92,7 +92,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_liking',
 			[
 				'label' => __( 'Like Button', 'elementor' ),
@@ -106,7 +106,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_download',
 			[
 				'label' => __( 'Download Button', 'elementor' ),
@@ -120,7 +120,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_sharing',
 			[
 				'label' => __( 'Share Button', 'elementor' ),
@@ -134,7 +134,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_show_comments',
 			[
 				'label' => __( 'Comments', 'elementor' ),
@@ -148,7 +148,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_show_playcount',
 			[
 				'label' => __( 'Play Counts', 'elementor' ),
@@ -162,7 +162,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_show_user',
 			[
 				'label' => __( 'Username', 'elementor' ),
@@ -176,7 +176,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'sc_color',
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
@@ -185,7 +185,7 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -241,5 +241,5 @@ class Widget_Audio extends Widget_Base {
 		return $html;
 	}
 
-	protected function content_template() {}
+	protected static function _content_template() {}
 }

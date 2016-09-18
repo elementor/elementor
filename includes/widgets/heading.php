@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Heading extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'heading';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Heading', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'type-tool';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -37,7 +37,7 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -51,7 +51,7 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'size',
 			[
 				'label' => __( 'Size', 'elementor' ),
@@ -68,7 +68,7 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'header_size',
 			[
 				'label' => __( 'HTML Tag', 'elementor' ),
@@ -89,7 +89,7 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -120,7 +120,7 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -130,16 +130,16 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_title_style',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -148,7 +148,7 @@ class Widget_Heading extends Widget_Base {
 				    'type' => Scheme_Color::get_type(),
 				    'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
@@ -156,12 +156,12 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
 			]
@@ -188,7 +188,7 @@ class Widget_Heading extends Widget_Base {
 		echo $title_html;
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<#
 		if ( '' !== settings.title ) {

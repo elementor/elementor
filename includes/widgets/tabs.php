@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Tabs extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'tabs';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Tabs', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'tabs';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_title',
 			[
 				'label' => __( 'Tabs', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'tabs',
 			[
 				'label' => __( 'Tabs Items', 'elementor' ),
@@ -64,7 +64,7 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -74,16 +74,16 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_title_style',
 			[
 				'label' => __( 'Tabs Style', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
@@ -97,7 +97,7 @@ class Widget_Tabs extends Widget_Base {
 						'max' => 10,
 					],
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -108,12 +108,12 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before' => 'border-color: {{VALUE}};',
@@ -124,12 +124,12 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'background_color',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title.active' => 'background-color: {{VALUE}};',
@@ -138,12 +138,12 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'tab_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'color: {{VALUE}};',
@@ -156,12 +156,12 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'tab_active_color',
 			[
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active' => 'color: {{VALUE}};',
@@ -173,32 +173,32 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'tab_typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-tab-title > span',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_tab_content',
 			[
 				'label' => __( 'Tab Content', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_tab_content',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
@@ -210,11 +210,11 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_tab_content',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -246,7 +246,7 @@ class Widget_Tabs extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
 			<#

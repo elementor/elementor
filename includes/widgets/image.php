@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'image';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Image', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'insert-image';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
@@ -38,7 +38,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -65,7 +65,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -77,7 +77,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link_to',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -92,7 +92,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -106,7 +106,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -116,21 +116,21 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_image',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Image', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'space',
 			[
 				'label' => __( 'Size (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'default' => [
 					'size' => 100,
@@ -149,12 +149,12 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'default' => [
 					'size' => 1,
@@ -172,34 +172,34 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -207,26 +207,26 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
 				'section' => 'section_style_image',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_caption',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Caption', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'caption_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -253,17 +253,17 @@ class Widget_Image extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'text-align: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_caption',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
@@ -276,12 +276,12 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
@@ -325,7 +325,7 @@ class Widget_Image extends Widget_Base {
 		echo $image_html;
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<# if ( '' !== settings.image.url ) { #>
 			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">

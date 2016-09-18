@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Google_maps extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'google_maps';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Google Maps', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'google-maps';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_map',
 			[
 				'label' => __( 'Map', 'elementor' ),
@@ -27,7 +27,7 @@ class Widget_Google_maps extends Widget_Base {
 		);
 
 		$default_address = __( 'London Eye, London, United Kingdom', 'elementor' );
-		$this->add_control(
+		self::add_control(
 			'address',
 			[
 				'label' => __( 'Address', 'elementor' ),
@@ -39,7 +39,7 @@ class Widget_Google_maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'zoom',
 			[
 				'label' => __( 'Zoom Level', 'elementor' ),
@@ -57,7 +57,7 @@ class Widget_Google_maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'height',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -78,7 +78,7 @@ class Widget_Google_maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'prevent_scroll',
 			[
 				'label' => __( 'Prevent Scroll', 'elementor' ),
@@ -95,7 +95,7 @@ class Widget_Google_maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -120,5 +120,5 @@ class Widget_Google_maps extends Widget_Base {
 		);
 	}
 
-	protected function content_template() {}
+	protected static function _content_template() {}
 }

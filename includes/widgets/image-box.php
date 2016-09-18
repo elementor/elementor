@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Box extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'image-box';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Image Box', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'image-box';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_image',
 			[
 				'label' => __( 'Image Box', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
@@ -38,7 +38,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_text',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
@@ -50,7 +50,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'description_text',
 			[
 				'label' => __( 'Content', 'elementor' ),
@@ -65,7 +65,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -76,7 +76,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'position',
 			[
 				'label' => __( 'Image Position', 'elementor' ),
@@ -102,7 +102,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_size',
 			[
 				'label' => __( 'Title HTML Tag', 'elementor' ),
@@ -123,7 +123,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -133,16 +133,16 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_image',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Image', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_space',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
@@ -157,7 +157,7 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_image',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}}.elementor-position-right .elementor-image-box-img' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
@@ -166,7 +166,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_size',
 			[
 				'label' => __( 'Image Size', 'elementor' ),
@@ -183,14 +183,14 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_image',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'image_opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
@@ -206,33 +206,33 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_image',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Content', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'text_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -256,14 +256,14 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_vertical_alignment',
 			[
 				'label' => __( 'Vertical Alignment', 'elementor' ),
@@ -275,23 +275,23 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'default' => 'top',
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'separator' => 'before',
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'title_bottom_space',
 			[
 				'label' => __( 'Title Spacing', 'elementor' ),
@@ -303,19 +303,19 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
@@ -328,34 +328,34 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'separator' => 'before',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'description_color',
 			[
 				'label' => __( 'Description Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
@@ -368,12 +368,12 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
@@ -438,7 +438,7 @@ class Widget_Image_Box extends Widget_Base {
 		echo $html;
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<#
 		var html = '<div class="elementor-image-box-wrapper">';

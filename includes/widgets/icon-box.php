@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Icon_Box extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'icon-box';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Icon Box', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'icon-box';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_icon',
 			[
 				'label' => __( 'Icon Box', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -42,7 +42,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon',
 			[
 				'label' => __( 'Choose Icon', 'elementor' ),
@@ -52,7 +52,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'shape',
 			[
 				'label' => __( 'Shape', 'elementor' ),
@@ -70,7 +70,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_text',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
@@ -82,7 +82,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'description_text',
 			[
 				'label' => '',
@@ -97,7 +97,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -108,7 +108,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'position',
 			[
 				'label' => __( 'Icon Position', 'elementor' ),
@@ -134,7 +134,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_size',
 			[
 				'label' => __( 'Title HTML Tag', 'elementor' ),
@@ -155,16 +155,16 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_icon',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Icon', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
@@ -173,7 +173,7 @@ class Widget_Icon_Box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'default' => '',
 				'selectors' => [
@@ -183,12 +183,12 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'secondary_color',
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'default' => '',
 				'condition' => [
@@ -201,7 +201,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_space',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
@@ -216,7 +216,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_icon',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}}.elementor-position-right .elementor-icon-box-icon' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-left .elementor-icon-box-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
@@ -225,7 +225,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_size',
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
@@ -237,19 +237,19 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_icon',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'icon_padding',
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
@@ -269,7 +269,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'rotate',
 			[
 				'label' => __( 'Icon Rotate', 'elementor' ),
@@ -278,7 +278,7 @@ class Widget_Icon_Box extends Widget_Base {
 					'size' => 0,
 					'unit' => 'deg',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
@@ -286,12 +286,12 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -302,13 +302,13 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -319,21 +319,21 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_hover',
 			[
 				'label' => __( 'Icon Hover', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'default' => '',
 				'selectors' => [
@@ -343,12 +343,12 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_secondary_color',
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'default' => '',
 				'condition' => [
@@ -361,26 +361,26 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Content', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'text_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -404,14 +404,14 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'content_vertical_alignment',
 			[
 				'label' => __( 'Vertical Alignment', 'elementor' ),
@@ -423,23 +423,23 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'default' => 'top',
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'separator' => 'before',
 			]
 		);
 
-		$this->add_responsive_control(
+		self::add_responsive_control(
 			'title_bottom_space',
 			[
 				'label' => __( 'Title Spacing', 'elementor' ),
@@ -451,19 +451,19 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title' => 'color: {{VALUE}};',
@@ -476,34 +476,34 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'separator' => 'before',
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'description_color',
 			[
 				'label' => __( 'Description Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description' => 'color: {{VALUE}};',
@@ -516,12 +516,12 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
@@ -563,7 +563,7 @@ class Widget_Icon_Box extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconTag = link ? 'a' : 'span'; #>

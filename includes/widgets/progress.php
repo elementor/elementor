@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Progress extends Widget_Base {
 
-	public function get_id() {
+	public static function get_name() {
 		return 'progress';
 	}
 
-	public function get_title() {
+	public static function get_title() {
 		return __( 'Progress Bar', 'elementor' );
 	}
 
-	public function get_icon() {
+	public static function get_icon() {
 		return 'skill-bar';
 	}
 
-	protected function _register_controls() {
-		$this->add_control(
+	protected static function _register_controls() {
+		self::add_control(
 			'section_progress',
 			[
 				'label' => __( 'Progress Bar', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -38,7 +38,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'progress_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
@@ -55,7 +55,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'percent',
 			[
 				'label' => __( 'Percentage', 'elementor' ),
@@ -69,7 +69,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-	    $this->add_control(
+	    self::add_control(
 	        'display_percentage',
 	        [
 	            'label' => __( 'Display Percentage', 'elementor' ),
@@ -83,7 +83,7 @@ class Widget_Progress extends Widget_Base {
 	        ]
 	    );
 
-		$this->add_control(
+		self::add_control(
 			'inner_text',
 			[
 				'label' => __( 'Inner Text', 'elementor' ),
@@ -95,7 +95,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -105,21 +105,21 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_progress_style',
 			[
 				'label' => __( 'Progress Bar', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'bar_color',
 			[
 				'label' => __( 'Bar Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
@@ -131,12 +131,12 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'bar_bg_color',
 			[
 				'label' => __( 'Bar Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_progress_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper' => 'background-color: {{VALUE}};',
@@ -144,12 +144,12 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'bar_inline_color',
 			[
 				'label' => __( 'Inner Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_progress_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-inner-text' => 'color: {{VALUE}};',
@@ -157,21 +157,21 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'section_title',
 			[
 				'label' => __( 'Title Style', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		self::add_control(
 			'title_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
@@ -183,11 +183,11 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
+		self::add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -231,7 +231,7 @@ class Widget_Progress extends Widget_Base {
 		echo $html;
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<#
 		var html = '';
