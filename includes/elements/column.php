@@ -410,40 +410,44 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
-	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$column_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+	public function before_render() {
+		$is_inner = $this->get_data( 'isInner' );
+
+		$column_type = ! empty( $is_inner ) ? 'inner' : 'top';
+
+		$settings = $this->get_settings();
 
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-column',
 			'elementor-element',
-			'elementor-element-' . $element_id,
-			'elementor-col-' . $instance['_column_size'],
+			'elementor-element-' . $this->get_id(),
+			'elementor-col-' . $settings['_column_size'],
 			'elementor-' . $column_type . '-column',
 		] );
 
-		foreach ( $this->get_class_controls() as $control ) {
-			if ( empty( $instance[ $control['name'] ] ) )
+		foreach ( self::get_class_controls() as $control ) {
+			if ( empty( $settings[ $control['name'] ] ) )
 				continue;
 
-			if ( ! $this->is_control_visible( $instance, $control ) )
+			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
-		if ( ! empty( $instance['animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
+		if ( ! empty( $settings['animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', self::get_name() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<div class="elementor-column-wrap<?php if ( ! empty( $element_data['elements'] ) ) echo ' elementor-element-populated'; ?>">
+			<div class="elementor-column-wrap<?php if ( $this->get_children_data() ) echo ' elementor-element-populated'; ?>">
 				<div class="elementor-widget-wrap">
 		<?php
 	}
 
-	public function after_render( $instance, $element_id, $element_data = [] ) {
+	public function after_render() {
 		?>
 				</div>
 			</div>

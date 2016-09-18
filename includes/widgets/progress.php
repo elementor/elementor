@@ -195,25 +195,27 @@ class Widget_Progress extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
 		$html = '';
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-progress-wrapper' );
 
-		if ( ! empty( $instance['progress_type'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'progress-' . $instance['progress_type'] );
+		if ( ! empty( $settings['progress_type'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'class', 'progress-' . $settings['progress_type'] );
 		}
 
-		if ( ! empty( $instance['title'] ) ) {
-			$html .= '<span class="elementor-title">' . $instance['title'] . '</span>';
+		if ( ! empty( $settings['title'] ) ) {
+			$html .= '<span class="elementor-title">' . $settings['title'] . '</span>';
 		}
 
 		$html .= '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' role="timer">';
 
-		$html .= '<span class="elementor-progress-bar" data-max="' . $instance['percent']['size'] . '"></span>';
+		$html .= '<span class="elementor-progress-bar" data-max="' . $settings['percent']['size'] . '"></span>';
 
-		if ( ! empty( $instance['inner_text'] ) ) {
-			$data_inner = ' data-inner="' . $instance['inner_text'] . '"';
+		if ( ! empty( $settings['inner_text'] ) ) {
+			$data_inner = ' data-inner="' . $settings['inner_text'] . '"';
 		} else {
 			$data_inner = '';
 		}
@@ -222,7 +224,7 @@ class Widget_Progress extends Widget_Base {
 
 		$html .= '<span class="elementor-progress-text"></span>';
 
-		if ( 'hide' !== $instance['display_percentage'] ) {
+		if ( 'hide' !== $settings['display_percentage'] ) {
 			$html .= '<span class="elementor-progress-percentage"></span>';
 		}
 

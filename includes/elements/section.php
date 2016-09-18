@@ -701,30 +701,30 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected static function _content_template() {
 		?>
 		<# if ( 'video' === settings.background_background ) {
-			var videoLink = settings.background_video_link;
+		var videoLink = settings.background_video_link;
 
-			if ( videoLink ) {
-				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); #>
+		if ( videoLink ) {
+		var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); #>
 
-				<div class="elementor-background-video-container elementor-hidden-phone">
-					<# if ( videoID ) { #>
-						<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
-					<# } else { #>
-						<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
+		<div class="elementor-background-video-container elementor-hidden-phone">
+			<# if ( videoID ) { #>
+				<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
+				<# } else { #>
+					<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
 					<# } #>
-				</div>
-			<# }
+		</div>
+		<# }
 
-			if ( settings.background_video_fallback ) { #>
-				<div class="elementor-background-video-fallback" style="background-image: url({{ settings.background_video_fallback.url }})"></div>
-			<# }
+		if ( settings.background_video_fallback ) { #>
+		<div class="elementor-background-video-fallback" style="background-image: url({{ settings.background_video_fallback.url }})"></div>
+		<# }
 		}
 
 		if ( 'classic' === settings.background_overlay_background ) { #>
-			<div class="elementor-background-overlay"></div>
+		<div class="elementor-background-overlay"></div>
 		<# } #>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
@@ -732,57 +732,59 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
-	public function before_render( $instance, $element_id, $element_data = [] ) {
+	public function before_render() {
 		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
 
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-section',
 			'elementor-element',
-			'elementor-element-' . $element_id,
+			'elementor-element-' . $this->get_id(),
 			'elementor-' . $section_type . '-section',
 		] );
 
-		foreach ( $this->get_class_controls() as $control ) {
-			if ( empty( $instance[ $control['name'] ] ) )
+		$settings = $this->get_settings();
+
+		foreach ( self::get_class_controls() as $control ) {
+			if ( empty( $settings[ $control['name'] ] ) )
 				continue;
 
-			if ( ! $this->is_control_visible( $instance, $control ) )
+			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
-		if ( ! empty( $instance['animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
+		if ( ! empty( $settings['animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', self::get_name() );
 		?>
 		<section <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<?php
-			if ( 'video' === $instance['background_background'] ) :
-				if ( $instance['background_video_link'] ) :
-					$video_id = Utils::get_youtube_id_from_url( $instance['background_video_link'] );
+			if ( 'video' === $settings['background_background'] ) :
+				if ( $settings['background_video_link'] ) :
+					$video_id = Utils::get_youtube_id_from_url( $settings['background_video_link'] );
 					?>
 					<div class="elementor-background-video-container elementor-hidden-phone">
 						<?php if ( $video_id ) : ?>
 							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
 						<?php else : ?>
-							<video class="elementor-background-video elementor-html5-video" src="<?php echo $instance['background_video_link'] ?>" autoplay loop muted></video>
+							<video class="elementor-background-video elementor-html5-video" src="<?php echo $settings['background_video_link'] ?>" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
 				<?php endif;
 			endif;
 
-			if ( 'classic' === $instance['background_overlay_background'] ) : ?>
+			if ( 'classic' === $settings['background_overlay_background'] ) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif; ?>
-			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $instance['gap'] ); ?>">
+			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
 				<div class="elementor-row">
 		<?php
 	}
 
-	public function after_render( $instance, $element_id, $element_data = [] ) {
+	public function after_render() {
 		?>
 				</div>
 			</div>

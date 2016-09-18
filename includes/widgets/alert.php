@@ -213,23 +213,25 @@ class Widget_Alert extends Widget_Base {
 
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['alert_title'] ) ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['alert_title'] ) ) {
 			return;
 		}
 
-		if ( ! empty( $instance['alert_type'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $instance['alert_type'] );
+		if ( ! empty( $settings['alert_type'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $settings['alert_type'] );
 		}
 
 		echo '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' role="alert">';
-		$html = sprintf( '<span class="elementor-alert-title">%1$s</span>', $instance['alert_title'] );
+		$html = sprintf( '<span class="elementor-alert-title">%1$s</span>', $settings['alert_title'] );
 
-		if ( ! empty( $instance['alert_description'] ) ) {
-			$html .= sprintf( '<span class="elementor-alert-description">%s</span>', $instance['alert_description'] );
+		if ( ! empty( $settings['alert_description'] ) ) {
+			$html .= sprintf( '<span class="elementor-alert-description">%s</span>', $settings['alert_description'] );
 		}
 
-		if ( ! empty( $instance['show_dismiss'] ) && 'show' === $instance['show_dismiss'] ) {
+		if ( ! empty( $settings['show_dismiss'] ) && 'show' === $settings['show_dismiss'] ) {
 			$html .= '<button type="button" class="elementor-alert-dismiss">X</button></div>';
 		}
 

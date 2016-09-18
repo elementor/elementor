@@ -105,16 +105,18 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		$instance['editor'] = $this->parse_text_editor( $instance['editor'], $instance );
+	protected function render() {
+		$editor_content = $this->get_settings( 'editor' );
+
+		$editor_content = $this->parse_text_editor( $editor_content );
 		?>
-		<div class="elementor-text-editor"><?php echo $instance['editor']; ?></div>
+		<div class="elementor-text-editor"><?php echo $editor_content; ?></div>
 		<?php
 	}
 
-	public function render_plain_content( $instance = [] ) {
+	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $instance['editor'];
+		echo $this->get_settings( 'editor' );
 	}
 
 	protected static function _content_template() {

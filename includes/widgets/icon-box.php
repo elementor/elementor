@@ -528,21 +528,23 @@ class Widget_Icon_Box extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
+	protected function render() {
+		$settings = $this->get_settings();
+
+		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
 		$icon_tag = 'span';
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
 		}
 
-		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
+		$this->add_render_attribute( 'i', 'class', $settings['icon'] );
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		$link_attributes = $this->get_render_attribute_string( 'link' );
@@ -554,10 +556,10 @@ class Widget_Icon_Box extends Widget_Base {
 				</<?php echo $icon_tag; ?>>
 			</div>
 			<div class="elementor-icon-box-content">
-				<<?php echo $instance['title_size']; ?> class="elementor-icon-box-title">
-					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $instance['title_text']; ?></<?php echo $icon_tag; ?>>
-				</<?php echo $instance['title_size']; ?>>
-				<p class="elementor-icon-box-description"><?php echo $instance['description_text']; ?></p>
+				<<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
+					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+				</<?php echo $settings['title_size']; ?>>
+				<p class="elementor-icon-box-description"><?php echo $settings['description_text']; ?></p>
 			</div>
 		</div>
 		<?php

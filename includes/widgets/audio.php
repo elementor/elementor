@@ -196,14 +196,16 @@ class Widget_Audio extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['link'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['link'] ) )
 			return;
 
-		$this->_current_instance = $instance;
+		$this->_current_instance = $settings;
 
 		add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
-		$video_html = wp_oembed_get( $instance['link']['url'], wp_embed_defaults() );
+		$video_html = wp_oembed_get( $settings['link']['url'], wp_embed_defaults() );
 		remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );
 
 		if ( $video_html ) : ?>

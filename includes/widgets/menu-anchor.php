@@ -48,9 +48,11 @@ class Widget_Menu_Anchor extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( ! empty( $instance['anchor'] ) ) {
-			$this->add_render_attribute( 'inner', 'id', $instance['anchor'] );
+	protected function render() {
+		$anchor = $this->get_settings( 'anchor' );
+
+		if ( ! empty( $anchor ) ) {
+			$this->add_render_attribute( 'inner', 'id', $anchor );
 		}
 
 		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );

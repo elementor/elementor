@@ -39,8 +39,8 @@ class Widget_Html extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		 echo $instance['html'];
+	protected function render() {
+		 echo $this->get_settings( 'html' );
 	}
 
 	protected static function _content_template() {

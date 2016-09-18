@@ -271,26 +271,28 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( ! $instance['wp_gallery'] ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( ! $settings['wp_gallery'] ) {
 			return;
 		}
 
-		$ids = wp_list_pluck( $instance['wp_gallery'], 'id' );
+		$ids = wp_list_pluck( $settings['wp_gallery'], 'id' );
 
 		$this->add_render_attribute( 'shortcode', 'ids', implode( ',', $ids ) );
-		$this->add_render_attribute( 'shortcode', 'size', $instance['thumbnail_size'] );
+		$this->add_render_attribute( 'shortcode', 'size', $settings['thumbnail_size'] );
 
-		if ( $instance['gallery_columns'] ) {
-			$this->add_render_attribute( 'shortcode', 'columns', $instance['gallery_columns'] );
+		if ( $settings['gallery_columns'] ) {
+			$this->add_render_attribute( 'shortcode', 'columns', $settings['gallery_columns'] );
 		}
 
-		if ( $instance['gallery_link'] ) {
-			$this->add_render_attribute( 'shortcode', 'link', $instance['gallery_link'] );
+		if ( $settings['gallery_link'] ) {
+			$this->add_render_attribute( 'shortcode', 'link', $settings['gallery_link'] );
 		}
 
-		if ( ! empty( $instance['gallery_rand'] ) ) {
-			$this->add_render_attribute( 'shortcode', 'orderby', $instance['gallery_rand'] );
+		if ( ! empty( $settings['gallery_rand'] ) ) {
+			$this->add_render_attribute( 'shortcode', 'orderby', $settings['gallery_rand'] );
 		}
 		?>
 		<div class="elementor-image-gallery">

@@ -62,7 +62,7 @@ class Widget_Spacer extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>

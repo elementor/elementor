@@ -158,7 +158,7 @@ class Widget_Divider extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator"></span>

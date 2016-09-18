@@ -295,14 +295,14 @@ abstract class Widget_Base extends Element_Base {
 		<?php
 	}
 
-	public function render_content( $instance ) {
+	public function render_content() {
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
-			$this->render_settings();
+			self::_render_settings();
 		}
 		?>
 		<div class="elementor-widget-container">
 			<?php
-			$this->render( $instance );
+			$this->render();
 			?>
 		</div>
 		<?php
@@ -339,35 +339,37 @@ abstract class Widget_Base extends Element_Base {
 		<?php
 	}
 
-	public function before_render( $instance, $element_id, $element_data = [] ) {
+	public function before_render() {
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
-			'elementor-element-' . $element_id,
-			'elementor-widget-' . $this->get_id(),
+			'elementor-element-' . $this->get_id(),
+			'elementor-widget-' . static::get_name(),
 		] );
 
-		foreach ( $this->get_class_controls() as $control ) {
-			if ( empty( $instance[ $control['name'] ] ) )
+		$settings = $this->get_settings();
+
+		foreach ( self::get_class_controls() as $control ) {
+			if ( empty( $settings[ $control['name'] ] ) )
 				continue;
 
-			if ( ! $this->is_control_visible( $instance, $control ) )
+			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
-		if ( ! empty( $instance['_animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['_animation'] );
+		if ( ! empty( $settings['_animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', static::get_name() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php
 	}
 
-	public function after_render( $instance, $element_id, $element_data = [] ) {
+	public function after_render() {
 		?>
 		</div>
 		<?php

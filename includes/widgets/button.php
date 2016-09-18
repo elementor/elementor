@@ -326,49 +326,51 @@ class Widget_Button extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		//if ( ! empty( $instance['align'] ) ) {
 		//	$this->add_render_attribute( 'wrapper', 'class', 'elementor-align-' . $instance['align'] );
 		//}
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $instance['link']['url'] );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'button', 'target', '_blank' );
 			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
 
-		if ( ! empty( $instance['size'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $instance['size'] );
+		if ( ! empty( $settings['size'] ) ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( ! empty( $instance['button_type'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $instance['button_type'] );
+		if ( ! empty( $settings['button_type'] ) ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $settings['button_type'] );
 		}
 
-		if ( $instance['hover_animation'] ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		if ( $settings['hover_animation'] ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
+		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
 				<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
-					<?php if ( ! empty( $instance['icon'] ) ) : ?>
+					<?php if ( ! empty( $settings['icon'] ) ) : ?>
 						<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-							<i class="<?php echo esc_attr( $instance['icon'] ); ?>"></i>
+							<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>
-					<span class="elementor-button-text"><?php echo $instance['text']; ?></span>
+					<span class="elementor-button-text"><?php echo $settings['text']; ?></span>
 				</span>
 			</a>
 		</div>

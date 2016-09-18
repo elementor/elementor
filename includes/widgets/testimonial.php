@@ -308,24 +308,26 @@ class Widget_Testimonial extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['testimonial_name'] ) || empty( $instance['testimonial_content'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['testimonial_name'] ) || empty( $settings['testimonial_content'] ) )
 			return;
 
 		$has_image = false;
-		if ( '' !== $instance['testimonial_image']['url'] ) {
-			$image_url = $instance['testimonial_image']['url'];
+		if ( '' !== $settings['testimonial_image']['url'] ) {
+			$image_url = $settings['testimonial_image']['url'];
 			$has_image = ' elementor-has-image';
 		}
 
-		$testimonial_alignment = $instance['testimonial_alignment'] ? ' elementor-testimonial-text-align-' . $instance['testimonial_alignment'] : '';
-		$testimonial_image_position = $instance['testimonial_image_position'] ? ' elementor-testimonial-image-position-' . $instance['testimonial_image_position'] : '';
+		$testimonial_alignment = $settings['testimonial_alignment'] ? ' elementor-testimonial-text-align-' . $settings['testimonial_alignment'] : '';
+		$testimonial_image_position = $settings['testimonial_image_position'] ? ' elementor-testimonial-image-position-' . $settings['testimonial_image_position'] : '';
 		?>
 		<div class="elementor-testimonial-wrapper<?php echo $testimonial_alignment; ?>">
 
-			<?php if ( ! empty( $instance['testimonial_content'] ) ) : ?>
+			<?php if ( ! empty( $settings['testimonial_content'] ) ) : ?>
 				<div class="elementor-testimonial-content">
-						<?php echo $instance['testimonial_content']; ?>
+						<?php echo $settings['testimonial_content']; ?>
 				</div>
 			<?php endif; ?>
 
@@ -333,20 +335,20 @@ class Widget_Testimonial extends Widget_Base {
 				<div class="elementor-testimonial-meta-inner">
 					<?php if ( isset( $image_url ) ) : ?>
 						<div class="elementor-testimonial-image">
-							<img src="<?php echo esc_attr( $image_url ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $instance['testimonial_image'] ) ); ?>" />
+							<img src="<?php echo esc_attr( $image_url ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $settings['testimonial_image'] ) ); ?>" />
 						</div>
 					<?php endif; ?>
 
 					<div class="elementor-testimonial-details">
-						<?php if ( ! empty( $instance['testimonial_name'] ) ) : ?>
+						<?php if ( ! empty( $settings['testimonial_name'] ) ) : ?>
 							<div class="elementor-testimonial-name">
-								<?php echo $instance['testimonial_name']; ?>
+								<?php echo $settings['testimonial_name']; ?>
 							</div>
 						<?php endif; ?>
 
-						<?php if ( ! empty( $instance['testimonial_job'] ) ) : ?>
+						<?php if ( ! empty( $settings['testimonial_job'] ) ) : ?>
 							<div class="elementor-testimonial-job">
-								<?php echo $instance['testimonial_job']; ?>
+								<?php echo $settings['testimonial_job']; ?>
 							</div>
 						<?php endif; ?>
 					</div>

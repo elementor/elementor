@@ -217,10 +217,11 @@ class Widget_Icon_List extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
 		?>
 		<ul class="elementor-icon-list-items">
-			<?php foreach ( $instance['icon_list'] as $item ) : ?>
+			<?php foreach ( $settings['icon_list'] as $item ) : ?>
 				<li class="elementor-icon-list-item" >
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {

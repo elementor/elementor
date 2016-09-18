@@ -168,21 +168,23 @@ class Widget_Heading extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['title'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['title'] ) )
 			return;
 
 		$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title' );
 
-		if ( ! empty( $instance['size'] ) ) {
-			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $instance['size'] );
+		if ( ! empty( $settings['size'] ) ) {
+			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$url = sprintf( '<a href="%s">%s</a>', $instance['link']['url'], $instance['title'] );
-			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$url = sprintf( '<a href="%s">%s</a>', $settings['link']['url'], $settings['title'] );
+			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
 		} else {
-			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $instance['title'] );
+			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $settings['title'] );
 		}
 
 		echo $title_html;

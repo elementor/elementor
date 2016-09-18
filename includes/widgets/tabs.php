@@ -222,12 +222,13 @@ class Widget_Tabs extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-tabs">
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-wrapper">
-				<?php foreach ( $instance['tabs'] as $item ) : ?>
+				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-title" data-tab="<?php echo $counter; ?>"><span><?php echo $item['tab_title']; ?></span></div>
 				<?php
 					$counter++;
@@ -236,8 +237,8 @@ class Widget_Tabs extends Widget_Base {
 
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper">
-				<?php foreach ( $instance['tabs'] as $item ) : ?>
-					<div class="elementor-tab-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'], $item ); ?></div>
+				<?php foreach ( $tabs as $item ) : ?>
+					<div class="elementor-tab-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				<?php
 					$counter++;
 				endforeach; ?>

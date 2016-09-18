@@ -301,28 +301,30 @@ class Widget_Icon extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
 		$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
 
-		if ( ! empty( $instance['hover_animation'] ) ) {
-			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		if ( ! empty( $settings['hover_animation'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
 		$icon_tag = 'div';
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'icon-wrapper', 'href', $instance['link']['url'] );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
 			}
 		}
 
-		if ( ! empty( $instance['icon'] ) ) {
-			$this->add_render_attribute( 'icon', 'class', $instance['icon'] );
+		if ( ! empty( $settings['icon'] ) ) {
+			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
 		}
 
 		?>

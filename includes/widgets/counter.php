@@ -207,28 +207,29 @@ class Widget_Counter extends Widget_Base {
 		<?php
 	}
 
-	public function render( $instance = [] ) {
+	public function render() {
+		$settings = $this->get_settings();
 		?>
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
 				<?php
 				$prefix = $suffix = '';
 
-				if ( $instance['prefix'] ) {
-					$prefix = '<span class="elementor-counter-number-prefix">' . $instance['prefix'] . '</span>';
+				if ( $settings['prefix'] ) {
+					$prefix = '<span class="elementor-counter-number-prefix">' . $settings['prefix'] . '</span>';
 				}
 
-				$duration = '<span class="elementor-counter-number" data-duration="' . $instance['duration'] . '" data-to_value="' . $instance['ending_number'] . '">' . $instance['starting_number'] . '</span>';
+				$duration = '<span class="elementor-counter-number" data-duration="' . $settings['duration'] . '" data-to_value="' . $settings['ending_number'] . '">' . $settings['starting_number'] . '</span>';
 
-				if ( $instance['suffix'] ) {
-					$suffix = '<span class="elementor-counter-number-suffix">' . $instance['suffix'] . '</span>';
+				if ( $settings['suffix'] ) {
+					$suffix = '<span class="elementor-counter-number-suffix">' . $settings['suffix'] . '</span>';
 				}
 
 				echo $prefix . $duration . $suffix;
 				?>
 			</div>
-			<?php if ( $instance['title'] ) : ?>
-				<div class="elementor-counter-title"><?php echo $instance['title']; ?></div>
+			<?php if ( $settings['title'] ) : ?>
+				<div class="elementor-counter-title"><?php echo $settings['title']; ?></div>
 			<?php endif; ?>
 		</div>
 		<?php

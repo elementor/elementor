@@ -239,19 +239,20 @@ class Widget_Accordion extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
 		?>
 		<div class="elementor-accordion">
 			<?php $counter = 1; ?>
-			<?php foreach ( $instance['tabs'] as $item ) : ?>
+			<?php foreach ( $settings['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
 					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">
-						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $instance['icon_align']; ?>">
+						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
-					<div class="elementor-accordion-content" data-section="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'], $item ); ?></div>
+					<div class="elementor-accordion-content" data-section="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php
 				$counter++;

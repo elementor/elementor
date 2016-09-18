@@ -288,23 +288,25 @@ class Widget_Image extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['image']['url'] ) ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['image']['url'] ) ) {
 			return;
 		}
-		$has_caption = ! empty( $instance['caption'] );
+		$has_caption = ! empty( $settings['caption'] );
 
-		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
+		$image_html = '<div class="elementor-image' . ( ! empty( $settings['shape'] ) ? ' elementor-image-shape-' . $settings['shape'] : '' ) . '">';
 
 		if ( $has_caption ) {
 			$image_html .= '<figure class="wp-caption">';
 		}
 
-		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="elementor-animation-' . $instance['hover_animation'] . '"' : '';
+		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
 
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), Control_Media::get_image_title( $instance['image'] ), Control_Media::get_image_alt( $instance['image'] ), $image_class_html );
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $settings['image']['url'] ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
 
-		$link = $this->get_link_url( $instance );
+		$link = $this->get_link_url( $settings );
 		if ( $link ) {
 			$target = '';
 			if ( ! empty( $link['is_external'] ) ) {
@@ -314,7 +316,7 @@ class Widget_Image extends Widget_Base {
 		}
 
 		if ( $has_caption ) {
-			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $instance['caption'] );
+			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $settings['caption'] );
 		}
 
 		if ( $has_caption ) {

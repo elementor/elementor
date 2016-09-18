@@ -222,18 +222,19 @@ class Widget_Toggle extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-toggle">
 			<?php $counter = 1; ?>
-			<?php foreach ( $instance['tabs'] as $item ) : ?>
+			<?php foreach ( $tabs as $item ) : ?>
 				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
 					<?php echo $item['tab_title']; ?>
 				</div>
-				<div class="elementor-toggle-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'], $item ); ?></div>
+				<div class="elementor-toggle-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 			<?php
 				$counter++;
 			endforeach; ?>

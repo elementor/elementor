@@ -290,10 +290,10 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-social-icons-wrapper">
-			<?php foreach ( $instance['social_icon_list'] as $item ) :
+			<?php foreach ( $this->get_settings( 'social_icon_list' ) as $item ) :
 				$social = str_replace( 'fa fa-', '', $item['social'] );
 				$target = $item['link']['is_external'] ? ' target="_blank"' : '';
 				?>

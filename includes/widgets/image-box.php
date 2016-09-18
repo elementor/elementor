@@ -380,28 +380,30 @@ class Widget_Image_Box extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		$has_content = ! empty( $instance['title_text'] ) || ! empty( $instance['description_text'] );
+	protected function render() {
+		$settings = $this->get_settings();
+
+		$has_content = ! empty( $settings['title_text'] ) || ! empty( $settings['description_text'] );
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
-		if ( ! empty( $instance['image']['url'] ) ) {
-			$this->add_render_attribute( 'image', 'src', $instance['image']['url'] );
-			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $instance['image'] ) );
-			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $instance['image'] ) );
+		if ( ! empty( $settings['image']['url'] ) ) {
+			$this->add_render_attribute( 'image', 'src', $settings['image']['url'] );
+			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $settings['image'] ) );
+			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $settings['image'] ) );
 
-			if ( $instance['hover_animation'] ) {
-				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+			if ( $settings['hover_animation'] ) {
+				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
 			$image_html = '<img ' . $this->get_render_attribute_string( 'image' ) . '>';
 
-			if ( ! empty( $instance['link']['url'] ) ) {
+			if ( ! empty( $settings['link']['url'] ) ) {
 				$target = '';
-				if ( ! empty( $instance['link']['is_external'] ) ) {
+				if ( ! empty( $settings['link']['is_external'] ) ) {
 					$target = ' target="_blank"';
 				}
-				$image_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $image_html );
+				$image_html = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $image_html );
 			}
 
 			$html .= '<figure class="elementor-image-box-img">' . $image_html . '</figure>';
@@ -410,24 +412,24 @@ class Widget_Image_Box extends Widget_Base {
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
 
-			if ( ! empty( $instance['title_text'] ) ) {
-				$title_html = $instance['title_text'];
+			if ( ! empty( $settings['title_text'] ) ) {
+				$title_html = $settings['title_text'];
 
-				if ( ! empty( $instance['link']['url'] ) ) {
+				if ( ! empty( $settings['link']['url'] ) ) {
 					$target = '';
 
-					if ( ! empty( $instance['link']['is_external'] ) ) {
+					if ( ! empty( $settings['link']['is_external'] ) ) {
 						$target = ' target="_blank"';
 					}
 
-					$title_html = sprintf( '<a href="%s"%s>%s</a>', $instance['link']['url'], $target, $title_html );
+					$title_html = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $title_html );
 				}
 
-				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $instance['title_size'], $title_html );
+				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $settings['title_size'], $title_html );
 			}
 
-			if ( ! empty( $instance['description_text'] ) ) {
-				$html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $instance['description_text'] );
+			if ( ! empty( $settings['description_text'] ) ) {
+				$html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $settings['description_text'] );
 			}
 
 			$html .= '</div>';

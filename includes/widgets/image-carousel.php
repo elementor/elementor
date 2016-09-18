@@ -473,16 +473,18 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['carousel'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['carousel'] ) )
 			return;
 
 		$slides = [];
-		foreach ( $instance['carousel'] as $attachment ) {
-			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $instance );
+		foreach ( $settings['carousel'] as $attachment ) {
+			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 
-			$link = $this->get_link_url( $attachment, $instance );
+			$link = $this->get_link_url( $attachment, $settings );
 			if ( $link ) {
 				$target = '';
 				if ( ! empty( $link['is_external'] ) ) {
@@ -499,19 +501,19 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
-		$is_slideshow = '1' === $instance['slides_to_show'];
-		$is_rtl = ( 'rtl' === $instance['direction'] );
+		$is_slideshow = '1' === $settings['slides_to_show'];
+		$is_rtl = ( 'rtl' === $settings['direction'] );
 		$direction = $is_rtl ? 'rtl' : 'ltr';
-		$show_dots = ( in_array( $instance['navigation'], [ 'dots', 'both' ] ) );
-		$show_arrows = ( in_array( $instance['navigation'], [ 'arrows', 'both' ] ) );
+		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
+		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
 
 		$slick_options = [
-			'slidesToShow' => absint( $instance['slides_to_show'] ),
-			'autoplaySpeed' => absint( $instance['autoplay_speed'] ),
-			'autoplay' => ( 'yes' === $instance['autoplay'] ),
-			'infinite' => ( 'yes' === $instance['infinite'] ),
-			'pauseOnHover' => ( 'yes' === $instance['pause_on_hover'] ),
-			'speed' => absint( $instance['speed'] ),
+			'slidesToShow' => absint( $settings['slides_to_show'] ),
+			'autoplaySpeed' => absint( $settings['autoplay_speed'] ),
+			'autoplay' => ( 'yes' === $settings['autoplay'] ),
+			'infinite' => ( 'yes' === $settings['infinite'] ),
+			'pauseOnHover' => ( 'yes' === $settings['pause_on_hover'] ),
+			'speed' => absint( $settings['speed'] ),
 			'arrows' => $show_arrows,
 			'dots' => $show_dots,
 			'rtl' => $is_rtl,
@@ -520,21 +522,21 @@ class Widget_Image_Carousel extends Widget_Base {
 		$carousel_classes = [ 'elementor-image-carousel' ];
 
 		if ( $show_arrows ) {
-			$carousel_classes[] = 'slick-arrows-' . $instance['arrows_position'];
+			$carousel_classes[] = 'slick-arrows-' . $settings['arrows_position'];
 		}
 
 		if ( $show_dots ) {
-			$carousel_classes[] = 'slick-dots-' . $instance['dots_position'];
+			$carousel_classes[] = 'slick-dots-' . $settings['dots_position'];
 		}
 
-		if ( 'yes' === $instance['image_stretch'] ) {
+		if ( 'yes' === $settings['image_stretch'] ) {
 			$carousel_classes[] = 'slick-image-stretch';
 		}
 
 		if ( ! $is_slideshow ) {
-			$slick_options['slidesToScroll'] = absint( $instance['slides_to_scroll'] );
+			$slick_options['slidesToScroll'] = absint( $settings['slides_to_scroll'] );
 		} else {
-			$slick_options['fade'] = ( 'fade' === $instance['effect'] );
+			$slick_options['fade'] = ( 'fade' === $settings['effect'] );
 		}
 
 		?>
