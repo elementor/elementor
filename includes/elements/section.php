@@ -118,7 +118,7 @@ class Element_Section extends Element_Base {
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
-				'description' => __( 'Stretch the section to the full width of the page using JS. Ideally use a theme that has a full-width template.', 'elementor' ),
+				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
 			]
 		);
 

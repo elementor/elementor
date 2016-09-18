@@ -130,7 +130,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'text',
 				'placeholder' => 'body',
-				'sub_desc' => __( 'Enter parent element selector, to which stretched sections will fit to (e.g. #primary / .content-wrapper / main etc). Leave blank if you want them to fit to the full width of the page.', 'elementor' ),
+				'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 			]
 		);
 
