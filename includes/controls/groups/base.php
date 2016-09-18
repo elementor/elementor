@@ -68,7 +68,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			'section' => '',
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'tab' => Element_Base::TAB_CONTENT,
+			'tab' => Controls_Manager::TAB_CONTENT,
 			'fields' => 'all',
 		];
 	}
