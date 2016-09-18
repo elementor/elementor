@@ -117,6 +117,7 @@ class Element_Section extends Element_Base {
 				'force_render' => 'js',
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
+				'hide_in_inner' => true,
 				'description' => __( 'Stretch the section to the full width of the page using JS. Ideally use a theme that has a full-width template.', 'elementor' ),
 			]
 		);
