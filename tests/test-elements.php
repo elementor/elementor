@@ -14,7 +14,7 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 		foreach ( \Elementor\Plugin::instance()->elements_manager->get_registered_elements() as $element ) {
 			$this->assertNotEmpty( $element->get_title() );
 			$this->assertNotEmpty( $element->get_type() );
-			$this->assertNotEmpty( $element->get_id() );
+			$this->assertNotEmpty( $element->get_name() );
 		}
 	}
 
@@ -87,7 +87,7 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
 					continue;
 
-				$error_msg = sprintf( 'Element: %s, Control: %s', $element->get_id(), $control['name'] );
+				$error_msg = sprintf( 'Element: %s, Control: %s', $element->get_name(), $control['name'] );
 
 				if ( empty( $control['default'] ) )
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );

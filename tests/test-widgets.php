@@ -14,7 +14,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
 			$this->assertNotEmpty( $widget->get_title() );
 			$this->assertNotEmpty( $widget->get_type() );
-			$this->assertNotEmpty( $widget->get_id() );
+			$this->assertNotEmpty( $widget->get_name() );
 		}
 	}
 
@@ -61,7 +61,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
 					continue;
 				
-				$error_msg = sprintf( 'Widget: %s, Control: %s', $widget->get_id(), $control['name'] );
+				$error_msg = sprintf( 'Widget: %s, Control: %s', $widget->get_name(), $control['name'] );
 				
 				if ( empty( $control['default'] ) )
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );
