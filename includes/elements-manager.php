@@ -85,13 +85,17 @@ class Elements_Manager {
 		return $elements[ $id ];
 	}
 
-	public function get_register_elements_data() {
-		$data = [];
-		foreach ( $this->get_registered_elements() as $element ) {
-			$data[ $element->get_id() ] = $element->get_data();
+	public function get_registered_elements_config() {
+		$config = [];
+
+		foreach ( $this->get_registered_elements() as $element_data ) {
+			/** @var Element_Base $class */
+			$class = $element_data['class'];
+
+			$config[ $class::get_name() ] = $class::get_config();
 		}
 
-		return $data;
+		return $config;
 	}
 
 	public function render_elements_content() {

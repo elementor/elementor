@@ -86,12 +86,12 @@ class Element_Section extends Element_Base {
 		}
 	}
 
-	public function get_data() {
-		$data = parent::get_data();
+	public static function get_config( $item = null ) {
+		$config = parent::get_config( $item );
 
-		$data['presets'] = self::get_presets();
+		$config['presets'] = self::get_presets();
 
-		return $data;
+		return $config;
 	}
 
 	protected static function _register_controls() {
