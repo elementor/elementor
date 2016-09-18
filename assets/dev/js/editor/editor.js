@@ -99,7 +99,7 @@ App = Marionette.Application.extend( {
 				checkbox_list: require( 'elementor-views/controls/checkbox-list' )
 			};
 
-			this.channels.editor.trigger( 'editor:controls:initialize' );
+			this.channels.editor.trigger( 'editor:controls:initialize', this );
 		}
 
 		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
@@ -241,6 +241,8 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
 
 		this.introduction.startOnLoadIntroduction();
+
+		this.trigger( 'preview:loaded' );
 	},
 
 	onEditModeSwitched: function() {
