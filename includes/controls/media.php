@@ -45,9 +45,6 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<# if ( data.description ) { #>
-				<div class="elementor-control-description">{{{ data.description }}}</div>
-				<# } #>
 				<div class="elementor-control-media">
 					<div class="elementor-control-media-upload-button">
 						<i class="fa fa-plus-circle"></i>
@@ -58,6 +55,9 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 				</div>
 			</div>
+			<# if ( data.description ) { #>
+				<div class="elementor-control-description">{{{ data.description }}}</div>
+			<# } #>
 			<input type="hidden" data-setting="{{ data.name }}" />
 		</div>
 		<?php

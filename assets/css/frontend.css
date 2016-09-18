@@ -170,11 +170,10 @@
         -ms-flex-align: end;
                 -ms-grid-row-align: flex-end;
             align-items: flex-end; }
-  @media (min-width: 768px) {
-    .elementor-section.elementor-section-height-full {
-      height: 100vh; }
-      .elementor-section.elementor-section-height-full > .elementor-container {
-        height: 100%; } }
+  .elementor-section.elementor-section-height-full {
+    min-height: 100vh; }
+    .elementor-section.elementor-section-height-full > .elementor-container {
+      height: 100%; }
 
 .elementor-row {
   width: 100%;

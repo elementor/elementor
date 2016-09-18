@@ -77,15 +77,12 @@
 		}
 	}
 
-	@media (min-width: $screen-md-min) {
+	// Section Full Height
+	&.elementor-section-height-full {
+		min-height: 100vh;
 
-		// Section Full Height
-		&.elementor-section-height-full {
-			height: 100vh;
-
-			> .elementor-container {
-				height: 100%;
-			}
+		> .elementor-container {
+			height: 100%;
 		}
 	}
 }
