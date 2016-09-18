@@ -49,6 +49,26 @@ class Controls_Manager {
 	 */
 	private $_group_controls = [];
 
+	private $_controls_stack = [];
+
+	private static $_available_tabs_controls;
+
+	private static function _get_available_tabs_controls() {
+		if ( ! self::$_available_tabs_controls ) {
+			self::$_available_tabs_controls = [
+				self::TAB_CONTENT => __( 'Content', 'elementor' ),
+				self::TAB_STYLE => __( 'Style', 'elementor' ),
+				self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
+				self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
+				self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
+			];
+
+			self::$_available_tabs_controls = apply_filters( 'elementor/controls/get_available_tabs_controls', self::$_available_tabs_controls );
+		}
+
+		return self::$_available_tabs_controls;
+	}
+
 	/**
 	 * @since 1.0.0
 	 */
@@ -215,6 +235,81 @@ class Controls_Manager {
 		foreach ( $this->get_controls() as $control ) {
 			$control->enqueue();
 		}
+	}
+
+
+	/**
+	 * @param Element_Base $element_class
+	 */
+	public function open_stack( $element_class ) {
+		$stack_id = $element_class::get_name();
+
+		$this->_controls_stack[ $stack_id ] = [
+			'tabs' => [],
+			'controls' => [],
+		];
+	}
+
+
+	/**
+	 * @param Element_Base $element_class
+	 *
+	 * @param string $control_id
+	 * @param array $control_data
+	 *
+	 * @return bool
+	 */
+	public function add_control_to_stack( $element_class, $control_id, $control_data ) {
+		$default_args = [
+			'default' => '',
+			'type' => self::TEXT,
+			'tab' => self::TAB_CONTENT,
+		];
+
+		$control_data['name'] = $control_id;
+
+		$control_data = array_merge( $default_args, $control_data );
+
+		$stack_id = $element_class::get_name();
+
+		if ( isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
+			return false;
+		}
+
+		$available_tabs = self::_get_available_tabs_controls();
+
+		if ( ! isset( $available_tabs[ $control_data['tab'] ] ) ) {
+			$control_data['tab'] = $default_args['tab'];
+		}
+
+		$this->_controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $available_tabs[ $control_data['tab'] ];
+
+		$this->_controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
+
+		return true;
+	}
+
+	/**
+	 * @param Element_Base $element_class
+	 *
+	 * @return null|array
+	 */
+	public function get_element_stack( $element_class ) {
+		$stack_id = $element_class::get_name();
+
+		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
+			return null;
+		}
+
+		$stack = $this->_controls_stack[ $stack_id ];
+
+		if ( 'widget' === $element_class::get_type() && 'widget' !== $element_class::get_name() ) {
+			$stack['controls'] = array_merge( Widget_Base::get_controls(), $stack['controls'] );
+			$stack['tabs'] = array_merge( $stack['tabs'], Widget_Base::get_tabs_controls() );
+		}
+
+		return $stack;
 	}
 
 	/**
