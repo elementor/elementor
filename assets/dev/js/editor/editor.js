@@ -243,7 +243,7 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
-		this.introduction.startOnLoadIntroduction();
+		// this.introduction.startOnLoadIntroduction(); //TEMP Removed
 	},
 
 	onEditModeSwitched: function() {
