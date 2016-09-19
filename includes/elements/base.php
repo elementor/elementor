@@ -213,7 +213,7 @@ abstract class Element_Base {
 			return false;
 		}
 
-		if( in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+		if( ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				$args = array_merge( $args, $this->_current_section );
 			}
