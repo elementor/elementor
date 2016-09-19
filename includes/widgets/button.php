@@ -141,6 +141,7 @@ class Widget_Button extends Widget_Base {
 				'condition' => [
 					'icon!' => '',
 				],
+				'section' => 'section_button',
 			]
 		);
 
@@ -161,6 +162,7 @@ class Widget_Button extends Widget_Base {
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
+				'section' => 'section_button',
 			]
 		);
 
@@ -309,6 +311,9 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_hover',
+				'condition' => [
+					'border_border!' => '',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
