@@ -209,17 +209,16 @@ abstract class Element_Base {
 		$args = array_merge( $default_args, $args );
 
 		if ( isset( $this->_controls[ $id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ) . ' - ' . $id, '1.0.0' );
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $id, '1.0.0' );
 
 			return false;
 		}
 
-		if( ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+		if ( ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				$args = array_merge( $args, $this->_current_section );
-			}
-			elseif ( empty( $args['section'] ) ) {
-				wp_die( __CLASS__ . '::' . __FUNCTION__ .': ' . __( 'Cannot add a control outside a section (use `start_controls_section`).', 'elementor' ) );
+			} elseif ( empty( $args['section'] ) ) {
+				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
 			}
 		}
 
