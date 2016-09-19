@@ -3,38 +3,43 @@ module.exports = function( $ ) {
 	/*
 	 * Force section full-width for non full-width templates
 	 */
-	// Clear any previously existing css associated with this script
-	this.removeAttr( 'style' );
 
-	if ( this.hasClass( 'elementor-section-stretched' ) ) {
-		var $section = this,
-			scopeWindow = elementorFrontend.getScopeWindow(),
-			$scopeWindow = $( scopeWindow ),
-			sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer, // User-defined parent container selector
-			$sectionContainer = $( scopeWindow.document ).find( sectionContainerSelector ),
-			$offsetParent = $section.offsetParent();
-			if ( $section.offsetParent().is( 'html' ) ) {
-				$offsetParent = $section.parent();
-			}
+	var $section = this,
+		scopeWindow = elementorFrontend.getScopeWindow(),
+		$scopeWindow = $( scopeWindow ),
+		sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer, // User-defined parent container selector
+		$sectionContainer = $( scopeWindow.document ).find( sectionContainerSelector );
 
-		var stretchSection = function() {
-			var sectionWidth = $scopeWindow.width(),
-				sectionOffset = $section.offset().left,
-				correctOffset = '-' + sectionOffset;
-
-			if ( 0 < $sectionContainer.length ) {
-				var containerOffset = $sectionContainer.offset().left;
-				sectionWidth = $sectionContainer.outerWidth();
-				if ( sectionOffset > containerOffset ) {
-					correctOffset = '-' + ( sectionOffset - containerOffset );
-				} else if ( sectionOffset <= containerOffset ) {
-					correctOffset = 0;
+	var stretchSection = function() {
+		// Clear any previously existing css associated with this script
+		$section.css( {
+			'width': 'auto',
+			'left': '0'
+		} );
+		if ( $section.hasClass( 'elementor-section-stretched' ) ) {
+				if ( $section.offsetParent().is( 'html' ) ) {
+					$offsetParent = $section.parent();
 				}
+
+				var sectionWidth = $scopeWindow.width(),
+					sectionOffset = $section.offset().left,
+					correctOffset = -sectionOffset;
+
+				if ( 0 < $sectionContainer.length ) {
+					var containerOffset = $sectionContainer.offset().left;
+					sectionWidth = $sectionContainer.outerWidth();
+					if ( sectionOffset > containerOffset ) {
+						correctOffset = -( sectionOffset - containerOffset );
+					} else {
+						correctOffset = 0;
+					}
+				}
+
+				$section.css( {
+					'width': sectionWidth + 'px',
+					'left': correctOffset + 'px'
+				} );
 			}
-			$section.css( {
-				'width': sectionWidth + 'px',
-				'left': correctOffset + 'px'
-			} );
 		};
 
 		$scopeWindow.on( 'resize', function() {
@@ -42,7 +47,6 @@ module.exports = function( $ ) {
 		} );
 
 		stretchSection();
-	}
 
 	var player,
 		ui = {
