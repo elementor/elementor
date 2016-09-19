@@ -64,6 +64,8 @@ class Plugin {
 		foreach ( $cpt_support as $cpt_slug ) {
 			add_post_type_support( $cpt_slug, 'elementor' );
 		}
+
+        do_action( 'elementor/init' );
 	}
 
 	private function _includes() {

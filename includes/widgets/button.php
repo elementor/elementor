@@ -141,6 +141,7 @@ class Widget_Button extends Widget_Base {
 				'condition' => [
 					'icon!' => '',
 				],
+				'section' => 'section_button',
 			]
 		);
 
@@ -161,6 +162,7 @@ class Widget_Button extends Widget_Base {
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
+				'section' => 'section_button',
 			]
 		);
 

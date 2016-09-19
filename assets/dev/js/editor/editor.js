@@ -95,7 +95,8 @@ App = Marionette.Application.extend( {
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' )
+				hover_animation: require( 'elementor-views/controls/animation' ),
+				checkbox_list: require( 'elementor-views/controls/checkbox-list' )
 			};
 
 			this.channels.editor.trigger( 'editor:controls:initialize' );
@@ -243,7 +244,9 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
-		// this.introduction.startOnLoadIntroduction(); //TEMP Removed
+		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
+
+		this.trigger( 'preview:loaded' );
 	},
 
 	onEditModeSwitched: function() {
