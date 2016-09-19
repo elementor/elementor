@@ -1428,7 +1428,7 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
-		// this.introduction.startOnLoadIntroduction(); //TEMP Remo
+		// this.introduction.startOnLoadIntroduction(); //TEMP Removed
 	},
 
 	onEditModeSwitched: function() {
