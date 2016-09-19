@@ -347,7 +347,7 @@ abstract class Element_Base {
 		$this->add_control( $id, $args );
 
 		if ( null !== $this->_current_section ) {
-			wp_die( sprintf( __( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', 'elementor' ), $this->_current_section['section'] ) );
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) );
 		}
 
 		$this->_current_section = [
