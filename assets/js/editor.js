@@ -1428,7 +1428,7 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
-		this.introduction.startOnLoadIntroduction();
+		// this.introduction.startOnLoadIntroduction(); //TEMP Removed
 	},
 
 	onEditModeSwitched: function() {
@@ -7067,7 +7067,9 @@ SectionView = BaseElementView.extend( {
 		this.redefineLayout();
 	},
 
-	onClickSave: function() {
+	onClickSave: function( event ) {
+		event.preventDefault();
+
 		var sectionID = this.model.get( 'id' );
 
 		elementor.templates.startModal( function() {

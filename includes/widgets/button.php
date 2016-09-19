@@ -309,6 +309,9 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'tab' => self::TAB_STYLE,
 				'section' => 'section_hover',
+				'condition' => [
+					'border_border!' => '',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
