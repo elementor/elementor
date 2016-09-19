@@ -328,7 +328,6 @@ abstract class Element_Base {
 
 		$content_template = apply_filters( 'elementor/elements/print_template', $content_template,  $this );
 
-
 		if ( empty( $content_template ) ) {
 			return;
 		}
@@ -340,9 +339,8 @@ abstract class Element_Base {
 		<?php
 	}
 
-	function start_controls_section($id, $args) {
-
-		do_action('elementor/element/before_section_start', $this, $id, $args);
+	function start_controls_section( $id, $args ) {
+		do_action( 'elementor/element/before_section_start', $this, $id, $args );
 
 		$args['type'] = Controls_Manager::SECTION;
 
@@ -354,19 +352,19 @@ abstract class Element_Base {
 
 		$this->_current_section = [
 			'section' => $id,
-			'tab' => $this->_controls[ $id ]['tab']
+			'tab' => $this->_controls[ $id ]['tab'],
 		];
 
-		do_action('elementor/element/after_section_start', $this, $id, $args);
+		do_action( 'elementor/element/after_section_start', $this, $id, $args );
 	}
 
-	function end_controls_section(){
-		/* save the current section for the action */
+	function end_controls_section() {
+		// Save the current section for the action
 		$current_section = $this->_current_section;
 
 		$this->_current_section = null;
 
-		do_action('elementor/element/after_section_end', $this, $current_section['section'], ['tab' => $current_section['tab']] );
+		do_action( 'elementor/element/after_section_end', $this, $current_section['section'], [ 'tab' => $current_section['tab'] ] );
 	}
 
 	public function __construct( $args = [] ) {
