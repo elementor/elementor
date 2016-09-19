@@ -46,6 +46,8 @@ class Frontend {
 		$section_obj = Plugin::instance()->elements_manager->get_element( 'section' );
 		$instance = $section_obj->get_parse_values( $section_data['settings'] );
 
+		do_action( 'elementor/frontend/section/before_render', $section_obj, $instance );
+
 		$section_obj->before_render( $instance, $section_data['id'], $section_data );
 
 		foreach ( $section_data['elements'] as $column_data ) {
@@ -53,11 +55,15 @@ class Frontend {
 		}
 
 		$section_obj->after_render( $instance, $section_data['id'], $section_data );
+
+		do_action( 'elementor/frontend/section/after_render', $section_obj, $instance );
 	}
 
 	protected function _print_column( $column_data ) {
 		$column_obj = Plugin::instance()->elements_manager->get_element( 'column' );
 		$instance = $column_obj->get_parse_values( $column_data['settings'] );
+
+		do_action( 'elementor/frontend/column/before_render', $column_obj, $instance );
 
 		$column_obj->before_render( $instance, $column_data['id'], $column_data );
 
@@ -70,6 +76,8 @@ class Frontend {
 		}
 
 		$column_obj->after_render( $instance, $column_data['id'], $column_data );
+
+		do_action( 'elementor/frontend/column/after_render', $column_obj, $instance );
 	}
 
 	protected function _print_widget( $widget_data ) {
@@ -82,9 +90,13 @@ class Frontend {
 
 		$instance = $widget_obj->get_parse_values( $widget_data['settings'] );
 
+		do_action( 'elementor/frontend/widget/before_render', $widget_obj, $instance );
+
 		$widget_obj->before_render( $instance, $widget_data['id'], $widget_data );
 		$widget_obj->render_content( $instance );
 		$widget_obj->after_render( $instance, $widget_data['id'], $widget_data );
+
+		do_action( 'elementor/frontend/widget/after_render', $widget_obj, $instance );
 	}
 
 	public function body_class( $classes = [] ) {
@@ -144,7 +156,7 @@ class Frontend {
 			'elementor-frontend',
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
-				'stretchedSectionContainer' => get_option( 'elementor_streched_section_container', '' ),
+				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			]
 		);
 	}
@@ -197,6 +209,11 @@ class Frontend {
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return;
+
+		$container_width = absint( get_option( 'elementor_container_width' ) );
+		if ( ! empty( $container_width ) ) {
+			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
+		}
 
 		$this->_parse_schemes_css_code();
 

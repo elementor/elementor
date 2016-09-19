@@ -1428,7 +1428,9 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
-		this.introduction.startOnLoadIntroduction();
+		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
+
+		this.trigger( 'preview:loaded' );
 	},
 
 	onEditModeSwitched: function() {
@@ -5396,6 +5398,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( 'select2' === inputType ) {
+			// don't touch
 		} else {
 			$input.val( value );
 		}
@@ -7076,7 +7080,9 @@ SectionView = BaseElementView.extend( {
 		this.redefineLayout();
 	},
 
-	onClickSave: function() {
+	onClickSave: function( event ) {
+		event.preventDefault();
+
 		var sectionID = this.model.get( 'id' );
 
 		elementor.templates.startModal( function() {

@@ -22,6 +22,13 @@ abstract class Element_Base {
 
 	private $_render_attributes = [];
 
+	/**
+	 * Holds the current section while render a set of controls sections
+	 *
+	 * @var null|array
+	 */
+	private $_current_section = null;
+
 	abstract public function get_id();
 
 	abstract public function get_title();
@@ -202,8 +209,17 @@ abstract class Element_Base {
 		$args = array_merge( $default_args, $args );
 
 		if ( isset( $this->_controls[ $id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $id, '1.0.0' );
+
 			return false;
+		}
+
+		if ( ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+			if ( null !== $this->_current_section ) {
+				$args = array_merge( $args, $this->_current_section );
+			} elseif ( empty( $args['section'] ) ) {
+				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
+			}
 		}
 
 		$available_tabs = $this->_get_available_tabs_controls();
@@ -309,6 +325,8 @@ abstract class Element_Base {
 		$this->content_template();
 		$content_template = ob_get_clean();
 
+		$content_template = apply_filters( 'elementor/elements/print_template', $content_template,  $this );
+
 		if ( empty( $content_template ) ) {
 			return;
 		}
@@ -318,6 +336,34 @@ abstract class Element_Base {
 			<?php echo $content_template; ?>
 		</script>
 		<?php
+	}
+
+	function start_controls_section( $id, $args ) {
+		do_action( 'elementor/element/before_section_start', $this, $id, $args );
+
+		$args['type'] = Controls_Manager::SECTION;
+
+		$this->add_control( $id, $args );
+
+		if ( null !== $this->_current_section ) {
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) );
+		}
+
+		$this->_current_section = [
+			'section' => $id,
+			'tab' => $this->_controls[ $id ]['tab'],
+		];
+
+		do_action( 'elementor/element/after_section_start', $this, $id, $args );
+	}
+
+	function end_controls_section() {
+		// Save the current section for the action
+		$current_section = $this->_current_section;
+
+		$this->_current_section = null;
+
+		do_action( 'elementor/element/after_section_end', $this, $current_section['section'], [ 'tab' => $current_section['tab'] ] );
 	}
 
 	public function __construct( $args = [] ) {

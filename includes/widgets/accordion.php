@@ -18,13 +18,12 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
-			'section_title',
-			[
-				'label' => __( 'Accordion', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-			]
-		);
+        $this->start_controls_section(
+            'section_title',
+            [
+                'label' => __( 'Accordion', 'elementor' ),
+            ]
+        );
 
 		$this->add_control(
 			'tabs',
@@ -41,7 +40,6 @@ class Widget_Accordion extends Widget_Base {
 						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 				],
-				'section' => 'section_title',
 				'fields' => [
 					[
 						'name' => 'tab_title',
@@ -68,15 +66,15 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_title',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_title_style',
 			[
 				'label' => __( 'Accordion', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => self::TAB_STYLE,
 			]
 		);
@@ -86,8 +84,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Icon Alignment', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_title_style',
 				'default' => is_rtl() ? 'right' : 'left',
 				'options' => [
 					'left' => __( 'Left', 'elementor' ),
@@ -225,6 +221,8 @@ class Widget_Accordion extends Widget_Base {
 				],
 			]
 		);
+
+		$this->end_controls_section();
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),

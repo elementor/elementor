@@ -11,6 +11,7 @@ class Controls_Manager {
 	const SELECT = 'select';
 	const CHECKBOX = 'checkbox';
 	const SWITCHER = 'switcher';
+	const CHECKBOX_LIST = 'checkbox_list';
 
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
@@ -65,6 +66,7 @@ class Controls_Manager {
 			self::SELECT,
 			self::CHECKBOX,
 			self::SWITCHER,
+			self::CHECKBOX_LIST,
 
 			self::HIDDEN,
 			self::HEADING,

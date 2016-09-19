@@ -20,6 +20,7 @@ class Preview {
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'wp_head', [ $this, 'print_custom_css' ] );
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
@@ -70,6 +71,15 @@ class Preview {
 	 */
 	public function builder_wrapper( $content ) {
 		return '<div id="elementor" class="elementor"></div>';
+	}
+
+	public function print_custom_css() {
+		$container_width = absint( get_option( 'elementor_container_width' ) );
+		if ( empty( $container_width ) ) {
+			return;
+		}
+
+		?><style>.elementor-section.elementor-section-boxed > .elementor-container{max-width: <?php echo esc_html( $container_width ); ?>px</style><?php
 	}
 
 	/**
