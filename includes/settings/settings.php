@@ -122,7 +122,7 @@ class Settings {
 		$field_id = 'elementor_streched_section_container';
 		add_settings_field(
 			$field_id,
-			__( 'Stretched section fit to', 'elementor' ),
+			__( 'Stretched Section Fit To', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
 			$style_section,
