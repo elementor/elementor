@@ -19,21 +19,21 @@ module.exports = function( $ ) {
 
 		var stretchSection = function() {
 			var sectionWidth = $scopeWindow.width(),
-				parentPadding = parseInt( $offsetParent.css( 'padding-left' ).replace( 'px', '' ), 10 ),
-				parentOffset = $offsetParent.offset().left +  parentPadding,
-				sectionOffset = '-' + parentOffset;
+				sectionOffset = $section.offset().left,
+				correctOffset = '-' + sectionOffset;
 
 			if ( 0 < $sectionContainer.length ) {
 				var containerOffset = $sectionContainer.offset().left;
-				sectionWidth = $sectionContainer.width();
-				sectionOffset = containerOffset;
-				if ( $offsetParent && ( parentOffset >= containerOffset ) ) {
-					sectionOffset = '-' + ( parentOffset - containerOffset );
+				sectionWidth = $sectionContainer.outerWidth();
+				if ( sectionOffset > containerOffset ) {
+					correctOffset = '-' + ( sectionOffset - containerOffset );
+				} else if ( sectionOffset <= containerOffset ) {
+					correctOffset = 0;
 				}
 			}
 			$section.css( {
-				'width': sectionWidth,
-				'left': sectionOffset + 'px'
+				'width': sectionWidth + 'px',
+				'left': correctOffset + 'px'
 			} );
 		};
 
