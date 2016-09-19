@@ -23,9 +23,10 @@ abstract class Element_Base {
 	private $_render_attributes = [];
 
 	/**
-	 * @var null $_current_section - Holds the current section while render a set of controls sections
+	 * Holds the current section while render a set of controls sections
+	 *
+	 * @var null|array
 	 */
-
 	private $_current_section = null;
 
 	abstract public function get_id();
