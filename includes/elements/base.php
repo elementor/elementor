@@ -213,15 +213,12 @@ abstract class Element_Base {
 			return false;
 		}
 
-		if( $args['type'] != Controls_Manager::SECTION ) {
-
-			/* TODO: unsure that all widgets uses start_controls_section. Mati, 2016-09-08*/
-//			if( $this->_current_section == null ) {
-//				wp_die( __CLASS__ . '::' . __FUNCTION__ .': ' . __( 'Cannot add a control outside a section (use `start_controls_section`).', 'elementor' ) );
-//			}
-			/* TODO: remove the if statement. Mati, 2016-09-08 */
-			if( $this->_current_section != null ) {
+		if( in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+			if ( null !== $this->_current_section ) {
 				$args = array_merge( $args, $this->_current_section );
+			}
+			elseif ( empty( $args['section'] ) ) {
+				wp_die( __CLASS__ . '::' . __FUNCTION__ .': ' . __( 'Cannot add a control outside a section (use `start_controls_section`).', 'elementor' ) );
 			}
 		}
 
