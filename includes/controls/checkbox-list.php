@@ -26,7 +26,7 @@ class Control_Checkbox_List extends Control_Base_Multiple {
 		</div>
 		<# if ( data.description ) { #>
 			<div class="elementor-control-description">{{{ data.description }}}</div>
-			<# } #>
+		<# } #>
 		<?php
 	}
 }

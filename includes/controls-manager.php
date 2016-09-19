@@ -10,7 +10,7 @@ class Controls_Manager {
 	const TEXTAREA = 'textarea';
 	const SELECT = 'select';
 	const CHECKBOX = 'checkbox';
-    const CHECKBOX_LIST = 'checkbox_list';
+	const CHECKBOX_LIST = 'checkbox_list';
 
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
