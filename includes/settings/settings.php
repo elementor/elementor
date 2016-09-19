@@ -119,7 +119,7 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_streched_section_container';
+		$field_id = 'elementor_stretched_section_container';
 		add_settings_field(
 			$field_id,
 			__( 'Stretched Section Fit To', 'elementor' ),
@@ -131,6 +131,25 @@ class Settings {
 				'type' => 'text',
 				'placeholder' => 'body',
 				'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_container_width';
+		add_settings_field(
+			$field_id,
+			__( 'Content Width', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '1140',
+				'sub_desc' => 'px',
+				'classes' => [ 'small-text' ],
+				'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 			]
 		);
 

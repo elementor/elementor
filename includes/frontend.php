@@ -210,6 +210,11 @@ class Frontend {
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return;
 
+		$container_width = absint( get_option( 'elementor_container_width' ) );
+		if ( ! empty( $container_width ) ) {
+			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
+		}
+
 		$this->_parse_schemes_css_code();
 
 		foreach ( $data as $section ) {
