@@ -6883,7 +6883,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	addEmptyColumn: function() {
-		this.addChildModel( {
+		dthis.addChildModel( {
 			id: elementor.helpers.getUniqueID(),
 			elType: 'column',
 			settings: {},

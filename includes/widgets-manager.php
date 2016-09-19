@@ -74,6 +74,10 @@ class Widgets_Manager {
 				'Pojo_Slideshow_Widget',
 				'Pojo_Forms_Widget',
 				'Pojo_Widget_News_Ticker',
+
+				'Pojo_Widget_WC_Products',
+				'Pojo_Widget_WC_Products_Category',
+				'Pojo_Widget_WC_Product_Categories',
 			];
 
 			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $allowed_widgets ) ) {
