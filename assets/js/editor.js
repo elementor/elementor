@@ -7067,7 +7067,9 @@ SectionView = BaseElementView.extend( {
 		this.redefineLayout();
 	},
 
-	onClickSave: function() {
+	onClickSave: function( event ) {
+		event.preventDefault();
+
 		var sectionID = this.model.get( 'id' );
 
 		elementor.templates.startModal( function() {
