@@ -50,21 +50,9 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 		$element_obj = Elementor\Plugin::instance()->elements_manager->get_element( 'section' );
 
 		$control_id = 'test_redeclare_control';
-		$element_obj->add_control( $control_id, [] );
-		$element_obj->add_control( $control_id, [] );
+		$element_obj->add_control( $control_id, [ 'section' => 'section_layout' ] );
+		$element_obj->add_control( $control_id, [ 'section' => 'section_layout' ] );
 		$element_obj->remove_control( $control_id );
-	}
-
-	public function test_addControlWithDoesNotExistsTab() {
-		$element_obj = Elementor\Plugin::instance()->elements_manager->get_element( 'section' );
-
-		$control_id = 'test_control_with_not_exists_tab';
-		$element_obj->add_control( $control_id, [ 'tab' => 'kkkk' ] );
-		
-		$all_controls = $element_obj->get_controls();
-		$last_control = $all_controls[ sizeof( $all_controls ) - 1 ];
-		
-		$this->assertEquals( Elementor\Element_Base::TAB_CONTENT, $last_control['tab'] );
 	}
 
 	public function test_controlsSelectorsData() {
