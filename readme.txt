@@ -157,6 +157,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.9.1 - 20.09.2016 =
+* Fix! - Changed again "fit to screen" to height for "content position" support
+
 = 0.9.0 - 20.09.2016 =
 * New! - Added stretch section control for all parent sections
 * New! - Added content width option to set the default width of the content area
