@@ -5,13 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Elements_Manager {
 
-	/**
-	 * @var Element_Base[]
-	 */
-	protected $_registered_elements = null;
+	protected $_elements = null;
 
 	private function _init_elements() {
-		$this->_registered_elements = [];
+		$this->_elements = [];
 
 		$this->register_element( __NAMESPACE__ . '\Element_Column' );
 		$this->register_element( __NAMESPACE__ . '\Element_Section' );
@@ -61,10 +58,10 @@ class Elements_Manager {
 	}
 
 	public function unregister_element( $id ) {
-		if ( ! isset( $this->_registered_elements[ $id ] ) ) {
+		if ( ! isset( $this->_elements[ $id ] ) ) {
 			return false;
 		}
-		unset( $this->_registered_elements[ $id ] );
+		unset( $this->_elements[ $id ] );
 		return true;
 	}
 
