@@ -18,12 +18,12 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-        $this->start_controls_section(
-            'section_title',
-            [
-                'label' => __( 'Accordion', 'elementor' ),
-            ]
-        );
+		$this->start_controls_section(
+			'section_title',
+			[
+				'label' => __( 'Accordion', 'elementor' ),
+			]
+		);
 
 		$this->add_control(
 			'tabs',
