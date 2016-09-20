@@ -263,13 +263,11 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
-			$content = apply_filters( 'elementor/widget/render_content', '', $instance, $this );
+			ob_start();
+			$this->render( $instance );
+			$content = ob_get_clean();
 
-			if ( '' === $content ) {
-				ob_start();
-				$this->render( $instance );
-				$content = ob_get_clean();
-			}
+			$content = apply_filters( 'elementor/widget/render_content', $content, $instance, $this );
 
 			echo $content;
 			?>
