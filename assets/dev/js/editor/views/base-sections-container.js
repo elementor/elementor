@@ -37,10 +37,6 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
-		if ( ! this.collection ) {
-			this.collection = new Element.Collection();
-		}
-
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
