@@ -403,7 +403,6 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-
 		// Section Typography
 		$this->start_controls_section(
 			'section_typo',
