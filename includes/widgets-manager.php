@@ -49,9 +49,7 @@ class Widgets_Manager {
 			$this->register_widget( __NAMESPACE__ . '\Widget_' . $class_name );
 		}
 
-		$this->_register_wp_widgets();
-
-		do_action( 'elementor/widgets/widgets_registered' );
+//		$this->_register_wp_widgets();
 	}
 
 	private function _register_wp_widgets() {
