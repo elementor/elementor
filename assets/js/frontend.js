@@ -161,39 +161,37 @@ jQuery( function() {
 } );
 
 },{"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14}],3:[function(require,module,exports){
+var activateSection = function( sectionIndex, $accordionTitles ) {
+	var $activeTitle = $accordionTitles.filter( '.active' ),
+		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
+		isRequestedActive = $requestedTitle.hasClass( 'active' );
+
+	$activeTitle
+		.removeClass( 'active' )
+		.next()
+		.slideUp();
+
+	if ( ! isRequestedActive ) {
+		$requestedTitle
+			.addClass( 'active' )
+			.next()
+			.slideDown();
+	}
+};
+
 module.exports = function( $ ) {
 	var $this = $( this ),
 		defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
-		$accordionTitles = $this.find( '.elementor-accordion-title' ),
-		$activeTitle = $accordionTitles.filter( '.active' );
-
-	var activateSection = function( sectionIndex ) {
-		var $requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
-			isRequestedActive = $requestedTitle.hasClass( 'active' );
-
-		$activeTitle
-			.removeClass( 'active' )
-			.next()
-			.slideUp();
-
-		if ( ! isRequestedActive ) {
-			$requestedTitle
-				.addClass( 'active' )
-				.next()
-				.slideDown();
-
-			$activeTitle = $requestedTitle;
-		}
-	};
+		$accordionTitles = $this.find( '.elementor-accordion-title' );
 
 	if ( ! defaultActiveSection ) {
 		defaultActiveSection = 1;
 	}
 
-	activateSection( defaultActiveSection );
+	activateSection( defaultActiveSection, $accordionTitles );
 
 	$accordionTitles.on( 'click', function() {
-		activateSection( this.dataset.section );
+		activateSection( this.dataset.section, $accordionTitles );
 	} );
 };
 
@@ -318,67 +316,14 @@ module.exports = function( $ ) {
 };
 
 },{}],10:[function(require,module,exports){
-module.exports = function( $ ) {
-
-	/*
-	 * Force section full-width for non full-width templates
-	 */
-	// Clear any previously existing css associated with this script
-	this.removeAttr( 'style' );
-
-	if ( this.hasClass( 'elementor-section-stretched' ) ) {
-		var $section = this,
-			scopeWindow = elementorFrontend.getScopeWindow(),
-			$scopeWindow = $( scopeWindow ),
-			sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer, // User-defined parent container selector
-			$sectionContainer = $( scopeWindow.document ).find( sectionContainerSelector ),
-			$offsetParent = $section.offsetParent();
-			if ( $section.offsetParent().is( 'html' ) ) {
-				$offsetParent = $section.parent();
-			}
-
-		var stretchSection = function() {
-			var sectionWidth = $scopeWindow.width(),
-				parentPadding = parseInt( $offsetParent.css( 'padding-left' ).replace( 'px', '' ), 10 ),
-				parentOffset = $offsetParent.offset().left +  parentPadding,
-				sectionOffset = '-' + parentOffset;
-
-			if ( 0 < $sectionContainer.length ) {
-				var containerOffset = $sectionContainer.offset().left;
-				sectionWidth = $sectionContainer.width();
-				sectionOffset = containerOffset;
-				if ( $offsetParent && ( parentOffset >= containerOffset ) ) {
-					sectionOffset = '-' + ( parentOffset - containerOffset );
-				}
-			}
-			$section.css( {
-				'width': sectionWidth,
-				'left': sectionOffset + 'px'
-			} );
-		};
-
-		$scopeWindow.on( 'resize', function() {
-			stretchSection();
-		} );
-
-		stretchSection();
-	}
-
+var BackgroundVideo = function( $, $backgroundVideoContainer ) {
 	var player,
-		ui = {
-			backgroundVideoContainer: this.find( '.elementor-background-video-container' )
-		},
+		elements = {},
 		isYTVideo = false;
 
-	if ( ! ui.backgroundVideoContainer.length ) {
-		return;
-	}
-
-	ui.backgroundVideo = ui.backgroundVideoContainer.children( '.elementor-background-video' );
-
 	var calcVideosSize = function() {
-		var containerWidth = ui.backgroundVideoContainer.outerWidth(),
-			containerHeight = ui.backgroundVideoContainer.outerHeight(),
+		var containerWidth = $backgroundVideoContainer.outerWidth(),
+			containerHeight = $backgroundVideoContainer.outerHeight(),
 			aspectRatioSetting = '16:9', //TEMP
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
 			aspectRatio = aspectRatioArray[ 0 ] / aspectRatioArray[ 1 ],
@@ -393,7 +338,7 @@ module.exports = function( $ ) {
 	};
 
 	var changeVideoSize = function() {
-		var $video = isYTVideo ? $( player.getIframe() ) : ui.backgroundVideo,
+		var $video = isYTVideo ? $( player.getIframe() ) : elements.$backgroundVideo,
 			size = calcVideosSize();
 
 		$video.width( size.width ).height( size.height );
@@ -401,7 +346,7 @@ module.exports = function( $ ) {
 
 	var prepareYTVideo = function( YT, videoID ) {
 
-		player = new YT.Player( ui.backgroundVideo[ 0 ], {
+		player = new YT.Player( elements.$backgroundVideo[ 0 ], {
 			videoId: videoID,
 			events: {
 				onReady: function() {
@@ -426,18 +371,103 @@ module.exports = function( $ ) {
 		$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
 	};
 
-	var videoID = ui.backgroundVideo.data( 'video-id' );
+	var initElements = function() {
+		elements.$backgroundVideo = $backgroundVideoContainer.children( '.elementor-background-video' );
+	};
 
-	if ( videoID ) {
-		isYTVideo = true;
+	var run = function() {
+		var videoID = elements.$backgroundVideo.data( 'video-id' );
 
-		elementorFrontend.utils.onYoutubeApiReady( function( YT ) {
-			setTimeout( function() {
-				prepareYTVideo( YT, videoID );
-			}, 1 );
+		if ( videoID ) {
+			isYTVideo = true;
+
+			elementorFrontend.utils.onYoutubeApiReady( function( YT ) {
+				setTimeout( function() {
+					prepareYTVideo( YT, videoID );
+				}, 1 );
+			} );
+		} else {
+			elements.$backgroundVideo.one( 'canplay', changeVideoSize );
+		}
+	};
+
+	var init = function() {
+		initElements();
+		run();
+	};
+
+	init();
+};
+
+var StretchedSection = function( $, $section ) {
+	var elements = {},
+		settings = {};
+
+	var stretchSection = function() {
+		// Clear any previously existing css associated with this script
+		$section.css( {
+			'width': 'auto',
+			'left': '0'
 		} );
-	} else {
-		ui.backgroundVideo.one( 'canplay', changeVideoSize );
+
+		if ( $section.hasClass( 'elementor-section-stretched' ) ) {
+			var sectionWidth = elements.$scopeWindow.width(),
+				sectionOffset = $section.offset().left,
+				correctOffset = -sectionOffset;
+
+			if ( elements.$sectionContainer.length ) {
+				var containerOffset = elements.$sectionContainer.offset().left;
+
+				sectionWidth = elements.$sectionContainer.outerWidth();
+
+				if ( sectionOffset > containerOffset ) {
+					correctOffset = -( sectionOffset - containerOffset );
+				} else {
+					correctOffset = 0;
+				}
+			}
+
+			$section.css( {
+				'width': sectionWidth + 'px',
+				'left': correctOffset + 'px'
+			} );
+		}
+	};
+
+	var initSettings = function() {
+		settings.sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer;
+	};
+
+	var initElements = function() {
+		elements.scopeWindow = elementorFrontend.getScopeWindow();
+		elements.$scopeWindow = $( elements.scopeWindow );
+		elements.$sectionContainer = $( elements.scopeWindow.document ).find( settings.sectionContainerSelector );
+	};
+
+	var bindEvents = function() {
+		elements.$scopeWindow.on( 'resize', stretchSection );
+	};
+
+	var init = function() {
+		initSettings();
+
+		initElements();
+
+		bindEvents();
+
+		stretchSection();
+	};
+
+	init();
+};
+
+module.exports = function( $ ) {
+	new StretchedSection( $, this );
+
+	var $backgroundVideoContainer = this.find( '.elementor-background-video-container' );
+
+	if ( $backgroundVideoContainer ) {
+		new BackgroundVideo( $, $backgroundVideoContainer );
 	}
 };
 
