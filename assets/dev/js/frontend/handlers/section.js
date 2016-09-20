@@ -91,28 +91,30 @@ var StretchedSection = function( $, $section ) {
 			'left': '0'
 		} );
 
-		if ( $section.hasClass( 'elementor-section-stretched' ) ) {
-			var sectionWidth = elements.$scopeWindow.width(),
-				sectionOffset = $section.offset().left,
-				correctOffset = -sectionOffset;
-
-			if ( elements.$sectionContainer.length ) {
-				var containerOffset = elements.$sectionContainer.offset().left;
-
-				sectionWidth = elements.$sectionContainer.outerWidth();
-
-				if ( sectionOffset > containerOffset ) {
-					correctOffset = -( sectionOffset - containerOffset );
-				} else {
-					correctOffset = 0;
-				}
-			}
-
-			$section.css( {
-				'width': sectionWidth + 'px',
-				'left': correctOffset + 'px'
-			} );
+		if ( ! $section.hasClass( 'elementor-section-stretched' ) ) {
+			return;
 		}
+
+		var sectionWidth = elements.$scopeWindow.width(),
+			sectionOffset = $section.offset().left,
+			correctOffset = -sectionOffset;
+
+		if ( elements.$sectionContainer.length ) {
+			var containerOffset = elements.$sectionContainer.offset().left;
+
+			sectionWidth = elements.$sectionContainer.outerWidth();
+
+			if ( sectionOffset > containerOffset ) {
+				correctOffset = -( sectionOffset - containerOffset );
+			} else {
+				correctOffset = 0;
+			}
+		}
+
+		$section.css( {
+			'width': sectionWidth + 'px',
+			'left': correctOffset + 'px'
+		} );
 	};
 
 	var initSettings = function() {
