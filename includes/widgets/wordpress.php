@@ -95,8 +95,6 @@ class Widget_WordPress extends Widget_Base {
 		];
 
 		$this->_get_widget_instance()->widget( $empty_widget_args, $instance['wp'] );
-		?>
-		<?php
 	}
 
 	protected function content_template() {}
