@@ -3152,8 +3152,8 @@ ElementModel = Backbone.Model.extend( {
 		return ( elementData ) ? elementData.icon : 'unknown';
 	},
 
-	renderRemoteServer: function( force ) {
-		if ( ! force && ! this.remoteRender ) {
+	renderRemoteServer: function() {
+		if ( ! this.remoteRender ) {
 			return;
 		}
 
@@ -4886,11 +4886,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 				var control = settings.getControl( settingKey );
 
 				if ( control.force_render ) {
-					if ( ! forceRender || 'remote' === control.force_render ) {
-						forceRender = control.force_render;
-					}
-
 					isContentChanged = true;
+
+					return;
 				}
 
 				if ( control && ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
@@ -4907,11 +4905,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 		// Re-render the template
 		var templateType = this.getTemplateType();
 
-		if ( 'js' === templateType && 'remote' !== forceRender ) {
+		if ( 'js' === templateType ) {
 			this.model.setHtmlCache();
 			this.render();
 		} else {
-			this.model.renderRemoteServer( forceRender );
+			this.model.renderRemoteServer();
 		}
 	},
 
