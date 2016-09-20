@@ -4948,10 +4948,6 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
-		if ( ! this.collection ) {
-			this.collection = new Element.Collection();
-		}
-
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
@@ -5074,7 +5070,7 @@ ColumnView = BaseElementView.extend( {
 		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
 
-	isDroppingAllowed: function( side, event ) {
+	isDroppingAllowed: function() {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			elType = elementView.model.get( 'elType' );
 
