@@ -77,12 +77,15 @@
 		}
 	}
 
-	// Section Full Height
-	&.elementor-section-height-full {
-		min-height: 100vh;
+	@media (min-width: $screen-md-min) {
 
-		> .elementor-container {
-			height: 100%;
+		// Section Full Height (note: don't be smart - min-height does not work well with the content position)
+		&.elementor-section-height-full {
+			height: 100vh;
+
+			> .elementor-container {
+				height: 100%;
+			}
 		}
 	}
 }
