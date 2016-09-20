@@ -68,27 +68,22 @@ class Elements_Manager {
 		return true;
 	}
 
-	public function get_registered_elements() {
-		if ( is_null( $this->_registered_elements ) ) {
+	public function get_elements( $element_name = null ) {
+		if ( is_null( $this->_elements ) ) {
 			$this->_init_elements();
 		}
-		return $this->_registered_elements;
-	}
 
-	public function get_element( $id ) {
-		$elements = $this->get_registered_elements();
-
-		if ( ! isset( $elements[ $id ] ) ) {
-			return false;
+		if ( $element_name ) {
+			return isset( $this->_elements[ $element_name ] ) ? $this->_elements[ $element_name ] : null;
 		}
 
-		return $elements[ $id ];
+		return $this->_elements;
 	}
 
 	public function get_registered_elements_config() {
 		$config = [];
 
-		foreach ( $this->get_registered_elements() as $element_data ) {
+		foreach ( $this->get_elements() as $element_data ) {
 			/** @var Element_Base $class */
 			$class = $element_data['class'];
 
@@ -99,8 +94,11 @@ class Elements_Manager {
 	}
 
 	public function render_elements_content() {
-		foreach ( $this->get_registered_elements() as $element ) {
-			$element->print_template();
+		foreach ( $this->get_elements() as $element_data ) {
+			/** @var Element_Base $class */
+			$class = $element_data['class'];
+
+			$class::print_template();
 		}
 	}
 

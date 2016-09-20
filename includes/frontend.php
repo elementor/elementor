@@ -218,7 +218,7 @@ class Frontend {
 		if ( 'widget' === $element_data['elType'] ) {
 			$element_type = Plugin::instance()->widgets_manager->get_widgets( $element_data['widgetType'] );
 		} else {
-			$element_type = Plugin::instance()->elements_manager->get_element( $element_data['elType'] );
+			$element_type = Plugin::instance()->elements_manager->get_elements( $element_data['elType'] );
 		}
 
 		if ( ! $element_type )
