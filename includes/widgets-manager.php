@@ -86,16 +86,15 @@ class Widgets_Manager {
 	}
 
 	public function register_widget( $widget_class, $args = [] ) {
+		/** @var Widget_Base $widget_class */
 		if ( ! class_exists( $widget_class ) ) {
 			return new \WP_Error( 'widget_class_name_not_exists' );
 		}
 
-		$widget_instance = new $widget_class( $args );
-
-		if ( ! $widget_instance instanceof Widget_Base ) {
-			return new \WP_Error( 'wrong_instance_widget' );
-		}
-		$this->_registered_widgets[ $widget_instance->get_id() ] = $widget_instance;
+		$this->_widgets[ $widget_class::get_name() ] = [
+			'class' => $widget_class,
+			'args' => $args,
+		];
 
 		return true;
 	}
