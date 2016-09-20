@@ -134,8 +134,8 @@ ElementModel = Backbone.Model.extend( {
 		return ( elementData ) ? elementData.icon : 'unknown';
 	},
 
-	renderRemoteServer: function( force ) {
-		if ( ! force && ! this.remoteRender ) {
+	renderRemoteServer: function() {
+		if ( ! this.remoteRender ) {
 			return;
 		}
 
