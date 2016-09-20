@@ -235,7 +235,7 @@ class Source_Local extends Source_Base {
 
 		$content_data = Plugin::instance()->db->iterate_data( $content['data'], function( $element ) use ( $import_images ) {
 			if ( 'widget' === $element['elType'] ) {
-				$element_data = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
+				$element_data = Plugin::instance()->widgets_manager->get_widgets( $element['widgetType'] );
 			} else {
 				$element_data = Plugin::instance()->elements_manager->get_element( $element['elType'] );
 			}

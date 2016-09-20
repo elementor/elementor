@@ -157,7 +157,7 @@ class DB {
 						if ( empty( $widget_data['widgetType'] ) )
 							continue;
 
-						$widget_props = Plugin::instance()->widgets_manager->get_widget( $widget_data['widgetType'] );
+						$widget_props = Plugin::instance()->widgets_manager->get_widgets( $widget_data['widgetType'] );
 
 						/** @var Widget_Base $widget */
 						$widget = new $widget_props['class']( $widget_data );

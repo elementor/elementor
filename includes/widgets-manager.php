@@ -110,28 +110,22 @@ class Widgets_Manager {
 		return true;
 	}
 
-	public function get_registered_widgets() {
-		if ( is_null( $this->_registered_widgets ) ) {
+	public function get_widgets( $widget_name = null ) {
+		if ( is_null( $this->_widgets ) ) {
 			$this->_init_widgets();
 		}
 
-		return $this->_registered_widgets;
-	}
-
-	public function get_widget( $name ) {
-		$widgets = $this->get_registered_widgets();
-
-		if ( ! isset( $widgets[ $name ] ) ) {
-			return false;
+		if ( $widget_name ) {
+			return isset( $this->_widgets[ $widget_name ] ) ? $this->_widgets[ $widget_name ] : null;
 		}
 
-		return $widgets[ $name ];
+		return $this->_widgets;
 	}
 
 	public function get_registered_widgets_config() {
 		$config = [];
 
-		foreach ( $this->get_registered_widgets() as $widget_data ) {
+		foreach ( $this->get_widgets() as $widget_data ) {
 			/** @var Widget_Base $class */
 			$class = $widget_data['class'];
 
@@ -161,11 +155,11 @@ class Widgets_Manager {
 
 		// Start buffering
 		ob_start();
-		$widget = $this->get_widget( $data['widgetType'] );
 		if ( false !== $widget ) {
 			$data['settings'] = $widget->get_parse_values( $data['settings'] );
 			$widget->render_content( $data['settings'] );
 		}
+		$widget_data = $this->get_widgets( $data['widgetType'] );
 
 		$render_html = ob_get_clean();
 
@@ -182,7 +176,7 @@ class Widgets_Manager {
 		}
 
 		$widget_type = $_POST['widget_type'];
-		$widget_obj = $this->get_widget( $widget_type );
+		$widget_obj = $this->get_widgets( $widget_type );
 
 		if ( ! $widget_obj instanceof Widget_WordPress ) {
 			wp_send_json_error();
@@ -194,8 +188,11 @@ class Widgets_Manager {
 	}
 
 	public function render_widgets_content() {
-		foreach ( $this->get_registered_widgets() as $widget ) {
-			$widget->print_template();
+		foreach ( $this->get_widgets() as $widget_data ) {
+			/** @var Widget_Base $class */
+			$class = $widget_data['class'];
+
+			$class::print_template();
 		}
 	}
 

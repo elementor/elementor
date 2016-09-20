@@ -460,7 +460,7 @@ class Element_Column extends Element_Base {
 			return Element_Section::get_class_name();
 		}
 
-		$widget_data = Plugin::instance()->widgets_manager->get_widget( $element_data['widgetType'] );
+		$widget_data = Plugin::instance()->widgets_manager->get_widgets( $element_data['widgetType'] );
 
 		return $widget_data['class'];
 	}

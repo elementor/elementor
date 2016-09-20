@@ -216,7 +216,7 @@ class Frontend {
 
 	protected function _parse_style_item( $element_data ) {
 		if ( 'widget' === $element_data['elType'] ) {
-			$element_type = Plugin::instance()->widgets_manager->get_widget( $element_data['widgetType'] );
+			$element_type = Plugin::instance()->widgets_manager->get_widgets( $element_data['widgetType'] );
 		} else {
 			$element_type = Plugin::instance()->elements_manager->get_element( $element_data['elType'] );
 		}
@@ -283,7 +283,7 @@ class Frontend {
 	}
 
 	protected function _parse_schemes_css_code() {
-		foreach ( Plugin::instance()->widgets_manager->get_registered_widgets() as $widget_data ) {
+		foreach ( Plugin::instance()->widgets_manager->get_widgets() as $widget_data ) {
 			/** @var Widget_Base $widget_class */
 			$widget_class = $widget_data['class'];
 

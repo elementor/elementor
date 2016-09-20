@@ -7,11 +7,11 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_getWidgets() {
-		$this->assertNotEmpty( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() );
+		$this->assertNotEmpty( Elementor\Plugin::instance()->widgets_manager->get_widgets() );
 	}
 
 	public function test_elementMethods() {
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_widgets() as $widget ) {
 			$this->assertNotEmpty( $widget->get_title() );
 			$this->assertNotEmpty( $widget->get_type() );
 			$this->assertNotEmpty( $widget->get_name() );
@@ -32,19 +32,19 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 
 		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->register_widget( $widget_class ) );
 
-		$widget = Elementor\Plugin::instance()->widgets_manager->get_widget( $widget_id );
+		$widget = Elementor\Plugin::instance()->widgets_manager->get_widgets( $widget_id );
 		$this->assertInstanceOf( $widget_class, $widget );
 
 		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->unregister_widget( $widget_id ) );
 		$this->assertFalse( Elementor\Plugin::instance()->widgets_manager->unregister_widget( $widget_id ) );
 
-		$this->assertFalse( Elementor\Plugin::instance()->widgets_manager->get_widget( $widget_id ) );
+		$this->assertFalse( Elementor\Plugin::instance()->widgets_manager->get_widgets( $widget_id ) );
 	}
 
 	public function test_controlsSelectorsData() {
 		$wrapper_text = '{{WRAPPER}}';
 
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_widgets() as $widget ) {
 			foreach ( $widget->get_style_controls() as $control ) {
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					foreach ( explode( ',', $selector ) as $item ) {
@@ -56,7 +56,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_controlsDefaultData() {
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_registered_widgets() as $widget ) {
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_widgets() as $widget ) {
 			foreach ( $widget->get_controls() as $control ) {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
 					continue;
