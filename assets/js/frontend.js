@@ -450,11 +450,8 @@ var StretchedSection = function( $, $section ) {
 
 	var init = function() {
 		initSettings();
-
 		initElements();
-
 		bindEvents();
-
 		stretchSection();
 	};
 
