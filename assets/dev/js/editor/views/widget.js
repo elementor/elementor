@@ -90,7 +90,10 @@ WidgetView = BaseElementView.extend( {
 			html = htmlCache;
 		}
 
-		this.$el.html( html );
+		//this.$el.html( html );
+		_.defer( _.bind( function() {
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
+		}, this ) );
 
 		return this;
 	},
@@ -101,7 +104,7 @@ WidgetView = BaseElementView.extend( {
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
 
-		this.$el.imagesLoaded().always( _.bind( function() {
+		this.$el.imagesLoaded().always( _.defer( _.bind( function() {
 			// Is element empty?
 			if ( 1 > this.$el.height() ) {
 				this.$el.addClass( 'elementor-widget-empty' );
@@ -110,7 +113,7 @@ WidgetView = BaseElementView.extend( {
 				// TEMP CODING !!
 				this.$el.append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
 			}
-		}, this ) );
+		}, this ) ) );
 	}
 } );
 

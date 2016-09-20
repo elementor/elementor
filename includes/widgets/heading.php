@@ -56,8 +56,9 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'large',
+				'default' => 'default',
 				'options' => [
+					'default' => __( 'Default', 'elementor' ),
 					'small' => __( 'Small', 'elementor' ),
 					'medium' => __( 'Medium', 'elementor' ),
 					'large' => __( 'Large', 'elementor' ),
