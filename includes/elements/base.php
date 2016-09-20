@@ -122,6 +122,10 @@ abstract class Element_Base {
 		);
 	}
 
+	public final static function get_class_name() {
+		return get_called_class();
+	}
+
 	private static function _init_controls() {
 		static::_before_register_controls();
 
@@ -130,10 +134,6 @@ abstract class Element_Base {
 		static::_register_controls();
 
 		static::_after_register_controls();
-	}
-
-	public final static function get_class_name() {
-		return get_called_class();
 	}
 
 	public static function get_name() {
@@ -162,6 +162,7 @@ abstract class Element_Base {
 
 	public static function get_config( $item = null ) {
 		$config = [
+			'name' => static::get_name(),
 			'elType' => static::get_type(),
 			'title' => static::get_title(),
 			'controls' => array_values( self::get_controls() ),
@@ -291,7 +292,11 @@ abstract class Element_Base {
 			$condition_sub_key = $condition_key_parts[2];
 			$is_negative_condition = ! ! $condition_key_parts[3];
 
-			$instance_value = $this->get_settings()[ $pure_condition_key ];
+			$instance_value = $this->get_settings( $pure_condition_key );
+
+			if ( null === $instance_value ) {
+				return false;
+			}
 
 			if ( $condition_sub_key ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {

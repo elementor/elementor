@@ -154,11 +154,13 @@ class Widgets_Manager {
 
 		// Start buffering
 		ob_start();
-		if ( false !== $widget ) {
-			$data['settings'] = $widget->get_parse_values( $data['settings'] );
-			$widget->render_content( $data['settings'] );
-		}
+
 		$widget_data = $this->get_widgets( $data['widgetType'] );
+
+		/** @var Widget_Base $widget */
+		$widget = new $widget_data['class']( $data );
+
+		$widget->render_content();
 
 		$render_html = ob_get_clean();
 
