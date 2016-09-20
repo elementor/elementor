@@ -4885,13 +4885,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
 
-				if ( control.force_render ) {
-					isContentChanged = true;
-
+				if ( ! control ) {
 					return;
 				}
 
-				if ( control && ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+				if ( control.force_render || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
 					isContentChanged = true;
 				}
 			} );
