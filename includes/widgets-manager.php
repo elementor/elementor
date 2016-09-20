@@ -5,10 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widgets_Manager {
 
-	/**
-	 * @var Widget_Base[]
-	 */
-	protected $_registered_widgets = null;
+	private $_widgets = null;
 
 	private function _init_widgets() {
 
@@ -42,7 +39,8 @@ class Widgets_Manager {
 			'sidebar',
 		];
 
-		$this->_registered_widgets = [];
+		$this->_widgets = [];
+
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
 
@@ -103,10 +101,12 @@ class Widgets_Manager {
 	}
 
 	public function unregister_widget( $name ) {
-		if ( ! isset( $this->_registered_widgets[ $name ] ) ) {
+		if ( ! isset( $this->_widgets[ $name ] ) ) {
 			return false;
 		}
-		unset( $this->_registered_widgets[ $name ] );
+
+		unset( $this->_widgets[ $name ] );
+
 		return true;
 	}
 
