@@ -27,7 +27,6 @@ var BackgroundVideo = function( $, $backgroundVideoContainer ) {
 	};
 
 	var prepareYTVideo = function( YT, videoID ) {
-
 		player = new YT.Player( elements.$backgroundVideo[ 0 ], {
 			videoId: videoID,
 			events: {
