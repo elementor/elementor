@@ -121,7 +121,7 @@ class Widgets_Manager {
 		return $this->_widgets;
 	}
 
-	public function get_registered_widgets_config() {
+	public function get_widgets_config() {
 		$config = [];
 
 		foreach ( $this->get_widgets() as $widget_data ) {

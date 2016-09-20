@@ -74,7 +74,7 @@ class Elements_Manager {
 		return $this->_elements;
 	}
 
-	public function get_registered_elements_config() {
+	public function get_elements_config() {
 		$config = [];
 
 		foreach ( $this->get_elements() as $element_data ) {
