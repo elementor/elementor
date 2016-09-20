@@ -113,7 +113,7 @@ class Element_Section extends Element_Base {
 				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
-				'force_render' => 'js',
+				'force_render' => true,
 				'tab' => self::TAB_LAYOUT,
 				'section' => 'section_layout',
 				'hide_in_inner' => true,
