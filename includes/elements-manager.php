@@ -42,17 +42,14 @@ class Elements_Manager {
 	}
 
 	public function register_element( $element_class ) {
+		/** @var Element_Base $element_class */
 		if ( ! class_exists( $element_class ) ) {
 			return new \WP_Error( 'element_class_name_not_exists' );
 		}
 
-		$element_instance = new $element_class();
-
-		if ( ! $element_instance instanceof Element_Base ) {
-			return new \WP_Error( 'wrong_instance_element' );
-		}
-
-		$this->_registered_elements[ $element_instance->get_id() ] = $element_instance;
+		$this->_elements[ $element_class::get_name() ] = [
+			'class' => $element_class,
+		];
 
 		return true;
 	}
