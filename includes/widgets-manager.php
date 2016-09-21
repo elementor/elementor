@@ -49,7 +49,9 @@ class Widgets_Manager {
 
 			$class_name = str_replace( '-', '_', $widget_filename );
 
-			$this->register_widget( __NAMESPACE__ . '\Widget_' . $class_name );
+			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
+
+			$this->register_widget_type( new $class_name() );
 		}
 
 		$this->_register_wp_widgets();
@@ -76,7 +78,9 @@ class Widgets_Manager {
 				continue;
 			}
 
-			$this->register_widget( __NAMESPACE__ . '\Widget_WordPress', [ 'widget_name' => $widget_class ] );
+			$elementor_widget_class = __NAMESPACE__ . '\Widget_WordPress';
+
+			$this->register_widget_type( new $elementor_widget_class( null, [ 'widget_name' => $widget_class ] ) );
 		}
 	}
 
@@ -86,16 +90,8 @@ class Widgets_Manager {
 		// require ELEMENTOR_PATH . 'includes/widgets/multi-section-base.php';
 	}
 
-	public function register_widget( $widget_class, $args = [] ) {
-		/** @var Widget_Base $widget_class */
-		if ( ! class_exists( $widget_class ) ) {
-			return new \WP_Error( 'widget_class_name_not_exists' );
-		}
-
-		$this->_widgets[ $widget_class::get_name() ] = [
-			'class' => $widget_class,
-			'args' => $args,
-		];
+	public function register_widget_type( Widget_Base $widget ) {
+		$this->_widget_types[ $widget->get_name() ] = $widget;
 
 		return true;
 	}

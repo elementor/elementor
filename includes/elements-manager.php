@@ -43,15 +43,8 @@ class Elements_Manager {
 		];
 	}
 
-	public function register_element( $element_class ) {
-		/** @var Element_Base $element_class */
-		if ( ! class_exists( $element_class ) ) {
-			return new \WP_Error( 'element_class_name_not_exists' );
-		}
-
-		$this->_elements[ $element_class::get_name() ] = [
-			'class' => $element_class,
-		];
+	public function register_element_type( Element_Base $element ) {
+		$this->_element_types[ $element->get_name() ] = $element;
 
 		return true;
 	}
