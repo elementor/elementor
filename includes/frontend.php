@@ -273,7 +273,7 @@ class Frontend {
 			}
 		}
 
-		$children = $element->get_children_data();
+		$children = $element->get_children();
 
 		if ( ! empty( $children ) ) {
 			foreach ( $children as $child_element ) {
