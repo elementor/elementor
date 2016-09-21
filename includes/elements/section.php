@@ -7,15 +7,15 @@ class Element_Section extends Element_Base {
 
 	private static $presets = [];
 
-	public static function get_name() {
+	public function get_name() {
 		return 'section';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Section', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'columns';
 	}
 
@@ -86,7 +86,7 @@ class Element_Section extends Element_Base {
 		}
 	}
 
-	public static function get_config( $item = null ) {
+	public function get_config( $item = null ) {
 		$config = parent::get_config( $item );
 
 		$config['presets'] = self::get_presets();
@@ -94,8 +94,8 @@ class Element_Section extends Element_Base {
 		return $config;
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_layout',
 			[
 				'label' => __( 'Layout', 'elementor' ),
@@ -104,7 +104,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'layout',
 			[
 				'label' => __( 'Width', 'elementor' ),
@@ -120,7 +120,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'content_width',
 			[
 				'label' => __( 'Content Width', 'elementor' ),
@@ -142,7 +142,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'gap',
 			[
 				'label' => __( 'Columns Gap', 'elementor' ),
@@ -161,7 +161,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'height',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -179,7 +179,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'custom_height',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -205,7 +205,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'height_inner',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -222,7 +222,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'custom_height_inner',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -248,7 +248,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'column_position',
 			[
 				'label' => __( 'Column Position', 'elementor' ),
@@ -269,7 +269,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'content_position',
 			[
 				'label' => __( 'Content Position', 'elementor' ),
@@ -287,7 +287,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'structure',
 			[
 				'label' => __( 'Structure', 'elementor' ),
@@ -299,7 +299,7 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section background
-		self::add_control(
+		$this->add_control(
 			'section_background',
 			[
 				'label' => __( 'Background', 'elementor' ),
@@ -308,7 +308,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
@@ -318,7 +318,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'background_overlay_title',
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
@@ -332,7 +332,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
@@ -345,7 +345,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'background_overlay_opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
@@ -371,7 +371,7 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section border
-		self::add_control(
+		$this->add_control(
 			'section_border',
 			[
 				'label' => __( 'Border', 'elementor' ),
@@ -380,7 +380,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
@@ -389,7 +389,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -403,7 +403,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
@@ -413,7 +413,7 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section Typography
-		self::add_control(
+		$this->add_control(
 			'section_typo',
 			[
 				'label' => __( 'Typography', 'elementor' ),
@@ -422,7 +422,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color_text',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -436,7 +436,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_color',
 			[
 				'label' => __( 'Heading Color', 'elementor' ),
@@ -450,7 +450,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color_link',
 			[
 				'label' => __( 'Link Color', 'elementor' ),
@@ -464,7 +464,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color_link_hover',
 			[
 				'label' => __( 'Link Hover Color', 'elementor' ),
@@ -478,7 +478,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_align',
 			[
 				'label' => __( 'Text Align', 'elementor' ),
@@ -506,7 +506,7 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section Advanced
-		self::add_control(
+		$this->add_control(
 			'section_advanced',
 			[
 				'label' => __( 'Advanced', 'elementor' ),
@@ -515,7 +515,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
@@ -536,7 +536,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
@@ -550,7 +550,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
@@ -563,7 +563,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'animation_duration',
 			[
 				'label' => __( 'Animation Duration', 'elementor' ),
@@ -583,7 +583,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
@@ -598,7 +598,7 @@ class Element_Section extends Element_Base {
 		);
 
 		// Section Responsive
-		self::add_control(
+		$this->add_control(
 			'_section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),
@@ -607,7 +607,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'reverse_order_mobile',
 			[
 				'label' => __( 'Reverse Columns', 'elementor' ),
@@ -624,7 +624,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_visibility',
 			[
 				'label' => __( 'Visibility', 'elementor' ),
@@ -635,7 +635,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'responsive_description',
 			[
 				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
@@ -646,7 +646,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hide_desktop',
 			[
 				'label' => __( 'Hide On Desktop', 'elementor' ),
@@ -662,7 +662,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hide_tablet',
 			[
 				'label' => __( 'Hide On Tablet', 'elementor' ),
@@ -678,7 +678,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hide_mobile',
 			[
 				'label' => __( 'Hide On Mobile', 'elementor' ),
@@ -695,13 +695,13 @@ class Element_Section extends Element_Base {
 		);
 	}
 
-	protected static function _render_settings() {
+	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay"></div>
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<# if ( 'video' === settings.background_background ) {
 		var videoLink = settings.background_video_link;

@@ -21,44 +21,49 @@ abstract class Element_Base {
 
 	private $_render_attributes = [];
 
+	public static function get_type() {
+		return 'element';
+	}
+
 	abstract public function before_render();
 
 	abstract public function after_render();
 
-	/**
-	 * @param array $element_data
-	 *
-	 * @return Element_Base class name
-	 */
 	abstract protected function _get_child_class( array $element_data );
 
-	public final static function get_controls() {
-		$stack = Plugin::instance()->controls_manager->get_element_stack( get_called_class() );
+	public function __construct( $data = [], $args = [] ) {
+		if ( $data ) {
+			$this->_init( $data );
+		}
+	}
+
+	public final function get_controls() {
+		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
-			self::_init_controls();
+			$this->_init_controls();
 
-			return self::get_controls();
+			return $this->get_controls();
 		}
 
 		return $stack['controls'];
 	}
 
-	public final static function add_control( $id, $args ) {
-		return Plugin::instance()->controls_manager->add_control_to_stack( get_called_class(), $id, $args );
+	public final function add_control( $id, $args ) {
+		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
 
-	public final static function add_group_control( $group_name, $args = [] ) {
-		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ get_called_class(), $args ] );
+	public final function add_group_control( $group_name, $args = [] ) {
+		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ $this, $args ] );
 	}
 
-	public final static function get_tabs_controls() {
-		$stack = Plugin::instance()->controls_manager->get_element_stack( get_called_class() );
+	public final function get_tabs_controls() {
+		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
 		return $stack['tabs'];
 	}
 
-	public final static function get_scheme_controls() {
+	public final function get_scheme_controls() {
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter( self::get_controls(), function( $control ) use ( $enabled_schemes ) {
@@ -66,19 +71,19 @@ abstract class Element_Base {
 		} );
 	}
 
-	public final static function get_style_controls() {
+	public final function get_style_controls() {
 		return array_filter( self::get_controls(), function( $control ) {
 			return ( ! empty( $control['selectors'] ) );
 		} );
 	}
 
-	public final static function get_class_controls() {
+	public final function get_class_controls() {
 		return array_filter( self::get_controls(), function( $control ) {
 			return ( isset( $control['prefix_class'] ) );
 		} );
 	}
 
-	public final static function add_responsive_control( $id, $args = [] ) {
+	public final function add_responsive_control( $id, $args = [] ) {
 		// Desktop
 		$control_args = $args;
 
@@ -88,7 +93,7 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_DESKTOP;
 
-		self::add_control(
+		$this->add_control(
 			$id,
 			$control_args
 		);
@@ -102,7 +107,7 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_TABLET;
 
-		self::add_control(
+		$this->add_control(
 			$id . '_tablet',
 			$control_args
 		);
@@ -116,60 +121,46 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_MOBILE;
 
-		self::add_control(
+		$this->add_control(
 			$id . '_mobile',
 			$control_args
 		);
 	}
 
-	public final static function get_class_name() {
+	public final function get_class_name() {
 		return get_called_class();
 	}
 
-	private static function _init_controls() {
-		static::_before_register_controls();
-
-		Plugin::instance()->controls_manager->open_stack( get_called_class() );
-
-		static::_register_controls();
-
-		static::_after_register_controls();
-	}
-
-	public static function get_name() {
+	public function get_name() {
 		return '';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return '';
 	}
 
-	public static function get_keywords() {
+	public function get_keywords() {
 		return [];
 	}
 
-	public static function get_categories() {
+	public function get_categories() {
 		return [ 'basic' ];
 	}
 
-	public static function get_type() {
-		return 'element';
-	}
-
-	public static function get_icon() {
+	public function get_icon() {
 		return 'columns';
 	}
 
-	public static function get_config( $item = null ) {
+	public function get_config( $item = null ) {
 		$config = [
-			'name' => static::get_name(),
-			'elType' => static::get_type(),
-			'title' => static::get_title(),
-			'controls' => array_values( self::get_controls() ),
-			'tabs_controls' => self::get_tabs_controls(),
-			'categories' => static::get_categories(),
-			'keywords' => static::get_keywords(),
-			'icon' => static::get_icon(),
+			'name' => $this->get_name(),
+			'elType' => $this->get_type(),
+			'title' => $this->get_title(),
+			'controls' => array_values( $this->get_controls() ),
+			'tabs_controls' => $this->get_tabs_controls(),
+			'categories' => $this->get_categories(),
+			'keywords' => $this->get_keywords(),
+			'icon' => $this->get_icon(),
 		];
 
 		if ( $item ) {
@@ -179,7 +170,7 @@ abstract class Element_Base {
 		return $config;
 	}
 
-	public static function print_template() {
+	public function print_template() {
 		ob_start();
 
 		static::_content_template();
@@ -197,58 +188,7 @@ abstract class Element_Base {
 		<?php
 	}
 
-	protected static function _before_register_controls() {}
-
-	protected static function _register_controls() {}
-
-	protected static function _after_register_controls() {}
-
-	protected static function _content_template() {}
-
-	protected static function _render_settings() {
-		?>
-		<div class="elementor-element-overlay">
-			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( static::get_name() ); ?>-settings">
-				<ul class="elementor-editor-element-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-add">
-						<a href="#" title="<?php _e( 'Add Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Add', 'elementor' ); ?></span>
-							<i class="fa fa-plus"></i>
-						</a>
-					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-trash-o"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<?php
-	}
-
-	public function __construct( $data, $args = [] ) {
-		$this->_data = array_merge( $this->get_default_data(), $data );
-		$this->_id = $data['id'];
-		$this->_settings = $this->_get_parsed_settings();
-	}
-
-	public final function get_id() {
+	public function get_id() {
 		return $this->_id;
 	}
 
@@ -266,10 +206,6 @@ abstract class Element_Base {
 		}
 
 		return $this->_settings;
-	}
-
-	public function get_children_data() {
-		return ! empty( $this->_data['elements'] ) ? $this->_data['elements'] : [];
 	}
 
 	public function get_children() {
@@ -368,6 +304,47 @@ abstract class Element_Base {
 		];
 	}
 
+	protected function _register_controls() {}
+
+	protected function _content_template() {}
+
+	protected function _render_settings() {
+		?>
+		<div class="elementor-element-overlay">
+			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( static::get_name() ); ?>-settings">
+				<ul class="elementor-editor-element-settings-list">
+					<li class="elementor-editor-element-setting elementor-editor-element-add">
+						<a href="#" title="<?php _e( 'Add Widget', 'elementor' ); ?>">
+							<span class="elementor-screen-only"><?php _e( 'Add', 'elementor' ); ?></span>
+							<i class="fa fa-plus"></i>
+						</a>
+					</li>
+					<?php /* Temp removing for better UI
+					<li class="elementor-editor-element-setting elementor-editor-element-edit">
+						<a href="#" title="<?php _e( 'Edit Widget', 'elementor' ); ?>">
+							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
+							<i class="fa fa-pencil"></i>
+						</a>
+					</li>
+					*/ ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
+						<a href="#" title="<?php _e( 'Duplicate Widget', 'elementor' ); ?>">
+							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
+							<i class="fa fa-files-o"></i>
+						</a>
+					</li>
+					<li class="elementor-editor-element-setting elementor-editor-element-remove">
+						<a href="#" title="<?php _e( 'Remove Widget', 'elementor' ); ?>">
+							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
+							<i class="fa fa-trash-o"></i>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<?php
+	}
+
 	protected function render() {}
 
 	protected function get_default_data() {
@@ -380,7 +357,7 @@ abstract class Element_Base {
 		];
 	}
 
-	private function _get_parsed_settings() {
+	protected function _get_parsed_settings() {
 		$settings = $this->_data['settings'];
 
 		foreach ( self::get_controls() as $control ) {
@@ -396,6 +373,16 @@ abstract class Element_Base {
 		return $settings;
 	}
 
+	protected function _get_child_args( array $element_data ) {
+		return [];
+	}
+
+	private function _init_controls() {
+		Plugin::instance()->controls_manager->open_stack( $this );
+
+		$this->_register_controls();
+	}
+
 	private function _init_children() {
 		$this->_children = [];
 
@@ -408,7 +395,15 @@ abstract class Element_Base {
 		foreach ( $elements as $element ) {
 			$child_class = $this->_get_child_class( $element );
 
-			$this->_children[] = new $child_class( $element );
+			$child_args = $this->_get_child_args( $element );
+
+			$this->_children[] = new $child_class( $element, $child_args );
 		}
+	}
+
+	private function _init( $data ) {
+		$this->_data = array_merge( $this->get_default_data(), $data );
+		$this->_id = $data['id'];
+		$this->_settings = $this->_get_parsed_settings();
 	}
 }

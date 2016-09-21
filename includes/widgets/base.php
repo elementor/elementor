@@ -13,7 +13,7 @@ abstract class Widget_Base extends Element_Base {
 		return 'widget';
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'apps';
 	}
 
@@ -21,7 +21,7 @@ abstract class Widget_Base extends Element_Base {
 		return static::get_title();
 	}
 
-	public final static function print_template() {
+	public final function print_template() {
 		ob_start();
 
 		static::_content_template();
@@ -41,7 +41,7 @@ abstract class Widget_Base extends Element_Base {
 		<?php
 	}
 
-	protected static function _render_settings() {
+	protected function _render_settings() {
 		?>
 		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( self::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( self::get_name() ); ?>-settings">
 			<ul class="elementor-editor-element-settings-list">
@@ -312,7 +312,7 @@ abstract class Widget_Base extends Element_Base {
 			'elementor-widget',
 			'elementor-element',
 			'elementor-element-' . $this->get_id(),
-			'elementor-widget-' . static::get_name(),
+			'elementor-widget-' . $this->get_name(),
 		] );
 
 		$settings = $this->get_settings();

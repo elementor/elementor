@@ -126,7 +126,7 @@ class Widgets_Manager {
 			/** @var Widget_Base $class */
 			$class = $widget_data['class'];
 
-			$config[ $class::get_name() ] = $class::get_config();
+			$config[ $widget->get_name() ] = $widget->get_config();
 		}
 
 		return $config;

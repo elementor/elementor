@@ -93,7 +93,7 @@ class DB {
 							[
 								'id' => Utils::generate_random_string(),
 								'elType' => $text_editor_class::get_type(),
-								'widgetType' => $text_editor_class::get_name(),
+								'widgetType' => $text_editor_widget_type->get_name(),
 								'settings' => [
 									'editor' => $post->post_content,
 								],

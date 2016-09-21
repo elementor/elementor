@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Element_Column extends Element_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'column';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Column', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'columns';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_style',
 			[
 				'label' => __( 'Background & Border', 'elementor' ),
@@ -27,7 +27,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
@@ -37,7 +37,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
@@ -47,7 +47,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -61,7 +61,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
@@ -72,7 +72,7 @@ class Element_Column extends Element_Base {
 		);
 
 		// Section Typography
-		self::add_control(
+		$this->add_control(
 			'section_typo',
 			[
 				'label' => __( 'Typography', 'elementor' ),
@@ -81,7 +81,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color_text',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -95,7 +95,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_color',
 			[
 				'label' => __( 'Heading Color', 'elementor' ),
@@ -109,7 +109,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color_link',
 			[
 				'label' => __( 'Link Color', 'elementor' ),
@@ -123,7 +123,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color_link_hover',
 			[
 				'label' => __( 'Link Hover Color', 'elementor' ),
@@ -137,7 +137,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_align',
 			[
 				'label' => __( 'Text Align', 'elementor' ),
@@ -165,7 +165,7 @@ class Element_Column extends Element_Base {
 		);
 
 		// Section Advanced
-		self::add_control(
+		$this->add_control(
 			'section_advanced',
 			[
 				'label' => __( 'Advanced', 'elementor' ),
@@ -174,7 +174,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
@@ -188,7 +188,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
@@ -202,7 +202,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
@@ -215,7 +215,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'animation_duration',
 			[
 				'label' => __( 'Animation Duration', 'elementor' ),
@@ -235,7 +235,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
@@ -250,7 +250,7 @@ class Element_Column extends Element_Base {
 		);
 
 		// Section Responsive
-		self::add_control(
+		$this->add_control(
 			'section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),
@@ -275,7 +275,7 @@ class Element_Column extends Element_Base {
 		];
 
 		foreach ( $responsive_points as $point_name => $point_data ) {
-			self::add_control(
+			$this->add_control(
 				$point_name,
 				[
 					'label' => $point_data['title'],
@@ -292,7 +292,7 @@ class Element_Column extends Element_Base {
 				]
 			);
 
-			self::add_control(
+			$this->add_control(
 				$point_name . '_width',
 				[
 					'label' => __( 'Column Width', 'elementor' ),
@@ -330,7 +330,7 @@ class Element_Column extends Element_Base {
 		}
 	}
 
-	protected static function _render_settings() {
+	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
 			<div class="column-title"></div>
@@ -402,7 +402,7 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-column-wrap">
 			<div class="elementor-widget-wrap"></div>

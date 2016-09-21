@@ -42,9 +42,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			if ( ! empty( $control_args['responsive'] ) ) {
 				unset( $control_args['responsive'] );
 
-				$element_class::add_responsive_control( $id, $control_args );
+				$element->add_responsive_control( $id, $control_args );
 			} else {
-				$element_class::add_control( $id , $control_args );
+				$element->add_control( $id , $control_args );
 			}
 		}
 	}

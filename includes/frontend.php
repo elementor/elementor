@@ -231,13 +231,13 @@ class Frontend {
 
 		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
 
-		if ( 'column' === $element::get_name() ) {
+		if ( 'column' === $element->get_name() ) {
 			if ( ! empty( $element_settings['_inline_size'] ) ) {
 				$this->_column_widths[] = $element_unique_class . '{width:' . $element_settings['_inline_size'] . '%;}';
 			}
 		}
 
-		foreach ( $element::get_style_controls() as $control ) {
+		foreach ( $element->get_style_controls() as $control ) {
 			if ( ! isset( $element_settings[ $control['name'] ] ) )
 				continue;
 
@@ -299,7 +299,7 @@ class Frontend {
 				if ( empty( $scheme_value ) )
 					continue;
 
-				$element_unique_class = 'elementor-widget-' . $widget_class::get_name();
+				$element_unique_class = 'elementor-widget-' . $widget->get_name();
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 				if ( Controls_Manager::FONT === $control_obj->get_type() ) {

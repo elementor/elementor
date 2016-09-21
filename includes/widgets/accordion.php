@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Accordion extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'accordion';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Accordion', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'accordion';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_title',
 			[
 				'label' => __( 'Accordion', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Accordion Items', 'elementor' ),
@@ -62,7 +62,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -72,7 +72,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_title_style',
 			[
 				'label' => __( 'Accordion', 'elementor' ),
@@ -81,7 +81,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_align',
 			[
 				'label' => __( 'Icon Alignment', 'elementor' ),
@@ -96,7 +96,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
@@ -120,7 +120,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
@@ -135,7 +135,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
@@ -153,7 +153,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_background',
 			[
 				'label' => __( 'Title Background', 'elementor' ),
@@ -166,7 +166,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'tab_active_color',
 			[
 				'label' => __( 'Active Color', 'elementor' ),
@@ -183,7 +183,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'label' => __( 'Title Typography', 'elementor' ),
@@ -195,7 +195,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'content_background_color',
 			[
 				'label' => __( 'Content Background', 'elementor' ),
@@ -209,7 +209,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'content_color',
 			[
 				'label' => __( 'Content Color', 'elementor' ),
@@ -226,7 +226,7 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
@@ -261,7 +261,7 @@ class Widget_Accordion extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
 			<#

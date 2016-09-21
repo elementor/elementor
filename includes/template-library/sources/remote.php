@@ -81,10 +81,7 @@ class Source_Remote extends Source_Base {
 			if ( ! $element_data )
 				return $element;
 
-			/** @var Element_Base $element_class */
-			$element_class = $element_data['class'];
-
-			foreach ( $element_class::get_controls() as $control ) {
+			foreach ( $element_type->get_controls() as $control ) {
 				if ( Controls_Manager::MEDIA === $control['type'] ) {
 					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
 						continue;

@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Alert extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'alert';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Alert', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'alert';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_alert',
 			[
 				'label' => __( 'Alert', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'alert_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
@@ -42,7 +42,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'alert_title',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
@@ -54,7 +54,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'alert_description',
 			[
 				'label' => __( 'Content', 'elementor' ),
@@ -67,7 +67,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'show_dismiss',
 			[
 				'label' => __( 'Dismiss Button', 'elementor' ),
@@ -81,7 +81,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -91,7 +91,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_type',
 			[
 				'label' => __( 'Alert Type', 'elementor' ),
@@ -100,7 +100,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'background',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
@@ -113,7 +113,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
@@ -126,7 +126,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_left-width',
 			[
 				'label' => __( 'Left Border Width', 'elementor' ),
@@ -145,7 +145,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -154,7 +154,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -167,7 +167,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'alert_title',
@@ -178,7 +178,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
@@ -187,7 +187,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'description_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -200,7 +200,7 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'alert_description',
@@ -238,7 +238,7 @@ class Widget_Alert extends Widget_Base {
 		echo $html;
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		var html = '<div class="elementor-alert elementor-alert-' + settings.alert_type + '" role="alert">';
