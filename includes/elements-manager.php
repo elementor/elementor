@@ -9,20 +9,10 @@ class Elements_Manager {
 	 */
 	private $_element_types = null;
 
-	private function _init_elements() {
-		$this->_elements = [];
+	public function __construct() {
+		$this->require_files();
 
-		$this->register_element( __NAMESPACE__ . '\Element_Column' );
-		$this->register_element( __NAMESPACE__ . '\Element_Section' );
-
-		do_action( 'elementor/elements/elements_registered' );
-	}
-
-	private function require_files() {
-		require_once ELEMENTOR_PATH . 'includes/elements/base.php';
-
-		require ELEMENTOR_PATH . 'includes/elements/column.php';
-		require ELEMENTOR_PATH . 'includes/elements/section.php';
+		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 
 	public function get_categories() {
@@ -74,22 +64,16 @@ class Elements_Manager {
 	public function get_element_types_config() {
 		$config = [];
 
-			/** @var Element_Base $class */
-			$class = $element_data['class'];
-
-			$config[ $class::get_name() ] = $class::get_config();
 		foreach ( $this->get_element_types() as $element ) {
+			$config[ $element->get_name() ] = $element->get_config();
 		}
 
 		return $config;
 	}
 
 	public function render_elements_content() {
-		foreach ( $this->get_elements() as $element_data ) {
-			/** @var Element_Base $class */
-			$class = $element_data['class'];
-
-			$class::print_template();
+		foreach ( $this->get_element_types() as $element_type ) {
+			$element_type->print_template();
 		}
 	}
 
@@ -118,9 +102,22 @@ class Elements_Manager {
 		wp_send_json_success();
 	}
 
-	public function __construct() {
-		$this->require_files();
+	private function _init_elements() {
+		$this->_element_types = [];
 
-		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
+		foreach ( [ 'section', 'column' ] as $element_name ) {
+			$class_name = __NAMESPACE__ . '\Element_' . $element_name;
+
+			$this->register_element_type( new $class_name() );
+		}
+
+		do_action( 'elementor/elements/elements_registered' );
+	}
+
+	private function require_files() {
+		require_once ELEMENTOR_PATH . 'includes/elements/base.php';
+
+		require ELEMENTOR_PATH . 'includes/elements/column.php';
+		require ELEMENTOR_PATH . 'includes/elements/section.php';
 	}
 }
