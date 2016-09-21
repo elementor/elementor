@@ -1379,7 +1379,6 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
-
 		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
