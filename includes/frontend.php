@@ -157,7 +157,7 @@ class Frontend {
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
 				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
-				'isRTL' => is_rtl(),
+				'is_rtl' => is_rtl(),
 			]
 		);
 	}

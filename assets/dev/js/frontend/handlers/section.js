@@ -111,7 +111,7 @@ var StretchedSection = function( $, $section ) {
 			}
 		}
 
-		if ( ! settings.isRTL ) {
+		if ( ! settings.is_rtl ) {
 			correctOffset = -correctOffset;
 		}
 
@@ -123,7 +123,7 @@ var StretchedSection = function( $, $section ) {
 
 	var initSettings = function() {
 		settings.sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer;
-		settings.isRTL = elementorFrontend.config.isRTL;
+		settings.is_rtl = elementorFrontend.config.is_rtl;
 	};
 
 	var initElements = function() {
