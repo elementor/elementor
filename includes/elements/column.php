@@ -457,11 +457,11 @@ class Element_Column extends Element_Base {
 
 	protected function _get_child_class( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
-			return Element_Section::get_class_name();
+			return Plugin::instance()->elements_manager->get_element_types( 'section' )->get_class_name();
 		}
 
-		$widget_data = Plugin::instance()->widgets_manager->get_widgets( $element_data['widgetType'] );
+		return Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] )->get_class_name();
+	}
 
-		return $widget_data['class'];
 	}
 }

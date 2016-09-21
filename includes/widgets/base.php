@@ -163,6 +163,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function _get_child_class( array $element_data ) {
-		return Element_Section::get_class_name();
+		return Plugin::instance()->elements_manager->get_element_types( 'section' )->get_class_name();
 	}
 }

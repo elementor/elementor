@@ -793,6 +793,6 @@ class Element_Section extends Element_Base {
 	}
 
 	protected function _get_child_class( array $element_data ) {
-	    return Element_Column::get_class_name();
+		return Plugin::instance()->elements_manager->get_element_types( 'column' )->get_class_name();
 	}
 }
