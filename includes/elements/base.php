@@ -73,6 +73,10 @@ abstract class Element_Base {
 		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
 
+	public function remove_control( $id ) {
+		return Plugin::instance()->controls_manager->remove_control_from_stack( $this, $id );
+	}
+
 	public final function add_group_control( $group_name, $args = [] ) {
 		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ $this, $args ] );
 	}
