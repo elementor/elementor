@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.8.1
+Stable tag: 0.9.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -157,16 +157,30 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.9.1 - 20.09.2016 =
+* Fix! - Changed again "fit to screen" to height for "content position" support
+
+= 0.9.0 - 20.09.2016 =
+* New! - Added stretch section control for all parent sections
+* New! - Added content width option to set the default width of the content area
+* Tweak! - Changed Fit to Screen to `min-height` for better behavior on mobile and content overflow scenarios.
+* Tweak! - Added Switcher control for editor panel ([#143](https://github.com/pojome/elementor/issues/143))
+* Tweak! - Improved Integration with 3rd party plugins and themes
+* Fix! - Hidden templates library items from nav menu
+* Fix! - Added color default for Button and Icon when schemes color is disabled
+* Fix! - Added default size for the Heading widget - ([#533](https://github.com/pojome/elementor/issues/533))
+* Fix! - Button border color hover control - only shown when border is set
+
 = 0.8.1 - 11.09.2016 =
-* Fix! - Correcting title link color in Image Box widget ([#531](https://github.com/pojome/elementor/issues/531))
-* Fix! - Resolved responsive bug in Image Gallery widget
-* Fix! - Resolved bug in editor for safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
 * Tweak! - Changed prevent scroll default to `Yes` for Maps widget
 * Tweak! - Removed `asp_tags` requirements
 * Tweak! - Added alignment responsive support for Image Box and Icon Box widgets
 * Tweak! - Added mobile editing for Spacer widget
 * Tweak! - Added title spacing for Image Box and Icon Box
 * Tweak! - Removed quick link to Edit with Elementor for non-Elementor pages ([#539](https://github.com/pojome/elementor/issues/539))
+* Fix! - Correcting title link color in Image Box widget ([#531](https://github.com/pojome/elementor/issues/531))
+* Fix! - Resolved responsive bug in Image Gallery widget
+* Fix! - Resolved bug in editor for safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
 
 = 0.8.0 - 07.09.2016 =
 * New! - Added columns ordering on mobile normal / reverse

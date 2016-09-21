@@ -5,6 +5,7 @@
 // Section
 .elementor-section {
 	position: relative;
+
 	// Container
 	.elementor-container {
 		display: flex;
@@ -18,6 +19,12 @@
 		& > .elementor-container {
 			max-width: 1140px;
 		}
+	}
+
+	// Stretched section settings
+	&.elementor-section-stretched {
+		position: relative;
+		width: 100%;
 	}
 
 	// In section min-height / fit to screen mode
@@ -72,7 +79,7 @@
 
 	@media (min-width: $screen-md-min) {
 
-		// Section Full Height
+		// Section Full Height (note: don't be smart - min-height does not work well with the content position)
 		&.elementor-section-height-full {
 			height: 100vh;
 

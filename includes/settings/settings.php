@@ -68,23 +68,6 @@ class Settings {
 			self::PAGE_ID
 		);
 
-		$field_id = 'elementor_default_generic_fonts';
-		add_settings_field(
-			$field_id,
-			__( 'Default Generic Fonts', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'std' => 'Sans-serif',
-				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
 		$field_id = 'elementor_disable_color_schemes';
 		add_settings_field(
 			$field_id,
@@ -114,6 +97,61 @@ class Settings {
 				'type' => 'checkbox',
 				'value' => 'yes',
 				'sub_desc' => __( 'Default Fonts let you change the fonts that appear on Elementor from one place. If you prefer to inherit the fonts from your theme, you can disable this feature here.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_default_generic_fonts';
+		add_settings_field(
+			$field_id,
+			__( 'Default Generic Fonts', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'std' => 'Sans-serif',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_container_width';
+		add_settings_field(
+			$field_id,
+			__( 'Content Width', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '1140',
+				'sub_desc' => 'px',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_stretched_section_container';
+		add_settings_field(
+			$field_id,
+			__( 'Stretched Section Fit To', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => 'body',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 			]
 		);
 

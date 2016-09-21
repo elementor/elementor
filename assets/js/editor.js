@@ -1428,7 +1428,9 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
-		this.introduction.startOnLoadIntroduction();
+		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
+
+		this.trigger( 'preview:loaded' );
 	},
 
 	onEditModeSwitched: function() {
@@ -4874,12 +4876,20 @@ BaseElementView = Marionette.CompositeView.extend( {
 			elementor.setFlagEditorChange( true );
 		}
 
+		var forceRender;
+
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				if ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && settings.getControl( settingKey ) ) {
+				var control = settings.getControl( settingKey );
+
+				if ( ! control ) {
+					return;
+				}
+
+				if ( control.force_render || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
 					isContentChanged = true;
 				}
 			} );
@@ -4891,14 +4901,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		// Re-render the template
-		switch ( this.getTemplateType() ) {
-			case 'js' :
-				this.model.setHtmlCache();
-				this.render();
-				break;
+		var templateType = this.getTemplateType();
 
-			default :
-				this.model.renderRemoteServer();
+		if ( 'js' === templateType ) {
+			this.model.setHtmlCache();
+			this.render();
+		} else {
+			this.model.renderRemoteServer();
 		}
 	},
 
@@ -5447,9 +5456,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			inputValue = $input.val(),
 			inputType = $input.attr( 'type' );
 
-		if ( 'checkbox' === inputType ) {
-			return $input.prop( 'checked' );
-		} else if ( 'radio' === inputType ) {
+		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
 			return $input.prop( 'checked' ) ? inputValue : '';
 		}
 
@@ -5469,6 +5476,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( 'select2' === inputType ) {
+			// don't touch
 		} else {
 			$input.val( value );
 		}
@@ -7267,7 +7276,9 @@ SectionView = BaseElementView.extend( {
 		this.redefineLayout();
 	},
 
-	onClickSave: function() {
+	onClickSave: function( event ) {
+		event.preventDefault();
+
 		var sectionID = this.model.get( 'id' );
 
 		elementor.templates.startModal( function() {

@@ -15,6 +15,8 @@ class Controls_Manager {
 	const TEXTAREA = 'textarea';
 	const SELECT = 'select';
 	const CHECKBOX = 'checkbox';
+	const SWITCHER = 'switcher';
+	const CHECKBOX_LIST = 'checkbox_list';
 
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
@@ -88,6 +90,8 @@ class Controls_Manager {
 			self::TEXTAREA,
 			self::SELECT,
 			self::CHECKBOX,
+			self::SWITCHER,
+			self::CHECKBOX_LIST,
 
 			self::HIDDEN,
 			self::HEADING,
@@ -265,7 +269,7 @@ class Controls_Manager {
 		$stack_id = $element->get_name();
 
 		if ( isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
 			return false;
 		}
 

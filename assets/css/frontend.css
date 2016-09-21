@@ -131,6 +131,9 @@
     position: relative; }
   .elementor-section.elementor-section-boxed > .elementor-container {
     max-width: 1140px; }
+  .elementor-section.elementor-section-stretched {
+    position: relative;
+    width: 100%; }
   .elementor-section.elementor-section-items-top > .elementor-container {
     -webkit-box-align: start;
     -webkit-align-items: flex-start;

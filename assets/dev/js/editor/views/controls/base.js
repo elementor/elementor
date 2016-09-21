@@ -126,9 +126,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			inputValue = $input.val(),
 			inputType = $input.attr( 'type' );
 
-		if ( 'checkbox' === inputType ) {
-			return $input.prop( 'checked' );
-		} else if ( 'radio' === inputType ) {
+		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
 			return $input.prop( 'checked' ) ? inputValue : '';
 		}
 
@@ -148,6 +146,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( 'select2' === inputType ) {
+			// don't touch
 		} else {
 			$input.val( value );
 		}

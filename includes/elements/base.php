@@ -21,6 +21,13 @@ abstract class Element_Base {
 
 	private $_render_attributes = [];
 
+	/**
+	 * Holds the current section while render a set of controls sections
+	 *
+	 * @var null|array
+	 */
+	private $_current_section = null;
+
 	public static function get_type() {
 		return 'element';
 	}
@@ -37,7 +44,7 @@ abstract class Element_Base {
 		}
 	}
 
-	public final function get_controls() {
+	public final function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
@@ -46,10 +53,23 @@ abstract class Element_Base {
 			return $this->get_controls();
 		}
 
+		if ( $control_id ) {
+			return isset( $stack['controls'][ $control_id ] ) ? $stack['controls'][ $control_id ] : null;
+		}
+
 		return $stack['controls'];
 	}
 
 	public final function add_control( $id, $args ) {
+		if ( ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+
+			if ( null !== $this->_current_section ) {
+				$args = array_merge( $args, $this->_current_section );
+			} elseif ( empty( $args['section'] ) ) {
+				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
+			}
+		}
+
 		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
 
@@ -66,19 +86,19 @@ abstract class Element_Base {
 	public final function get_scheme_controls() {
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
-		return array_filter( self::get_controls(), function( $control ) use ( $enabled_schemes ) {
+		return array_filter( $this->get_controls(), function( $control ) use ( $enabled_schemes ) {
 			return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
 		} );
 	}
 
 	public final function get_style_controls() {
-		return array_filter( self::get_controls(), function( $control ) {
+		return array_filter( $this->get_controls(), function( $control ) {
 			return ( ! empty( $control['selectors'] ) );
 		} );
 	}
 
 	public final function get_class_controls() {
-		return array_filter( self::get_controls(), function( $control ) {
+		return array_filter( $this->get_controls(), function( $control ) {
 			return ( isset( $control['prefix_class'] ) );
 		} );
 	}
@@ -173,16 +193,16 @@ abstract class Element_Base {
 	public function print_template() {
 		ob_start();
 
-		static::_content_template();
+		$this->_content_template();
 
-		$content_template = ob_get_clean();
+		$content_template = apply_filters( 'elementor/elements/print_template', ob_get_clean(),  $this );
 
 		if ( empty( $content_template ) ) {
 			return;
 		}
 		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( static::get_name() ); ?>-content">
-			<?php static::_render_settings(); ?>
+		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
+			<?php $this->_render_settings(); ?>
 			<?php echo $content_template; ?>
 		</script>
 		<?php
@@ -277,13 +297,15 @@ abstract class Element_Base {
 	}
 
 	public function print_element() {
+		do_action( 'elementor/frontend/' . $this->get_name() . '/before_render', $this );
+
 		$this->before_render();
 
-		foreach ( $this->get_children() as $child ) {
-			$child->print_element();
-		}
+		$this->_print_content();
 
 		$this->after_render();
+
+		do_action( 'elementor/frontend/' . $this->get_name() . '/after_render', $this );
 	}
 
 	public function get_raw_data( $with_html_content = false ) {
@@ -304,6 +326,34 @@ abstract class Element_Base {
 		];
 	}
 
+	public function start_controls_section( $id, $args ) {
+		do_action( 'elementor/element/before_section_start', $this, $id, $args );
+
+		$args['type'] = Controls_Manager::SECTION;
+
+		$this->add_control( $id, $args );
+
+		if ( null !== $this->_current_section ) {
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) );
+		}
+
+		$this->_current_section = [
+			'section' => $id,
+			'tab' => $this->get_controls( $id )['tab'],
+		];
+
+		do_action( 'elementor/element/after_section_start', $this, $id, $args );
+	}
+
+	public function end_controls_section() {
+		// Save the current section for the action
+		$current_section = $this->_current_section;
+
+		$this->_current_section = null;
+
+		do_action( 'elementor/element/after_section_end', $this, $current_section['section'], [ 'tab' => $current_section['tab'] ] );
+	}
+
 	protected function _register_controls() {}
 
 	protected function _content_template() {}
@@ -311,7 +361,7 @@ abstract class Element_Base {
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
-			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( static::get_name() ); ?>-settings">
+			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
 				<ul class="elementor-editor-element-settings-list">
 					<li class="elementor-editor-element-setting elementor-editor-element-add">
 						<a href="#" title="<?php _e( 'Add Widget', 'elementor' ); ?>">
@@ -375,6 +425,12 @@ abstract class Element_Base {
 
 	protected function _get_child_args( array $element_data ) {
 		return [];
+	}
+
+	protected function _print_content() {
+		foreach ( $this->get_children() as $child ) {
+			$child->print_element();
+		}
 	}
 
 	private function _init_controls() {

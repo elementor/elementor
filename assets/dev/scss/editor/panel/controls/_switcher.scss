@@ -1,0 +1,101 @@
+.elementor-control-type-switcher {
+
+	.elementor-control-field {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.elementor-control-title {
+			flex-grow: 1;
+		}
+
+	}
+
+	.elementor-switch {
+		position: relative;
+		display: inline-block;
+		vertical-align: top;
+		width: 49px;
+		height: 20px;
+		background-color: white;
+		border-radius: 18px;
+		cursor: pointer;
+	}
+
+	.elementor-switch-input {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0;
+	}
+
+	.elementor-switch-label {
+		position: relative;
+		display: block;
+		height: inherit;
+		font-size: 7px;
+		text-transform: uppercase;
+		background: #eceeef;
+		border-radius: inherit;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
+		transition: 0.15s ease-out;
+		transition-property: opacity, background;
+	}
+
+	.elementor-switch-label {
+
+		&:before,
+		&:after {
+			position: absolute;
+			top: 0;
+			width: 50%;
+			text-align: center;
+			line-height: 20px;
+			transition: inherit;
+		}
+
+		&:before {
+			content: attr(data-off);
+			right: 3px;
+			color: $editor-light;
+			text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+		}
+
+		&:after {
+			content: attr(data-on);
+			left: 3px;
+			color: white;
+			text-shadow: 0 1px rgba(0, 0, 0, 0.2);
+			opacity: 0;
+		}
+	}
+
+	.elementor-switch-input:checked ~ .elementor-switch-label {
+		background: $editor-info;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
+
+		&:before {
+			opacity: 0;
+		}
+
+		&:after {
+			opacity: 1;
+		}
+	}
+
+	.elementor-switch-handle {
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		width: 18px;
+		height: 18px;
+		background: white;
+		border-radius: 10px;
+		transition: left 0.15s ease-out;
+	}
+
+	.elementor-switch-input:checked ~ .elementor-switch-handle {
+		left: 30px;
+		box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
+	}
+}
