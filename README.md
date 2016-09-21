@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.9.0  
+**Stable tag:** 0.9.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
