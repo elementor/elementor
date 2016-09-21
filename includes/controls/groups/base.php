@@ -19,11 +19,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	/**
-	 * @param Element_Base $element_class
-	 * @param $user_args
-	 */
-	final public function add_controls( $element_class, $user_args ) {
+	final public function add_controls( Element_Base $element, $user_args ) {
 		$this->_init_args( $user_args );
 
 		// Filter witch controls to display
