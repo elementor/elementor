@@ -286,6 +286,18 @@ class Controls_Manager {
 		return true;
 	}
 
+	public function remove_control_from_stack( Element_Base $element, $control_id ) {
+		$stack_id = $element->get_name();
+
+		if ( empty( $this->_controls_stack[ $stack_id ][ $control_id ] ) ) {
+			return new \WP_Error( 'Cannot remove not-exists control.' );
+		}
+
+		unset( $this->_controls_stack[ $stack_id ][ $control_id ] );
+
+		return true;
+	}
+
 	public function get_element_stack( Element_Base $element ) {
 		$stack_id = $element->get_name();
 
