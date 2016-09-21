@@ -4,8 +4,10 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widgets_Manager {
-
-	private $_widgets = null;
+	/**
+	 * @var Widget_Base[]
+	 */
+	private $_widget_types = null;
 
 	private function _init_widgets() {
 
