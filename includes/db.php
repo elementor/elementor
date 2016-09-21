@@ -149,15 +149,14 @@ class DB {
 		$data = $this->get_plain_editor( $post_id );
 		if ( ! empty( $data ) ) {
 			foreach ( $data as $section ) {
-				foreach ( $section['elements'] as $column ) {
-					foreach ( $column['elements'] as $widget_data ) {
-						if ( empty( $widget_data['widgetType'] ) )
+				foreach ( $section['elements'] as $column_data ) {
+					$column = new Element_Column( $column_data );
+
+					/** @var Widget_Base $widget */
+					foreach ( $column->get_children() as $widget ) {
+						if ( 'element' === $widget::get_type() ) {
 							continue;
-
-						$widget_props = Plugin::instance()->widgets_manager->get_widgets( $widget_data['widgetType'] );
-
-						/** @var Widget_Base $widget */
-						$widget = new $widget_props['class']( $widget_data );
+						}
 
 						$widget->render_plain_content();
 					}
