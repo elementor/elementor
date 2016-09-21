@@ -78,7 +78,7 @@ class Source_Remote extends Source_Base {
 				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
 			}
 
-			if ( ! $element_data )
+			if ( ! $element_type )
 				return $element;
 
 			foreach ( $element_type->get_controls() as $control ) {

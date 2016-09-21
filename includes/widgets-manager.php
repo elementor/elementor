@@ -39,7 +39,7 @@ class Widgets_Manager {
 			'sidebar',
 		];
 
-		$this->_widgets = [];
+		$this->_widget_types = [];
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
@@ -97,34 +97,34 @@ class Widgets_Manager {
 		return true;
 	}
 
-	public function unregister_widget( $name ) {
-		if ( ! isset( $this->_widgets[ $name ] ) ) {
+	public function unregister_widget_type( $name ) {
+		if ( ! isset( $this->_widget_types[ $name ] ) ) {
 			return false;
 		}
 
-		unset( $this->_widgets[ $name ] );
+		unset( $this->_widget_types[ $name ] );
 
 		return true;
 	}
 
-	public function get_widgets( $widget_name = null ) {
-		if ( is_null( $this->_widgets ) ) {
+	public function get_widget_types( $widget_name = null ) {
+		if ( is_null( $this->_widget_types ) ) {
 			$this->_init_widgets();
 		}
 
 		if ( $widget_name ) {
-			return isset( $this->_widgets[ $widget_name ] ) ? $this->_widgets[ $widget_name ] : null;
+			return isset( $this->_widget_types[ $widget_name ] ) ? $this->_widget_types[ $widget_name ] : null;
 		}
 
-		return $this->_widgets;
+		return $this->_widget_types;
 	}
 
-	public function get_widgets_config() {
+	public function get_widget_types_config() {
 		$config = [];
 
-		foreach ( $this->get_widgets() as $widget_data ) {
 			/** @var Widget_Base $class */
 			$class = $widget_data['class'];
+		foreach ( $this->get_widget_types() as $widget ) {
 
 			$config[ $widget->get_name() ] = $widget->get_config();
 		}
@@ -153,7 +153,8 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
-		$widget_data = $this->get_widgets( $data['widgetType'] );
+		/** @var Widget_Base|Widget_WordPress $widget_data */
+		$widget_data = $this->get_widget_types( $data['widgetType'] );
 
 		/** @var Widget_Base $widget */
 		$widget = new $widget_data['class']( $data );
@@ -175,7 +176,8 @@ class Widgets_Manager {
 		}
 
 		$widget_type = $_POST['widget_type'];
-		$widget_obj = $this->get_widgets( $widget_type );
+
+		$widget_obj = $this->get_widget_types( $widget_type );
 
 		if ( ! $widget_obj instanceof Widget_WordPress ) {
 			wp_send_json_error();
@@ -187,11 +189,11 @@ class Widgets_Manager {
 	}
 
 	public function render_widgets_content() {
-		foreach ( $this->get_widgets() as $widget_data ) {
 			/** @var Widget_Base $class */
 			$class = $widget_data['class'];
 
 			$class::print_template();
+		foreach ( $this->get_widget_types() as $widget ) {
 		}
 	}
 

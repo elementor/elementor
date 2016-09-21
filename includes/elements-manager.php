@@ -4,8 +4,10 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Elements_Manager {
-
-	protected $_elements = null;
+	/**
+	 * @var Element_Base[]
+	 */
+	private $_element_types = null;
 
 	private function _init_elements() {
 		$this->_elements = [];
@@ -54,34 +56,36 @@ class Elements_Manager {
 		return true;
 	}
 
-	public function unregister_element( $id ) {
-		if ( ! isset( $this->_elements[ $id ] ) ) {
+	public function unregister_element_type( $name ) {
+		if ( ! isset( $this->_element_types[ $name ] ) ) {
 			return false;
 		}
-		unset( $this->_elements[ $id ] );
+
+		unset( $this->_element_types[ $name ] );
+
 		return true;
 	}
 
-	public function get_elements( $element_name = null ) {
-		if ( is_null( $this->_elements ) ) {
+	public function get_element_types( $element_name = null ) {
+		if ( is_null( $this->_element_types ) ) {
 			$this->_init_elements();
 		}
 
 		if ( $element_name ) {
-			return isset( $this->_elements[ $element_name ] ) ? $this->_elements[ $element_name ] : null;
+			return isset( $this->_element_types[ $element_name ] ) ? $this->_element_types[ $element_name ] : null;
 		}
 
-		return $this->_elements;
+		return $this->_element_types;
 	}
 
-	public function get_elements_config() {
+	public function get_element_types_config() {
 		$config = [];
 
-		foreach ( $this->get_elements() as $element_data ) {
 			/** @var Element_Base $class */
 			$class = $element_data['class'];
 
 			$config[ $class::get_name() ] = $class::get_config();
+		foreach ( $this->get_element_types() as $element ) {
 		}
 
 		return $config;

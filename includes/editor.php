@@ -272,8 +272,8 @@ class Editor {
 				'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
 				'elements_categories' => Plugin::instance()->elements_manager->get_categories(),
 				'controls' => Plugin::instance()->controls_manager->get_controls_data(),
-				'elements' => Plugin::instance()->elements_manager->get_elements_config(),
-				'widgets' => Plugin::instance()->widgets_manager->get_widgets_config(),
+				'elements' => Plugin::instance()->elements_manager->get_element_types_config(),
+				'widgets' => Plugin::instance()->widgets_manager->get_widget_types_config(),
 				'schemes' => [
 					'items' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
 					'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),

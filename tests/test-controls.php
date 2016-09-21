@@ -85,7 +85,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_checkCondition() {
-		$element_obj = Elementor\Plugin::instance()->widgets_manager->get_widgets( 'text-editor' );
+		$element_obj = Elementor\Plugin::instance()->widgets_manager->get_widget_types( 'text-editor' );
 
 		$this->assertTrue( $element_obj->is_control_visible( [], [] ) );
 		

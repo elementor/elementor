@@ -75,10 +75,7 @@ class DB {
 			return [];
 		}
 
-		$text_editor_widget = Plugin::instance()->widgets_manager->get_widget( 'text-editor' );
-
-		/** @var Widget_Text_Editor $text_editor_class */
-		$text_editor_class = $text_editor_widget['class'];
+		$text_editor_widget_type = Plugin::instance()->widgets_manager->get_widget_types( 'text-editor' );
 
 		// TODO: Better coding to start template for editor
 		return [
@@ -92,7 +89,7 @@ class DB {
 						'elements' => [
 							[
 								'id' => Utils::generate_random_string(),
-								'elType' => $text_editor_class::get_type(),
+								'elType' => $text_editor_widget_type::get_type(),
 								'widgetType' => $text_editor_widget_type->get_name(),
 								'settings' => [
 									'editor' => $post->post_content,
