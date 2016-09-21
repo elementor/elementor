@@ -242,11 +242,7 @@ class Controls_Manager {
 		}
 	}
 
-
-	/**
-	 * @param Element_Base $element_class
-	 */
-	public function open_stack( $element_class ) {
+	public function open_stack( Element_Base $element ) {
 		$stack_id = $element->get_name();
 
 		$this->_controls_stack[ $stack_id ] = [
@@ -255,16 +251,7 @@ class Controls_Manager {
 		];
 	}
 
-
-	/**
-	 * @param Element_Base $element_class
-	 *
-	 * @param string $control_id
-	 * @param array $control_data
-	 *
-	 * @return bool
-	 */
-	public function add_control_to_stack( $element_class, $control_id, $control_data ) {
+	public function add_control_to_stack( Element_Base $element, $control_id, $control_data ) {
 		$default_args = [
 			'default' => '',
 			'type' => self::TEXT,
@@ -295,12 +282,7 @@ class Controls_Manager {
 		return true;
 	}
 
-	/**
-	 * @param Element_Base $element_class
-	 *
-	 * @return null|array
-	 */
-	public function get_element_stack( $element_class ) {
+	public function get_element_stack( Element_Base $element ) {
 		$stack_id = $element->get_name();
 
 		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
