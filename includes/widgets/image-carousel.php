@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Carousel extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'image-carousel';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Image Carousel', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'slider-push';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_image_carousel',
 			[
 				'label' => __( 'Image Carousel', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'carousel',
 			[
 				'label' => __( 'Add Images', 'elementor' ),
@@ -36,7 +36,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
@@ -47,7 +47,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_to_show = range( 1, 10 );
 		$slides_to_show = array_combine( $slides_to_show, $slides_to_show );
 
-		self::add_control(
+		$this->add_control(
 			'slides_to_show',
 			[
 				'label' => __( 'Slides to Show', 'elementor' ),
@@ -58,7 +58,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'slides_to_scroll',
 			[
 				'label' => __( 'Slides to Scroll', 'elementor' ),
@@ -72,7 +72,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_stretch',
 			[
 				'label' => __( 'Image Stretch', 'elementor' ),
@@ -86,7 +86,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'navigation',
 			[
 				'label' => __( 'Navigation', 'elementor' ),
@@ -102,7 +102,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link_to',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -117,7 +117,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link',
 			[
 				'label' => 'Link to',
@@ -131,7 +131,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -141,7 +141,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_additional_options',
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
@@ -149,7 +149,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'pause_on_hover',
 			[
 				'label' => __( 'Pause on Hover', 'elementor' ),
@@ -163,7 +163,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -177,7 +177,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'autoplay_speed',
 			[
 				'label' => __( 'Autoplay Speed', 'elementor' ),
@@ -187,7 +187,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'infinite',
 			[
 				'label' => __( 'Infinite Loop', 'elementor' ),
@@ -201,7 +201,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'effect',
 			[
 				'label' => __( 'Effect', 'elementor' ),
@@ -218,7 +218,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'speed',
 			[
 				'label' => __( 'Animation Speed', 'elementor' ),
@@ -228,7 +228,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'direction',
 			[
 				'label' => __( 'Direction', 'elementor' ),
@@ -242,7 +242,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_navigation',
 			[
 				'label' => __( 'Navigation', 'elementor' ),
@@ -254,7 +254,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_style_arrows',
 			[
 				'label' => __( 'Arrows', 'elementor' ),
@@ -268,7 +268,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'arrows_position',
 			[
 				'label' => __( 'Arrows Position', 'elementor' ),
@@ -286,7 +286,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'arrows_size',
 			[
 				'label' => __( 'Arrows Size', 'elementor' ),
@@ -308,7 +308,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'arrows_color',
 			[
 				'label' => __( 'Arrows Color', 'elementor' ),
@@ -324,7 +324,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_style_dots',
 			[
 				'label' => __( 'Dots', 'elementor' ),
@@ -338,7 +338,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'dots_position',
 			[
 				'label' => __( 'Dots Position', 'elementor' ),
@@ -356,7 +356,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'dots_size',
 			[
 				'label' => __( 'Dots Size', 'elementor' ),
@@ -378,7 +378,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'dots_color',
 			[
 				'label' => __( 'Dots Color', 'elementor' ),
@@ -394,7 +394,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
@@ -403,7 +403,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_spacing',
 			[
 				'label' => __( 'Spacing', 'elementor' ),
@@ -421,7 +421,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_spacing_custom',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
@@ -448,7 +448,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
@@ -458,7 +458,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -548,7 +548,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	<?php
 	}
 
-	protected static function _content_template() {}
+	protected function _content_template() {}
 
 	private function get_link_url( $attachment, $instance ) {
 		if ( 'none' === $instance['link_to'] ) {

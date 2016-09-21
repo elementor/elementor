@@ -247,7 +247,7 @@ class Controls_Manager {
 	 * @param Element_Base $element_class
 	 */
 	public function open_stack( $element_class ) {
-		$stack_id = $element_class::get_name();
+		$stack_id = $element->get_name();
 
 		$this->_controls_stack[ $stack_id ] = [
 			'tabs' => [],
@@ -275,7 +275,7 @@ class Controls_Manager {
 
 		$control_data = array_merge( $default_args, $control_data );
 
-		$stack_id = $element_class::get_name();
+		$stack_id = $element->get_name();
 
 		if ( isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, __( 'Cannot redeclare control with same name.', 'elementor' ), '1.0.0' );
@@ -301,7 +301,7 @@ class Controls_Manager {
 	 * @return null|array
 	 */
 	public function get_element_stack( $element_class ) {
-		$stack_id = $element_class::get_name();
+		$stack_id = $element->get_name();
 
 		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
 			return null;
@@ -309,9 +309,9 @@ class Controls_Manager {
 
 		$stack = $this->_controls_stack[ $stack_id ];
 
-		if ( 'widget' === $element_class::get_type() && 'widget' !== $element_class::get_name() ) {
 			$stack['controls'] = array_merge( Widget_Base::get_controls(), $stack['controls'] );
 			$stack['tabs'] = array_merge( $stack['tabs'], Widget_Base::get_tabs_controls() );
+		if ( 'widget' === $element->get_type() && 'common' !== $element->get_name() ) {
 		}
 
 		return $stack;

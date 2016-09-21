@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Box extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'image-box';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Image Box', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'image-box';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_image',
 			[
 				'label' => __( 'Image Box', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
@@ -38,7 +38,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_text',
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
@@ -50,7 +50,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'description_text',
 			[
 				'label' => __( 'Content', 'elementor' ),
@@ -65,7 +65,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -76,7 +76,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'position',
 			[
 				'label' => __( 'Image Position', 'elementor' ),
@@ -102,7 +102,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_size',
 			[
 				'label' => __( 'Title HTML Tag', 'elementor' ),
@@ -123,7 +123,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -133,7 +133,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_image',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -142,7 +142,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_space',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
@@ -166,7 +166,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_size',
 			[
 				'label' => __( 'Image Size', 'elementor' ),
@@ -190,7 +190,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
@@ -213,7 +213,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Animation', 'elementor' ),
@@ -223,7 +223,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_content',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -232,7 +232,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'text_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -263,7 +263,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'content_vertical_alignment',
 			[
 				'label' => __( 'Vertical Alignment', 'elementor' ),
@@ -280,7 +280,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -291,7 +291,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'title_bottom_space',
 			[
 				'label' => __( 'Title Spacing', 'elementor' ),
@@ -310,7 +310,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_color',
 			[
 				'label' => __( 'Title Color', 'elementor' ),
@@ -328,7 +328,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
@@ -339,7 +339,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
@@ -350,7 +350,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'description_color',
 			[
 				'label' => __( 'Description Color', 'elementor' ),
@@ -368,7 +368,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
@@ -440,7 +440,7 @@ class Widget_Image_Box extends Widget_Base {
 		echo $html;
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		var html = '<div class="elementor-image-box-wrapper">';

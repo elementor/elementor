@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Text_Editor extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'text-editor';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Text Editor', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'align-left';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_editor',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'editor',
 			[
 				'label' => '',
@@ -36,7 +36,7 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
@@ -45,7 +45,7 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -76,7 +76,7 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-	    self::add_control(
+	    $this->add_control(
 	        'text_color',
 	        [
 	            'label' => __( 'Text Color', 'elementor' ),
@@ -94,7 +94,7 @@ class Widget_Text_Editor extends Widget_Base {
 	        ]
 	    );
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
@@ -119,7 +119,7 @@ class Widget_Text_Editor extends Widget_Base {
 		echo $this->get_settings( 'editor' );
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-text-editor">{{{ settings.editor }}}</div>
 		<?php

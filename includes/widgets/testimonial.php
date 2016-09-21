@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Testimonial extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'testimonial';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Testimonial', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'testimonial';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_testimonial',
 			[
 				'label' => __( 'Testimonial', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'testimonial_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
@@ -37,7 +37,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'testimonial_image',
 			[
 				'label' => __( 'Add Image', 'elementor' ),
@@ -49,7 +49,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'testimonial_name',
 			[
 				'label' => __( 'Name', 'elementor' ),
@@ -59,7 +59,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'testimonial_job',
 			[
 				'label' => __( 'Job', 'elementor' ),
@@ -69,7 +69,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'testimonial_image_position',
 			[
 				'label' => __( 'Image Position', 'elementor' ),
@@ -87,7 +87,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'testimonial_alignment',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -111,7 +111,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -122,7 +122,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		// Content
-		self::add_control(
+		$this->add_control(
 			'section_style_testimonial_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
@@ -131,7 +131,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'content_content_color',
 			[
 				'label' => __( 'Content Color', 'elementor' ),
@@ -149,7 +149,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
@@ -162,7 +162,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		// Image
-		self::add_control(
+		$this->add_control(
 			'section_style_testimonial_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
@@ -174,7 +174,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_size',
 			[
 				'label' => __( 'Image Size', 'elementor' ),
@@ -197,7 +197,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
@@ -210,7 +210,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -228,7 +228,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		// Name
-		self::add_control(
+		$this->add_control(
 			'section_style_testimonial_name',
 			[
 				'label' => __( 'Name', 'elementor' ),
@@ -237,7 +237,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'name_text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -255,7 +255,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'name_typography',
@@ -268,7 +268,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		// Job
-		self::add_control(
+		$this->add_control(
 			'section_style_testimonial_job',
 			[
 				'label' => __( 'Job', 'elementor' ),
@@ -277,7 +277,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'job_text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -295,7 +295,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'job_typography',
@@ -358,7 +358,7 @@ class Widget_Testimonial extends Widget_Base {
 	<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		var imageUrl = false, hasImage = '';

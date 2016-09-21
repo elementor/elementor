@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Video extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'video';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Video', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'youtube';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_video',
 			[
 				'label' => __( 'Video', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'video_type',
 			[
 				'label' => __( 'Video Type', 'elementor' ),
@@ -41,7 +41,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -56,7 +56,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'vimeo_link',
 			[
 				'label' => __( 'Vimeo Link', 'elementor' ),
@@ -71,7 +71,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hosted_link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -86,7 +86,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'aspect_ratio',
 			[
 				'label' => __( 'Aspect Ratio', 'elementor' ),
@@ -102,7 +102,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'heading_youtube',
 			[
 				'label' => __( 'Video Options', 'elementor' ),
@@ -113,7 +113,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		// YouTube
-		self::add_control(
+		$this->add_control(
 			'yt_autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -130,7 +130,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'yt_rel',
 			[
 				'label' => __( 'Suggested Videos', 'elementor' ),
@@ -147,7 +147,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'yt_controls',
 			[
 				'label' => __( 'Player Control', 'elementor' ),
@@ -164,7 +164,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'yt_showinfo',
 			[
 				'label' => __( 'Player Title & Actions', 'elementor' ),
@@ -182,7 +182,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		// Vimeo
-		self::add_control(
+		$this->add_control(
 			'vimeo_autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -199,7 +199,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'vimeo_loop',
 			[
 				'label' => __( 'Loop', 'elementor' ),
@@ -216,7 +216,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'vimeo_title',
 			[
 				'label' => __( 'Intro Title', 'elementor' ),
@@ -233,7 +233,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'vimeo_portrait',
 			[
 				'label' => __( 'Intro Portrait', 'elementor' ),
@@ -250,7 +250,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'vimeo_byline',
 			[
 				'label' => __( 'Intro Byline', 'elementor' ),
@@ -267,7 +267,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'vimeo_color',
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
@@ -281,7 +281,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		// Self Hosted
-		//self::add_control(
+		//$this->add_control(
 		//	'hosted_width',
 		//	[
 		//		'label' => __( 'Width', 'elementor' ),
@@ -294,7 +294,7 @@ class Widget_Video extends Widget_Base {
 		//	]
 		//);
 		//
-		//self::add_control(
+		//$this->add_control(
 		//	'hosted_height',
 		//	[
 		//		'label' => __( 'Height', 'elementor' ),
@@ -307,7 +307,7 @@ class Widget_Video extends Widget_Base {
 		//	]
 		//);
 		//
-		//self::add_control(
+		//$this->add_control(
 		//	'hosted_autoplay',
 		//	[
 		//		'label' => __( 'Autoplay', 'elementor' ),
@@ -324,7 +324,7 @@ class Widget_Video extends Widget_Base {
 		//	]
 		//);
 		//
-		//self::add_control(
+		//$this->add_control(
 		//	'hosted_loop',
 		//	[
 		//		'label' => __( 'Loop', 'elementor' ),
@@ -341,7 +341,7 @@ class Widget_Video extends Widget_Base {
 		//	]
 		//);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -351,7 +351,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_image_overlay',
 			[
 				'label' => __( 'Image Overlay', 'elementor' ),
@@ -359,7 +359,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'show_image_overlay',
 			[
 				'label' => __( 'Image Overlay', 'elementor' ),
@@ -373,7 +373,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_overlay',
 			[
 				'label' => __( 'Image', 'elementor' ),
@@ -388,7 +388,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'show_play_icon',
 			[
 				'label' => __( 'Play Icon', 'elementor' ),
@@ -516,5 +516,5 @@ class Widget_Video extends Widget_Base {
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}
 
-	protected static function _content_template() {}
+	protected function _content_template() {}
 }

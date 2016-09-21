@@ -5,24 +5,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Spacer extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'spacer';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Spacer', 'elementor' );
 	}
 
-	public static function get_categories() {
+	public function get_categories() {
 		return [ 'basic' ];
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'spacer';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_spacer',
 			[
 				'label' => __( 'Spacer', 'elementor' ),
@@ -30,7 +30,7 @@ class Widget_Spacer extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'space',
 			[
 				'label' => __( 'Space (PX)', 'elementor' ),
@@ -51,7 +51,7 @@ class Widget_Spacer extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -70,7 +70,7 @@ class Widget_Spacer extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>

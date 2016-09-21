@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Social_Icons extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'social-icons';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Social Icons', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'social-icons';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_social_icon',
 			[
 				'label' => __( 'Social Icons', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'social_icon_list',
 			[
 				'label' => __( 'Social Icons', 'elementor' ),
@@ -95,7 +95,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'shape',
 			[
 				'label' => __( 'Shape', 'elementor' ),
@@ -111,7 +111,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -138,7 +138,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -148,7 +148,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_social_style',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -157,7 +157,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_color',
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
@@ -172,7 +172,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
@@ -188,7 +188,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_secondary_color',
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
@@ -204,7 +204,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_size',
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
@@ -223,7 +223,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_padding',
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
@@ -246,7 +246,7 @@ class Widget_Social_Icons extends Widget_Base {
 
 		$icon_spacing = is_rtl() ? 'margin-left: {{SIZE}}{{UNIT}};' : 'margin-right: {{SIZE}}{{UNIT}};';
 
-		self::add_control(
+		$this->add_control(
 			'icon_spacing',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
@@ -265,7 +265,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
@@ -275,7 +275,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -305,7 +305,7 @@ class Widget_Social_Icons extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<# _.each( settings.social_icon_list, function( item ) {

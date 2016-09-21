@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Progress extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'progress';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Progress Bar', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'skill-bar';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_progress',
 			[
 				'label' => __( 'Progress Bar', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -38,7 +38,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'progress_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
@@ -55,7 +55,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'percent',
 			[
 				'label' => __( 'Percentage', 'elementor' ),
@@ -69,7 +69,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-	    self::add_control(
+	    $this->add_control(
 	        'display_percentage',
 	        [
 	            'label' => __( 'Display Percentage', 'elementor' ),
@@ -83,7 +83,7 @@ class Widget_Progress extends Widget_Base {
 	        ]
 	    );
 
-		self::add_control(
+		$this->add_control(
 			'inner_text',
 			[
 				'label' => __( 'Inner Text', 'elementor' ),
@@ -95,7 +95,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -105,7 +105,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_progress_style',
 			[
 				'label' => __( 'Progress Bar', 'elementor' ),
@@ -114,7 +114,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'bar_color',
 			[
 				'label' => __( 'Bar Color', 'elementor' ),
@@ -131,7 +131,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'bar_bg_color',
 			[
 				'label' => __( 'Bar Background Color', 'elementor' ),
@@ -144,7 +144,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'bar_inline_color',
 			[
 				'label' => __( 'Inner Text Color', 'elementor' ),
@@ -157,7 +157,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_title',
 			[
 				'label' => __( 'Title Style', 'elementor' ),
@@ -166,7 +166,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'title_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -183,7 +183,7 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
@@ -233,7 +233,7 @@ class Widget_Progress extends Widget_Base {
 		echo $html;
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		var html = '';

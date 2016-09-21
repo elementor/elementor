@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Html extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'html';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'HTML', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'coding';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_title',
 			[
 				'label' => __( 'HTML Code', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Html extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'html',
 			[
 				'label' => '',
@@ -43,7 +43,7 @@ class Widget_Html extends Widget_Base {
 		 echo $this->get_settings( 'html' );
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		{{{ settings.html }}}
 		<?php

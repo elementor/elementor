@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'image';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Image', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'insert-image';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image',
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
@@ -38,7 +38,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -65,7 +65,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -77,7 +77,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link_to',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -92,7 +92,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -106,7 +106,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -116,7 +116,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_image',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -125,7 +125,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'space',
 			[
 				'label' => __( 'Size (%)', 'elementor' ),
@@ -149,7 +149,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'opacity',
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
@@ -172,7 +172,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Hover Animation', 'elementor' ),
@@ -182,7 +182,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
@@ -193,7 +193,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -207,7 +207,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
@@ -217,7 +217,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_caption',
 			[
 				'type'  => Controls_Manager::SECTION,
@@ -226,7 +226,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'caption_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -258,7 +258,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -276,7 +276,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
@@ -327,7 +327,7 @@ class Widget_Image extends Widget_Base {
 		echo $image_html;
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<# if ( '' !== settings.image.url ) { #>
 			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">

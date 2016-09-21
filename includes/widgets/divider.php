@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Divider extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'divider';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Divider', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'divider';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_divider',
 			[
 				'label' => __( 'Divider', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'style',
 			[
 				'label' => __( 'Style', 'elementor' ),
@@ -45,7 +45,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'weight',
 			[
 				'label' => __( 'Weight', 'elementor' ),
@@ -66,7 +66,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'color',
 			[
 				'label' => __( 'Color', 'elementor' ),
@@ -83,7 +83,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'width',
 			[
 				'label' => __( 'Width', 'elementor' ),
@@ -99,7 +99,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -126,7 +126,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'gap',
 			[
 				'label' => __( 'Gap', 'elementor' ),
@@ -147,7 +147,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -166,7 +166,7 @@ class Widget_Divider extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator"></span>

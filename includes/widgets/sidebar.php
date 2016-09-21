@@ -5,19 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Sidebar extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'sidebar';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Sidebar', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'sidebar';
 	}
 
-	protected static function _register_controls() {
+	protected function _register_controls() {
 		global $wp_registered_sidebars;
 
 		$options = [];
@@ -35,7 +35,7 @@ class Widget_Sidebar extends Widget_Base {
 		$default_key = array_keys( $options );
 		$default_key = array_shift( $default_key );
 
-		self::add_control(
+		$this->add_control(
 			'section_sidebar',
 			[
 				'label' => __( 'Sidebar', 'elementor' ),
@@ -43,7 +43,7 @@ class Widget_Sidebar extends Widget_Base {
 			]
 		);
 
-		self::add_control( 'sidebar', [
+		$this->add_control( 'sidebar', [
 			'label' => __( 'Choose Sidebar', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => $default_key,
@@ -62,7 +62,7 @@ class Widget_Sidebar extends Widget_Base {
 		dynamic_sidebar( $sidebar );
 	}
 
-	protected static function _content_template() {}
+	protected function _content_template() {}
 
 	public function render_plain_content() {}
 }

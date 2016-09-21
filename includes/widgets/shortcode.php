@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Shortcode extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'shortcode';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Shortcode', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'shortcode';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_shortcode',
 			[
 				'label' => __( 'Shortcode', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Shortcode extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'shortcode',
 			[
 				'label' => __( 'Insert your shortcode here', 'elementor' ),
@@ -52,5 +52,5 @@ class Widget_Shortcode extends Widget_Base {
 		echo $this->get_settings( 'shortcode' );
 	}
 
-	protected static function _content_template() {}
+	protected function _content_template() {}
 }

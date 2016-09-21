@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image_Gallery extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'image-gallery';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Image Gallery', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'gallery-grid';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_gallery',
 			[
 				'label' => __( 'Image Gallery', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -36,7 +36,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'wp_gallery',
 			[
 				'label' => __( 'Add Images', 'elementor' ),
@@ -45,7 +45,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Image_size::get_type(),
 			[
 				'name' => 'thumbnail',
@@ -57,7 +57,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$gallery_columns = range( 1, 10 );
 		$gallery_columns = array_combine( $gallery_columns, $gallery_columns );
 
-		self::add_control(
+		$this->add_control(
 			'gallery_columns',
 			[
 				'label' => __( 'Columns', 'elementor' ),
@@ -68,7 +68,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'gallery_link',
 			[
 				'label' => __( 'Link to', 'elementor' ),
@@ -83,7 +83,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'gallery_rand',
 			[
 				'label' => __( 'Ordering', 'elementor' ),
@@ -97,7 +97,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_gallery_images',
 			[
 				'label' => __( 'Images', 'elementor' ),
@@ -106,7 +106,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_spacing',
 			[
 				'label' => __( 'Spacing', 'elementor' ),
@@ -125,7 +125,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$columns_margin = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
 		$columns_padding = is_rtl() ? '0 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}};' : '0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;';
 
-		self::add_control(
+		$this->add_control(
 			'image_spacing_custom',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
@@ -151,7 +151,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
@@ -162,7 +162,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -176,7 +176,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_caption',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -185,7 +185,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'gallery_display_caption',
 			[
 				'label' => __( 'Display', 'elementor' ),
@@ -203,7 +203,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -238,7 +238,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -255,7 +255,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
@@ -301,5 +301,5 @@ class Widget_Image_Gallery extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {}
+	protected function _content_template() {}
 }

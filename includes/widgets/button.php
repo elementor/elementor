@@ -5,15 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Button extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'button';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Button', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'button';
 	}
 
@@ -27,8 +27,8 @@ class Widget_Button extends Widget_Base {
 		];
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_button',
 			[
 				'label' => __( 'Button', 'elementor' ),
@@ -36,7 +36,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'button_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
@@ -53,7 +53,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text',
 			[
 				'label' => __( 'Text', 'elementor' ),
@@ -64,7 +64,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -77,7 +77,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -106,7 +106,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'size',
 			[
 				'label' => __( 'Size', 'elementor' ),
@@ -117,7 +117,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -128,7 +128,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_align',
 			[
 				'label' => __( 'Icon Position', 'elementor' ),
@@ -144,7 +144,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_indent',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
@@ -164,7 +164,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -174,7 +174,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style',
 			[
 				'label' => __( 'Button', 'elementor' ),
@@ -183,7 +183,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'button_text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -197,7 +197,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
@@ -209,7 +209,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'background_color',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
@@ -226,7 +226,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
@@ -239,7 +239,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -253,7 +253,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_padding',
 			[
 				'label' => __( 'Text Padding', 'elementor' ),
@@ -267,7 +267,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_hover',
 			[
 				'label' => __( 'Button Hover', 'elementor' ),
@@ -276,7 +276,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -289,7 +289,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'button_background_hover_color',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
@@ -302,7 +302,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'button_hover_border_color',
 			[
 				'label' => __( 'Border Color', 'elementor' ),
@@ -315,7 +315,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Animation', 'elementor' ),
@@ -377,7 +377,7 @@ class Widget_Button extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-button-wrapper">
 			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">

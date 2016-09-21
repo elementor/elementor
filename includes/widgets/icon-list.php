@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Icon_List extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'icon-list';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Icon List', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'bullet-list';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_icon',
 			[
 				'label' => __( 'Icon List', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_list',
 			[
 				'label' => '',
@@ -74,7 +74,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -84,7 +84,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_icon_style',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -93,7 +93,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_color',
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
@@ -111,7 +111,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_size',
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
@@ -132,7 +132,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'icon_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -159,7 +159,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_text_style',
 			[
 				'label' => __( 'Text', 'elementor' ),
@@ -168,7 +168,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_indent',
 			[
 				'label' => __( 'Text Indent', 'elementor' ),
@@ -186,7 +186,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -204,7 +204,7 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		self::add_group_control(
+		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
@@ -248,7 +248,7 @@ class Widget_Icon_List extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<ul class="elementor-icon-list-items">
 			<#

@@ -5,20 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Icon extends Widget_Base {
 
-	public static function get_name() {
+	public function get_name() {
 		return 'icon';
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		return __( 'Icon', 'elementor' );
 	}
 
-	public static function get_icon() {
+	public function get_icon() {
 		return 'favorite';
 	}
 
-	protected static function _register_controls() {
-		self::add_control(
+	protected function _register_controls() {
+		$this->add_control(
 			'section_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -26,7 +26,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -42,7 +42,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -53,7 +53,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'shape',
 			[
 				'label' => __( 'Shape', 'elementor' ),
@@ -71,7 +71,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -81,7 +81,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_responsive_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -108,7 +108,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_style_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -117,7 +117,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
@@ -136,7 +136,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'secondary_color',
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
@@ -154,7 +154,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'size',
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
@@ -173,7 +173,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'icon_padding',
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
@@ -198,7 +198,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'rotate',
 			[
 				'label' => __( 'Icon Rotate', 'elementor' ),
@@ -215,7 +215,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
@@ -231,7 +231,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -248,7 +248,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'section_hover',
 			[
 				'label' => __( 'Icon Hover', 'elementor' ),
@@ -257,7 +257,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
@@ -272,7 +272,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_secondary_color',
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
@@ -290,7 +290,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		self::add_control(
+		$this->add_control(
 			'hover_animation',
 			[
 				'label' => __( 'Animation', 'elementor' ),
@@ -336,7 +336,7 @@ class Widget_Icon extends Widget_Base {
 		<?php
 	}
 
-	protected static function _content_template() {
+	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconTag = link ? 'a' : 'div'; #>
