@@ -97,7 +97,7 @@ var StretchedSection = function( $, $section ) {
 
 		var sectionWidth = elements.$scopeWindow.width(),
 			sectionOffset = $section.offset().left,
-			correctOffset = -sectionOffset;
+			correctOffset = sectionOffset;
 
 		if ( elements.$sectionContainer.length ) {
 			var containerOffset = elements.$sectionContainer.offset().left;
@@ -105,10 +105,14 @@ var StretchedSection = function( $, $section ) {
 			sectionWidth = elements.$sectionContainer.outerWidth();
 
 			if ( sectionOffset > containerOffset ) {
-				correctOffset = -( sectionOffset - containerOffset );
+				correctOffset = sectionOffset - containerOffset;
 			} else {
 				correctOffset = 0;
 			}
+		}
+
+		if ( ! settings.isRTL ) {
+			correctOffset = -correctOffset;
 		}
 
 		$section.css( {
@@ -119,6 +123,7 @@ var StretchedSection = function( $, $section ) {
 
 	var initSettings = function() {
 		settings.sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer;
+		settings.isRTL = elementorFrontend.config.isRTL;
 	};
 
 	var initElements = function() {
