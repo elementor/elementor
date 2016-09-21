@@ -96,7 +96,8 @@ class Element_Section extends Element_Base {
 
 	protected function _register_controls() {
 
-		$this->start_controls_section('section_layout',
+		$this->start_controls_section(
+			'section_layout',
 			[
 				'label' => __( 'Layout', 'elementor' ),
 				'tab' => self::TAB_LAYOUT,
@@ -113,9 +114,7 @@ class Element_Section extends Element_Base {
 				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
-				'force_render' => 'js',
-				'tab' => self::TAB_LAYOUT,
-				'section' => 'section_layout',
+				'force_render' => true,
 				'hide_in_inner' => true,
 				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
 			]
@@ -403,7 +402,6 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-
 		// Section Typography
 		$this->start_controls_section(
 			'section_typo',
@@ -515,7 +513,6 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'margin-top: {{TOP}}{{UNIT}}; margin-bottom: {{BOTTOM}}{{UNIT}};',
 				],
-				'force_render' => 'js',
 			]
 		);
 

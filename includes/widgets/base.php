@@ -237,12 +237,11 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	final public function print_template() {
+		ob_start();
+		$this->content_template();
+		$content_template = ob_get_clean();
 
-        ob_start();
-        $this->content_template();
-        $content_template = ob_get_clean();
-
-        $content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
+		$content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
 
 		if ( empty( $content_template ) ) {
 			return;
@@ -264,17 +263,13 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
+			ob_start();
+			$this->render( $instance );
+			$content = ob_get_clean();
 
-			$content = apply_filters( 'elementor/widget/render_content', '', $instance, $this );
-
-			if( '' === $content ) {
-				ob_start();
-				$this->render( $instance );
-				$content = ob_get_clean();
-			}
+			$content = apply_filters( 'elementor/widget/render_content', $content, $instance, $this );
 
 			echo $content;
-
 			?>
 		</div>
 		<?php

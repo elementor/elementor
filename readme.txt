@@ -157,6 +157,18 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.9.0 - 20.09.2016 =
+* New! - Added stretch section control for all parent sections
+* New! - Added content width option to set the default width of the content area
+* Tweak! - Changed Fit to Screen to `min-height` for better behavior on mobile and content overflow scenarios.
+* Tweak! - Added Switcher control for editor panel ([#143](https://github.com/pojome/elementor/issues/143))
+* Tweak! - Changed `jQuery.html()` to inside the iframe
+* Tweak! - Improved Integration with 3rd party plugins and themes
+* Fix! - Hidden templates library items from nav menu
+* Fix! - Added color default for Button and Icon when schemes color is disabled
+* Fix! - Added default size for the Heading widget - ([#533](https://github.com/pojome/elementor/issues/533))
+* Fix! - Button border color hover control - only shown when border is set
+
 = 0.8.1 - 11.09.2016 =
 * Tweak! - Changed prevent scroll default to `Yes` for Maps widget
 * Tweak! - Removed `asp_tags` requirements
