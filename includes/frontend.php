@@ -162,7 +162,9 @@ class Frontend {
 
 		$this->_parse_schemes_css_code();
 
-		foreach ( $data as $section ) {
+		foreach ( $data as $section_data ) {
+			$section = new Element_Section( $section_data );
+
 			$this->_parse_style_item( $section );
 		}
 
@@ -214,19 +216,7 @@ class Frontend {
 		}
 	}
 
-	protected function _parse_style_item( $element_data ) {
-		if ( 'widget' === $element_data['elType'] ) {
-			$element_type = Plugin::instance()->widgets_manager->get_widgets( $element_data['widgetType'] );
-		} else {
-			$element_type = Plugin::instance()->elements_manager->get_elements( $element_data['elType'] );
-		}
-
-		if ( ! $element_type )
-			return;
-
-		/** @var Element_Base $element */
-		$element = new $element_type['class']( $element_data );
-
+	protected function _parse_style_item( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
 		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
@@ -283,11 +273,8 @@ class Frontend {
 	}
 
 	protected function _parse_schemes_css_code() {
-		foreach ( Plugin::instance()->widgets_manager->get_widgets() as $widget_data ) {
-			/** @var Widget_Base $widget_class */
-			$widget_class = $widget_data['class'];
-
-			foreach ( $widget_class::get_scheme_controls() as $control ) {
+		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
+			foreach ( $widget->get_scheme_controls() as $control ) {
 				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 				if ( empty( $scheme_value ) )
 					continue;
