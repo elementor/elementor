@@ -73,9 +73,9 @@ class Source_Remote extends Source_Base {
 			$element['id'] = Utils::generate_random_string();
 
 			if ( 'widget' === $element['elType'] ) {
-				$element_data = Plugin::instance()->widgets_manager->get_widgets( $element['widgetType'] );
+				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
 			} else {
-				$element_data = Plugin::instance()->elements_manager->get_elements( $element['elType'] );
+				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
 			}
 
 			if ( ! $element_data )

@@ -132,7 +132,7 @@ class Source_Local extends Source_Base {
 			return $post_id;
 		}
 
-		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
+		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
 		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
@@ -171,7 +171,7 @@ class Source_Local extends Source_Base {
 		if ( 'display' === $context ) {
 			$data = Plugin::instance()->db->get_builder( $item_id );
 		} else {
-			$data = Plugin::instance()->db->get_plain_builder( $item_id );
+			$data = Plugin::instance()->db->get_plain_editor( $item_id );
 		}
 
 		return Plugin::instance()->db->iterate_data( $data, function( $element ) {

@@ -24,15 +24,15 @@ class DB {
 	 *
 	 * @return void
 	 */
-	public function save_builder( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
-		$builder_data = $this->_get_editor_data( $posted );
+	public function save_editor( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
+		$editor_data = $this->_get_editor_data( $posted );
 
 		if ( self::REVISION_PUBLISH === $revision ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', $builder_data );
+			update_post_meta( $post_id, '_elementor_data', $editor_data );
 			$this->_save_plain_text( $post_id );
 		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', $builder_data );
+			update_post_meta( $post_id, '_elementor_draft_data', $editor_data );
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
@@ -48,12 +48,12 @@ class DB {
 	 * @return array
 	 */
 	public function get_builder( $post_id, $revision = self::REVISION_PUBLISH ) {
-		$data = $this->get_plain_builder( $post_id, $revision );
+		$data = $this->get_plain_editor( $post_id, $revision );
 
 		return $this->_get_editor_data( $data, true );
 	}
 
-	public function get_plain_builder( $post_id, $revision = self::REVISION_PUBLISH ) {
+	public function get_plain_editor( $post_id, $revision = self::REVISION_PUBLISH ) {
 		$data = get_post_meta( $post_id, '_elementor_data', true );
 		if ( self::REVISION_DRAFT === $revision ) {
 			$draft_data = get_post_meta( $post_id, '_elementor_draft_data', true );
@@ -63,13 +63,13 @@ class DB {
 			}
 
 			if ( empty( $data ) ) {
-				$data = $this->_get_new_builder_from_wp_editor( $post_id );
+				$data = $this->_get_new_editor_from_wp_editor( $post_id );
 			}
 		}
 		return $data;
 	}
 
-	protected function _get_new_builder_from_wp_editor( $post_id ) {
+	protected function _get_new_editor_from_wp_editor( $post_id ) {
 		$post = get_post( $post_id );
 		if ( empty( $post ) || empty( $post->post_content ) ) {
 			return [];
@@ -149,7 +149,7 @@ class DB {
 	private function _save_plain_text( $post_id ) {
 		ob_start();
 
-		$data = $this->get_plain_builder( $post_id );
+		$data = $this->get_plain_editor( $post_id );
 		if ( ! empty( $data ) ) {
 			foreach ( $data as $section ) {
 				foreach ( $section['elements'] as $column ) {
@@ -200,7 +200,7 @@ class DB {
 	 * @return array
 	 */
 	private function _get_editor_data( $data, $with_html_content = false ) {
-		$builder_data = [];
+		$editor_data = [];
 
 		foreach ( $data as $section_data ) {
 			$section = new Element_Section( $section_data );
@@ -211,10 +211,10 @@ class DB {
 				continue;
 			}
 
-			$builder_data[] = $section_data;
+			$editor_data[] = $section_data;
 		} // End Section
 
-		return $builder_data;
+		return $editor_data;
 	}
 
 	public function iterate_data( $data_container, $callback ) {

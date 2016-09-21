@@ -116,7 +116,7 @@ class Elements_Manager {
 		}
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		Plugin::instance()->db->save_builder( $_POST['post_id'], $posted, $revision );
+		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $revision );
 
 		wp_send_json_success();
 	}
