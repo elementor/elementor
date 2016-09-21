@@ -212,6 +212,13 @@ class Settings {
 		);
 	}
 
+	public function admin_menu_change_name() {
+		global $submenu;
+
+		if ( isset( $submenu['elementor'] ) )
+			$submenu['elementor'][0][0] = __( 'Settings', 'pojo' );
+	}
+
 	public function display_settings_page() {
 		?>
 		<div class="wrap">
@@ -234,5 +241,6 @@ class Settings {
 
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 	}
 }
