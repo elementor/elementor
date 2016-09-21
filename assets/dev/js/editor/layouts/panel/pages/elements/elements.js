@@ -37,7 +37,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		_.each( elementor.config.widgets, function( element, widgetType ) {
 			elementsCollection.add( {
 				title: element.title,
-				elType: 'widget',
+				elType: element.elType,
 				categories: element.categories,
 				keywords: element.keywords,
 				icon: element.icon,

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Counter extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'counter';
 	}
 
@@ -109,7 +109,7 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Number', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -122,7 +122,7 @@ class Widget_Counter extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_number',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'color: {{VALUE}};',
@@ -135,7 +135,7 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'typography_number',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_number',
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
 			]
@@ -146,7 +146,7 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -159,7 +159,7 @@ class Widget_Counter extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_2,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'color: {{VALUE}};',
@@ -172,14 +172,14 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'typography_title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
 			]
 		);
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
@@ -207,28 +207,29 @@ class Widget_Counter extends Widget_Base {
 		<?php
 	}
 
-	public function render( $instance = [] ) {
+	public function render() {
+		$settings = $this->get_settings();
 		?>
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
 				<?php
 				$prefix = $suffix = '';
 
-				if ( $instance['prefix'] ) {
-					$prefix = '<span class="elementor-counter-number-prefix">' . $instance['prefix'] . '</span>';
+				if ( $settings['prefix'] ) {
+					$prefix = '<span class="elementor-counter-number-prefix">' . $settings['prefix'] . '</span>';
 				}
 
-				$duration = '<span class="elementor-counter-number" data-duration="' . $instance['duration'] . '" data-to_value="' . $instance['ending_number'] . '">' . $instance['starting_number'] . '</span>';
+				$duration = '<span class="elementor-counter-number" data-duration="' . $settings['duration'] . '" data-to_value="' . $settings['ending_number'] . '">' . $settings['starting_number'] . '</span>';
 
-				if ( $instance['suffix'] ) {
-					$suffix = '<span class="elementor-counter-number-suffix">' . $instance['suffix'] . '</span>';
+				if ( $settings['suffix'] ) {
+					$suffix = '<span class="elementor-counter-number-suffix">' . $settings['suffix'] . '</span>';
 				}
 
 				echo $prefix . $duration . $suffix;
 				?>
 			</div>
-			<?php if ( $instance['title'] ) : ?>
-				<div class="elementor-counter-title"><?php echo $instance['title']; ?></div>
+			<?php if ( $settings['title'] ) : ?>
+				<div class="elementor-counter-title"><?php echo $settings['title']; ?></div>
 			<?php endif; ?>
 		</div>
 		<?php

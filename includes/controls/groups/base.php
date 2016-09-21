@@ -19,11 +19,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	/**
-	 * @param Element_Base $element
-	 * @param $user_args
-	 */
-	final public function add_controls( $element, $user_args ) {
+	final public function add_controls( Element_Base $element, $user_args ) {
 		$this->_init_args( $user_args );
 
 		// Filter witch controls to display
@@ -68,7 +64,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			'section' => '',
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'tab' => Element_Base::TAB_CONTENT,
+			'tab' => Controls_Manager::TAB_CONTENT,
 			'fields' => 'all',
 		];
 	}

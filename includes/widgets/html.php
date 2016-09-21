@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Html extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'html';
 	}
 
@@ -39,11 +39,11 @@ class Widget_Html extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		 echo $instance['html'];
+	protected function render() {
+		 echo $this->get_settings( 'html' );
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		{{{ settings.html }}}
 		<?php

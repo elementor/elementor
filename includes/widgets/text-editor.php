@@ -3,9 +3,9 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Text_editor extends Widget_Base {
+class Widget_Text_Editor extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'text-editor';
 	}
 
@@ -41,7 +41,7 @@ class Widget_Text_editor extends Widget_Base {
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -50,7 +50,7 @@ class Widget_Text_editor extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'options' => [
 					'left' => [
@@ -81,7 +81,7 @@ class Widget_Text_editor extends Widget_Base {
 	        [
 	            'label' => __( 'Text Color', 'elementor' ),
 	            'type' => Controls_Manager::COLOR,
-	            'tab' => self::TAB_STYLE,
+	            'tab' => Controls_Manager::TAB_STYLE,
 	            'section' => 'section_style',
 	            'default' => '',
 	            'selectors' => [
@@ -99,25 +99,27 @@ class Widget_Text_editor extends Widget_Base {
 			[
 				'name' => 'typography',
 				'section' => 'section_style',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		$instance['editor'] = $this->parse_text_editor( $instance['editor'], $instance );
+	protected function render() {
+		$editor_content = $this->get_settings( 'editor' );
+
+		$editor_content = $this->parse_text_editor( $editor_content );
 		?>
-		<div class="elementor-text-editor"><?php echo $instance['editor']; ?></div>
+		<div class="elementor-text-editor"><?php echo $editor_content; ?></div>
 		<?php
 	}
 
-	public function render_plain_content( $instance = [] ) {
+	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $instance['editor'];
+		echo $this->get_settings( 'editor' );
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-text-editor">{{{ settings.editor }}}</div>
 		<?php

@@ -178,7 +178,7 @@ App = Marionette.Application.extend( {
 
 		this.$previewContents = this.$preview.contents();
 
-		var SectionsCollectionView = require( 'elementor-views/sections' ),
+		var Preview = require( 'elementor-views/preview' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
 		var $previewElementorEl = this.$previewContents.find( '#elementor' );
@@ -221,7 +221,7 @@ App = Marionette.Application.extend( {
 			panel: '#elementor-panel'
 		} );
 
-		this.getRegion( 'sections' ).show( new SectionsCollectionView( {
+		this.getRegion( 'sections' ).show( new Preview( {
 			collection: this.elements
 		} ) );
 
@@ -348,7 +348,7 @@ App = Marionette.Application.extend( {
 		    .addClass( 'elementor-editor-active' );
 	},
 
-	saveBuilder: function( options ) {
+	saveEditor: function( options ) {
 		options = _.extend( {
 			revision: 'draft',
 			onSuccess: null

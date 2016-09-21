@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Sidebar extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'sidebar';
 	}
 
@@ -52,15 +52,17 @@ class Widget_Sidebar extends Widget_Base {
 		] );
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['sidebar'] ) ) {
+	protected function render() {
+		$sidebar = $this->get_settings( 'sidebar' );
+
+		if ( empty( $sidebar ) ) {
 			return;
 		}
 
-		dynamic_sidebar( $instance['sidebar'] );
+		dynamic_sidebar( $sidebar );
 	}
 
-	protected function content_template() {}
+	protected function _content_template() {}
 
-	public function render_plain_content( $instance = [] ) {}
+	public function render_plain_content() {}
 }

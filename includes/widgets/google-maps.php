@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Google_maps extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'google_maps';
 	}
 
@@ -106,19 +106,21 @@ class Widget_Google_maps extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['address'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['address'] ) )
 			return;
 
-		if ( 0 === absint( $instance['zoom']['size'] ) )
-			$instance['zoom']['size'] = 10;
+		if ( 0 === absint( $settings['zoom']['size'] ) )
+			$settings['zoom']['size'] = 10;
 
 		printf(
 			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near"></iframe></div>',
-			urlencode( $instance['address'] ),
-			absint( $instance['zoom']['size'] )
+			urlencode( $settings['address'] ),
+			absint( $settings['zoom']['size'] )
 		);
 	}
 
-	protected function content_template() {}
+	protected function _content_template() {}
 }

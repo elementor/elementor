@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Heading extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'heading';
 	}
 
@@ -136,7 +136,7 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -149,7 +149,7 @@ class Widget_Heading extends Widget_Base {
 				    'type' => Scheme_Color::get_type(),
 				    'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
@@ -162,34 +162,36 @@ class Widget_Heading extends Widget_Base {
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
 			]
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['title'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['title'] ) )
 			return;
 
 		$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title' );
 
-		if ( ! empty( $instance['size'] ) ) {
-			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $instance['size'] );
+		if ( ! empty( $settings['size'] ) ) {
+			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$url = sprintf( '<a href="%s">%s</a>', $instance['link']['url'], $instance['title'] );
-			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$url = sprintf( '<a href="%s">%s</a>', $settings['link']['url'], $settings['title'] );
+			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
 		} else {
-			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $instance['header_size'], $this->get_render_attribute_string( 'heading' ), $instance['title'] );
+			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $settings['title'] );
 		}
 
 		echo $title_html;
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		if ( '' !== settings.title ) {

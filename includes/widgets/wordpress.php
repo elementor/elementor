@@ -15,31 +15,16 @@ class Widget_WordPress extends Widget_Base {
 	 */
 	private $_widget_instance = null;
 
-	private function _get_widget_instance() {
-		if ( is_null( $this->_widget_instance ) ) {
-			global $wp_widget_factory;
-
-			if ( isset( $wp_widget_factory->widgets[ $this->_widget_name ] ) ) {
-				$this->_widget_instance = $wp_widget_factory->widgets[ $this->_widget_name ];
-				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
-			} elseif ( class_exists( $this->_widget_name ) ) {
-				$this->_widget_instance = new $this->_widget_name;
-				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
-			}
-		}
-		return $this->_widget_instance;
-	}
-
 	private function _is_pojo_widget() {
-		return $this->_get_widget_instance() instanceof \Pojo_Widget_Base;
+		return $this->get_widget_instance() instanceof \Pojo_Widget_Base;
 	}
 
-	public function get_id() {
-		return 'wp-widget-' . $this->_get_widget_instance()->id_base;
+	public function get_name() {
+		return 'wp-widget-' . $this->get_widget_instance()->id_base;
 	}
 
 	public function get_title() {
-		return $this->_get_widget_instance()->name;
+		return $this->get_widget_instance()->name;
 	}
 
 	public function get_categories() {
@@ -60,17 +45,36 @@ class Widget_WordPress extends Widget_Base {
 
 	public function get_form( $instance = [] ) {
 		ob_start();
-		$this->_get_widget_instance()->form( $instance['wp'] );
+		$this->get_widget_instance()->form( $instance['wp'] );
 		return ob_get_clean();
 	}
 
-	public function get_parse_values( $instance = [] ) {
-		$instance = parent::get_parse_values( $instance );
+	/**
+	 * @return \WP_Widget
+	 */
+	public function get_widget_instance() {
+		if ( is_null( $this->_widget_instance ) ) {
+			global $wp_widget_factory;
 
-		if ( ! empty( $instance['wp'] ) ) {
-			$instance['wp'] = $this->_get_widget_instance()->update( $instance['wp'], [] );
+			if ( isset( $wp_widget_factory->widgets[ $this->_widget_name ] ) ) {
+				$this->_widget_instance = $wp_widget_factory->widgets[ $this->_widget_name ];
+				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
+			} elseif ( class_exists( $this->_widget_name ) ) {
+				$this->_widget_instance = new $this->_widget_name;
+				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
+			}
 		}
-		return $instance;
+		return $this->_widget_instance;
+	}
+
+	protected function _get_parsed_settings() {
+		$settings = parent::_get_parsed_settings();
+
+		if ( ! empty( $settings['wp'] ) ) {
+			$settings['wp'] = $this->get_widget_instance()->update( $settings['wp'], [] );
+		}
+
+		return $settings;
 	}
 
 	protected function _register_controls() {
@@ -79,30 +83,30 @@ class Widget_WordPress extends Widget_Base {
 			[
 				'label' => __( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
-				'widget' => $this->get_id(),
-				'id_base' => $this->_get_widget_instance()->id_base,
+				'widget' => $this->get_name(),
+				'id_base' => $this->get_widget_instance()->id_base,
 			]
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		$empty_widget_args = [
-			'widget_id' => $this->get_id(),
+			'widget_id' => $this->get_name(),
 			'before_widget' => '',
 			'after_widget' => '',
 			'before_title' => '<h5>',
 			'after_title' => '</h5>',
 		];
 
-		$this->_get_widget_instance()->widget( $empty_widget_args, $instance['wp'] );
+		$this->get_widget_instance()->widget( $empty_widget_args, $this->get_settings( 'wp' ) );
 	}
 
 	protected function content_template() {}
 
-	public function __construct( $args = [] ) {
+	public function __construct( $data = [], $args = [] ) {
 		$this->_widget_name = $args['widget_name'];
 
-		parent::__construct( $args );
+		parent::__construct( $data, $args );
 	}
 
 	public function render_plain_content( $instance = [] ) {}

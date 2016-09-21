@@ -3,9 +3,9 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Icon_list extends Widget_Base {
+class Widget_Icon_List extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'icon-list';
 	}
 
@@ -89,7 +89,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -98,7 +98,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'default' => '',
 				'selectors' => [
@@ -116,7 +116,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'default' => [
 					'size' => 14,
@@ -137,7 +137,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_icon_style',
 				'options' => [
 					'left' => [
@@ -164,7 +164,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -173,7 +173,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Text Indent', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_text_style',
 				'range' => [
 					'px' => [
@@ -191,7 +191,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_text_style',
 				'default' => '',
 				'selectors' => [
@@ -209,7 +209,7 @@ class Widget_Icon_list extends Widget_Base {
 			[
 				'name' => 'icon_typography',
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_text_style',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -217,10 +217,11 @@ class Widget_Icon_list extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
 		?>
 		<ul class="elementor-icon-list-items">
-			<?php foreach ( $instance['icon_list'] as $item ) : ?>
+			<?php foreach ( $settings['icon_list'] as $item ) : ?>
 				<li class="elementor-icon-list-item" >
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
@@ -247,7 +248,7 @@ class Widget_Icon_list extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<ul class="elementor-icon-list-items">
 			<#
