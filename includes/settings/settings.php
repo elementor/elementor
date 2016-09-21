@@ -216,7 +216,7 @@ class Settings {
 		global $submenu;
 
 		if ( isset( $submenu['elementor'] ) )
-			$submenu['elementor'][0][0] = __( 'Settings', 'pojo' );
+			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
 	}
 
 	public function display_settings_page() {
