@@ -291,9 +291,12 @@ class Controls_Manager {
 
 		$stack = $this->_controls_stack[ $stack_id ];
 
-			$stack['controls'] = array_merge( Widget_Base::get_controls(), $stack['controls'] );
-			$stack['tabs'] = array_merge( $stack['tabs'], Widget_Base::get_tabs_controls() );
 		if ( 'widget' === $element->get_type() && 'common' !== $element->get_name() ) {
+			$common_widget = Plugin::instance()->widgets_manager->get_widget_types( 'common' );
+
+			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
+
+			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
 		}
 
 		return $stack;
