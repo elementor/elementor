@@ -11,26 +11,24 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_elementMethods() {
-		foreach ( Elementor\Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
-			$this->assertNotEmpty( $widget->get_title() );
-			$this->assertNotEmpty( $widget->get_type() );
-			$this->assertNotEmpty( $widget->get_name() );
+		foreach ( Elementor\Plugin::instance()->widgets_manager->get_widget_types() as $widget_type ) {
+			$name = $widget_type->get_name();
+
+			if ( 'common' === $name ) {
+				continue;
+			}
+
+			$this->assertNotEmpty( $widget_type->get_title() );
+			$this->assertNotEmpty( $widget_type->get_type() );
+			$this->assertNotEmpty( $name );
 		}
 	}
 
 	public function test_registerNUnregisterWidget() {
-		$return = Elementor\Plugin::instance()->widgets_manager->register_widget_type( '\Elementor\Widget_Not_Found' );
-		$this->assertInstanceOf( '\WP_Error', $return );
-		$this->assertEquals( 'widget_class_name_not_exists', $return->get_error_code() );
-
-		$return = Elementor\Plugin::instance()->widgets_manager->register_widget_type( '\Elementor\Control_Text' );
-		$this->assertInstanceOf( '\WP_Error', $return );
-		$this->assertEquals( 'wrong_instance_widget', $return->get_error_code() );
-
 		$widget_class = '\Elementor\Widget_Text_editor';
 		$widget_id = 'text-editor';
 
-		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->register_widget_type( $widget_class ) );
+		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->register_widget_type( new $widget_class( [ 'id' => $widget_id ] ) ) );
 
 		$widget = Elementor\Plugin::instance()->widgets_manager->get_widget_types( $widget_id );
 		$this->assertInstanceOf( $widget_class, $widget );
@@ -38,7 +36,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->unregister_widget_type( $widget_id ) );
 		$this->assertFalse( Elementor\Plugin::instance()->widgets_manager->unregister_widget_type( $widget_id ) );
 
-		$this->assertFalse( Elementor\Plugin::instance()->widgets_manager->get_widget_types( $widget_id ) );
+		$this->assertNull( Elementor\Plugin::instance()->widgets_manager->get_widget_types( $widget_id ) );
 	}
 
 	public function test_controlsSelectorsData() {

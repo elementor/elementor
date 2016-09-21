@@ -19,18 +19,10 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 	}
 
 	public function test_registerNUnregisterElement() {
-		$return = Elementor\Plugin::instance()->elements_manager->register_element_type( 'Element_Not_Found' );
-		$this->assertInstanceOf( '\WP_Error', $return );
-		$this->assertEquals( 'element_class_name_not_exists', $return->get_error_code() );
-
-		$return = Elementor\Plugin::instance()->elements_manager->register_element_type( '\Elementor\Control_Text' );
-		$this->assertInstanceOf( '\WP_Error', $return );
-		$this->assertEquals( 'wrong_instance_element', $return->get_error_code() );
-
 		$element_class = '\Elementor\Element_Column';
 		$element_id = 'column';
 
-		$this->assertTrue( Elementor\Plugin::instance()->elements_manager->register_element_type( $element_class ) );
+		$this->assertTrue( Elementor\Plugin::instance()->elements_manager->register_element_type( new $element_class( [ 'id' => $element_id ] ) ) );
 
 		$element = Elementor\Plugin::instance()->elements_manager->get_element_types( $element_id );
 		$this->assertInstanceOf( $element_class, $element );
@@ -38,13 +30,13 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 		$this->assertTrue( Elementor\Plugin::instance()->elements_manager->unregister_element_type( $element_id ) );
 		$this->assertFalse( Elementor\Plugin::instance()->elements_manager->unregister_element_type( $element_id ) );
 
-		$this->assertFalse( Elementor\Plugin::instance()->elements_manager->get_element_types( $element_id ) );
+		$this->assertNull( Elementor\Plugin::instance()->elements_manager->get_element_types( $element_id ) );
 
-		$this->assertTrue( Elementor\Plugin::instance()->elements_manager->register_element_type( $element_class ) );
+		$this->assertTrue( Elementor\Plugin::instance()->elements_manager->register_element_type( new $element_class( [ 'id' => $element_id ] ) ) );
 	}
 
 	/**
-	 * @expectedIncorrectUsage  Elementor\Element_Base::add_control
+	 * @expectedIncorrectUsage  Elementor\Controls_Manager::add_control_to_stack
 	 */
 	public function test_redeclareControl() {
 		$element_obj = Elementor\Plugin::instance()->elements_manager->get_element_types( 'section' );
