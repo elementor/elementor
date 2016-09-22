@@ -32,10 +32,6 @@ abstract class Element_Base {
 		return 'element';
 	}
 
-	abstract public function before_render();
-
-	abstract public function after_render();
-
 	abstract protected function _get_child_class( array $element_data );
 
 	public function __construct( $data = [], $args = [] ) {
@@ -154,6 +150,10 @@ abstract class Element_Base {
 	public final function get_class_name() {
 		return get_called_class();
 	}
+
+	public function before_render() {}
+
+	public function after_render() {}
 
 	public function get_name() {
 		return '';
