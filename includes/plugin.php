@@ -51,6 +51,7 @@ class Plugin {
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+			do_action( 'elementor/loaded' );
 		}
 		return self::$_instance;
 	}
@@ -128,8 +129,6 @@ class Plugin {
 		if ( is_admin() ) {
 			new Admin();
 		}
-
-		do_action( 'elementor/loaded' );
 	}
 }
 
