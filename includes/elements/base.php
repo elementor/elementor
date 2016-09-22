@@ -240,6 +240,18 @@ abstract class Element_Base {
 		return $this->_children;
 	}
 
+	public function add_child( $child_data, $child_args = [] ) {
+		if ( null === $this->_children ) {
+			$this->_init_children();
+		}
+
+		$child_class = $this->_get_child_class( $child_data );
+
+		$child_args = array_merge( $this->_get_child_args( $child_data ), $child_args );
+
+		$this->_children[] = new $child_class( $child_data, $child_args );
+	}
+
 	public function is_control_visible( $control ) {
 		if ( empty( $control['condition'] ) ) {
 			return true;
@@ -449,11 +461,7 @@ abstract class Element_Base {
 		}
 
 		foreach ( $children_data as $child_data ) {
-			$child_class = $this->_get_child_class( $child_data );
-
-			$child_args = $this->_get_child_args( $child_data );
-
-			$this->_children[] = new $child_class( $child_data, $child_args );
+			$this->add_child( $child_data );
 		}
 	}
 
