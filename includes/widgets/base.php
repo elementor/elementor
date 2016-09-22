@@ -13,10 +13,6 @@ abstract class Widget_Base extends Element_Base {
 		return 'apps';
 	}
 
-	public static function get_short_title() {
-		return static::get_title();
-	}
-
 	public final function print_template() {
 		ob_start();
 
