@@ -32,11 +32,9 @@ abstract class Element_Base {
 		return 'element';
 	}
 
-	abstract public function before_render();
-
-	abstract public function after_render();
-
 	abstract protected function _get_child_class( array $element_data );
+
+	abstract public function get_name();
 
 	public function __construct( $data = [], $args = [] ) {
 		if ( $data ) {
@@ -155,16 +153,16 @@ abstract class Element_Base {
 		return get_called_class();
 	}
 
-	public function get_name() {
-		return '';
-	}
+	public function before_render() {}
+
+	public function after_render() {}
 
 	public function get_title() {
 		return '';
 	}
 
 	public function get_keywords() {
-		return [];
+		return '';
 	}
 
 	public function get_categories() {
@@ -238,6 +236,25 @@ abstract class Element_Base {
 		}
 
 		return $this->_children;
+	}
+
+	/**
+	 * @return Element_Base
+	 */
+	public function get_parent() {
+		return $this->get_data( 'parent' );
+	}
+
+	public function add_child( $child_data, $child_args = [] ) {
+		if ( null === $this->_children ) {
+			$this->_init_children();
+		}
+
+		$child_class = $this->_get_child_class( $child_data );
+
+		$child_args = array_merge( $this->_get_child_args( $child_data ), $child_args );
+
+		$this->_children[] = new $child_class( $child_data, $child_args );
 	}
 
 	public function is_control_visible( $control ) {
@@ -414,12 +431,8 @@ abstract class Element_Base {
 	protected function _get_parsed_settings() {
 		$settings = $this->_data['settings'];
 
-		foreach ( self::get_controls() as $control ) {
+		foreach ( $this->get_controls() as $control ) {
 			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-
-			if ( $control_obj ) {
-				continue;
-			}
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
@@ -446,18 +459,14 @@ abstract class Element_Base {
 	private function _init_children() {
 		$this->_children = [];
 
-		$elements = $this->get_data( 'elements' );
+		$children_data = $this->get_data( 'elements' );
 
-		if ( ! $elements ) {
+		if ( ! $children_data ) {
 			return;
 		}
 
-		foreach ( $elements as $element ) {
-			$child_class = $this->_get_child_class( $element );
-
-			$child_args = $this->_get_child_args( $element );
-
-			$this->_children[] = new $child_class( $element, $child_args );
+		foreach ( $children_data as $child_data ) {
+			$this->add_child( $child_data );
 		}
 	}
 

@@ -13,14 +13,10 @@ abstract class Widget_Base extends Element_Base {
 		return 'apps';
 	}
 
-	public static function get_short_title() {
-		return static::get_title();
-	}
-
 	public final function print_template() {
 		ob_start();
 
-		static::_content_template();
+		$this->_content_template();
 
 		$content_template = ob_get_clean();
 
@@ -30,7 +26,7 @@ abstract class Widget_Base extends Element_Base {
 			return;
 		}
 		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( static::get_name() ); ?>-content">
+		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
 			<?php self::_render_settings(); ?>
 			<div class="elementor-widget-container">
 				<?php echo $content_template; ?>
@@ -41,7 +37,7 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _render_settings() {
 		?>
-		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( self::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( self::get_name() ); ?>-settings">
+		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
 			<ul class="elementor-editor-element-settings-list">
 				<li class="elementor-editor-element-setting elementor-editor-element-edit">
 					<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
@@ -81,7 +77,7 @@ abstract class Widget_Base extends Element_Base {
 
 	public function render_content() {
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
-			self::_render_settings();
+			$this->_render_settings();
 		}
 		?>
 		<div class="elementor-widget-container">
@@ -124,7 +120,7 @@ abstract class Widget_Base extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', static::get_name() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php

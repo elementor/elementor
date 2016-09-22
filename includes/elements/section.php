@@ -703,7 +703,7 @@ class Element_Section extends Element_Base {
 
 		$settings = $this->get_settings();
 
-		foreach ( self::get_class_controls() as $control ) {
+		foreach ( $this->get_class_controls() as $control ) {
 			if ( empty( $settings[ $control['name'] ] ) )
 				continue;
 
@@ -717,7 +717,7 @@ class Element_Section extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', self::get_name() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
 		?>
 		<section <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<?php
