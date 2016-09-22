@@ -414,7 +414,7 @@ abstract class Element_Base {
 	protected function _get_parsed_settings() {
 		$settings = $this->_data['settings'];
 
-		foreach ( self::get_controls() as $control ) {
+		foreach ( $this->get_controls() as $control ) {
 			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 			if ( $control_obj ) {
