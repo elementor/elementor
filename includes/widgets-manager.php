@@ -95,6 +95,10 @@ class Widgets_Manager {
 	}
 
 	public function register_widget_type( Widget_Base $widget ) {
+		if ( is_null( $this->_widget_types ) ) {
+			$this->_init_widgets();
+		}
+
 		$this->_widget_types[ $widget->get_name() ] = $widget;
 
 		return true;
