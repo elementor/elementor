@@ -34,6 +34,8 @@ abstract class Element_Base {
 
 	abstract protected function _get_child_class( array $element_data );
 
+	abstract public function get_name();
+
 	public function __construct( $data = [], $args = [] ) {
 		if ( $data ) {
 			$this->_init( $data );
@@ -154,10 +156,6 @@ abstract class Element_Base {
 	public function before_render() {}
 
 	public function after_render() {}
-
-	public function get_name() {
-		return '';
-	}
 
 	public function get_title() {
 		return '';
