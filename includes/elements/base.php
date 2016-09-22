@@ -442,18 +442,18 @@ abstract class Element_Base {
 	private function _init_children() {
 		$this->_children = [];
 
-		$elements = $this->get_data( 'elements' );
+		$children_data = $this->get_data( 'elements' );
 
-		if ( ! $elements ) {
+		if ( ! $children_data ) {
 			return;
 		}
 
-		foreach ( $elements as $element ) {
-			$child_class = $this->_get_child_class( $element );
+		foreach ( $children_data as $child_data ) {
+			$child_class = $this->_get_child_class( $child_data );
 
-			$child_args = $this->_get_child_args( $element );
+			$child_args = $this->_get_child_args( $child_data );
 
-			$this->_children[] = new $child_class( $element, $child_args );
+			$this->_children[] = new $child_class( $child_data, $child_args );
 		}
 	}
 
