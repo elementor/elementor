@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.9.1  
+**Stable tag:** 0.9.2  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -158,6 +158,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 0.9.2 - 21.09.2016 ###
+* Fix! - Added color default for Progress Bar when schemes color is disabled
+* Fix! - Stretched section in RTL bug
 
 ### 0.9.1 - 20.09.2016 ###
 * Fix! - Changed again "fit to screen" to height for "content position" support
