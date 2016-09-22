@@ -9,6 +9,7 @@ class Frontend {
 	private $_enqueue_google_early_access_fonts = [];
 
 	private $_column_widths = [];
+	private $_is_frontend_mode = false;
 
 	/**
 	 * @var Stylesheet
@@ -16,15 +17,16 @@ class Frontend {
 	private $stylesheet;
 
 	public function init() {
-		if ( is_admin() || Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
+		if ( Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
 			return;
 		}
+
+		$this->_is_frontend_mode = true;
 
 		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
@@ -108,6 +110,7 @@ class Frontend {
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
 				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+				'is_rtl' => is_rtl(),
 			]
 		);
 	}
@@ -310,6 +313,9 @@ class Frontend {
 	}
 
 	public function apply_builder_in_content( $content ) {
+		if ( ! $this->_is_frontend_mode )
+			return $content;
+
 		$post_id = get_the_ID();
 		if ( post_password_required( $post_id ) )
 			return $content;
@@ -348,6 +354,10 @@ class Frontend {
 	}
 
 	public function __construct() {
+		if ( is_admin() )
+			return;
+
 		add_action( 'template_redirect', [ $this, 'init' ] );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 	}
 }

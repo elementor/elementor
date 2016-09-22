@@ -223,7 +223,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	{{{ '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) }}}
+	{{{ '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) }}}
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
