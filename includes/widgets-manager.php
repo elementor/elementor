@@ -161,19 +161,13 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
-		/** @var Widget_Base|Widget_WordPress $widget_data */
-		$widget_data = $this->get_widget_types( $data['widgetType'] );
+		/** @var Widget_Base|Widget_WordPress $widget_type */
+		$widget_type = $this->get_widget_types( $data['widgetType'] );
 
-		$widget_class = $widget_data->get_class_name();
-
-		$args = [];
-
-		if ( $widget_data instanceof Widget_WordPress ) {
-			$args['widget_name'] = get_class( $widget_data->get_widget_instance() );
-		}
+		$widget_class = $widget_type->get_class_name();
 
 		/** @var Widget_Base $widget */
-		$widget = new $widget_class( $data, $args );
+		$widget = new $widget_class( $data, $widget_type->get_default_args() );
 
 		$widget->render_content();
 
