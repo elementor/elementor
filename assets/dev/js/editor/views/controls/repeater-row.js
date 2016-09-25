@@ -94,6 +94,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+		this.checkConditions();
 	}
 } );
 
