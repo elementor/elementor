@@ -238,6 +238,13 @@ abstract class Element_Base {
 		return $this->_children;
 	}
 
+	/**
+	 * @return Element_Base
+	 */
+	public function get_parent() {
+		return $this->get_data( 'parent' );
+	}
+
 	public function add_child( $child_data, $child_args = [] ) {
 		if ( null === $this->_children ) {
 			$this->_init_children();
