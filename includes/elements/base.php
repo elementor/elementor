@@ -422,7 +422,7 @@ abstract class Element_Base {
 		return [
 			'id' => 0,
 			'settings' => [],
-			'elements' => '',
+			'elements' => [],
 			'isInner' => false,
 		];
 	}
