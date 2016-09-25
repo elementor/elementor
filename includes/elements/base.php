@@ -421,7 +421,6 @@ abstract class Element_Base {
 	protected function get_default_data() {
 		return [
 			'id' => 0,
-			'elType' => 'element',
 			'settings' => [],
 			'elements' => '',
 			'isInner' => false,
