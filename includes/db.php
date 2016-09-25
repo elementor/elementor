@@ -11,7 +11,6 @@ class DB {
 	const DB_VERSION = '0.2';
 
 	const REVISION_PUBLISH = 'publish';
-
 	const REVISION_DRAFT = 'draft';
 
 	/**

@@ -4,6 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Element_Base {
+
 	const RESPONSIVE_DESKTOP = 'desktop';
 	const RESPONSIVE_TABLET = 'tablet';
 	const RESPONSIVE_MOBILE = 'mobile';
