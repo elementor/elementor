@@ -233,20 +233,18 @@ class Source_Local extends Source_Base {
 		// Fetch all images and replace to new
 		$import_images = new Classes\Import_Images();
 
+		/** @var Element_Base $element_type */
 		$content_data = Plugin::instance()->db->iterate_data( $content['data'], function( $element ) use ( $import_images ) {
 			if ( 'widget' === $element['elType'] ) {
-				$element_data = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
+				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
 			} else {
-				$element_data = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
+				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
 			}
 
-			if ( ! $element_data )
+			if ( ! $element_type )
 				return $element;
 
-			/** @var Element_Base $element_class */
-			$element_class = $element_data['class'];
-
-			foreach ( $element_class->get_controls() as $control ) {
+			foreach ( $element_type->get_controls() as $control ) {
 				if ( Controls_Manager::MEDIA === $control['type'] ) {
 					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
 						continue;
