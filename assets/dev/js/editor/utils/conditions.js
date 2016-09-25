@@ -5,6 +5,10 @@ Conditions = function() {
 
 	this.compare = function( leftValue, rightValue, operator ) {
 		switch ( operator ) {
+			case 'in':
+				return -1 !== rightValue.indexOf( leftValue );
+			case '!in':
+				return -1 === rightValue.indexOf( leftValue );
 			case '!':
 				return leftValue !== rightValue;
 			case '<':
