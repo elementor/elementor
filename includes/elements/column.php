@@ -455,27 +455,11 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
-	protected function _get_child_class( array $element_data ) {
+	protected function _get_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
-			return Plugin::instance()->elements_manager->get_element_types( 'section' )->get_class_name();
+			return Plugin::instance()->elements_manager->get_element_types( 'section' );
 		}
 
-		return Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] )->get_class_name();
-	}
-
-	protected function _get_child_args( array $element_data ) {
-		if ( 'section' === $element_data['elType'] ) {
-			return [];
-		}
-
-		$widget_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
-
-		if ( ! $widget_type instanceof Widget_WordPress ) {
-			return [];
-		}
-
-		return [
-			'widget_name' => get_class( $widget_type->get_widget_instance() ),
-		];
+		return Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 }
