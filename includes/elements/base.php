@@ -258,6 +258,12 @@ abstract class Element_Base {
 		return $this->get_data( 'parent' );
 	}
 
+	/**
+	 * @param array $child_data
+	 * @param array $child_args
+	 *
+	 * @return Element_Base|false
+	 */
 	public function add_child( array $child_data, array $child_args = [] ) {
 		if ( null === $this->_children ) {
 			$this->_init_children();
@@ -265,11 +271,19 @@ abstract class Element_Base {
 
 		$child_type = $this->_get_child_type( $child_data );
 
+		if ( ! $child_type ) {
+			return false;
+		}
+
 		$child_args = array_merge( $child_type->get_default_args(), $child_args );
 
 		$child_class = $child_type->get_class_name();
 
-		$this->_children[] = new $child_class( $child_data, $child_args );
+		$child = new $child_class( $child_data, $child_args );
+
+		$this->_children[] = $child;
+
+		return $child;
 	}
 
 	public function is_control_visible( $control ) {
