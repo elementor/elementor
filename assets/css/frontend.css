@@ -775,13 +775,15 @@
   padding: 0; }
   .elementor-widget-icon-list .elementor-icon-list-item a {
     display: inline; }
-.elementor-widget-icon-list .elementor-icon-list-icon,
 .elementor-widget-icon-list .elementor-icon-list-text {
   display: inline;
   vertical-align: middle; }
 .elementor-widget-icon-list .elementor-icon-list-icon {
   width: 1em;
-  line-height: 1; }
+  line-height: 1;
+  vertical-align: middle;
+  display: inline-block;
+  text-align: center; }
 
 .elementor-widget-video.elementor-aspect-ratio-169 .elementor-video-wrapper {
   padding-bottom: 56.25%; }

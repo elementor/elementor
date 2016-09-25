@@ -113,8 +113,8 @@ class Tracker {
 	}
 
 	public static function admin_notices() {
-		// Show tracker notice after 12 hours from installed time.
-		if ( self::_get_installed_time() > strtotime( '-12 hours' ) )
+		// Show tracker notice after 24 hours from installed time.
+		if ( self::_get_installed_time() > strtotime( '-24 hours' ) )
 			return;
 
 		if ( '1' === get_option( 'elementor_tracker_notice' ) )
@@ -132,7 +132,7 @@ class Tracker {
 		?>
 		<div class="updated">
 			<p><?php _e( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php _e( 'Learn more.', 'elementor' ); ?></a></p>
-			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'I won\'t help', 'elementor' ); ?></a></p>
+			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'No thanks', 'elementor' ); ?></a></p>
 		</div>
 		<?php
 	}

@@ -44,17 +44,12 @@ class Import_Images {
 		if ( $saved_image )
 			return $saved_image;
 
-		/**
-		 * @var $wp_filesystem \WP_Filesystem_Base
-		 */
-		global $wp_filesystem;
-
 		// Extract the file name and extension from the url
 		$filename = basename( $attachment['url'] );
 
-		$file_content = $wp_filesystem->get_contents( $attachment['url'] );
+		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
 
-		if ( ! $file_content ) {
+		if ( empty( $file_content ) ) {
 			return false;
 		}
 
