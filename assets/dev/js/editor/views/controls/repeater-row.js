@@ -37,6 +37,23 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	checkConditions: function() {
+		var self = this;
+
+		self.collection.each( function( model ) {
+			var conditions = model.get( 'conditions' ),
+				isVisible = true;
+
+			if ( conditions ) {
+				isVisible = elementor.conditions.check( conditions, self.model.attributes );
+			}
+
+			var child = self.children.findByModelCid( model.cid );
+
+			child.$el.toggle( isVisible );
+		} );
+	},
+
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
 		this.setTitle();
@@ -68,6 +85,8 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		// Collection for Controls list
 		this.collection = new Backbone.Collection( options.controlFields );
 
+		this.listenTo( this.model, 'change', this.checkConditions );
+
 		if ( options.titleField ) {
 			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
 		}
@@ -75,6 +94,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+		this.checkConditions();
 	}
 } );
 
