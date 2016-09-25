@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Divider extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'divider';
 	}
 
@@ -158,7 +158,7 @@ class Widget_Divider extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator"></span>
@@ -166,7 +166,7 @@ class Widget_Divider extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator"></span>

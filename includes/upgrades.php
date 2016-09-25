@@ -41,7 +41,7 @@ class Upgrades {
 			return;
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::instance()->db->get_plain_builder( $post_id );
+			$data = Plugin::instance()->db->get_plain_editor( $post_id );
 			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) || 'image' !== $element['widgetType'] ) {
 					return $element;
@@ -54,7 +54,7 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::instance()->db->save_builder( $post_id, $data );
+			Plugin::instance()->db->save_editor( $post_id, $data );
 		}
 	}
 }

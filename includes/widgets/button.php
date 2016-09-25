@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Button extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'button';
 	}
 
@@ -181,7 +181,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Button', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -190,7 +190,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'default' => '',
 				'selectors' => [
@@ -205,7 +205,7 @@ class Widget_Button extends Widget_Base {
 				'name' => 'typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
@@ -216,7 +216,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -233,7 +233,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'name' => 'border',
 				'label' => __( 'Border', 'elementor' ),
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'placeholder' => '1px',
 				'default' => '1px',
 				'section' => 'section_style',
@@ -247,7 +247,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -261,7 +261,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Text Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -274,7 +274,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Button Hover', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -283,7 +283,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'color: {{VALUE}};',
@@ -296,7 +296,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
@@ -309,7 +309,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 				'condition' => [
 					'border_border!' => '',
@@ -325,62 +325,64 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_hover',
 			]
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		//if ( ! empty( $instance['align'] ) ) {
 		//	$this->add_render_attribute( 'wrapper', 'class', 'elementor-align-' . $instance['align'] );
 		//}
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $instance['link']['url'] );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'button', 'target', '_blank' );
 			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
 
-		if ( ! empty( $instance['size'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $instance['size'] );
+		if ( ! empty( $settings['size'] ) ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( ! empty( $instance['button_type'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $instance['button_type'] );
+		if ( ! empty( $settings['button_type'] ) ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $settings['button_type'] );
 		}
 
-		if ( $instance['hover_animation'] ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		if ( $settings['hover_animation'] ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
+		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
 				<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
-					<?php if ( ! empty( $instance['icon'] ) ) : ?>
+					<?php if ( ! empty( $settings['icon'] ) ) : ?>
 						<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-							<i class="<?php echo esc_attr( $instance['icon'] ); ?>"></i>
+							<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>
-					<span class="elementor-button-text"><?php echo $instance['text']; ?></span>
+					<span class="elementor-button-text"><?php echo $settings['text']; ?></span>
 				</span>
 			</a>
 		</div>
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-button-wrapper">
 			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Image extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'image';
 	}
 
@@ -121,7 +121,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Image', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -130,7 +130,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Size (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'default' => [
 					'size' => 100,
@@ -154,7 +154,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'default' => [
 					'size' => 1,
@@ -177,7 +177,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 			]
 		);
@@ -187,7 +187,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
@@ -199,7 +199,7 @@ class Widget_Image extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -212,7 +212,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'image_box_shadow',
 				'section' => 'section_style_image',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
@@ -222,7 +222,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Caption', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -253,7 +253,7 @@ class Widget_Image extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'text-align: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_caption',
 			]
 		);
@@ -263,7 +263,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
@@ -281,30 +281,32 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['image']['url'] ) ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['image']['url'] ) ) {
 			return;
 		}
-		$has_caption = ! empty( $instance['caption'] );
+		$has_caption = ! empty( $settings['caption'] );
 
-		$image_html = '<div class="elementor-image' . ( ! empty( $instance['shape'] ) ? ' elementor-image-shape-' . $instance['shape'] : '' ) . '">';
+		$image_html = '<div class="elementor-image' . ( ! empty( $settings['shape'] ) ? ' elementor-image-shape-' . $settings['shape'] : '' ) . '">';
 
 		if ( $has_caption ) {
 			$image_html .= '<figure class="wp-caption">';
 		}
 
-		$image_class_html = ! empty( $instance['hover_animation'] ) ? ' class="elementor-animation-' . $instance['hover_animation'] . '"' : '';
+		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
 
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $instance['image']['url'] ), Control_Media::get_image_title( $instance['image'] ), Control_Media::get_image_alt( $instance['image'] ), $image_class_html );
+		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $settings['image']['url'] ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
 
-		$link = $this->get_link_url( $instance );
+		$link = $this->get_link_url( $settings );
 		if ( $link ) {
 			$target = '';
 			if ( ! empty( $link['is_external'] ) ) {
@@ -314,7 +316,7 @@ class Widget_Image extends Widget_Base {
 		}
 
 		if ( $has_caption ) {
-			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $instance['caption'] );
+			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $settings['caption'] );
 		}
 
 		if ( $has_caption ) {
@@ -325,7 +327,7 @@ class Widget_Image extends Widget_Base {
 		echo $image_html;
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<# if ( '' !== settings.image.url ) { #>
 			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">

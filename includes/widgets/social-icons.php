@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Social_Icons extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'social-icons';
 	}
 
@@ -153,7 +153,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -162,7 +162,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'default' => 'default',
 				'options' => [
@@ -177,7 +177,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'condition' => [
 					'icon_color' => 'custom',
@@ -193,7 +193,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'condition' => [
 					'icon_color' => 'custom',
@@ -209,7 +209,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'range' => [
 					'px' => [
@@ -228,7 +228,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
@@ -251,7 +251,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'range' => [
 					'px' => [
@@ -269,7 +269,7 @@ class Widget_Social_Icons extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'selector' => '{{WRAPPER}} .elementor-social-icon',
 			]
@@ -281,7 +281,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_social_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -290,10 +290,10 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-social-icons-wrapper">
-			<?php foreach ( $instance['social_icon_list'] as $item ) :
+			<?php foreach ( $this->get_settings( 'social_icon_list' ) as $item ) :
 				$social = str_replace( 'fa fa-', '', $item['social'] );
 				$target = $item['link']['is_external'] ? ' target="_blank"' : '';
 				?>
@@ -305,7 +305,7 @@ class Widget_Social_Icons extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<# _.each( settings.social_icon_list, function( item ) {

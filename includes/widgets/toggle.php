@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Toggle extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'toggle';
 	}
 
@@ -77,7 +77,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Toggle', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -95,7 +95,7 @@ class Widget_Toggle extends Widget_Base {
 						'max' => 10,
 					],
 				],
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -109,7 +109,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-bottom-color: {{VALUE}};',
@@ -123,7 +123,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'background-color: {{VALUE}};',
@@ -137,7 +137,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'color: {{VALUE}};',
@@ -154,7 +154,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title.active' => 'color: {{VALUE}};',
@@ -171,7 +171,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title Typography', 'elementor' ),
 				'name' => 'title_typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
@@ -183,7 +183,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Content Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'background-color: {{VALUE}};',
@@ -197,7 +197,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Content Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'color: {{VALUE}};',
@@ -214,7 +214,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'label' => 'Content Typography',
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -222,18 +222,19 @@ class Widget_Toggle extends Widget_Base {
 		);
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-toggle">
 			<?php $counter = 1; ?>
-			<?php foreach ( $instance['tabs'] as $item ) : ?>
+			<?php foreach ( $tabs as $item ) : ?>
 				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
 					<?php echo $item['tab_title']; ?>
 				</div>
-				<div class="elementor-toggle-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'], $item ); ?></div>
+				<div class="elementor-toggle-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 			<?php
 				$counter++;
 			endforeach; ?>
@@ -241,7 +242,7 @@ class Widget_Toggle extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-toggle">
 			<#

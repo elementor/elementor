@@ -44,61 +44,12 @@ class Frontend {
 			->add_device( 'tablet', $breakpoints['lg'] - 1 );
 	}
 
-	protected function _print_section( $section_data ) {
-		$section_obj = Plugin::instance()->elements_manager->get_element( 'section' );
-		$instance = $section_obj->get_parse_values( $section_data['settings'] );
+	protected function _print_sections( $sections_data ) {
+		foreach ( $sections_data as $section_data ) {
+			$section = new Element_Section( $section_data );
 
-		do_action( 'elementor/frontend/section/before_render', $section_obj, $instance );
-
-		$section_obj->before_render( $instance, $section_data['id'], $section_data );
-
-		foreach ( $section_data['elements'] as $column_data ) {
-			$this->_print_column( $column_data );
+			$section->print_element();
 		}
-
-		$section_obj->after_render( $instance, $section_data['id'], $section_data );
-
-		do_action( 'elementor/frontend/section/after_render', $section_obj, $instance );
-	}
-
-	protected function _print_column( $column_data ) {
-		$column_obj = Plugin::instance()->elements_manager->get_element( 'column' );
-		$instance = $column_obj->get_parse_values( $column_data['settings'] );
-
-		do_action( 'elementor/frontend/column/before_render', $column_obj, $instance );
-
-		$column_obj->before_render( $instance, $column_data['id'], $column_data );
-
-		foreach ( $column_data['elements'] as $widget_data ) {
-			if ( 'section' === $widget_data['elType'] ) {
-				$this->_print_section( $widget_data );
-			} else {
-				$this->_print_widget( $widget_data );
-			}
-		}
-
-		$column_obj->after_render( $instance, $column_data['id'], $column_data );
-
-		do_action( 'elementor/frontend/column/after_render', $column_obj, $instance );
-	}
-
-	protected function _print_widget( $widget_data ) {
-		$widget_obj = Plugin::instance()->widgets_manager->get_widget( $widget_data['widgetType'] );
-		if ( false === $widget_obj )
-			return;
-
-		if ( empty( $widget_data['settings'] ) )
-			$widget_data['settings'] = [];
-
-		$instance = $widget_obj->get_parse_values( $widget_data['settings'] );
-
-		do_action( 'elementor/frontend/widget/before_render', $widget_obj, $instance );
-
-		$widget_obj->before_render( $instance, $widget_data['id'], $widget_data );
-		$widget_obj->render_content( $instance );
-		$widget_obj->after_render( $instance, $widget_data['id'], $widget_data );
-
-		do_action( 'elementor/frontend/widget/after_render', $widget_obj, $instance );
 	}
 
 	public function body_class( $classes = [] ) {
@@ -207,7 +158,7 @@ class Frontend {
 
 	public function print_css() {
 		$post_id = get_the_ID();
-		$data = Plugin::instance()->db->get_plain_builder( $post_id );
+		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
@@ -220,7 +171,9 @@ class Frontend {
 
 		$this->_parse_schemes_css_code();
 
-		foreach ( $data as $section ) {
+		foreach ( $data as $section_data ) {
+			$section = new Element_Section( $section_data );
+
 			$this->_parse_style_item( $section );
 		}
 
@@ -272,29 +225,22 @@ class Frontend {
 		}
 	}
 
-	protected function _parse_style_item( $element ) {
-		if ( 'widget' === $element['elType'] ) {
-			$element_obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
-		} else {
-			$element_obj = Plugin::instance()->elements_manager->get_element( $element['elType'] );
-		}
+	protected function _parse_style_item( Element_Base $element ) {
+		$element_settings = $element->get_settings();
 
-		if ( ! $element_obj )
-			return;
+		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
 
-		$element_instance = $element_obj->get_parse_values( $element['settings'] );
-		$element_unique_class = '.elementor-element.elementor-element-' . $element['id'];
-		if ( 'column' === $element_obj->get_id() ) {
-			if ( ! empty( $element_instance['_inline_size'] ) ) {
-				$this->_column_widths[] = $element_unique_class . '{width:' . $element_instance['_inline_size'] . '%;}';
+		if ( 'column' === $element->get_name() ) {
+			if ( ! empty( $element_settings['_inline_size'] ) ) {
+				$this->_column_widths[] = $element_unique_class . '{width:' . $element_settings['_inline_size'] . '%;}';
 			}
 		}
 
-		foreach ( $element_obj->get_style_controls() as $control ) {
-			if ( ! isset( $element_instance[ $control['name'] ] ) )
+		foreach ( $element->get_style_controls() as $control ) {
+			if ( ! isset( $element_settings[ $control['name'] ] ) )
 				continue;
 
-			$control_value = $element_instance[ $control['name'] ];
+			$control_value = $element_settings[ $control['name'] ];
 			if ( ! is_numeric( $control_value ) && ! is_float( $control_value ) && empty( $control_value ) ) {
 				continue;
 			}
@@ -304,7 +250,7 @@ class Frontend {
 				continue;
 			}
 
-			if ( ! $element_obj->is_control_visible( $element_instance, $control ) ) {
+			if ( ! $element->is_control_visible( $control ) ) {
 				continue;
 			}
 
@@ -326,16 +272,18 @@ class Frontend {
 			}
 		}
 
-		if ( ! empty( $element['elements'] ) ) {
-			foreach ( $element['elements'] as $child_element ) {
+		$children = $element->get_children();
+
+		if ( ! empty( $children ) ) {
+			foreach ( $children as $child_element ) {
 				$this->_parse_style_item( $child_element );
 			}
 		}
 	}
 
 	protected function _parse_schemes_css_code() {
-		foreach ( Plugin::instance()->widgets_manager->get_registered_widgets() as $widget_obj ) {
-			foreach ( $widget_obj->get_scheme_controls() as $control ) {
+		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
+			foreach ( $widget->get_scheme_controls() as $control ) {
 				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 				if ( empty( $scheme_value ) )
 					continue;
@@ -347,7 +295,7 @@ class Frontend {
 				if ( empty( $scheme_value ) )
 					continue;
 
-				$element_unique_class = 'elementor-widget-' . $widget_obj->get_id();
+				$element_unique_class = 'elementor-widget-' . $widget->get_name();
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
@@ -372,7 +320,7 @@ class Frontend {
 		if ( post_password_required( $post_id ) )
 			return $content;
 
-		$data = Plugin::instance()->db->get_plain_builder( $post_id );
+		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
@@ -382,9 +330,7 @@ class Frontend {
 		<div id="elementor" class="elementor">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">
-					<?php foreach ( $data as $section ) : ?>
-						<?php $this->_print_section( $section ); ?>
-					<?php endforeach; ?>
+					<?php $this->_print_sections( $data ); ?>
 				</div>
 			</div>
 		</div>
