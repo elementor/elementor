@@ -1680,8 +1680,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
-
 		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
@@ -1742,7 +1740,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
-	onDocumentClick: function( event ) {
+	onPanelClick: function( event ) {
 		var $target = Backbone.$( event.target ),
 			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
 
@@ -1808,6 +1806,14 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	onClickSaveTemplate: function() {
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView();
+		} );
+	},
+
+	onRender: function() {
+		var self = this;
+
+		_.defer( function() {
+			elementor.getPanelView().$el.on( 'click', _.bind( self.onPanelClick, self ) );
 		} );
 	}
 } );
