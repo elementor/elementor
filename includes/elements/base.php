@@ -318,7 +318,7 @@ abstract class Element_Base {
 	}
 
 	public function print_element() {
-		do_action( 'elementor/frontend/' . $this->get_name() . '/before_render', $this );
+		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
 		$this->before_render();
 
@@ -326,7 +326,7 @@ abstract class Element_Base {
 
 		$this->after_render();
 
-		do_action( 'elementor/frontend/' . $this->get_name() . '/after_render', $this );
+		do_action( 'elementor/frontend/' . static::get_type() . '/after_render', $this );
 	}
 
 	public function get_raw_data( $with_html_content = false ) {
