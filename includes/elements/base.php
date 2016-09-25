@@ -439,10 +439,6 @@ abstract class Element_Base {
 		return $settings;
 	}
 
-	protected function _get_child_args( array $element_data ) {
-		return [];
-	}
-
 	protected function _print_content() {
 		foreach ( $this->get_children() as $child ) {
 			$child->print_element();

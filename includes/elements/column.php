@@ -462,20 +462,4 @@ class Element_Column extends Element_Base {
 
 		return Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] )->get_class_name();
 	}
-
-	protected function _get_child_args( array $element_data ) {
-		if ( 'section' === $element_data['elType'] ) {
-			return [];
-		}
-
-		$widget_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
-
-		if ( ! $widget_type instanceof Widget_WordPress ) {
-			return [];
-		}
-
-		return [
-			'widget_name' => get_class( $widget_type->get_widget_instance() ),
-		];
-	}
 }
