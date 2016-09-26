@@ -5549,11 +5549,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return inputValue;
 	},
 
-	// This method used inside of repeater
-	getFieldTitleValue: function() {
-		return this.getControlValue();
-	},
-
 	setInputValue: function( input, value ) {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );
@@ -6240,12 +6235,6 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		);
 	},
 
-	getFieldTitleValue: function() {
-		var controlValue = this.getControlValue();
-
-		return controlValue.replace( /^fa fa-/, '' ).replace( '-', ' ' );
-	},
-
 	onReady: function() {
 		this.ui.select.select2( {
 			allowClear: true,
@@ -6441,35 +6430,47 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	},
 
 	setTitle: function() {
-		var titleField = this.getOption( 'titleField' ),
-			title;
+		var self = this,
+			titleField = self.getOption( 'titleField' ),
+			title = '';
 
 		if ( titleField ) {
-			var changerControlModel = this.collection.find( { name: titleField } ),
-				changerControlView = this.children.findByModelCid( changerControlModel.cid );
+			title = titleField.replace( /\{([a-z_0-9]+)}/g, function() {
+				var changerControlModel = self.collection.find( { name: arguments[1] } ),
+					changerControlView = self.children.findByModelCid( changerControlModel.cid );
 
-			title = changerControlView.getFieldTitleValue();
+				return changerControlView.getControlValue();
+			} );
+			
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+			title = elementor.translate( 'Item #{0}', [ self.getOption( 'itemIndex' ) ] );
 		}
 
-		this.ui.itemTitle.text( title );
+		self.ui.itemTitle.html( title );
 	},
 
 	initialize: function( options ) {
-		this.elementSettingsModel = options.elementSettingsModel;
+		var self = this;
 
-		this.itemIndex = 0;
+		self.elementSettingsModel = options.elementSettingsModel;
+
+		self.itemIndex = 0;
 
 		// Collection for Controls list
-		this.collection = new Backbone.Collection( options.controlFields );
+		self.collection = new Backbone.Collection( options.controlFields );
 
-		this.listenTo( this.model, 'change', this.checkConditions );
+		self.listenTo( self.model, 'change', self.checkConditions );
 
 		if ( options.titleField ) {
-			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
+			var fields = options.titleField.match( /\{[a-z_0-9]+}/g );
+
+			_.each( fields, function( field ) {
+				field = field.replace( /\{|}/g, '' );
+
+				self.listenTo( self.model, 'change:' + field, self.setTitle );
+			} );
 		}
 	},
 
