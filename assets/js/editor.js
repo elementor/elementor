@@ -5549,11 +5549,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return inputValue;
 	},
 
-	// This method used inside of repeater
-	getFieldTitleValue: function() {
-		return this.getControlValue();
-	},
-
 	setInputValue: function( input, value ) {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );
@@ -6240,12 +6235,6 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		);
 	},
 
-	getFieldTitleValue: function() {
-		var controlValue = this.getControlValue();
-
-		return controlValue.replace( /^fa fa-/, '' ).replace( '-', ' ' );
-	},
-
 	onReady: function() {
 		this.ui.select.select2( {
 			allowClear: true,
@@ -6450,8 +6439,9 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 				var changerControlModel = self.collection.find( { name: arguments[1] } ),
 					changerControlView = self.children.findByModelCid( changerControlModel.cid );
 
-				return changerControlView.getFieldTitleValue();
+				return changerControlView.getControlValue();
 			} );
+			
 		}
 
 		if ( ! title ) {

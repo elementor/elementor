@@ -69,7 +69,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 				var changerControlModel = self.collection.find( { name: arguments[1] } ),
 					changerControlView = self.children.findByModelCid( changerControlModel.cid );
 
-				return changerControlView.getFieldTitleValue();
+				return changerControlView.getControlValue();
 			} );
 		}
 
