@@ -71,6 +71,10 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+
+			.fa {
+				@include margin-end(5px);
+			}
 		}
 
 		.elementor-repeater-row-tool {

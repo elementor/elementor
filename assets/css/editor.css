@@ -1358,6 +1358,8 @@ select {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
+      #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title .fa {
+        margin-right: 5px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {
       width: 40px; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-handle-sortable {
