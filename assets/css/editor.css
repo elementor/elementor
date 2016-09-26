@@ -560,6 +560,28 @@ select {
       color: #a94442;
       background-color: #f2dede;
       border-color: #e8c4c4; }
+  #elementor-panel .elementor-label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    text-transform: capitalize; }
+    #elementor-panel .elementor-label.elementor-label-default {
+      background-color: #a4afb7; }
+    #elementor-panel .elementor-label.elementor-label-info {
+      background-color: #5bc0de; }
+    #elementor-panel .elementor-label.elementor-label-success {
+      background-color: #5cb85c; }
+    #elementor-panel .elementor-label.elementor-label-warning {
+      background-color: #f0ad4e; }
+    #elementor-panel .elementor-label.elementor-label-danger {
+      background-color: #d9534f; }
   #elementor-panel #elementor-panel-header {
     display: table;
     height: 40px;
