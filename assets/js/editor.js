@@ -6441,7 +6441,6 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 				return changerControlView.getControlValue();
 			} );
-			
 		}
 
 		if ( ! title ) {
