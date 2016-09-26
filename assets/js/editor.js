@@ -1658,6 +1658,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
+		previewReloadButton: '#elementor-panel-footer-preview-reload',
 		menuButtons: '.elementor-panel-footer-tool',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
@@ -1670,6 +1671,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	events: {
+		'click @ui.previewReloadButton': 'onClickPreviewReloadButtons',
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
@@ -1785,6 +1787,12 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		event.stopPropagation();
 
 		this._publishBuilder();
+	},
+
+	onClickPreviewReloadButtons: function( event ) {
+		event.preventDefault();
+
+		elementor.$preview[0].contentWindow.location.reload( true );
 	},
 
 	onClickResponsiveButtons: function( event ) {
