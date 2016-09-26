@@ -110,6 +110,9 @@ App = Marionette.Application.extend( {
 	},
 
 	initComponents: function() {
+		var EventManager = require( '../utils/hooks' );
+		this.hooks = new EventManager();
+
 		this.initDialogsManager();
 
 		this.heartbeat.init();
