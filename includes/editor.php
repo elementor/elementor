@@ -122,6 +122,10 @@ class Editor {
 	public function enqueue_scripts() {
 		global $wp_styles, $wp_scripts;
 
+		$post_id = get_the_ID();
+
+		$editor_data = Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT );
+
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
@@ -253,8 +257,6 @@ class Editor {
 		);
 		wp_enqueue_script( 'elementor-editor' );
 
-		$post_id = get_the_ID();
-
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
@@ -288,7 +290,7 @@ class Editor {
 				'elementor_site' => 'https://go.elementor.com/about-elementor/',
 				'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 				'assets_url' => ELEMENTOR_ASSETS_URL,
-				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
+				'data' => $editor_data,
 				'locked_user' => $locked_user,
 				'is_rtl' => is_rtl(),
 				'introduction' => User::get_introduction(),
