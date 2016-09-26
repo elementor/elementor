@@ -28,10 +28,10 @@ class DB {
 
 		if ( self::REVISION_PUBLISH === $revision ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', $editor_data );
+			update_post_meta( $post_id, '_elementor_data', json_encode( $editor_data ) );
 			$this->_save_plain_text( $post_id );
 		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', $editor_data );
+			update_post_meta( $post_id, '_elementor_draft_data', json_encode( $editor_data ) );
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
@@ -52,10 +52,20 @@ class DB {
 		return $this->_get_editor_data( $data, true );
 	}
 
+	protected function _get_json_meta( $post_id, $key ) {
+		$meta = get_post_meta( $post_id, $key, true );
+
+		if ( is_string( $meta ) && ! empty( $meta ) ) {
+			$meta = json_decode( $meta, true );
+		}
+
+		return $meta;
+	}
+
 	public function get_plain_editor( $post_id, $revision = self::REVISION_PUBLISH ) {
-		$data = get_post_meta( $post_id, '_elementor_data', true );
+		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 		if ( self::REVISION_DRAFT === $revision ) {
-			$draft_data = get_post_meta( $post_id, '_elementor_draft_data', true );
+			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
 
 			if ( ! empty( $draft_data ) ) {
 				$data = $draft_data;
