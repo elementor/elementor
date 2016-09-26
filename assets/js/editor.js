@@ -6458,7 +6458,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 			title = elementor.translate( 'Item #{0}', [ self.getOption( 'itemIndex' ) ] );
 		}
 
-		self.ui.itemTitle.text( title );
+		self.ui.itemTitle.html( title );
 	},
 
 	initialize: function( options ) {
