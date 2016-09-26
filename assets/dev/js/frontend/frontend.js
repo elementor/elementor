@@ -1,6 +1,7 @@
 /* global elementorFrontendConfig */
 ( function( $ ) {
-	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
+	var EventManager = require( '../utils/hooks' ),
+		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
@@ -50,8 +51,8 @@
 			return self.config.isEditMode;
 		};
 
+		this.hooks = new EventManager();
 		this.elementsHandler = new ElementsHandler( $ );
-
 		this.utils = new Utils( $ );
 
 		this.init = function() {
