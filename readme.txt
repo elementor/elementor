@@ -157,6 +157,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.9.3 - 26.09.2016 =
+Tweak! - New method for import template library
+Tweak! - Changed priority for 3rd party plugins
+Fix! - Conflict with WooCommerce Memberships
+Fix! - Conflict with Lifter LMS ([#612](https://github.com/pojome/elementor/issues/612))
+Fix! - Icon list correct alignment ([#620](https://github.com/pojome/elementor/issues/620))
+Fix! - Reload the iframe causes the panel to stop working
+
 = 0.9.2 - 21.09.2016 =
 * Fix! - Added color default for Progress Bar when schemes color is disabled
 * Fix! - Stretched section in RTL bug
