@@ -28,10 +28,10 @@ class DB {
 
 		if ( self::REVISION_PUBLISH === $revision ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', json_encode( $editor_data ) );
+			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $editor_data ) );
 			$this->_save_plain_text( $post_id );
 		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', json_encode( $editor_data ) );
+			update_post_meta( $post_id, '_elementor_draft_data', wp_json_encode( $editor_data ) );
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
