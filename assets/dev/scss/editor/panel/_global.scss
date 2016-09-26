@@ -155,19 +155,19 @@
 	vertical-align: baseline;
 	border-radius: .25em;
 	text-transform: capitalize;
-	&.elementor-label-default{
+	&.elementor-label-default {
 		background-color: $editor-light;
 	}
-	&.elementor-label-info{
+	&.elementor-label-info {
 		background-color: $info;
 	}
-	&.elementor-label-success{
+	&.elementor-label-success {
 		background-color: $success;
 	}
-	&.elementor-label-warning{
+	&.elementor-label-warning {
 		background-color: $warning;
 	}
-	&.elementor-label-danger{
+	&.elementor-label-danger {
 		background-color: $danger;
 	}
 }
