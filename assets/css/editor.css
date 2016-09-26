@@ -1354,7 +1354,7 @@ select {
         opacity: .95; }
     #elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
       text-align: left;
-      padding: 0 20px;
+      padding: 0 10px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
