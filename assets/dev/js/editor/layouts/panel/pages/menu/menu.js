@@ -20,10 +20,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
                 pageName: 'typographyScheme'
             },
-            {
-				icon: 'file-text',
-				title: elementor.translate( 'page_settings' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
-			},
 			{
 				icon: 'cog',
 				title: elementor.translate( 'elementor_settings' ),

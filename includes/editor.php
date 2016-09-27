@@ -309,7 +309,6 @@ class Editor {
 					'edit_element' => __( 'Edit {0}', 'elementor' ),
 					'global_colors' => __( 'Global Colors', 'elementor' ),
 					'global_fonts' => __( 'Global Fonts', 'elementor' ),
-					'page_settings' => __( 'Page Settings', 'elementor' ),
 					'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
 					'soon' => __( 'Soon', 'elementor' ),
 					'revisions_history' => __( 'Revisions History', 'elementor' ),
