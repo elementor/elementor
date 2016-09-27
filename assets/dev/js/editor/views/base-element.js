@@ -264,6 +264,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		if ( 'js' === templateType ) {
 			this.model.setHtmlCache();
 			this.render();
+			this.model.renderOnLeave = true;
 		} else {
 			this.model.renderRemoteServer();
 		}
