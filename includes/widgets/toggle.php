@@ -58,7 +58,7 @@ class Widget_Toggle extends Widget_Base {
 						'show_label' => false,
 					],
 				],
-				'title_field' => 'tab_title',
+				'title_field' => '{tab_title}',
 			]
 		);
 

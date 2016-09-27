@@ -106,6 +106,8 @@ class Preview {
 		);
 
 		wp_enqueue_style( 'editor-preview' );
+
+		do_action( 'elementor/preview/enqueue_styles' );
 	}
 
 	/**
