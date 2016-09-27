@@ -377,6 +377,10 @@ App = Marionette.Application.extend( {
         } );
 	},
 
+	reloadPreview: function() {
+		this.$preview[0].contentWindow.location.reload( true );
+	},
+
 	changeDeviceMode: function( newDeviceMode ) {
 		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
