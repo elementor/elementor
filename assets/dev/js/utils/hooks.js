@@ -25,7 +25,7 @@ var EventManager = function() {
 	 * @param [context] Supply a value to be used for this
 	 */
 	function addAction( action, callback, priority, context ) {
-		if ( typeof 'string' === action && typeof 'function' === callback ) {
+		if ( 'string' === typeof action && 'function' === typeof callback ) {
 			priority = parseInt( ( priority || 10 ), 10 );
 			_addHook( 'actions', action, callback, priority, context );
 		}
@@ -41,7 +41,7 @@ var EventManager = function() {
 		var args = slice.call( arguments );
 		var action = args.shift();
 
-		if ( typeof 'string' === action ) {
+		if ( 'string' === typeof action ) {
 			_runHook( 'actions', action, args );
 		}
 
@@ -55,7 +55,7 @@ var EventManager = function() {
 	 * @param [callback] Callback function to remove
 	 */
 	function removeAction( action, callback ) {
-		if ( typeof 'string' === action ) {
+		if ( 'string' === typeof action ) {
 			_removeHook( 'actions', action, callback );
 		}
 
@@ -71,7 +71,7 @@ var EventManager = function() {
 	 * @param [context] Supply a value to be used for this
 	 */
 	function addFilter( filter, callback, priority, context ) {
-		if ( typeof 'string' === filter && typeof 'function' === callback ) {
+		if ( 'string' === typeof filter && 'function' === typeof callback ) {
 			priority = parseInt( ( priority || 10 ), 10 );
 			_addHook( 'filters', filter, callback, priority, context );
 		}
@@ -87,7 +87,7 @@ var EventManager = function() {
 		var args = slice.call( arguments );
 		var filter = args.shift();
 
-		if ( typeof 'string' === filter ) {
+		if ( 'string' === typeof filter ) {
 			return _runHook( 'filters', filter, args );
 		}
 
@@ -101,7 +101,7 @@ var EventManager = function() {
 	 * @param [callback] Callback function to remove
 	 */
 	function removeFilter( filter, callback ) {
-		if ( typeof 'string' === filter ) {
+		if ( 'string' === typeof filter ) {
 			_removeHook( 'filters', filter, callback );
 		}
 
