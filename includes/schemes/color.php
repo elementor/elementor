@@ -74,7 +74,7 @@ class Scheme_Color extends Scheme_Base {
 			'joker' => [
 				'title' => 'Joker',
 				'items' => [
-					self::COLOR_1 => '#000000',
+					self::COLOR_1 => '#202020',
 					self::COLOR_2 => '#b7b4b4',
 					self::COLOR_3 => '#707070',
 					self::COLOR_4 => '#f6121c',
@@ -85,7 +85,7 @@ class Scheme_Color extends Scheme_Base {
 				'items' => [
 					self::COLOR_1 => '#1569ae',
 					self::COLOR_2 => '#b6c9db',
-					self::COLOR_3 => '#969696',
+					self::COLOR_3 => '#545454',
 					self::COLOR_4 => '#fdd247',
 				],
 			],
@@ -94,7 +94,7 @@ class Scheme_Color extends Scheme_Base {
 				'items' => [
 					self::COLOR_1 => '#d5ba7f',
 					self::COLOR_2 => '#902729',
-					self::COLOR_3 => '#95938f',
+					self::COLOR_3 => '#ae4848',
 					self::COLOR_4 => '#302a8c',
 				],
 			],
