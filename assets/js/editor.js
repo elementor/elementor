@@ -1453,7 +1453,7 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
+		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
@@ -1591,6 +1591,8 @@ App = Marionette.Application.extend( {
 	},
 
 	reloadPreview: function() {
+		Backbone.$( '#elementor-preview-loading' ).show();
+
 		this.$preview[0].contentWindow.location.reload( true );
 	},
 
@@ -2658,7 +2660,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend( {
 	},
 
 	orderView: function( model ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( model.get( 'key' ) );
+		return elementor.helpers.getColorPickerPaletteIndex( model.get( 'key' ) );
 	}
 } );
 
@@ -3788,10 +3790,18 @@ helpers = {
 		} );
 	},
 
+	getColorPickerPaletteIndex: function( paletteKey ) {
+		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( item.key );
+	},
+
 	wpColorPicker: function( $element, options ) {
-		var colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+		var self = this,
+			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			items = _.sortBy( colorPickerScheme.items, function( item ) {
+				return self.getColorPickerPaletteIndex( item.key );
+			} ),
 			defaultOptions = {
-				palettes: _.pluck( colorPickerScheme.items, 'value' )
+				palettes: _.pluck( items, 'value' )
 			};
 
 		if ( options ) {

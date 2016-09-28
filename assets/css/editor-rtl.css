@@ -167,6 +167,29 @@ body {
     opacity: .6; }
   100% {
     opacity: 1; } }
+#elementor-preview-loading {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff; }
+  #elementor-preview-loading i {
+    color: #d5dadf;
+    font-size: 50px; }
+
 .select2-dropdown {
   border-color: #a4afb7; }
   .select2-dropdown .select2-search__field {
@@ -694,8 +717,7 @@ select {
   #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-items {
     position: relative; }
   #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item {
-    display: inline-block;
-    margin-bottom: 10px; }
+    display: inline-block; }
     #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
       margin-left: 13px; }
   #elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
@@ -706,7 +728,7 @@ select {
   #elementor-panel .elementor-panel-scheme-color-title {
     text-align: center;
     text-transform: uppercase;
-    margin-top: 10px;
+    margin: 10px 0;
     color: #c2cbd2;
     font-size: 8px; }
   #elementor-panel .elementor-panel-scheme-typography-item {
