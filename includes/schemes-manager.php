@@ -25,7 +25,7 @@ class Schemes_Manager {
 		foreach ( self::$_schemes_types as $schemes_type ) {
 			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
 
-			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( $schemes_type ) );
+			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( str_replace( '-', '_', $schemes_type ) ) );
 		}
 	}
 
@@ -39,6 +39,7 @@ class Schemes_Manager {
 		if ( ! $scheme_instance instanceof Scheme_Base ) {
 			return new \WP_Error( 'wrong_instance_scheme' );
 		}
+
 		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
 
 		return true;
