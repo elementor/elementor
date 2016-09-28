@@ -1562,6 +1562,10 @@ App = Marionette.Application.extend( {
         } );
 	},
 
+	reloadPreview: function() {
+		this.$preview[0].contentWindow.location.reload( true );
+	},
+
 	changeDeviceMode: function( newDeviceMode ) {
 		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
@@ -2382,10 +2386,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
                 pageName: 'typographyScheme'
             },
-            {
-				icon: 'file-text',
-				title: elementor.translate( 'page_settings' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
-			},
 			{
 				icon: 'cog',
 				title: elementor.translate( 'elementor_settings' ),
@@ -6833,13 +6833,15 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 
 		ui.form = 'form';
 		ui.loading = '.wp-widget-form-loading';
+		ui.reloadButton = '#elementor-update-preview-button';
 
 		return ui;
 	},
 
 	events: {
 		'keyup @ui.form :input': 'onFormChanged',
-		'change @ui.form :input': 'onFormChanged'
+		'change @ui.form :input': 'onFormChanged',
+		'click @ui.reloadButton': 'onReloadButtonClick'
 	},
 
 	onFormChanged: function() {
@@ -6859,6 +6861,10 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 				this.ui.form.html( data );
 			}, this )
 		} );
+	},
+
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	}
 } );
 
