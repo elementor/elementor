@@ -84,7 +84,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var currentIndex = 'section' === childView.model.get( 'elType' ) ? childView.$el.index() + 1 : this.view.collection.indexOf( childView.model ),
+		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
 		this.view.addChildModel( newModel, { at: currentIndex } );
@@ -430,8 +430,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 				var oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
-					collection.remove( model, { silent: true } );
-					collection.add( model, { silent: true, at: newIndex } );
+					collection.remove( model );
+					this.view.addChildModel( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
 				}
