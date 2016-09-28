@@ -40,7 +40,6 @@ class Scheme_Color extends Scheme_Base {
 		];
 	}
 
-	public static function get_system_schemes() {
 	public function print_template_content() {
 		?>
 		<div class="elementor-panel-scheme-content elementor-panel-box">
@@ -69,6 +68,8 @@ class Scheme_Color extends Scheme_Base {
 		</div>
 		<?php
 	}
+
+	protected function _init_system_schemes() {
 		return [
 			'joker' => [
 				'title' => 'Joker',

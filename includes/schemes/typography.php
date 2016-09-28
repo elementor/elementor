@@ -52,7 +52,7 @@ class Scheme_Typography extends Scheme_Base {
 		];
 	}
 
-	public static function get_system_schemes() {
+	protected function _init_system_schemes() {
 		return [];
 	}
 
