@@ -328,6 +328,7 @@ class Editor {
 					'section' => __( 'Section', 'elementor' ),
 					'delete_template' => __( 'Delete Template', 'elementor' ),
 					'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
+					'color_picker' => __( 'Color Picker', 'elementor' ),
 				],
 			]
 		);

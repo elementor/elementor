@@ -15,6 +15,7 @@ class Schemes_Manager {
 	private static $_schemes_types = [
 		'color',
 		'typography',
+		'color-picker',
 	];
 
 	public function init() {
