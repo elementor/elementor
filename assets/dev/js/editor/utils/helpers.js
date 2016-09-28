@@ -168,9 +168,13 @@ helpers = {
 	},
 
 	wpColorPicker: function( $element, options ) {
-		var colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+		var self = this,
+			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			items = _.sortBy( colorPickerScheme.items, function( item ) {
+				return self.getColorPickerPaletteIndex( item.key );
+			} ),
 			defaultOptions = {
-				palettes: _.pluck( colorPickerScheme.items, 'value' )
+				palettes: _.pluck( items, 'value' )
 			};
 
 		if ( options ) {
