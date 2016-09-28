@@ -154,4 +154,12 @@ class Scheme_Color extends Scheme_Base {
 			],
 		];
 	}
+
+	protected function _get_system_schemes_to_print() {
+		return $this->get_system_schemes();
+	}
+
+	protected function _get_current_scheme_title() {
+		return __( 'Color Palette', 'elementor' );
+	}
 }
