@@ -407,6 +407,8 @@ class Editor {
 		Plugin::instance()->widgets_manager->render_widgets_content();
 		Plugin::instance()->elements_manager->render_elements_content();
 
+		Plugin::instance()->schemes_manager->print_schemes_templates();
+
 		include( 'editor-templates/global.php' );
 		include( 'editor-templates/panel.php' );
 		include( 'editor-templates/panel-elements.php' );
