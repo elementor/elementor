@@ -161,6 +161,19 @@ helpers = {
 				.removeData( 'backup-pointer-events' )
 				.css( 'pointer-events', backupPointerEvents );
 		} );
+	},
+
+	wpColorPicker: function( $element, options ) {
+		var colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			defaultOptions = {
+				palettes: _.pluck( colorPickerScheme.items, 'value' )
+			};
+
+		if ( options ) {
+			_.extend( defaultOptions, options );
+		}
+
+		return $element.wpColorPicker( defaultOptions );
 	}
 };
 
