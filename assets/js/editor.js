@@ -1337,6 +1337,32 @@ App = Marionette.Application.extend( {
 		elementorFrontend.init();
 	},
 
+	initClearPageDialog: function() {
+		var self = this,
+			dialog;
+
+		self.getClearPageDialog = function() {
+			if ( dialog ) {
+				return dialog;
+			}
+
+			dialog = this.dialogsManager.createWidget( 'confirm', {
+				id: 'elementor-clear-page-dialog',
+				headerMessage: elementor.translate( 'clear_page' ),
+				message: elementor.translate( 'dialog_confirm_clear_page' ),
+				position: {
+					my: 'center center',
+					at: 'center center'
+				},
+				onConfirm: function() {
+					self.getRegion( 'sections' ).currentView.collection.reset();
+				}
+			} );
+
+			return dialog;
+		};
+	},
+
 	onStart: function() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -1358,6 +1384,8 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
+
+		this.initClearPageDialog();
 	},
 
 	onPreviewLoaded: function() {
@@ -1564,6 +1592,10 @@ App = Marionette.Application.extend( {
 
 	reloadPreview: function() {
 		this.$preview[0].contentWindow.location.reload( true );
+	},
+
+	clearPage: function() {
+		this.getClearPageDialog().show();
 	},
 
 	changeDeviceMode: function( newDeviceMode ) {
@@ -2400,6 +2432,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				newTab: true
 			},
 			{
+				icon: 'eraser',
+				title: elementor.translate( 'clear_page' ),
+				callback: function() {
+					elementor.clearPage();
+				}
+			},
+			{
 				icon: 'history',
 				title: elementor.translate( 'revisions_history' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
 			},
@@ -2435,6 +2474,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				}
 
 				break;
+
+			default:
+				var callback = childView.model.get( 'callback' );
+
+				if ( _.isFunction( callback ) ) {
+					callback.call( childView );
+				}
 		}
 	}
 } );
