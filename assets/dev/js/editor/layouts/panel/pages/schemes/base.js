@@ -1,4 +1,8 @@
-var PanelSchemeBaseView;
+var childViewTypes = {
+		color: require( 'elementor-panel/pages/schemes/items/color' ),
+		typography: require( 'elementor-panel/pages/schemes/items/typography' )
+	},
+	PanelSchemeBaseView;
 
 PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	id: function() {
@@ -13,6 +17,14 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 	getTemplate: function() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-schemes-' + this.getType() );
+	},
+
+	getChildView: function() {
+		return childViewTypes[ this.getUIType() ];
+	},
+
+	getUIType: function() {
+		return this.getType();
 	},
 
 	ui: function() {
@@ -57,6 +69,8 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	discardScheme: function() {
 		elementor.schemes.resetSchemes( this.getType() );
 
+		this.onSchemeChange();
+
 		this.ui.saveButton.prop( 'disabled', true );
 
 		this._renderChildren();
@@ -64,6 +78,8 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 	setSchemeValue: function( key, value ) {
 		elementor.schemes.setSchemeValue( this.getType(), key, value );
+
+		this.onSchemeChange();
 	},
 
 	saveScheme: function() {
@@ -102,6 +118,10 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	resetScheme: function() {
 		this.resetItems();
 		this.resetCollection();
+	},
+
+	onSchemeChange: function() {
+		elementor.schemes.printSchemesStyle();
 	},
 
 	onChildviewValueChange: function( childView, newValue ) {
