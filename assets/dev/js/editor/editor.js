@@ -268,7 +268,7 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
+		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
@@ -406,6 +406,8 @@ App = Marionette.Application.extend( {
 	},
 
 	reloadPreview: function() {
+		Backbone.$( '#elementor-preview-loading' ).show();
+
 		this.$preview[0].contentWindow.location.reload( true );
 	},
 
