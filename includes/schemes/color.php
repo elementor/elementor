@@ -41,6 +41,34 @@ class Scheme_Color extends Scheme_Base {
 	}
 
 	public static function get_system_schemes() {
+	public function print_template_content() {
+		?>
+		<div class="elementor-panel-scheme-content elementor-panel-box">
+			<div class="elementor-panel-heading">
+				<div class="elementor-panel-heading-title"><?php echo $this->_get_current_scheme_title(); ?></div>
+			</div>
+			<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
+		</div>
+		<div class="elementor-panel-scheme-colors-more-palettes elementor-panel-box">
+			<div class="elementor-panel-heading">
+				<div class="elementor-panel-heading-title"><?php _e( 'More Palettes', 'elementor' ); ?></div>
+			</div>
+			<div class="elementor-panel-box-content">
+				<?php foreach ( $this->_get_system_schemes_to_print() as $scheme_name => $scheme ) : ?>
+					<div class="elementor-panel-scheme-color-system-scheme" data-scheme-name="<?php echo $scheme_name; ?>">
+						<div class="elementor-panel-scheme-color-system-items">
+							<?php
+							foreach ( $scheme['items'] as $color_value ) : ?>
+								<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
+							<?php endforeach; ?>
+						</div>
+						<div class="elementor-title"><?php echo $scheme['title']; ?></div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
+	}
 		return [
 			'joker' => [
 				'title' => 'Joker',

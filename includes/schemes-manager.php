@@ -129,6 +129,12 @@ class Schemes_Manager {
 		wp_send_json_success();
 	}
 
+	public function print_schemes_templates() {
+		foreach ( $this->get_registered_schemes() as $scheme ) {
+			$scheme->print_template();
+		}
+	}
+
 	public static function get_enabled_schemes() {
 		if ( null === self::$_enabled_schemes ) {
 			$enabled_schemes = [];
