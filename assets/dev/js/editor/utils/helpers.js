@@ -163,6 +163,10 @@ helpers = {
 		} );
 	},
 
+	getColorPickerPaletteIndex: function( paletteKey ) {
+		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( item.key );
+	},
+
 	wpColorPicker: function( $element, options ) {
 		var colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
 			defaultOptions = {

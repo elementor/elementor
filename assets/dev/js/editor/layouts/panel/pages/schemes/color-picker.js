@@ -17,7 +17,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend( {
 	},
 
 	orderView: function( model ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( model.get( 'key' ) );
+		return elementor.helpers.getColorPickerPaletteIndex( model.get( 'key' ) );
 	}
 } );
 
