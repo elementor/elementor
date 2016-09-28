@@ -691,17 +691,17 @@ select {
     background: none; }
   #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-reset .fa, #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-discard .fa {
     margin-right: 3px; }
-  #elementor-panel #elementor-panel-scheme-color .elementor-panel-scheme-items {
+  #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-items {
     position: relative; }
-  #elementor-panel #elementor-panel-scheme-color .elementor-panel-scheme-item {
+  #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item {
     display: inline-block;
     margin-bottom: 10px; }
-    #elementor-panel #elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
+    #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
       margin-left: 13px; }
-  #elementor-panel #elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
+  #elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
     -webkit-transform: translateY(-37px);
             transform: translateY(-37px); }
-    #elementor-panel #elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
+    #elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 7px; }
   #elementor-panel .elementor-panel-scheme-color-title {
     text-align: center;
@@ -729,6 +729,10 @@ select {
       font-style: italic;
       margin-top: 5px; }
   #elementor-panel .elementor-panel-scheme-color-system-items {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-transition: border .5s;
     transition: border .5s;
     overflow: hidden;
@@ -739,9 +743,11 @@ select {
     #elementor-panel .elementor-panel-scheme-color-system-items:hover {
       border: 1px solid #a4afb7; }
   #elementor-panel .elementor-panel-scheme-color-system-item {
-    float: left;
     height: 20px;
-    width: 25%; }
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1; }
   #elementor-panel #elementor-panel-schemes-disabled {
     padding: 20px;
     text-align: center;
