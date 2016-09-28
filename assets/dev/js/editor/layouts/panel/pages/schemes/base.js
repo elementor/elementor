@@ -5,7 +5,9 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		return 'elementor-panel-scheme-' + this.getType();
 	},
 
-	className: 'elementor-panel-scheme',
+	className: function() {
+		return 'elementor-panel-scheme elementor-panel-scheme-' + this.getUIType();
+	},
 
 	childViewContainer: '.elementor-panel-scheme-items',
 

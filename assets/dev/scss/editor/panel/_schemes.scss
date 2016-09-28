@@ -50,7 +50,7 @@
 	}
 }
 
-#elementor-panel-scheme-color {
+.elementor-panel-scheme-color {
 
 	.elementor-panel-scheme-items {
 		position: relative;
@@ -129,6 +129,7 @@
 }
 
 .elementor-panel-scheme-color-system-items {
+	display: flex;
 	transition: border .5s;
 	overflow: hidden;
 	padding: 3px;
@@ -142,9 +143,8 @@
 }
 
 .elementor-panel-scheme-color-system-item {
-	float: left;
 	height: 20px;
-	width: 25%;
+	flex-grow: 1;
 }
 
 #elementor-panel-schemes-disabled {
