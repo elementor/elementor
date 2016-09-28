@@ -581,7 +581,8 @@ module.exports = Utils;
  * that, lowest priority hooks are fired first.
  */
 var EventManager = function() {
-	var slice = Array.prototype.slice;
+	var slice = Array.prototype.slice,
+		MethodsAvailable;
 
 	/**
 	 * Contains the hooks that get registered with this EventManager. The array for storage utilizes a "flat"
@@ -591,6 +592,121 @@ var EventManager = function() {
 		actions: {},
 		filters: {}
 	};
+
+	/**
+	 * Removes the specified hook by resetting the value of it.
+	 *
+	 * @param type Type of hook, either 'actions' or 'filters'
+	 * @param hook The hook (namespace.identifier) to remove
+	 *
+	 * @private
+	 */
+	function _removeHook( type, hook, callback, context ) {
+		var handlers, handler, i;
+
+		if ( ! STORAGE[ type ][ hook ] ) {
+			return;
+		}
+		if ( ! callback ) {
+			STORAGE[ type ][ hook ] = [];
+		} else {
+			handlers = STORAGE[ type ][ hook ];
+			if ( ! context ) {
+				for ( i = handlers.length; i--; ) {
+					if ( handlers[ i ].callback === callback ) {
+						handlers.splice( i, 1 );
+					}
+				}
+			} else {
+				for ( i = handlers.length; i--; ) {
+					handler = handlers[ i ];
+					if ( handler.callback === callback && handler.context === context ) {
+						handlers.splice( i, 1 );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Use an insert sort for keeping our hooks organized based on priority. This function is ridiculously faster
+	 * than bubble sort, etc: http://jsperf.com/javascript-sort
+	 *
+	 * @param hooks The custom array containing all of the appropriate hooks to perform an insert sort on.
+	 * @private
+	 */
+	function _hookInsertSort( hooks ) {
+		var tmpHook, j, prevHook;
+		for ( var i = 1, len = hooks.length; i < len; i++ ) {
+			tmpHook = hooks[ i ];
+			j = i;
+			while ( ( prevHook = hooks[ j - 1 ] ) && prevHook.priority > tmpHook.priority ) {
+				hooks[ j ] = hooks[ j - 1 ];
+				--j;
+			}
+			hooks[ j ] = tmpHook;
+		}
+
+		return hooks;
+	}
+
+	/**
+	 * Adds the hook to the appropriate storage container
+	 *
+	 * @param type 'actions' or 'filters'
+	 * @param hook The hook (namespace.identifier) to add to our event manager
+	 * @param callback The function that will be called when the hook is executed.
+	 * @param priority The priority of this hook. Must be an integer.
+	 * @param [context] A value to be used for this
+	 * @private
+	 */
+	function _addHook( type, hook, callback, priority, context ) {
+		var hookObject = {
+			callback: callback,
+			priority: priority,
+			context: context
+		};
+
+		// Utilize 'prop itself' : http://jsperf.com/hasownproperty-vs-in-vs-undefined/19
+		var hooks = STORAGE[ type ][ hook ];
+		if ( hooks ) {
+			hooks.push( hookObject );
+			hooks = _hookInsertSort( hooks );
+		} else {
+			hooks = [ hookObject ];
+		}
+
+		STORAGE[ type ][ hook ] = hooks;
+	}
+
+	/**
+	 * Runs the specified hook. If it is an action, the value is not modified but if it is a filter, it is.
+	 *
+	 * @param type 'actions' or 'filters'
+	 * @param hook The hook ( namespace.identifier ) to be ran.
+	 * @param args Arguments to pass to the action/filter. If it's a filter, args is actually a single parameter.
+	 * @private
+	 */
+	function _runHook( type, hook, args ) {
+		var handlers = STORAGE[ type ][ hook ], i, len;
+
+		if ( ! handlers ) {
+			return ( 'filters' === type ) ? args[ 0 ] : false;
+		}
+
+		len = handlers.length;
+		if ( 'filters' === type ) {
+			for ( i = 0; i < len; i++ ) {
+				args[ 0 ] = handlers[ i ].callback.apply( handlers[ i ].context, args );
+			}
+		} else {
+			for ( i = 0; i < len; i++ ) {
+				handlers[ i ].callback.apply( handlers[ i ].context, args );
+			}
+		}
+
+		return ( 'filters' === type ) ? args[ 0 ] : true;
+	}
 
 	/**
 	 * Adds an action to the event manager.
@@ -685,124 +801,9 @@ var EventManager = function() {
 	}
 
 	/**
-	 * Removes the specified hook by resetting the value of it.
-	 *
-	 * @param type Type of hook, either 'actions' or 'filters'
-	 * @param hook The hook (namespace.identifier) to remove
-	 *
-	 * @private
-	 */
-	function _removeHook( type, hook, callback, context ) {
-		var handlers, handler, i;
-
-		if ( ! STORAGE[ type ][ hook ] ) {
-			return;
-		}
-		if ( ! callback ) {
-			STORAGE[ type ][ hook ] = [];
-		} else {
-			handlers = STORAGE[ type ][ hook ];
-			if ( ! context ) {
-				for ( i = handlers.length; i--; ) {
-					if ( handlers[ i ].callback === callback ) {
-						handlers.splice( i, 1 );
-					}
-				}
-			} else {
-				for ( i = handlers.length; i--; ) {
-					handler = handlers[ i ];
-					if ( handler.callback === callback && handler.context === context ) {
-						handlers.splice( i, 1 );
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Adds the hook to the appropriate storage container
-	 *
-	 * @param type 'actions' or 'filters'
-	 * @param hook The hook (namespace.identifier) to add to our event manager
-	 * @param callback The function that will be called when the hook is executed.
-	 * @param priority The priority of this hook. Must be an integer.
-	 * @param [context] A value to be used for this
-	 * @private
-	 */
-	function _addHook( type, hook, callback, priority, context ) {
-		var hookObject = {
-			callback: callback,
-			priority: priority,
-			context: context
-		};
-
-		// Utilize 'prop itself' : http://jsperf.com/hasownproperty-vs-in-vs-undefined/19
-		var hooks = STORAGE[ type ][ hook ];
-		if ( hooks ) {
-			hooks.push( hookObject );
-			hooks = _hookInsertSort( hooks );
-		} else {
-			hooks = [ hookObject ];
-		}
-
-		STORAGE[ type ][ hook ] = hooks;
-	}
-
-	/**
-	 * Use an insert sort for keeping our hooks organized based on priority. This function is ridiculously faster
-	 * than bubble sort, etc: http://jsperf.com/javascript-sort
-	 *
-	 * @param hooks The custom array containing all of the appropriate hooks to perform an insert sort on.
-	 * @private
-	 */
-	function _hookInsertSort( hooks ) {
-		var tmpHook, j, prevHook;
-		for ( var i = 1, len = hooks.length; i < len; i++ ) {
-			tmpHook = hooks[ i ];
-			j = i;
-			while ( ( prevHook = hooks[ j - 1 ] ) && prevHook.priority > tmpHook.priority ) {
-				hooks[ j ] = hooks[ j - 1 ];
-				--j;
-			}
-			hooks[ j ] = tmpHook;
-		}
-
-		return hooks;
-	}
-
-	/**
-	 * Runs the specified hook. If it is an action, the value is not modified but if it is a filter, it is.
-	 *
-	 * @param type 'actions' or 'filters'
-	 * @param hook The hook ( namespace.identifier ) to be ran.
-	 * @param args Arguments to pass to the action/filter. If it's a filter, args is actually a single parameter.
-	 * @private
-	 */
-	function _runHook( type, hook, args ) {
-		var handlers = STORAGE[ type ][ hook ], i, len;
-
-		if ( ! handlers ) {
-			return ( 'filters' === type ) ? args[ 0 ] : false;
-		}
-
-		len = handlers.length;
-		if ( 'filters' === type ) {
-			for ( i = 0; i < len; i++ ) {
-				args[ 0 ] = handlers[ i ].callback.apply( handlers[ i ].context, args );
-			}
-		} else {
-			for ( i = 0; i < len; i++ ) {
-				handlers[ i ].callback.apply( handlers[ i ].context, args );
-			}
-		}
-
-		return ( 'filters' === type ) ? args[ 0 ] : true;
-	}
-
-	/**
 	 * Maintain a reference to the object scope so our public methods never get confusing.
 	 */
-	var MethodsAvailable = {
+	MethodsAvailable = {
 		removeFilter: removeFilter,
 		applyFilters: applyFilters,
 		addFilter: addFilter,
