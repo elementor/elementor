@@ -168,7 +168,7 @@ class Widget_Icon extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 				'section' => 'section_style_icon',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -183,13 +183,10 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
-				'default' => [
-					'size' => 1.5,
-					'unit' => 'em',
-				],
 				'range' => [
 					'em' => [
 						'min' => 0,
+						'max' => 5,
 					],
 				],
 				'condition' => [
