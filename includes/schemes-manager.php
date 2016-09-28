@@ -88,7 +88,7 @@ class Schemes_Manager {
 		$data = [];
 
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			$data[ $scheme::get_type() ] = $scheme::get_system_schemes();
+			$data[ $scheme::get_type() ] = $scheme->get_system_schemes();
 		}
 
 		return $data;
