@@ -21,6 +21,12 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
                 pageName: 'typographyScheme'
             },
 			{
+				icon: 'eyedropper',
+				title: elementor.translate( 'color_picker' ),
+				type: 'page',
+				pageName: 'colorPickerScheme'
+			},
+			{
 				icon: 'cog',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
