@@ -76,6 +76,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				}
 
 				break;
+
+			default:
+				var callback = childView.model.get( 'callback' );
+
+				if ( _.isFunction( callback ) ) {
+					callback.call( childView );
+				}
 		}
 	}
 } );
