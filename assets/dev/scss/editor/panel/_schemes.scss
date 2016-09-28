@@ -58,7 +58,6 @@
 
 	.elementor-panel-scheme-item {
 		display: inline-block;
-		margin-bottom: 10px;
 
 		&:not(:nth-child(4n)) {
 			@include margin-end(13px);
@@ -80,7 +79,7 @@
 .elementor-panel-scheme-color-title {
 	text-align: center;
 	text-transform: uppercase;
-	margin-top: 10px;
+	margin: 10px 0;
 	color: $editor-lighter;
 	font-size: 8px;
 }
