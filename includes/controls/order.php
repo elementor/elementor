@@ -9,6 +9,13 @@ class Control_Order extends Control_Base_Multiple {
 		return 'order';
 	}
 
+	public function get_default_value() {
+		return [
+			'order_by' => '',
+			'reverse_order' => '',
+		];
+	}
+
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
