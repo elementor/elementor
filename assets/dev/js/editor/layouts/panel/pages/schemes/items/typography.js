@@ -2,6 +2,10 @@ var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
 	PanelSchemeTypographyView;
 
 PanelSchemeTypographyView = PanelSchemeItemView.extend( {
+	getUIType: function() {
+		return 'typography';
+	},
+
 	className: function() {
 		var classes = PanelSchemeItemView.prototype.className.apply( this, arguments );
 

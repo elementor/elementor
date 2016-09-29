@@ -161,6 +161,27 @@ helpers = {
 				.removeData( 'backup-pointer-events' )
 				.css( 'pointer-events', backupPointerEvents );
 		} );
+	},
+
+	getColorPickerPaletteIndex: function( paletteKey ) {
+		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( item.key );
+	},
+
+	wpColorPicker: function( $element, options ) {
+		var self = this,
+			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			items = _.sortBy( colorPickerScheme.items, function( item ) {
+				return self.getColorPickerPaletteIndex( item.key );
+			} ),
+			defaultOptions = {
+				palettes: _.pluck( items, 'value' )
+			};
+
+		if ( options ) {
+			_.extend( defaultOptions, options );
+		}
+
+		return $element.wpColorPicker( defaultOptions );
 	}
 };
 

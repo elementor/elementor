@@ -2,7 +2,6 @@ var PanelSchemeBaseView = require( 'elementor-panel/pages/schemes/base' ),
 	PanelSchemeColorsView;
 
 PanelSchemeColorsView = PanelSchemeBaseView.extend( {
-
 	ui: function() {
 		var ui = PanelSchemeBaseView.prototype.ui.apply( this, arguments );
 
@@ -19,10 +18,6 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 		return events;
 	},
 
-	getChildView: function() {
-		return require( 'elementor-panel/pages/schemes/items/color' );
-	},
-
 	getType: function() {
 		return 'color';
 	},
@@ -30,7 +25,7 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 	onSystemSchemeClick: function( event ) {
 		var $schemeClicked = Backbone.$( event.currentTarget ),
 			schemeName = $schemeClicked.data( 'schemeName' ),
-			scheme = elementor.config.system_schemes.color[ schemeName ].items;
+			scheme = elementor.config.system_schemes[ this.getType() ][ schemeName ].items;
 
 		this.changeChildrenUIValues( scheme );
 	}

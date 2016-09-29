@@ -2,7 +2,7 @@ var PanelSchemeItemView;
 
 PanelSchemeItemView = Marionette.ItemView.extend( {
 	getTemplate: function() {
-		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-scheme-' + this.model.get( 'type' ) + '-item' );
+		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-scheme-' + this.getUIType() + '-item' );
 	},
 
 	className: function() {
