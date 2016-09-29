@@ -96,7 +96,8 @@ App = Marionette.Application.extend( {
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' )
+				hover_animation: require( 'elementor-views/controls/animation' ),
+				order: require( 'elementor-views/controls/order' )
 			};
 
 			this.channels.editor.trigger( 'editor:controls:initialize' );
