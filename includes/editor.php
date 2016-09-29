@@ -331,6 +331,8 @@ class Editor {
 					'color_picker' => __( 'Color Picker', 'elementor' ),
 					'clear_page' => __( 'Clear Page', 'elementor' ),
 					'dialog_confirm_clear_page' => __( 'All of your current page content will be lost. <br>Do you wish to proceed?', 'elementor' ),
+					'asc' => 'Ascending order',
+					'desc' => 'Descending order',
 				],
 			]
 		);

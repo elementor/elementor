@@ -46,6 +46,7 @@ class Controls_Manager {
 	const BOX_SHADOW = 'box_shadow';
 	const ANIMATION = 'animation';
 	const HOVER_ANIMATION = 'hover_animation';
+	const ORDER = 'order';
 
 	/**
 	 * @var Control_Base[]
@@ -121,6 +122,7 @@ class Controls_Manager {
 			self::BOX_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
+			self::ORDER,
 		];
 
 		foreach ( $available_controls as $control_id ) {
