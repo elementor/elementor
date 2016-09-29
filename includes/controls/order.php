@@ -15,7 +15,7 @@ class Control_Order extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-control-oreder-wrapper">
-					<select data-setting="oreder_by">
+					<select data-setting="order_by">
 						<# _.each( data.options, function( option_title, option_value ) { #>
 							<option value="{{ option_value }}">{{{ option_title }}}</option>
 							<# } ); #>
