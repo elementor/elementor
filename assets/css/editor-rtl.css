@@ -1858,7 +1858,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   text-align: center; }
 
 .dialog-message {
-  font-size: 12px; }
+  font-size: 12px;
+  line-height: 1.4; }
 
 .dialog-buttons-wrapper {
   border-top: 1px solid #e6e9ec;
