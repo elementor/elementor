@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Group_Control_Image_size extends Group_Control_Base {
+class Group_Control_Image_Size extends Group_Control_Base {
 
 	public static function get_type() {
 		return 'image-size';

@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Widget_Base extends Element_Base {
 
+	protected $skins = [];
+
 	public static function get_type() {
 		return 'widget';
 	}
@@ -164,5 +166,123 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
+	}
+
+	public function add_skin( $id, $args ) {
+		$this->skins[ $id ] = $args;
+	}
+
+	public function set_skin_args( $id, $args ) {
+		array_merge( $this->skins[ $id ], $args );
+	}
+
+	public function get_skin_arg( $id, $arg ) {
+		$skin = $this->get_skin( $id );
+
+		if ( $skin && isset( $skin[ $arg ] ) ) {
+			return $skin[ $arg ];
+		}
+
+		return false;
+	}
+
+	public function get_skin( $id ) {
+		if ( $this->skin_exist( $id ) ) {
+			return $this->skins[ $id ];
+		}
+
+		return false;
+	}
+
+	public function get_current_skin_id() {
+
+		return $this->get_settings( 'skin' );
+	}
+
+	public function get_current_skin() {
+
+		return $this->get_skin( $this->get_current_skin_id() );
+	}
+
+	/**
+	 * @return false|Skin_Base
+	 */
+	public function get_current_skin_instance() {
+
+		return $this->get_skin_instance( $this->get_current_skin_id() );
+	}
+
+	public function remove_skin( $id ) {
+		if ( $this->skin_exist( $id ) ) {
+			unset( $this->skins[ $id ] );
+			return true;
+		}
+
+		return false;
+	}
+
+	public function skin_exist( $id ) {
+
+		return isset( $this->skins[ $id ] );
+	}
+
+	public function has_skins() {
+
+		return ! empty( $this->skins );
+	}
+
+	public function get_skins() {
+
+		return $this->skins;
+	}
+
+	public function get_skins_names() {
+
+		$list = [];
+
+		foreach ( $this->get_skins() as $id => $skin ) {
+			$list[ $id ] = $skin['title'];
+		}
+
+		return $list;
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @return bool|Skin_Base
+	 */
+	public function get_skin_instance( $id ) {
+
+		$skin_args = $this->get_skin( $id );
+
+		if ( ! $skin_args ) {
+			return false;
+		}
+
+		if ( isset( $skin_args['instance'] ) ) {
+			$instance = $skin_args['instance'];
+		} else {
+
+			require_once $skin_args['path'];
+
+			$instance = new $skin_args['class_name']( $this );
+
+			$this->set_skin_args( $id, [ 'instance' => $instance ] );
+		}
+
+		return $instance;
+	}
+
+	public function render_skin() {
+
+		/** @var Skin_Base $skin */
+		$skin = $this->get_skin_instance( $this->get_current_skin_id() );
+
+		if ( ! $skin ) {
+			return;
+		}
+
+		$skin->render();
 	}
 }
