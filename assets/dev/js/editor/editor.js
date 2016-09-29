@@ -96,7 +96,8 @@ App = Marionette.Application.extend( {
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' )
+				hover_animation: require( 'elementor-views/controls/animation' ),
+				order: require( 'elementor-views/controls/order' )
 			};
 
 			this.channels.editor.trigger( 'editor:controls:initialize' );
@@ -274,6 +275,8 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
+		this.enqueueTypographyFonts();
+
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
@@ -430,6 +433,15 @@ App = Marionette.Application.extend( {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+	},
+
+	enqueueTypographyFonts: function() {
+		var self = this,
+			typographyScheme = this.schemes.getScheme( 'typography' );
+
+		_.each( typographyScheme.items, function( item ) {
+			self.helpers.enqueueFont( item.value.font_family );
+		} );
 	},
 
 	translate: function( stringKey, templateArgs ) {

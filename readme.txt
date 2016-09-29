@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.9.2
+Stable tag: 0.9.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -156,6 +156,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 0.9.3 - 26.09.2016 =
+* Tweak! - New method for import template library
+* Tweak! - Changed priority for 3rd party plugins
+* Fix! - Conflict with WooCommerce Memberships
+* Fix! - Conflict with Lifter LMS ([#612](https://github.com/pojome/elementor/issues/612))
+* Fix! - Icon list correct alignment ([#620](https://github.com/pojome/elementor/issues/620))
+* Fix! - Reload the iframe causes the panel to stop working
 
 = 0.9.2 - 21.09.2016 =
 * Fix! - Added color default for Progress Bar when schemes color is disabled
