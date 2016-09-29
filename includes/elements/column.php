@@ -18,11 +18,10 @@ class Element_Column extends Element_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_style',
 			[
 				'label' => __( 'Background & Border', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -32,7 +31,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -42,7 +40,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'border',
 				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -54,7 +51,6 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -65,18 +61,18 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
-				'section' => 'section_style',
 				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Section Typography
-		$this->add_control(
+		$this->start_controls_section(
 			'section_typo',
 			[
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
 				'type' => Controls_Manager::SECTION,
 			]
 		);
@@ -86,7 +82,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
@@ -105,8 +100,7 @@ class Element_Column extends Element_Base {
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_typo',
-			]
+				]
 		);
 
 		$this->add_control(
@@ -114,7 +108,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Link Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
@@ -128,7 +121,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Link Hover Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
@@ -143,7 +135,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_typo',
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
@@ -164,8 +155,10 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Section Advanced
-		$this->add_control(
+		$this->start_controls_section(
 			'section_advanced',
 			[
 				'label' => __( 'Advanced', 'elementor' ),
@@ -180,7 +173,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'section' => 'section_advanced',
 				'tab' => Controls_Manager::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -194,7 +186,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'section' => 'section_advanced',
 				'tab' => Controls_Manager::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -211,8 +202,7 @@ class Element_Column extends Element_Base {
 				'prefix_class' => 'animated ',
 				'tab' => Controls_Manager::TAB_ADVANCED,
 				'label_block' => true,
-				'section' => 'section_advanced',
-			]
+				]
 		);
 
 		$this->add_control(
@@ -228,7 +218,6 @@ class Element_Column extends Element_Base {
 				],
 				'prefix_class' => 'animated-',
 				'tab' => Controls_Manager::TAB_ADVANCED,
-				'section' => 'section_advanced',
 				'condition' => [
 					'animation!' => '',
 				],
@@ -240,7 +229,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'section' => 'section_advanced',
 				'tab' => Controls_Manager::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
@@ -249,12 +237,13 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Section Responsive
-		$this->add_control(
+		$this->start_controls_section(
 			'section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -280,7 +269,6 @@ class Element_Column extends Element_Base {
 				[
 					'label' => $point_data['title'],
 					'type' => Controls_Manager::SELECT,
-					'section' => 'section_responsive',
 					'default' => 'default',
 					'options' => [
 						'default' => __( 'Default', 'elementor' ),
@@ -297,7 +285,6 @@ class Element_Column extends Element_Base {
 				[
 					'label' => __( 'Column Width', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'section' => 'section_responsive',
 					'options' => [
 						'10' => '10%',
 						'11' => '11%',
@@ -328,6 +315,8 @@ class Element_Column extends Element_Base {
 				]
 			);
 		}
+
+		$this->end_controls_section();
 	}
 
 	protected function _render_settings() {
