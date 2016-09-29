@@ -74,18 +74,6 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
 			'heading_color',
 			[
 				'label' => __( 'Heading Color', 'elementor' ),
@@ -93,6 +81,19 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'section' => 'section_typo',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
 				],
 			]
 		);

@@ -1460,6 +1460,8 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
 
+		this.enqueueTypographyFonts();
+
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
@@ -1616,6 +1618,15 @@ App = Marionette.Application.extend( {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+	},
+
+	enqueueTypographyFonts: function() {
+		var self = this,
+			typographyScheme = this.schemes.getScheme( 'typography' );
+
+		_.each( typographyScheme.items, function( item ) {
+			self.helpers.enqueueFont( item.value.font_family );
+		} );
 	},
 
 	translate: function( stringKey, templateArgs ) {
@@ -3151,6 +3162,7 @@ ElementModel = Backbone.Model.extend( {
 	remoteRender: false,
 	_htmlCache: null,
 	_jqueryXhr: null,
+	renderOnLeave: false,
 
 	initialize: function( options ) {
 		var elements = this.get( 'elements' ),
@@ -3217,7 +3229,10 @@ ElementModel = Backbone.Model.extend( {
 
 	onCloseEditor: function() {
 		this.initEditSettings();
-		this.renderRemoteServer();
+
+		if ( this.renderOnLeave ) {
+			this.renderRemoteServer();
+		}
 	},
 
 	setSetting: function( key, value, triggerChange ) {
@@ -3270,6 +3285,8 @@ ElementModel = Backbone.Model.extend( {
 		if ( ! this.remoteRender ) {
 			return;
 		}
+
+		this.renderOnLeave = false;
 
 		this.trigger( 'before:remote:render' );
 
@@ -5077,8 +5094,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 			elementor.setFlagEditorChange( true );
 		}
 
-		var forceRender;
-
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
@@ -5107,6 +5122,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		if ( 'js' === templateType ) {
 			this.model.setHtmlCache();
 			this.render();
+			this.model.renderOnLeave = true;
 		} else {
 			this.model.renderRemoteServer();
 		}
