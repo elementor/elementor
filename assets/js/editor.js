@@ -3791,7 +3791,7 @@ helpers = {
 	},
 
 	getColorPickerPaletteIndex: function( paletteKey ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( item.key );
+		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
 	},
 
 	wpColorPicker: function( $element, options ) {
