@@ -13,6 +13,7 @@ abstract class Widget_Base extends Element_Base {
 
 	public function __construct( $data = [], $args = [] ) {
 		parent::__construct( $data, $args );
+
 		do_action( 'elementor/element/construct', $this );
 		do_action( 'elementor/element/construct/' . $this->get_name(), $this );
 	}

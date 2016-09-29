@@ -377,22 +377,21 @@ abstract class Element_Base {
 		];
 	}
 
-	public function start_controls_section( $id, $args ) {
-		$section_id = $id;
+	public function start_controls_section( $section_id, $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
 
 		$args['type'] = Controls_Manager::SECTION;
 
-		$this->add_control( $id, $args );
+		$this->add_control( $section_id, $args );
 
 		if ( null !== $this->_current_section ) {
 			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) );
 		}
 
 		$this->_current_section = [
-			'section' => $id,
-			'tab'     => $this->get_controls( $id )['tab'],
+			'section' => $section_id,
+			'tab'     => $this->get_controls( $section_id )['tab'],
 		];
 
 		do_action( 'elementor/element/after_section_start', $this, $section_id, $args );
