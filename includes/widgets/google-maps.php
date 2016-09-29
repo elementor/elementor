@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Google_maps extends Widget_Base {
+class Widget_Google_Maps extends Widget_Base {
 
 	public function get_name() {
 		return 'google_maps';
