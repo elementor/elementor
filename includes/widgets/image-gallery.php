@@ -27,16 +27,6 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-				'section' => 'section_gallery',
-			]
-		);
-
-		$this->add_control(
 			'wp_gallery',
 			[
 				'label' => __( 'Add Images', 'elementor' ),
@@ -94,6 +84,16 @@ class Widget_Image_Gallery extends Widget_Base {
 					'rand' => __( 'Random', 'elementor' ),
 				],
 				'default' => '',
+			]
+		);
+
+		$this->add_control(
+			'view',
+			[
+				'label' => __( 'View', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'default' => 'traditional',
+				'section' => 'section_gallery',
 			]
 		);
 

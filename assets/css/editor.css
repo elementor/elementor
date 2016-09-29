@@ -1165,8 +1165,6 @@ select {
     margin-right: 3px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery.elementor-gallery-empty .elementor-control-gallery-clear, #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery.elementor-gallery-empty .elementor-control-gallery-thumbnails {
     display: none; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-media {
-    padding-top: 20px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-gallery-thumbnails {
     overflow: hidden;
     margin-top: 20px;
