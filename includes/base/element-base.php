@@ -45,6 +45,9 @@ abstract class Element_Base {
 	abstract public function get_name();
 
 	public function __construct( $data = [], $args = [] ) {
+
+		do_action( 'elementor/element/construct', $this );
+
 		if ( $data ) {
 			$this->_init( $data );
 		} else {
