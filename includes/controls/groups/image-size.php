@@ -76,6 +76,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'options' => $image_sizes,
 			'default' => $default_value,
+			'label_block' => true,
 		];
 
 		if ( isset( $image_sizes['custom'] ) ) {

@@ -38,6 +38,15 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Image_size::get_type(),
+			[
+				'name'        => 'image', /* actually its `image_size` */
+				'section'     => 'section_image',
+				'label'       => __( 'Image Size', 'elementor' ),
+			]
+		);
+
 		$this->add_responsive_control(
 			'align',
 			[
@@ -304,7 +313,22 @@ class Widget_Image extends Widget_Base {
 
 		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
 
-		$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $settings['image']['url'] ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
+		/* if is the new version - with image size */
+
+		$image_sizes = get_intermediate_image_sizes();
+		$image_sizes[] = 'full';
+
+		if ( isset( $settings['image_size'] ) && in_array( $settings['image_size'], $image_sizes ) ) {
+			$image_html .= wp_get_attachment_image( $settings['image']['id'], $settings['image_size'] );
+		} else {
+			if ( 'custom' === $settings['image_size'] ) {
+				$image_src = Group_Control_Image_size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
+			} else {
+				$image_src = $settings['image']['url'];
+			}
+
+			$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
+		}
 
 		$link = $this->get_link_url( $settings );
 		if ( $link ) {
@@ -344,8 +368,23 @@ class Widget_Image extends Widget_Base {
 					image_html += '<figure class="wp-caption">';
 				}
 
-				image_html = '<img src="' + settings.image.url + '" class="' + imgClass + '" />';
-				
+				obj.model = elementModel;
+
+				elementor.imagesManager.registerItem( obj );
+
+				/* get url from imagesManager. if it's not in cache like a new dropped widget or a custom size - get from settings */
+				var image_url = elementor.imagesManager.getItem( obj );
+
+				if( !image_url ){
+
+					if ( 'custom' === settings.image_size ) {
+					}
+
+					image_url = settings.image.url;
+				}
+
+				image_html += '<img src="' + image_url + '" class="' + imgClass + '" />';
+
 				var link_url;
 				if ( 'custom' === settings.link_to ) {
 					link_url = settings.link.url;
@@ -368,6 +407,7 @@ class Widget_Image extends Widget_Base {
 				}
 
 				print( image_html );
+
 				#>
 			</div>
 		<# } #>
