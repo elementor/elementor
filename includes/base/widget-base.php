@@ -195,12 +195,10 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function get_current_skin_id() {
-
 		return $this->get_settings( 'skin' );
 	}
 
 	public function get_current_skin() {
-
 		return $this->get_skin( $this->get_current_skin_id() );
 	}
 
@@ -208,7 +206,6 @@ abstract class Widget_Base extends Element_Base {
 	 * @return false|Skin_Base
 	 */
 	public function get_current_skin_instance() {
-
 		return $this->get_skin_instance( $this->get_current_skin_id() );
 	}
 
@@ -222,22 +219,18 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function skin_exist( $id ) {
-
 		return isset( $this->skins[ $id ] );
 	}
 
 	public function has_skins() {
-
 		return ! empty( $this->skins );
 	}
 
 	public function get_skins() {
-
 		return $this->skins;
 	}
 
 	public function get_skins_names() {
-
 		$list = [];
 
 		foreach ( $this->get_skins() as $id => $skin ) {
@@ -253,7 +246,6 @@ abstract class Widget_Base extends Element_Base {
 	 * @return bool|Skin_Base
 	 */
 	public function get_skin_instance( $id ) {
-
 		$skin_args = $this->get_skin( $id );
 
 		if ( ! $skin_args ) {
@@ -275,7 +267,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function render_skin() {
-
 		/** @var Skin_Base $skin */
 		$skin = $this->get_skin_instance( $this->get_current_skin_id() );
 
