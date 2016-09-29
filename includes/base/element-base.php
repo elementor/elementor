@@ -45,9 +45,6 @@ abstract class Element_Base {
 	abstract public function get_name();
 
 	public function __construct( $data = [], $args = [] ) {
-
-		do_action( 'elementor/element/construct', $this );
-
 		if ( $data ) {
 			$this->_init( $data );
 		} else {
@@ -381,7 +378,9 @@ abstract class Element_Base {
 	}
 
 	public function start_controls_section( $id, $args ) {
-		do_action( 'elementor/element/before_section_start', $this, $id, $args );
+		$section_id = $id;
+		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
+		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
 
 		$args['type'] = Controls_Manager::SECTION;
 
@@ -396,16 +395,23 @@ abstract class Element_Base {
 			'tab'     => $this->get_controls( $id )['tab'],
 		];
 
-		do_action( 'elementor/element/after_section_start', $this, $id, $args );
+		do_action( 'elementor/element/after_section_start', $this, $section_id, $args );
+		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_start', $this, $args );
 	}
 
 	public function end_controls_section() {
 		// Save the current section for the action
 		$current_section = $this->_current_section;
+		$section_id = $current_section['section'];
+		$args = [ 'tab' => $current_section['tab'] ];
+
+		do_action( 'elementor/element/before_section_end', $this, $section_id, $args );
+		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_end', $this, $args );
 
 		$this->_current_section = null;
 
-		do_action( 'elementor/element/after_section_end', $this, $current_section['section'], [ 'tab' => $current_section['tab'] ] );
+		do_action( 'elementor/element/after_section_end', $this, $section_id, $args );
+		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
 	}
 
 	protected function _register_controls() {}
