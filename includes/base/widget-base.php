@@ -11,6 +11,12 @@ abstract class Widget_Base extends Element_Base {
 		return 'widget';
 	}
 
+	public function __construct( $data = [], $args = [] ) {
+		parent::__construct( $data, $args );
+		do_action( 'elementor/element/construct', $this );
+		do_action( 'elementor/element/construct/' . $this->get_name(), $this );
+	}
+
 	public function get_icon() {
 		return 'apps';
 	}
@@ -86,7 +92,11 @@ abstract class Widget_Base extends Element_Base {
 			<?php
 			ob_start();
 
-			$this->render();
+			if ( $skin = $this->get_current_skin_instance() ) {
+				$skin->render();
+			} else {
+				$this->render();
+			}
 
 			echo apply_filters( 'elementor/widget/render_content', ob_get_clean(), $this );
 			?>
@@ -170,6 +180,9 @@ abstract class Widget_Base extends Element_Base {
 
 	public function add_skin( $id, $args ) {
 		$this->skins[ $id ] = $args;
+
+		//load the skin
+		$this->get_skin_instance( $id );
 	}
 
 	public function set_skin_args( $id, $args ) {
@@ -195,12 +208,10 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function get_current_skin_id() {
-
 		return $this->get_settings( 'skin' );
 	}
 
 	public function get_current_skin() {
-
 		return $this->get_skin( $this->get_current_skin_id() );
 	}
 
@@ -208,7 +219,6 @@ abstract class Widget_Base extends Element_Base {
 	 * @return false|Skin_Base
 	 */
 	public function get_current_skin_instance() {
-
 		return $this->get_skin_instance( $this->get_current_skin_id() );
 	}
 
@@ -222,22 +232,18 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function skin_exist( $id ) {
-
 		return isset( $this->skins[ $id ] );
 	}
 
 	public function has_skins() {
-
 		return ! empty( $this->skins );
 	}
 
 	public function get_skins() {
-
 		return $this->skins;
 	}
 
 	public function get_skins_names() {
-
 		$list = [];
 
 		foreach ( $this->get_skins() as $id => $skin ) {
@@ -253,7 +259,6 @@ abstract class Widget_Base extends Element_Base {
 	 * @return bool|Skin_Base
 	 */
 	public function get_skin_instance( $id ) {
-
 		$skin_args = $this->get_skin( $id );
 
 		if ( ! $skin_args ) {
@@ -275,7 +280,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function render_skin() {
-
 		/** @var Skin_Base $skin */
 		$skin = $this->get_skin_instance( $this->get_current_skin_id() );
 
