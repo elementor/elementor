@@ -30,7 +30,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -39,7 +38,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -50,7 +48,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -61,7 +58,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
-				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -86,7 +82,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -99,8 +94,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				]
+			]
 		);
 
 		$this->add_control(
@@ -112,7 +106,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -125,7 +118,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -134,7 +126,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => Controls_Manager::TAB_STYLE,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
@@ -173,7 +164,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => Controls_Manager::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -186,7 +176,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'tab' => Controls_Manager::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -200,7 +189,6 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'tab' => Controls_Manager::TAB_ADVANCED,
 				'label_block' => true,
 				]
 		);
@@ -217,7 +205,6 @@ class Element_Column extends Element_Base {
 					'fast' => __( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
-				'tab' => Controls_Manager::TAB_ADVANCED,
 				'condition' => [
 					'animation!' => '',
 				],
@@ -229,7 +216,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'tab' => Controls_Manager::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
 				'label_block' => true,
@@ -274,7 +260,6 @@ class Element_Column extends Element_Base {
 						'default' => __( 'Default', 'elementor' ),
 						'custom' => __( 'Custom', 'elementor' ),
 					],
-					'tab' => Controls_Manager::TAB_ADVANCED,
 					'description' => $point_data['description'],
 					'classes' => $point_data['classes'],
 				]
@@ -307,7 +292,6 @@ class Element_Column extends Element_Base {
 						'100' => '100%',
 					],
 					'default' => '100',
-					'tab' => Controls_Manager::TAB_ADVANCED,
 					'condition' => [
 						$point_name => [ 'custom' ],
 					],
