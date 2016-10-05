@@ -234,8 +234,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 			elementor.setFlagEditorChange( true );
 		}
 
-		var forceRender;
-
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
@@ -264,6 +262,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		if ( 'js' === templateType ) {
 			this.model.setHtmlCache();
 			this.render();
+			this.model.renderOnLeave = true;
 		} else {
 			this.model.renderRemoteServer();
 		}

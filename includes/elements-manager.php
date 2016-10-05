@@ -115,7 +115,7 @@ class Elements_Manager {
 	}
 
 	private function require_files() {
-		require_once ELEMENTOR_PATH . 'includes/elements/base.php';
+		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 
 		require ELEMENTOR_PATH . 'includes/elements/column.php';
 		require ELEMENTOR_PATH . 'includes/elements/section.php';
