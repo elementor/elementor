@@ -12,7 +12,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function __construct( $data = [], $args = [] ) {
-
 		do_action( 'elementor/element/before_construct', $this, $data, $args );
 		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
 
