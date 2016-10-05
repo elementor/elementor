@@ -5,6 +5,8 @@ var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
 
+	stylesheet: null,
+
 	id: function() {
 		return this.getElementUniqueClass();
 	},
@@ -20,11 +22,26 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	baseEvents: {},
+	ui: function() {
+		return {
+			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
+			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+		};
+	},
 
-	elementEvents: {},
+	events: function() {
+		return {
+			'click @ui.removeButton': 'onClickRemove',
+			'click @ui.saveButton': 'onClickSave'
+		};
+	},
 
-	stylesheet: null,
+	triggers: function() {
+		return {
+			'click @ui.duplicateButton': 'click:duplicate'
+		};
+	},
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -32,10 +49,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
-	},
-
-	events: function() {
-		return _.extend( {}, this.baseEvents, this.elementEvents );
 	},
 
 	getTemplateType: function() {
@@ -273,6 +286,16 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.stopPropagation();
 
 		this.getRemoveDialog().show();
+	},
+
+	onClickSave: function( event ) {
+		event.preventDefault();
+
+		var id = this.model.get( 'id' );
+
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView( id );
+		} );
 	}
 } );
 
