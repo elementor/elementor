@@ -163,15 +163,9 @@
 	}
 
 	.elementor-control-description {
-		margin-top: 10px;
-	}
+		@extend .elementor-descriptor;
 
-	.elementor-control-description,
-	.elementor-control-descriptor {
-		font-size: 11px;
-		font-style: italic;
-		line-height: 1.2;
-		color: $editor-light;
+		margin-top: 10px;
 	}
 
 	.elementor-choices {

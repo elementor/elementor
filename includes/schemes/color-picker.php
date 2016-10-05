@@ -14,6 +14,10 @@ class Scheme_Color_Picker extends Scheme_Color {
 		return 'color-picker';
 	}
 
+	public static function get_description() {
+		return __( 'Choose which colors appear in the editor\'s color picker. This makes accessing the colors you chose for the site much easier.', 'elementor' );
+	}
+
 	public function get_default_scheme() {
 		return array_replace( parent::get_default_scheme(), [
 			self::COLOR_5 => '#4054b2',
