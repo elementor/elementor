@@ -8,9 +8,9 @@
 
 .elementor-social-icon {
 	color: white;
-	font-size: 20px;
+	font-size: 25px;
 	text-align: center;
-	padding: 0.6em;
+	padding: 0.5em;
 	@include margin-end(5px);
 	cursor: pointer;
 
@@ -49,10 +49,6 @@
 		&vimeo			{ background-color: $vimeo; }
 		&wordpress		{ background-color: $wordpress; }
 		&youtube		{ background-color: $youtube; }
-	}
-
-	i {
-		font-size: 25px;
 	}
 }
 
