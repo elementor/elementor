@@ -218,7 +218,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -239,6 +239,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'range' => [
 					'em' => [
 						'min' => 0,
+						'max' => 5,
 					],
 				],
 			]
