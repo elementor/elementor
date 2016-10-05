@@ -977,9 +977,9 @@
 
 .elementor-social-icon {
   color: white;
-  font-size: 20px;
+  font-size: 25px;
   text-align: center;
-  padding: 0.6em;
+  padding: 0.5em;
   margin-right: 5px;
   cursor: pointer; }
   .elementor-social-icon:last-child {
@@ -1038,8 +1038,6 @@
     background-color: #21759b; }
   .elementor-social-icon-youtube {
     background-color: #cd201f; }
-  .elementor-social-icon i {
-    font-size: 25px; }
 
 .elementor-shape-rounded .elementor-icon.elementor-social-icon {
   border-radius: 10%; }
