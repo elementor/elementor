@@ -412,18 +412,6 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-container' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
 			'heading_color',
 			[
 				'label' => __( 'Heading Color', 'elementor' ),
@@ -431,6 +419,18 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'color: {{VALUE}};',
 				],
 			]
 		);

@@ -309,7 +309,6 @@ class Editor {
 					'edit_element' => __( 'Edit {0}', 'elementor' ),
 					'global_colors' => __( 'Global Colors', 'elementor' ),
 					'global_fonts' => __( 'Global Fonts', 'elementor' ),
-					'page_settings' => __( 'Page Settings', 'elementor' ),
 					'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
 					'soon' => __( 'Soon', 'elementor' ),
 					'revisions_history' => __( 'Revisions History', 'elementor' ),
@@ -329,6 +328,11 @@ class Editor {
 					'section' => __( 'Section', 'elementor' ),
 					'delete_template' => __( 'Delete Template', 'elementor' ),
 					'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
+					'color_picker' => __( 'Color Picker', 'elementor' ),
+					'clear_page' => __( 'Clear Page', 'elementor' ),
+					'dialog_confirm_clear_page' => __( 'All of your current page content will be lost. <br>Do you wish to proceed?', 'elementor' ),
+					'asc' => 'Ascending order',
+					'desc' => 'Descending order',
 				],
 			]
 		);
@@ -407,6 +411,8 @@ class Editor {
 		Plugin::instance()->controls_manager->render_controls();
 		Plugin::instance()->widgets_manager->render_widgets_content();
 		Plugin::instance()->elements_manager->render_elements_content();
+
+		Plugin::instance()->schemes_manager->print_schemes_templates();
 
 		include( 'editor-templates/global.php' );
 		include( 'editor-templates/panel.php' );

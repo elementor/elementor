@@ -314,6 +314,24 @@
 		}
 	}
 
+	#elementor-update-preview {
+		margin: -16px -20px 15px;
+		padding: 0 15px 15px;
+		background-color: $editor-background;
+		display: flex;
+		align-items: center;
+	}
+
+	#elementor-update-preview-button-wrapper {
+		flex-grow: 1;
+		text-align: $end;
+	}
+
+	#elementor-update-preview-button {
+		padding: 8px 15px;
+		text-transform: uppercase;
+	}
+
 	// Media Control
 	.elementor-control-type-media {
 
@@ -732,7 +750,7 @@
 		}
 
 		.elementor-control-media {
-			padding-top: 20px;
+		//	padding-top: 20px; //temp remove for some space in gallery widget
 		}
 
 		.elementor-control-gallery-thumbnails {
@@ -952,4 +970,7 @@
 
 	// Switcher control
 	@import "controls/switcher";
+
+	// Order control
+	@import "controls/order";
 }

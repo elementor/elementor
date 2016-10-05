@@ -15,6 +15,7 @@ class Schemes_Manager {
 	private static $_schemes_types = [
 		'color',
 		'typography',
+		'color-picker',
 	];
 
 	public function init() {
@@ -25,7 +26,7 @@ class Schemes_Manager {
 		foreach ( self::$_schemes_types as $schemes_type ) {
 			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
 
-			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( $schemes_type ) );
+			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( str_replace( '-', '_', $schemes_type ) ) );
 		}
 	}
 
@@ -39,6 +40,7 @@ class Schemes_Manager {
 		if ( ! $scheme_instance instanceof Scheme_Base ) {
 			return new \WP_Error( 'wrong_instance_scheme' );
 		}
+
 		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
 
 		return true;
@@ -87,7 +89,7 @@ class Schemes_Manager {
 		$data = [];
 
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			$data[ $scheme::get_type() ] = $scheme::get_system_schemes();
+			$data[ $scheme::get_type() ] = $scheme->get_system_schemes();
 		}
 
 		return $data;
@@ -127,6 +129,12 @@ class Schemes_Manager {
 		$scheme_obj->save_scheme( $posted );
 
 		wp_send_json_success();
+	}
+
+	public function print_schemes_templates() {
+		foreach ( $this->get_registered_schemes() as $scheme ) {
+			$scheme->print_template();
+		}
 	}
 
 	public static function get_enabled_schemes() {

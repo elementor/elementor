@@ -50,7 +50,7 @@
 	}
 }
 
-#elementor-panel-scheme-color {
+.elementor-panel-scheme-color {
 
 	.elementor-panel-scheme-items {
 		position: relative;
@@ -58,7 +58,6 @@
 
 	.elementor-panel-scheme-item {
 		display: inline-block;
-		margin-bottom: 10px;
 
 		&:not(:nth-child(4n)) {
 			@include margin-end(13px);
@@ -80,7 +79,7 @@
 .elementor-panel-scheme-color-title {
 	text-align: center;
 	text-transform: uppercase;
-	margin-top: 10px;
+	margin: 10px 0;
 	color: $editor-lighter;
 	font-size: 8px;
 }
@@ -129,6 +128,7 @@
 }
 
 .elementor-panel-scheme-color-system-items {
+	display: flex;
 	transition: border .5s;
 	overflow: hidden;
 	padding: 3px;
@@ -142,13 +142,20 @@
 }
 
 .elementor-panel-scheme-color-system-item {
-	float: left;
 	height: 20px;
-	width: 25%;
+	flex-grow: 1;
 }
 
 #elementor-panel-schemes-disabled {
 	padding: 20px;
+	text-align: center;
+	margin-top: 10px;
+
+	i {
+		display: block;
+		font-size: 52px;
+		color: $editor-light;
+	}
 
 	a {
 		color: $editor-accent;
@@ -158,4 +165,16 @@
 			text-decoration: underline;
 		}
 	}
+}
+
+#elementor-panel-schemes-disabled-title {
+	margin-top: 30px;
+	font-size: 15px;
+	font-weight: 500;
+	color: $editor-darkest;
+}
+
+#elementor-panel-schemes-disabled-content {
+	margin-top: 20px;
+	line-height: 1.5;
 }

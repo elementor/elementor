@@ -97,7 +97,8 @@ App = Marionette.Application.extend( {
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' )
+				hover_animation: require( 'elementor-views/controls/animation' ),
+				order: require( 'elementor-views/controls/order' )
 			};
 
 			this.channels.editor.trigger( 'editor:controls:initialize' );
@@ -153,6 +154,32 @@ App = Marionette.Application.extend( {
 		elementorFrontend.init();
 	},
 
+	initClearPageDialog: function() {
+		var self = this,
+			dialog;
+
+		self.getClearPageDialog = function() {
+			if ( dialog ) {
+				return dialog;
+			}
+
+			dialog = this.dialogsManager.createWidget( 'confirm', {
+				id: 'elementor-clear-page-dialog',
+				headerMessage: elementor.translate( 'clear_page' ),
+				message: elementor.translate( 'dialog_confirm_clear_page' ),
+				position: {
+					my: 'center center',
+					at: 'center center'
+				},
+				onConfirm: function() {
+					self.getRegion( 'sections' ).currentView.collection.reset();
+				}
+			} );
+
+			return dialog;
+		};
+	},
+
 	onStart: function() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -174,6 +201,8 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
+
+		this.initClearPageDialog();
 	},
 
 	onPreviewLoaded: function() {
@@ -241,11 +270,13 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading' ).fadeOut( 600 );
+		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
 		} );
+
+		this.enqueueTypographyFonts();
 
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
@@ -378,6 +409,16 @@ App = Marionette.Application.extend( {
         } );
 	},
 
+	reloadPreview: function() {
+		Backbone.$( '#elementor-preview-loading' ).show();
+
+		this.$preview[0].contentWindow.location.reload( true );
+	},
+
+	clearPage: function() {
+		this.getClearPageDialog().show();
+	},
+
 	changeDeviceMode: function( newDeviceMode ) {
 		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
@@ -393,6 +434,15 @@ App = Marionette.Application.extend( {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+	},
+
+	enqueueTypographyFonts: function() {
+		var self = this,
+			typographyScheme = this.schemes.getScheme( 'typography' );
+
+		_.each( typographyScheme.items, function( item ) {
+			self.helpers.enqueueFont( item.value.font_family );
+		} );
 	},
 
 	translate: function( stringKey, templateArgs ) {

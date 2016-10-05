@@ -20,9 +20,11 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
                 pageName: 'typographyScheme'
             },
-            {
-				icon: 'file-text',
-				title: elementor.translate( 'page_settings' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
+			{
+				icon: 'eyedropper',
+				title: elementor.translate( 'color_picker' ),
+				type: 'page',
+				pageName: 'colorPickerScheme'
 			},
 			{
 				icon: 'cog',
@@ -35,6 +37,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				icon: 'history',
 				title: elementor.translate( 'revisions_history' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
 			},
+            {
+                icon: 'eraser',
+                title: elementor.translate( 'clear_page' ),
+                callback: function() {
+                    elementor.clearPage();
+                }
+            },
 			{
 				icon: 'info-circle',
 				title: elementor.translate( 'about_elementor' ),
@@ -67,6 +76,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				}
 
 				break;
+
+			default:
+				var callback = childView.model.get( 'callback' );
+
+				if ( _.isFunction( callback ) ) {
+					callback.call( childView );
+				}
 		}
 	}
 } );

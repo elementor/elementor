@@ -19,6 +19,7 @@ ElementModel = Backbone.Model.extend( {
 	remoteRender: false,
 	_htmlCache: null,
 	_jqueryXhr: null,
+	renderOnLeave: false,
 
 	initialize: function( options ) {
 		var elements = this.get( 'elements' ),
@@ -85,7 +86,10 @@ ElementModel = Backbone.Model.extend( {
 
 	onCloseEditor: function() {
 		this.initEditSettings();
-		this.renderRemoteServer();
+
+		if ( this.renderOnLeave ) {
+			this.renderRemoteServer();
+		}
 	},
 
 	setSetting: function( key, value, triggerChange ) {
@@ -138,6 +142,8 @@ ElementModel = Backbone.Model.extend( {
 		if ( ! this.remoteRender ) {
 			return;
 		}
+
+		this.renderOnLeave = false;
 
 		this.trigger( 'before:remote:render' );
 
