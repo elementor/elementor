@@ -10,11 +10,11 @@ ImagesManager = function () {
 
 	var registeredItems = [];
 
-	var getNormalizedSize = function ( obj ) {
+	var getNormalizedSize = function ( model ) {
 
 		var size,
-			image_size = obj.settings.image_size,
-			custom_dimension = obj.settings.image_custom_dimension;
+			image_size = model.getSetting( 'image_size' ),
+			custom_dimension = model.getSetting( 'image_custom_dimension' );
 
 		if ( 'custom' === image_size ) {
 
@@ -32,10 +32,10 @@ ImagesManager = function () {
 		return size;
 	};
 
-	_this.getItem = function ( obj ) {
+	_this.getItem = function ( model ) {
 
-		var size = getNormalizedSize( obj ),
-			id = obj.settings.image.id;
+		var size = getNormalizedSize( model ),
+			id =  model.getSetting( 'image' ).id;
 
 		if ( ! size ) {
 			return false;
@@ -43,29 +43,25 @@ ImagesManager = function () {
 
 		if ( cache[ id ] && cache[ id ][ size ] ) {
 
-			obj.settings.image.url = cache[ id ][ size ];
-
 			return cache[ id ][ size ];
 		}
 
 		return false;
 	};
 
-	_this.registerItem = function ( obj ) {
+	_this.registerItem = function ( model ) {
 
-		if ( '' === obj.settings.image.id ) {
+		if ( '' === model.getSetting( 'image' ).id ) {
 			// It's a new dropped widget
 			return;
 		}
 
-		if ( _this.getItem( obj ) ) {
+		if ( _this.getItem( model ) ) {
 			// It's already in cache
 			return;
 		}
 
-
-
-		registeredItems.push( obj );
+		registeredItems.push( model );
 
 		_this.debounceGetRemoteItems();
 
@@ -79,20 +75,18 @@ ImagesManager = function () {
 		if ( 1 === Object.keys( registeredItems ).length ) {
 
 			for ( var index in registeredItems ) {
-				var obj = registeredItems[ index ];
+				var model = registeredItems[ index ];
 			}
 
-
-
-			obj.model.renderRemoteServer();
+			model.renderRemoteServer();
 			return;
 		}
 
 		for ( var index in registeredItems ) {
 
-			var obj = registeredItems[ index ],
-				size = getNormalizedSize( obj ),
-				id = obj.settings.image.id,
+			var model = registeredItems[ index ],
+				size = getNormalizedSize( model ),
+				id = model.getSetting( 'image' ).id,
 				is_first_time = ! cache[ id ] || 0 === Object.keys( cache[ id ] ).length;
 
 			requestedItems.push(
@@ -121,9 +115,7 @@ ImagesManager = function () {
 						}
 					}
 
-					for ( var index in registeredItems ) {
-						delete registeredItems[ index ];
-					}
+					registeredItems = [];
 				}
 			}
 		);

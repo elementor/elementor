@@ -39,7 +39,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Image_size::get_type(),
+			Group_Control_Image_Size::get_type(),
 			[
 				'name'        => 'image', /* actually its `image_size` */
 				'section'     => 'section_image',
@@ -318,11 +318,11 @@ class Widget_Image extends Widget_Base {
 		$image_sizes = get_intermediate_image_sizes();
 		$image_sizes[] = 'full';
 
-		if ( isset( $settings['image_size'] ) && in_array( $settings['image_size'], $image_sizes ) ) {
+		if ( ! empty( $settings['image']['id'] ) && isset( $settings['image_size'] ) && in_array( $settings['image_size'], $image_sizes ) ) {
 			$image_html .= wp_get_attachment_image( $settings['image']['id'], $settings['image_size'] );
 		} else {
 			if ( 'custom' === $settings['image_size'] ) {
-				$image_src = Group_Control_Image_size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
+				$image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
 			} else {
 				$image_src = $settings['image']['url'];
 			}
@@ -353,7 +353,25 @@ class Widget_Image extends Widget_Base {
 
 	protected function _content_template() {
 		?>
-		<# if ( '' !== settings.image.url ) { #>
+		<# if ( '' !== settings.image.url ) {
+
+			elementor.imagesManager.registerItem( elementModel );
+
+			// Get url from imagesManager.
+			var image_url = elementor.imagesManager.getItem( elementModel );
+
+			// If it's not in cache, like a new dropped widget or a custom size - get from settings */
+			if( ! image_url ) {
+
+				if ( 'custom' === settings.image_size ) {
+					return;
+				}
+
+				// If it's a new dropped widget
+				image_url = settings.image.url;
+			}
+
+			#>
 			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">
 				<#
 				var imgClass = '', image_html = '',
@@ -366,21 +384,6 @@ class Widget_Image extends Widget_Base {
 				
 				if ( hasCaption ) {
 					image_html += '<figure class="wp-caption">';
-				}
-
-				obj.model = elementModel;
-
-				elementor.imagesManager.registerItem( obj );
-
-				/* get url from imagesManager. if it's not in cache like a new dropped widget or a custom size - get from settings */
-				var image_url = elementor.imagesManager.getItem( obj );
-
-				if( !image_url ){
-
-					if ( 'custom' === settings.image_size ) {
-					}
-
-					image_url = settings.image.url;
 				}
 
 				image_html += '<img src="' + image_url + '" class="' + imgClass + '" />';
