@@ -15,7 +15,7 @@ class Scheme_Color_Picker extends Scheme_Color {
 	}
 
 	public static function get_description() {
-		return __( 'Choose which colors appear in the editor\'s color picker. This makes accessing the colors you choose for the site much easier.', 'elementor' );
+		return __( 'Choose which colors appear in the editor\'s color picker. This makes accessing the colors you chose for the site much easier.', 'elementor' );
 	}
 
 	public function get_default_scheme() {
