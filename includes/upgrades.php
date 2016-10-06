@@ -88,15 +88,7 @@ class Upgrades {
 				}
 
 				if ( ! empty( $element['settings']['icon_padding']['size'] ) ) {
-					$icon_padding_size = $element['settings']['icon_padding']['size'];
-
-					if ( 1 > $icon_padding_size ) {
-						$icon_padding_size = '';
-					} else {
-						$icon_padding_size = $icon_padding_size - 1;
-					}
-
-					$element['settings']['icon_padding']['size'] = $icon_padding_size;
+					$element['settings']['icon_padding']['size'] = '';
 				}
 
 				return $element;
