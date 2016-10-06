@@ -41,9 +41,9 @@ class Widget_Image extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name'        => 'image', /* actually its `image_size` */
-				'section'     => 'section_image',
-				'label'       => __( 'Image Size', 'elementor' ),
+				'name' => 'image', // Actually its `image_size`
+				'section' => 'section_image',
+				'label' => __( 'Image Size', 'elementor' ),
 			]
 		);
 
@@ -313,8 +313,7 @@ class Widget_Image extends Widget_Base {
 
 		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
 
-		/* if is the new version - with image size */
-
+		// If is the new version - with image size
 		$image_sizes = get_intermediate_image_sizes();
 		$image_sizes[] = 'full';
 
