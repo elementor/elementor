@@ -1901,7 +1901,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     font-size: 15px;
     cursor: pointer;
     padding: 13px 0;
-    outline: none; }
+    outline: 0; }
     .dialog-buttons-wrapper > button:first-child {
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {
@@ -1910,6 +1910,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
       color: #39b54a; }
     .dialog-buttons-wrapper > button:active {
       background-color: rgba(230, 233, 236, 0.5); }
+    .dialog-buttons-wrapper > button::-moz-focus-inner {
+      border: 0; }
 
 .dialog-widget-header {
   padding: 20px 0;
