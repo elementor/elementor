@@ -65,8 +65,6 @@ html.elementor-html {
   display: none; }
 .elementor-editor-active #elementor .elementor-element:not(:hover):not(.ui-resizable-resizing) > .elementor-element-overlay .column-title {
   display: none; }
-.elementor-editor-active #elementor .elementor-element .elementor-image img {
-  min-height: 1px; }
 @media (max-width: 1023px) {
   .elementor-editor-active #elementor .elementor-element > .elementor-element-overlay .column-title {
     display: none; } }
