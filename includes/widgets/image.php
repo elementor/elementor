@@ -320,11 +320,7 @@ class Widget_Image extends Widget_Base {
 		if ( ! empty( $settings['image']['id'] ) && isset( $settings['image_size'] ) && in_array( $settings['image_size'], $image_sizes ) ) {
 			$image_html .= wp_get_attachment_image( $settings['image']['id'], $settings['image_size'] );
 		} else {
-			if ( 'custom' === $settings['image_size'] ) {
-				$image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
-			} else {
-				$image_src = $settings['image']['url'];
-			}
+			$image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
 
 			$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
 		}
