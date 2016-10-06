@@ -18,7 +18,6 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-
 		$this->start_controls_section(
 			'section_alert',
 			[
