@@ -6627,13 +6627,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		self.listenTo( self.model, 'change', self.checkConditions );
 
 		if ( options.titleField ) {
-			var fields = options.titleField.match( /\{[a-z_0-9]+}/g );
-
-			_.each( fields, function( field ) {
-				field = field.replace( /\{|}/g, '' );
-
-				self.listenTo( self.model, 'change:' + field, self.setTitle );
-			} );
+			self.listenTo( self.model, 'change', self.setTitle );
 		}
 	},
 
