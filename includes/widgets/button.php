@@ -311,10 +311,6 @@ class Widget_Button extends Widget_Base {
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
-		//if ( ! empty( $instance['align'] ) ) {
-		//	$this->add_render_attribute( 'wrapper', 'class', 'elementor-align-' . $instance['align'] );
-		//}
-
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
