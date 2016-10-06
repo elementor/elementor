@@ -18,11 +18,10 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_progress',
 			[
 				'label' => __( 'Progress Bar', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -34,7 +33,6 @@ class Widget_Progress extends Widget_Base {
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
-				'section' => 'section_progress',
 			]
 		);
 
@@ -44,7 +42,6 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'section' => 'section_progress',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'info' => __( 'Info', 'elementor' ),
@@ -65,7 +62,6 @@ class Widget_Progress extends Widget_Base {
 					'unit' => '%',
 				],
 				'label_block' => true,
-				'section' => 'section_progress',
 			]
 		);
 
@@ -75,7 +71,6 @@ class Widget_Progress extends Widget_Base {
 	            'label' => __( 'Display Percentage', 'elementor' ),
 	            'type' => Controls_Manager::SELECT,
 	            'default' => 'show',
-	            'section' => 'section_progress',
 	            'options' => [
 	                'show' => __( 'Show', 'elementor' ),
 	                'hide' => __( 'Hide', 'elementor' ),
@@ -91,7 +86,6 @@ class Widget_Progress extends Widget_Base {
 				'placeholder' => __( 'e.g. Web Designer', 'elementor' ),
 				'default' => __( 'Web Designer', 'elementor' ),
 				'label_block' => true,
-				'section' => 'section_progress',
 			]
 		);
 
@@ -101,15 +95,15 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_progress',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_progress_style',
 			[
 				'label' => __( 'Progress Bar', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -119,12 +113,10 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Bar Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'section' => 'section_progress_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
 				],
@@ -136,8 +128,6 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Bar Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_progress_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper' => 'background-color: {{VALUE}};',
 				],
@@ -149,19 +139,18 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Inner Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_progress_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-inner-text' => 'color: {{VALUE}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_title',
 			[
 				'label' => __( 'Title Style', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -171,8 +160,6 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
 				],
@@ -187,12 +174,12 @@ class Widget_Progress extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

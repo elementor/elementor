@@ -18,11 +18,10 @@ class Widget_Image extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -34,7 +33,6 @@ class Widget_Image extends Widget_Base {
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
-				'section' => 'section_image',
 			]
 		);
 
@@ -58,7 +56,6 @@ class Widget_Image extends Widget_Base {
 					],
 				],
 				'default' => 'center',
-				'section' => 'section_image',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
@@ -73,7 +70,6 @@ class Widget_Image extends Widget_Base {
 				'default' => '',
 				'placeholder' => __( 'Enter your caption about the image', 'elementor' ),
 				'title' => __( 'Input image caption here', 'elementor' ),
-				'section' => 'section_image',
 			]
 		);
 
@@ -83,7 +79,6 @@ class Widget_Image extends Widget_Base {
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
-				'section' => 'section_image',
 				'options' => [
 					'none' => __( 'None', 'elementor' ),
 					'file' => __( 'Media File', 'elementor' ),
@@ -98,7 +93,6 @@ class Widget_Image extends Widget_Base {
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
-				'section' => 'section_image',
 				'condition' => [
 					'link_to' => 'custom',
 				],
@@ -112,14 +106,14 @@ class Widget_Image extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_image',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style_image',
 			[
-				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Image', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
@@ -130,8 +124,6 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Size (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_image',
 				'default' => [
 					'size' => 100,
 					'unit' => '%',
@@ -154,8 +146,6 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Opacity (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_image',
 				'default' => [
 					'size' => 1,
 				],
@@ -177,8 +167,6 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_image',
 			]
 		);
 
@@ -187,8 +175,6 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_image',
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
@@ -199,8 +185,6 @@ class Widget_Image extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -211,16 +195,15 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
-				'section' => 'section_style_image',
-				'tab' => Controls_Manager::TAB_STYLE,
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style_caption',
 			[
-				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
@@ -253,8 +236,6 @@ class Widget_Image extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'text-align: {{VALUE}};',
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_caption',
 			]
 		);
 
@@ -263,12 +244,10 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
 				],
-				'section' => 'section_style_caption',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
@@ -281,11 +260,11 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

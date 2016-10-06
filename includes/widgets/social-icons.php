@@ -18,11 +18,10 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_social_icon',
 			[
 				'label' => __( 'Social Icons', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -42,7 +41,6 @@ class Widget_Social_Icons extends Widget_Base {
 						'social' => 'fa fa-google-plus',
 					],
 				],
-				'section' => 'section_social_icon',
 				'fields' => [
 					[
 						'name' => 'social',
@@ -100,7 +98,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_social_icon',
 				'default' => 'rounded',
 				'options' => [
 					'rounded' => __( 'Rounded', 'elementor' ),
@@ -116,7 +113,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_social_icon',
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
@@ -144,15 +140,15 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_icon',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_social_style',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -162,8 +158,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'default' => 'default',
 				'options' => [
 					'default' => __( 'Official Color', 'elementor' ),
@@ -177,8 +171,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'condition' => [
 					'icon_color' => 'custom',
 				],
@@ -193,8 +185,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'condition' => [
 					'icon_color' => 'custom',
 				],
@@ -209,8 +199,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'range' => [
 					'px' => [
 						'min' => 6,
@@ -228,8 +216,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
@@ -252,8 +238,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -270,8 +254,6 @@ class Widget_Social_Icons extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'selector' => '{{WRAPPER}} .elementor-social-icon',
 			]
 		);
@@ -282,13 +264,13 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_social_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

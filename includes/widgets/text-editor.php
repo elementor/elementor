@@ -18,11 +18,10 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_editor',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -32,15 +31,15 @@ class Widget_Text_Editor extends Widget_Base {
 				'label' => '',
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => __( 'I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-				'section' => 'section_editor',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -50,8 +49,6 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
@@ -81,8 +78,6 @@ class Widget_Text_Editor extends Widget_Base {
 	        [
 	            'label' => __( 'Text Color', 'elementor' ),
 	            'type' => Controls_Manager::COLOR,
-	            'tab' => Controls_Manager::TAB_STYLE,
-	            'section' => 'section_style',
 	            'default' => '',
 	            'selectors' => [
 	                '{{WRAPPER}}' => 'color: {{VALUE}};',
@@ -98,11 +93,11 @@ class Widget_Text_Editor extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'section' => 'section_style',
-				'tab' => Controls_Manager::TAB_STYLE,
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {
