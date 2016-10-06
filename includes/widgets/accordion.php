@@ -106,8 +106,6 @@ class Widget_Accordion extends Widget_Base {
 						'max' => 10,
 					],
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -121,8 +119,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'border-top-color: {{VALUE}};',
@@ -136,8 +132,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'color: {{VALUE}};',
 				],
@@ -154,8 +148,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Title Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'background-color: {{VALUE}};',
 				],
@@ -167,8 +159,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title.active' => 'color: {{VALUE}};',
 				],
@@ -184,8 +174,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Title Typography', 'elementor' ),
 				'name' => 'title_typography',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
@@ -196,8 +184,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Content Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'background-color: {{VALUE}};',
 				],
@@ -210,8 +196,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Content Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'color: {{VALUE}};',
 				],
@@ -222,19 +206,17 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		$this->end_controls_section();
-
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
 				'label' => __( 'Content Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

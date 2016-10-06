@@ -90,7 +90,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
