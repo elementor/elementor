@@ -359,7 +359,7 @@ class Widget_Image extends Widget_Base {
 			// Get url from imagesManager.
 			var image_url = elementor.imagesManager.getItem( elementModel );
 
-			// If it's not in cache, like a new dropped widget or a custom size - get from settings */
+			// If it's not in cache, like a new dropped widget or a custom size - get from settings
 			if( ! image_url ) {
 
 				if ( 'custom' === settings.image_size ) {
