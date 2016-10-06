@@ -143,6 +143,7 @@
 		border-color: $danger-border;
 	}
 }
+
 .elementor-label {
 	display: inline;
 	padding: .2em .6em .3em;
@@ -172,6 +173,12 @@
 	}
 }
 
+.elementor-descriptor {
+	font-size: 11px;
+	font-style: italic;
+	line-height: 1.2;
+	color: $editor-light;
+}
 //
 // Variables
 //
