@@ -6734,12 +6734,13 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 			title = '';
 
 		if ( titleField ) {
-			title = titleField.replace( /\{([a-z_0-9]+)}/g, function() {
-				var changerControlModel = self.collection.find( { name: arguments[1] } ),
-					changerControlView = self.children.findByModelCid( changerControlModel.cid );
+			var values = {};
 
-				return changerControlView.getControlValue();
+			self.children.each( function( child ) {
+				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
+
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( values );
 		}
 
 		if ( ! title ) {
@@ -6762,13 +6763,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		self.listenTo( self.model, 'change', self.checkConditions );
 
 		if ( options.titleField ) {
-			var fields = options.titleField.match( /\{[a-z_0-9]+}/g );
-
-			_.each( fields, function( field ) {
-				field = field.replace( /\{|}/g, '' );
-
-				self.listenTo( self.model, 'change:' + field, self.setTitle );
-			} );
+			self.listenTo( self.model, 'change', self.setTitle );
 		}
 	},
 
