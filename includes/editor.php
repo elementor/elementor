@@ -331,8 +331,8 @@ class Editor {
 					'color_picker' => __( 'Color Picker', 'elementor' ),
 					'clear_page' => __( 'Delete All Content', 'elementor' ),
 					'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
-					'asc' => 'Ascending order',
-					'desc' => 'Descending order',
+					'asc' => __( 'Ascending order', 'elementor' ),
+					'desc' => __( 'Descending order', 'elementor' ),
 				],
 			]
 		);
