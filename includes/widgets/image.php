@@ -323,6 +323,10 @@ class Widget_Image extends Widget_Base {
 		} else {
 			$image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
 
+			if ( ! $image_src ) {
+				$image_src = $settings['image']['url'];
+			}
+
 			$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
 		}
 
