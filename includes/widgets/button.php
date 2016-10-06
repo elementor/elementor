@@ -28,11 +28,10 @@ class Widget_Button extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_button',
 			[
 				'label' => __( 'Button', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -42,7 +41,6 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'section' => 'section_button',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'info' => __( 'Info', 'elementor' ),
@@ -60,7 +58,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Click me', 'elementor' ),
 				'placeholder' => __( 'Click me', 'elementor' ),
-				'section' => 'section_button',
 			]
 		);
 
@@ -73,7 +70,6 @@ class Widget_Button extends Widget_Base {
 				'default' => [
 					'url' => '#',
 				],
-				'section' => 'section_button',
 			]
 		);
 
@@ -82,7 +78,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_button',
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
@@ -113,7 +108,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'medium',
 				'options' => self::get_button_sizes(),
-				'section' => 'section_button',
 			]
 		);
 
@@ -124,7 +118,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::ICON,
 				'label_block' => true,
 				'default' => '',
-				'section' => 'section_button',
 			]
 		);
 
@@ -141,7 +134,6 @@ class Widget_Button extends Widget_Base {
 				'condition' => [
 					'icon!' => '',
 				],
-				'section' => 'section_button',
 			]
 		);
 
@@ -162,7 +154,6 @@ class Widget_Button extends Widget_Base {
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
-				'section' => 'section_button',
 			]
 		);
 
@@ -172,15 +163,15 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_button',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style',
 			[
 				'label' => __( 'Button', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -190,8 +181,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'color: {{VALUE}};',
@@ -205,8 +194,6 @@ class Widget_Button extends Widget_Base {
 				'name' => 'typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
@@ -216,8 +203,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_4,
@@ -233,10 +218,8 @@ class Widget_Button extends Widget_Base {
 			[
 				'name' => 'border',
 				'label' => __( 'Border', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
 				'placeholder' => '1px',
 				'default' => '1px',
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
@@ -247,8 +230,6 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -261,15 +242,15 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Text Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_hover',
 			[
 				'label' => __( 'Button Hover', 'elementor' ),
@@ -283,8 +264,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'color: {{VALUE}};',
 				],
@@ -296,8 +275,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
 				],
@@ -309,8 +286,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_hover',
 				'condition' => [
 					'border_border!' => '',
 				],
@@ -325,10 +300,10 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_hover',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {
