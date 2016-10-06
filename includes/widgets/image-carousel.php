@@ -37,7 +37,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Image_size::get_type(),
+			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail',
 				'section' => 'section_image_carousel',
@@ -481,7 +481,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$slides = [];
 		foreach ( $settings['carousel'] as $attachment ) {
-			$image_url = Group_Control_Image_size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
+			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 
 			$link = $this->get_link_url( $attachment, $settings );

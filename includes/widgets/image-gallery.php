@@ -36,7 +36,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Image_size::get_type(),
+			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail',
 				'exclude' => [ 'custom' ],
