@@ -19,7 +19,7 @@ class Widget_Tabs extends Widget_Base {
 
 	protected function _register_controls() {
 		$this->start_controls_section(
-			'section_title',
+			'section_tabs',
 			[
 				'label' => __( 'Tabs', 'elementor' ),
 			]
@@ -74,7 +74,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_title_style',
+			'section_tabs_style',
 			[
 				'label' => __( 'Tabs Style', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
@@ -173,9 +173,9 @@ class Widget_Tabs extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_tab_content',
+			'section_tabs_content',
 			[
-				'label' => __( 'Tab Content', 'elementor' ),
+				'label' => __( 'Tabs Content', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);

@@ -20,6 +20,7 @@
 
 	&:hover {
 		opacity: .5;
+		color: white; //for override .elementor-icon class
 	}
 
 	&- {
@@ -45,6 +46,7 @@
 		&soundcloud		{ background-color: $soundcloud; }
 		&stack-overflow { background-color: $stack-overflow; }
 		&tumblr			{ background-color: $tumblr; }
+		&twitch			{ background-color: $twitch; }
 		&twitter		{ background-color: $twitter; }
 		&vimeo			{ background-color: $vimeo; }
 		&wordpress		{ background-color: $wordpress; }
