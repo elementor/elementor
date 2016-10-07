@@ -19,7 +19,7 @@ class Widget_Toggle extends Widget_Base {
 
 	protected function _register_controls() {
 		$this->start_controls_section(
-			'section_title',
+			'section_toggle',
 			[
 				'label' => __( 'Toggle', 'elementor' ),
 			]
@@ -72,7 +72,7 @@ class Widget_Toggle extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_title_style',
+			'section_toggle_style',
 			[
 				'label' => __( 'Toggle', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
