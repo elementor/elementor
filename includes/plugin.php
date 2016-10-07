@@ -97,6 +97,10 @@ class Plugin {
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
+
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+				include( ELEMENTOR_PATH . 'includes/image-manager.php' );
+			}
 		}
 	}
 

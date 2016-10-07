@@ -34,6 +34,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
 
+	templateHelpers: function() {
+		return {
+			elementModel: this.model
+		};
+	},
+
 	events: function() {
 		return _.extend( {}, this.baseEvents, this.elementEvents );
 	},
