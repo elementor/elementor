@@ -148,9 +148,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		} else {
 			// Use BFI_Thumb script
 			// TODO: Please rewrite this code
-			if ( ! function_exists( 'bfi_thumb' ) ) {
-				require( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
-			}
+			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 
 			$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
 
