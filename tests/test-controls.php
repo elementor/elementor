@@ -85,13 +85,17 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_checkCondition() {
-		$element_obj = Elementor\Plugin::instance()->widgets_manager->get_widget( 'text-editor' );
+		Elementor\Plugin::instance()->widgets_manager->get_widget_types(); // Ensure the widgets initialized
 
-		$this->assertTrue( $element_obj->is_control_visible( [], [] ) );
-		
-		$instance = [
-			'control_1' => 'value',
-		];
+		$element_obj = new \Elementor\Widget_Text_Editor( [
+			'id' => 'test_id',
+			'settings' => [
+				'control_1' => 'value',
+			]
+		] );
+
+		$this->assertTrue( $element_obj->is_control_visible( [] ) );
+
 		$control_option = [
 			'name' => 'control_2',
 			'condition' => [
@@ -99,7 +103,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			],
 		];
 
-		$this->assertFalse( $element_obj->is_control_visible( $instance, $control_option) );
+		$this->assertFalse( $element_obj->is_control_visible( $control_option) );
 
 		$control_option = [
 			'name' => 'control_2',
@@ -108,7 +112,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			],
 		];
 
-		$this->assertTrue( $element_obj->is_control_visible( $instance, $control_option) );
+		$this->assertTrue( $element_obj->is_control_visible( $control_option) );
 
 		$control_option = [
 			'name' => 'control_2',
@@ -116,7 +120,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'control_1!' => 'value',
 			],
 		];
-		$this->assertFalse( $element_obj->is_control_visible( $instance, $control_option) );
+		$this->assertFalse( $element_obj->is_control_visible( $control_option) );
 	}
 
 	public function test_getDefaultValue() {

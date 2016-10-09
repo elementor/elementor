@@ -5,9 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Video extends Widget_Base {
 
-	protected $_current_instance = [];
-
-	public function get_id() {
+	public function get_name() {
 		return 'video';
 	}
 
@@ -20,11 +18,10 @@ class Widget_Video extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_video',
 			[
 				'label' => __( 'Video', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,7 +30,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Video Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'default' => 'youtube',
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
@@ -48,7 +44,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
 				'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
 				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
 				'label_block' => true,
@@ -63,7 +58,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Vimeo Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
 				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
 				'default' => 'https://vimeo.com/170933924',
 				'label_block' => true,
@@ -78,7 +72,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'section' => 'section_video',
 				'placeholder' => __( 'Enter your video link', 'elementor' ),
 				'default' => '',
 				'label_block' => true,
@@ -93,7 +86,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Aspect Ratio', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 	            'options' => [
 					'169' => '16:9',
 					'43' => '4:3',
@@ -109,7 +101,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Video Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'section' => 'section_video',
 				'separator' => 'before',
 			]
 		);
@@ -120,7 +111,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'no' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
@@ -137,7 +127,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Suggested Videos', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'no' => __( 'Hide', 'elementor' ),
 					'yes' => __( 'Show', 'elementor' ),
@@ -154,7 +143,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Player Control', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'yes' => __( 'Show', 'elementor' ),
 					'no' => __( 'Hide', 'elementor' ),
@@ -171,7 +159,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Player Title & Actions', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'yes' => __( 'Show', 'elementor' ),
 					'no' => __( 'Hide', 'elementor' ),
@@ -189,7 +176,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'no' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
@@ -206,7 +192,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Loop', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'no' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
@@ -223,7 +208,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Intro Title', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'yes' => __( 'Show', 'elementor' ),
 					'no' => __( 'Hide', 'elementor' ),
@@ -240,7 +224,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Intro Portrait', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'yes' => __( 'Show', 'elementor' ),
 					'no' => __( 'Hide', 'elementor' ),
@@ -257,7 +240,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Intro Byline', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_video',
 				'options' => [
 					'yes' => __( 'Show', 'elementor' ),
 					'no' => __( 'Hide', 'elementor' ),
@@ -274,7 +256,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_video',
 				'default' => '',
 				'condition' => [
 					'video_type' => 'vimeo',
@@ -288,7 +269,6 @@ class Widget_Video extends Widget_Base {
 		//	[
 		//		'label' => __( 'Width', 'elementor' ),
 		//		'type' => Controls_Manager::NUMBER,
-		//		'section' => 'section_video',
 		//		'default' => '640',
 		//		'condition' => [
 		//			'video_type' => 'hosted',
@@ -301,7 +281,6 @@ class Widget_Video extends Widget_Base {
 		//	[
 		//		'label' => __( 'Height', 'elementor' ),
 		//		'type' => Controls_Manager::NUMBER,
-		//		'section' => 'section_video',
 		//		'default' => '360',
 		//		'condition' => [
 		//			'video_type' => 'hosted',
@@ -314,7 +293,6 @@ class Widget_Video extends Widget_Base {
 		//	[
 		//		'label' => __( 'Autoplay', 'elementor' ),
 		//		'type' => Controls_Manager::SELECT,
-		//		'section' => 'section_video',
 		//		'options' => [
 		//			'no' => __( 'No', 'elementor' ),
 		//			'yes' => __( 'Yes', 'elementor' ),
@@ -331,7 +309,6 @@ class Widget_Video extends Widget_Base {
 		//	[
 		//		'label' => __( 'Loop', 'elementor' ),
 		//		'type' => Controls_Manager::SELECT,
-		//		'section' => 'section_video',
 		//		'options' => [
 		//			'no' => __( 'No', 'elementor' ),
 		//			'yes' => __( 'Yes', 'elementor' ),
@@ -348,16 +325,16 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
-				'section' => 'section_video',
 				'default' => 'youtube',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_image_overlay',
 			[
 				'label' => __( 'Image Overlay', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -371,7 +348,6 @@ class Widget_Video extends Widget_Base {
 					'no' => __( 'Hide', 'elementor' ),
 					'yes' => __( 'Show', 'elementor' ),
 				],
-				'section' => 'section_image_overlay',
 			]
 		);
 
@@ -383,7 +359,6 @@ class Widget_Video extends Widget_Base {
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
-				'section' => 'section_image_overlay',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
@@ -400,22 +375,23 @@ class Widget_Video extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'section' => 'section_image_overlay',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
 				],
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
-		$this->_current_instance = $instance;
+	protected function render() {
+		$settings = $this->get_settings();
 
-		if ( 'hosted' !== $instance['video_type'] ) {
+		if ( 'hosted' !== $settings['video_type'] ) {
 			add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
 
-			$video_link = 'youtube' === $instance['video_type'] ? $instance['link'] : $instance['vimeo_link'];
+			$video_link = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
 			if ( empty( $video_link ) )
 				return;
@@ -433,8 +409,8 @@ class Widget_Video extends Widget_Base {
 				echo $video_html;
 
 				if ( $this->has_image_overlay() ) : ?>
-					<div class="elementor-custom-embed-image-overlay" style="background-image: url(<?php echo $this->_current_instance['image_overlay']['url']; ?>);">
-						<?php if ( 'yes' === $this->_current_instance['show_play_icon'] ) : ?>
+					<div class="elementor-custom-embed-image-overlay" style="background-image: url(<?php echo $settings['image_overlay']['url']; ?>);">
+						<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 							<div class="elementor-custom-embed-play">
 								<i class="fa fa-play-circle"></i>
 							</div>
@@ -443,39 +419,41 @@ class Widget_Video extends Widget_Base {
 				<?php endif; ?>
 			</div>
 		<?php else :
-			echo $instance['link'];
+			echo $settings['link'];
 		endif;
 	}
 
-	public function filter_oembed_result( $html, $url, $args ) {
+	public function filter_oembed_result( $html ) {
+		$settings = $this->get_settings();
+
 		$params = [];
 
-		if ( 'youtube' === $this->_current_instance['video_type'] ) {
+		if ( 'youtube' === $settings['video_type'] ) {
 			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
 
 			foreach ( $youtube_options as $option ) {
 				if ( 'autoplay' === $option && $this->has_image_overlay() )
 					continue;
 
-				$value = ( 'yes' === $this->_current_instance[ 'yt_' . $option ] ) ? '1' : '0';
+				$value = ( 'yes' === $settings[ 'yt_' . $option ] ) ? '1' : '0';
 				$params[ $option ] = $value;
 			}
 
 			$params['wmode'] = 'opaque';
 		}
 
-		if ( 'vimeo' === $this->_current_instance['video_type'] ) {
+		if ( 'vimeo' === $settings['video_type'] ) {
 			$vimeo_options = [ 'autoplay', 'loop', 'title', 'portrait', 'byline' ];
 
 			foreach ( $vimeo_options as $option ) {
 				if ( 'autoplay' === $option && $this->has_image_overlay() )
 					continue;
 
-				$value = ( 'yes' === $this->_current_instance[ 'vimeo_' . $option ] ) ? '1' : '0';
+				$value = ( 'yes' === $settings[ 'vimeo_' . $option ] ) ? '1' : '0';
 				$params[ $option ] = $value;
 			}
 
-			$params['color'] = str_replace( '#', '', $this->_current_instance['vimeo_color'] );
+			$params['color'] = str_replace( '#', '', $settings['vimeo_color'] );
 		}
 
 		if ( ! empty( $params ) ) {
@@ -489,28 +467,34 @@ class Widget_Video extends Widget_Base {
 	}
 
 	protected function get_hosted_params() {
+		$settings = $this->get_settings();
+
 		$params = [];
-		$params['src'] = $this->_current_instance['hosted_link'];
+
+		$params['src'] = $settings['hosted_link'];
+
 		$hosted_options = [ 'autoplay', 'loop' ];
 
 		foreach ( $hosted_options as $key => $option ) {
-			$value = ( 'yes' === $this->_current_instance[ 'hosted_' . $option ] ) ? '1' : '0';
+			$value = ( 'yes' === $settings[ 'hosted_' . $option ] ) ? '1' : '0';
 			$params[ $option ] = $value;
 		}
 
-		if ( ! empty( $this->_current_instance['hosted_width'] ) ) {
-			$params['width'] = $this->_current_instance['hosted_width'];
+		if ( ! empty( $settings['hosted_width'] ) ) {
+			$params['width'] = $settings['hosted_width'];
 		}
 
-		if ( ! empty( $this->_current_instance['hosted_height'] ) ) {
-			$params['height'] = $this->_current_instance['hosted_height'];
+		if ( ! empty( $settings['hosted_height'] ) ) {
+			$params['height'] = $settings['hosted_height'];
 		}
 		return $params;
 	}
 
 	protected function has_image_overlay() {
-		return ! empty( $this->_current_instance['image_overlay']['url'] ) && 'yes' === $this->_current_instance['show_image_overlay'];
+		$settings = $this->get_settings();
+
+		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}
 
-	protected function content_template() {}
+	protected function _content_template() {}
 }

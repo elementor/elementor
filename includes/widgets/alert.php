@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Alert extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'alert';
 	}
 
@@ -18,11 +18,10 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_alert',
 			[
 				'label' => __( 'Alert', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -32,7 +31,6 @@ class Widget_Alert extends Widget_Base {
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'info',
-				'section' => 'section_alert',
 				'options' => [
 					'info' => __( 'Info', 'elementor' ),
 					'success' => __( 'Success', 'elementor' ),
@@ -50,7 +48,6 @@ class Widget_Alert extends Widget_Base {
 				'placeholder' => __( 'Your Title', 'elementor' ),
 				'default' => __( 'This is Alert', 'elementor' ),
 				'label_block' => true,
-				'section' => 'section_alert',
 			]
 		);
 
@@ -62,7 +59,6 @@ class Widget_Alert extends Widget_Base {
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'default' => __( 'I am description. Click edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
-				'section' => 'section_alert',
 				'show_label' => false,
 			]
 		);
@@ -73,7 +69,6 @@ class Widget_Alert extends Widget_Base {
 				'label' => __( 'Dismiss Button', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
-				'section' => 'section_alert',
 				'options' => [
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
@@ -87,16 +82,16 @@ class Widget_Alert extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_alert',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_type',
 			[
 				'label' => __( 'Alert Type', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -105,8 +100,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_type',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-alert' => 'background-color: {{VALUE}};',
 				],
@@ -118,8 +111,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_type',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-alert' => 'border-color: {{VALUE}};',
 				],
@@ -131,8 +122,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Left Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_type',
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -145,12 +134,13 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -159,8 +149,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_title',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-alert-title' => 'color: {{VALUE}};',
 				],
@@ -171,19 +159,18 @@ class Widget_Alert extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'alert_title',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-alert-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_description',
 			[
 				'label' => __( 'Description', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -192,8 +179,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_description',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-alert-description' => 'color: {{VALUE}};',
 				],
@@ -204,39 +189,41 @@ class Widget_Alert extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'alert_description',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_description',
 				'selector' => '{{WRAPPER}} .elementor-alert-description',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
+		$this->end_controls_section();
+
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['alert_title'] ) ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['alert_title'] ) ) {
 			return;
 		}
 
-		if ( ! empty( $instance['alert_type'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $instance['alert_type'] );
+		if ( ! empty( $settings['alert_type'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $settings['alert_type'] );
 		}
 
 		echo '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' role="alert">';
-		$html = sprintf( '<span class="elementor-alert-title">%1$s</span>', $instance['alert_title'] );
+		$html = sprintf( '<span class="elementor-alert-title">%1$s</span>', $settings['alert_title'] );
 
-		if ( ! empty( $instance['alert_description'] ) ) {
-			$html .= sprintf( '<span class="elementor-alert-description">%s</span>', $instance['alert_description'] );
+		if ( ! empty( $settings['alert_description'] ) ) {
+			$html .= sprintf( '<span class="elementor-alert-description">%s</span>', $settings['alert_description'] );
 		}
 
-		if ( ! empty( $instance['show_dismiss'] ) && 'show' === $instance['show_dismiss'] ) {
+		if ( ! empty( $settings['show_dismiss'] ) && 'show' === $settings['show_dismiss'] ) {
 			$html .= '<button type="button" class="elementor-alert-dismiss">X</button></div>';
 		}
 
 		echo $html;
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		var html = '<div class="elementor-alert elementor-alert-' + settings.alert_type + '" role="alert">';

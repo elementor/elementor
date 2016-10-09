@@ -6,7 +6,7 @@ WidgetView = BaseElementView.extend( {
 
 	getTemplate: function() {
 		if ( 'remote' !== this.getTemplateType() ) {
-			return Marionette.TemplateCache.get( '#tmpl-elementor-widget-' + this.model.get( 'widgetType' ) + '-content' );
+			return Marionette.TemplateCache.get( '#tmpl-elementor-' + this.model.get( 'elType' ) + '-' + this.model.get( 'widgetType' ) + '-content' );
 		} else {
 			return _.template( '' );
 		}
@@ -52,8 +52,8 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	getTemplateType: function() {
-		if ( null === this.getOption( '_templateType' ) ) {
-			var $template = Backbone.$( '#tmpl-elementor-widget-' + this.model.get( 'widgetType' ) + '-content' );
+		if ( null === this._templateType ) {
+			var $template = Backbone.$( '#tmpl-elementor-' + this.model.get( 'elType' ) + '-' + this.model.get( 'widgetType' ) + '-content' );
 
 			if ( 0 === $template.length ) {
 				this._templateType = 'remote';
@@ -62,7 +62,7 @@ WidgetView = BaseElementView.extend( {
 			}
 		}
 
-		return this.getOption( '_templateType' );
+		return this._templateType;
 	},
 
 	onModelBeforeRemoteRender: function() {
@@ -99,21 +99,26 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		this.$el
-			.removeClass( 'elementor-widget-empty' )
-			.children( '.elementor-widget-empty-icon' )
-			.remove();
+        var self = this;
 
-		this.$el.imagesLoaded().always( _.defer( _.bind( function() {
-			// Is element empty?
-			if ( 1 > this.$el.height() ) {
-				this.$el.addClass( 'elementor-widget-empty' );
+        self.$el
+            .removeClass( 'elementor-widget-empty' )
+            .children( '.elementor-widget-empty-icon' )
+            .remove();
 
-				// TODO: REMOVE THIS !!
-				// TEMP CODING !!
-				this.$el.append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
-			}
-		}, this ) ) );
+        self.$el.imagesLoaded().always( function() {
+
+            setTimeout( function() {
+                if ( 1 > self.$el.height() ) {
+                    self.$el.addClass( 'elementor-widget-empty' );
+
+                    // TODO: REMOVE THIS !!
+                    // TEMP CODING !!
+                    self.$el.append( '<i class="elementor-widget-empty-icon eicon-' + self.model.getIcon() + '"></i>' );
+                }
+            }, 200 );
+            // Is element empty?
+        } );
 	}
 } );
 

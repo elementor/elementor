@@ -3,9 +3,9 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Text_editor extends Widget_Base {
+class Widget_Text_Editor extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'text-editor';
 	}
 
@@ -18,11 +18,10 @@ class Widget_Text_editor extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_editor',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -32,16 +31,16 @@ class Widget_Text_editor extends Widget_Base {
 				'label' => '',
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => __( 'I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-				'section' => 'section_editor',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style',
 			[
 				'label' => __( 'Text Editor', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -50,8 +49,6 @@ class Widget_Text_editor extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
@@ -81,8 +78,6 @@ class Widget_Text_editor extends Widget_Base {
 	        [
 	            'label' => __( 'Text Color', 'elementor' ),
 	            'type' => Controls_Manager::COLOR,
-	            'tab' => self::TAB_STYLE,
-	            'section' => 'section_style',
 	            'default' => '',
 	            'selectors' => [
 	                '{{WRAPPER}}' => 'color: {{VALUE}};',
@@ -98,26 +93,28 @@ class Widget_Text_editor extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'section' => 'section_style',
-				'tab' => self::TAB_STYLE,
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
-		$instance['editor'] = $this->parse_text_editor( $instance['editor'], $instance );
+	protected function render() {
+		$editor_content = $this->get_settings( 'editor' );
+
+		$editor_content = $this->parse_text_editor( $editor_content );
 		?>
-		<div class="elementor-text-editor"><?php echo $instance['editor']; ?></div>
+		<div class="elementor-text-editor"><?php echo $editor_content; ?></div>
 		<?php
 	}
 
-	public function render_plain_content( $instance = [] ) {
+	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $instance['editor'];
+		echo $this->get_settings( 'editor' );
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-text-editor">{{{ settings.editor }}}</div>
 		<?php

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Spacer extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'spacer';
 	}
 
@@ -22,11 +22,10 @@ class Widget_Spacer extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_spacer',
 			[
 				'label' => __( 'Spacer', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -35,7 +34,6 @@ class Widget_Spacer extends Widget_Base {
 			[
 				'label' => __( 'Space (PX)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'section' => 'section_spacer',
 				'default' => [
 					'size' => 50,
 				],
@@ -57,12 +55,13 @@ class Widget_Spacer extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_spacer',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>
@@ -70,7 +69,7 @@ class Widget_Spacer extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>

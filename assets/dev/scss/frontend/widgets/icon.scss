@@ -9,13 +9,13 @@
 	line-height: 1;
 	transition: $transition-hover;
 	color: $gray;
+	font-size: 50px;
 
 	&:hover {
 		color: $gray;
 	}
 
 	i {
-		font-size: 50px;
 		width: 1em;
 		height: 1em;
 	}
@@ -24,6 +24,7 @@
 .elementor-view-stacked {
 
 	.elementor-icon {
+		padding: .5em;
 		background-color: $gray;
 		color: #fff;
 	}
@@ -32,6 +33,7 @@
 .elementor-view-framed {
 
 	.elementor-icon {
+		padding: .5em;
 		color: $gray;
 		border: 3px solid $gray;
 		background-color: transparent;

@@ -52,7 +52,7 @@ class Control_Color extends Control_Base {
 				defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
 			}
 			if ( data.alpha ) {
-				dataAlpha = ' data-alpha="true"';
+				dataAlpha = ' data-alpha=true';
 			} #>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">

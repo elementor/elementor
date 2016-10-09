@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Divider extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'divider';
 	}
 
@@ -18,11 +18,10 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_divider',
 			[
 				'label' => __( 'Divider', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -31,7 +30,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Style', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_divider',
 				'options' => [
 					'solid' => __( 'Solid', 'elementor' ),
 					'double' => __( 'Double', 'elementor' ),
@@ -50,7 +48,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Weight', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'section' => 'section_divider',
 				'default' => [
 					'size' => 1,
 				],
@@ -71,7 +68,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_divider',
 				'default' => '',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -92,7 +88,6 @@ class Widget_Divider extends Widget_Base {
 					'size' => 100,
 					'unit' => '%',
 				],
-				'section' => 'section_divider',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-divider-separator' => 'width: {{SIZE}}{{UNIT}};',
 				],
@@ -104,7 +99,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_divider',
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
@@ -140,7 +134,6 @@ class Widget_Divider extends Widget_Base {
 						'max' => 50,
 					],
 				],
-				'section' => 'section_divider',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-divider' => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}};',
 				],
@@ -153,12 +146,13 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_divider',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator"></span>
@@ -166,7 +160,7 @@ class Widget_Divider extends Widget_Base {
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator"></span>

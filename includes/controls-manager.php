@@ -5,6 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Controls_Manager {
 
+	const TAB_CONTENT = 'content';
+	const TAB_STYLE = 'style';
+	const TAB_ADVANCED = 'advanced';
+	const TAB_RESPONSIVE = 'responsive';
+	const TAB_LAYOUT = 'layout';
+
 	const TEXT = 'text';
 	const NUMBER = 'number';
 	const TEXTAREA = 'textarea';
@@ -40,6 +46,7 @@ class Controls_Manager {
 	const BOX_SHADOW = 'box_shadow';
 	const ANIMATION = 'animation';
 	const HOVER_ANIMATION = 'hover_animation';
+	const ORDER = 'order';
 
 	/**
 	 * @var Control_Base[]
@@ -50,6 +57,26 @@ class Controls_Manager {
 	 * @var Group_Control_Base[]
 	 */
 	private $_group_controls = [];
+
+	private $_controls_stack = [];
+
+	private static $_available_tabs_controls;
+
+	private static function _get_available_tabs_controls() {
+		if ( ! self::$_available_tabs_controls ) {
+			self::$_available_tabs_controls = [
+				self::TAB_CONTENT => __( 'Content', 'elementor' ),
+				self::TAB_STYLE => __( 'Style', 'elementor' ),
+				self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
+				self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
+				self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
+			];
+
+			self::$_available_tabs_controls = apply_filters( 'elementor/controls/get_available_tabs_controls', self::$_available_tabs_controls );
+		}
+
+		return self::$_available_tabs_controls;
+	}
 
 	/**
 	 * @since 1.0.0
@@ -95,6 +122,7 @@ class Controls_Manager {
 			self::BOX_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
+			self::ORDER,
 		];
 
 		foreach ( $available_controls as $control_id ) {
@@ -119,7 +147,7 @@ class Controls_Manager {
 		$this->_group_controls['background'] = new Group_Control_Background();
 		$this->_group_controls['border'] = new Group_Control_Border();
 		$this->_group_controls['typography'] = new Group_Control_Typography();
-		$this->_group_controls['image-size'] = new Group_Control_Image_size();
+		$this->_group_controls['image-size'] = new Group_Control_Image_Size();
 		$this->_group_controls['box-shadow'] = new Group_Control_Box_Shadow();
 	}
 
@@ -219,6 +247,78 @@ class Controls_Manager {
 		foreach ( $this->get_controls() as $control ) {
 			$control->enqueue();
 		}
+	}
+
+	public function open_stack( Element_Base $element ) {
+		$stack_id = $element->get_name();
+
+		$this->_controls_stack[ $stack_id ] = [
+			'tabs' => [],
+			'controls' => [],
+		];
+	}
+
+	public function add_control_to_stack( Element_Base $element, $control_id, $control_data ) {
+		$default_args = [
+			'default' => '',
+			'type' => self::TEXT,
+			'tab' => self::TAB_CONTENT,
+		];
+
+		$control_data['name'] = $control_id;
+
+		$control_data = array_merge( $default_args, $control_data );
+
+		$stack_id = $element->get_name();
+
+		if ( isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
+			return false;
+		}
+
+		$available_tabs = self::_get_available_tabs_controls();
+
+		if ( ! isset( $available_tabs[ $control_data['tab'] ] ) ) {
+			$control_data['tab'] = $default_args['tab'];
+		}
+
+		$this->_controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $available_tabs[ $control_data['tab'] ];
+
+		$this->_controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
+
+		return true;
+	}
+
+	public function remove_control_from_stack( Element_Base $element, $control_id ) {
+		$stack_id = $element->get_name();
+
+		if ( empty( $this->_controls_stack[ $stack_id ][ $control_id ] ) ) {
+			return new \WP_Error( 'Cannot remove not-exists control.' );
+		}
+
+		unset( $this->_controls_stack[ $stack_id ][ $control_id ] );
+
+		return true;
+	}
+
+	public function get_element_stack( Element_Base $element ) {
+		$stack_id = $element->get_name();
+
+		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
+			return null;
+		}
+
+		$stack = $this->_controls_stack[ $stack_id ];
+
+		if ( 'widget' === $element->get_type() && 'common' !== $element->get_name() ) {
+			$common_widget = Plugin::instance()->widgets_manager->get_widget_types( 'common' );
+
+			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
+
+			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
+		}
+
+		return $stack;
 	}
 
 	/**

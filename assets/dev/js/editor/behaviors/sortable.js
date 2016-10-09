@@ -189,8 +189,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 				var oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
-					collection.remove( model, { silent: true } );
-					collection.add( model, { silent: true, at: newIndex } );
+					collection.remove( model );
+					this.view.addChildModel( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
 				}

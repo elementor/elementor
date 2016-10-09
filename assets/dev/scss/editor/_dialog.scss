@@ -26,6 +26,7 @@
 
 .dialog-message {
 	font-size: 12px;
+	line-height: 1.4;
 }
 
 .dialog-buttons-wrapper {
@@ -38,7 +39,7 @@
 		font-size: 15px;
 		cursor: pointer;
 		padding: 13px 0;
-		outline: none;
+		outline: 0;
 
 		&:first-child {
 			color: $editor-dark;
@@ -54,6 +55,10 @@
 
 		&:active {
 			background-color: fade-out($editor-background, .5);
+		}
+
+		&::-moz-focus-inner {
+			border: 0;
 		}
 	}
 }

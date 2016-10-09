@@ -144,6 +144,41 @@
 	}
 }
 
+.elementor-label {
+	display: inline;
+	padding: .2em .6em .3em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+	text-transform: capitalize;
+	&.elementor-label-default {
+		background-color: $editor-light;
+	}
+	&.elementor-label-info {
+		background-color: $info;
+	}
+	&.elementor-label-success {
+		background-color: $success;
+	}
+	&.elementor-label-warning {
+		background-color: $warning;
+	}
+	&.elementor-label-danger {
+		background-color: $danger;
+	}
+}
+
+.elementor-descriptor {
+	font-size: 11px;
+	font-style: italic;
+	line-height: 1.2;
+	color: $editor-light;
+}
 //
 // Variables
 //

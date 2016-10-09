@@ -40,12 +40,47 @@ class Scheme_Color extends Scheme_Base {
 		];
 	}
 
-	public static function get_system_schemes() {
+	public function print_template_content() {
+		?>
+		<div class="elementor-panel-scheme-content elementor-panel-box">
+			<div class="elementor-panel-heading">
+				<div class="elementor-panel-heading-title"><?php echo $this->_get_current_scheme_title(); ?></div>
+			</div>
+			<?php
+			$description = static::get_description();
+
+			if ( $description ) { ?>
+				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo $description; ?></div>
+			<?php } ?>
+			<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
+		</div>
+		<div class="elementor-panel-scheme-colors-more-palettes elementor-panel-box">
+			<div class="elementor-panel-heading">
+				<div class="elementor-panel-heading-title"><?php _e( 'More Palettes', 'elementor' ); ?></div>
+			</div>
+			<div class="elementor-panel-box-content">
+				<?php foreach ( $this->_get_system_schemes_to_print() as $scheme_name => $scheme ) : ?>
+					<div class="elementor-panel-scheme-color-system-scheme" data-scheme-name="<?php echo $scheme_name; ?>">
+						<div class="elementor-panel-scheme-color-system-items">
+							<?php
+							foreach ( $scheme['items'] as $color_value ) : ?>
+								<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
+							<?php endforeach; ?>
+						</div>
+						<div class="elementor-title"><?php echo $scheme['title']; ?></div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	protected function _init_system_schemes() {
 		return [
 			'joker' => [
 				'title' => 'Joker',
 				'items' => [
-					self::COLOR_1 => '#000000',
+					self::COLOR_1 => '#202020',
 					self::COLOR_2 => '#b7b4b4',
 					self::COLOR_3 => '#707070',
 					self::COLOR_4 => '#f6121c',
@@ -56,7 +91,7 @@ class Scheme_Color extends Scheme_Base {
 				'items' => [
 					self::COLOR_1 => '#1569ae',
 					self::COLOR_2 => '#b6c9db',
-					self::COLOR_3 => '#969696',
+					self::COLOR_3 => '#545454',
 					self::COLOR_4 => '#fdd247',
 				],
 			],
@@ -65,7 +100,7 @@ class Scheme_Color extends Scheme_Base {
 				'items' => [
 					self::COLOR_1 => '#d5ba7f',
 					self::COLOR_2 => '#902729',
-					self::COLOR_3 => '#95938f',
+					self::COLOR_3 => '#ae4848',
 					self::COLOR_4 => '#302a8c',
 				],
 			],
@@ -124,5 +159,13 @@ class Scheme_Color extends Scheme_Base {
 				],
 			],
 		];
+	}
+
+	protected function _get_system_schemes_to_print() {
+		return $this->get_system_schemes();
+	}
+
+	protected function _get_current_scheme_title() {
+		return __( 'Color Palette', 'elementor' );
 	}
 }

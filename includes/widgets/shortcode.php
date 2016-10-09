@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Shortcode extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'shortcode';
 	}
 
@@ -18,11 +18,10 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_shortcode',
 			[
 				'label' => __( 'Shortcode', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,23 +32,25 @@ class Widget_Shortcode extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
-				'section' => 'section_shortcode',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
-		$instance['shortcode'] = shortcode_unautop( $instance['shortcode'] );
-		$instance['shortcode'] = do_shortcode( $instance['shortcode'] );
+	protected function render() {
+		$shortcode = $this->get_settings( 'shortcode' );
+
+		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>
-		<div class="elementor-shortcode"><?php echo $instance['shortcode']; ?></div>
+		<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 		<?php
 	}
 
-	public function render_plain_content( $instance = [] ) {
+	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $instance['shortcode'];
+		echo $this->get_settings( 'shortcode' );
 	}
 
-	protected function content_template() {}
+	protected function _content_template() {}
 }

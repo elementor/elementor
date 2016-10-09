@@ -146,89 +146,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-controls"></div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-schemes-typography">
-	<div class="elementor-panel-scheme-buttons">
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
-			<button class="elementor-button">
-				<i class="fa fa-undo"></i>
-				<?php _e( 'Reset', 'elementor' ); ?>
-			</button>
-		</div>
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-			<button class="elementor-button">
-				<i class="fa fa-times"></i>
-				<?php _e( 'Discard', 'elementor' ); ?>
-			</button>
-		</div>
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-			<button class="elementor-button elementor-button-success" disabled><?php _e( 'Apply', 'elementor' ); ?></button>
-		</div>
-	</div>
-	<div class="elementor-panel-scheme-items"></div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-schemes-color">
-	<div class="elementor-panel-scheme-buttons">
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
-			<button class="elementor-button">
-				<i class="fa fa-undo"></i>
-				<?php _e( 'Reset', 'elementor' ); ?>
-			</button>
-		</div>
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-			<button class="elementor-button">
-				<i class="fa fa-times"></i>
-				<?php _e( 'Discard', 'elementor' ); ?>
-			</button>
-		</div>
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-			<button class="elementor-button elementor-button-success" disabled><?php _e( 'Apply', 'elementor' ); ?></button>
-		</div>
-	</div>
-	<div class="elementor-panel-scheme-content elementor-panel-box">
-		<div class="elementor-panel-heading">
-			<div class="elementor-panel-heading-title"><?php _e( 'Color Palette', 'elementor' ); ?></div>
-		</div>
-		<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
-	</div>
-	<div class="elementor-panel-scheme-colors-more-palettes elementor-panel-box">
-		<div class="elementor-panel-heading">
-			<div class="elementor-panel-heading-title"><?php _e( 'More Palettes', 'elementor' ); ?></div>
-		</div>
-		<div class="elementor-panel-box-content">
-			<?php foreach ( Scheme_Color::get_system_schemes() as $scheme_name => $scheme ) : ?>
-				<div class="elementor-panel-scheme-color-system-scheme" data-scheme-name="<?php echo $scheme_name; ?>">
-					<div class="elementor-panel-scheme-color-system-items">
-						<?php
-						$print_colors_index = [
-							Scheme_Color::COLOR_1,
-							Scheme_Color::COLOR_2,
-							Scheme_Color::COLOR_3,
-							Scheme_Color::COLOR_4,
-						];
-						$colors_to_print = [];
-						foreach ( $print_colors_index as $color_name ) {
-							$colors_to_print[ $color_name ] = $scheme['items'][ $color_name ];
-						}
-
-						foreach ( $colors_to_print as $color_value ) : ?>
-							<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
-						<?php endforeach; ?>
-					</div>
-					<div class="elementor-title"><?php echo $scheme['title']; ?></div>
-				</div>
-			<?php endforeach; ?>
-		</div>
-	</div>
-</script>
-
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	{{{ '<?php printf( __( '{0} are disabled. You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?>'.replace( '{0}', disabledTitle ) }}}
+	<i class="eicon-nerd"></i>
+	<div id="elementor-panel-schemes-disabled-title">{{{ '<?php echo __( '{0} are disabled', 'elementor' ); ?>'.replace( '{0}', disabledTitle ) }}}</div>
+	<div id="elementor-panel-schemes-disabled-content"><?php printf( __( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
 	<div class="elementor-panel-scheme-color-input-wrapper">
-		<input type="text" class="elementor-panel-scheme-color-value" value="{{ value }}" />
+		<input type="text" class="elementor-panel-scheme-color-value" value="{{ value }}" data-alpha="true" />
 	</div>
 	<div class="elementor-panel-scheme-color-title">{{{ title }}}</div>
 </script>

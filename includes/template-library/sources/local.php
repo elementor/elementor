@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Controls_Manager;
 use Elementor\DB;
+use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -131,7 +132,7 @@ class Source_Local extends Source_Base {
 			return $post_id;
 		}
 
-		Plugin::instance()->db->save_builder( $post_id, $template_data['data'] );
+		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
 		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
@@ -170,7 +171,7 @@ class Source_Local extends Source_Base {
 		if ( 'display' === $context ) {
 			$data = Plugin::instance()->db->get_builder( $item_id );
 		} else {
-			$data = Plugin::instance()->db->get_plain_builder( $item_id );
+			$data = Plugin::instance()->db->get_plain_editor( $item_id );
 		}
 
 		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
@@ -232,17 +233,18 @@ class Source_Local extends Source_Base {
 		// Fetch all images and replace to new
 		$import_images = new Classes\Import_Images();
 
+		/** @var Element_Base $element_type */
 		$content_data = Plugin::instance()->db->iterate_data( $content['data'], function( $element ) use ( $import_images ) {
 			if ( 'widget' === $element['elType'] ) {
-				$obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
+				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
 			} else {
-				$obj = Plugin::instance()->elements_manager->get_element( $element['elType'] );
+				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
 			}
 
-			if ( ! $obj )
+			if ( ! $element_type )
 				return $element;
 
-			foreach ( $obj->get_controls() as $control ) {
+			foreach ( $element_type->get_controls() as $control ) {
 				if ( Controls_Manager::MEDIA === $control['type'] ) {
 					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
 						continue;

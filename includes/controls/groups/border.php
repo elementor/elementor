@@ -43,7 +43,6 @@ class Group_Control_Border extends Group_Control_Base {
 			'label' => _x( 'Color', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
-			'tab' => $args['tab'],
 			'selectors' => [
 				$args['selector'] => 'border-color: {{VALUE}};',
 			],

@@ -163,15 +163,9 @@
 	}
 
 	.elementor-control-description {
-		margin-top: 10px;
-	}
+		@extend .elementor-descriptor;
 
-	.elementor-control-description,
-	.elementor-control-descriptor {
-		font-size: 11px;
-		font-style: italic;
-		line-height: 1.2;
-		color: $editor-light;
+		margin-top: 10px;
 	}
 
 	.elementor-choices {
@@ -312,6 +306,24 @@
 		.elementor-device-tablet & {
 			background-color: $editor-info;
 		}
+	}
+
+	#elementor-update-preview {
+		margin: -16px -20px 15px;
+		padding: 0 15px 15px;
+		background-color: $editor-background;
+		display: flex;
+		align-items: center;
+	}
+
+	#elementor-update-preview-button-wrapper {
+		flex-grow: 1;
+		text-align: $end;
+	}
+
+	#elementor-update-preview-button {
+		padding: 8px 15px;
+		text-transform: uppercase;
 	}
 
 	// Media Control
@@ -952,4 +964,7 @@
 
 	// Switcher control
 	@import "controls/switcher";
+
+	// Order control
+	@import "controls/order";
 }
