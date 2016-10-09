@@ -491,6 +491,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	protected function has_image_overlay() {
+		$settings = $this->get_settings();
+
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}
 
