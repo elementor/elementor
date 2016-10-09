@@ -10,7 +10,6 @@ class Widgets_Manager {
 	private $_widget_types = null;
 
 	private function _init_widgets() {
-
 		$build_widgets_filename = [
 			'common',
 			'heading',
