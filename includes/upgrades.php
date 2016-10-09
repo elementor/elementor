@@ -83,12 +83,20 @@ class Upgrades {
 		foreach ( $post_ids as $post_id ) {
 			$data = Plugin::instance()->db->get_plain_editor( $post_id );
 			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
-				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ] ) ) {
+				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
 
-				if ( ! empty( $element['settings']['icon_padding']['size'] ) ) {
-					$element['settings']['icon_padding']['size'] = '';
+				if ( in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ] ) ) {
+					if ( ! empty( $element['settings']['icon_padding']['size'] ) ) {
+						$element['settings']['icon_padding']['size'] = '';
+					}
+				}
+
+				if ( 'image' === $element['widgetType'] ) {
+					if ( empty( $element['settings']['image_size'] ) ) {
+						$element['settings']['image_size'] = 'large';
+					}
 				}
 
 				return $element;
