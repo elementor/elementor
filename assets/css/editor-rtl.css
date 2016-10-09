@@ -605,6 +605,11 @@ select {
       background-color: #f0ad4e; }
     #elementor-panel .elementor-label.elementor-label-danger {
       background-color: #d9534f; }
+  #elementor-panel .elementor-descriptor, #elementor-panel #elementor-panel-page-editor .elementor-control-description {
+    font-size: 11px;
+    font-style: italic;
+    line-height: 1.2;
+    color: #a4afb7; }
   #elementor-panel #elementor-panel-header {
     display: table;
     height: 40px;
@@ -690,10 +695,12 @@ select {
   #elementor-panel .panel-elements-category-items {
     overflow: hidden;
     padding: 5px; }
-  #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-title {
+  #elementor-panel .elementor-panel-scheme-title {
     padding: 10px 20px;
     margin-top: 10px; }
-  #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-buttons {
+  #elementor-panel .elementor-panel-scheme-description {
+    padding: 20px 20px 0; }
+  #elementor-panel .elementor-panel-scheme-buttons {
     padding-right: 20px;
     display: table;
     table-layout: fixed;
@@ -701,18 +708,18 @@ select {
     height: 40px;
     background-color: #fff;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
-  #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-button-wrapper {
+  #elementor-panel .elementor-panel-scheme-button-wrapper {
     display: table-cell;
     vertical-align: middle; }
-  #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-save {
+  #elementor-panel .elementor-panel-scheme-save {
     text-align: center; }
-    #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-save .elementor-button {
+    #elementor-panel .elementor-panel-scheme-save .elementor-button {
       padding: 6px 18px;
       text-transform: uppercase; }
-  #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-reset .elementor-button, #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-discard .elementor-button {
+  #elementor-panel .elementor-panel-scheme-reset .elementor-button, #elementor-panel .elementor-panel-scheme-discard .elementor-button {
     color: #a4afb7;
     background: none; }
-  #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-reset .fa, #elementor-panel .elementor-panel-scheme .elementor-panel-scheme-discard .fa {
+  #elementor-panel .elementor-panel-scheme-reset .fa, #elementor-panel .elementor-panel-scheme-discard .fa {
     margin-right: 3px; }
   #elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-items {
     position: relative; }
@@ -929,12 +936,6 @@ select {
     width: 45%; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-description {
     margin-top: 10px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-description,
-  #elementor-panel #elementor-panel-page-editor .elementor-control-descriptor {
-    font-size: 11px;
-    font-style: italic;
-    line-height: 1.2;
-    color: #a4afb7; }
   #elementor-panel #elementor-panel-page-editor .elementor-choices {
     display: table;
     width: 100%;
@@ -1900,7 +1901,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     font-size: 15px;
     cursor: pointer;
     padding: 13px 0;
-    outline: none; }
+    outline: 0; }
     .dialog-buttons-wrapper > button:first-child {
       color: #6d7882; }
     .dialog-buttons-wrapper > button.dialog-ok {
@@ -1909,6 +1910,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
       color: #39b54a; }
     .dialog-buttons-wrapper > button:active {
       background-color: rgba(230, 233, 236, 0.5); }
+    .dialog-buttons-wrapper > button::-moz-focus-inner {
+      border: 0; }
 
 .dialog-widget-header {
   padding: 20px 0;

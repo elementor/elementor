@@ -35,11 +35,10 @@ class Widget_Sidebar extends Widget_Base {
 		$default_key = array_keys( $options );
 		$default_key = array_shift( $default_key );
 
-		$this->add_control(
+		$this->start_controls_section(
 			'section_sidebar',
 			[
 				'label' => __( 'Sidebar', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -48,8 +47,9 @@ class Widget_Sidebar extends Widget_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => $default_key,
 			'options' => $options,
-			'section' => 'section_sidebar',
 		] );
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

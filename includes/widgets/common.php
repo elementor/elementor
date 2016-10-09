@@ -24,7 +24,6 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -37,7 +36,6 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -51,9 +49,8 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-
 				'label_block' => true,
-				]
+			]
 		);
 
 		$this->add_control(
@@ -68,7 +65,6 @@ class Widget_Common extends Widget_Base {
 					'fast' => __( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
-
 				'condition' => [
 					'_animation!' => '',
 				],
@@ -149,7 +145,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
-				'classes' => 'elementor-control-descriptor',
+				'classes' => 'elementor-descriptor',
 			]
 		);
 
