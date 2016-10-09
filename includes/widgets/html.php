@@ -18,11 +18,10 @@ class Widget_Html extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_title',
 			[
 				'label' => __( 'HTML Code', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,10 +32,11 @@ class Widget_Html extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => '',
 				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
-				'section' => 'section_title',
 				'show_label' => false,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

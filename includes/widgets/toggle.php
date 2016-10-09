@@ -18,11 +18,10 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
-			'section_title',
+		$this->start_controls_section(
+			'section_toggle',
 			[
 				'label' => __( 'Toggle', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -31,7 +30,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Toggle Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
-				'section' => 'section_title',
 				'default' => [
 					[
 						'tab_title' => __( 'Toggle #1', 'elementor' ),
@@ -58,7 +56,7 @@ class Widget_Toggle extends Widget_Base {
 						'show_label' => false,
 					],
 				],
-				'title_field' => '{tab_title}',
+				'title_field' => '{{{ tab_title }}}',
 			]
 		);
 
@@ -68,15 +66,15 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_title',
 			]
 		);
 
-		$this->add_control(
-			'section_title_style',
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_toggle_style',
 			[
 				'label' => __( 'Toggle', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -95,8 +93,6 @@ class Widget_Toggle extends Widget_Base {
 						'max' => 10,
 					],
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -109,8 +105,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'border-bottom-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'border-color: {{VALUE}};',
@@ -123,8 +117,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'background-color: {{VALUE}};',
 				],
@@ -137,8 +129,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'color: {{VALUE}};',
 				],
@@ -154,8 +144,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title.active' => 'color: {{VALUE}};',
 				],
@@ -171,8 +159,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title Typography', 'elementor' ),
 				'name' => 'title_typography',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
@@ -183,8 +169,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Content Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'background-color: {{VALUE}};',
 				],
@@ -197,8 +181,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Content Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'color: {{VALUE}};',
 				],
@@ -214,12 +196,12 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'label' => 'Content Typography',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

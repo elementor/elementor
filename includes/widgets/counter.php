@@ -18,11 +18,10 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_counter',
 			[
 				'label' => __( 'Counter', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,7 +32,6 @@ class Widget_Counter extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'default' => 0,
-				'section' => 'section_counter',
 			]
 		);
 
@@ -44,7 +42,6 @@ class Widget_Counter extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'min' => 100,
 				'default' => 100,
-				'section' => 'section_counter',
 			]
 		);
 
@@ -55,7 +52,6 @@ class Widget_Counter extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => 1,
-				'section' => 'section_counter',
 			]
 		);
 
@@ -66,7 +62,6 @@ class Widget_Counter extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => __( 'Plus', 'elementor' ),
-				'section' => 'section_counter',
 			]
 		);
 
@@ -78,7 +73,6 @@ class Widget_Counter extends Widget_Base {
 				'default' => 2000,
 				'min' => 100,
 				'step' => 100,
-				'section' => 'section_counter',
 			]
 		);
 
@@ -90,7 +84,6 @@ class Widget_Counter extends Widget_Base {
 				'label_block' => true,
 				'default' => __( 'Cool Number', 'elementor' ),
 				'placeholder' => __( 'Cool Number', 'elementor' ),
-				'section' => 'section_counter',
 			]
 		);
 
@@ -100,15 +93,15 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_counter',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_number',
 			[
 				'label' => __( 'Number', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -122,8 +115,6 @@ class Widget_Counter extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_number',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'color: {{VALUE}};',
 				],
@@ -135,17 +126,16 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'typography_number',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_number',
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -159,8 +149,6 @@ class Widget_Counter extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_2,
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'color: {{VALUE}};',
 				],
@@ -172,11 +160,11 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'typography_title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function _content_template() {

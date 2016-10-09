@@ -67,15 +67,20 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$image_sizes = $this->_get_image_sizes();
 
-		// Get the first item for default value
-		$default_value = array_keys( $image_sizes );
-		$default_value = array_shift( $default_value );
+		if ( ! empty( $args['default'] ) ) {
+			$default_value = $args['default'];
+		} else {
+			// Get the first item for default value
+			$default_value = array_keys( $image_sizes );
+			$default_value = array_shift( $default_value );
+		}
 
 		$controls['size'] = [
 			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => $image_sizes,
 			'default' => $default_value,
+			'label_block' => false,
 		];
 
 		if ( isset( $image_sizes['custom'] ) ) {
@@ -94,6 +99,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
+		if ( empty( $attachment_id ) )
+			return false;
+
 		$size = $instance[ $group_name . '_size' ];
 
 		if ( 'custom' !== $size ) {
