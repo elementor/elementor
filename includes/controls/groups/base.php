@@ -61,10 +61,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private function _get_default_args() {
 		return [
-			'section' => '',
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'tab' => Controls_Manager::TAB_CONTENT,
 			'fields' => 'all',
 		];
 	}
@@ -123,8 +121,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	protected function _add_group_args_to_control( $control_id, $control_args ) {
 		$args = $this->get_args();
 
-		$control_args['tab'] = $args['tab'];
-		$control_args['section'] = $args['section'];
+		if ( ! empty( $args['tab'] ) ) {
+			$control_args['tab'] = $args['tab'];
+		}
+
+		if ( ! empty( $args['section'] ) ) {
+			$control_args['section'] = $args['section'];
+		}
+
 		$control_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
 		if ( ! empty( $args['condition'] ) ) {

@@ -18,11 +18,10 @@ class Widget_Google_Maps extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_map',
 			[
 				'label' => __( 'Map', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -35,7 +34,6 @@ class Widget_Google_Maps extends Widget_Base {
 				'placeholder' => $default_address,
 				'default' => $default_address,
 				'label_block' => true,
-				'section' => 'section_map',
 			]
 		);
 
@@ -53,7 +51,6 @@ class Widget_Google_Maps extends Widget_Base {
 						'max' => 20,
 					],
 				],
-				'section' => 'section_map',
 			]
 		);
 
@@ -71,7 +68,6 @@ class Widget_Google_Maps extends Widget_Base {
 						'max' => 1440,
 					],
 				],
-				'section' => 'section_map',
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],
@@ -88,7 +84,6 @@ class Widget_Google_Maps extends Widget_Base {
 					'' => __( 'No', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
 				],
-				'section' => 'section_map',
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'pointer-events: none;',
 				],
@@ -101,9 +96,10 @@ class Widget_Google_Maps extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_map',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

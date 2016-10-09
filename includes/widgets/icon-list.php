@@ -18,11 +18,10 @@ class Widget_Icon_List extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_icon',
 			[
 				'label' => __( 'Icon List', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -45,7 +44,6 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'fa fa-dot-circle-o',
 					],
 				],
-				'section' => 'section_icon',
 				'fields' => [
 					[
 						'name' => 'text',
@@ -70,7 +68,7 @@ class Widget_Icon_List extends Widget_Base {
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
-				'title_field' => '<i class="{{ icon }}"></i>  {{{ text }}}',
+				'title_field' => '<i class="{{ icon }}"></i> {{{ text }}}',
 			]
 		);
 
@@ -80,15 +78,15 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_icon',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_icon_style',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -98,8 +96,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Icon Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_icon_style',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
@@ -116,8 +112,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_icon_style',
 				'default' => [
 					'size' => 14,
 				],
@@ -137,8 +131,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_icon_style',
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
@@ -159,11 +151,12 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_text_style',
 			[
 				'label' => __( 'Text', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -173,8 +166,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Text Indent', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_text_style',
 				'range' => [
 					'px' => [
 						'max' => 50,
@@ -191,8 +182,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_text_style',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
@@ -209,12 +198,12 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'name' => 'icon_typography',
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_text_style',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

@@ -22,11 +22,10 @@ class Widget_Spacer extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_spacer',
 			[
 				'label' => __( 'Spacer', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -35,7 +34,6 @@ class Widget_Spacer extends Widget_Base {
 			[
 				'label' => __( 'Space (PX)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'section' => 'section_spacer',
 				'default' => [
 					'size' => 50,
 				],
@@ -57,9 +55,10 @@ class Widget_Spacer extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_spacer',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

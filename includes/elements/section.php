@@ -444,8 +444,6 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container a' => 'color: {{VALUE}};',
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_typo',
 			]
 		);
 
