@@ -55,7 +55,7 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'section_sc_options',
+			'sc_options',
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
