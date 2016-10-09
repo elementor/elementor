@@ -9,6 +9,45 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return 'image-size';
 	}
 
+	/**
+	 * @param array $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]
+	 *
+	 * @return string
+	 */
+	public static function get_attachment_image_html( $settings ) {
+		$id  = $settings['image']['id'];
+		$url = $settings['image']['url'];
+
+		// Old version of image settings
+		if ( ! isset( $settings['image_size'] ) ) {
+			$settings['image_size'] = '';
+		}
+
+		$size = $settings['image_size'];
+
+		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
+
+		$html = '';
+
+		// If is the new version - with image size
+		$image_sizes   = get_intermediate_image_sizes();
+		$image_sizes[] = 'full';
+
+		if ( ! empty( $id ) && in_array( $size, $image_sizes ) ) {
+			$html .= wp_get_attachment_image( $id, $size );
+		} else {
+			$image_src = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $settings );
+
+			if ( ! $image_src ) {
+				$image_src = $url;
+			}
+
+			$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
+		}
+
+		return $html;
+	}
+
 	public static function get_all_image_sizes() {
 		global $_wp_additional_image_sizes;
 
