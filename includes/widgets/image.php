@@ -41,7 +41,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'image', // Actually its `image_size`
 				'label' => __( 'Image Size', 'elementor' ),
-				'default' => 'full',
+				'default' => 'large',
 			]
 		);
 
