@@ -159,6 +159,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.10.1 - 09.10.2016 ###
+* Fix! - Image size default
+
 ### 0.10.0 - 09.10.2016 ###
 * New! - Choose which colors appear in the editor's color picker. This makes accessing the colors you choose for the site much easier
 * New! - Clear the entire page content in one click ([#607](https://github.com/pojome/elementor/issues/607))
