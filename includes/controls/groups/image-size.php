@@ -67,7 +67,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$image_sizes = $this->_get_image_sizes();
 
-		if ( ! empty( $args['default'] ) ) {
+		if ( ! empty( $args['default'] ) && isset( $image_sizes[ $args['default'] ] ) ) {
 			$default_value = $args['default'];
 		} else {
 			// Get the first item for default value
