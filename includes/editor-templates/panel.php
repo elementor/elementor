@@ -143,7 +143,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<# } ); #>
 		</ul>
 	</div>
-	<div class="elementor-controls"></div>
+	<# if ( elementData.reload_preview ) { #>
+		<div id="elementor-update-preview">
+			<div id="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
+			<div id="elementor-update-preview-button-wrapper">
+				<button id="elementor-update-preview-button" class="elementor-button elementor-button-success"><?php echo __( 'Apply', 'elementor' ); ?></button>
+			</div>
+		</div>
+	<# } #>
+	<div id="elementor-controls"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
