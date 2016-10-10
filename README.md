@@ -77,6 +77,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
+- [Swedish](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (sv_SE)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
 - [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO) - in progress
 - [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES) - in progress
@@ -158,6 +159,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 0.10.2 - 10.10.2016 ###
+* Tweak! - Added Apply button for Shortcode widget to trigger loading of external scripts
+* Tweak! - Restore action `elementor/widgets/widgets_registered`
+* Fix! - Conflict with old versions of Bfi_Thumb plugin
 
 ### 0.10.1 - 09.10.2016 ###
 * Fix! - Image size default
