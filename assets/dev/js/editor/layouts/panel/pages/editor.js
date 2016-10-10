@@ -11,7 +11,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	childViewContainer: 'div.elementor-controls',
+	childViewContainer: '#elementor-controls',
 
 	modelEvents: {
 		'destroy': 'onModelDestroy'
