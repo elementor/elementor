@@ -164,6 +164,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added Apply button for Shortcode widget to trigger loading of external scripts
 * Tweak! - Restore action `elementor/widgets/widgets_registered`
 * Fix! - Conflict with old versions of Bfi_Thumb plugin
+* Fix! - Conflict with other plugins ([Topic](https://wordpress.org/support/topic/0-10-1-fatal-error-with-html-editor-syntax-highlighter/))
 
 ### 0.10.1 - 09.10.2016 ###
 * Fix! - Image size default
