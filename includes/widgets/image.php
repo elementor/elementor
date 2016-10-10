@@ -290,23 +290,7 @@ class Widget_Image extends Widget_Base {
 			$image_html .= '<figure class="wp-caption">';
 		}
 
-		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
-
-		// If is the new version - with image size
-		$image_sizes = get_intermediate_image_sizes();
-		$image_sizes[] = 'full';
-
-		if ( ! empty( $settings['image']['id'] ) && isset( $settings['image_size'] ) && in_array( $settings['image_size'], $image_sizes ) ) {
-			$image_html .= wp_get_attachment_image( $settings['image']['id'], $settings['image_size'] );
-		} else {
-			$image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['image']['id'], 'image', $settings );
-
-			if ( ! $image_src ) {
-				$image_src = $settings['image']['url'];
-			}
-
-			$image_html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
-		}
+		$image_html .= Group_Control_Image_Size::get_attachment_image_html( $settings );
 
 		$link = $this->get_link_url( $settings );
 		if ( $link ) {

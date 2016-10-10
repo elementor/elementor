@@ -17,6 +17,10 @@ class Widget_Shortcode extends Widget_Base {
 		return 'shortcode';
 	}
 
+	public function is_reload_preview_required() {
+		return true;
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_shortcode',
