@@ -7,15 +7,13 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 
 		ui.form = 'form';
 		ui.loading = '.wp-widget-form-loading';
-		ui.reloadButton = '#elementor-update-preview-button';
 
 		return ui;
 	},
 
 	events: {
 		'keyup @ui.form :input': 'onFormChanged',
-		'change @ui.form :input': 'onFormChanged',
-		'click @ui.reloadButton': 'onReloadButtonClick'
+		'change @ui.form :input': 'onFormChanged'
 	},
 
 	onFormChanged: function() {
@@ -35,10 +33,6 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 				this.ui.form.html( data );
 			}, this )
 		} );
-	},
-
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
 	}
 } );
 
