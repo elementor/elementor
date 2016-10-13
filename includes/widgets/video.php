@@ -86,12 +86,12 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Aspect Ratio', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-	            'options' => [
+				'options' => [
 					'169' => '16:9',
 					'43' => '4:3',
 					'32' => '3:2',
-	            ],
-	            'default' => '169',
+				],
+				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
 			]
 		);
