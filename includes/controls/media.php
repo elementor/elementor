@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\TemplateLibrary\Classes\Import_Images;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Control_Media extends Control_Base_Multiple {
@@ -14,6 +16,30 @@ class Control_Media extends Control_Base_Multiple {
 			'url' => '',
 			'id' => '',
 		];
+	}
+
+	/**
+	 * Fetch images and replace to new
+	 *
+	 * @param $settings
+	 *
+	 * @return array|bool
+	 */
+	public function on_import( $settings ) {
+		if ( empty( $settings['url'] ) ) {
+			return $settings;
+		}
+
+		$settings = Import_Images::instance()->import( $settings );
+
+		if ( ! $settings ) {
+			$settings = [
+				'id' => null,
+				'url' => Utils::get_placeholder_image_src(),
+			];
+		}
+
+		return $settings;
 	}
 
 	public function enqueue() {
