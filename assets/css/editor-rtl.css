@@ -558,7 +558,7 @@ select {
   #elementor-panel .select2-selection__arrow {
     height: 27px;
     top: 0; }
-  #elementor-panel #elementor-panel #elementor-panel-page-editor .elementor-controls .pojo-widget-button-collapse {
+  #elementor-panel #elementor-controls .pojo-widget-button-collapse {
     display: none; }
   #elementor-panel .panel-alert {
     padding: 15px;
@@ -860,7 +860,7 @@ select {
             font-size: 16px;
             display: block;
             margin-bottom: 6px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-controls > .elementor-control:not(.elementor-active-tab) {
+  #elementor-panel #elementor-panel-page-editor #elementor-controls > .elementor-control:not(.elementor-active-tab) {
     display: none; }
   #elementor-panel #elementor-panel-page-editor .elementor-control {
     background-color: #fff;
@@ -1034,8 +1034,7 @@ select {
   .elementor-device-tablet #elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-tablet {
     background-color: #71d7f7; }
   #elementor-panel #elementor-panel-page-editor #elementor-update-preview {
-    margin: -16px -20px 15px;
-    padding: 0 15px 15px;
+    margin: 15px 15px 0;
     background-color: #e6e9ec;
     display: -webkit-box;
     display: -webkit-flex;

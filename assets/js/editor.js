@@ -1927,18 +1927,20 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	childViewContainer: 'div.elementor-controls',
+	childViewContainer: '#elementor-controls',
 
 	modelEvents: {
 		'destroy': 'onModelDestroy'
 	},
 
 	ui: {
-		'tabs': '.elementor-tabs-controls li'
+		tabs: '.elementor-tabs-controls li',
+		reloadButton: '#elementor-update-preview-button'
 	},
 
 	events: {
-		'click @ui.tabs a': 'onClickTabControl'
+		'click @ui.tabs a': 'onClickTabControl',
+		'click @ui.reloadButton': 'onReloadButtonClick'
 	},
 
 	initialize: function() {
@@ -1947,6 +1949,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
+
 		return elementor.getControlItemView( controlType );
 	},
 
@@ -2091,6 +2094,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		} );
 
 		elementor.channels.data.trigger( 'scrollbar:update' );
+	},
+
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	}
 } );
 
@@ -7162,15 +7169,13 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 
 		ui.form = 'form';
 		ui.loading = '.wp-widget-form-loading';
-		ui.reloadButton = '#elementor-update-preview-button';
 
 		return ui;
 	},
 
 	events: {
 		'keyup @ui.form :input': 'onFormChanged',
-		'change @ui.form :input': 'onFormChanged',
-		'click @ui.reloadButton': 'onReloadButtonClick'
+		'change @ui.form :input': 'onFormChanged'
 	},
 
 	onFormChanged: function() {
@@ -7190,10 +7195,6 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 				this.ui.form.html( data );
 			}, this )
 		} );
-	},
-
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
 	}
 } );
 

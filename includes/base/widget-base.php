@@ -63,7 +63,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function parse_text_editor( $content ) {
-		$content = apply_filters( 'widget_text', $content, $this );
+		$content = apply_filters( 'widget_text', $content, $this->get_settings() );
 
 		$content = shortcode_unautop( $content );
 		$content = do_shortcode( $content );

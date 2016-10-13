@@ -43,6 +43,10 @@ class Widget_WordPress extends Widget_Base {
 		return 'wordpress';
 	}
 
+	public function is_reload_preview_required() {
+		return true;
+	}
+
 	public function get_form( $instance = [] ) {
 		ob_start();
 		$this->get_widget_instance()->form( $instance['wp'] );

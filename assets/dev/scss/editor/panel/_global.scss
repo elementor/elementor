@@ -100,13 +100,10 @@
 }
 
 // Pojo Theme Support
-#elementor-panel {
-	#elementor-panel-page-editor {
-		.elementor-controls {
-			.pojo-widget-button-collapse {
-				display: none;
-			}
-		}
+
+#elementor-controls {
+	.pojo-widget-button-collapse {
+		display: none;
 	}
 }
 
