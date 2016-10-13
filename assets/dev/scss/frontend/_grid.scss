@@ -150,7 +150,43 @@
 
 }
 
-// Columns Gap (Inner section supported)
+// Columns Gap
+.elementor-column-gap-default {
+
+	.elementor-element-populated {
+		padding: 10px;
+	}
+}
+
+.elementor-column-gap-narrow {
+
+	.elementor-element-populated {
+		padding: 5px;
+	}
+}
+
+.elementor-column-gap-extended {
+
+	.elementor-element-populated {
+		padding: 15px;
+	}
+}
+
+.elementor-column-gap-wide {
+
+	.elementor-element-populated {
+		padding: 20px;
+	}
+}
+
+.elementor-column-gap-wider {
+
+	.elementor-element-populated {
+		padding: 30px;
+	}
+}
+
+// Columns Gap for Inner section
 .elementor-inner-section {
 
 	.elementor-column-gap-no {
@@ -178,48 +214,14 @@
 }
 
 @media (min-width: $screen-md-min) {
+
 	.elementor-column {
 		@include elementor-grid-classes;
-	}
-
-	// Columns Gap
-	.elementor-column-gap-default {
-
-		.elementor-element-populated {
-			padding: 10px;
-		}
-	}
-
-	.elementor-column-gap-narrow {
-
-		.elementor-element-populated {
-			padding: 5px;
-		}
-	}
-
-	.elementor-column-gap-extended {
-
-		.elementor-element-populated {
-			padding: 15px;
-		}
-	}
-
-	.elementor-column-gap-wide {
-
-		.elementor-element-populated {
-			padding: 20px;
-		}
-	}
-
-	.elementor-column-gap-wider {
-
-		.elementor-element-populated {
-			padding: 30px;
-		}
 	}
 }
 
 @media (max-width: $screen-sm-max) {
+
 	.elementor-column {
 		width: 100%;
 	}
