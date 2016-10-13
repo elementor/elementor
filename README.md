@@ -161,10 +161,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 0.10.3 - 13.10.2016 ###
-Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
-Fix! - Columns gap for all devices
-Fix! - Added trigger for changes on Apply button
-Fix! - Inner section class on front-end
+* Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
+* Fix! - Columns gap for all devices
+* Fix! - Added trigger for changes on Apply button
+* Fix! - Inner section class on front-end
 
 ### 0.10.2 - 10.10.2016 ###
 * Tweak! - Added Apply button for Shortcode widget to trigger loading of external scripts
