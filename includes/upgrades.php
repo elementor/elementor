@@ -95,7 +95,7 @@ class Upgrades {
 
 				if ( 'image' === $element['widgetType'] ) {
 					if ( empty( $element['settings']['image_size'] ) ) {
-						$element['settings']['image_size'] = 'large';
+						$element['settings']['image_size'] = 'full';
 					}
 				}
 

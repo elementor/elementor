@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.9.3
+Stable tag: 0.10.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -73,6 +73,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
+- [Swedish](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (sv_SE)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
@@ -156,6 +157,35 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 0.10.3 - 13.10.2016 =
+* Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
+* Fix! - Columns gap for all devices
+* Fix! - Added trigger for changes on Apply button
+* Fix! - Inner section class on front-end
+
+= 0.10.2 - 10.10.2016 =
+* Tweak! - Added Apply button for Shortcode widget to trigger loading of external scripts
+* Tweak! - Restore action `elementor/widgets/widgets_registered`
+* Fix! - Conflict with old versions of Bfi_Thumb plugin
+* Fix! - Conflict with other plugins ([Topic](https://wordpress.org/support/topic/0-10-1-fatal-error-with-html-editor-syntax-highlighter/))
+
+= 0.10.1 - 09.10.2016 =
+* Fix! - Image size default
+
+= 0.10.0 - 09.10.2016 =
+* New! - Choose which colors appear in the editor's color picker. This makes accessing the colors you choose for the site much easier
+* New! - Clear the entire page content in one click ([#607](https://github.com/pojome/elementor/issues/607))
+* New! - Added image size control for Image widget ([#537](https://github.com/pojome/elementor/issues/537))
+* New! - Added social icon for Twitch.tv ([#694](https://github.com/pojome/elementor/issues/694))
+* Tweak! - Data stored in a JSON format instead of serialize, for smoother migration ([#403](https://github.com/pojome/elementor/issues/403))
+* Tweak! - Added Apply button for all WP widgets to trigger loading of external scripts
+* Tweak! - Adding a preview icon for repeater control ([#609](https://github.com/pojome/elementor/issues/609))
+* Tweak! - All widgets code rewritten to allow for better API flexibility
+* Fix! - Icon under 20px size now looks good
+* Fix! - Improve CSS for Icon list alignment ([#620](https://github.com/pojome/elementor/issues/620))
+* Fix! - Ninja Forms widget conflict ([#546](https://github.com/pojome/elementor/issues/546))
+* Fix! - Global Fonts Don't Show Up on Live Preview Screen ([#606](https://github.com/pojome/elementor/issues/606))
 
 = 0.9.3 - 26.09.2016 =
 * Tweak! - New method for import template library

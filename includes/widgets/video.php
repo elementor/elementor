@@ -86,12 +86,12 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Aspect Ratio', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-	            'options' => [
+				'options' => [
 					'169' => '16:9',
 					'43' => '4:3',
 					'32' => '3:2',
-	            ],
-	            'default' => '169',
+				],
+				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
 			]
 		);
@@ -491,6 +491,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	protected function has_image_overlay() {
+		$settings = $this->get_settings();
+
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}
 

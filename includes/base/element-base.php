@@ -185,6 +185,10 @@ abstract class Element_Base {
 		return 'columns';
 	}
 
+	public function is_reload_preview_required() {
+		return false;
+	}
+
 	public function get_config( $item = null ) {
 		$config = [
 			'name' => $this->get_name(),
@@ -195,6 +199,7 @@ abstract class Element_Base {
 			'categories' => $this->get_categories(),
 			'keywords' => $this->get_keywords(),
 			'icon' => $this->get_icon(),
+			'reload_preview' => $this->is_reload_preview_required(),
 		];
 
 		if ( $item ) {
