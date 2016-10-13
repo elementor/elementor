@@ -329,10 +329,10 @@ class Editor {
 					'delete_template' => __( 'Delete Template', 'elementor' ),
 					'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
 					'color_picker' => __( 'Color Picker', 'elementor' ),
-					'clear_page' => __( 'Clear Page', 'elementor' ),
-					'dialog_confirm_clear_page' => __( 'All of your current page content will be lost. <br>Do you wish to proceed?', 'elementor' ),
-					'asc' => 'Ascending order',
-					'desc' => 'Descending order',
+					'clear_page' => __( 'Delete All Content', 'elementor' ),
+					'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
+					'asc' => __( 'Ascending order', 'elementor' ),
+					'desc' => __( 'Descending order', 'elementor' ),
 				],
 			]
 		);

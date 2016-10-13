@@ -18,11 +18,10 @@ class Widget_Testimonial extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_testimonial',
 			[
 				'label' => __( 'Testimonial', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,7 +32,6 @@ class Widget_Testimonial extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'rows' => '10',
 				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.',
-				'section' => 'section_testimonial',
 			]
 		);
 
@@ -45,7 +43,6 @@ class Widget_Testimonial extends Widget_Base {
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
-				'section' => 'section_testimonial',
 			]
 		);
 
@@ -55,7 +52,6 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Name', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'John Doe',
-				'section' => 'section_testimonial',
 			]
 		);
 
@@ -65,7 +61,6 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Job', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'Designer',
-				'section' => 'section_testimonial',
 			]
 		);
 
@@ -75,7 +70,6 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'aside',
-				'section' => 'section_testimonial',
 				'options' => [
 					'aside' => __( 'Aside', 'elementor' ),
 					'top' => __( 'Top', 'elementor' ),
@@ -93,7 +87,6 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'center',
-				'section' => 'section_testimonial',
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
@@ -117,16 +110,16 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_image_carousel',
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Content
-		$this->add_control(
+		$this->start_controls_section(
 			'section_style_testimonial_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -140,8 +133,6 @@ class Widget_Testimonial extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_content',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-content' => 'color: {{VALUE}};',
@@ -155,18 +146,17 @@ class Widget_Testimonial extends Widget_Base {
 				'name' => 'content_typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_content',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Image
-		$this->add_control(
+		$this->start_controls_section(
 			'section_style_testimonial_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'testimonial_image[url]!' => '',
@@ -186,8 +176,6 @@ class Widget_Testimonial extends Widget_Base {
 						'max' => 200,
 					],
 				],
-				'section' => 'section_style_testimonial_image',
-				'tab' => Controls_Manager::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 				],
@@ -201,8 +189,6 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_image',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img',
 				'condition' => [
 					'testimonial_image[url]!' => '',
@@ -216,8 +202,6 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_image',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -227,12 +211,13 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Name
-		$this->add_control(
+		$this->start_controls_section(
 			'section_style_testimonial_name',
 			[
 				'label' => __( 'Name', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -246,8 +231,6 @@ class Widget_Testimonial extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_name',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-name' => 'color: {{VALUE}};',
@@ -261,18 +244,17 @@ class Widget_Testimonial extends Widget_Base {
 				'name' => 'name_typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_name',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Job
-		$this->add_control(
+		$this->start_controls_section(
 			'section_style_testimonial_job',
 			[
 				'label' => __( 'Job', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -286,8 +268,6 @@ class Widget_Testimonial extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_2,
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_job',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-job' => 'color: {{VALUE}};',
@@ -301,11 +281,11 @@ class Widget_Testimonial extends Widget_Base {
 				'name' => 'job_typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_style_testimonial_job',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

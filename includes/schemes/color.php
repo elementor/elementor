@@ -46,6 +46,12 @@ class Scheme_Color extends Scheme_Base {
 			<div class="elementor-panel-heading">
 				<div class="elementor-panel-heading-title"><?php echo $this->_get_current_scheme_title(); ?></div>
 			</div>
+			<?php
+			$description = static::get_description();
+
+			if ( $description ) { ?>
+				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo $description; ?></div>
+			<?php } ?>
 			<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
 		</div>
 		<div class="elementor-panel-scheme-colors-more-palettes elementor-panel-box">

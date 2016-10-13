@@ -26,12 +26,15 @@ class DB {
 	public function save_editor( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
 		$editor_data = $this->_get_editor_data( $posted );
 
+		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+		$json_value = wp_slash( wp_json_encode( $editor_data ) );
+
 		if ( self::REVISION_PUBLISH === $revision ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $editor_data ) );
+			update_post_meta( $post_id, '_elementor_data', $json_value );
 			$this->_save_plain_text( $post_id );
 		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', wp_json_encode( $editor_data ) );
+			update_post_meta( $post_id, '_elementor_draft_data', $json_value );
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );

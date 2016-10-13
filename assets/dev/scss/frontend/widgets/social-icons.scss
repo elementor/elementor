@@ -8,9 +8,9 @@
 
 .elementor-social-icon {
 	color: white;
-	font-size: 20px;
+	font-size: 25px;
 	text-align: center;
-	padding: 0.6em;
+	padding: 0.5em;
 	@include margin-end(5px);
 	cursor: pointer;
 
@@ -20,6 +20,7 @@
 
 	&:hover {
 		opacity: .5;
+		color: white; //for override .elementor-icon class
 	}
 
 	&- {
@@ -45,14 +46,11 @@
 		&soundcloud		{ background-color: $soundcloud; }
 		&stack-overflow { background-color: $stack-overflow; }
 		&tumblr			{ background-color: $tumblr; }
+		&twitch			{ background-color: $twitch; }
 		&twitter		{ background-color: $twitter; }
 		&vimeo			{ background-color: $vimeo; }
 		&wordpress		{ background-color: $wordpress; }
 		&youtube		{ background-color: $youtube; }
-	}
-
-	i {
-		font-size: 25px;
 	}
 }
 
