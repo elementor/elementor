@@ -25,7 +25,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$size = $settings['image_size'];
 
-		$image_class_html = ! empty( $settings['hover_animation'] ) ? ' class="elementor-animation-' . $settings['hover_animation'] . '"' : '';
+		$image_class = ! empty( $settings['hover_animation'] ) ? 'elementor-animation-' . $settings['hover_animation'] : '';
 
 		$html = '';
 
@@ -34,13 +34,17 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$image_sizes[] = 'full';
 
 		if ( ! empty( $id ) && in_array( $size, $image_sizes ) ) {
-			$html .= wp_get_attachment_image( $id, $size );
+			$image_class .= " attachment-$size size-$size";
+
+			$html .= wp_get_attachment_image( $id, $size, false, [ 'class' => trim( $image_class ) ] );
 		} else {
 			$image_src = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $settings );
 
 			if ( ! $image_src ) {
 				$image_src = $url;
 			}
+
+			$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
 
 			$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
 		}
