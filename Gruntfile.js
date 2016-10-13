@@ -42,6 +42,7 @@ module.exports = function( grunt ) {
 						'!node_modules/**',
 						'!build/**',
 						'!tests/**',
+						'!.github/**',
 						'!vendor/**',
 						'!*~'
 					],
@@ -332,6 +333,7 @@ module.exports = function( grunt ) {
 					'!bin/**',
 					'!.git/**',
 					'!tests/**',
+					'!.github/**',
 					'!.travis.yml',
 					'!.jscsrc',
 					'!.jshintignore',
