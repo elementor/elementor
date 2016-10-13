@@ -34,16 +34,16 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				newTab: true
 			},
 			{
-				icon: 'eraser',
-				title: elementor.translate( 'clear_page' ),
-				callback: function() {
-					elementor.clearPage();
-				}
-			},
-			{
 				icon: 'history',
 				title: elementor.translate( 'revisions_history' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
 			},
+            {
+                icon: 'eraser',
+                title: elementor.translate( 'clear_page' ),
+                callback: function() {
+                    elementor.clearPage();
+                }
+            },
 			{
 				icon: 'info-circle',
 				title: elementor.translate( 'about_elementor' ),

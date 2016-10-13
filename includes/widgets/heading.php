@@ -18,11 +18,10 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,7 +32,6 @@ class Widget_Heading extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'This is heading element', 'elementor' ),
-				'section' => 'section_title',
 			]
 		);
 
@@ -46,7 +44,6 @@ class Widget_Heading extends Widget_Base {
 				'default' => [
 					'url' => '',
 				],
-				'section' => 'section_title',
 				'separator' => 'before',
 			]
 		);
@@ -65,7 +62,6 @@ class Widget_Heading extends Widget_Base {
 					'xl' => __( 'XL', 'elementor' ),
 					'xxl' => __( 'XXL', 'elementor' ),
 				],
-				'section' => 'section_title',
 			]
 		);
 
@@ -86,7 +82,6 @@ class Widget_Heading extends Widget_Base {
 					'p' => __( 'p', 'elementor' ),
 				],
 				'default' => 'h2',
-				'section' => 'section_title',
 			]
 		);
 
@@ -117,7 +112,6 @@ class Widget_Heading extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
-				'section' => 'section_title',
 			]
 		);
 
@@ -127,15 +121,15 @@ class Widget_Heading extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_title',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_title_style',
 			[
 				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -149,8 +143,6 @@ class Widget_Heading extends Widget_Base {
 				    'type' => Scheme_Color::get_type(),
 				    'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
 				],
@@ -162,11 +154,11 @@ class Widget_Heading extends Widget_Base {
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-				'tab' => Controls_Manager::TAB_STYLE,
-				'section' => 'section_title_style',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

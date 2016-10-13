@@ -977,15 +977,16 @@
 
 .elementor-social-icon {
   color: white;
-  font-size: 20px;
+  font-size: 25px;
   text-align: center;
-  padding: 0.6em;
+  padding: 0.5em;
   margin-left: 5px;
   cursor: pointer; }
   .elementor-social-icon:last-child {
     margin: 0; }
   .elementor-social-icon:hover {
-    opacity: .5; }
+    opacity: .5;
+    color: white; }
   .elementor-social-icon-behance {
     background-color: #1769ff; }
   .elementor-social-icon-bitbucket {
@@ -1030,6 +1031,8 @@
     background-color: #fe7a15; }
   .elementor-social-icon-tumblr {
     background-color: #35465c; }
+  .elementor-social-icon-twitch {
+    background-color: #6441A5; }
   .elementor-social-icon-twitter {
     background-color: #55acee; }
   .elementor-social-icon-vimeo {
@@ -1038,8 +1041,6 @@
     background-color: #21759b; }
   .elementor-social-icon-youtube {
     background-color: #cd201f; }
-  .elementor-social-icon i {
-    font-size: 25px; }
 
 .elementor-shape-rounded .elementor-icon.elementor-social-icon {
   border-radius: 10%; }

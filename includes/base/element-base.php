@@ -70,8 +70,10 @@ abstract class Element_Base {
 
 	public final function add_control( $id, $args ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
-
 			if ( null !== $this->_current_section ) {
+				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
+					_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . $id, '1.0.0' );
+				}
 				$args = array_merge( $args, $this->_current_section );
 			} elseif ( empty( $args['section'] ) ) {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
@@ -183,6 +185,10 @@ abstract class Element_Base {
 		return 'columns';
 	}
 
+	public function is_reload_preview_required() {
+		return false;
+	}
+
 	public function get_config( $item = null ) {
 		$config = [
 			'name' => $this->get_name(),
@@ -193,6 +199,7 @@ abstract class Element_Base {
 			'categories' => $this->get_categories(),
 			'keywords' => $this->get_keywords(),
 			'icon' => $this->get_icon(),
+			'reload_preview' => $this->is_reload_preview_required(),
 		];
 
 		if ( $item ) {

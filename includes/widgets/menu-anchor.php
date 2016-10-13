@@ -18,11 +18,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_anchor',
 			[
 				'label' => __( 'Anchor', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -31,8 +30,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 			[
 				'raw' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
-				'section' => 'section_anchor',
-				'classes' => 'elementor-control-descriptor',
+				'classes' => 'elementor-descriptor',
 			]
 		);
 
@@ -43,9 +41,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'For Example: About', 'elementor' ),
 	            'label_block' => true,
-				'section' => 'section_anchor',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

@@ -17,12 +17,15 @@ class Widget_Shortcode extends Widget_Base {
 		return 'shortcode';
 	}
 
+	public function is_reload_preview_required() {
+		return true;
+	}
+
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_shortcode',
 			[
 				'label' => __( 'Shortcode', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -33,9 +36,10 @@ class Widget_Shortcode extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
-				'section' => 'section_shortcode',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {

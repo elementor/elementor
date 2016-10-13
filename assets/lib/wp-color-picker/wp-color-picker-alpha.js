@@ -227,7 +227,7 @@
 				self._initControls();
 
 				// For updated widget
-				self._change();
+				// self._change();
 			}
 		},
 		_initControls: function() {
