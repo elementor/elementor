@@ -283,7 +283,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function render_skin() {
-		/** @var Skin_Base $skin */
 		$skin = $this->get_skin_instance( $this->get_current_skin_id() );
 
 		if ( ! $skin ) {
