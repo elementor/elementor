@@ -272,7 +272,6 @@ abstract class Widget_Base extends Element_Base {
 		if ( isset( $skin_args['instance'] ) ) {
 			$instance = $skin_args['instance'];
 		} else {
-
 			require_once $skin_args['path'];
 
 			$instance = new $skin_args['class_name']( $this );
