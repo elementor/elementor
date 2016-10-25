@@ -68,10 +68,14 @@ class Main {
 			<div><?php $this->print_report( $reports, 'html' ); ?></div>
 			<h3><?php _e( 'Copy & Paste Info', 'elementor' ); ?></h3>
 			<div id="elementor-system-info-raw">
-				<label id="elementor-system-info-raw-code-label"
-				       for="elementor-system-info-raw-code"><?php _e( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ) ?></label>
-				<textarea id="elementor-system-info-raw-code"
-				          readonly><?php $this->print_report( $reports, 'raw' ); ?></textarea>
+				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php _e( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ) ?></label>
+				<textarea id="elementor-system-info-raw-code" readonly>
+					<?php
+					unset( $reports['wordpress']['report']['admin_email'] );
+
+					$this->print_report( $reports, 'raw' );
+					?>
+				</textarea>
 				<script>
 					var textarea = document.getElementById( 'elementor-system-info-raw-code' );
 					var selectRange = function () {
