@@ -96,7 +96,8 @@ abstract class Widget_Base extends Element_Base {
 			<?php
 			ob_start();
 
-			if ( $skin = $this->get_current_skin_instance() ) {
+			$skin = $this->get_current_skin_instance();
+			if ( $skin ) {
 				$skin->render();
 			} else {
 				$this->render();
