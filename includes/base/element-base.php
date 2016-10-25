@@ -398,7 +398,7 @@ abstract class Element_Base {
 
 		$this->_current_section = [
 			'section' => $section_id,
-			'tab'     => $this->get_controls( $section_id )['tab'],
+			'tab' => $this->get_controls( $section_id )['tab'],
 		];
 
 		do_action( 'elementor/element/after_section_start', $this, $section_id, $args );
