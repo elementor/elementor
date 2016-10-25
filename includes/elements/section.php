@@ -690,7 +690,7 @@ class Element_Section extends Element_Base {
 	}
 
 	public function before_render() {
-		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
 
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-section',

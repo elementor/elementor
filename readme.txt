@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.10.2
+Stable tag: 0.10.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,8 +76,8 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Swedish](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (sv_SE)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
+- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO) - in progress
 - [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES) - in progress
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 - [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
@@ -157,6 +157,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 0.10.3 - 13.10.2016 =
+* Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
+* Fix! - Columns gap for all devices
+* Fix! - Added trigger for changes on Apply button
+* Fix! - Inner section class on front-end
 
 = 0.10.2 - 10.10.2016 =
 * Tweak! - Added Apply button for Shortcode widget to trigger loading of external scripts
