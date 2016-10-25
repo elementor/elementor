@@ -221,7 +221,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * @return false|Skin_Base
+	 * @return bool|Skin_Base
 	 */
 	public function get_current_skin_instance() {
 		return $this->get_skin_instance( $this->get_current_skin_id() );
@@ -281,15 +281,5 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $instance;
-	}
-
-	public function render_skin() {
-		$skin = $this->get_skin_instance( $this->get_current_skin_id() );
-
-		if ( ! $skin ) {
-			return;
-		}
-
-		$skin->render();
 	}
 }
