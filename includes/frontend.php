@@ -131,7 +131,7 @@ class Frontend {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.6.3'
+			'4.7.0'
 		);
 
 		// Elementor Animations
