@@ -313,10 +313,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 	onClickSave: function( event ) {
 		event.preventDefault();
 
-		var id = this.model.get( 'id' );
+		var model = this.model;
 
 		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView( id );
+			elementor.templates.getLayout().showSaveTemplateView( model );
 		} );
 	}
 } );

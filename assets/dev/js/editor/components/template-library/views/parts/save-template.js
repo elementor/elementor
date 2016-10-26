@@ -14,22 +14,22 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit'
 	},
 
-	templateHelpers: function() {
-		return {
-			sectionID: this.getOption( 'sectionID' )
-		};
-	},
-
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			elementsData = elementor.helpers.cloneObject( elementor.elements.toJSON() ),
-			sectionID = this.getOption( 'sectionID' ),
-			saveType = sectionID ? 'section' : 'page';
+			saveType = this.model ? this.model.get( 'elType' ) : 'page',
+			elementsData;
 
-		if ( 'section' === saveType ) {
-			elementsData = [ _.findWhere( elementsData, { id: sectionID } ) ];
+		switch ( saveType ) {
+			case 'section':
+				elementsData = [ this.model.toJSON() ];
+				break;
+			case 'widget':
+				elementsData = this.model.toJSON();
+				break;
+			default:
+				elementsData = elementor.elements.toJSON();
 		}
 
 		_.extend( formData, {
