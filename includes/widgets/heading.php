@@ -174,7 +174,7 @@ class Widget_Heading extends Widget_Base {
 		}
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$target = $settings['link']['is_external'] ? ' target="_blank"' : null;
+			$target = $settings['link']['is_external'] ? ' target="_blank"' : '';
 
 			$url = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $settings['title'] );
 
