@@ -120,7 +120,7 @@ class Widgets_Manager {
 			$this->_init_widgets();
 		}
 
-		if ( $widget_name ) {
+		if ( null !== $widget_name ) {
 			return isset( $this->_widget_types[ $widget_name ] ) ? $this->_widget_types[ $widget_name ] : null;
 		}
 
