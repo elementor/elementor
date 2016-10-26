@@ -61,6 +61,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return 'js';
 	},
 
+	getEditModel: function() {
+		return this.model;
+	},
+
 	initialize: function() {
 		// grab the child collection from the parent model
 		// so that we can render the collection as children
@@ -71,8 +75,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
-		this.listenTo( this.model.get( 'settings' ), 'change', this.onSettingsChanged, this );
-		this.listenTo( this.model.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
+		var editModel = this.getEditModel();
+
+		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
 
 		this.on( 'render', function() {
 			this.renderUI();
@@ -137,13 +143,17 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	enqueueFonts: function() {
-		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
-			var fontFamilyName = this.model.getSetting( control.name );
+		var editModel = this.getEditModel(),
+			settings = editModel.get( 'settings' );
+
+		_.each( settings.getFontControls(), _.bind( function( control ) {
+			var fontFamilyName = editModel.getSetting( control.name );
 			if ( _.isEmpty( fontFamilyName ) ) {
 				return;
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) );
+			var isVisible = elementor.helpers.isControlVisible( control, settings );
+
 			if ( ! isVisible ) {
 				return;
 			}
@@ -155,18 +165,19 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderStyles: function() {
 		var self = this,
 			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
-			styleControls = self.model.get( 'settings' ).getStyleControls();
+			editModel = self.getEditModel(),
+			styleControls = editModel.get( 'settings' ).getStyleControls();
 
 		self.stylesheet.empty();
 
 		_.each( styleControls, function( control ) {
-			var controlValue = self.model.getSetting( control.name );
+			var controlValue = editModel.getSetting( control.name );
 
 			if ( ! _.isNumber( controlValue ) && _.isEmpty( controlValue ) ) {
 				return;
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) );
+			var isVisible = elementor.helpers.isControlVisible( control, editModel.get( 'settings' ) );
 			if ( ! isVisible ) {
 				return;
 			}
@@ -213,7 +224,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderCustomClasses: function() {
 		this.$el.addClass( 'elementor-element' );
 
-		var settings = this.model.get( 'settings' );
+		var settings = this.getEditModel().get( 'settings' );
 
 		_.each( settings.attributes, _.bind( function( value, attribute ) {
 			if ( settings.isClassControl( attribute ) ) {
@@ -221,7 +232,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 				this.$el.removeClass( currentControl.prefix_class + settings.previous( attribute ) );
 
-				var isVisible = elementor.helpers.isControlVisible( currentControl, this.model.get( 'settings' ) );
+				var isVisible = elementor.helpers.isControlVisible( currentControl, settings );
 
 				if ( isVisible && ! _.isEmpty( settings.get( attribute ) ) ) {
 					this.$el.addClass( currentControl.prefix_class + settings.get( attribute ) );
@@ -264,7 +275,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onSettingsChanged: function( settings ) {
-		if ( this.model.get( 'editSettings' ) !== settings ) {
+		var editModel = this.getEditModel();
+
+		if ( editModel.get( 'editSettings' ) !== settings ) {
 			// Change flag only if server settings was changed
 			elementor.setFlagEditorChange( true );
 		}
@@ -295,11 +308,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			this.model.setHtmlCache();
+			editModel.setHtmlCache();
 			this.render();
-			this.model.renderOnLeave = true;
+			editModel.renderOnLeave = true;
 		} else {
-			this.model.renderRemoteServer();
+			editModel.renderRemoteServer();
 		}
 	},
 
