@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Source_Local extends Source_Base {
 
 	const CPT = 'elementor_library';
+
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	const TYPE_META_KEY = '_elementor_template_type';
@@ -120,19 +121,18 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', 'The specified template type doesn\'t exists' );
 		}
 
-		$post_id = wp_insert_post(
-			[
-				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-				'post_status' => 'publish',
-				'post_type' => self::CPT,
-			]
-		);
+		$post_id = wp_insert_post( [
+			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
+			'post_status' => 'publish',
+			'post_type' => self::CPT,
+		] );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}
 
 		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
+
 		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
@@ -173,14 +173,16 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_content( $item_id, $context = 'display' ) {
+		$db = Plugin::instance()->db;
+
 		// TODO: Valid the data (in JS too!)
 		if ( 'display' === $context ) {
-			$data = Plugin::instance()->db->get_builder( $item_id );
+			$data = $db->get_builder( $item_id );
 		} else {
-			$data = Plugin::instance()->db->get_plain_editor( $item_id );
+			$data = $db->get_plain_editor( $item_id );
 		}
 
-		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
+		return $db->iterate_data( $data, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
 			return $element;
 		} );
