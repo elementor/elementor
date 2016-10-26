@@ -158,6 +158,15 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.10.4 - 26.10.2016 =
+* Tweak! - Updated Font Awesome v4.7.0 (41+ icons)
+* Tweak! - Added type attribute for text input control
+* Tweak! - Improved import template from library
+* Tweak! - Removed admin email from system info copied
+* Fixed! - Columns overlay layer for negative top margin scenario
+* Fixed! - Added i18n strings to Delete All Content dialog
+* Fixed! - Target blank link in heading widget - ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
+
 = 0.10.3 - 13.10.2016 =
 * Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
 * Fix! - Columns gap for all devices
