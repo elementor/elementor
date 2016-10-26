@@ -28,7 +28,6 @@ ElementModel = Backbone.Model.extend( {
 		var settingModels = {
 			widget: WidgetSettingsModel,
 			column: ColumnSettingsModel,
-			row: RowSettingsModel,
 			section: SectionSettingsModel
 		};
 
