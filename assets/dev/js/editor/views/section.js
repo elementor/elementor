@@ -20,17 +20,6 @@ SectionView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 
-	triggers: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-edit': 'click:edit',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-trigger': 'click:edit',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	elementEvents: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-save': 'onClickSave'
-	},
-
 	behaviors: {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -51,6 +40,25 @@ SectionView = BaseElementView.extend( {
 		HandleElementsRelation: {
 			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
+	},
+
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.duplicateButton = '.elementor-editor-section-settings-list .elementor-editor-element-duplicate';
+		ui.removeButton = '.elementor-editor-section-settings-list .elementor-editor-element-remove';
+		ui.saveButton = '.elementor-editor-section-settings-list .elementor-editor-element-save';
+		ui.triggerButton = '.elementor-editor-section-settings-list .elementor-editor-element-trigger';
+
+		return ui;
+	},
+
+	triggers: function() {
+		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+
+		triggers[ 'click @ui.triggerButton' ] = 'click:edit';
+
+		return triggers;
 	},
 
 	initialize: function() {
@@ -253,16 +261,6 @@ SectionView = BaseElementView.extend( {
 
 	onStructureChanged: function() {
 		this.redefineLayout();
-	},
-
-	onClickSave: function( event ) {
-		event.preventDefault();
-
-		var sectionID = this.model.get( 'id' );
-
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView( sectionID );
-		} );
 	}
 } );
 

@@ -21,19 +21,6 @@ WidgetView = BaseElementView.extend( {
 		'remote:render': 'onModelRemoteRender'
 	},
 
-	triggers: {
-		'click': {
-			event: 'click:edit',
-			stopPropagation: false
-		},
-		'click > .elementor-editor-element-settings .elementor-editor-add-element': 'click:add',
-		'click > .elementor-editor-element-settings .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	elementEvents: {
-		'click > .elementor-editor-element-settings .elementor-editor-element-remove': 'onClickRemove'
-	},
-
 	behaviors: {
 		HandleEditor: {
 			behaviorClass: require( 'elementor-behaviors/handle-editor' )
@@ -41,6 +28,17 @@ WidgetView = BaseElementView.extend( {
 		HandleEditMode: {
 			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
 		}
+	},
+
+	triggers: function() {
+		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+
+		triggers.click = {
+			event: 'click:edit',
+			stopPropagation: false
+		};
+
+		return triggers;
 	},
 
 	initialize: function() {

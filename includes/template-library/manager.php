@@ -152,7 +152,9 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->export_template( $_REQUEST['template_id'] );
+		$source->export_template( $_REQUEST['template_id'] );
+
+		return true;
 	}
 
 	public function import_template() {

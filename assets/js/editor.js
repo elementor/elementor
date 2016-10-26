@@ -1356,6 +1356,10 @@ App = Marionette.Application.extend( {
 					my: 'center center',
 					at: 'center center'
 				},
+				strings: {
+					confirm: elementor.translate( 'delete' ),
+					cancel: elementor.translate( 'cancel' )
+				},
 				onConfirm: function() {
 					self.getRegion( 'sections' ).currentView.collection.reset();
 				}
@@ -4992,6 +4996,8 @@ var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
 
+	stylesheet: null,
+
 	id: function() {
 		return this.getElementUniqueClass();
 	},
@@ -5007,11 +5013,26 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	baseEvents: {},
+	ui: function() {
+		return {
+			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
+			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+		};
+	},
 
-	elementEvents: {},
+	events: function() {
+		return {
+			'click @ui.removeButton': 'onClickRemove',
+			'click @ui.saveButton': 'onClickSave'
+		};
+	},
 
-	stylesheet: null,
+	triggers: function() {
+		return {
+			'click @ui.duplicateButton': 'click:duplicate'
+		};
+	},
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -5025,10 +5046,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return {
 			elementModel: this.model
 		};
-	},
-
-	events: function() {
-		return _.extend( {}, this.baseEvents, this.elementEvents );
 	},
 
 	getTemplateType: function() {
@@ -5266,6 +5283,16 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.stopPropagation();
 
 		this.getRemoveDialog().show();
+	},
+
+	onClickSave: function( event ) {
+		event.preventDefault();
+
+		var id = this.model.get( 'id' );
+
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView( id );
+		} );
 	}
 } );
 
@@ -5362,44 +5389,9 @@ var BaseElementView = require( 'elementor-views/base-element' ),
 ColumnView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-column-content' ),
 
-	elementEvents: {
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove': 'onClickRemove',
-		'click @ui.listTriggers': 'onClickTrigger'
-	},
-
-	getChildView: function( model ) {
-		if ( 'section' === model.get( 'elType' ) ) {
-			return require( 'elementor-views/section' ); // We need to require the section dynamically
-		}
-
-		return WidgetView;
-	},
-
 	emptyView: ElementEmptyView,
 
-	className: function() {
-		var classes = 'elementor-column',
-			type = this.isInner() ? 'inner' : 'top';
-
-		classes += ' elementor-' + type + '-column';
-
-		return classes;
-	},
-
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
-
-	triggers: {
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add': 'click:new',
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-edit': 'click:edit',
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger': 'click:edit',
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	ui: {
-		columnTitle: '.column-title',
-		columnInner: '> .elementor-column-wrap',
-		listTriggers: '> .elementor-element-overlay .elementor-editor-element-trigger'
-	},
 
 	behaviors: {
 		Sortable: {
@@ -5424,6 +5416,55 @@ ColumnView = BaseElementView.extend( {
 		HandleElementsRelation: {
 			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
+	},
+
+	getChildView: function( model ) {
+		if ( 'section' === model.get( 'elType' ) ) {
+			return require( 'elementor-views/section' ); // We need to require the section dynamically
+		}
+
+		return WidgetView;
+	},
+
+	className: function() {
+		var classes = 'elementor-column',
+			type = this.isInner() ? 'inner' : 'top';
+
+		classes += ' elementor-' + type + '-column';
+
+		return classes;
+	},
+
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.duplicateButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate';
+		ui.removeButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove';
+		ui.saveButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-save';
+		ui.triggerButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger';
+		ui.addButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add';
+		ui.columnTitle = '.column-title';
+		ui.columnInner = '> .elementor-column-wrap';
+		ui.listTriggers = '> .elementor-element-overlay .elementor-editor-element-trigger';
+
+		return ui;
+	},
+
+	triggers: function() {
+		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+
+		triggers[ 'click @ui.triggerButton' ] = 'click:edit';
+		triggers[ 'click @ui.addButton' ] = 'click:new';
+
+		return triggers;
+	},
+
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
+
+		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
+
+		return events;
 	},
 
 	initialize: function() {
@@ -7438,17 +7479,6 @@ SectionView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 
-	triggers: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-edit': 'click:edit',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-trigger': 'click:edit',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	elementEvents: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-save': 'onClickSave'
-	},
-
 	behaviors: {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -7469,6 +7499,25 @@ SectionView = BaseElementView.extend( {
 		HandleElementsRelation: {
 			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
+	},
+
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.duplicateButton = '.elementor-editor-section-settings-list .elementor-editor-element-duplicate';
+		ui.removeButton = '.elementor-editor-section-settings-list .elementor-editor-element-remove';
+		ui.saveButton = '.elementor-editor-section-settings-list .elementor-editor-element-save';
+		ui.triggerButton = '.elementor-editor-section-settings-list .elementor-editor-element-trigger';
+
+		return ui;
+	},
+
+	triggers: function() {
+		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+
+		triggers[ 'click @ui.triggerButton' ] = 'click:edit';
+
+		return triggers;
 	},
 
 	initialize: function() {
@@ -7671,16 +7720,6 @@ SectionView = BaseElementView.extend( {
 
 	onStructureChanged: function() {
 		this.redefineLayout();
-	},
-
-	onClickSave: function( event ) {
-		event.preventDefault();
-
-		var sectionID = this.model.get( 'id' );
-
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView( sectionID );
-		} );
 	}
 } );
 
@@ -7710,19 +7749,6 @@ WidgetView = BaseElementView.extend( {
 		'remote:render': 'onModelRemoteRender'
 	},
 
-	triggers: {
-		'click': {
-			event: 'click:edit',
-			stopPropagation: false
-		},
-		'click > .elementor-editor-element-settings .elementor-editor-add-element': 'click:add',
-		'click > .elementor-editor-element-settings .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	elementEvents: {
-		'click > .elementor-editor-element-settings .elementor-editor-element-remove': 'onClickRemove'
-	},
-
 	behaviors: {
 		HandleEditor: {
 			behaviorClass: require( 'elementor-behaviors/handle-editor' )
@@ -7730,6 +7756,17 @@ WidgetView = BaseElementView.extend( {
 		HandleEditMode: {
 			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
 		}
+	},
+
+	triggers: function() {
+		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+
+		triggers.click = {
+			event: 'click:edit',
+			stopPropagation: false
+		};
+
+		return triggers;
 	},
 
 	initialize: function() {
