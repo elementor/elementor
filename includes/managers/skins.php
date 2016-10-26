@@ -40,4 +40,8 @@ class Skins_Manager {
 
 		return isset( $this->_skins[ $widget_name ] );
 	}
+
+	public function __construct() {
+		require ELEMENTOR_PATH . 'includes/base/skin-base.php';
+	}
 }

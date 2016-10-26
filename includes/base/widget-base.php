@@ -19,11 +19,20 @@ abstract class Widget_Base extends Element_Base {
 
 		do_action( 'elementor/element/after_construct', $this );
 		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
+
+		// First instance
+		if ( ! $data ) {
+			do_action( 'elementor/widget/' . $this->get_name() . '/before_register_skins', $this );
+			$this->_register_skins();
+			do_action( 'elementor/widget/' . $this->get_name() . '/after_register_skins', $this );
+		}
 	}
 
 	public function get_icon() {
 		return 'apps';
 	}
+
+	protected function _register_skins() {}
 
 	public final function print_template() {
 		ob_start();
@@ -183,7 +192,7 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
 	}
 
-	public function add_skin( $id, Skin_Base $skin ) {
+	public function add_skin( Skin_Base $skin ) {
 		Plugin::instance()->skins_manager->add_skin( $this, $skin );
 	}
 
