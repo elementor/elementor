@@ -194,6 +194,7 @@ class Source_Local extends Source_Base {
 
 	public function export_template( $item_id ) {
 		$template_data = $this->get_content( $item_id, 'raw' );
+
 		if ( empty( $template_data ) )
 			return new \WP_Error( '404', 'The template does not exist' );
 
@@ -219,10 +220,12 @@ class Source_Local extends Source_Base {
 
 		// Clear buffering just in case
 		@ob_end_clean();
+
 		flush();
 
 		// Output file contents
 		echo $template_contents;
+
 		die;
 	}
 
