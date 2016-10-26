@@ -130,12 +130,12 @@ class Widgets_Manager {
 	public function get_widget_types_config() {
 		$config = [];
 
-		foreach ( $this->get_widget_types() as $widget ) {
-			if ( 'common' === $widget->get_name() ) {
+		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
+			if ( 'common' === $widget_key ) {
 				continue;
 			}
 
-			$config[ $widget->get_name() ] = $widget->get_config();
+			$config[ $widget_key ] = $widget->get_config();
 		}
 
 		return $config;
