@@ -214,7 +214,7 @@ class Manager {
 	}
 
 	private function handle_ajax_request( $ajax_request ) {
-		$result = call_user_func_array( [ $this, $ajax_request ], $_REQUEST );
+		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
 
 		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
 
