@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Manager {
@@ -139,14 +141,15 @@ class Manager {
 	}
 
 	public function get_template_content( array $args ) {
-		$validate_args = $this->ensure_args( [ 'source', 'template_id', 'post_id' ], $args );
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
 		}
 
-		// Override the global $post for the render
-		$GLOBALS['post'] = get_post( (int) $args['post_id'] );
+		if ( isset( $args['edit_mode'] ) ) {
+			Plugin::instance()->editor->set_edit_mode( $args['edit_mode'] );
+		}
 
 		$source = $this->get_source( $args['source'] );
 
