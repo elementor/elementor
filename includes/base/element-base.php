@@ -35,6 +35,13 @@ abstract class Element_Base {
 		return 'element';
 	}
 
+	private static function _get_items( $haystack, $needle = null ) {
+		if ( $needle ) {
+			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
+		}
+
+		return $haystack;
+	}
 	/**
 	 * @param array $element_data
 	 *
@@ -61,11 +68,7 @@ abstract class Element_Base {
 			return $this->get_controls();
 		}
 
-		if ( $control_id ) {
-			return isset( $stack['controls'][ $control_id ] ) ? $stack['controls'][ $control_id ] : null;
-		}
-
-		return $stack['controls'];
+		return self::_get_items( $stack['controls'], $control_id );
 	}
 
 	public final function add_control( $id, $args ) {
@@ -202,11 +205,7 @@ abstract class Element_Base {
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
 
-		if ( $item ) {
-			return isset( $config[ $item ] ) ? $config[ $item ] : null;
-		}
-
-		return $config;
+		return self::_get_items( $config, $item );
 	}
 
 	public function print_template() {
@@ -232,19 +231,11 @@ abstract class Element_Base {
 	}
 
 	public function get_data( $item = null ) {
-		if ( $item ) {
-			return isset( $this->_data[ $item ] ) ? $this->_data[ $item ] : null;
-		}
-
-		return $this->_data;
+		return self::_get_items( $this->_data, $item );
 	}
 
 	public function get_settings( $setting = null ) {
-		if ( $setting ) {
-			return isset( $this->_settings[ $setting ] ) ? $this->_settings[ $setting ] : null;
-		}
-
-		return $this->_settings;
+		return self::_get_items( $this->_settings, $setting );
 	}
 
 	public function get_children() {
@@ -255,8 +246,8 @@ abstract class Element_Base {
 		return $this->_children;
 	}
 
-	public function get_default_args() {
-		return $this->_default_args;
+	public function get_default_args( $item = null ) {
+		return self::_get_items( $this->_default_args, $item );
 	}
 
 	/**
