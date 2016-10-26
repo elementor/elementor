@@ -1,7 +1,6 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetSettingsModel = require( 'elementor-models/widget-settings' ),
 	ColumnSettingsModel = require( 'elementor-models/column-settings' ),
-	RowSettingsModel = require( 'elementor-models/row-settings' ),
 	SectionSettingsModel = require( 'elementor-models/section-settings' ),
 
 	ElementModel,
