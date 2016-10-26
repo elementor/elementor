@@ -84,7 +84,7 @@ class Manager {
 		return $templates;
 	}
 
-	public function save_template( $args ) {
+	public function save_template( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'data' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -108,7 +108,7 @@ class Manager {
 		return $source->get_item( $template_id );
 	}
 
-	public function update_template( $template_data ) {
+	public function update_template( array $template_data ) {
 		$validate_args = $this->ensure_args( [ 'source', 'data' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -132,13 +132,13 @@ class Manager {
 		return $source->get_item( $template_data['id'] );
 	}
 
-	public function update_templates( $args ) {
+	public function update_templates( array $args ) {
 		foreach ( $args['templates'] as $template_data ) {
 			$this->update_template( $template_data );
 		}
 	}
 
-	public function get_template_content( $args ) {
+	public function get_template_content( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id', 'post_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -157,7 +157,7 @@ class Manager {
 		return $source->get_content( $args['template_id'] );
 	}
 
-	public function delete_template( $args ) {
+	public function delete_template( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -175,7 +175,7 @@ class Manager {
 		return true;
 	}
 
-	public function export_template( $args ) {
+	public function export_template( array $args ) {
 		// TODO: Add nonce for security
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
@@ -271,7 +271,7 @@ class Manager {
 		}
 	}
 
-	private function ensure_args( $required_args, $specified_args ) {
+	private function ensure_args( array $required_args, array $specified_args ) {
 		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
 
 		if ( $not_specified_args ) {
