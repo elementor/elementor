@@ -189,9 +189,8 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$source->export_template( $args['template_id'] );
-
-		return true;
+		// If you reach this line, the export was not successful
+		return $source->export_template( $args['template_id'] );
 	}
 
 	public function import_template() {
