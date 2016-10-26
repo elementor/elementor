@@ -38,7 +38,8 @@ html.elementor-html {
   left: 0;
   bottom: 0;
   letter-spacing: 0;
-  z-index: 1; }
+  z-index: 2;
+  pointer-events: none; }
 .elementor-editor-active #elementor .elementor-element.elementor-widget-empty {
   height: 50px;
   background: #ffffff; }
@@ -134,7 +135,8 @@ html.elementor-html {
   margin-bottom: 1px;
   -webkit-transform: translateY(1px);
           transform: translateY(1px);
-  border-radius: 3px 3px 0 0; }
+  border-radius: 3px 3px 0 0;
+  pointer-events: all; }
   .elementor-editor-active #elementor .elementor-editor-column-settings .elementor-editor-element-settings-list {
     float: right;
     background-color: #495157; }
