@@ -47,8 +47,17 @@ class Import_Images {
 		// Extract the file name and extension from the url
 		$filename = basename( $attachment['url'] );
 
+		$options = [
+			'http' =>
+				[
+					'user_agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux i686 on x86_64; rv:41.0) Gecko/20100101 Firefox/41.0',
+				],
+		];
+
+		$context = stream_context_create( $options );
+
 		if ( function_exists( 'file_get_contents' ) ) {
-			$file_content = file_get_contents( $attachment['url'] );
+			$file_content = file_get_contents( $attachment['url'], false, $context );
 		} else {
 			$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
 		}
