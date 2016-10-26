@@ -64,6 +64,10 @@ class Source_Remote extends Source_Base {
 		return false;
 	}
 
+	public function export_template( $item_id ) {
+		return false;
+	}
+
 	public function get_content( $item_id, $context = 'display' ) {
 		$data = Api::get_template_content( $item_id );
 		if ( ! $data ) {
