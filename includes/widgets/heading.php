@@ -174,7 +174,10 @@ class Widget_Heading extends Widget_Base {
 		}
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$url = sprintf( '<a href="%s">%s</a>', $settings['link']['url'], $settings['title'] );
+			$target = $settings['link']['is_external'] ? ' target="_blank"' : null;
+
+			$url = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $settings['title'] );
+
 			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
 		} else {
 			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $settings['title'] );
