@@ -84,6 +84,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.initStylesheet();
 	},
 
+	edit: function() {
+		elementor.getPanelView().openEditor( this.getEditModel(), this );
+	},
+
 	addChildModel: function( model, options ) {
 		return this.collection.add( model, options, true );
 	},
@@ -241,6 +245,18 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	getElementUniqueClass: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
+	},
+
+	onClickEdit: function( event ) {
+		event.preventDefault();
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'preview' === activeMode ) {
+			return;
+		}
+
+		this.edit();
 	},
 
 	onCollectionChanged: function() {

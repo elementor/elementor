@@ -28,12 +28,6 @@ SectionView = BaseElementView.extend( {
 		HandleDuplicate: {
 			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
 		},
-		HandleEditor: {
-			behaviorClass: require( 'elementor-behaviors/handle-editor' )
-		},
-		HandleEditMode: {
-			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
-		},
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
 		},
@@ -53,12 +47,12 @@ SectionView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
 
-		triggers[ 'click @ui.triggerButton' ] = 'click:edit';
+		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
 
-		return triggers;
+		return events;
 	},
 
 	initialize: function() {

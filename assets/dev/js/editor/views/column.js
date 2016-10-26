@@ -21,12 +21,6 @@ ColumnView = BaseElementView.extend( {
 		HandleDuplicate: {
 			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
 		},
-		HandleEditor: {
-			behaviorClass: require( 'elementor-behaviors/handle-editor' )
-		},
-		HandleEditMode: {
-			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
-		},
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
 		},
@@ -70,7 +64,6 @@ ColumnView = BaseElementView.extend( {
 	triggers: function() {
 		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
 
-		triggers[ 'click @ui.triggerButton' ] = 'click:edit';
 		triggers[ 'click @ui.addButton' ] = 'click:new';
 
 		return triggers;
@@ -80,6 +73,7 @@ ColumnView = BaseElementView.extend( {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
 		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
+		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
 
 		return events;
 	},
