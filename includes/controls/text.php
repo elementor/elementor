@@ -14,12 +14,18 @@ class Control_Text extends Control_Base {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input type="text" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
+				<input type="{{ data.input_type }}" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
 			</div>
 		</div>
 		<# if ( data.description ) { #>
 		<div class="elementor-control-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
+	}
+
+	public function get_default_settings() {
+		return [
+			'input_type' => 'text',
+		];
 	}
 }

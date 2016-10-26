@@ -1301,6 +1301,10 @@ App = Marionette.Application.extend( {
 					my: 'center center',
 					at: 'center center'
 				},
+				strings: {
+					confirm: elementor.translate( 'delete' ),
+					cancel: elementor.translate( 'cancel' )
+				},
 				onConfirm: function() {
 					self.getRegion( 'sections' ).currentView.collection.reset();
 				}
