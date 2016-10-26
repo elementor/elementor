@@ -6,17 +6,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 abstract class Skin_Base {
 
 	/**
-	 * @var Element_Base|null
+	 * @var Widget_Base|null
 	 */
 	protected $parent = null;
 
 	/**
 	 * Skin_Base constructor.
 	 *
-	 * @param Element_Base $parent
+	 * @param Widget_Base $parent
 	 */
-	function __construct( $parent ) {
-
+	public function __construct( $parent ) {
 		$this->parent = $parent;
 	}
 

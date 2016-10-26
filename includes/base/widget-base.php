@@ -183,31 +183,18 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
 	}
 
-	public function add_skin( $id, $args ) {
-		$this->skins[ $id ] = $args;
-
-		//load the skin
-		$this->get_skin_instance( $id );
+	public function add_skin( $id, Skin_Base $skin ) {
+		Plugin::instance()->skins_manager->add_skin( $this, $skin );
 	}
 
 	public function set_skin_args( $id, $args ) {
 		array_merge( $this->skins[ $id ], $args );
 	}
 
-	public function get_skin_arg( $id, $arg ) {
-		$skin = $this->get_skin( $id );
-
-		if ( $skin && isset( $skin[ $arg ] ) ) {
-			return $skin[ $arg ];
-		}
-
-		return false;
-	}
-
-	public function get_skin( $id ) {
-		if ( $this->skin_exist( $id ) ) {
-			return $this->skins[ $id ];
-		}
+	public function get_skin( $skin_id ) {
+		$skins = $this->get_skins();
+		if ( isset( $skins[ $skin_id ] ) )
+			return $skins[ $skin_id ];
 
 		return false;
 	}
@@ -227,25 +214,12 @@ abstract class Widget_Base extends Element_Base {
 		return $this->get_skin_instance( $this->get_current_skin_id() );
 	}
 
-	public function remove_skin( $id ) {
-		if ( $this->skin_exist( $id ) ) {
-			unset( $this->skins[ $id ] );
-			return true;
-		}
-
-		return false;
-	}
-
-	public function skin_exist( $id ) {
-		return isset( $this->skins[ $id ] );
-	}
-
-	public function has_skins() {
-		return ! empty( $this->skins );
+	public function remove_skin( $skin_id ) {
+		return Plugin::instance()->skins_manager->remove_skin( $this, $skin_id );
 	}
 
 	public function get_skins() {
-		return $this->skins;
+		return Plugin::instance()->skins_manager->get_skins( $this );
 	}
 
 	public function get_skins_names() {

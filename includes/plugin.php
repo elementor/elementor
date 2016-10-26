@@ -83,6 +83,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
@@ -118,6 +119,7 @@ class Plugin {
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
+		$this->skins_manager = new Skins_Manager();
 
 		$settings = new Settings();
 
