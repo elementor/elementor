@@ -141,6 +141,12 @@ class Source_Local extends Source_Base {
 		return $post_id;
 	}
 
+	public function update_item( $new_data ) {
+		Plugin::instance()->db->save_editor( $new_data['id'], $new_data['data'] );
+
+		return true;
+	}
+
 	/**
 	 * @param int $item_id
 	 *

@@ -56,6 +56,10 @@ class Source_Remote extends Source_Base {
 		return false;
 	}
 
+	public function update_item( $new_data ) {
+		return false;
+	}
+
 	public function delete_template( $item_id ) {
 		return false;
 	}

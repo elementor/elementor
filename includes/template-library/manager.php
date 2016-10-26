@@ -98,7 +98,35 @@ class Manager {
 	public function get_template_content() {
 		if ( empty( $_POST['source'] ) ) {
 			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
+	public function update_template( $template_data ) {
+		$validate_args = $this->ensure_args( [ 'source', 'data' ], $template_data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
 		}
+
+		$source = $this->get_source( $template_data['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$template_data['data'] = json_decode( stripslashes( html_entity_decode( $template_data['data'] ) ), true );
+
+		$update = $source->update_item( $template_data );
+
+		if ( is_wp_error( $update ) ) {
+			return $update;
+		}
+
+		return $source->get_item( $template_data['id'] );
+	}
+
+	public function update_templates( $args ) {
+		foreach ( $args['templates'] as $template_data ) {
+			$this->update_template( $template_data );
+		}
+	}
 
 		if ( empty( $_POST['template_id'] ) || empty( $_POST['post_id'] ) ) {
 			return new \WP_Error( 'template_error', '`template_id` was not specified.' );
@@ -221,6 +249,7 @@ class Manager {
 			'get_templates',
 			'get_template_content',
 			'save_template',
+			'update_templates',
 			'delete_template',
 			'export_template',
 			'import_template',
