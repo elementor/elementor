@@ -13,6 +13,14 @@ abstract class Widget_Base extends Element_Base {
 		return 'apps';
 	}
 
+	public function get_config( $item = null ) {
+		$config = parent::get_config( $item );
+
+		$config['widget_type'] = $this->get_name();
+
+		return $config;
+	}
+
 	public final function print_template() {
 		ob_start();
 
