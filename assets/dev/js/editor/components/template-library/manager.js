@@ -40,7 +40,7 @@ TemplateLibraryManager = function() {
 		elementor.ajax.send( 'get_template_content', {
 			data: {
 				source: templateModel.get( 'source' ),
-				post_id: elementor.config.post_id,
+				edit_mode: true,
 				template_id: templateModel.get( 'template_id' )
 			},
 			success: function( data ) {
