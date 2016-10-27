@@ -1,3 +1,46 @@
 //
 // Mixins
 //
+
+// Forms > Input Style
+@mixin input-style() {
+	border: 1px solid $gray;
+	background-color: $gray-lightest;
+	padding: 5px;
+	color: $gray-darker;
+	border-radius: 3px;
+	flex-grow: 1;
+	width: auto;
+}
+
+// Forms > Input Focus
+@mixin input-focus() {
+
+	&:focus {
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+		outline-width: 0;
+		outline-style: hidden;
+	}
+}
+
+// Forms > Input Placeholder
+@mixin placeholder-style() {
+	color: inherit;
+	opacity: 0.5;
+}
+
+@mixin input-placeholder() {
+	&::-webkit-input-placeholder {
+		@include placeholder-style();
+	}
+	&:-ms-input-placeholder {
+		@include placeholder-style();
+	}
+	&::-moz-placeholder {
+		@include placeholder-style();
+	}
+	&:-moz-placeholder {
+		@include placeholder-style();
+	}
+}
+//End
