@@ -37,9 +37,9 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( $is_first_section ) {
 			$this->_register_skin_control();
-		}
 
-		$is_first_section = false;
+			$is_first_section = false;
+		}
 	}
 
 	private function _register_skin_control() {
