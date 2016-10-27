@@ -95,6 +95,9 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
+		include( ELEMENTOR_PATH . 'includes/managers/posts-css-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
 
@@ -118,6 +121,7 @@ class Plugin {
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
+		$this->posts_css_manager = new Posts_Css_Manager();
 
 		$settings = new Settings();
 

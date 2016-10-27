@@ -154,16 +154,12 @@ class Frontend {
 
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
+
+		$css_file = new Post_Css_File( get_the_ID() );
+		$css_file->enqueue();
 	}
 
 	public function print_css() {
-		$post_id = get_the_ID();
-		$data = Plugin::instance()->db->get_plain_editor( $post_id );
-		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
-
-		if ( empty( $data ) || 'builder' !== $edit_mode )
-			return;
-
 		$container_width = absint( get_option( 'elementor_container_width' ) );
 		if ( ! empty( $container_width ) ) {
 			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
@@ -171,21 +167,7 @@ class Frontend {
 
 		$this->_parse_schemes_css_code();
 
-		foreach ( $data as $section_data ) {
-			$section = new Element_Section( $section_data );
-
-			$this->_parse_style_item( $section );
-		}
-
 		$css_code = $this->stylesheet;
-
-		if ( ! empty( $this->_column_widths ) ) {
-			$css_code .= '@media (min-width: 768px) {';
-			foreach ( $this->_column_widths as $column_width ) {
-				$css_code .= $column_width;
-			}
-			$css_code .= '}';
-		}
 
 		if ( empty( $css_code ) )
 			return;
@@ -211,7 +193,7 @@ class Frontend {
 		}
 	}
 
-	protected function _add_enqueue_font( $font ) {
+	public function _add_enqueue_font( $font ) {
 		switch ( Fonts::get_font_type( $font ) ) {
 			case Fonts::GOOGLE :
 				if ( ! in_array( $font, $this->_enqueue_google_fonts ) )
@@ -222,62 +204,6 @@ class Frontend {
 				if ( ! in_array( $font, $this->_enqueue_google_early_access_fonts ) )
 					$this->_enqueue_google_early_access_fonts[] = $font;
 				break;
-		}
-	}
-
-	protected function _parse_style_item( Element_Base $element ) {
-		$element_settings = $element->get_settings();
-
-		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
-
-		if ( 'column' === $element->get_name() ) {
-			if ( ! empty( $element_settings['_inline_size'] ) ) {
-				$this->_column_widths[] = $element_unique_class . '{width:' . $element_settings['_inline_size'] . '%;}';
-			}
-		}
-
-		foreach ( $element->get_style_controls() as $control ) {
-			if ( ! isset( $element_settings[ $control['name'] ] ) )
-				continue;
-
-			$control_value = $element_settings[ $control['name'] ];
-			if ( ! is_numeric( $control_value ) && ! is_float( $control_value ) && empty( $control_value ) ) {
-				continue;
-			}
-
-			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-			if ( ! $control_obj ) {
-				continue;
-			}
-
-			if ( ! $element->is_control_visible( $control ) ) {
-				continue;
-			}
-
-			if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-				$this->_add_enqueue_font( $control_value );
-			}
-
-			foreach ( $control['selectors'] as $selector => $css_property ) {
-				$output_selector = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
-				$output_css_property = $control_obj->get_replace_style_values( $css_property, $control_value );
-
-				if ( ! $output_css_property ) {
-					continue;
-				}
-
-				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
-
-				$this->stylesheet->add_rules( $output_selector, $output_css_property, $device );
-			}
-		}
-
-		$children = $element->get_children();
-
-		if ( ! empty( $children ) ) {
-			foreach ( $children as $child_element ) {
-				$this->_parse_style_item( $child_element );
-			}
 		}
 	}
 
