@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Widget_Base extends Element_Base {
 
-	protected $skins = [];
-
 	public static function get_type() {
 		return 'widget';
 	}
