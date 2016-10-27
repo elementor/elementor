@@ -137,12 +137,32 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );
 
+		input = $input[0];
+
+		if ( ! input ) {
+			return;
+		}
+
 		if ( 'checkbox' === inputType ) {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
 		} else if ( 'select2' === inputType ) {
 			// don't touch
+		} else if ( 'SELECT' === input.tagName ) {
+			var hasMatchValue = false;
+
+			Backbone.$.each( input.options, function() {
+				if ( this.value === value ) {
+					hasMatchValue = true;
+
+					return false;
+				}
+			} );
+
+			if ( ! hasMatchValue ) {
+				input.options[0].selected = true;
+			}
 		} else {
 			$input.val( value );
 		}
