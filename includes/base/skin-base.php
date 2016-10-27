@@ -21,6 +21,8 @@ abstract class Skin_Base {
 
 	abstract public function get_id();
 
+	abstract public function get_title();
+
 	abstract public function render();
 
 	abstract public function register_controls();

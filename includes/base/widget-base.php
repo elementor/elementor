@@ -11,6 +11,10 @@ abstract class Widget_Base extends Element_Base {
 		return 'widget';
 	}
 
+	public function get_icon() {
+		return 'apps';
+	}
+
 	public function __construct( $data = [], $args = [] ) {
 		do_action( 'elementor/element/before_construct', $this, $data, $args );
 		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
@@ -28,8 +32,37 @@ abstract class Widget_Base extends Element_Base {
 		}
 	}
 
-	public function get_icon() {
-		return 'apps';
+	public function start_controls_section( $section_id, $args ) {
+		parent::start_controls_section( $section_id, $args );
+
+		static $is_first_section = true;
+
+		if ( $is_first_section ) {
+			$this->_register_skin_control();
+		}
+
+		$is_first_section = false;
+	}
+
+	private function _register_skin_control() {
+		$skins = $this->get_skins();
+		if ( ! empty( $skins ) ) {
+			$skin_options = [ '' => __( 'Default', 'elementor' ) ];
+
+			foreach ( $skins as $skin_id => $skin ) {
+				$skin_options[ $skin_id ] = $skin->get_title();
+			}
+
+			$this->add_control(
+				'_skin',
+				[
+					'label' => __( 'Skin', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => '',
+					'options' => $skin_options,
+				]
+			);
+		}
 	}
 
 	protected function _register_skins() {}
@@ -105,7 +138,7 @@ abstract class Widget_Base extends Element_Base {
 			<?php
 			ob_start();
 
-			$skin = $this->get_current_skin_instance();
+			$skin = $this->get_current_skin();
 			if ( $skin ) {
 				$skin->render();
 			} else {
@@ -209,7 +242,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function get_current_skin_id() {
-		return $this->get_settings( 'skin' );
+		return $this->get_settings( '_skin' );
 	}
 
 	public function get_current_skin() {
@@ -227,18 +260,11 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::instance()->skins_manager->remove_skin( $this, $skin_id );
 	}
 
+	/**
+	 * @return Skin_Base[]
+	 */
 	public function get_skins() {
 		return Plugin::instance()->skins_manager->get_skins( $this );
-	}
-
-	public function get_skins_names() {
-		$list = [];
-
-		foreach ( $this->get_skins() as $id => $skin ) {
-			$list[ $id ] = $skin['title'];
-		}
-
-		return $list;
 	}
 
 	/**

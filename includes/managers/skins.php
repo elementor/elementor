@@ -38,7 +38,7 @@ class Skins_Manager {
 			return false;
 		}
 
-		return isset( $this->_skins[ $widget_name ] );
+		return $this->_skins[ $widget_name ];
 	}
 
 	public function __construct() {
