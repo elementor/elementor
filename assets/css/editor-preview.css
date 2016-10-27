@@ -1,5 +1,7 @@
 @charset "UTF-8";
-body.layout-section .entry-content {
+body.elementor-editor-active.layout-section .entry-content {
+  overflow: visible; }
+body.elementor-editor-active .article {
   overflow: visible; }
 
 #elementor .animated {
