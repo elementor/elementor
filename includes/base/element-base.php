@@ -35,7 +35,14 @@ abstract class Element_Base {
 		return 'element';
 	}
 
-	private static function _get_items( $haystack, $needle = null ) {
+	/**
+	 * @param array $haystack
+	 * @param string $needle
+	 *
+	 * @return mixed the whole haystack or the
+	 * needle from the haystack when requested
+	 */
+	private static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}
