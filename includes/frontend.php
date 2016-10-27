@@ -29,6 +29,7 @@ class Frontend {
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
@@ -155,6 +156,7 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
+
 		$css_file = new Post_Css_File( get_the_ID() );
 		$css_file->enqueue();
 	}
@@ -176,6 +178,18 @@ class Frontend {
 		<style id="elementor-frontend-stylesheet"><?php echo $css_code; ?></style>
 		<?php
 
+		$this->print_google_fonts();
+	}
+
+	/**
+	 * Handle style that do not printed in header
+	 */
+	function wp_footer() {
+		/* TODO: add JS to append the css to the `head` tag */
+		$this->print_google_fonts();
+	}
+
+	public function print_google_fonts() {
 		// Enqueue used fonts
 		if ( ! empty( $this->_enqueue_google_fonts ) ) {
 			foreach ( $this->_enqueue_google_fonts as &$font ) {
@@ -192,8 +206,7 @@ class Frontend {
 			$this->_enqueue_google_early_access_fonts = [];
 		}
 	}
-
-	public function _add_enqueue_font( $font ) {
+	public function add_enqueue_font( $font ) {
 		switch ( Fonts::get_font_type( $font ) ) {
 			case Fonts::GOOGLE :
 				if ( ! in_array( $font, $this->_enqueue_google_fonts ) )
@@ -225,7 +238,7 @@ class Frontend {
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-					$this->_add_enqueue_font( $scheme_value );
+					$this->add_enqueue_font( $scheme_value );
 				}
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {

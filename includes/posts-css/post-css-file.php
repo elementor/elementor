@@ -14,8 +14,12 @@ class Post_Css_File {
 	const CSS_STATUS_EMPTY = 'empty';
 
 	protected $post_id;
+	protected $is_build_with_elementor;
 	protected $path;
 	protected $url;
+	protected $css = '';
+	protected $fonts = [];
+
 	/**
 	 * @var Stylesheet
 	 */
@@ -24,46 +28,47 @@ class Post_Css_File {
 
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
+
+		// Check if it's an Elementor post
+		$plugin    = Plugin::instance();
+		$data      = $plugin->db->get_plain_editor( $post_id );
+		$edit_mode = $plugin->db->get_edit_mode( $post_id );
+
+		$this->is_build_with_elementor = ! empty( $data ) && 'builder' === $edit_mode;
+
+		if ( ! $this->is_build_with_elementor ) {
+			return;
+		}
+
 		$this->set_path_and_url();
 		$this->init_stylesheet();
 	}
 
 	public function update() {
-		$css  = $this->parse_elements_css();
+		$this->parse_elements_css();
 
-		if ( '' === $css ) {
+		$meta = [
+			'version' => ELEMENTOR_VERSION,
+			'fonts' => $this->fonts,
+		];
+
+		if ( '' === $this->css ) {
 			$this->delete();
 
-			$this->update_meta(
-				[
-					'status' => self::CSS_STATUS_EMPTY,
-				]
-			);
-
-			return;
-		}
-
-		$created = @file_put_contents( $this->path, $css );
-
-		if ( $created ) {
-
-			$this->update_meta(
-				[
-					'version' => ELEMENTOR_VERSION,
-					'status' => self::CSS_STATUS_FILE,
-				]
-			);
-
+			$meta['status'] = self::CSS_STATUS_EMPTY;
+			$meta['css'] = '';
 		} else {
+			$file_created = @file_put_contents( $this->path, $this->css );
 
-			$this->update_meta(
-				[
-					'version' => ELEMENTOR_VERSION,
-					'status' => self::CSS_STATUS_INLINE,
-					'css' => $css,
-				]
-			);
+			if ( $file_created ) {
+				$meta['status'] = self::CSS_STATUS_FILE;
+			} else {
+				$meta['status'] = self::CSS_STATUS_INLINE;
+				$meta['css'] = $this->css;
+			}
 		}
+
+		$this->update_meta( $meta );
 	}
 
 	public function delete() {
@@ -90,6 +95,17 @@ class Post_Css_File {
 		} else {
 			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['version'] );
 		}
+
+		// Handle fonts
+		if ( ! empty( $meta['fonts'] ) ) {
+			foreach ( $meta['fonts'] as $font ) {
+				Plugin::instance()->frontend->add_enqueue_font( $font );
+			}
+		}
+	}
+
+	public function is_build_with_elementor() {
+		return $this->is_build_with_elementor;
 	}
 
 	protected function init_stylesheet() {
@@ -116,7 +132,7 @@ class Post_Css_File {
 	protected function update_meta( $meta ) {
 		$defaults = [
 			'version' => '',
-			'status' => '',
+			'status'  => '',
 		];
 
 		$meta = wp_parse_args( $meta, $defaults );
@@ -125,14 +141,14 @@ class Post_Css_File {
 	}
 
 	protected function parse_elements_css() {
-		$css       = '';
-		$plugin    = Plugin::instance();
-		$data      = $plugin->db->get_plain_editor( $this->post_id );
-		$edit_mode = $plugin->db->get_edit_mode( $this->post_id );
 
-		if ( empty( $data ) || 'builder' !== $edit_mode ) {
-			return $css;
+		if ( ! $this->is_build_with_elementor() ) {
+			return;
 		}
+
+		$data = Plugin::instance()->db->get_plain_editor( $this->post_id );
+
+		$css = '';
 
 		foreach ( $data as $section_data ) {
 			$section = new Element_Section( $section_data );
@@ -149,12 +165,10 @@ class Post_Css_File {
 			$css .= '}';
 		}
 
-		return $css;
+		$this->css = $css;
 	}
 
 	protected function parse_style_item( Element_Base $element ) {
-		$plugin = Plugin::instance();
-
 		$element_settings = $element->get_settings();
 
 		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
@@ -175,7 +189,7 @@ class Post_Css_File {
 				continue;
 			}
 
-			$control_obj = $plugin->controls_manager->get_control( $control['type'] );
+			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 			if ( ! $control_obj ) {
 				continue;
 			}
@@ -185,7 +199,7 @@ class Post_Css_File {
 			}
 
 			if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-				$plugin->frontend->_add_enqueue_font( $control_value );
+				$this->fonts[] = $control_value;
 			}
 
 			foreach ( $control['selectors'] as $selector => $css_property ) {
