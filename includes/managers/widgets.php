@@ -85,7 +85,7 @@ class Widgets_Manager {
 
 			$elementor_widget_class = __NAMESPACE__ . '\Widget_WordPress';
 
-			$this->register_widget_type( new $elementor_widget_class( null, [ 'widget_name' => $widget_class ] ) );
+			$this->register_widget_type( new $elementor_widget_class( [], [ 'widget_name' => $widget_class ] ) );
 		}
 	}
 

@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Widget_Base extends Element_Base {
 
+	protected $skins = [];
+
 	public static function get_type() {
 		return 'widget';
 	}
@@ -12,6 +14,58 @@ abstract class Widget_Base extends Element_Base {
 	public function get_icon() {
 		return 'apps';
 	}
+
+	public function __construct( $data = [], $args = [] ) {
+		do_action( 'elementor/element/before_construct', $this, $data, $args );
+		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
+
+		parent::__construct( $data, $args );
+
+		do_action( 'elementor/element/after_construct', $this );
+		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
+
+		// First instance
+		if ( ! $data ) {
+			do_action( 'elementor/widget/' . $this->get_name() . '/before_register_skins', $this );
+			$this->_register_skins();
+			do_action( 'elementor/widget/' . $this->get_name() . '/after_register_skins', $this );
+		}
+	}
+
+	public function start_controls_section( $section_id, $args ) {
+		parent::start_controls_section( $section_id, $args );
+
+		static $is_first_section = true;
+
+		if ( $is_first_section ) {
+			$this->_register_skin_control();
+		}
+
+		$is_first_section = false;
+	}
+
+	private function _register_skin_control() {
+		$skins = $this->get_skins();
+		if ( ! empty( $skins ) ) {
+			$skin_options = [ '' => __( 'Default', 'elementor' ) ];
+
+			foreach ( $skins as $skin_id => $skin ) {
+				$skin_options[ $skin_id ] = $skin->get_title();
+			}
+
+			$this->add_control(
+				'_skin',
+				[
+					'label' => __( 'Skin', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => '',
+					'options' => $skin_options,
+				]
+			);
+		}
+	}
+
+	protected function _register_skins() {}
 
 	public function get_config( $item = null ) {
 		$config = parent::get_config( $item );
@@ -92,7 +146,12 @@ abstract class Widget_Base extends Element_Base {
 			<?php
 			ob_start();
 
-			$this->render();
+			$skin = $this->get_current_skin();
+			if ( $skin ) {
+				$skin->render();
+			} else {
+				$this->render();
+			}
 
 			echo apply_filters( 'elementor/widget/render_content', ob_get_clean(), $this );
 			?>
@@ -172,5 +231,36 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
+	}
+
+	public function add_skin( Skin_Base $skin ) {
+		Plugin::instance()->skins_manager->add_skin( $this, $skin );
+	}
+
+	public function get_skin( $skin_id ) {
+		$skins = $this->get_skins();
+		if ( isset( $skins[ $skin_id ] ) )
+			return $skins[ $skin_id ];
+
+		return false;
+	}
+
+	public function get_current_skin_id() {
+		return $this->get_settings( '_skin' );
+	}
+
+	public function get_current_skin() {
+		return $this->get_skin( $this->get_current_skin_id() );
+	}
+
+	public function remove_skin( $skin_id ) {
+		return Plugin::instance()->skins_manager->remove_skin( $this, $skin_id );
+	}
+
+	/**
+	 * @return Skin_Base[]
+	 */
+	public function get_skins() {
+		return Plugin::instance()->skins_manager->get_skins( $this );
 	}
 }

@@ -74,6 +74,11 @@ class Plugin {
 	public $templates_manager;
 
 	/**
+	 * @var Skins_Manager
+	 */
+	public $skins_manager;
+
+	/**
 	 * @return string
 	 */
 	public function get_version() {
@@ -137,10 +142,11 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
-		include( ELEMENTOR_PATH . 'includes/controls-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/schemes-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/elements-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/widgets-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
@@ -157,7 +163,7 @@ class Plugin {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				include( ELEMENTOR_PATH . 'includes/image-manager.php' );
+				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
 			}
 		}
 	}
@@ -166,23 +172,17 @@ class Plugin {
 		$this->db = new DB();
 
 		$this->controls_manager = new Controls_Manager();
-
 		$this->schemes_manager = new Schemes_Manager();
-
 		$this->elements_manager = new Elements_Manager();
-
 		$this->widgets_manager = new Widgets_Manager();
+		$this->skins_manager = new Skins_Manager();
 
 		$this->settings = new Settings();
-
 		$this->editor = new Editor();
-
 		$this->preview = new Preview();
-
 		$this->frontend = new Frontend();
 
 		$this->heartbeat = new Heartbeat();
-
 		$this->system_info = new System_Info\Main();
 
 		$this->templates_manager = new TemplateLibrary\Manager();

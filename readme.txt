@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.10.3
+Stable tag: 0.10.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -157,6 +157,15 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 0.10.4 - 26.10.2016 =
+* Tweak! - Updated Font Awesome v4.7.0 (41+ icons)
+* Tweak! - Added type attribute for text input control
+* Tweak! - Improved import template from library
+* Tweak! - Removed admin email from system info copied
+* Fixed! - Columns overlay layer for negative top margin scenario
+* Fixed! - Added i18n strings to Delete All Content dialog
+* Fixed! - Target blank link in heading widget - ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
 
 = 0.10.3 - 13.10.2016 =
 * Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))

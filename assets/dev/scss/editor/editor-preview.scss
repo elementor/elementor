@@ -56,6 +56,7 @@ html.elementor-html {
 				bottom: 0;
 				letter-spacing: 0; // Hack for front-end style themes
 				z-index: $element-overlay;
+				pointer-events: none;
 			}
 
 			&.elementor-widget-empty {
@@ -251,6 +252,7 @@ html.elementor-html {
 			margin-bottom: 1px;
 			transform: translateY(1px);
 			border-radius: 3px 3px 0 0;
+			pointer-events: all;
 
 			.elementor-editor-element-settings-list {
 				float: $start;
