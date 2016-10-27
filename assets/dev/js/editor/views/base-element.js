@@ -71,7 +71,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 		// of this parent element
 		this.collection = this.model.get( 'elements' );
 
-		this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
+		if ( this.collection ) {
+			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
+		}
 
 		var editModel = this.getEditModel();
 
