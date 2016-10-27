@@ -327,6 +327,6 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_controls' ] );
+		$this->register_controls();
 	}
 }
