@@ -299,30 +299,29 @@ class Widget_Image extends Widget_Base {
 			if ( ! empty( $link['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
-		}
-
+		} ?>
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<?php
 		if ( $link ) : ?>
 			<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-		<?php endif; ?>
-				<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-		<?php
+		<?php endif;
 		if ( $has_caption ) : ?>
-					<figure class="wp-caption">
+				<figure class="wp-caption">
 		<?php endif;
 
 		echo Group_Control_Image_Size::get_attachment_image_html( $settings );
 
 		if ( $has_caption ) : ?>
-						<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+					<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
 		<?php endif;
 
 		if ( $has_caption ) : ?>
-					</figure>
-		<?php endif; ?>
-				</div>
+				</figure>
 		<?php
 		if ( $link ) : ?>
 			</a>
+		<?php endif; ?>
+		</div>
 		<?php endif;
 	}
 
@@ -356,11 +355,12 @@ class Widget_Image extends Widget_Base {
 				link_url = settings.image.url;
 			}
 
+			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
+
 			if ( link_url ) {
 				#><a href="{{ link_url }}"><#
 			}
 
-					#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
 			var imgClass = '',
 				hasCaption = '' !== settings.caption;
 
@@ -382,10 +382,11 @@ class Widget_Image extends Widget_Base {
 						#></figure><#
 			}
 
-					#></div><#
 			if ( link_url ) {
-				#></a><#
+					#></a><#
 			}
+
+			#></div><#
 		} #>
 		<?php
 	}
