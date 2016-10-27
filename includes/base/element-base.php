@@ -35,7 +35,14 @@ abstract class Element_Base {
 		return 'element';
 	}
 
-	private static function _get_items( $haystack, $needle = null ) {
+	/**
+	 * @param array $haystack
+	 * @param string $needle
+	 *
+	 * @return mixed the whole haystack or the
+	 * needle from the haystack when requested
+	 */
+	private static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}
@@ -403,7 +410,7 @@ abstract class Element_Base {
 		do_action( 'elementor/element/after_section_end', $this, $current_section['section'], [ 'tab' => $current_section['tab'] ] );
 	}
 
-	protected final function _set_settings( $key, $value = null ) {
+	public final function set_settings( $key, $value = null ) {
 		if ( null === $value ) {
 			$this->_settings = $key;
 		} else {

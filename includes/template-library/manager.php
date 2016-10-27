@@ -13,28 +13,12 @@ class Manager {
 	protected $_registered_sources = [];
 
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
+		$this->register_default_sources();
 
 		$this->init_ajax_calls();
 	}
 
 	public function init() {
-		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
-
-		$sources = [
-			'local',
-			'remote',
-		];
-
-		foreach ( $sources as $source_filename ) {
-			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
-
-			$class_name = ucwords( $source_filename );
-			$class_name = str_replace( '-', '_', $class_name );
-
-			$this->register_source( __NAMESPACE__ . '\Source_' . $class_name );
-		}
 	}
 
 	public function register_source( $source_class, $args = [] ) {
@@ -213,6 +197,25 @@ class Manager {
 
 	public function on_export_template_error( \WP_Error $error ) {
 		_default_wp_die_handler( $error->get_error_message(), 'Elementor Library' );
+	}
+
+	private function register_default_sources() {
+		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
+
+		$sources = [
+			'local',
+			'remote',
+		];
+
+		foreach ( $sources as $source_filename ) {
+			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
+
+			$class_name = ucwords( $source_filename );
+			$class_name = str_replace( '-', '_', $class_name );
+
+			$this->register_source( __NAMESPACE__ . '\Source_' . $class_name );
+		}
 	}
 
 	private function handle_ajax_request( $ajax_request ) {
