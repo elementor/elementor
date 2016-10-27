@@ -452,7 +452,7 @@ TemplateLibraryManager = function() {
 		elementor.ajax.send( 'get_template_content', {
 			data: {
 				source: templateModel.get( 'source' ),
-				post_id: elementor.config.post_id,
+				edit_mode: true,
 				template_id: templateModel.get( 'template_id' )
 			},
 			success: function( data ) {
@@ -2115,14 +2115,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.config.widgets, function( element, widgetType ) {
+		_.each( elementor.config.widgets, function( element ) {
 			elementsCollection.add( {
 				title: element.title,
 				elType: element.elType,
 				categories: element.categories,
 				keywords: element.keywords,
 				icon: element.icon,
-				widgetType: widgetType
+				widgetType: element.widget_type
 			} );
 		} );
 
@@ -2325,8 +2325,12 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
-		return _.any( [ 'title', 'keywords' ], function( type ) {
-			return ( -1 !== childModel.get( type ).toLowerCase().indexOf( filterValue.toLowerCase() ) );
+		if ( -1 !== childModel.get( 'title' ).toLowerCase().indexOf( filterValue.toLowerCase() ) ) {
+			return true;
+		}
+
+		return _.any( childModel.get( 'keywords' ), function( keyword ) {
+			return ( -1 !== keyword.toLowerCase().indexOf( filterValue.toLowerCase() ) );
 		} );
 	},
 
@@ -4635,17 +4639,17 @@ Schemes = function() {
 		} );
 	};
 
-	var fetchWidgetControlsStyles = function( widget, widgetType ) {
+	var fetchWidgetControlsStyles = function( widget ) {
 		var widgetSchemeControls = self.getWidgetSchemeControls( widget );
 
 		_.each( widgetSchemeControls, function( control ) {
-			fetchControlStyles( control, widgetType );
+			fetchControlStyles( control, widget.widget_type );
 		} );
 	};
 
 	var fetchAllWidgetsSchemesStyle = function() {
-		_.each( elementor.config.widgets, function( widget, widgetType ) {
-			fetchWidgetControlsStyles(  widget, widgetType  );
+		_.each( elementor.config.widgets, function( widget ) {
+			fetchWidgetControlsStyles(  widget  );
 		} );
 	};
 
