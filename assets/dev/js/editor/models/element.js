@@ -1,7 +1,6 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetSettingsModel = require( 'elementor-models/widget-settings' ),
 	ColumnSettingsModel = require( 'elementor-models/column-settings' ),
-	RowSettingsModel = require( 'elementor-models/row-settings' ),
 	SectionSettingsModel = require( 'elementor-models/section-settings' ),
 
 	ElementModel,
@@ -29,7 +28,6 @@ ElementModel = Backbone.Model.extend( {
 		var settingModels = {
 			widget: WidgetSettingsModel,
 			column: ColumnSettingsModel,
-			row: RowSettingsModel,
 			section: SectionSettingsModel
 		};
 
@@ -181,7 +179,9 @@ ElementModel = Backbone.Model.extend( {
 			newModel.set( 'elements', elements.clone() );
 		}
 
-		newModel.set( 'settings', settings.clone() );
+		if ( settings instanceof BaseSettingsModel ) {
+			newModel.set( 'settings', settings.clone() );
+		}
 
 		return newModel;
 	},

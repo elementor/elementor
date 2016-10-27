@@ -96,6 +96,26 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.currentPageName = page;
 	},
 
+	openEditor: function( model, view ) {
+		var currentPageName = this.getCurrentPageName();
+
+		if ( 'editor' === currentPageName ) {
+			var currentPageView = this.getCurrentPageView(),
+				currentEditableModel = currentPageView.model;
+
+			if ( currentEditableModel === model ) {
+				return;
+			}
+		}
+
+		var elementData = elementor.getElementData( model );
+
+		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
+			model: model,
+			editedElementView: view
+		} );
+	},
+
 	onBeforeShow: function() {
 		var PanelFooterItemView = require( 'elementor-layouts/panel/footer' ),
 			PanelHeaderItemView = require( 'elementor-layouts/panel/header' );

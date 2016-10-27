@@ -5,15 +5,17 @@ WidgetView = BaseElementView.extend( {
 	_templateType: null,
 
 	getTemplate: function() {
+		var editModel = this.getEditModel();
+
 		if ( 'remote' !== this.getTemplateType() ) {
-			return Marionette.TemplateCache.get( '#tmpl-elementor-' + this.model.get( 'elType' ) + '-' + this.model.get( 'widgetType' ) + '-content' );
+			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 		} else {
 			return _.template( '' );
 		}
 	},
 
 	className: function() {
-		return 'elementor-widget elementor-widget-' + this.model.get( 'widgetType' );
+		return 'elementor-widget';
 	},
 
 	modelEvents: {
@@ -21,37 +23,28 @@ WidgetView = BaseElementView.extend( {
 		'remote:render': 'onModelRemoteRender'
 	},
 
-	behaviors: {
-		HandleEditor: {
-			behaviorClass: require( 'elementor-behaviors/handle-editor' )
-		},
-		HandleEditMode: {
-			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
-		}
-	},
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
+		events.click = 'onClickEdit';
 
-		triggers.click = {
-			event: 'click:edit',
-			stopPropagation: false
-		};
-
-		return triggers;
+		return events;
 	},
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		if ( ! this.model.getHtmlCache() ) {
-			this.model.renderRemoteServer();
+		var editModel = this.getEditModel();
+
+		if ( ! editModel.getHtmlCache() ) {
+			editModel.renderRemoteServer();
 		}
 	},
 
 	getTemplateType: function() {
 		if ( null === this._templateType ) {
-			var $template = Backbone.$( '#tmpl-elementor-' + this.model.get( 'elType' ) + '-' + this.model.get( 'widgetType' ) + '-content' );
+			var editModel = this.getEditModel(),
+				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
 			if ( 0 === $template.length ) {
 				this._templateType = 'remote';
@@ -82,7 +75,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlCache = this.model.getHtmlCache();
+		var htmlCache = this.getEditModel().getHtmlCache();
 
 		if ( htmlCache ) {
 			html = htmlCache;
@@ -101,6 +94,7 @@ WidgetView = BaseElementView.extend( {
 
         self.$el
             .removeClass( 'elementor-widget-empty' )
+	        .addClass( 'elementor-widget-' + this.getEditModel().get( 'widgetType' ) )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
