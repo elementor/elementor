@@ -184,7 +184,7 @@ abstract class Element_Base {
 	}
 
 	public function get_keywords() {
-		return '';
+		return [];
 	}
 
 	public function get_categories() {
