@@ -229,10 +229,6 @@ abstract class Widget_Base extends Element_Base {
 		Plugin::instance()->skins_manager->add_skin( $this, $skin );
 	}
 
-	public function set_skin_args( $id, $args ) {
-		array_merge( $this->skins[ $id ], $args );
-	}
-
 	public function get_skin( $skin_id ) {
 		$skins = $this->get_skins();
 		if ( isset( $skins[ $skin_id ] ) )
@@ -249,13 +245,6 @@ abstract class Widget_Base extends Element_Base {
 		return $this->get_skin( $this->get_current_skin_id() );
 	}
 
-	/**
-	 * @return bool|Skin_Base
-	 */
-	public function get_current_skin_instance() {
-		return $this->get_skin_instance( $this->get_current_skin_id() );
-	}
-
 	public function remove_skin( $skin_id ) {
 		return Plugin::instance()->skins_manager->remove_skin( $this, $skin_id );
 	}
@@ -265,30 +254,5 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function get_skins() {
 		return Plugin::instance()->skins_manager->get_skins( $this );
-	}
-
-	/**
-	 * @param $id
-	 *
-	 * @return bool|Skin_Base
-	 */
-	public function get_skin_instance( $id ) {
-		$skin_args = $this->get_skin( $id );
-
-		if ( ! $skin_args ) {
-			return false;
-		}
-
-		if ( isset( $skin_args['instance'] ) ) {
-			$instance = $skin_args['instance'];
-		} else {
-			require_once $skin_args['path'];
-
-			$instance = new $skin_args['class_name']( $this );
-
-			$this->set_skin_args( $id, [ 'instance' => $instance ] );
-		}
-
-		return $instance;
 	}
 }
