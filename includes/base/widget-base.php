@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Widget_Base extends Element_Base {
 
+	protected $_has_template_content = true;
+
 	public static function get_type() {
 		return 'widget';
 	}
@@ -45,18 +47,26 @@ abstract class Widget_Base extends Element_Base {
 	private function _register_skin_control() {
 		$skins = $this->get_skins();
 		if ( ! empty( $skins ) ) {
-			$skin_options = [ '' => __( 'Default', 'elementor' ) ];
+			$skin_options = [];
+
+			if ( $this->_has_template_content ) {
+				$skin_options[''] = __( 'Default', 'elementor' );
+			}
 
 			foreach ( $skins as $skin_id => $skin ) {
 				$skin_options[ $skin_id ] = $skin->get_title();
 			}
+
+			// Get the first item for default value
+			$default_value = array_keys( $skin_options );
+			$default_value = array_shift( $default_value );
 
 			$this->add_control(
 				'_skin',
 				[
 					'label' => __( 'Skin', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => '',
+					'default' => $default_value,
 					'options' => $skin_options,
 				]
 			);
