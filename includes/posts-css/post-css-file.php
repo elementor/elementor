@@ -174,7 +174,7 @@ class Post_CSS_File {
 	protected function parse_style_item( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
-		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
+		$element_unique_class = '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
 
 		if ( 'column' === $element->get_name() ) {
 			if ( ! empty( $element_settings['_inline_size'] ) ) {

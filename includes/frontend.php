@@ -264,7 +264,7 @@ class Frontend {
 			return $content;
 
 		ob_start(); ?>
-		<div id="elementor" class="elementor">
+		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">
 					<?php $this->_print_sections( $data ); ?>
