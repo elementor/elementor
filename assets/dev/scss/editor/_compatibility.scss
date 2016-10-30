@@ -28,4 +28,9 @@ body.elementor-editor-active {
 	.elementor-editor-element-settings-list {
 		word-break: normal;
 	}
+
+	// Hack for jQuery Masonry Image Gallery plugin
+	.gallery {
+		opacity: 1;
+	}
 }
