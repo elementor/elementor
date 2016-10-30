@@ -255,14 +255,25 @@ class Frontend {
 			return $content;
 
 		$post_id = get_the_ID();
-		if ( post_password_required( $post_id ) )
-			return $content;
+		$builder_content = $this->get_builder_content( $post_id );
+
+		if ( ! empty( $builder_content ) ) {
+			$content = $builder_content;
+		}
+
+		return $content;
+	}
+
+	public function get_builder_content( $post_id ) {
+		if ( post_password_required( $post_id ) ) {
+			return '';
+		}
 
 		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
-			return $content;
+			return '';
 
 		ob_start(); ?>
 		<div id="elementor" class="elementor">
@@ -291,11 +302,32 @@ class Frontend {
 		] );
 	}
 
+	public function library_shortcode( $attributes ) {
+
+		$content = '';
+
+		if ( ! empty( $attributes['id'] ) ) {
+			// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
+			$global_post = $GLOBALS['post'];
+			$GLOBALS['post'] = get_post( $attributes['id'] );
+
+			$content = $this->get_builder_content( $attributes['id'] );
+			$css_file = new Post_Css_File( $attributes['id'] );
+			$css_file->enqueue();
+
+			// Restore global post
+			$GLOBALS['post'] = $global_post;
+		}
+
+		return $content;
+	}
 	public function __construct() {
-		if ( is_admin() )
+		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 			return;
+		}
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		add_shortcode( 'elementor-library', [ $this, 'library_shortcode' ] );
 	}
 }
