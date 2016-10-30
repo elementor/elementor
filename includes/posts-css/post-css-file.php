@@ -60,7 +60,6 @@ class Post_CSS_File {
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
 		} else {
-
 			$file_created = false;
 
 			if ( wp_is_writable( $this->path ) ) {
