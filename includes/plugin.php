@@ -95,6 +95,10 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
+		include( ELEMENTOR_PATH . 'includes/managers/posts-css-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
+
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
 
@@ -104,11 +108,16 @@ class Plugin {
 		}
 	}
 
+	public function widgets_init() {
+		register_widget( 'Elementor\Widget_Library_Template' );
+	}
+
 	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'widgets_init', [ $this, 'widgets_init' ] );
 
 		// TODO: Declare this fields
 		$this->_includes();
@@ -118,6 +127,7 @@ class Plugin {
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
+		$this->posts_css_manager = new Posts_Css_Manager();
 
 		$settings = new Settings();
 
