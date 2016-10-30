@@ -28,11 +28,11 @@ class Post_CSS_File {
 		$this->post_id = $post_id;
 
 		// Check if it's an Elementor post
-		$plugin    = Plugin::instance();
-		$data      = $plugin->db->get_plain_editor( $post_id );
-		$edit_mode = $plugin->db->get_edit_mode( $post_id );
+		$db = Plugin::instance()->db;
+		$data = $db->get_plain_editor( $post_id );
+		$edit_mode = $db->get_edit_mode( $post_id );
 
-		$this->is_build_with_elementor = ! empty( $data ) && 'builder' === $edit_mode;
+		$this->is_build_with_elementor = ( ! empty( $data ) && 'builder' === $edit_mode );
 
 		if ( ! $this->is_build_with_elementor ) {
 			return;
@@ -56,7 +56,7 @@ class Post_CSS_File {
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
 		} else {
-			$file_created = @file_put_contents( $this->path, $this->css );
+			$file_created = file_put_contents( $this->path, $this->css );
 
 			if ( $file_created ) {
 				$meta['status'] = self::CSS_STATUS_FILE;
@@ -119,8 +119,8 @@ class Post_CSS_File {
 	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$relative_path = sprintf( '%s/post-%d.css', self::BASE_DIR, $this->post_id );
-		$this->path    = $wp_upload_dir['basedir'] . $relative_path;
-		$this->url     = $wp_upload_dir['baseurl'] . $relative_path;
+		$this->path = $wp_upload_dir['basedir'] . $relative_path;
+		$this->url = $wp_upload_dir['baseurl'] . $relative_path;
 	}
 
 	protected function get_meta() {
@@ -141,7 +141,6 @@ class Post_CSS_File {
 	}
 
 	protected function parse_elements_css() {
-
 		if ( ! $this->is_build_with_elementor() ) {
 			return;
 		}
