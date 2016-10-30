@@ -62,7 +62,7 @@ class Post_CSS_File {
 		} else {
 			$file_created = false;
 
-			if ( wp_is_writable( $this->path ) ) {
+			if ( wp_is_writable( dirname( $this->path ) ) ) {
 				$file_created = file_put_contents( $this->path, $this->css );
 			}
 
