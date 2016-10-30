@@ -25,7 +25,7 @@ class Widget_Library_Template extends \WP_Widget {
 		}
 
 		if ( ! empty( $instance['template_id'] ) && get_post( $instance['template_id'] ) ) {
-			echo Plugin::instance()->frontend->get_builder_content( $instance['template_id'] );
+			echo Plugin::instance()->frontend->get_builder_content_for_display( $instance['template_id'] );
 		}
 
 		echo $args['after_widget'];

@@ -104,6 +104,13 @@ abstract class Widget_Base extends Element_Base {
 			'elementor-widget-' . $this->get_name(),
 		] );
 
+		// Add a `disabled` class if it's a shortcode/wp-widget
+		if ( ! Plugin::instance()->editor->is_edit_mode() ) {
+			$this->add_render_attribute( 'wrapper', 'class', [
+				'elementor-widget-edit-disabled',
+			] );
+		}
+
 		$settings = $this->get_settings();
 
 		foreach ( self::get_class_controls() as $control ) {
