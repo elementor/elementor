@@ -7,6 +7,9 @@ class Post_CSS_File {
 
 	const BASE_DIR = '/elementor/cache/css';
 
+	// %s: Base folder; %d: post_id
+	const CSS_FILENAME = '%s/post-%d.css';
+
 	const CSS_STATUS_FILE = 'file';
 	const CSS_STATUS_INLINE = 'inline';
 	const CSS_STATUS_EMPTY = 'empty';
@@ -119,7 +122,7 @@ class Post_CSS_File {
 
 	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
-		$relative_path = sprintf( '%s/post-%d.css', self::BASE_DIR, $this->post_id );
+		$relative_path = sprintf( self::CSS_FILENAME, self::BASE_DIR, $this->post_id );
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
 		$this->url = $wp_upload_dir['baseurl'] . $relative_path;
 	}
