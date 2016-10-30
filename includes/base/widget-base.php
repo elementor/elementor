@@ -187,7 +187,9 @@ abstract class Widget_Base extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
+		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php
