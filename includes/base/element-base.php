@@ -44,14 +44,6 @@ abstract class Element_Base {
 
 	abstract public function get_name();
 
-	public function __construct( $data = [], $args = [] ) {
-		if ( $data ) {
-			$this->_init( $data );
-		} else {
-			$this->_default_args = $args;
-		}
-	}
-
 	public final function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
@@ -514,5 +506,13 @@ abstract class Element_Base {
 		$this->_data = array_merge( $this->get_default_data(), $data );
 		$this->_id = $data['id'];
 		$this->_settings = $this->_get_parsed_settings();
+	}
+
+	public function __construct( $data = [], $args = [] ) {
+		if ( $data ) {
+			$this->_init( $data );
+		} else {
+			$this->_default_args = $args;
+		}
 	}
 }
