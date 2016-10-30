@@ -183,7 +183,7 @@ class Frontend {
 	 * Handle style that do not printed in header
 	 */
 	function wp_footer() {
-		/* TODO: add JS to append the css to the `head` tag */
+		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
 
