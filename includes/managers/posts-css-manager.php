@@ -1,9 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Posts_Css_Manager {
 
@@ -19,7 +17,7 @@ class Posts_Css_Manager {
 		if ( ! file_exists( $css_path ) ) {
 			mkdir( $css_path, 0777, true );
 
-			// prevent directory index
+			// Prevent directory index
 			file_put_contents( $css_path . '/' . 'index.php', "<?php\n// Silence is golden.\n" );
 		}
 	}
