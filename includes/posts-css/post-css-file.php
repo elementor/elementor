@@ -60,7 +60,12 @@ class Post_CSS_File {
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
 		} else {
-			$file_created = file_put_contents( $this->path, $this->css );
+
+			$file_created = false;
+
+			if ( wp_is_writable( $this->path ) ) {
+				$file_created = file_put_contents( $this->path, $this->css );
+			}
 
 			if ( $file_created ) {
 				$meta['status'] = self::CSS_STATUS_FILE;
