@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Post_CSS_File {
 
-	const BASE_DIR = '/elementor/cache/css';
+	const BASE_DIR = '/elementor/css';
 
 	// %s: Base folder; %d: post_id
 	const CSS_FILENAME = '%s/post-%d.css';
