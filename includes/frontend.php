@@ -8,7 +8,6 @@ class Frontend {
 	private $_enqueue_google_fonts = [];
 	private $_enqueue_google_early_access_fonts = [];
 
-	private $_column_widths = [];
 	private $_is_frontend_mode = false;
 
 	/**
