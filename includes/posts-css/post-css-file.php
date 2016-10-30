@@ -49,7 +49,7 @@ class Post_Css_File {
 
 		$meta = [
 			'version' => ELEMENTOR_VERSION,
-			'fonts' => $this->fonts,
+			'fonts' => array_unique( $this->fonts ),
 		];
 
 		if ( '' === $this->css ) {
@@ -126,10 +126,8 @@ class Post_Css_File {
 	}
 
 	protected function get_meta() {
-		return get_post_meta( $this->post_id, '_elementor_css', true );
-	}
+		$meta = get_post_meta( $this->post_id, '_elementor_css', true );
 
-	protected function update_meta( $meta ) {
 		$defaults = [
 			'version' => '',
 			'status'  => '',
@@ -137,6 +135,10 @@ class Post_Css_File {
 
 		$meta = wp_parse_args( $meta, $defaults );
 
+		return $meta;
+	}
+
+	protected function update_meta( $meta ) {
 		return update_post_meta( $this->post_id, '_elementor_css', $meta );
 	}
 
