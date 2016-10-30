@@ -330,9 +330,9 @@ class Frontend {
 	public function library_shortcode( $attributes ) {
 		return $this->get_builder_content_for_display( $attributes['id'] );
 	}
-	
+
 	public function __construct() {
-		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+		if ( is_admin() ) {
 			return;
 		}
 
