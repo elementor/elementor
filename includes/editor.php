@@ -7,14 +7,6 @@ class Editor {
 
 	private $_is_edit_mode;
 
-	private $_editor_templates = [
-		'editor-templates/global.php',
-		'editor-templates/panel.php',
-		'editor-templates/panel-elements.php',
-		'editor-templates/repeater.php',
-		'editor-templates/templates.php',
-	];
-
 	public function init() {
 		if ( is_admin() || ! $this->is_edit_mode() ) {
 			return;
@@ -421,10 +413,6 @@ class Editor {
 		do_action( 'elementor/editor/wp_head' );
 	}
 
-	public function add_editor_template( $template_path ) {
-		$this->_editor_templates[] = $template_path;
-	}
-
 	public function wp_footer() {
 		Plugin::instance()->controls_manager->render_controls();
 		Plugin::instance()->widgets_manager->render_widgets_content();
@@ -432,9 +420,11 @@ class Editor {
 
 		Plugin::instance()->schemes_manager->print_schemes_templates();
 
-		foreach ( $this->_editor_templates as $editor_template ) {
-			include $editor_template;
-		}
+		include( 'editor-templates/global.php' );
+		include( 'editor-templates/panel.php' );
+		include( 'editor-templates/panel-elements.php' );
+		include( 'editor-templates/repeater.php' );
+		include( 'editor-templates/templates.php' );
 	}
 
 	/**
