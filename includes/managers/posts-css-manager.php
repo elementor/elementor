@@ -14,8 +14,8 @@ class Posts_Css_Manager {
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$css_path = $wp_upload_dir['basedir'] . Post_CSS_File::BASE_DIR;
 
-		if ( ! file_exists( $css_path ) ) {
-			mkdir( $css_path, 0777, true );
+		if ( ! is_dir( $css_path ) ) {
+			wp_mkdir_p( $css_path );
 
 			// Prevent directory index
 			file_put_contents( $css_path . '/' . 'index.php', "<?php\n// Silence is golden.\n" );
