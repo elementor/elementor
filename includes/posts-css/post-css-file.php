@@ -1,11 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Post_Css_File {
+class Post_CSS_File {
 
 	const BASE_DIR = '/elementor/cache/css';
 

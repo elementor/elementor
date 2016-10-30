@@ -155,7 +155,7 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-		$css_file = new Post_Css_File( get_the_ID() );
+		$css_file = new Post_CSS_File( get_the_ID() );
 		$css_file->enqueue();
 	}
 
