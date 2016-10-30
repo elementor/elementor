@@ -7,6 +7,10 @@
 	flex-wrap: wrap;
 	align-items: center;
 
+	label {
+		cursor: pointer;
+	}
+
 	input {
 
 		&[type=text],
@@ -51,7 +55,7 @@
 			-moz-appearance: none;
 			appearance: none;
 			background: transparent;
-			padding: 5px;
+			padding: 9px 16px; // Inherit from input size
 			border-radius: 2px;
 			border: 0;
 			font-size: inherit;
