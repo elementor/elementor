@@ -3556,7 +3556,12 @@ Conditions = function() {
 			if ( term.terms ) {
 				comparisonResult = self.check( term, comparisonObject );
 			} else {
-				var value = comparisonObject[ term.name ];
+				var parsedName = term.name.match( /(\w+)(?:\[(\w+)])?/ ),
+					value = comparisonObject[ parsedName[ 1 ] ];
+
+				if ( parsedName[ 2 ] ) {
+					value = value[ parsedName[ 2 ] ];
+				}
 
 				comparisonResult = self.compare( value, term.value, term.operator );
 			}
