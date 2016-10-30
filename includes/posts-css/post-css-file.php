@@ -29,6 +29,7 @@ class Post_CSS_File {
 
 		// Check if it's an Elementor post
 		$db = Plugin::instance()->db;
+
 		$data = $db->get_plain_editor( $post_id );
 		$edit_mode = $db->get_edit_mode( $post_id );
 
