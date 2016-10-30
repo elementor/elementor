@@ -51,7 +51,7 @@ class Post_CSS_File {
 			'fonts' => array_unique( $this->fonts ),
 		];
 
-		if ( '' === $this->css ) {
+		if ( empty( $this->css ) ) {
 			$this->delete();
 
 			$meta['status'] = self::CSS_STATUS_EMPTY;
@@ -203,7 +203,7 @@ class Post_CSS_File {
 			}
 
 			foreach ( $control['selectors'] as $selector => $css_property ) {
-				$output_selector     = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
+				$output_selector = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
 				$output_css_property = $control_obj->get_replace_style_values( $css_property, $control_value );
 
 				if ( ! $output_css_property ) {

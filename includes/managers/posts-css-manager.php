@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Posts_Css_Manager {
+class Posts_CSS_Manager {
 
 	public function __construct() {
 		$this->register_actions();
