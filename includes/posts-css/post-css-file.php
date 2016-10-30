@@ -85,7 +85,7 @@ class Post_CSS_File {
 
 		if ( version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ) ) {
 			$this->update();
-			//refresh new meta
+			// Refresh new meta
 			$meta = $this->get_meta();
 		}
 
