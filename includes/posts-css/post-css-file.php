@@ -159,7 +159,7 @@ class Post_CSS_File {
 
 		foreach ( $data as $section_data ) {
 			$section = new Element_Section( $section_data );
-			$this->parse_style_item( $section );
+			$this->add_element_style_rules( $section );
 		}
 
 		$css .= $this->stylesheet_obj;
@@ -175,7 +175,7 @@ class Post_CSS_File {
 		$this->css = $css;
 	}
 
-	protected function parse_style_item( Element_Base $element ) {
+	private function add_element_style_rules( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
 		$element_unique_class = '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
