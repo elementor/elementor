@@ -51,11 +51,9 @@ class Post_CSS_File {
 	public function update() {
 		$this->parse_elements_css();
 
-		// Use both the `post_date` and the elementor version as the version of the file to avoid wrong cache
-		$version = sprintf( '%s-%s', ELEMENTOR_VERSION, strtotime( get_post_field( 'post_date', $this->post_id ) ) );
-
 		$meta = [
-			'version' => $version,
+			'version' => ELEMENTOR_VERSION,
+			'time' => date('Y-m-d-H-i'),
 			'fonts' => array_unique( $this->fonts ),
 		];
 
@@ -104,7 +102,7 @@ class Post_CSS_File {
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			wp_add_inline_style( 'elementor-frontend', $meta['css'] );
 		} else {
-			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['version'] );
+			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['time'] );
 		}
 
 		// Handle fonts
