@@ -155,8 +155,7 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-
-		$css_file = new Post_Css_File( get_the_ID() );
+		$css_file = new Post_CSS_File( get_the_ID() );
 		$css_file->enqueue();
 	}
 
@@ -184,7 +183,7 @@ class Frontend {
 	 * Handle style that do not printed in header
 	 */
 	function wp_footer() {
-		/* TODO: add JS to append the css to the `head` tag */
+		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
 
@@ -276,7 +275,7 @@ class Frontend {
 			return '';
 
 		ob_start(); ?>
-		<div id="elementor" class="elementor">
+		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">
 					<?php $this->_print_sections( $data ); ?>

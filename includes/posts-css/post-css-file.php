@@ -1,13 +1,14 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Post_Css_File {
+class Post_CSS_File {
 
 	const BASE_DIR = '/elementor/cache/css';
+
+	// %s: Base folder; %d: post_id
+	const CSS_FILENAME = '%s/post-%d.css';
 
 	const CSS_STATUS_FILE = 'file';
 	const CSS_STATUS_INLINE = 'inline';
@@ -30,11 +31,12 @@ class Post_Css_File {
 		$this->post_id = $post_id;
 
 		// Check if it's an Elementor post
-		$plugin    = Plugin::instance();
-		$data      = $plugin->db->get_plain_editor( $post_id );
-		$edit_mode = $plugin->db->get_edit_mode( $post_id );
+		$db = Plugin::instance()->db;
 
-		$this->is_build_with_elementor = ! empty( $data ) && 'builder' === $edit_mode;
+		$data = $db->get_plain_editor( $post_id );
+		$edit_mode = $db->get_edit_mode( $post_id );
+
+		$this->is_build_with_elementor = ( ! empty( $data ) && 'builder' === $edit_mode );
 
 		if ( ! $this->is_build_with_elementor ) {
 			return;
@@ -52,13 +54,17 @@ class Post_Css_File {
 			'fonts' => array_unique( $this->fonts ),
 		];
 
-		if ( '' === $this->css ) {
+		if ( empty( $this->css ) ) {
 			$this->delete();
 
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
 		} else {
-			$file_created = @file_put_contents( $this->path, $this->css );
+			$file_created = false;
+
+			if ( wp_is_writable( dirname( $this->path ) ) ) {
+				$file_created = file_put_contents( $this->path, $this->css );
+			}
 
 			if ( $file_created ) {
 				$meta['status'] = self::CSS_STATUS_FILE;
@@ -86,7 +92,7 @@ class Post_Css_File {
 
 		if ( version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ) ) {
 			$this->update();
-			//refresh new meta
+			// Refresh new meta
 			$meta = $this->get_meta();
 		}
 
@@ -120,9 +126,9 @@ class Post_Css_File {
 
 	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
-		$relative_path = sprintf( '%s/post-%d.css', self::BASE_DIR, $this->post_id );
-		$this->path    = $wp_upload_dir['basedir'] . $relative_path;
-		$this->url     = $wp_upload_dir['baseurl'] . $relative_path;
+		$relative_path = sprintf( self::CSS_FILENAME, self::BASE_DIR, $this->post_id );
+		$this->path = $wp_upload_dir['basedir'] . $relative_path;
+		$this->url = $wp_upload_dir['baseurl'] . $relative_path;
 	}
 
 	protected function get_meta() {
@@ -143,7 +149,6 @@ class Post_Css_File {
 	}
 
 	protected function parse_elements_css() {
-
 		if ( ! $this->is_build_with_elementor() ) {
 			return;
 		}
@@ -173,7 +178,7 @@ class Post_Css_File {
 	protected function parse_style_item( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
-		$element_unique_class = '.elementor-element.elementor-element-' . $element->get_id();
+		$element_unique_class = '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
 
 		if ( 'column' === $element->get_name() ) {
 			if ( ! empty( $element_settings['_inline_size'] ) ) {
@@ -205,7 +210,7 @@ class Post_Css_File {
 			}
 
 			foreach ( $control['selectors'] as $selector => $css_property ) {
-				$output_selector     = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
+				$output_selector = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
 				$output_css_property = $control_obj->get_replace_style_values( $css_property, $control_value );
 
 				if ( ! $output_css_property ) {

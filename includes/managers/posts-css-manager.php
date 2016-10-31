@@ -1,36 +1,34 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Posts_Css_Manager {
+class Posts_CSS_Manager {
 
-	function __construct() {
+	public function __construct() {
 		$this->register_actions();
 	}
 
-	function init() {
+	public function init() {
 		// Create the css directory if it's not exist
 		$wp_upload_dir = wp_upload_dir( null, false );
-		$css_path      = $wp_upload_dir['basedir'] . Post_Css_File::BASE_DIR;
+		$css_path = $wp_upload_dir['basedir'] . Post_CSS_File::BASE_DIR;
 
-		if ( ! file_exists( $css_path ) ) {
-			mkdir( $css_path, 0777, true );
+		if ( ! is_dir( $css_path ) ) {
+			wp_mkdir_p( $css_path );
 
-			// prevent directory index
+			// Prevent directory index
 			file_put_contents( $css_path . '/' . 'index.php', "<?php\n// Silence is golden.\n" );
 		}
 	}
 
-	function on_save_post( $post_id ) {
-		$css_file = new Post_Css_File( $post_id );
+	public function on_save_post( $post_id ) {
+		$css_file = new Post_CSS_File( $post_id );
 		$css_file->update();
 	}
 
-	function on_delete_post( $post_id ) {
-		$css_file = new Post_Css_File( $post_id );
+	public function on_delete_post( $post_id ) {
+		$css_file = new Post_CSS_File( $post_id );
 		$css_file->delete();
 	}
 

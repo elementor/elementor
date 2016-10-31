@@ -127,7 +127,7 @@ class Plugin {
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
-		$this->posts_css_manager = new Posts_Css_Manager();
+		$this->posts_css_manager = new Posts_CSS_Manager();
 
 		$settings = new Settings();
 
