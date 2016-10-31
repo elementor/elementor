@@ -29,7 +29,7 @@ abstract class Control_Base_Multiple extends Control_Base {
 		);
 	}
 
-	public function get_replace_style_values( $css_property, $control_value ) {
+	public function get_replaced_style_values( $css_property, $control_value ) {
 		if ( ! is_array( $control_value ) ) {
 			return '';
 		}

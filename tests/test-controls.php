@@ -63,7 +63,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 
 		$this->assertEquals(
 			'10px;',
-			$text_control->get_replace_style_values(
+			$text_control->get_replaced_style_values(
 				'{{VALUE}};',
 				'10px'
 			)
@@ -72,7 +72,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$dimensions_control = Elementor\Plugin::instance()->controls_manager->get_control( 'dimensions' );
 		$this->assertEquals(
 			'1px 2px 3px 4px;',
-			$dimensions_control->get_replace_style_values(
+			$dimensions_control->get_replaced_style_values(
 				'{{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 				[
 					'top' => '1px',

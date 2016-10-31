@@ -241,7 +241,7 @@ class Frontend {
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
-					$output_css_property = $control_obj->get_replace_style_values( $css_property, $scheme_value );
+					$output_css_property = $control_obj->get_replaced_style_values( $css_property, $scheme_value );
 
 					$this->stylesheet->add_rules( $output_selector, $output_css_property );
 				}
