@@ -184,6 +184,8 @@ html.elementor-html {
     color: #f00; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit a {
     cursor: move; }
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-widget:hover {
+  outline: 1px solid #71d7f7; }
 @media (max-width: 1023px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
     display: none; } }
@@ -246,7 +248,7 @@ html.elementor-html {
 .elementor-editor-active .elementor-widget:not(.elementor-loading):not(.elementor-widget-menu-anchor) {
   -webkit-transition: all .1s;
   transition: all .1s; }
-.elementor-editor-active .elementor-widget.elementor-element-editable, .elementor-editor-active .elementor-widget:hover {
+.elementor-editor-active .elementor-widget.elementor-element-editable {
   outline: 1px solid #71d7f7; }
 .elementor-editor-active .elementor-widget:not(.elementor-element-editable):not(:hover) .elementor-editor-element-settings {
   display: none; }
