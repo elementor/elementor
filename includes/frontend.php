@@ -250,6 +250,9 @@ class Frontend {
 	}
 
 	public function apply_builder_in_content( $content ) {
+		// Remove the filter itself in order to allow other `the_content` in the elements
+		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
 		if ( ! $this->_is_frontend_mode )
 			return $content;
 
@@ -259,6 +262,9 @@ class Frontend {
 		if ( ! empty( $builder_content ) ) {
 			$content = $builder_content;
 		}
+
+		// Add the filter again for other `the_content` calls
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 
 		return $content;
 	}
@@ -273,6 +279,9 @@ class Frontend {
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return '';
+
+		$css_file = new Post_Css_File( $post_id );
+		$css_file->enqueue();
 
 		ob_start(); ?>
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
@@ -314,8 +323,6 @@ class Frontend {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id );
-		$css_file = new Post_Css_File( $post_id );
-		$css_file->enqueue();
 
 		// Restore global post
 		$GLOBALS['post'] = $global_post;
