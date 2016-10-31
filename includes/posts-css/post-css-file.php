@@ -191,44 +191,57 @@ class Post_CSS_File {
 				continue;
 			}
 
-			$control_value = $element_settings[ $control['name'] ];
-			if ( ! is_numeric( $control_value ) && ! is_float( $control_value ) && empty( $control_value ) ) {
-				continue;
-			}
-
-			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-			if ( ! $control_obj ) {
-				continue;
-			}
-
 			if ( ! $element->is_control_visible( $control ) ) {
 				continue;
 			}
 
-			if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-				$this->fonts[] = $control_value;
-			}
+			$control_value = $element_settings[ $control['name'] ];
 
-			foreach ( $control['selectors'] as $selector => $css_property ) {
-				$output_selector = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
-				$output_css_property = $control_obj->get_replace_style_values( $css_property, $control_value );
+			$this->add_control_style_rules( $control, $control_value, [ '{{WRAPPER}}' ], [ $element_unique_class ] );
+		}
 
-				if ( ! $output_css_property ) {
-					continue;
-				}
+		foreach ( $element->get_children() as $child_element ) {
+			$this->add_element_style_rules( $child_element );
+		}
+	}
 
-				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
+	private function add_control_style_rules( $control, $value, $placeholders, $replacements ) {
+		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
+			return;
+		}
 
-				$this->stylesheet_obj->add_rules( $output_selector, $output_css_property, $device );
+		if ( Controls_Manager::FONT === $control['type'] ) {
+			$this->fonts[] = $value;
+		}
+
+		$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+
+		if ( ! empty( $control['style_fields'] ) ) {
+			$placeholders[] = '{{CURRENT_ITEM}}';
+
+			foreach ( $control['style_fields'] as $index => $style_field ) {
+				$replacements[1] = '.elementor-repeater-item-' . $index;
+
+				$this->add_control_style_rules( $style_field, $value[ $index ][ $style_field['name'] ], $placeholders, $replacements );
 			}
 		}
 
-		$children = $element->get_children();
+		if ( empty( $control['selectors'] ) ) {
+			return;
+		}
 
-		if ( ! empty( $children ) ) {
-			foreach ( $children as $child_element ) {
-				$this->parse_style_item( $child_element );
+		foreach ( $control['selectors'] as $selector => $css_property ) {
+			$output_selector = str_replace( $placeholders, $replacements, $selector );
+
+			$output_css_property = $control_obj->get_replaced_style_values( $css_property, $value );
+
+			if ( ! $output_css_property ) {
+				continue;
 			}
+
+			$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
+
+			$this->stylesheet_obj->add_rules( $output_selector, $output_css_property, $device );
 		}
 	}
 }
