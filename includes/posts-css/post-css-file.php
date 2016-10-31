@@ -5,10 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Post_CSS_File {
 
-	const BASE_DIR = '/elementor/css';
-
-	// %s: Base folder; %d: post_id
-	const CSS_FILENAME = '%s/post-%d.css';
+	const FILE_BASE_DIR = '/elementor/css';
+	// %s: Base folder; %s: file prefix; %d: post_id
+	const FILE_NAME_PATTERN = '%s/%s%d.css';
+	const FILE_PREFIX = 'post-';
 
 	const CSS_STATUS_FILE = 'file';
 	const CSS_STATUS_INLINE = 'inline';
@@ -129,7 +129,7 @@ class Post_CSS_File {
 
 	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
-		$relative_path = sprintf( self::CSS_FILENAME, self::BASE_DIR, $this->post_id );
+		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, self::FILE_PREFIX, $this->post_id );
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
 		$this->url = $wp_upload_dir['baseurl'] . $relative_path;
 	}

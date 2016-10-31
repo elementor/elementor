@@ -12,7 +12,7 @@ class Posts_CSS_Manager {
 	public function init() {
 		// Create the css directory if it's not exist
 		$wp_upload_dir = wp_upload_dir( null, false );
-		$css_path = $wp_upload_dir['basedir'] . Post_CSS_File::BASE_DIR;
+		$css_path = $wp_upload_dir['basedir'] . Post_CSS_File::FILE_BASE_DIR;
 
 		if ( ! is_dir( $css_path ) ) {
 			wp_mkdir_p( $css_path );
@@ -44,6 +44,23 @@ class Posts_CSS_Manager {
 		}
 
 		return $skip;
+	}
+
+	public function clear_cache() {
+		// Delete post meta
+		global $wpdb;
+
+		$wpdb->delete( $wpdb->postmeta, [
+			'meta_key' => Post_CSS_File::META_KEY_CSS,
+		] );
+
+		// Delete files
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$path = sprintf( '%s%s%s%s*', $wp_upload_dir['basedir'], Post_CSS_File::FILE_BASE_DIR, '/', Post_CSS_File::FILE_PREFIX	);
+
+		foreach ( glob( $path ) as $file ) {
+			wp_delete_file( $file );
+		}
 	}
 
 	private function register_actions() {
