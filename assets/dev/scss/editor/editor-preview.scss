@@ -505,7 +505,7 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable, &:hover {
+		&.elementor-element-editable, &:not(.elementor-widget-edit-disabled):hover {
 			outline: 1px solid $editor-info;
 		}
 
