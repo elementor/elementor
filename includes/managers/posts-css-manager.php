@@ -47,20 +47,32 @@ class Posts_CSS_Manager {
 	}
 
 	public function clear_cache() {
+		$errors = [];
+
 		// Delete post meta
 		global $wpdb;
 
-		$wpdb->delete( $wpdb->postmeta, [
+		$deleted = $wpdb->delete( $wpdb->postmeta, [
 			'meta_key' => Post_CSS_File::META_KEY_CSS,
 		] );
 
+		if ( false === $deleted ) {
+			$errors['db'] = __( 'Cannot delete DB cache', 'elementor' );
+		}
+
 		// Delete files
 		$wp_upload_dir = wp_upload_dir( null, false );
-		$path = sprintf( '%s%s%s%s*', $wp_upload_dir['basedir'], Post_CSS_File::FILE_BASE_DIR, '/', Post_CSS_File::FILE_PREFIX	);
+		$path = sprintf( '%s%s%s%s*', $wp_upload_dir['basedir'], Post_CSS_File::FILE_BASE_DIR, '/', Post_CSS_File::FILE_PREFIX );
 
 		foreach ( glob( $path ) as $file ) {
-			wp_delete_file( $file );
+			$deleted = unlink( $file );
+
+			if ( ! $deleted ) {
+				$errors['files'] = __( 'Cannot delete files cache', 'elementor' );
+			}
 		}
+
+		return $errors;
 	}
 
 	private function register_actions() {

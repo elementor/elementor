@@ -239,6 +239,10 @@ class Settings {
 		include( ELEMENTOR_PATH . 'includes/settings/controls.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/validations.php' );
 
+		if ( is_admin() ) {
+			require ( ELEMENTOR_PATH . 'includes/settings/tools.php' );
+		}
+
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
