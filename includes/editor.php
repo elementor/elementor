@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Editor {
 
+	private $_is_edit_mode;
+
 	public function init() {
 		if ( is_admin() || ! $this->is_edit_mode() ) {
 			return;
@@ -58,6 +60,10 @@ class Editor {
 	}
 
 	public function is_edit_mode() {
+		if ( null !== $this->_is_edit_mode ) {
+			return $this->_is_edit_mode;
+		}
+
 		if ( ! User::is_current_user_can_edit() ) {
 			return false;
 		}
@@ -419,6 +425,13 @@ class Editor {
 		include( 'editor-templates/panel-elements.php' );
 		include( 'editor-templates/repeater.php' );
 		include( 'editor-templates/templates.php' );
+	}
+
+	/**
+	 * @param bool $edit_mode
+	 */
+	public function set_edit_mode( $edit_mode ) {
+		$this->_is_edit_mode = $edit_mode;
 	}
 
 	public function __construct() {

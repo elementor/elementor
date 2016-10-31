@@ -254,14 +254,25 @@ class Frontend {
 			return $content;
 
 		$post_id = get_the_ID();
-		if ( post_password_required( $post_id ) )
-			return $content;
+		$builder_content = $this->get_builder_content( $post_id );
+
+		if ( ! empty( $builder_content ) ) {
+			$content = $builder_content;
+		}
+
+		return $content;
+	}
+
+	public function get_builder_content( $post_id ) {
+		if ( post_password_required( $post_id ) ) {
+			return '';
+		}
 
 		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
-			return $content;
+			return '';
 
 		ob_start(); ?>
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
@@ -290,11 +301,42 @@ class Frontend {
 		] );
 	}
 
+	public function get_builder_content_for_display( $post_id ) {
+		if ( ! get_post( $post_id ) ) {
+			return '';
+		}
+
+		// Set edit mode as false, so dont render settings and etc
+		Plugin::instance()->editor->set_edit_mode( false );
+
+		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
+		$global_post = $GLOBALS['post'];
+		$GLOBALS['post'] = get_post( $post_id );
+
+		$content = $this->get_builder_content( $post_id );
+		$css_file = new Post_Css_File( $post_id );
+		$css_file->enqueue();
+
+		// Restore global post
+		$GLOBALS['post'] = $global_post;
+
+		// Restore edit mode state
+		Plugin::instance()->editor->set_edit_mode( null );
+
+		return $content;
+	}
+
+	public function library_shortcode( $attributes ) {
+		return $this->get_builder_content_for_display( $attributes['id'] );
+	}
+
 	public function __construct() {
-		if ( is_admin() )
+		if ( is_admin() ) {
 			return;
+		}
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		add_shortcode( 'elementor-library', [ $this, 'library_shortcode' ] );
 	}
 }
