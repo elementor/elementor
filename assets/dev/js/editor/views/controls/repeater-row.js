@@ -28,6 +28,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
+
 		return elementor.getControlItemView( controlType );
 	},
 
