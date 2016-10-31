@@ -16,7 +16,7 @@ html.elementor-html {
 }
 
 .elementor-editor-active {
-	#elementor {
+	.elementor.elementor-edit-mode {
 
 		.elementor-element-empty {
 
@@ -505,7 +505,7 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable, &:not(.elementor-widget-edit-disabled):hover {
+		&.elementor-element-editable, &:hover {
 			outline: 1px solid $editor-info;
 		}
 
