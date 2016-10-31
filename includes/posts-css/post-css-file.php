@@ -14,6 +14,8 @@ class Post_CSS_File {
 	const CSS_STATUS_INLINE = 'inline';
 	const CSS_STATUS_EMPTY = 'empty';
 
+	const META_KEY_CSS = '_elementor_css';
+
 	protected $post_id;
 	protected $is_build_with_elementor;
 	protected $path;
@@ -49,8 +51,11 @@ class Post_CSS_File {
 	public function update() {
 		$this->parse_elements_css();
 
+		// Use both the `post_date` and the elementor version as the version of the file to avoid wrong cache
+		$version = sprintf( '%s-%s', ELEMENTOR_VERSION, strtotime( get_post_field( 'post_date', $this->post_id ) ) );
+
 		$meta = [
-			'version' => ELEMENTOR_VERSION,
+			'version' => $version,
 			'fonts' => array_unique( $this->fonts ),
 		];
 
@@ -132,7 +137,7 @@ class Post_CSS_File {
 	}
 
 	protected function get_meta() {
-		$meta = get_post_meta( $this->post_id, '_elementor_css', true );
+		$meta = get_post_meta( $this->post_id, self::META_KEY_CSS, true );
 
 		$defaults = [
 			'version' => '',

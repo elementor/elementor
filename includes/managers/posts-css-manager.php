@@ -32,9 +32,24 @@ class Posts_CSS_Manager {
 		$css_file->delete();
 	}
 
+	/**
+	 * @param bool $skip
+	 * @param string $meta_key
+	 *
+	 * @return bool
+	 */
+	public function on_export_post_meta( $skip, $meta_key ) {
+		if ( Post_CSS_File::META_KEY_CSS === $meta_key ) {
+			$skip = true;
+		}
+
+		return $skip;
+	}
+
 	private function register_actions() {
 		add_action( 'init', [ $this, 'init' ] );
 		add_action( 'save_post', [ $this, 'on_save_post' ] );
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
+		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
 	}
 }
