@@ -157,9 +157,49 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	addControlStyleRules: function( control, value, placeholders, replacements ) {
+		var self = this;
+
+		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
+			return;
+		}
+
+		if ( ! elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) ) ) {
+			return;
+		}
+
+		if ( control.styleFields ) {
+			placeholders.push( '{{CURRENT_ITEM}}' );
+
+			_.each( control.styleFields, function( styleField, index ) {
+				replacements[1] = '.elementor-repeater-item-' + index;
+
+				self.addControlStyleRules( styleField, value.models[ index ].get( styleField.name ), placeholders, replacements );
+			} );
+		}
+
+		_.each( control.selectors, function( cssProperty, selector ) {
+			var outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, value ),
+				query;
+
+			if ( _.isEmpty( outputCssProperty ) ) {
+				return;
+			}
+
+			_.each( placeholders, function( placeholder, index ) {
+				selector = selector.replace( placeholder, replacements[ index ] );
+			} );
+
+			if ( control.responsive && 'desktop' !== control.responsive ) {
+				query = { max: control.responsive };
+			}
+
+			self.stylesheet.addRules( selector, outputCssProperty, query );
+		} );
+	},
+
 	renderStyles: function() {
 		var self = this,
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
 			styleControls = self.model.get( 'settings' ).getStyleControls();
 
 		self.stylesheet.empty();
@@ -167,30 +207,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		_.each( styleControls, function( control ) {
 			var controlValue = self.model.getSetting( control.name );
 
-			if ( ! _.isNumber( controlValue ) && _.isEmpty( controlValue ) ) {
-				return;
-			}
-
-			var isVisible = elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) );
-			if ( ! isVisible ) {
-				return;
-			}
-
-			_.each( control.selectors, function( cssProperty, selector ) {
-				var outputSelector = selector.replace( /\{\{WRAPPER}}/g, '#' + self.getElementUniqueClass() ),
-					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue ),
-					query;
-
-				if ( _.isEmpty( outputCssProperty ) ) {
-					return;
-				}
-
-				if ( control.responsive && 'desktop' !== control.responsive ) {
-					query = { max: control.responsive };
-				}
-
-				self.stylesheet.addRules( outputSelector, outputCssProperty, query );
-			} );
+			self.addControlStyleRules( control, controlValue, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueClass() ] );
 		} );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
