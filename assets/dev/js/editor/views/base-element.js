@@ -26,6 +26,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	stylesheet: null,
 
+	$stylesheet: null,
+
 	getElementType: function() {
 		return this.model.get( 'elType' );
 	},
@@ -119,6 +121,26 @@ BaseElementView = Marionette.CompositeView.extend( {
 			.addDevice( 'desktop', viewportBreakpoints.lg );
 	},
 
+	createStylesheetElement: function() {
+		this.$stylesheet = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
+
+		elementor.$previewContents.find( 'head' ).append( this.$stylesheet );
+	},
+
+	addStyleToDocument: function() {
+		var styleText = this.stylesheet.toString();
+
+		if ( _.isEmpty( styleText ) && ! this.$stylesheet ) {
+			return;
+		}
+
+		if ( ! this.$stylesheet ) {
+			this.createStylesheetElement();
+		}
+
+		this.$stylesheet.text( styleText );
+	},
+
 	enqueueFonts: function() {
 		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = this.model.getSetting( control.name );
@@ -179,18 +201,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
-		var styleHtml = self.stylesheet.toString();
-
-		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
-			return;
-		}
-
-		if ( ! $stylesheet.length ) {
-			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + self.model.cid + '"></style>' );
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid );
-		}
-
-		$stylesheet.html( styleHtml );
+		self.addStyleToDocument();
 	},
 
 	renderCustomClasses: function() {
