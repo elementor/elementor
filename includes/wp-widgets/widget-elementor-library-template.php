@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-class Widget_Library_Template extends \WP_Widget {
+class Widget_Elementor_Library_Template extends \WP_Widget {
 
 	function __construct() {
 		parent::__construct(

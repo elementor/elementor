@@ -39,6 +39,7 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
+			'library-template',
 		];
 
 		$this->_widget_types = [];

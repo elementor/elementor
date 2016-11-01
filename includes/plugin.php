@@ -97,7 +97,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/posts-css-manager.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
+		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-elementor-library-template.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -109,7 +109,7 @@ class Plugin {
 	}
 
 	public function widgets_init() {
-		register_widget( 'Elementor\Widget_Library_Template' );
+		register_widget( 'Elementor\Widget_Elementor_Library_Template' );
 	}
 
 	/**
