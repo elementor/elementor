@@ -46,6 +46,8 @@ abstract class Element_Base {
 			self::_init_edit_tools();
 		}
 
+		// Adding the tool at specific position
+		// in the tools array if requested
 		if ( $after ) {
 			$after_index = array_search( $after, array_keys( static::$_edit_tools ) ) + 1;
 
