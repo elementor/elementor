@@ -57,6 +57,15 @@ class Widget_Tabs extends Widget_Base {
 						'type' => Controls_Manager::TEXTAREA,
 						'show_label' => false,
 					],
+					[
+						'name' => 'tab_color',
+						'label' => __( 'Tab Color', 'elementor' ),
+						'placeholder' => __( 'Tab Content', 'elementor' ),
+						'type' => Controls_Manager::COLOR,
+						'selectors' => [
+							'{{WRAPPER}} {{CURRENT_ITEM}}' => 'color: {{VALUE}}',
+						],
+					],
 				],
 				'title_field' => '{{{ tab_title }}}',
 			]
@@ -251,7 +260,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-content-wrapper">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-content" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+						<div class="elementor-tab-content elementor-repeater-item-{{ counter }}" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
 					<#
 					counter++;
 					} ); #>
