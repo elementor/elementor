@@ -293,6 +293,7 @@ class Editor {
 				'data' => $editor_data,
 				'locked_user' => $locked_user,
 				'is_rtl' => is_rtl(),
+				'locale' => get_locale(),
 				'introduction' => User::get_introduction(),
 				'viewportBreakpoints' => Responsive::get_breakpoints(),
 				'i18n' => [
