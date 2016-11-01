@@ -214,14 +214,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	renderStyles: function() {
 		var self = this,
-			styleControls = self.model.get( 'settings' ).getStyleControls();
+			settings = self.model.get( 'settings' );
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( styleControls, self.model.get( 'settings' ).attributes );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
-			var inlineSize = self.model.getSetting( '_inline_size' );
+			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
 				self.stylesheet.addRules( '#' + self.getElementUniqueSelector(), { width: inlineSize + '%' }, { min: 'tablet' } );
