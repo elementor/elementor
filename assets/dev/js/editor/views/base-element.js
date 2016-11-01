@@ -144,12 +144,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 	enqueueFonts: function() {
 		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = this.model.getSetting( control.name );
+
 			if ( _.isEmpty( fontFamilyName ) ) {
 				return;
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) );
-			if ( ! isVisible ) {
+			if ( ! elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) ) ) {
 				return;
 			}
 
