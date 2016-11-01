@@ -84,6 +84,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/elements-manager.php' );
 		include( ELEMENTOR_PATH . 'includes/widgets-manager.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
+		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
 		include( ELEMENTOR_PATH . 'includes/frontend.php' );
