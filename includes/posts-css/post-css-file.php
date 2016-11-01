@@ -114,6 +114,10 @@ class Post_CSS_File {
 		return $this->is_build_with_elementor;
 	}
 
+	public function get_element_unique_selector( Element_Base $element ) {
+		return '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
+	}
+
 	protected function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
