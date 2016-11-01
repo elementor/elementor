@@ -92,7 +92,7 @@ WidgetView = BaseElementView.extend( {
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueSelector() ).html( html );
 		}, this ) );
 
 		return this;
