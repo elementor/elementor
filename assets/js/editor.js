@@ -2122,7 +2122,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				categories: element.categories,
 				keywords: element.keywords,
 				icon: element.icon,
-				widgetType: element.widget_type
+				widgetType: element.widget_type,
+				custom: element.custom
 			} );
 		} );
 
@@ -2871,7 +2872,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.initPages();
 	},
 
-	initPages: function() {
+	buildPages: function() {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
@@ -2906,7 +2907,27 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		this.pages = pages;
+		return pages;
+	},
+
+	initPages: function() {
+		var pages;
+
+		this.getPages = function( page ) {
+			if ( ! pages ) {
+				pages = this.buildPages();
+			}
+
+			return page ? pages[ page ] : pages;
+		};
+
+		this.addPage = function( pageName, pageData ) {
+			if ( ! pages ) {
+				pages = this.buildPages();
+			}
+
+			pages[ pageName ] = pageData;
+		};
 	},
 
 	getHeaderView: function() {
@@ -2922,7 +2943,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	setPage: function( page, title, viewOptions ) {
-		var pageData = this.pages[ page ];
+		var pageData = this.getPages( page );
 
 		if ( ! pageData ) {
 			throw new ReferenceError( 'Elementor panel doesn\'t have page named \'' + page + '\'' );

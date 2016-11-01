@@ -24,6 +24,8 @@ abstract class Element_Base {
 
 	private $_default_args = [];
 
+	protected static $_edit_tools;
+
 	/**
 	 * Holds the current section while render a set of controls sections
 	 *
@@ -31,8 +33,38 @@ abstract class Element_Base {
 	 */
 	private $_current_section = null;
 
+	public final static function get_edit_tools() {
+		if ( null === static::$_edit_tools ) {
+			self::_init_edit_tools();
+		}
+
+		return static::$_edit_tools;
+	}
+
+	public final static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
+		if ( null === static::$_edit_tools ) {
+			self::_init_edit_tools();
+		}
+
+		// Adding the tool at specific position
+		// in the tools array if requested
+		if ( $after ) {
+			$after_index = array_search( $after, array_keys( static::$_edit_tools ) ) + 1;
+
+			static::$_edit_tools = array_slice( static::$_edit_tools, 0, $after_index, true ) +
+			                       [ $tool_name => $tool_data ] +
+			                       array_slice( static::$_edit_tools, $after_index, null, true );
+		} else {
+			static::$_edit_tools[ $tool_name ] = $tool_data;
+		}
+	}
+
 	public static function get_type() {
 		return 'element';
+	}
+
+	protected static function get_default_edit_tools() {
+		return [];
 	}
 
 	/**
@@ -49,6 +81,11 @@ abstract class Element_Base {
 
 		return $haystack;
 	}
+
+	private static function _init_edit_tools() {
+		static::$_edit_tools = static::get_default_edit_tools();
+	}
+
 	/**
 	 * @param array $element_data
 	 *

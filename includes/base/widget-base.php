@@ -11,6 +11,23 @@ abstract class Widget_Base extends Element_Base {
 		return 'widget';
 	}
 
+	protected static function get_default_edit_tools() {
+		return [
+			'edit' => [
+				'title' => __( 'Edit', 'elementor' ),
+				'icon' => 'pencil',
+			],
+			'duplicate' => [
+				'title' => __( 'Duplicate', 'elementor' ),
+				'icon' => 'files-o',
+			],
+			'remove' => [
+				'title' => __( 'Remove', 'elementor' ),
+				'icon' => 'times',
+			],
+		];
+	}
+
 	public function get_icon() {
 		return 'apps';
 	}
@@ -101,24 +118,14 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
 			<ul class="elementor-editor-element-settings-list">
-				<li class="elementor-editor-element-setting elementor-editor-element-edit">
-					<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-						<i class="fa fa-pencil"></i>
-					</a>
-				</li>
-				<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-					<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-						<i class="fa fa-files-o"></i>
-					</a>
-				</li>
-				<li class="elementor-editor-element-setting elementor-editor-element-remove">
-					<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-						<i class="fa fa-times"></i>
-					</a>
-				</li>
+				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
+						<a href="#" title="<?php echo $edit_tool['title']; ?>">
+							<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+							<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+						</a>
+					</li>
+				<?php endforeach; ?>
 			</ul>
 		</div>
 		<?php

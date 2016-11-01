@@ -41,7 +41,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				categories: element.categories,
 				keywords: element.keywords,
 				icon: element.icon,
-				widgetType: element.widget_type
+				widgetType: element.widget_type,
+				custom: element.custom
 			} );
 		} );
 
