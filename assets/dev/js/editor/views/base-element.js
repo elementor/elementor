@@ -127,20 +127,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.$previewContents.find( 'head' ).append( this.$stylesheet );
 	},
 
-	addStyleToDocument: function() {
-		var styleText = this.stylesheet.toString();
-
-		if ( _.isEmpty( styleText ) && ! this.$stylesheet ) {
-			return;
-		}
-
-		if ( ! this.$stylesheet ) {
-			this.createStylesheetElement();
-		}
-
-		this.$stylesheet.text( styleText );
-	},
-
 	enqueueFonts: function() {
 		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = this.model.getSetting( control.name );
@@ -157,6 +143,30 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	addStyleRules: function( controls, values, placeholders, replacements ) {
+		var self = this;
+
+		placeholders = placeholders || [ /\{\{WRAPPER}}/g ];
+
+		replacements = replacements || [ '#' + self.getElementUniqueClass() ];
+
+		_.each( controls, function( control ) {
+			var controlValue = values[ control.name ];
+
+			if ( control.styleFields ) {
+				placeholders.push( '{{CURRENT_ITEM}}' );
+
+				controlValue.each( function( model, index ) {
+					replacements[1] = '.elementor-repeater-item-' + index;
+
+					self.addStyleRules( control.styleFields, model.attributes, placeholders, replacements );
+				} );
+			}
+
+			self.addControlStyleRules( control, controlValue, placeholders, replacements );
+		} );
+	},
+
 	addControlStyleRules: function( control, value, placeholders, replacements ) {
 		var self = this;
 
@@ -166,16 +176,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		if ( ! elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) ) ) {
 			return;
-		}
-
-		if ( control.styleFields ) {
-			placeholders.push( '{{CURRENT_ITEM}}' );
-
-			_.each( control.styleFields, function( styleField, index ) {
-				replacements[1] = '.elementor-repeater-item-' + index;
-
-				self.addControlStyleRules( styleField, value.models[ index ].get( styleField.name ), placeholders, replacements );
-			} );
 		}
 
 		_.each( control.selectors, function( cssProperty, selector ) {
@@ -198,17 +198,27 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} );
 	},
 
+	addStyleToDocument: function() {
+		var styleText = this.stylesheet.toString();
+
+		if ( _.isEmpty( styleText ) && ! this.$stylesheet ) {
+			return;
+		}
+
+		if ( ! this.$stylesheet ) {
+			this.createStylesheetElement();
+		}
+
+		this.$stylesheet.text( styleText );
+	},
+
 	renderStyles: function() {
 		var self = this,
 			styleControls = self.model.get( 'settings' ).getStyleControls();
 
 		self.stylesheet.empty();
 
-		_.each( styleControls, function( control ) {
-			var controlValue = self.model.getSetting( control.name );
-
-			self.addControlStyleRules( control, controlValue, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueClass() ] );
-		} );
+		self.addStyleRules( styleControls, self.model.get( 'settings' ).attributes );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = self.model.getSetting( '_inline_size' );
