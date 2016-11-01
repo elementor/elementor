@@ -27,12 +27,9 @@ class Tools {
 		<div class="wrap">
 			<h2><?php _e( 'Elementor Tools', 'elementor' ); ?></h2>
 			<form method="post" action="">
-				<h3>
-					<?php _e( 'Clear Cache', 'elementor' ); ?>
-				</h3>
-				<p>
-					<?php _e( 'Regenerate CSS files', 'elementor' ); ?>
-				</p>
+				<h3><?php _e( 'Clear Cache', 'elementor' ); ?></h3>
+
+				<p><?php _e( 'Regenerate CSS files', 'elementor' ); ?></p>
 
 				<input type="hidden" name="tool_name" value="clear_cache" />
 
