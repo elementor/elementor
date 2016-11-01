@@ -46,7 +46,6 @@ class Tools {
 	}
 
 	public function process_form() {
-
 		if ( empty( $_POST['option_page'] ) || self::PAGE_ID !== $_POST['option_page'] ) {
 			return;
 		}
@@ -55,7 +54,7 @@ class Tools {
 			case 'clear_cache':
 				$errors = Plugin::instance()->posts_css_manager->clear_cache();
 
-				add_action( 'admin_notices', function () use ( $errors ) {
+				add_action( 'admin_notices', function() use ( $errors ) {
 					if ( empty( $errors ) ) {
 						echo '<div class="notice notice-success"><p>' . __( 'Cache has been cleared', 'elementor' ) . '</p></div>';
 					} else {
