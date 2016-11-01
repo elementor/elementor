@@ -44,22 +44,19 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getStyleControls: function( controls ) {
-		var self = this,
-			styleControls = {};
+		var self = this;
 
 		controls = controls || self.controls;
 
-		_.each( controls, function( control, key ) {
+		return _.filter( controls, function( control ) {
 			if ( control.fields ) {
 				control.styleFields = self.getStyleControls( control.fields );
+
+				return true;
 			}
 
-			if ( control.fields || self.isStyleControl( control.name, controls ) ) {
-				styleControls[ key ] = control;
-			}
+			return self.isStyleControl( control.name, controls );
 		} );
-
-		return styleControls;
 	},
 
 	isStyleControl: function( attribute, controls ) {
