@@ -105,29 +105,10 @@ class Plugin {
 	}
 
 	/**
-	 * Normalize Elementor post meta on import,
-	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
-	 *
-	 * @param array $post_meta
-	 *
-*@return array
-	 */
-	public function on_wp_import_post_meta( $post_meta ) {
-		foreach ( $post_meta as &$meta ) {
-			if ( '_elementor_data' === $meta['key'] ) {
-				$meta['value'] = wp_slash( $meta['value'] );
-			}
-		}
-
-		return $post_meta;
-	}
-
-	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
-		add_filter( 'wp_import_post_meta', [ $this, 'on_wp_import_post_meta' ] );
 
 		// TODO: Declare this fields
 		$this->_includes();
