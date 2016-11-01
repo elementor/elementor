@@ -195,7 +195,7 @@ class Post_CSS_File {
 				$placeholders[] = '{{CURRENT_ITEM}}';
 
 				foreach ( $control_value as $index => $field_value ) {
-					$replacements[1] = '.elementor-repeater-item-' . $index;
+					$replacements[1] = '.elementor-repeater-item-' . ( $index + 1 );
 
 					$this->add_element_style_rules( $element, $control['style_fields'], $field_value, $placeholders, $replacements );
 				}
