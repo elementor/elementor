@@ -280,7 +280,7 @@ class Frontend {
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return '';
 
-		$css_file = new Post_Css_File( $post_id );
+		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
 
 		ob_start(); ?>
