@@ -3,9 +3,10 @@ namespace Elementor;
 
 class Widget_Library_Template extends \WP_Widget {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct(
-			'elementor-library-template', esc_html__( 'Elementor Library Template', 'elementor' ),
+			'elementor-library-template',
+			esc_html__( 'Elementor Library Template', 'elementor' ),
 			[
 				'description' => esc_html__( 'Include your Elementor template anywhere', 'elementor' ),
 			]
