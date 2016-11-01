@@ -24,6 +24,9 @@ class DB {
 	 * @return void
 	 */
 	public function save_editor( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
+		// Set current post as the global post, for library template parsing in a widget/shortcode
+		$GLOBALS['post'] = get_post( $post_id );
+
 		$editor_data = $this->_get_editor_data( $posted );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`

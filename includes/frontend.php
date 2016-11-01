@@ -315,17 +315,31 @@ class Frontend {
 			return '';
 		}
 
-		// Set edit mode as false, so dont render settings and etc
+		// Avoid recursion
+		if ( get_the_ID() === (int) $post_id ) {
+			$content = '';
+			if ( Plugin::instance()->editor->is_edit_mode() ) {
+				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Shortcode: The template ID cannot be the same as the currently used template. Please choose a different one.', 'elementor' ) . '</div>';
+			}
+
+			return $content;
+		}
+
+		// Set edit mode as false, so don't render settings and etc
 		Plugin::instance()->editor->set_edit_mode( false );
 
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		$global_post = $GLOBALS['post'];
-		$GLOBALS['post'] = get_post( $post_id );
+		if ( isset( $GLOBALS['post'] ) ) {
+			$global_post = $GLOBALS['post'];
+			$GLOBALS['post'] = get_post( $post_id );
+		}
 
 		$content = $this->get_builder_content( $post_id );
 
 		// Restore global post
-		$GLOBALS['post'] = $global_post;
+		if ( isset( $global_post ) ) {
+			$GLOBALS['post'] = $global_post;
+		}
 
 		// Restore edit mode state
 		Plugin::instance()->editor->set_edit_mode( null );
@@ -333,17 +347,18 @@ class Frontend {
 		return $content;
 	}
 
-	public function library_shortcode( $attributes ) {
+	public function library_template_shortcode( $attributes ) {
 		return $this->get_builder_content_for_display( $attributes['id'] );
 	}
 
 	public function __construct() {
-		if ( is_admin() ) {
+		// Allow on AJAX in order to load the shortcode content from the panel
+		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 			return;
 		}
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
-		add_shortcode( 'elementor-library', [ $this, 'library_shortcode' ] );
+		add_shortcode( 'elementor-template', [ $this, 'library_template_shortcode' ] );
 	}
 }
