@@ -57,15 +57,6 @@ class Widget_Tabs extends Widget_Base {
 						'type' => Controls_Manager::TEXTAREA,
 						'show_label' => false,
 					],
-					[
-						'name' => 'tab_color',
-						'label' => __( 'Tab Color', 'elementor' ),
-						'placeholder' => __( 'Tab Content', 'elementor' ),
-						'type' => Controls_Manager::COLOR,
-						'selectors' => [
-							'{{WRAPPER}} {{CURRENT_ITEM}}' => 'color: {{VALUE}}',
-						],
-					],
 				],
 				'title_field' => '{{{ tab_title }}}',
 			]
