@@ -163,7 +163,7 @@ class Post_CSS_File {
 
 		foreach ( $data as $section_data ) {
 			$section = new Element_Section( $section_data );
-			$this->add_element_style_rules( $section );
+			$this->render_styles( $section );
 		}
 
 		$css .= $this->stylesheet_obj;
@@ -179,33 +179,33 @@ class Post_CSS_File {
 		$this->css = $css;
 	}
 
-	private function add_element_style_rules( Element_Base $element ) {
-		$element_settings = $element->get_settings();
-
-		$element_unique_class = '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
-
-		if ( 'column' === $element->get_name() ) {
-			if ( ! empty( $element_settings['_inline_size'] ) ) {
-				$this->_columns_width[] = $element_unique_class . '{width:' . $element_settings['_inline_size'] . '%;}';
-			}
+	private function add_element_style_rules( Element_Base $element, $controls, $values, $placeholders = null, $replacements = null ) {
+		if ( ! $placeholders ) {
+			$placeholders = [ '{{WRAPPER}}' ];
 		}
 
-		foreach ( $element->get_style_controls() as $control ) {
-			if ( ! isset( $element_settings[ $control['name'] ] ) ) {
-				continue;
+		if ( ! $replacements ) {
+			$replacements = [ $this->get_element_unique_selector( $element ) ];
+		}
+
+		foreach ( $controls as $control ) {
+			$control_value = $values[ $control['name'] ];
+
+			if ( ! empty( $control['style_fields'] ) ) {
+				$placeholders[] = '{{CURRENT_ITEM}}';
+
+				foreach ( $control_value as $index => $field_value ) {
+					$replacements[1] = '.elementor-repeater-item-' . $index;
+
+					$this->add_element_style_rules( $element, $control['style_fields'], $field_value, $placeholders, $replacements );
+				}
 			}
 
-			if ( ! $element->is_control_visible( $control ) ) {
-				continue;
-			}
-
-			$control_value = $element_settings[ $control['name'] ];
-
-			$this->add_control_style_rules( $control, $control_value, [ '{{WRAPPER}}' ], [ $element_unique_class ] );
+			$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
 		}
 
 		foreach ( $element->get_children() as $child_element ) {
-			$this->add_element_style_rules( $child_element );
+			$this->render_styles( $child_element );
 		}
 	}
 
@@ -220,32 +220,30 @@ class Post_CSS_File {
 
 		$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
-		if ( ! empty( $control['style_fields'] ) ) {
-			$placeholders[] = '{{CURRENT_ITEM}}';
-
-			foreach ( $control['style_fields'] as $index => $style_field ) {
-				$replacements[1] = '.elementor-repeater-item-' . $index;
-
-				$this->add_control_style_rules( $style_field, $value[ $index ][ $style_field['name'] ], $placeholders, $replacements );
-			}
-		}
-
-		if ( empty( $control['selectors'] ) ) {
-			return;
-		}
-
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			$output_selector = str_replace( $placeholders, $replacements, $selector );
+			$parsed_css_property = $control_obj->get_replaced_style_values( $css_property, $value );
 
-			$output_css_property = $control_obj->get_replaced_style_values( $css_property, $value );
-
-			if ( ! $output_css_property ) {
+			if ( ! $parsed_css_property ) {
 				continue;
 			}
 
+			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
+
 			$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
 
-			$this->stylesheet_obj->add_rules( $output_selector, $output_css_property, $device );
+			$this->stylesheet_obj->add_rules( $parsed_selector, $parsed_css_property, $device );
+		}
+	}
+
+	private function render_styles( Element_Base $element ) {
+		$element_settings = $element->get_settings();
+
+		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings );
+
+		if ( 'column' === $element->get_name() ) {
+			if ( ! empty( $element_settings['_inline_size'] ) ) {
+				$this->_columns_width[] = $this->get_element_unique_selector( $element ) . '{width:' . $element_settings['_inline_size'] . '%;}';
+			}
 		}
 	}
 }
