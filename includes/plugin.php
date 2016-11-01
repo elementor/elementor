@@ -97,6 +97,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/posts-css-manager.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -107,11 +108,16 @@ class Plugin {
 		}
 	}
 
+	public function widgets_init() {
+		register_widget( 'Elementor\Widget_Library_Template' );
+	}
+
 	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'widgets_init', [ $this, 'widgets_init' ] );
 
 		// TODO: Declare this fields
 		$this->_includes();
@@ -136,6 +142,7 @@ class Plugin {
 
 		if ( is_admin() ) {
 			new Admin();
+			new Tools();
 		}
 	}
 }
