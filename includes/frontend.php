@@ -319,7 +319,7 @@ class Frontend {
 		if ( get_the_ID() === (int) $post_id ) {
 			$content = '';
 			if ( Plugin::instance()->editor->is_edit_mode() ) {
-				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Shortcode: The template ID cannot be the same as the currently used template. Please choose a different one.', 'elementor' ) . '</div>';
+				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
 			}
 
 			return $content;
