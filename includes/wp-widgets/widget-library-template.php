@@ -18,7 +18,6 @@ class Widget_Library_Template extends \WP_Widget {
 	 * @param array $instance
 	 */
 	public function widget( $args, $instance ) {
-
 		echo $args['before_widget'];
 
 		if ( ! empty( $instance['title'] ) ) {
@@ -34,11 +33,13 @@ class Widget_Library_Template extends \WP_Widget {
 
 	/**
 	 * @param array $instance
+	 *
+	 * @return void
 	 */
 	public function form( $instance ) {
-		if ( ! isset( $instance['title'] ) ) {
+		if ( ! isset( $instance['title'] ) ) :
 			$instance['title'] = '';
-		}
+		endif;
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_attr_e( 'Title:', 'elementor' ); ?></label>
@@ -48,22 +49,18 @@ class Widget_Library_Template extends \WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'template_id' ) ); ?>"><?php esc_attr_e( 'Template ID:', 'elementor' ); ?></label>
 			<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'template_id' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'template_id' ) ); ?>">
-				<option value="">
-					<?php echo __( 'Please Choose', 'elementor' ) ?>
-				</option>
+				<option value=""><?php _e( 'Please Choose', 'elementor' ) ?></option>
 				<?php
-				$source    = Plugin::instance()->templates_manager->get_source( 'local' );
+				$source = Plugin::instance()->templates_manager->get_source( 'local' );
 				$templates = $source->get_items();
 
-				foreach ( $templates as $template ) {
+				foreach ( $templates as $template ) :
 					$selected = selected( $template['template_id'], $instance['template_id'] );
 					?>
 					<option value="<?php echo $template['template_id'] ?>" <?php echo $selected ?>>
 						<?php echo $template['title'] ?>
 					</option>
-					<?php
-				}
-				?>
+				<?php endforeach; ?>
 			</select>
 		</p>
 		<?php
@@ -77,8 +74,8 @@ class Widget_Library_Template extends \WP_Widget {
 	 * @return array
 	 */
 	public function update( $new_instance, $old_instance ) {
-		$instance                = array();
-		$instance['title']       = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance = [];
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 		$instance['template_id'] = $new_instance['template_id'];
 
 		return $instance;
