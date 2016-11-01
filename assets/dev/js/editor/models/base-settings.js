@@ -38,9 +38,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getFontControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
+		return _.filter( this.controls, function( control ) {
 			return 'font' === control.type;
-		}, this ) );
+		} );
 	},
 
 	getStyleControls: function() {
@@ -62,9 +62,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
     getClassControls: function() {
-        return _.filter( this.controls, _.bind( function( control ) {
-            return this.isClassControl( control.name );
-        }, this ) );
+	    var self = this;
+
+        return _.filter( self.controls, function( control ) {
+            return self.isClassControl( control.name );
+        } );
     },
 
 	isClassControl: function( attribute ) {
