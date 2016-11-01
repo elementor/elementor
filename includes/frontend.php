@@ -333,7 +333,11 @@ class Frontend {
 		return $content;
 	}
 
-	public function library_shortcode( $attributes ) {
+	public function library_shortcode( $attributes = [] ) {
+		if ( empty( $attributes['id'] ) ) {
+			return '';
+		}
+
 		return $this->get_builder_content_for_display( $attributes['id'] );
 	}
 
@@ -344,6 +348,7 @@ class Frontend {
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
 		add_shortcode( 'elementor-library', [ $this, 'library_shortcode' ] );
 	}
 }
