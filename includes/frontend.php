@@ -199,7 +199,24 @@ class Frontend {
 			foreach ( $this->_enqueue_google_fonts as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
-			printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=%s">', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$subsets = [
+				'ru_RU' => 'cyrillic',
+				'uk' => 'cyrillic',
+				'bg_BG' => 'cyrillic',
+				'vi' => 'vietnamese',
+				'el' => 'greek',
+				'he_IL' => 'hebrew',
+			];
+			$locale = get_locale();
+
+			if ( isset( $subsets[ $locale ] ) ) {
+				$fonts_url .= '&subset=' . $subsets[ $locale ];
+			}
+
+			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
 			$this->_enqueue_google_fonts = [];
 		}
 
