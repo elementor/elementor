@@ -330,12 +330,30 @@ abstract class Element_Base {
 		return true;
 	}
 
-	public function add_render_attribute( $element, $key, $value ) {
+	public function add_render_attribute( $element, $key = null, $value = null ) {
+		if ( is_array( $element ) ) {
+			foreach ( $element as $element_key => $attributes ) {
+				$this->add_render_attribute( $element_key, $attributes );
+			}
+
+			return $this;
+		}
+
+		if ( is_array( $key ) ) {
+			foreach ( $key as $attribute_key => $attributes ) {
+				$this->add_render_attribute( $element, $attribute_key, $attributes );
+			}
+
+			return $this;
+		}
+
 		if ( empty( $this->_render_attributes[ $element ][ $key ] ) ) {
 			$this->_render_attributes[ $element ][ $key ] = [];
 		}
 
 		$this->_render_attributes[ $element ][ $key ] = array_merge( $this->_render_attributes[ $element ][ $key ], (array) $value );
+
+		return $this;
 	}
 
 	public function get_render_attribute_string( $element ) {
