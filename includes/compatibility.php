@@ -33,6 +33,12 @@ class Compatibility {
 				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
 			} );
 		}
+
+		// Exclude our Library from sitemap.xml in Yoast SEO plugin
+		add_filter( 'wpseo_sitemaps_supported_post_types', function( $post_types ) {
+			unset( $post_types[ TemplateLibrary\Source_Local::CPT ] );
+			return $post_types;
+		} );
 	}
 
 	/**
