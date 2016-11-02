@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Widget_Base extends Element_Base {
 
-	protected $skins = [];
+	protected $_has_template_content = true;
 
 	public static function get_type() {
 		return 'widget';
@@ -56,26 +56,34 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( $is_first_section ) {
 			$this->_register_skin_control();
-		}
 
-		$is_first_section = false;
+			$is_first_section = false;
+		}
 	}
 
 	private function _register_skin_control() {
 		$skins = $this->get_skins();
 		if ( ! empty( $skins ) ) {
-			$skin_options = [ '' => __( 'Default', 'elementor' ) ];
+			$skin_options = [];
+
+			if ( $this->_has_template_content ) {
+				$skin_options[''] = __( 'Default', 'elementor' );
+			}
 
 			foreach ( $skins as $skin_id => $skin ) {
 				$skin_options[ $skin_id ] = $skin->get_title();
 			}
+
+			// Get the first item for default value
+			$default_value = array_keys( $skin_options );
+			$default_value = array_shift( $default_value );
 
 			$this->add_control(
 				'_skin',
 				[
 					'label' => __( 'Skin', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => '',
+					'default' => $default_value,
 					'options' => $skin_options,
 				]
 			);
@@ -194,7 +202,9 @@ abstract class Widget_Base extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
+		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
+
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php

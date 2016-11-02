@@ -14,13 +14,14 @@ abstract class Control_Base {
 	private $_settings = [];
 
 	abstract public function content_template();
+
 	abstract public function get_type();
 
-	public function enqueue() {}
-
-	protected function get_default_settings() {
-		return [];
+	public function __construct() {
+		$this->_settings = wp_parse_args( $this->get_default_settings(), $this->_base_settings );
 	}
+
+	public function enqueue() {}
 
 	public function get_default_value() {
 		return '';
@@ -73,7 +74,7 @@ abstract class Control_Base {
 		<?php
 	}
 
-	public function __construct() {
-		$this->_settings = wp_parse_args( $this->get_default_settings(), $this->_base_settings );
+	protected function get_default_settings() {
+		return [];
 	}
 }

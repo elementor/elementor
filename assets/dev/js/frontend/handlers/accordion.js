@@ -16,10 +16,9 @@ var activateSection = function( sectionIndex, $accordionTitles ) {
 	}
 };
 
-module.exports = function( $ ) {
-	var $this = $( this ),
-		defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
-		$accordionTitles = $this.find( '.elementor-accordion-title' );
+module.exports = function( $scoop, $ ) {
+	var defaultActiveSection = $scoop.find( '.elementor-accordion' ).data( 'active-section' ),
+		$accordionTitles = $scoop.find( '.elementor-accordion-title' );
 
 	if ( ! defaultActiveSection ) {
 		defaultActiveSection = 1;
