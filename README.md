@@ -161,6 +161,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 0.10.6 - 02.11.2016 ###
+* Fix! - Some breaks layouts from previous release
+
 ### 0.10.5 - 02.11.2016 ###
 * Tweak! - Added Compatibility for Autoptimize Plugin ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
 * Tweak! - Now `elementor_library` custom post type excluded from the sitemap by Yoast SEO ([Topic](https://wordpress.org/support/topic/disable-elementor_library-sitemap-xml/))
@@ -169,7 +172,6 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added Compatibility for jQuery Masonry Image Gallery plugin ([#762](https://github.com/pojome/elementor/issues/762))
 * Tweak! - Added support for "multiple value" condition in Repeater control
 * Fixed! - Bug corrupting JSON post meta on import Elementor pages ([Topic](https://wordpress.org/support/topic/pages-importexport-not-working-properly/))
-* Fixed! - Image widget template for link and caption ([Topic](https://wordpress.org/support/topic/image-not-aligning-when-linked/))
 * Fixed! - `.elementor-slick-slider` class now apply on all Elementor custom slick theme ([#424](https://github.com/pojome/elementor/issues/424))
 * Fixed! - Added subset support for Google Fonts to fix issues with some browsers
 
