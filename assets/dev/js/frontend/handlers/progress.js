@@ -1,7 +1,7 @@
-module.exports = function( $ ) {
+module.exports = function( $scoop, $ ) {
 	var interval = 80;
 
-	$( this ).find( '.elementor-progress-bar' ).waypoint( function() {
+	$scoop.find( '.elementor-progress-bar' ).waypoint( function() {
 		var $progressbar = $( this ),
 			max = parseInt( $progressbar.data( 'max' ), 10 ),
 			$inner = $progressbar.next(),

@@ -1,8 +1,7 @@
-module.exports = function( $ ) {
-	var $this = $( this ),
-		defaultActiveTab = $this.find( '.elementor-tabs' ).data( 'active-tab' ),
-		$tabsTitles = $this.find( '.elementor-tab-title' ),
-		$tabs = $this.find( '.elementor-tab-content' ),
+module.exports = function( $scoop, $ ) {
+	var defaultActiveTab = $scoop.find( '.elementor-tabs' ).data( 'active-tab' ),
+		$tabsTitles = $scoop.find( '.elementor-tab-title' ),
+		$tabs = $scoop.find( '.elementor-tab-content' ),
 		$active,
 		$content;
 

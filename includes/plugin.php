@@ -79,10 +79,11 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
-		include( ELEMENTOR_PATH . 'includes/controls-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/schemes-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/elements-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/widgets-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
@@ -104,7 +105,7 @@ class Plugin {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				include( ELEMENTOR_PATH . 'includes/image-manager.php' );
+				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
 			}
 		}
 	}
@@ -128,6 +129,7 @@ class Plugin {
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
+		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
 
 		$settings = new Settings();

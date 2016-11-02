@@ -1,19 +1,18 @@
-module.exports = function() {
+module.exports = function( $scoop, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var $element = this,
-		animation = $element.data( 'animation' );
+	var animation = $scoop.data( 'animation' );
 
 	if ( ! animation ) {
 		return;
 	}
 
-	$element.addClass( 'elementor-invisible' ).removeClass( animation );
+	$scoop.addClass( 'elementor-invisible' ).removeClass( animation );
 
-	$element.waypoint( function() {
-		$element.removeClass( 'elementor-invisible' ).addClass( animation );
+	$scoop.waypoint( function() {
+		$scoop.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
 
 };
