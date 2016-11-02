@@ -1,0 +1,82 @@
+//
+// Forms (Input, Textarea, Select Etc..)
+//
+
+//
+.elementor-field-group {
+	flex-wrap: wrap;
+	align-items: center;
+
+	label {
+		cursor: pointer;
+	}
+
+	input {
+
+		&[type=text],
+		&[type=email],
+		&[type=url],
+		&[type=password],
+		&[type=tel],
+		&[type=search] {
+			@include input-style();
+			@include input-focus();
+			@include input-placeholder();
+		}
+
+		&[type=radio] {
+			-webkit-appearance: radio;
+			-moz-appearance: radio;
+			appearance: radio;
+		}
+
+		&[type=checkbox] {
+			-webkit-appearance: checkbox;
+			-moz-appearance: checkbox;
+			appearance: checkbox;
+		}
+	}
+
+	textarea {
+		@include input-style();
+		@include input-focus();
+		@include input-placeholder();
+	}
+
+	// Select Input
+	.elementor-select-wrapper {
+		@include input-style();
+		display: flex;
+		position: relative;
+		padding: 0;
+
+		select {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			background: transparent;
+			padding: 9px 16px; // Inherit from input size
+			border-radius: 2px;
+			border: 0;
+			font-size: inherit;
+			color: inherit;
+			line-height: inherit;
+			flex-basis: 100%;
+			@include input-focus();
+			@include padding-end(20px);
+			position: relative;
+			z-index: 1;
+		}
+
+		&:before {
+			content: '\f0d7';
+			font-family: 'FontAwesome';
+			font-size: 15px;
+			position: absolute;
+			z-index: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			@include end(10px);
+		}
+	}
+}

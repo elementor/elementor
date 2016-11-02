@@ -79,6 +79,11 @@ class Plugin {
 	public $skins_manager;
 
 	/**
+	 * @var Posts_CSS_Manager
+	 */
+	public $posts_css_manager;
+
+	/**
 	 * @return string
 	 */
 	public function get_version() {
@@ -132,6 +137,10 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
+	public function widgets_init() {
+		register_widget( 'Elementor\Widget_Library_Template' );
+	}
+
 	private function _includes() {
 		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
 		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
@@ -148,6 +157,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
+		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
 		include( ELEMENTOR_PATH . 'includes/frontend.php' );
@@ -158,6 +168,10 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
+
+		include( ELEMENTOR_PATH . 'includes/managers/posts-css-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -176,6 +190,7 @@ class Plugin {
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
+		$this->posts_css_manager = new Posts_CSS_Manager();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();
@@ -189,6 +204,7 @@ class Plugin {
 
 		if ( is_admin() ) {
 			new Admin();
+			new Tools();
 		}
 	}
 
@@ -205,6 +221,7 @@ class Plugin {
 	 */
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'widgets_init', [ $this, 'widgets_init' ] );
 
 		// TODO: Declare this fields
 		$this->_includes();
