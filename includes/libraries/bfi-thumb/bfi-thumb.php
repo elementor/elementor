@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 if ( ! defined( 'BFITHUMB_UPLOAD_DIR' ) ) {
-	define( 'BFITHUMB_UPLOAD_DIR', 'elementor-thumbs' );
+	define( 'BFITHUMB_UPLOAD_DIR', 'elementor/thumbs' );
 }
 
 if ( ! function_exists( 'bfi_thumb' ) ) {
