@@ -70,6 +70,7 @@ We've integrated RTL and multi language support within the framework of Elemento
 
 = Translations =
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
+- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
@@ -78,9 +79,9 @@ We've integrated RTL and multi language support within the framework of Elemento
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES) - in progress
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 - [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
+- [Arabic](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (ar) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -89,9 +90,9 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Documentation and Support =
 
-- For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 - If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
-- For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- For more information about features, FAQs and documentation, check out our website at [Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Liked Elementor? =
 - Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
@@ -120,7 +121,7 @@ https://www.youtube.com/watch?v=Ypn6fltn_7s
 4. Press the 'Edit with Elementor' button.
 5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
 
-For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+For documentation and tutorials visit our [Knowledge Base](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 == Frequently Asked Questions ==
 
