@@ -1,7 +1,6 @@
-module.exports = function( $ ) {
-	var $this = $( this ),
-		$imageOverlay = $this.find( '.elementor-custom-embed-image-overlay' ),
-		$videoFrame = $this.find( 'iframe' );
+module.exports = function( $scoop, $ ) {
+	var $imageOverlay = $scoop.find( '.elementor-custom-embed-image-overlay' ),
+		$videoFrame = $scoop.find( 'iframe' );
 
 	if ( ! $imageOverlay.length ) {
 		return;

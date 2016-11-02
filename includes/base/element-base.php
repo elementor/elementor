@@ -95,14 +95,6 @@ abstract class Element_Base {
 
 	abstract public function get_name();
 
-	public function __construct( $data = [], $args = [] ) {
-		if ( $data ) {
-			$this->_init( $data );
-		} else {
-			$this->_default_args = $args;
-		}
-	}
-
 	public final function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
@@ -365,12 +357,30 @@ abstract class Element_Base {
 		return true;
 	}
 
-	public function add_render_attribute( $element, $key, $value ) {
+	public function add_render_attribute( $element, $key = null, $value = null ) {
+		if ( is_array( $element ) ) {
+			foreach ( $element as $element_key => $attributes ) {
+				$this->add_render_attribute( $element_key, $attributes );
+			}
+
+			return $this;
+		}
+
+		if ( is_array( $key ) ) {
+			foreach ( $key as $attribute_key => $attributes ) {
+				$this->add_render_attribute( $element, $attribute_key, $attributes );
+			}
+
+			return $this;
+		}
+
 		if ( empty( $this->_render_attributes[ $element ][ $key ] ) ) {
 			$this->_render_attributes[ $element ][ $key ] = [];
 		}
 
 		$this->_render_attributes[ $element ][ $key ] = array_merge( $this->_render_attributes[ $element ][ $key ], (array) $value );
+
+		return $this;
 	}
 
 	public function get_render_attribute_string( $element ) {
@@ -557,5 +567,13 @@ abstract class Element_Base {
 		$this->_data = array_merge( $this->get_default_data(), $data );
 		$this->_id = $data['id'];
 		$this->_settings = $this->_get_parsed_settings();
+	}
+
+	public function __construct( $data = [], $args = [] ) {
+		if ( $data ) {
+			$this->_init( $data );
+		} else {
+			$this->_default_args = $args;
+		}
 	}
 }

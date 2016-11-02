@@ -33,6 +33,22 @@ class Compatibility {
 				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
 			} );
 		}
+
+		// Exclude our Library from sitemap.xml in Yoast SEO plugin
+		add_filter( 'wpseo_sitemaps_supported_post_types', function( $post_types ) {
+			unset( $post_types[ TemplateLibrary\Source_Local::CPT ] );
+
+			return $post_types;
+		} );
+
+		// Disable optimize files in Editor from Autoptimize plugin
+		add_filter( 'autoptimize_filter_noptimize', function( $retval ) {
+			if ( Plugin::instance()->editor->is_edit_mode() ) {
+				$retval = true;
+			}
+
+			return $retval;
+		} );
 	}
 
 	/**

@@ -1,4 +1,4 @@
-var BackgroundVideo = function( $, $backgroundVideoContainer ) {
+var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
 		isYTVideo = false;
@@ -80,7 +80,7 @@ var BackgroundVideo = function( $, $backgroundVideoContainer ) {
 	init();
 };
 
-var StretchedSection = function( $, $section ) {
+var StretchedSection = function( $section, $ ) {
 	var elements = {},
 		settings = {};
 
@@ -146,12 +146,12 @@ var StretchedSection = function( $, $section ) {
 	init();
 };
 
-module.exports = function( $ ) {
-	new StretchedSection( $, this );
+module.exports = function( $scoop, $ ) {
+	new StretchedSection( $scoop, $ );
 
-	var $backgroundVideoContainer = this.find( '.elementor-background-video-container' );
+	var $backgroundVideoContainer = $scoop.find( '.elementor-background-video-container' );
 
 	if ( $backgroundVideoContainer ) {
-		new BackgroundVideo( $, $backgroundVideoContainer );
+		new BackgroundVideo( $backgroundVideoContainer, $ );
 	}
 };
