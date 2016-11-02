@@ -193,13 +193,30 @@ class Frontend {
 			foreach ( $this->_enqueue_google_fonts as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
-			printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=%s">', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$subsets = [
+				'ru_RU' => 'cyrillic',
+				'bg_BG' => 'cyrillic',
+				'he_IL' => 'hebrew',
+				'el' => 'greek',
+				'vi' => 'vietnamese',
+				'uk' => 'cyrillic',
+			];
+			$locale = get_locale();
+
+			if ( isset( $subsets[ $locale ] ) ) {
+				$fonts_url .= '&subset=' . $subsets[ $locale ];
+			}
+
+			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
 			$this->_enqueue_google_fonts = [];
 		}
 
 		if ( ! empty( $this->_enqueue_google_early_access_fonts ) ) {
 			foreach ( $this->_enqueue_google_early_access_fonts as $current_font ) {
-				printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
+				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 			}
 			$this->_enqueue_google_early_access_fonts = [];
 		}
@@ -250,18 +267,38 @@ class Frontend {
 	}
 
 	public function apply_builder_in_content( $content ) {
+		// Remove the filter itself in order to allow other `the_content` in the elements
+		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
 		if ( ! $this->_is_frontend_mode )
 			return $content;
 
 		$post_id = get_the_ID();
-		if ( post_password_required( $post_id ) )
-			return $content;
+		$builder_content = $this->get_builder_content( $post_id );
+
+		if ( ! empty( $builder_content ) ) {
+			$content = $builder_content;
+		}
+
+		// Add the filter again for other `the_content` calls
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
+		return $content;
+	}
+
+	public function get_builder_content( $post_id ) {
+		if ( post_password_required( $post_id ) ) {
+			return '';
+		}
 
 		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
 
 		if ( empty( $data ) || 'builder' !== $edit_mode )
-			return $content;
+			return '';
+
+		$css_file = new Post_CSS_File( $post_id );
+		$css_file->enqueue();
 
 		ob_start(); ?>
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
@@ -290,11 +327,45 @@ class Frontend {
 		] );
 	}
 
+	public function get_builder_content_for_display( $post_id ) {
+		if ( ! get_post( $post_id ) ) {
+			return '';
+		}
+
+		// Set edit mode as false, so dont render settings and etc
+		Plugin::instance()->editor->set_edit_mode( false );
+
+		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
+		$global_post = $GLOBALS['post'];
+		$GLOBALS['post'] = get_post( $post_id );
+
+		$content = $this->get_builder_content( $post_id );
+
+		// Restore global post
+		$GLOBALS['post'] = $global_post;
+
+		// Restore edit mode state
+		Plugin::instance()->editor->set_edit_mode( null );
+
+		return $content;
+	}
+
+	public function library_shortcode( $attributes = [] ) {
+		if ( empty( $attributes['id'] ) ) {
+			return '';
+		}
+
+		return $this->get_builder_content_for_display( $attributes['id'] );
+	}
+
 	public function __construct() {
-		if ( is_admin() )
+		if ( is_admin() ) {
 			return;
+		}
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
+		add_shortcode( 'elementor-library', [ $this, 'library_shortcode' ] );
 	}
 }

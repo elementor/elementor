@@ -45,7 +45,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		this.getOption( 'editedElementView' ).$el.removeClass( 'elementor-element-editable' );
+		if ( this.editedElementView ) {
+			this.editedElementView.$el.removeClass( 'elementor-element-editable' );
+		}
+
 		this.model.trigger( 'editor:close' );
 
 		this.triggerMethod( 'editor:destroy' );
@@ -63,7 +66,9 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	onRender: function() {
-		this.getOption( 'editedElementView' ).$el.addClass( 'elementor-element-editable' );
+		if ( this.editedElementView ) {
+			this.editedElementView.$el.addClass( 'elementor-element-editable' );
+		}
 
 		// Set the first tab as active
 		this.ui.tabs.eq( 0 ).find( 'a' ).trigger( 'click' );

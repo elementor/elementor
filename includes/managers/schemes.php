@@ -18,18 +18,6 @@ class Schemes_Manager {
 		'color-picker',
 	];
 
-	public function init() {
-		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
-
-		include( ELEMENTOR_PATH . 'includes/schemes/base.php' );
-
-		foreach ( self::$_schemes_types as $schemes_type ) {
-			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
-
-			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( str_replace( '-', '_', $schemes_type ) ) );
-		}
-	}
-
 	public function register_scheme( $scheme_class ) {
 		if ( ! class_exists( $scheme_class ) ) {
 			return new \WP_Error( 'scheme_class_name_not_exists' );
@@ -152,8 +140,21 @@ class Schemes_Manager {
 		return self::$_enabled_schemes;
 	}
 
+	private function register_default_schemes() {
+		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
+
+		include( ELEMENTOR_PATH . 'includes/schemes/base.php' );
+
+		foreach ( self::$_schemes_types as $schemes_type ) {
+			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
+
+			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( str_replace( '-', '_', $schemes_type ) ) );
+		}
+	}
+
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
+		$this->register_default_schemes();
+
 		add_action( 'wp_ajax_elementor_apply_scheme', [ $this, 'ajax_apply_scheme' ] );
 	}
 }

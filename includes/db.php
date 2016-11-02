@@ -208,30 +208,41 @@ class DB {
 	 * @return array
 	 */
 	private function _get_editor_data( $data, $with_html_content = false ) {
-		$editor_data = [];
-
-		foreach ( $data as $section_data ) {
-			$section = new Element_Section( $section_data );
-
-			$section_data = $section->get_raw_data( $with_html_content );
-
-			if ( ! $section_data ) {
-				continue;
+		if ( isset( $data['elType'] ) ) {
+			if ( 'widget' === $data['elType'] ) {
+				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $data['widgetType'] );
+			} else {
+				$element_type = Plugin::instance()->elements_manager->get_element_types( $data['elType'] );
 			}
 
-			$editor_data[] = $section_data;
+			$element_class = $element_type->get_class_name();
+
+			/** @var Element_Base $element */
+			$element = new $element_class( $data );
+
+			return $element->get_raw_data( $with_html_content );
+		}
+
+		$editor_data = [];
+
+		foreach ( $data as $element_data ) {
+			$editor_data[] = $this->_get_editor_data( $element_data, $with_html_content );
 		} // End Section
 
 		return $editor_data;
 	}
 
 	public function iterate_data( $data_container, $callback ) {
-		foreach ( $data_container as $element_key => $element_value ) {
-			$data_container[ $element_key ] = $callback( $data_container[ $element_key ] );
-
-			if ( ! empty( $data_container[ $element_key ]['elements'] ) ) {
-				$data_container[ $element_key ]['elements'] = $this->iterate_data( $data_container[ $element_key ]['elements'], $callback );
+		if ( isset( $data_container['elType'] ) ) {
+			if ( ! empty( $data_container['elements'] ) ) {
+				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback );
 			}
+
+			return $callback( $data_container );
+		}
+
+		foreach ( $data_container as $element_key => $element_value ) {
+			$data_container[ $element_key ] = $this->iterate_data( $data_container[ $element_key ], $callback );
 		}
 
 		return $data_container;

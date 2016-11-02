@@ -70,7 +70,7 @@ class Preview {
 	 * @return string
 	 */
 	public function builder_wrapper( $content ) {
-		return '<div id="elementor" class="elementor"></div>';
+		return '<div id="elementor" class="elementor elementor-edit-mode"></div>';
 	}
 
 	public function print_custom_css() {

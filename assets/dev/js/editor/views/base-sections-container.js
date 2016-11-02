@@ -1,5 +1,4 @@
 var SectionView = require( 'elementor-views/section' ),
-	Element = require( 'elementor-models/element' ),
 	BaseSectionsContainerView;
 
 BaseSectionsContainerView = Marionette.CompositeView.extend( {

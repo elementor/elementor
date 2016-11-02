@@ -5,7 +5,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Element_Section extends Element_Base {
 
+	protected static $_edit_tools;
+
 	private static $presets = [];
+
+	protected static function get_default_edit_tools() {
+		return [
+			'duplicate' => [
+				'title' => __( 'Duplicate', 'elementor' ),
+				'icon' => 'files-o',
+			],
+			'save' => [
+				'title' => __( 'Save', 'elementor' ),
+				'icon' => 'floppy-o',
+			],
+			'remove' => [
+				'title' => __( 'Remove', 'elementor' ),
+				'icon' => 'times',
+			],
+		];
+	}
 
 	public function get_name() {
 		return 'section';

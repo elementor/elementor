@@ -15,6 +15,14 @@ body.elementor-editor-active {
 	.article {
 		overflow: visible;
 	}
+
+	// Hack for Zerif Pro theme
+	.elementor-element-overlay {
+
+		.elementor-editor-element-settings-list {
+			clear: unset;
+		}
+	}
 }
 
 #elementor {

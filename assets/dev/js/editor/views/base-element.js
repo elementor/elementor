@@ -5,6 +5,8 @@ var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
 
+	stylesheet: null,
+
 	id: function() {
 		return this.getElementUniqueSelector();
 	},
@@ -20,11 +22,26 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	baseEvents: {},
+	ui: function() {
+		return {
+			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
+			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+		};
+	},
 
-	elementEvents: {},
+	events: function() {
+		return {
+			'click @ui.removeButton': 'onClickRemove',
+			'click @ui.saveButton': 'onClickSave'
+		};
+	},
 
-	stylesheet: null,
+	triggers: function() {
+		return {
+			'click @ui.duplicateButton': 'click:duplicate'
+		};
+	},
 
 	$stylesheet: null,
 
@@ -42,12 +59,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	events: function() {
-		return _.extend( {}, this.baseEvents, this.elementEvents );
-	},
-
 	getTemplateType: function() {
 		return 'js';
+	},
+
+	getEditModel: function() {
+		return this.model;
 	},
 
 	initialize: function() {
@@ -60,8 +77,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
-		this.listenTo( this.model.get( 'settings' ), 'change', this.onSettingsChanged, this );
-		this.listenTo( this.model.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
+		var editModel = this.getEditModel();
+
+		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
 
 		this.on( 'render', function() {
 			this.renderUI();
@@ -71,6 +90,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.initRemoveDialog();
 
 		this.initStylesheet();
+	},
+
+	edit: function() {
+		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
 	addChildModel: function( model, options ) {
@@ -128,14 +151,17 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	enqueueFonts: function() {
-		_.each( this.model.get( 'settings' ).getFontControls(), _.bind( function( control ) {
-			var fontFamilyName = this.model.getSetting( control.name );
+		var editModel = this.getEditModel(),
+			settings = editModel.get( 'settings' );
+
+		_.each( settings.getFontControls(), _.bind( function( control ) {
+			var fontFamilyName = editModel.getSetting( control.name );
 
 			if ( _.isEmpty( fontFamilyName ) ) {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, this.model.get( 'settings' ) ) ) {
+			if ( ! elementor.helpers.isControlVisible( control, settings ) ) {
 				return;
 			}
 
@@ -174,7 +200,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		if ( ! elementor.helpers.isControlVisible( control, self.model.get( 'settings' ) ) ) {
+		if ( ! elementor.helpers.isControlVisible( control, self.getEditModel().get( 'settings' ) ) ) {
 			return;
 		}
 
@@ -214,7 +240,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	renderStyles: function() {
 		var self = this,
-			settings = self.model.get( 'settings' );
+			settings = self.getEditModel().get( 'settings' );
 
 		self.stylesheet.empty();
 
@@ -234,7 +260,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderCustomClasses: function() {
 		this.$el.addClass( 'elementor-element' );
 
-		var settings = this.model.get( 'settings' );
+		var settings = this.getEditModel().get( 'settings' );
 
 		_.each( settings.attributes, _.bind( function( value, attribute ) {
 			if ( settings.isClassControl( attribute ) ) {
@@ -242,7 +268,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 				this.$el.removeClass( currentControl.prefix_class + settings.previous( attribute ) );
 
-				var isVisible = elementor.helpers.isControlVisible( currentControl, this.model.get( 'settings' ) );
+				var isVisible = elementor.helpers.isControlVisible( currentControl, settings );
 
 				if ( isVisible && ! _.isEmpty( settings.get( attribute ) ) ) {
 					this.$el.addClass( currentControl.prefix_class + settings.get( attribute ) );
@@ -268,12 +294,26 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
+	onClickEdit: function( event ) {
+		event.preventDefault();
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'preview' === activeMode ) {
+			return;
+		}
+
+		this.edit();
+	},
+
 	onCollectionChanged: function() {
 		elementor.setFlagEditorChange( true );
 	},
 
 	onSettingsChanged: function( settings ) {
-		if ( this.model.get( 'editSettings' ) !== settings ) {
+		var editModel = this.getEditModel();
+
+		if ( editModel.get( 'editSettings' ) !== settings ) {
 			// Change flag only if server settings was changed
 			elementor.setFlagEditorChange( true );
 		}
@@ -304,11 +344,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			this.model.setHtmlCache();
+			editModel.setHtmlCache();
 			this.render();
-			this.model.renderOnLeave = true;
+			editModel.renderOnLeave = true;
 		} else {
-			this.model.renderRemoteServer();
+			editModel.renderRemoteServer();
 		}
 	},
 
@@ -317,6 +357,16 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.stopPropagation();
 
 		this.getRemoveDialog().show();
+	},
+
+	onClickSave: function( event ) {
+		event.preventDefault();
+
+		var model = this.model;
+
+		elementor.templates.startModal( function() {
+			elementor.templates.getLayout().showSaveTemplateView( model );
+		} );
 	}
 } );
 
