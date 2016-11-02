@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.10.4  
+**Stable tag:** 0.10.5  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -160,6 +160,18 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 0.10.5 - 02.11.2016 ###
+* Tweak! - Added Compatibility for Autoptimize Plugin ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
+* Tweak! - Now `elementor_library` custom post type excluded from the sitemap by Yoast SEO ([Topic](https://wordpress.org/support/topic/disable-elementor_library-sitemap-xml/))
+* Tweak! - Added Compatibility for Zerif Pro theme
+* Tweak! - Added Compatibility for themes by Bluchic
+* Tweak! - Added Compatibility for jQuery Masonry Image Gallery plugin ([#762](https://github.com/pojome/elementor/issues/762))
+* Tweak! - Added support for "multiple value" condition in Repeater control
+* Fixed! - Bug corrupting JSON post meta on import Elementor pages ([Topic](https://wordpress.org/support/topic/pages-importexport-not-working-properly/))
+* Fixed! - Image widget template for link and caption ([Topic](https://wordpress.org/support/topic/image-not-aligning-when-linked/))
+* Fixed! - `.elementor-slick-slider` class now apply on all Elementor custom slick theme ([#424](https://github.com/pojome/elementor/issues/424))
+* Fixed! - Added subset support for Google Fonts to fix issues with some browsers
 
 ### 0.10.4 - 26.10.2016 ###
 * Tweak! - Updated Font Awesome v4.7.0 (41+ icons)
