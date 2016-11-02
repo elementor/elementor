@@ -1,5 +1,5 @@
 === Elementor Page Builder ===
-Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
+Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh,
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
@@ -96,7 +96,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Liked Elementor? =
 - Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
-- Or rate us on [WordPress](https://wordpress.org/support/view/plugin-reviews/elementor?rate=5#postform) :)
+- Or rate us on [WordPress](https://wordpress.org/support/plugin/elementor/reviews/?filter=5/#new-post) :)
 
 == Installation ==
 
