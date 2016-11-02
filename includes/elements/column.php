@@ -5,6 +5,25 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Element_Column extends Element_Base {
 
+	protected static $_edit_tools;
+
+	protected static function get_default_edit_tools() {
+		return [
+			'duplicate' => [
+				'title' => __( 'Duplicate', 'elementor' ),
+				'icon' => 'files-o',
+			],
+			'add' => [
+				'title' => __( 'Add', 'elementor' ),
+				'icon' => 'plus',
+			],
+			'remove' => [
+				'title' => __( 'Remove', 'elementor' ),
+				'icon' => 'times',
+			],
+		];
+	}
+
 	public function get_name() {
 		return 'column';
 	}
@@ -312,63 +331,27 @@ class Element_Column extends Element_Base {
 					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
 						<a href="#" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><?php _e( 'Column', 'elementor' ); ?></a>
 					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-add">
-						<a href="#" title="<?php _e( 'Add New Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Add', 'elementor' ); ?></span>
-							<i class="fa fa-plus"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-times"></i>
-						</a>
-					</li>
+					<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+						<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
+							<a href="#" title="<?php echo $edit_tool['title']; ?>">
+								<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+								<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+							</a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 				<ul class="elementor-editor-element-settings-list  elementor-editor-section-settings-list">
 					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
 						<a href="#" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><?php _e( 'Section', 'elementor' ); ?></a>
 					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit Section', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate Section', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-save">
-						<a href="#" title="<?php _e( 'Save', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Save to Library', 'elementor' ); ?></span>
-							<i class="fa fa-floppy-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove Section', 'elementor' ); ?></span>
-							<i class="fa fa-times"></i>
-						</a>
-					</li>
+					<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+						<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
+							<a href="#" title="<?php echo $edit_tool['title']; ?>">
+								<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+								<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+							</a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 			</div>
 		</div>

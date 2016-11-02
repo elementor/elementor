@@ -32,7 +32,7 @@ HandleElementsRelation = Marionette.Behavior.extend( {
 			newView.addEmptyColumn();
 		}
 
-		newView.triggerMethod( 'open:editor' );
+		newView.edit();
 	}
 } );
 
