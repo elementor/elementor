@@ -169,7 +169,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
-		include( ELEMENTOR_PATH . 'includes/managers/posts-css-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
 
