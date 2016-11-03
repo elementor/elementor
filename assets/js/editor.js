@@ -3754,7 +3754,7 @@ helpers = {
 		} );
 	},
 
-	isControlVisible: function( controlModel, elementSettingsModel ) {
+	isControlVisible: function( controlModel, values ) {
 		var condition;
 
 		// TODO: Better way to get this?
@@ -3762,6 +3762,11 @@ helpers = {
 			condition = controlModel.get( 'condition' );
 		} else {
 			condition = controlModel.condition;
+		}
+
+		// Repeater items conditions
+		if ( controlModel.conditions ) {
+			return elementor.conditions.check( controlModel.conditions, values );
 		}
 
 		if ( _.isEmpty( condition ) ) {
@@ -3773,7 +3778,7 @@ helpers = {
 				conditionRealName = conditionNameParts[1],
 				conditionSubKey = conditionNameParts[2],
 				isNegativeCondition = !! conditionNameParts[3],
-				controlValue = elementSettingsModel.get( conditionRealName );
+				controlValue = values[ conditionRealName ];
 
 			if ( conditionSubKey ) {
 				controlValue = controlValue[ conditionSubKey ];
@@ -5005,7 +5010,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	stylesheet: null,
 
 	id: function() {
-		return this.getElementUniqueSelector();
+		return this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -5040,7 +5045,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	$stylesheet: null,
+	$stylesheetElement: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -5142,9 +5147,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	createStylesheetElement: function() {
-		this.$stylesheet = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
+		this.$stylesheetElement = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
 
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheet );
+		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
 	},
 
 	enqueueFonts: function() {
@@ -5171,33 +5176,32 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		placeholders = placeholders || [ /\{\{WRAPPER}}/g ];
 
-		replacements = replacements || [ '#' + self.getElementUniqueSelector() ];
+		replacements = replacements || [ '#' + self.getElementUniqueID() ];
 
 		_.each( controls, function( control ) {
-			var controlValue = values[ control.name ];
-
 			if ( control.styleFields ) {
-				placeholders.push( '{{CURRENT_ITEM}}' );
+				placeholders[1] = '{{CURRENT_ITEM}}';
 
-				controlValue.each( function( model, index ) {
-					replacements[1] = '.elementor-repeater-item-' + ( index + 1 );
+				values[ control.name ].each( function( itemModel ) {
+					replacements[1] = '.elementor-repeater-item-' + itemModel.get( '_id' );
 
-					self.addStyleRules( control.styleFields, model.attributes, placeholders, replacements );
+					self.addStyleRules( control.styleFields, itemModel.attributes, placeholders, replacements );
 				} );
 			}
 
-			self.addControlStyleRules( control, controlValue, placeholders, replacements );
+			self.addControlStyleRules( control, values, placeholders, replacements );
 		} );
 	},
 
-	addControlStyleRules: function( control, value, placeholders, replacements ) {
-		var self = this;
+	addControlStyleRules: function( control, values, placeholders, replacements ) {
+		var self = this,
+			value = values[ control.name ];
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
 		}
 
-		if ( ! elementor.helpers.isControlVisible( control, self.getEditModel().get( 'settings' ) ) ) {
+		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
 			return;
 		}
 
@@ -5224,15 +5228,15 @@ BaseElementView = Marionette.CompositeView.extend( {
 	addStyleToDocument: function() {
 		var styleText = this.stylesheet.toString();
 
-		if ( _.isEmpty( styleText ) && ! this.$stylesheet ) {
+		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
 			return;
 		}
 
-		if ( ! this.$stylesheet ) {
+		if ( ! this.$stylesheetElement ) {
 			this.createStylesheetElement();
 		}
 
-		this.$stylesheet.text( styleText );
+		this.$stylesheetElement.text( styleText );
 	},
 
 	renderStyles: function() {
@@ -5247,7 +5251,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueSelector(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
@@ -5287,7 +5291,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	getElementUniqueSelector: function() {
+	getElementUniqueID: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
@@ -5988,7 +5992,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	toggleControlVisibility: function() {
-		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel );
+		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
@@ -7889,7 +7893,7 @@ WidgetView = BaseElementView.extend( {
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueSelector() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( html );
 		}, this ) );
 
 		return this;
