@@ -419,6 +419,24 @@
   width: 0;
   height: 0; }
 
+.elementor-form-fields-wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; }
+  .elementor-form-fields-wrapper.elementor-labels-above > .elementor-field-group > input, .elementor-form-fields-wrapper.elementor-labels-above > .elementor-field-group > textarea, .elementor-form-fields-wrapper.elementor-labels-above > .elementor-field-group > .elementor-select-wrapper, .elementor-form-fields-wrapper.elementor-labels-above > .elementor-field-group .elementor-field-subgroup {
+    -webkit-flex-basis: 100%;
+        -ms-flex-preferred-size: 100%;
+            flex-basis: 100%; }
+  .elementor-form-fields-wrapper.elementor-labels-inline > .elementor-field-group > input, .elementor-form-fields-wrapper.elementor-labels-inline > .elementor-field-group .elementor-select-wrapper {
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1; }
+
 .elementor-field-group {
   -webkit-flex-wrap: wrap;
       -ms-flex-wrap: wrap;
@@ -428,130 +446,128 @@
       -ms-flex-align: center;
               -ms-grid-row-align: center;
           align-items: center; }
-  .elementor-field-group label {
-    cursor: pointer; }
-  .elementor-field-group input[type=text], .elementor-field-group input[type=email], .elementor-field-group input[type=url], .elementor-field-group input[type=password], .elementor-field-group input[type=tel], .elementor-field-group input[type=search] {
+  .elementor-field-group.elementor-button-vertical-align-start {
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+        -ms-flex-align: start;
+                -ms-grid-row-align: flex-start;
+            align-items: flex-start; }
+  .elementor-field-group.elementor-button-vertical-align-end {
+    -webkit-box-align: end;
+    -webkit-align-items: flex-end;
+        -ms-flex-align: end;
+                -ms-grid-row-align: flex-end;
+            align-items: flex-end; }
+  .elementor-field-group.elementor-button-vertical-align-stretch {
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+        -ms-flex-align: stretch;
+                -ms-grid-row-align: stretch;
+            align-items: stretch; }
+  .elementor-field-group .elementor-field-textual {
+    width: auto;
     border: 1px solid #818a91;
     background-color: transparent;
     color: #373a3c;
-    font-size: 1em;
-    line-height: 1.4;
-    height: auto;
-    width: auto;
     vertical-align: middle;
-    padding: 9px 16px;
-    border-radius: 3px;
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1; }
-    .elementor-field-group input[type=text]:focus, .elementor-field-group input[type=email]:focus, .elementor-field-group input[type=url]:focus, .elementor-field-group input[type=password]:focus, .elementor-field-group input[type=tel]:focus, .elementor-field-group input[type=search]:focus {
+    .elementor-field-group .elementor-field-textual:focus {
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
-      outline-width: 0;
-      outline-style: hidden; }
-    .elementor-field-group input[type=text]::-webkit-input-placeholder, .elementor-field-group input[type=email]::-webkit-input-placeholder, .elementor-field-group input[type=url]::-webkit-input-placeholder, .elementor-field-group input[type=password]::-webkit-input-placeholder, .elementor-field-group input[type=tel]::-webkit-input-placeholder, .elementor-field-group input[type=search]::-webkit-input-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-    .elementor-field-group input[type=text]:-ms-input-placeholder, .elementor-field-group input[type=email]:-ms-input-placeholder, .elementor-field-group input[type=url]:-ms-input-placeholder, .elementor-field-group input[type=password]:-ms-input-placeholder, .elementor-field-group input[type=tel]:-ms-input-placeholder, .elementor-field-group input[type=search]:-ms-input-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-    .elementor-field-group input[type=text]::-moz-placeholder, .elementor-field-group input[type=email]::-moz-placeholder, .elementor-field-group input[type=url]::-moz-placeholder, .elementor-field-group input[type=password]::-moz-placeholder, .elementor-field-group input[type=tel]::-moz-placeholder, .elementor-field-group input[type=search]::-moz-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-    .elementor-field-group input[type=text]:-moz-placeholder, .elementor-field-group input[type=email]:-moz-placeholder, .elementor-field-group input[type=url]:-moz-placeholder, .elementor-field-group input[type=password]:-moz-placeholder, .elementor-field-group input[type=tel]:-moz-placeholder, .elementor-field-group input[type=search]:-moz-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-  .elementor-field-group input[type=radio] {
-    -webkit-appearance: radio;
-    -moz-appearance: radio;
-    appearance: radio; }
-  .elementor-field-group input[type=checkbox] {
-    -webkit-appearance: checkbox;
-    -moz-appearance: checkbox;
-    appearance: checkbox; }
-  .elementor-field-group textarea {
-    border: 1px solid #818a91;
-    background-color: transparent;
-    color: #373a3c;
-    font-size: 1em;
-    line-height: 1.4;
-    height: auto;
-    width: auto;
-    vertical-align: middle;
-    padding: 9px 16px;
-    border-radius: 3px;
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1; }
-    .elementor-field-group textarea:focus {
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
-      outline-width: 0;
-      outline-style: hidden; }
-    .elementor-field-group textarea::-webkit-input-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-    .elementor-field-group textarea:-ms-input-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-    .elementor-field-group textarea::-moz-placeholder {
-      color: inherit;
-      opacity: 0.6; }
-    .elementor-field-group textarea:-moz-placeholder {
+      outline: 0; }
+    .elementor-field-group .elementor-field-textual::-moz-placeholder, .elementor-field-group .elementor-field-textual::-webkit-input-placeholder, .elementor-field-group .elementor-field-textual :-ms-input-placeholder {
       color: inherit;
       opacity: 0.6; }
   .elementor-field-group .elementor-select-wrapper {
-    border: 1px solid #818a91;
-    background-color: transparent;
-    color: #373a3c;
-    font-size: 1em;
-    line-height: 1.4;
-    height: auto;
-    width: auto;
-    vertical-align: middle;
-    padding: 9px 16px;
-    border-radius: 3px;
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    position: relative;
-    padding: 0; }
+    position: relative; }
     .elementor-field-group .elementor-select-wrapper select {
       -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background: transparent;
-      padding: 9px 16px;
-      border-radius: 2px;
-      border: 0;
-      font-size: inherit;
+         -moz-appearance: none;
+              appearance: none;
       color: inherit;
-      line-height: inherit;
       -webkit-flex-basis: 100%;
           -ms-flex-preferred-size: 100%;
               flex-basis: 100%;
-      padding-right: 20px;
-      position: relative;
-      z-index: 1; }
-      .elementor-field-group .elementor-select-wrapper select:focus {
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
-        outline-width: 0;
-        outline-style: hidden; }
+      padding-right: 20px; }
     .elementor-field-group .elementor-select-wrapper:before {
       content: '\f0d7';
       font-family: 'FontAwesome';
       font-size: 15px;
       position: absolute;
-      z-index: 0;
       top: 50%;
       -webkit-transform: translateY(-50%);
               transform: translateY(-50%);
       right: 10px; }
+
+.elementor-field-subgroup {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; }
+  .elementor-field-subgroup.elementor-subgroup-inline .elementor-field-option {
+    padding-right: 10px; }
+  .elementor-field-subgroup:not(.elementor-subgroup-inline) .elementor-field-option {
+    -webkit-flex-basis: 100%;
+        -ms-flex-preferred-size: 100%;
+            flex-basis: 100%; }
+
+.elementor-field-label {
+  cursor: pointer; }
+
+.elementor-field-textual.elementor-size-xs {
+  font-size: 0.9em;
+  line-height: 1.2;
+  padding: 6px 12px;
+  border-radius: 1px; }
+.elementor-field-textual.elementor-size-sm {
+  font-size: 1em;
+  line-height: 1.4;
+  padding: 9px 16px;
+  border-radius: 2px; }
+.elementor-field-textual.elementor-size-md {
+  font-size: 1.2em;
+  line-height: 1.5;
+  padding: 10px 16px;
+  border-radius: 3px; }
+.elementor-field-textual.elementor-size-lg {
+  font-size: 1.4em;
+  line-height: 1.6;
+  padding: 11px 16px;
+  border-radius: 4px; }
+.elementor-field-textual.elementor-size-xl {
+  font-size: 1.6em;
+  line-height: 1.8;
+  padding: 18px 20px;
+  border-radius: 5px; }
+
+.elementor-button-align-center {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+.elementor-button-align-stretch button {
+  -webkit-flex-basis: 100%;
+      -ms-flex-preferred-size: 100%;
+          flex-basis: 100%; }
+.elementor-button-align-start {
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+      -ms-flex-pack: start;
+          justify-content: flex-start; }
+.elementor-button-align-end {
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end; }
 
 .elementor-widget-heading .elementor-heading-title {
   padding: 0;

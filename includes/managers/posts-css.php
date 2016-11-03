@@ -16,9 +16,6 @@ class Posts_CSS_Manager {
 
 		if ( ! is_dir( $css_path ) ) {
 			wp_mkdir_p( $css_path );
-
-			// Prevent directory index
-			file_put_contents( $css_path . '/' . 'index.php', "<?php\n// Silence is golden.\n" );
 		}
 	}
 

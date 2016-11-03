@@ -38,34 +38,36 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getFontControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
+		return _.filter( this.controls, function( control ) {
 			return 'font' === control.type;
-		}, this ) );
+		} );
 	},
 
-	getStyleControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
-			return this.isStyleControl( control.name );
-		}, this ) );
+	getStyleControls: function( controls ) {
+		var self = this;
+
+		controls = controls || self.controls;
+
+		return _.filter( controls, function( control ) {
+			if ( control.fields ) {
+				control.styleFields = self.getStyleControls( control.fields );
+
+				return true;
+			}
+
+			return self.isStyleControl( control.name, controls );
+		} );
 	},
 
-	isStyleControl: function( attribute ) {
-		var currentControl = _.find( this.controls, function( control ) {
+	isStyleControl: function( attribute, controls ) {
+		controls = controls || this.controls;
+
+		var currentControl = _.find( controls, function( control ) {
 			return attribute === control.name;
 		} );
 
-		if ( _.isUndefined( currentControl ) ) {
-			return false;
-		}
-
-		return ! _.isEmpty( currentControl.selectors );
+		return currentControl && ! _.isEmpty( currentControl.selectors );
 	},
-
-    getClassControls: function() {
-        return _.filter( this.controls, _.bind( function( control ) {
-            return this.isClassControl( control.name );
-        }, this ) );
-    },
 
 	isClassControl: function( attribute ) {
 		var currentControl = _.find( this.controls, function( control ) {
