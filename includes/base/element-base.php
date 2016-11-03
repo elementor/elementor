@@ -144,10 +144,24 @@ abstract class Element_Base {
 		} );
 	}
 
-	public final function get_style_controls() {
-		return array_filter( $this->get_controls(), function( $control ) {
-			return ( ! empty( $control['selectors'] ) );
-		} );
+	public final function get_style_controls( $controls = null ) {
+		if ( null === $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		$style_controls = [];
+
+		foreach ( $controls as $control_name => $control ) {
+			if ( Controls_Manager::REPEATER === $control['type'] ) {
+				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
+			}
+
+			if ( ! empty( $control['style_fields'] ) || ! empty( $control['selectors'] ) ) {
+				$style_controls[ $control_name ] = $control;
+			}
+		}
+
+		return $style_controls;
 	}
 
 	public final function get_class_controls() {

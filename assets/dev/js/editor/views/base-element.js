@@ -8,7 +8,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	stylesheet: null,
 
 	id: function() {
-		return this.getElementUniqueClass();
+		return this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -42,6 +42,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 			'click @ui.duplicateButton': 'click:duplicate'
 		};
 	},
+
+	$stylesheetElement: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -142,19 +144,24 @@ BaseElementView = Marionette.CompositeView.extend( {
 			.addDevice( 'desktop', viewportBreakpoints.lg );
 	},
 
+	createStylesheetElement: function() {
+		this.$stylesheetElement = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
+
+		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
+	},
+
 	enqueueFonts: function() {
 		var editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
 		_.each( settings.getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = editModel.getSetting( control.name );
+
 			if ( _.isEmpty( fontFamilyName ) ) {
 				return;
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, settings );
-
-			if ( ! isVisible ) {
+			if ( ! elementor.helpers.isControlVisible( control, settings ) ) {
 				return;
 			}
 
@@ -162,63 +169,91 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	renderStyles: function() {
-		var self = this,
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
-			editModel = self.getEditModel(),
-			styleControls = editModel.get( 'settings' ).getStyleControls();
+	addStyleRules: function( controls, values, placeholders, replacements ) {
+		var self = this;
 
-		self.stylesheet.empty();
+		placeholders = placeholders || [ /\{\{WRAPPER}}/g ];
 
-		_.each( styleControls, function( control ) {
-			var controlValue = editModel.getSetting( control.name );
+		replacements = replacements || [ '#' + self.getElementUniqueID() ];
 
-			if ( ! _.isNumber( controlValue ) && _.isEmpty( controlValue ) ) {
-				return;
+		_.each( controls, function( control ) {
+			if ( control.styleFields ) {
+				placeholders[1] = '{{CURRENT_ITEM}}';
+
+				values[ control.name ].each( function( itemModel ) {
+					replacements[1] = '.elementor-repeater-item-' + itemModel.get( '_id' );
+
+					self.addStyleRules( control.styleFields, itemModel.attributes, placeholders, replacements );
+				} );
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, editModel.get( 'settings' ) );
-			if ( ! isVisible ) {
-				return;
-			}
-
-			_.each( control.selectors, function( cssProperty, selector ) {
-				var outputSelector = selector.replace( /\{\{WRAPPER}}/g, '#' + self.getElementUniqueClass() ),
-					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue ),
-					query;
-
-				if ( _.isEmpty( outputCssProperty ) ) {
-					return;
-				}
-
-				if ( control.responsive && 'desktop' !== control.responsive ) {
-					query = { max: control.responsive };
-				}
-
-				self.stylesheet.addRules( outputSelector, outputCssProperty, query );
-			} );
+			self.addControlStyleRules( control, values, placeholders, replacements );
 		} );
+	},
 
-		if ( 'column' === self.model.get( 'elType' ) ) {
-			var inlineSize = self.model.getSetting( '_inline_size' );
+	addControlStyleRules: function( control, values, placeholders, replacements ) {
+		var self = this,
+			value = values[ control.name ];
 
-			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueClass(), { width: inlineSize + '%' }, { min: 'tablet' } );
-			}
-		}
-
-		var styleHtml = self.stylesheet.toString();
-
-		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
+		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
 		}
 
-		if ( ! $stylesheet.length ) {
-			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + self.model.cid + '"></style>' );
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid );
+		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
+			return;
 		}
 
-		$stylesheet.html( styleHtml );
+		_.each( control.selectors, function( cssProperty, selector ) {
+			var outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, value ),
+				query;
+
+			if ( _.isEmpty( outputCssProperty ) ) {
+				return;
+			}
+
+			_.each( placeholders, function( placeholder, index ) {
+				selector = selector.replace( placeholder, replacements[ index ] );
+			} );
+
+			if ( control.responsive && 'desktop' !== control.responsive ) {
+				query = { max: control.responsive };
+			}
+
+			self.stylesheet.addRules( selector, outputCssProperty, query );
+		} );
+	},
+
+	addStyleToDocument: function() {
+		var styleText = this.stylesheet.toString();
+
+		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
+			return;
+		}
+
+		if ( ! this.$stylesheetElement ) {
+			this.createStylesheetElement();
+		}
+
+		this.$stylesheetElement.text( styleText );
+	},
+
+	renderStyles: function() {
+		var self = this,
+			settings = self.getEditModel().get( 'settings' );
+
+		self.stylesheet.empty();
+
+		self.addStyleRules( settings.getStyleControls(), settings.attributes );
+
+		if ( 'column' === self.model.get( 'elType' ) ) {
+			var inlineSize = settings.get( '_inline_size' );
+
+			if ( ! _.isEmpty( inlineSize ) ) {
+				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+			}
+		}
+
+		self.addStyleToDocument();
 	},
 
 	renderCustomClasses: function() {
@@ -254,7 +289,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	getElementUniqueClass: function() {
+	getElementUniqueID: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 

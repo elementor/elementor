@@ -3068,34 +3068,36 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getFontControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
+		return _.filter( this.controls, function( control ) {
 			return 'font' === control.type;
-		}, this ) );
+		} );
 	},
 
-	getStyleControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
-			return this.isStyleControl( control.name );
-		}, this ) );
+	getStyleControls: function( controls ) {
+		var self = this;
+
+		controls = controls || self.controls;
+
+		return _.filter( controls, function( control ) {
+			if ( control.fields ) {
+				control.styleFields = self.getStyleControls( control.fields );
+
+				return true;
+			}
+
+			return self.isStyleControl( control.name, controls );
+		} );
 	},
 
-	isStyleControl: function( attribute ) {
-		var currentControl = _.find( this.controls, function( control ) {
+	isStyleControl: function( attribute, controls ) {
+		controls = controls || this.controls;
+
+		var currentControl = _.find( controls, function( control ) {
 			return attribute === control.name;
 		} );
 
-		if ( _.isUndefined( currentControl ) ) {
-			return false;
-		}
-
-		return ! _.isEmpty( currentControl.selectors );
+		return currentControl && ! _.isEmpty( currentControl.selectors );
 	},
-
-    getClassControls: function() {
-        return _.filter( this.controls, _.bind( function( control ) {
-            return this.isClassControl( control.name );
-        }, this ) );
-    },
 
 	isClassControl: function( attribute ) {
 		var currentControl = _.find( this.controls, function( control ) {
@@ -3752,7 +3754,7 @@ helpers = {
 		} );
 	},
 
-	isControlVisible: function( controlModel, elementSettingsModel ) {
+	isControlVisible: function( controlModel, values ) {
 		var condition;
 
 		// TODO: Better way to get this?
@@ -3760,6 +3762,11 @@ helpers = {
 			condition = controlModel.get( 'condition' );
 		} else {
 			condition = controlModel.condition;
+		}
+
+		// Repeater items conditions
+		if ( controlModel.conditions ) {
+			return elementor.conditions.check( controlModel.conditions, values );
 		}
 
 		if ( _.isEmpty( condition ) ) {
@@ -3771,7 +3778,7 @@ helpers = {
 				conditionRealName = conditionNameParts[1],
 				conditionSubKey = conditionNameParts[2],
 				isNegativeCondition = !! conditionNameParts[3],
-				controlValue = elementSettingsModel.get( conditionRealName );
+				controlValue = values[ conditionRealName ];
 
 			if ( conditionSubKey ) {
 				controlValue = controlValue[ conditionSubKey ];
@@ -5003,7 +5010,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	stylesheet: null,
 
 	id: function() {
-		return this.getElementUniqueClass();
+		return this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -5037,6 +5044,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 			'click @ui.duplicateButton': 'click:duplicate'
 		};
 	},
+
+	$stylesheetElement: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -5137,19 +5146,24 @@ BaseElementView = Marionette.CompositeView.extend( {
 			.addDevice( 'desktop', viewportBreakpoints.lg );
 	},
 
+	createStylesheetElement: function() {
+		this.$stylesheetElement = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
+
+		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
+	},
+
 	enqueueFonts: function() {
 		var editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
 		_.each( settings.getFontControls(), _.bind( function( control ) {
 			var fontFamilyName = editModel.getSetting( control.name );
+
 			if ( _.isEmpty( fontFamilyName ) ) {
 				return;
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, settings );
-
-			if ( ! isVisible ) {
+			if ( ! elementor.helpers.isControlVisible( control, settings ) ) {
 				return;
 			}
 
@@ -5157,63 +5171,91 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	renderStyles: function() {
-		var self = this,
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid ),
-			editModel = self.getEditModel(),
-			styleControls = editModel.get( 'settings' ).getStyleControls();
+	addStyleRules: function( controls, values, placeholders, replacements ) {
+		var self = this;
 
-		self.stylesheet.empty();
+		placeholders = placeholders || [ /\{\{WRAPPER}}/g ];
 
-		_.each( styleControls, function( control ) {
-			var controlValue = editModel.getSetting( control.name );
+		replacements = replacements || [ '#' + self.getElementUniqueID() ];
 
-			if ( ! _.isNumber( controlValue ) && _.isEmpty( controlValue ) ) {
-				return;
+		_.each( controls, function( control ) {
+			if ( control.styleFields ) {
+				placeholders[1] = '{{CURRENT_ITEM}}';
+
+				values[ control.name ].each( function( itemModel ) {
+					replacements[1] = '.elementor-repeater-item-' + itemModel.get( '_id' );
+
+					self.addStyleRules( control.styleFields, itemModel.attributes, placeholders, replacements );
+				} );
 			}
 
-			var isVisible = elementor.helpers.isControlVisible( control, editModel.get( 'settings' ) );
-			if ( ! isVisible ) {
-				return;
-			}
-
-			_.each( control.selectors, function( cssProperty, selector ) {
-				var outputSelector = selector.replace( /\{\{WRAPPER}}/g, '#' + self.getElementUniqueClass() ),
-					outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, controlValue ),
-					query;
-
-				if ( _.isEmpty( outputCssProperty ) ) {
-					return;
-				}
-
-				if ( control.responsive && 'desktop' !== control.responsive ) {
-					query = { max: control.responsive };
-				}
-
-				self.stylesheet.addRules( outputSelector, outputCssProperty, query );
-			} );
+			self.addControlStyleRules( control, values, placeholders, replacements );
 		} );
+	},
 
-		if ( 'column' === self.model.get( 'elType' ) ) {
-			var inlineSize = self.model.getSetting( '_inline_size' );
+	addControlStyleRules: function( control, values, placeholders, replacements ) {
+		var self = this,
+			value = values[ control.name ];
 
-			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueClass(), { width: inlineSize + '%' }, { min: 'tablet' } );
-			}
-		}
-
-		var styleHtml = self.stylesheet.toString();
-
-		if ( _.isEmpty( styleHtml ) && ! $stylesheet.length ) {
+		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
 		}
 
-		if ( ! $stylesheet.length ) {
-			elementor.$previewContents.find( 'head' ).append( '<style type="text/css" id="elementor-style-' + self.model.cid + '"></style>' );
-			$stylesheet = elementor.$previewContents.find( '#elementor-style-' + self.model.cid );
+		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
+			return;
 		}
 
-		$stylesheet.html( styleHtml );
+		_.each( control.selectors, function( cssProperty, selector ) {
+			var outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, value ),
+				query;
+
+			if ( _.isEmpty( outputCssProperty ) ) {
+				return;
+			}
+
+			_.each( placeholders, function( placeholder, index ) {
+				selector = selector.replace( placeholder, replacements[ index ] );
+			} );
+
+			if ( control.responsive && 'desktop' !== control.responsive ) {
+				query = { max: control.responsive };
+			}
+
+			self.stylesheet.addRules( selector, outputCssProperty, query );
+		} );
+	},
+
+	addStyleToDocument: function() {
+		var styleText = this.stylesheet.toString();
+
+		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
+			return;
+		}
+
+		if ( ! this.$stylesheetElement ) {
+			this.createStylesheetElement();
+		}
+
+		this.$stylesheetElement.text( styleText );
+	},
+
+	renderStyles: function() {
+		var self = this,
+			settings = self.getEditModel().get( 'settings' );
+
+		self.stylesheet.empty();
+
+		self.addStyleRules( settings.getStyleControls(), settings.attributes );
+
+		if ( 'column' === self.model.get( 'elType' ) ) {
+			var inlineSize = settings.get( '_inline_size' );
+
+			if ( ! _.isEmpty( inlineSize ) ) {
+				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+			}
+		}
+
+		self.addStyleToDocument();
 	},
 
 	renderCustomClasses: function() {
@@ -5249,7 +5291,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	getElementUniqueClass: function() {
+	getElementUniqueID: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
@@ -5950,7 +5992,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	toggleControlVisibility: function() {
-		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel );
+		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
@@ -6761,6 +6803,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
+
 		return elementor.getControlItemView( controlType );
 	},
 
@@ -6878,7 +6921,25 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
+		this.collection.each( function( model ) {
+			if ( ! model.get( '_id' ) ) {
+				model.set( '_id', elementor.helpers.getUniqueID() );
+			}
+		} );
+
 		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
+	},
+
+	addRow: function( data, options ) {
+		var id = elementor.helpers.getUniqueID();
+
+		if ( data instanceof Backbone.Model ) {
+			data.set( '_id', id );
+		} else {
+			data._id = id;
+		}
+
+		return this.collection.add( data, options );
 	},
 
 	editRow: function( rowView ) {
@@ -6938,7 +6999,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			newIndex = ui.item.index();
 
 		this.collection.remove( model );
-		this.collection.add( model, { at: newIndex } );
+
+		this.addRow( model, { at: newIndex } );
 	},
 
 	onAddChild: function() {
@@ -6967,7 +7029,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			defaults[ field.name ] = field['default'];
 		} );
 
-		var newModel = this.collection.add( defaults ),
+		var newModel = this.addRow( defaults ),
 			newChildView = this.children.findByModel( newModel );
 
 		this.editRow( newChildView );
@@ -6978,7 +7040,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		this.collection.add( childView.model.clone(), { at: childView.itemIndex } );
+		this.addRow( childView.model.clone(), { at: childView.itemIndex } );
 	},
 
 	onChildviewClickEdit: function( childView ) {
@@ -7831,7 +7893,7 @@ WidgetView = BaseElementView.extend( {
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( html );
 		}, this ) );
 
 		return this;
