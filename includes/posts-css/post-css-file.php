@@ -194,9 +194,11 @@ class Post_CSS_File {
 		foreach ( $controls as $control ) {
 			$control_value = $values[ $control['name'] ];
 
-			if ( ! empty( $control['style_fields'] ) ) {
-				$placeholders[] = '{{CURRENT_ITEM}}';
+			$has_style_fields = ! empty( $control['style_fields'] );
 
+			$placeholders[1] = $has_style_fields ? '{{CURRENT_ITEM}}' : null;
+
+			if ( $has_style_fields ) {
 				foreach ( $control_value as $field_value ) {
 					$replacements[1] = '.elementor-repeater-item-' . $field_value['_id'];
 

@@ -5179,9 +5179,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 		replacements = replacements || [ '#' + self.getElementUniqueID() ];
 
 		_.each( controls, function( control ) {
-			if ( control.styleFields ) {
-				placeholders[1] = '{{CURRENT_ITEM}}';
+			placeholders[1] = control.styleFields ? '{{CURRENT_ITEM}}' : null;
 
+			if ( control.styleFields ) {
 				values[ control.name ].each( function( itemModel ) {
 					replacements[1] = '.elementor-repeater-item-' + itemModel.get( '_id' );
 
