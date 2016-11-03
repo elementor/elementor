@@ -317,12 +317,12 @@ class Widget_Image extends Widget_Base {
 
 		if ( $has_caption ) : ?>
 				</figure>
-		<?php
+		<?php endif;
 		if ( $link ) : ?>
 			</a>
 		<?php endif; ?>
 		</div>
-		<?php endif;
+		<?php
 	}
 
 	protected function _content_template() {
