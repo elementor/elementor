@@ -43,7 +43,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	$stylesheet: null,
+	$stylesheetElement: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -145,9 +145,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	createStylesheetElement: function() {
-		this.$stylesheet = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
+		this.$stylesheetElement = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
 
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheet );
+		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
 	},
 
 	enqueueFonts: function() {
@@ -227,15 +227,15 @@ BaseElementView = Marionette.CompositeView.extend( {
 	addStyleToDocument: function() {
 		var styleText = this.stylesheet.toString();
 
-		if ( _.isEmpty( styleText ) && ! this.$stylesheet ) {
+		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
 			return;
 		}
 
-		if ( ! this.$stylesheet ) {
+		if ( ! this.$stylesheetElement ) {
 			this.createStylesheetElement();
 		}
 
-		this.$stylesheet.text( styleText );
+		this.$stylesheetElement.text( styleText );
 	},
 
 	renderStyles: function() {
