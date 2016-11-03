@@ -115,6 +115,11 @@ helpers = {
 			condition = controlModel.condition;
 		}
 
+		// Repeater items conditions
+		if ( controlModel.conditions ) {
+			return elementor.conditions.check( controlModel.conditions, values );
+		}
+
 		if ( _.isEmpty( condition ) ) {
 			return true;
 		}
