@@ -200,7 +200,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		if ( ! elementor.helpers.isControlVisible( control, self.getEditModel().get( 'settings' ) ) ) {
+		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
 			return;
 		}
 
