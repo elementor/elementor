@@ -179,7 +179,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function before_render() {
-		$this->add_render_attribute( 'wrapper', 'class', [
+		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
 			'elementor-element-' . $this->get_id(),
@@ -195,18 +195,18 @@ abstract class Widget_Base extends Element_Base {
 			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
 		if ( ! empty( $settings['_animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
+			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
 		}
 
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 
