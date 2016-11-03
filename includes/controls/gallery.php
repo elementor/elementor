@@ -1,12 +1,28 @@
 <?php
 namespace Elementor;
 
+use Elementor\TemplateLibrary\Classes\Import_Images;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Control_Gallery extends Control_Base {
 
 	public function get_type() {
 		return 'gallery';
+	}
+
+	public function on_import( $settings ) {
+		foreach ( $settings as &$attachment ) {
+			if ( empty( $attachment['url'] ) )
+				continue;
+
+			$attachment = Import_Images::instance()->import( $attachment );
+		}
+
+		// Filter out attachments that doesn't exist
+		$settings = array_filter( $settings );
+
+		return $settings;
 	}
 
 	public function content_template() {
