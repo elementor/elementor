@@ -37,7 +37,7 @@ abstract class Control_Base {
 		return $instance[ $control['name'] ];
 	}
 
-	public function get_replace_style_values( $css_property, $control_value ) {
+	public function get_replaced_style_values( $css_property, $control_value ) {
 		return str_replace( '{{VALUE}}', $control_value, $css_property );
 	}
 
