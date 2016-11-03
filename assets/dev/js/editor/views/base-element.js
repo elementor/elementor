@@ -8,7 +8,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	stylesheet: null,
 
 	id: function() {
-		return this.getElementUniqueSelector();
+		return this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -174,7 +174,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		placeholders = placeholders || [ /\{\{WRAPPER}}/g ];
 
-		replacements = replacements || [ '#' + self.getElementUniqueSelector() ];
+		replacements = replacements || [ '#' + self.getElementUniqueID() ];
 
 		_.each( controls, function( control ) {
 			var controlValue = values[ control.name ];
@@ -250,7 +250,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueSelector(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
@@ -290,7 +290,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	getElementUniqueSelector: function() {
+	getElementUniqueID: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
