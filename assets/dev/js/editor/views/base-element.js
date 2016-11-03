@@ -180,7 +180,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			var controlValue = values[ control.name ];
 
 			if ( control.styleFields ) {
-				placeholders.push( '{{CURRENT_ITEM}}' );
+				placeholders[1] = '{{CURRENT_ITEM}}';
 
 				controlValue.each( function( model, index ) {
 					replacements[1] = '.elementor-repeater-item-' + ( index + 1 );
