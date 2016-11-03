@@ -177,24 +177,23 @@ BaseElementView = Marionette.CompositeView.extend( {
 		replacements = replacements || [ '#' + self.getElementUniqueID() ];
 
 		_.each( controls, function( control ) {
-			var controlValue = values[ control.name ];
-
 			if ( control.styleFields ) {
 				placeholders[1] = '{{CURRENT_ITEM}}';
 
-				controlValue.each( function( itemModel ) {
+				values[ control.name ].each( function( itemModel ) {
 					replacements[1] = '.elementor-repeater-item-' + itemModel.get( '_id' );
 
 					self.addStyleRules( control.styleFields, itemModel.attributes, placeholders, replacements );
 				} );
 			}
 
-			self.addControlStyleRules( control, controlValue, placeholders, replacements );
+			self.addControlStyleRules( control, values, placeholders, replacements );
 		} );
 	},
 
-	addControlStyleRules: function( control, value, placeholders, replacements ) {
-		var self = this;
+	addControlStyleRules: function( control, values, placeholders, replacements ) {
+		var self = this,
+			value = values[ control.name ];
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
