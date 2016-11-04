@@ -1220,7 +1220,7 @@ select {
     border: none;
     color: #6d7882;
     font-size: 11px;
-    padding: 3px 12px 4px;
+    padding: 3px 9px 4px;
     border-radius: 3px 3px 0 0; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .html-active .switch-tmce {
     background-color: transparent; }
@@ -1239,8 +1239,11 @@ select {
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-ico {
     color: #6d7882;
     font-size: 16px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:hover, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:active, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn.mce-active {
-    border-color: #d5dadf; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn {
+    margin-right: 0;
+    margin-left: 0; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:hover, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:active, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn.mce-active {
+      border-color: #d5dadf; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-path {
     padding: 5px 10px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-path-item {

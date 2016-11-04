@@ -658,7 +658,7 @@
 			border: none;
 			color: $editor-dark;
 			font-size: 11px;
-			padding: 3px 12px 4px;
+			padding: 3px 9px 4px;
 			border-radius: 3px 3px 0 0;
 		}
 
@@ -705,6 +705,8 @@
 		}
 
 		.mce-btn {
+			margin-right: 0;
+			margin-left: 0;
 
 			&:hover, &:active, &.mce-active {
 				border-color: $editor-lightest;
