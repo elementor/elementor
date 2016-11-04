@@ -1205,8 +1205,8 @@ select {
     margin-top: 7px;
     height: initial;
     line-height: 1;
-    font-size: 11px;
-    padding: 3px 9px;
+    font-size: 10px;
+    padding: 3px 7px;
     background-color: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .ed_button {
     height: 22px;
@@ -1219,7 +1219,7 @@ select {
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-switch-editor {
     border: none;
     color: #6d7882;
-    font-size: 11px;
+    font-size: 10px;
     padding: 3px 9px 4px;
     border-radius: 3px 3px 0 0; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .html-active .switch-tmce {
