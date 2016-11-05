@@ -88,7 +88,7 @@ class Admin {
 		?>
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
-			<button id="elementor-switch-mode-button" class="elementor-button">
+			<button id="elementor-switch-mode-button" class="elementor-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor"></i>
@@ -98,7 +98,7 @@ class Admin {
 		</div>
 		<div id="elementor-editor">
 	        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
-		        <div id="elementor-editor-button" class="elementor-button">
+		        <div id="elementor-editor-button" class="elementor-button button button-primary button-hero">
 			        <i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 		        </div>
