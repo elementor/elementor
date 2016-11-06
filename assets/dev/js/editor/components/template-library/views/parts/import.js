@@ -28,7 +28,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
-				elementor.templates.showErrorDialog( data.message );
+				elementor.templates.showErrorDialog( data );
 			}
 		} );
 	}
