@@ -340,6 +340,11 @@ abstract class Element_Base {
 			$values = $this->get_settings();
 		}
 
+		// Repeater fields
+		if ( ! empty( $control['conditions'] ) ) {
+			return Conditions::check( $control['conditions'], $values );
+		}
+
 		if ( empty( $control['condition'] ) ) {
 			return true;
 		}
