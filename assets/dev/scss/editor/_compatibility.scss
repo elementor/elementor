@@ -1,20 +1,44 @@
-body {
+// Compatibility elementor editor for themes and plugins
 
+
+body.elementor-editor-active {
+
+	// Hack for pojo.me themes
 	&.layout-section {
 
 		.entry-content {
-			overflow: visible; // Hack for Pojo themes
+			overflow: visible;
+		}
+	}
+
+	// Hack for bluchic.com themes
+	.article {
+		overflow: visible;
+	}
+
+	// Hack for Zerif Pro theme
+	.elementor-element-overlay {
+
+		.elementor-editor-element-settings-list {
+			clear: unset;
 		}
 	}
 }
 
 #elementor {
 
+	// Prevent external animate.css embed which causing elements overlay issue
 	.animated {
-		animation-fill-mode: none !important; // Prevent external animate.css embed which causing elements overlay issue
+		animation-fill-mode: none !important;
 	}
 
+	// Fixes Make theme issue
 	.elementor-editor-element-settings-list {
-		word-break: normal; // Fixes Make theme issue
+		word-break: normal;
+	}
+
+	// Hack for jQuery Masonry Image Gallery plugin
+	.gallery {
+		opacity: 1;
 	}
 }

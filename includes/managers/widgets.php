@@ -85,7 +85,7 @@ class Widgets_Manager {
 
 			$elementor_widget_class = __NAMESPACE__ . '\Widget_WordPress';
 
-			$this->register_widget_type( new $elementor_widget_class( null, [ 'widget_name' => $widget_class ] ) );
+			$this->register_widget_type( new $elementor_widget_class( [], [ 'widget_name' => $widget_class ] ) );
 		}
 	}
 
@@ -120,7 +120,7 @@ class Widgets_Manager {
 			$this->_init_widgets();
 		}
 
-		if ( $widget_name ) {
+		if ( null !== $widget_name ) {
 			return isset( $this->_widget_types[ $widget_name ] ) ? $this->_widget_types[ $widget_name ] : null;
 		}
 
@@ -130,12 +130,12 @@ class Widgets_Manager {
 	public function get_widget_types_config() {
 		$config = [];
 
-		foreach ( $this->get_widget_types() as $widget ) {
-			if ( 'common' === $widget->get_name() ) {
+		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
+			if ( 'common' === $widget_key ) {
 				continue;
 			}
 
-			$config[ $widget->get_name() ] = $widget->get_config();
+			$config[ $widget_key ] = $widget->get_config();
 		}
 
 		return $config;

@@ -16,8 +16,8 @@ abstract class Source_Base {
 	abstract public function get_content( $item_id );
 	abstract public function delete_template( $item_id );
 	abstract public function save_item( $template_data );
-
-	public function export_template( $item_id ) {}
+	abstract public function update_item( $new_data );
+	abstract public function export_template( $item_id );
 
 	public function __construct() {
 		$this->register_data();

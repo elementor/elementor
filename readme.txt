@@ -1,9 +1,9 @@
 === Elementor Page Builder ===
-Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah
+Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.10.2
+Stable tag: 0.10.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -70,17 +70,18 @@ We've integrated RTL and multi language support within the framework of Elemento
 
 = Translations =
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
+- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Swedish](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (sv_SE)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
+- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO) - in progress
-- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES) - in progress
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
 - [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
+- [Arabic](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (ar) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -89,13 +90,13 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Documentation and Support =
 
-- For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 - If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
-- For more information about features, FAQs and documentation, check out [Elementor.com](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- For more information about features, FAQs and documentation, check out our website at [Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Liked Elementor? =
 - Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
-- Or rate us on [WordPress](https://wordpress.org/support/view/plugin-reviews/elementor?rate=5#postform) :)
+- Or rate us on [WordPress](https://wordpress.org/support/plugin/elementor/reviews/?filter=5/#new-post) :)
 
 == Installation ==
 
@@ -120,7 +121,7 @@ https://www.youtube.com/watch?v=Ypn6fltn_7s
 4. Press the 'Edit with Elementor' button.
 5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
 
-For documentation and tutorials go to [docs.elementor.com](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+For documentation and tutorials visit our [Knowledge Base](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 == Frequently Asked Questions ==
 
@@ -157,6 +158,35 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 0.10.6 - 02.11.2016 =
+* Fix! - Some breaks layouts from previous release
+
+= 0.10.5 - 02.11.2016 =
+* Tweak! - Added Compatibility for Autoptimize Plugin ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
+* Tweak! - Now `elementor_library` custom post type excluded from the sitemap by Yoast SEO ([Topic](https://wordpress.org/support/topic/disable-elementor_library-sitemap-xml/))
+* Tweak! - Added Compatibility for Zerif Pro theme
+* Tweak! - Added Compatibility for themes by Bluchic
+* Tweak! - Added Compatibility for jQuery Masonry Image Gallery plugin ([#762](https://github.com/pojome/elementor/issues/762))
+* Tweak! - Added support for "multiple value" condition in Repeater control
+* Fixed! - Bug corrupting JSON post meta on import Elementor pages ([Topic](https://wordpress.org/support/topic/pages-importexport-not-working-properly/))
+* Fixed! - `.elementor-slick-slider` class now apply on all Elementor custom slick theme ([#424](https://github.com/pojome/elementor/issues/424))
+* Fixed! - Added subset support for Google Fonts to fix issues with some browsers
+
+= 0.10.4 - 26.10.2016 =
+* Tweak! - Updated Font Awesome v4.7.0 (41+ icons)
+* Tweak! - Added type attribute for text input control
+* Tweak! - Improved import template from library
+* Tweak! - Removed admin email from system info copied
+* Fixed! - Columns overlay layer for negative top margin scenario
+* Fixed! - Added i18n strings to Delete All Content dialog
+* Fixed! - Target blank link in heading widget - ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
+
+= 0.10.3 - 13.10.2016 =
+* Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
+* Fix! - Columns gap for all devices
+* Fix! - Added trigger for changes on Apply button
+* Fix! - Inner section class on front-end
 
 = 0.10.2 - 10.10.2016 =
 * Tweak! - Added Apply button for Shortcode widget to trigger loading of external scripts

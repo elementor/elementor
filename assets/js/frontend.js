@@ -2,22 +2,6 @@
 var ElementsHandler;
 
 ElementsHandler = function( $ ) {
-	var registeredHandlers = {},
-		registeredGlobalHandlers = [];
-
-	var runGlobalHandlers = function( $scope ) {
-		$.each( registeredGlobalHandlers, function() {
-			this.call( $scope, $ );
-		} );
-	};
-
-	this.addHandler = function( widgetType, callback ) {
-		registeredHandlers[ widgetType ] = callback;
-	};
-
-	this.addGlobalHandler = function( callback ) {
-		registeredGlobalHandlers.push( callback );
-	};
 
 	this.runReadyTrigger = function( $scope ) {
 		var elementType = $scope.data( 'element_type' );
@@ -26,13 +10,9 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		runGlobalHandlers( $scope );
+		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		if ( ! registeredHandlers[ elementType ] ) {
-			return;
-		}
-
-		registeredHandlers[ elementType ].call( $scope, $ );
+		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
 	};
 };
 
@@ -49,26 +29,13 @@ module.exports = ElementsHandler;
 		var self = this,
 			scopeWindow = window;
 
-		var elementsDefaultHandlers = {
-			accordion: require( 'elementor-frontend/handlers/accordion' ),
-			alert: require( 'elementor-frontend/handlers/alert' ),
-			counter: require( 'elementor-frontend/handlers/counter' ),
-			'image-carousel': require( 'elementor-frontend/handlers/image-carousel' ),
-			'menu-anchor': require( 'elementor-frontend/handlers/menu-anchor' ),
-			progress: require( 'elementor-frontend/handlers/progress' ),
-			section: require( 'elementor-frontend/handlers/section' ),
-			tabs: require( 'elementor-frontend/handlers/tabs' ),
-			toggle: require( 'elementor-frontend/handlers/toggle' ),
-			video: require( 'elementor-frontend/handlers/video' )
-		};
-
 		var addGlobalHandlers = function() {
-			self.elementsHandler.addGlobalHandler( require( 'elementor-frontend/handlers/global' ) );
+			self.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
 		};
 
 		var addElementsHandlers = function() {
-			$.each( elementsDefaultHandlers, function( elementName ) {
-				self.elementsHandler.addHandler( elementName, this );
+			$.each( self.handlers, function( elementName, funcCallback ) {
+				self.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
 			} );
 		};
 
@@ -76,6 +43,23 @@ module.exports = ElementsHandler;
 			$( '.elementor-element' ).each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
+		};
+
+		// element-type.skin-type
+		this.handlers = {
+			// Elements
+			'section': require( 'elementor-frontend/handlers/section' ),
+
+			// Widgets
+			'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
+			'alert.default': require( 'elementor-frontend/handlers/alert' ),
+			'counter.default': require( 'elementor-frontend/handlers/counter' ),
+			'progress.default': require( 'elementor-frontend/handlers/progress' ),
+			'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
+			'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
+			'video.default': require( 'elementor-frontend/handlers/video' ),
+			'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
+			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
 		};
 
 		this.config = elementorFrontendConfig;
@@ -180,10 +164,9 @@ var activateSection = function( sectionIndex, $accordionTitles ) {
 	}
 };
 
-module.exports = function( $ ) {
-	var $this = $( this ),
-		defaultActiveSection = $this.find( '.elementor-accordion' ).data( 'active-section' ),
-		$accordionTitles = $this.find( '.elementor-accordion-title' );
+module.exports = function( $scoop, $ ) {
+	var defaultActiveSection = $scoop.find( '.elementor-accordion' ).data( 'active-section' ),
+		$accordionTitles = $scoop.find( '.elementor-accordion-title' );
 
 	if ( ! defaultActiveSection ) {
 		defaultActiveSection = 1;
@@ -197,15 +180,15 @@ module.exports = function( $ ) {
 };
 
 },{}],4:[function(require,module,exports){
-module.exports = function( $ ) {
-	$( this ).find( '.elementor-alert-dismiss' ).on( 'click', function() {
+module.exports = function( $scoop, $ ) {
+	$scoop.find( '.elementor-alert-dismiss' ).on( 'click', function() {
 		$( this ).parent().fadeOut();
 	} );
 };
 
 },{}],5:[function(require,module,exports){
-module.exports = function( $ ) {
-	this.find( '.elementor-counter-number' ).waypoint( function() {
+module.exports = function( $scoop, $ ) {
+	$scoop.find( '.elementor-counter-number' ).waypoint( function() {
 		var $number = $( this );
 
 		$number.numerator( {
@@ -215,29 +198,28 @@ module.exports = function( $ ) {
 };
 
 },{}],6:[function(require,module,exports){
-module.exports = function() {
+module.exports = function( $scoop, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var $element = this,
-		animation = $element.data( 'animation' );
+	var animation = $scoop.data( 'animation' );
 
 	if ( ! animation ) {
 		return;
 	}
 
-	$element.addClass( 'elementor-invisible' ).removeClass( animation );
+	$scoop.addClass( 'elementor-invisible' ).removeClass( animation );
 
-	$element.waypoint( function() {
-		$element.removeClass( 'elementor-invisible' ).addClass( animation );
+	$scoop.waypoint( function() {
+		$scoop.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
 
 };
 
 },{}],7:[function(require,module,exports){
-module.exports = function( $ ) {
-	var $carousel = $( this ).find( '.elementor-image-carousel' );
+module.exports = function( $scoop, $ ) {
+	var $carousel = $scoop.find( '.elementor-image-carousel' );
 	if ( ! $carousel.length ) {
 		return;
 	}
@@ -269,12 +251,12 @@ module.exports = function( $ ) {
 };
 
 },{}],8:[function(require,module,exports){
-module.exports = function( $ ) {
+module.exports = function( $scoop, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var $anchor = this.find( '.elementor-menu-anchor' ),
+	var $anchor = $scoop.find( '.elementor-menu-anchor' ),
 		anchorID = $anchor.attr( 'id' ),
 		$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
 		$scrollable = $( 'html, body' ),
@@ -297,10 +279,10 @@ module.exports = function( $ ) {
 };
 
 },{}],9:[function(require,module,exports){
-module.exports = function( $ ) {
+module.exports = function( $scoop, $ ) {
 	var interval = 80;
 
-	$( this ).find( '.elementor-progress-bar' ).waypoint( function() {
+	$scoop.find( '.elementor-progress-bar' ).waypoint( function() {
 		var $progressbar = $( this ),
 			max = parseInt( $progressbar.data( 'max' ), 10 ),
 			$inner = $progressbar.next(),
@@ -317,7 +299,7 @@ module.exports = function( $ ) {
 };
 
 },{}],10:[function(require,module,exports){
-var BackgroundVideo = function( $, $backgroundVideoContainer ) {
+var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
 		isYTVideo = false;
@@ -399,29 +381,34 @@ var BackgroundVideo = function( $, $backgroundVideoContainer ) {
 	init();
 };
 
-var StretchedSection = function( $, $section ) {
+var StretchedSection = function( $section, $ ) {
 	var elements = {},
 		settings = {};
 
 	var stretchSection = function() {
 		// Clear any previously existing css associated with this script
-		$section.css( {
-			'width': 'auto',
-			'left': '0'
-		} );
+		var direction = settings.is_rtl ? 'right' : 'left',
+			resetCss = {
+				width: 'auto'
+			};
+
+		resetCss[ direction ] = 0;
+
+		$section.css( resetCss );
 
 		if ( ! $section.hasClass( 'elementor-section-stretched' ) ) {
 			return;
 		}
 
-		var sectionWidth = elements.$scopeWindow.width(),
+		var containerWidth = elements.$scopeWindow.width(),
+			sectionWidth = $section.width(),
 			sectionOffset = $section.offset().left,
 			correctOffset = sectionOffset;
 
 		if ( elements.$sectionContainer.length ) {
 			var containerOffset = elements.$sectionContainer.offset().left;
 
-			sectionWidth = elements.$sectionContainer.outerWidth();
+			containerWidth = elements.$sectionContainer.outerWidth();
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -430,14 +417,15 @@ var StretchedSection = function( $, $section ) {
 			}
 		}
 
-		if ( ! settings.is_rtl ) {
-			correctOffset = -correctOffset;
+		if ( settings.is_rtl ) {
+			correctOffset = containerWidth - ( sectionWidth + correctOffset );
 		}
 
-		$section.css( {
-			'width': sectionWidth + 'px',
-			'left': correctOffset + 'px'
-		} );
+		resetCss.width = containerWidth + 'px';
+
+		resetCss[ direction ] = -correctOffset + 'px';
+
+		$section.css( resetCss );
 	};
 
 	var initSettings = function() {
@@ -465,22 +453,21 @@ var StretchedSection = function( $, $section ) {
 	init();
 };
 
-module.exports = function( $ ) {
-	new StretchedSection( $, this );
+module.exports = function( $scoop, $ ) {
+	new StretchedSection( $scoop, $ );
 
-	var $backgroundVideoContainer = this.find( '.elementor-background-video-container' );
+	var $backgroundVideoContainer = $scoop.find( '.elementor-background-video-container' );
 
 	if ( $backgroundVideoContainer ) {
-		new BackgroundVideo( $, $backgroundVideoContainer );
+		new BackgroundVideo( $backgroundVideoContainer, $ );
 	}
 };
 
 },{}],11:[function(require,module,exports){
-module.exports = function( $ ) {
-	var $this = $( this ),
-		defaultActiveTab = $this.find( '.elementor-tabs' ).data( 'active-tab' ),
-		$tabsTitles = $this.find( '.elementor-tab-title' ),
-		$tabs = $this.find( '.elementor-tab-content' ),
+module.exports = function( $scoop, $ ) {
+	var defaultActiveTab = $scoop.find( '.elementor-tabs' ).data( 'active-tab' ),
+		$tabsTitles = $scoop.find( '.elementor-tab-title' ),
+		$tabs = $scoop.find( '.elementor-tab-content' ),
 		$active,
 		$content;
 
@@ -512,8 +499,8 @@ module.exports = function( $ ) {
 };
 
 },{}],12:[function(require,module,exports){
-module.exports = function( $ ) {
-	var $toggleTitles = $( this ).find( '.elementor-toggle-title' );
+module.exports = function( $scoop, $ ) {
+	var $toggleTitles = $scoop.find( '.elementor-toggle-title' );
 
 	$toggleTitles.on( 'click', function() {
 		var $active = $( this ),
@@ -530,10 +517,9 @@ module.exports = function( $ ) {
 };
 
 },{}],13:[function(require,module,exports){
-module.exports = function( $ ) {
-	var $this = $( this ),
-		$imageOverlay = $this.find( '.elementor-custom-embed-image-overlay' ),
-		$videoFrame = $this.find( 'iframe' );
+module.exports = function( $scoop, $ ) {
+	var $imageOverlay = $scoop.find( '.elementor-custom-embed-image-overlay' ),
+		$videoFrame = $scoop.find( 'iframe' );
 
 	if ( ! $imageOverlay.length ) {
 		return;

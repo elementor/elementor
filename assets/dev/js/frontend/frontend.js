@@ -8,26 +8,13 @@
 		var self = this,
 			scopeWindow = window;
 
-		var elementsDefaultHandlers = {
-			accordion: require( 'elementor-frontend/handlers/accordion' ),
-			alert: require( 'elementor-frontend/handlers/alert' ),
-			counter: require( 'elementor-frontend/handlers/counter' ),
-			'image-carousel': require( 'elementor-frontend/handlers/image-carousel' ),
-			'menu-anchor': require( 'elementor-frontend/handlers/menu-anchor' ),
-			progress: require( 'elementor-frontend/handlers/progress' ),
-			section: require( 'elementor-frontend/handlers/section' ),
-			tabs: require( 'elementor-frontend/handlers/tabs' ),
-			toggle: require( 'elementor-frontend/handlers/toggle' ),
-			video: require( 'elementor-frontend/handlers/video' )
-		};
-
 		var addGlobalHandlers = function() {
-			self.elementsHandler.addGlobalHandler( require( 'elementor-frontend/handlers/global' ) );
+			self.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
 		};
 
 		var addElementsHandlers = function() {
-			$.each( elementsDefaultHandlers, function( elementName ) {
-				self.elementsHandler.addHandler( elementName, this );
+			$.each( self.handlers, function( elementName, funcCallback ) {
+				self.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
 			} );
 		};
 
@@ -35,6 +22,23 @@
 			$( '.elementor-element' ).each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
+		};
+
+		// element-type.skin-type
+		this.handlers = {
+			// Elements
+			'section': require( 'elementor-frontend/handlers/section' ),
+
+			// Widgets
+			'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
+			'alert.default': require( 'elementor-frontend/handlers/alert' ),
+			'counter.default': require( 'elementor-frontend/handlers/counter' ),
+			'progress.default': require( 'elementor-frontend/handlers/progress' ),
+			'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
+			'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
+			'video.default': require( 'elementor-frontend/handlers/video' ),
+			'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
+			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
 		};
 
 		this.config = elementorFrontendConfig;

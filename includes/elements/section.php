@@ -5,7 +5,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Element_Section extends Element_Base {
 
+	protected static $_edit_tools;
+
 	private static $presets = [];
+
+	protected static function get_default_edit_tools() {
+		return [
+			'duplicate' => [
+				'title' => __( 'Duplicate', 'elementor' ),
+				'icon' => 'files-o',
+			],
+			'save' => [
+				'title' => __( 'Save', 'elementor' ),
+				'icon' => 'floppy-o',
+			],
+			'remove' => [
+				'title' => __( 'Remove', 'elementor' ),
+				'icon' => 'times',
+			],
+		];
+	}
 
 	public function get_name() {
 		return 'section';
@@ -690,7 +709,7 @@ class Element_Section extends Element_Base {
 	}
 
 	public function before_render() {
-		$section_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
 
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-section',

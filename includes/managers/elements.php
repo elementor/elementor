@@ -7,7 +7,9 @@ class Elements_Manager {
 	/**
 	 * @var Element_Base[]
 	 */
-	private $_element_types = null;
+	private $_element_types;
+
+	private $_categories;
 
 	public function __construct() {
 		$this->require_files();
@@ -16,21 +18,19 @@ class Elements_Manager {
 	}
 
 	public function get_categories() {
-		// TODO: Need to filter
-		return [
-			'basic' => [
-				'title' => __( 'Elements', 'elementor' ),
-				'icon' => 'font',
-			],
-			'pojo' => [
-				'title' => __( 'Pojo Themes', 'elementor' ),
-				'icon' => 'pojome',
-			],
-			'wordpress' => [
-				'title' => __( 'WordPress', 'elementor' ),
-				'icon' => 'wordpress',
-			],
-		];
+		if ( null === $this->_categories ) {
+			$this->init_categories();
+		}
+
+		return $this->_categories;
+	}
+
+	public function add_category( $category_name, $category_properties ) {
+		if ( null === $this->_categories ) {
+			$this->init_categories();
+		}
+
+		$this->_categories[ $category_name ] = $category_properties;
 	}
 
 	public function register_element_type( Element_Base $element ) {
@@ -112,6 +112,23 @@ class Elements_Manager {
 		}
 
 		do_action( 'elementor/elements/elements_registered' );
+	}
+
+	private function init_categories() {
+		$this->_categories = [
+			'basic' => [
+				'title' => __( 'Elements', 'elementor' ),
+				'icon' => 'font',
+			],
+			'pojo' => [
+				'title' => __( 'Pojo Themes', 'elementor' ),
+				'icon' => 'pojome',
+			],
+			'wordpress' => [
+				'title' => __( 'WordPress', 'elementor' ),
+				'icon' => 'wordpress',
+			],
+		];
 	}
 
 	private function require_files() {
