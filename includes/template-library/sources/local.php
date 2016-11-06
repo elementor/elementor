@@ -58,6 +58,7 @@ class Source_Local extends Source_Base {
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => false,
+			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
