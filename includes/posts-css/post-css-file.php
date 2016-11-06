@@ -198,6 +198,10 @@ class Post_CSS_File {
 				}
 			}
 
+			if ( ! $element->is_control_visible( $control, $values ) ) {
+				continue;
+			}
+
 			$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
 		}
 
