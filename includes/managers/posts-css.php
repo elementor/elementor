@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Posts_CSS_Manager {
 
 	public function __construct() {
+		$this->init();
 		$this->register_actions();
 	}
 
@@ -76,7 +77,6 @@ class Posts_CSS_Manager {
 	}
 
 	private function register_actions() {
-		add_action( 'init', [ $this, 'init' ] );
 		add_action( 'save_post', [ $this, 'on_save_post' ] );
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 
