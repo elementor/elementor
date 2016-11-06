@@ -66,6 +66,24 @@
 	font-size: 12px;
 }
 
+// inner-tabs
+.elementor-control-type-tab:not(.type-tabs) {
+	display: inline-block;
+	border: 1px solid #d6d6d6;
+	border-bottom: none;
+	padding: 10px 10px 0 !important;
+	cursor: pointer;
+
+	&.elementor-tab-active {
+		font-weight: bold;
+	}
+}
+
+.elementor-tab-close {
+	display: none;
+}
+
+
 // select2
 .select2-container {
 	width: 100% !important;
