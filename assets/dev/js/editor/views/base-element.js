@@ -172,18 +172,15 @@ BaseElementView = Marionette.CompositeView.extend( {
 	addStyleRules: function( controls, values, placeholders, replacements ) {
 		var self = this;
 
-		placeholders = placeholders || [ /\{\{WRAPPER}}/g ];
-
-		replacements = replacements || [ '#' + self.getElementUniqueID() ];
-
 		_.each( controls, function( control ) {
-			placeholders[1] = control.styleFields ? '{{CURRENT_ITEM}}' : null;
-
 			if ( control.styleFields ) {
 				values[ control.name ].each( function( itemModel ) {
-					replacements[1] = '.elementor-repeater-item-' + itemModel.get( '_id' );
-
-					self.addStyleRules( control.styleFields, itemModel.attributes, placeholders, replacements );
+					self.addStyleRules(
+						control.styleFields,
+						itemModel.attributes,
+						_.extend( {}, placeholders, [ '{{CURRENT_ITEM}}' ] ),
+						_.extend( {}, replacements, [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+					);
 				} );
 			}
 
@@ -243,7 +240,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
