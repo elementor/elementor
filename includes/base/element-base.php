@@ -335,7 +335,11 @@ abstract class Element_Base {
 		return $child;
 	}
 
-	public function is_control_visible( $control ) {
+	public function is_control_visible( $control, $values = null ) {
+		if ( null === $values ) {
+			$values = $this->get_settings();
+		}
+
 		if ( empty( $control['condition'] ) ) {
 			return true;
 		}
@@ -347,7 +351,7 @@ abstract class Element_Base {
 			$condition_sub_key = $condition_key_parts[2];
 			$is_negative_condition = ! ! $condition_key_parts[3];
 
-			$instance_value = $this->get_settings( $pure_condition_key );
+			$instance_value = $values[ $pure_condition_key ];
 
 			if ( null === $instance_value ) {
 				return false;
