@@ -42,7 +42,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 			'wp-auth-check',
 			'google-font-roboto',
 
-			'elementor-admin',
+			'elementor-editor',
 		];
 
 		foreach ( $scripts as $script ) {
