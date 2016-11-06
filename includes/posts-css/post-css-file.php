@@ -182,26 +182,24 @@ class Post_CSS_File {
 		$this->css = $css;
 	}
 
-	private function add_element_style_rules( Element_Base $element, $controls, $values, $placeholders = null, $replacements = null ) {
-		if ( ! $placeholders ) {
-			$placeholders = [ '{{WRAPPER}}' ];
-		}
-
-		if ( ! $replacements ) {
-			$replacements = [ $this->get_element_unique_selector( $element ) ];
-		}
-
+	private function add_element_style_rules( Element_Base $element, $controls, $values, $placeholders, $replacements ) {
 		foreach ( $controls as $control ) {
 			$control_value = $values[ $control['name'] ];
 
 			if ( ! empty( $control['style_fields'] ) ) {
-				$placeholders[] = '{{CURRENT_ITEM}}';
-
-				foreach ( $control_value as $index => $field_value ) {
-					$replacements[1] = '.elementor-repeater-item-' . ( $index + 1 );
-
-					$this->add_element_style_rules( $element, $control['style_fields'], $field_value, $placeholders, $replacements );
+				foreach ( $control_value as $field_value ) {
+					$this->add_element_style_rules(
+						$element,
+						$control['style_fields'],
+						$field_value,
+						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
+						array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
+					);
 				}
+			}
+
+			if ( ! $element->is_control_visible( $control, $values ) ) {
+				continue;
 			}
 
 			$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
@@ -241,7 +239,7 @@ class Post_CSS_File {
 	private function render_styles( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
-		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings );
+		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{WRAPPER}}' ], [ $this->get_element_unique_selector( $element ) ] );
 
 		if ( 'column' === $element->get_name() ) {
 			if ( ! empty( $element_settings['_inline_size'] ) ) {

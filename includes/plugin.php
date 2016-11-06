@@ -172,6 +172,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
+		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
