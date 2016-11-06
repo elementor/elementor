@@ -5,46 +5,6 @@ class Import_Images {
 
 	private $_replace_image_ids = [];
 
-	/**
-	 * @var self
-	 */
-	private static $_instance = null;
-
-	/**
-	 * Throw error on object clone
-	 *
-	 * The whole idea of the singleton design pattern is that there is a single
-	 * object therefore, we don't want the object to be cloned.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function __clone() {
-		// Cloning instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
-	}
-
-	/**
-	 * Disable unserializing of the class
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function __wakeup() {
-		// Unserializing instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
-	}
-
-	/**
-	 * @return self
-	 */
-	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
 	private function _get_hash_image( $attachment_url ) {
 		return sha1( $attachment_url );
 	}

@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\TemplateLibrary\Classes\Import_Images;
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Control_Gallery extends Control_Base {
@@ -16,7 +14,7 @@ class Control_Gallery extends Control_Base {
 			if ( empty( $attachment['url'] ) )
 				continue;
 
-			$attachment = Import_Images::instance()->import( $attachment );
+			$attachment = Plugin::instance()->templates_manager->get_import_images_instance()->import( $attachment );
 		}
 
 		// Filter out attachments that doesn't exist

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\TemplateLibrary\Classes\Import_Images;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Manager {
@@ -9,6 +11,8 @@ class Manager {
 	 * @var Source_Base[]
 	 */
 	protected $_registered_sources = [];
+
+	private $_import_images = null;
 
 	public function init() {
 		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
@@ -27,6 +31,17 @@ class Manager {
 
 			$this->register_source( __NAMESPACE__ . '\Source_' . $class_name );
 		}
+	}
+
+	/**
+	 * @return Import_Images
+	 */
+	public function get_import_images_instance() {
+		if ( null === $this->_import_images ) {
+			$this->_import_images = new Import_Images();
+		}
+
+		return $this->_import_images;
 	}
 
 	public function register_source( $source_class, $args = [] ) {

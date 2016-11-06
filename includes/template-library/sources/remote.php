@@ -67,7 +67,6 @@ class Source_Remote extends Source_Base {
 		}
 
 		$data = $this->replace_elements_ids( $data );
-
 		$data = $this->process_export_import_data( $data, 'on_import' );
 
 		return $data;

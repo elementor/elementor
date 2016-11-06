@@ -38,7 +38,6 @@ abstract class Source_Base {
 	 * @return mixed
 	 */
 	protected function process_export_import_data( $data, $method ) {
-
 		return Plugin::instance()->db->iterate_data( $data, function( $element ) use ( $method ) {
 
 			if ( 'widget' === $element['elType'] ) {
@@ -47,7 +46,7 @@ abstract class Source_Base {
 				$element_class = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
 			}
 
-			/* if the widget/element isn't exist, like a plugin that creates a widget but deactivated */
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
 			if ( ! $element_class ) {
 				return $element;
 			}
@@ -59,7 +58,7 @@ abstract class Source_Base {
 			foreach ( $element_class->get_controls() as $control ) {
 				$control_class = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
-				/* if the control isn't exist, like a plugin that creates the control but deactivated */
+				// If the control isn't exist, like a plugin that creates the control but deactivated
 				if ( ! $control_class ) {
 					return $element;
 				}
