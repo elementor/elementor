@@ -121,7 +121,6 @@ class Plugin {
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
-			do_action( 'elementor/loaded' );
 		}
 		return self::$_instance;
 	}
@@ -134,7 +133,7 @@ class Plugin {
 
 		$this->init_components();
 
-		do_action( 'elementor/init' );
+		do_action( 'elementor/loaded' );
 	}
 
 	public function widgets_init() {
