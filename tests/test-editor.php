@@ -35,7 +35,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	public function test_enqueueStyles() {
 		Elementor\Plugin::instance()->editor->enqueue_styles();
 
-		$scripts = [
+		$styles = [
 			'font-awesome',
 			'select2',
 			'elementor-icons',
@@ -45,8 +45,8 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 			'elementor-editor',
 		];
 
-		foreach ( $scripts as $script ) {
-			$this->assertTrue( wp_style_is( $script ) );
+		foreach ( $styles as $style ) {
+			$this->assertTrue( wp_style_is( $style ) );
 		}
 	}
 
