@@ -13,6 +13,7 @@
 
 		img {
 			vertical-align: middle;
+			display: inline-block; // Hack for themes that set img as a display block
 		}
 
 		&.elementor-image-shape- {

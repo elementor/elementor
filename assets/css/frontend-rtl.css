@@ -572,7 +572,8 @@
 .elementor-widget-image .elementor-image figure > a {
   display: inline-block; }
 .elementor-widget-image .elementor-image img {
-  vertical-align: middle; }
+  vertical-align: middle;
+  display: inline-block; }
 .elementor-widget-image .elementor-image.elementor-image-shape-circle {
   border-radius: 50%; }
 
