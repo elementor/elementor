@@ -70,7 +70,14 @@
     position: absolute; }
   .elementor .elementor-invisible {
     visibility: hidden; }
-
+  .elementor .elementor-column-background-overlay {
+    background: red none repeat scroll 0 0;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
 .elementor-align-center {
   text-align: center; }
   .elementor-align-center .elementor-button {
