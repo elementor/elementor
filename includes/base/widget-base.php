@@ -188,7 +188,7 @@ abstract class Widget_Base extends Element_Base {
 
 		// Add a `disabled` class if it's a shortcode/wp-widget within the editor
 		if ( ! Plugin::instance()->editor->is_edit_mode() ) {
-			$this->add_render_attribute( 'wrapper', 'class', [
+			$this->add_render_attribute( '_wrapper', 'class', [
 				'elementor-widget-edit-disabled',
 			] );
 		}
