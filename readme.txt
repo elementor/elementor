@@ -169,18 +169,18 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added Compatibility for themes by Bluchic
 * Tweak! - Added Compatibility for jQuery Masonry Image Gallery plugin ([#762](https://github.com/pojome/elementor/issues/762))
 * Tweak! - Added support for "multiple value" condition in Repeater control
-* Fixed! - Bug corrupting JSON post meta on import Elementor pages ([Topic](https://wordpress.org/support/topic/pages-importexport-not-working-properly/))
-* Fixed! - `.elementor-slick-slider` class now apply on all Elementor custom slick theme ([#424](https://github.com/pojome/elementor/issues/424))
-* Fixed! - Added subset support for Google Fonts to fix issues with some browsers
+* Fix! - Bug corrupting JSON post meta on import Elementor pages ([Topic](https://wordpress.org/support/topic/pages-importexport-not-working-properly/))
+* Fix! - `.elementor-slick-slider` class now apply on all Elementor custom slick theme ([#424](https://github.com/pojome/elementor/issues/424))
+* Fix! - Added subset support for Google Fonts to fix issues with some browsers
 
 = 0.10.4 - 26.10.2016 =
 * Tweak! - Updated Font Awesome v4.7.0 (41+ icons)
 * Tweak! - Added type attribute for text input control
 * Tweak! - Improved import template from library
 * Tweak! - Removed admin email from system info copied
-* Fixed! - Columns overlay layer for negative top margin scenario
-* Fixed! - Added i18n strings to Delete All Content dialog
-* Fixed! - Target blank link in heading widget - ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
+* Fix! - Columns overlay layer for negative top margin scenario
+* Fix! - Added i18n strings to Delete All Content dialog
+* Fix! - Target blank link in heading widget - ([Topic](https://wordpress.org/support/topic/open-link-in-new-tab-doesnt-work/))
 
 = 0.10.3 - 13.10.2016 =
 * Fix! - Hover animation classes for Image widget ([Topic](https://wordpress.org/support/topic/update-issue-animation/), [Topic](https://wordpress.org/support/topic/hover-animation-2/))
