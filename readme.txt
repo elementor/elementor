@@ -160,13 +160,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 == Changelog ==
 
 = 0.10.7 - 07.11.2016 =
-Fix! - Image widget template for link and caption ([Topic](https://wordpress.org/support/topic/image-not-aligning-when-linked/))
-Fix! - Exclude Library from search ([Topic](https://wordpress.org/support/topic/custom-templates-accidentally-show-up-in-search-results/))
-Fix! - HTML of text widget not being parsed in the preview ([Topic](https://wordpress.org/support/topic/html-of-text-widget-not-being-parsed-in-the-preview/))
-Fix! - Add new section button in RTL
-Fix! - Stretched section in RTL
-Fix! - TinyMCE editor buttons in RTL
-Fix! - Error messages for template library
+* Fix! - Image widget template for link and caption ([Topic](https://wordpress.org/support/topic/image-not-aligning-when-linked/))
+* Fix! - Exclude Library from search ([Topic](https://wordpress.org/support/topic/custom-templates-accidentally-show-up-in-search-results/))
+* Fix! - HTML of text widget not being parsed in the preview ([Topic](https://wordpress.org/support/topic/html-of-text-widget-not-being-parsed-in-the-preview/))
+* Fix! - Add new section button in RTL
+* Fix! - Stretched section in RTL
+* Fix! - TinyMCE editor buttons in RTL
+* Fix! - Error messages for template library
 
 = 0.10.6 - 02.11.2016 =
 * Fix! - Some breaks layouts from previous release
