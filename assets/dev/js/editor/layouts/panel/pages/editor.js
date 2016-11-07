@@ -90,7 +90,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			}
 		} );
 
-		this.handleInnerTabs();
+		this.handleInnerTabs( this );
 	},
 
 	onModelDestroy: function() {
@@ -187,11 +187,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		elementor.channels.data.trigger( 'scrollbar:update' );
 	},
 
-	handleInnerTabs: function () {
-		var editor = this,
-			closedClass = 'elementor-tab-close',
+	handleInnerTabs: function ( parent ) {
+		var closedClass = 'elementor-tab-close',
 			activeClass = 'elementor-tab-active',
-			tabsWrappers = this.children.filter( function( view ) {
+			tabsWrappers = parent.children.filter( function( view ) {
 				return ( view.model.get( 'is_tabs_wrapper' ) );
 			} );
 
@@ -199,7 +198,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			view.$el.addClass( 'type-tabs' );
 
 			var tabs_id = view.model.get('name'),
-				tabs = editor.children.filter( function( childView ) {
+				tabs = parent.children.filter( function( childView ) {
 					return ( childView.model.get( 'type' ) === 'tab' && childView.model.get( 'tabs_wrapper' ) === tabs_id );
 				} );
 
@@ -207,7 +206,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 				view._addChildView( childView );
 
 				var tab_id =  childView.model.get( 'name' ),
-					controlsUnderTab = editor.children.filter( function( view ) {
+					controlsUnderTab = parent.children.filter( function( view ) {
 						return ( view.model.get( 'inner_tab' ) === tab_id );
 					} );
 
@@ -238,7 +237,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		_.each( siblingTabs, function( view ) {
 			view.$el.removeClass(activeClass);
 		} );
-		
+
 		_.each( childrenUnderTab, function( view ) {
 			if ( view.model.get( 'inner_tab' ) === tabClicked ) {
 				view.$el.removeClass( closedClass );

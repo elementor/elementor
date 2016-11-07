@@ -554,7 +554,7 @@ select {
     #elementor-panel .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
       font-weight: bold; }
   #elementor-panel .elementor-tab-close {
-    display: none; }
+    display: none !important; }
   #elementor-panel .select2-container {
     width: 100% !important; }
     #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single {

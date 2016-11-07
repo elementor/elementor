@@ -11,7 +11,7 @@ abstract class Element_Base {
 
 	private $_id;
 
-	private $_settings;
+	private $_settings = [];
 
 	private $_data;
 
@@ -38,7 +38,7 @@ abstract class Element_Base {
 	 *
 	 * @var null|array
 	 */
-	private $_current_tab = null;
+	protected $_current_tab = null;
 
 	public final static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
@@ -114,7 +114,7 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
-	public final function add_control( $id, $args ) {
+	public function add_control( $id, $args ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
