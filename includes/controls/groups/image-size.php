@@ -145,7 +145,12 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		if ( empty( $attachment_id ) )
 			return false;
 
-		$size = $instance[ $group_name . '_size' ];
+		$array_key = $group_name . '_size';
+		if ( isset( $array_key ) ) {
+			$size = $instance[ $array_key ];
+		} else {
+			return false;
+		}
 
 		if ( 'custom' !== $size ) {
 			$attachment_size = $size;
