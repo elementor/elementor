@@ -461,7 +461,7 @@ TemplateLibraryManager = function() {
 				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
 			error: function( data ) {
-				self.showErrorDialog( data.message );
+				self.showErrorDialog( data );
 			}
 		} );
 	};
@@ -872,7 +872,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
-				elementor.templates.showErrorDialog( data.message );
+				elementor.templates.showErrorDialog( data );
 			}
 		} );
 	}
@@ -967,7 +967,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
-				elementor.templates.showErrorDialog( data.message );
+				elementor.templates.showErrorDialog( data );
 			}
 		} );
 	}
@@ -7271,7 +7271,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: this.editorID,
 			selector: '#' + this.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change undo redo', function() {
+				editor.on( 'keyup change undo redo SetContent', function() {
 					editor.save();
 
 					self.setValue( editor.getContent() );
@@ -7844,12 +7844,13 @@ WidgetView = BaseElementView.extend( {
 
 	onRender: function() {
         var self = this,
-	        skinType = self.model.getSetting( '_skin' ) || 'default';
+	        editModel = self.getEditModel(),
+	        skinType = editModel.getSetting( '_skin' ) || 'default';
 
         self.$el
-	        .attr( 'data-element_type', self.model.get( 'widgetType' ) + '.' + skinType )
+	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + this.getEditModel().get( 'widgetType' ) )
+	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
@@ -7861,7 +7862,7 @@ WidgetView = BaseElementView.extend( {
 
                     // TODO: REMOVE THIS !!
                     // TEMP CODING !!
-                    self.$el.append( '<i class="elementor-widget-empty-icon eicon-' + self.model.getIcon() + '"></i>' );
+                    self.$el.append( '<i class="elementor-widget-empty-icon eicon-' + editModel.getIcon() + '"></i>' );
                 }
             }, 200 );
             // Is element empty?

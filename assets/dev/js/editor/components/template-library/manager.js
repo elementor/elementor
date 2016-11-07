@@ -49,7 +49,7 @@ TemplateLibraryManager = function() {
 				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
 			error: function( data ) {
-				self.showErrorDialog( data.message );
+				self.showErrorDialog( data );
 			}
 		} );
 	};

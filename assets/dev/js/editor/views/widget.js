@@ -91,12 +91,13 @@ WidgetView = BaseElementView.extend( {
 
 	onRender: function() {
         var self = this,
-	        skinType = self.model.getSetting( '_skin' ) || 'default';
+	        editModel = self.getEditModel(),
+	        skinType = editModel.getSetting( '_skin' ) || 'default';
 
         self.$el
-	        .attr( 'data-element_type', self.model.get( 'widgetType' ) + '.' + skinType )
+	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + this.getEditModel().get( 'widgetType' ) )
+	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
@@ -108,7 +109,7 @@ WidgetView = BaseElementView.extend( {
 
                     // TODO: REMOVE THIS !!
                     // TEMP CODING !!
-                    self.$el.append( '<i class="elementor-widget-empty-icon eicon-' + self.model.getIcon() + '"></i>' );
+                    self.$el.append( '<i class="elementor-widget-empty-icon eicon-' + editModel.getIcon() + '"></i>' );
                 }
             }, 200 );
             // Is element empty?
