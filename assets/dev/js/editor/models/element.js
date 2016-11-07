@@ -257,7 +257,7 @@ ElementModel.prototype.save = function() {
 	return null;
 };
 
-module.exports = {
+module.exports = elementor.modules.element = {
 	Model: ElementModel,
 	Collection: ElementCollection
 };

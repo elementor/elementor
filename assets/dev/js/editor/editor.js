@@ -32,6 +32,8 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	modules: {},
+
 	// Private Members
 	_controlsItemView: null,
 
