@@ -38,7 +38,8 @@
 			'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 			'video.default': require( 'elementor-frontend/handlers/video' ),
 			'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
+			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' ),
+			'library-template.default': require( 'elementor-frontend/handlers/template' )
 		};
 
 		this.config = elementorFrontendConfig;
@@ -119,7 +120,7 @@
 } )( jQuery );
 
 jQuery( function() {
-	if ( ! elementorFrontend.isEditMode() ) {
+	// if ( ! elementorFrontend.isEditMode() ) {
 		elementorFrontend.init();
-	}
+	// }
 } );

@@ -59,7 +59,8 @@ module.exports = ElementsHandler;
 			'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 			'video.default': require( 'elementor-frontend/handlers/video' ),
 			'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
+			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' ),
+			'library-template.default': require( 'elementor-frontend/handlers/template' )
 		};
 
 		this.config = elementorFrontendConfig;
@@ -140,12 +141,12 @@ module.exports = ElementsHandler;
 } )( jQuery );
 
 jQuery( function() {
-	if ( ! elementorFrontend.isEditMode() ) {
+	// if ( ! elementorFrontend.isEditMode() ) {
 		elementorFrontend.init();
-	}
+	// }
 } );
 
-},{"../utils/hooks":15,"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14}],3:[function(require,module,exports){
+},{"../utils/hooks":16,"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/template":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/utils":15}],3:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -500,6 +501,13 @@ module.exports = function( $scoop, $ ) {
 
 },{}],12:[function(require,module,exports){
 module.exports = function( $scoop, $ ) {
+	$scoop.find( '.elementor-element' ).each( function() {
+		elementorFrontend.elementsHandler.runReadyTrigger( $( this ) );
+	} );
+};
+
+},{}],13:[function(require,module,exports){
+module.exports = function( $scoop, $ ) {
 	var $toggleTitles = $scoop.find( '.elementor-toggle-title' );
 
 	$toggleTitles.on( 'click', function() {
@@ -516,7 +524,7 @@ module.exports = function( $scoop, $ ) {
 	} );
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function( $scoop, $ ) {
 	var $imageOverlay = $scoop.find( '.elementor-custom-embed-image-overlay' ),
 		$videoFrame = $scoop.find( 'iframe' );
@@ -535,7 +543,7 @@ module.exports = function( $scoop, $ ) {
 	} );
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var Utils;
 
 Utils = function( $ ) {
@@ -559,7 +567,7 @@ Utils = function( $ ) {
 
 module.exports = Utils;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
