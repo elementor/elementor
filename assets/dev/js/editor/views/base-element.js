@@ -51,6 +51,21 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
 
+	getChildView: function( model ) {
+		var ChildView,
+			elType = model.get( 'elType' );
+
+		if ( 'section' === elType ) {
+			ChildView = require( 'elementor-views/section' );
+		} else if ( 'column' === elType ) {
+			ChildView = require( 'elementor-views/column' );
+		} else {
+			ChildView = require( 'elementor-views/widget' );
+		}
+
+		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
+	},
+
 	templateHelpers: function() {
 		return {
 			elementModel: this.model
