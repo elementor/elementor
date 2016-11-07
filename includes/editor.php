@@ -389,7 +389,7 @@ class Editor {
 		);
 
 		wp_register_style(
-			'elementor-admin',
+			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'font-awesome',
@@ -401,7 +401,7 @@ class Editor {
 			Plugin::instance()->get_version()
 		);
 
-		wp_enqueue_style( 'elementor-admin' );
+		wp_enqueue_style( 'elementor-editor' );
 	}
 
 	protected function _get_wp_editor_config() {

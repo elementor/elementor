@@ -586,7 +586,7 @@
 
 .elementor-widget-image .elementor-image > a,
 .elementor-widget-image .elementor-image figure > a {
-  display: inline-block; }
+  display: block; }
 .elementor-widget-image .elementor-image img {
   vertical-align: middle; }
 .elementor-widget-image .elementor-image.elementor-image-shape-circle {

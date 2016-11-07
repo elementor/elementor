@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -12,13 +13,23 @@ class Manager {
 	 */
 	protected $_registered_sources = [];
 
+	private $_import_images = null;
+
 	public function __construct() {
 		$this->register_default_sources();
 
 		$this->init_ajax_calls();
 	}
 
-	public function init() {
+	/**
+	 * @return Import_Images
+	 */
+	public function get_import_images_instance() {
+		if ( null === $this->_import_images ) {
+			$this->_import_images = new Import_Images();
+		}
+
+		return $this->_import_images;
 	}
 
 	public function register_source( $source_class, $args = [] ) {
@@ -233,7 +244,7 @@ class Manager {
 
 		if ( is_wp_error( $result ) ) {
 			if ( 'ajax' === $request_type ) {
-				wp_send_json_error( $result );
+				wp_send_json_error( $result->get_error_message() );
 			}
 
 			$callback = "on_{$ajax_request}_error";

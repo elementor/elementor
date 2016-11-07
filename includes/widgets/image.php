@@ -302,24 +302,26 @@ class Widget_Image extends Widget_Base {
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 		<?php
-		if ( $link ) : ?>
-			<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-		<?php endif;
 		if ( $has_caption ) : ?>
-				<figure class="wp-caption">
+			<figure class="wp-caption">
+		<?php endif;
+
+		if ( $link ) : ?>
+				<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
 		<?php endif;
 
 		echo Group_Control_Image_Size::get_attachment_image_html( $settings );
 
-		if ( $has_caption ) : ?>
-					<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+		if ( $link ) : ?>
+				</a>
 		<?php endif;
 
 		if ( $has_caption ) : ?>
-				</figure>
+				<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
 		<?php endif;
-		if ( $link ) : ?>
-			</a>
+
+		if ( $has_caption ) : ?>
+			</figure>
 		<?php endif; ?>
 		</div>
 		<?php
@@ -356,11 +358,6 @@ class Widget_Image extends Widget_Base {
 			}
 
 			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-
-			if ( link_url ) {
-				#><a href="{{ link_url }}"><#
-			}
-
 			var imgClass = '',
 				hasCaption = '' !== settings.caption;
 
@@ -369,21 +366,24 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( hasCaption ) {
-						#><figure class="wp-caption"><#
-			}
-
-							#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
-
-			if ( hasCaption ) {
-							#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
-			}
-
-			if ( hasCaption ) {
-						#></figure><#
+				#><figure class="wp-caption"><#
 			}
 
 			if ( link_url ) {
+					#><a href="{{ link_url }}"><#
+			}
+						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
+
+			if ( link_url ) {
 					#></a><#
+			}
+
+			if ( hasCaption ) {
+					#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
+			}
+
+			if ( hasCaption ) {
+				#></figure><#
 			}
 
 			#></div><#
