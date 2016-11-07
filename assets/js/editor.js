@@ -461,7 +461,7 @@ TemplateLibraryManager = function() {
 				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
 			error: function( data ) {
-				self.showErrorDialog( data.message );
+				self.showErrorDialog( data );
 			}
 		} );
 	};
@@ -872,7 +872,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
-				elementor.templates.showErrorDialog( data.message );
+				elementor.templates.showErrorDialog( data );
 			}
 		} );
 	}
@@ -967,7 +967,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
-				elementor.templates.showErrorDialog( data.message );
+				elementor.templates.showErrorDialog( data );
 			}
 		} );
 	}
@@ -7263,7 +7263,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: this.editorID,
 			selector: '#' + this.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change undo redo', function() {
+				editor.on( 'keyup change undo redo SetContent', function() {
 					editor.save();
 
 					self.setValue( editor.getContent() );
