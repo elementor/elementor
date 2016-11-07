@@ -47,8 +47,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		this.getRegion( 'modalContent' ).show( new TemplateLibraryImportView() );
 	},
 
-	showSaveTemplateView: function( sectionID ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView( { sectionID: sectionID } ) );
+	showSaveTemplateView: function( elementModel ) {
+		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 
 		var headerView = this.getHeaderView();
 

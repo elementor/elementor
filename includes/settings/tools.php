@@ -27,12 +27,9 @@ class Tools {
 		<div class="wrap">
 			<h2><?php _e( 'Elementor Tools', 'elementor' ); ?></h2>
 			<form method="post" action="">
-				<h3>
-					<?php _e( 'Clear Cache', 'elementor' ); ?>
-				</h3>
-				<p>
-					<?php _e( 'Regenerate CSS files', 'elementor' ); ?>
-				</p>
+				<h3><?php _e( 'Clear Cache', 'elementor' ); ?></h3>
+
+				<p><?php _e( 'Regenerate CSS files', 'elementor' ); ?></p>
 
 				<input type="hidden" name="tool_name" value="clear_cache" />
 
@@ -46,7 +43,6 @@ class Tools {
 	}
 
 	public function process_form() {
-
 		if ( empty( $_POST['option_page'] ) || self::PAGE_ID !== $_POST['option_page'] ) {
 			return;
 		}
@@ -55,7 +51,7 @@ class Tools {
 			case 'clear_cache':
 				$errors = Plugin::instance()->posts_css_manager->clear_cache();
 
-				add_action( 'admin_notices', function () use ( $errors ) {
+				add_action( 'admin_notices', function() use ( $errors ) {
 					if ( empty( $errors ) ) {
 						echo '<div class="notice notice-success"><p>' . __( 'Cache has been cleared', 'elementor' ) . '</p></div>';
 					} else {

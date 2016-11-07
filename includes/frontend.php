@@ -193,13 +193,30 @@ class Frontend {
 			foreach ( $this->_enqueue_google_fonts as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
-			printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=%s">', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$subsets = [
+				'ru_RU' => 'cyrillic',
+				'bg_BG' => 'cyrillic',
+				'he_IL' => 'hebrew',
+				'el' => 'greek',
+				'vi' => 'vietnamese',
+				'uk' => 'cyrillic',
+			];
+			$locale = get_locale();
+
+			if ( isset( $subsets[ $locale ] ) ) {
+				$fonts_url .= '&subset=' . $subsets[ $locale ];
+			}
+
+			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
 			$this->_enqueue_google_fonts = [];
 		}
 
 		if ( ! empty( $this->_enqueue_google_early_access_fonts ) ) {
 			foreach ( $this->_enqueue_google_early_access_fonts as $current_font ) {
-				printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
+				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 			}
 			$this->_enqueue_google_early_access_fonts = [];
 		}
@@ -280,7 +297,7 @@ class Frontend {
 		if ( empty( $data ) || 'builder' !== $edit_mode )
 			return '';
 
-		$css_file = new Post_Css_File( $post_id );
+		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
 
 		ob_start(); ?>
@@ -347,10 +364,6 @@ class Frontend {
 		return $content;
 	}
 
-	public function library_template_shortcode( $attributes ) {
-		return $this->get_builder_content_for_display( $attributes['id'] );
-	}
-
 	public function __construct() {
 		// Allow on AJAX in order to load the shortcode content from the panel
 		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
@@ -359,6 +372,5 @@ class Frontend {
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
-		add_shortcode( 'elementor-template', [ $this, 'library_template_shortcode' ] );
 	}
 }

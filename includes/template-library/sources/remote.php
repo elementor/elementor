@@ -56,7 +56,15 @@ class Source_Remote extends Source_Base {
 		return false;
 	}
 
+	public function update_item( $new_data ) {
+		return false;
+	}
+
 	public function delete_template( $item_id ) {
+		return false;
+	}
+
+	public function export_template( $item_id ) {
 		return false;
 	}
 
@@ -66,42 +74,9 @@ class Source_Remote extends Source_Base {
 			return false;
 		}
 
-		// Fetch all images and replace to new
-		$import_images = new Classes\Import_Images();
+		$data = $this->replace_elements_ids( $data );
+		$data = $this->process_export_import_data( $data, 'on_import' );
 
-		$content_data = Plugin::instance()->db->iterate_data( $data, function( $element ) use ( $import_images ) {
-			$element['id'] = Utils::generate_random_string();
-
-			if ( 'widget' === $element['elType'] ) {
-				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
-			} else {
-				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
-			}
-
-			if ( ! $element_type )
-				return $element;
-
-			foreach ( $element_type->get_controls() as $control ) {
-				if ( Controls_Manager::MEDIA === $control['type'] ) {
-					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
-						continue;
-
-					$element['settings'][ $control['name'] ] = $import_images->import( $element['settings'][ $control['name'] ] );
-				}
-
-				if ( Controls_Manager::GALLERY === $control['type'] ) {
-					foreach ( $element['settings'][ $control['name'] ] as &$attachment ) {
-						if ( empty( $attachment['url'] ) )
-							continue;
-
-						$attachment = $import_images->import( $attachment );
-					}
-				}
-			}
-
-			return $element;
-		} );
-
-		return $content_data;
+		return $data;
 	}
 }

@@ -7,6 +7,14 @@ class Editor {
 
 	private $_is_edit_mode;
 
+	private $_editor_templates = [
+		'editor-templates/global.php',
+		'editor-templates/panel.php',
+		'editor-templates/panel-elements.php',
+		'editor-templates/repeater.php',
+		'editor-templates/templates.php',
+	];
+
 	public function init() {
 		if ( is_admin() || ! $this->is_edit_mode() ) {
 			return;
@@ -299,6 +307,7 @@ class Editor {
 				'data' => $editor_data,
 				'locked_user' => $locked_user,
 				'is_rtl' => is_rtl(),
+				'locale' => get_locale(),
 				'introduction' => User::get_introduction(),
 				'viewportBreakpoints' => Responsive::get_breakpoints(),
 				'i18n' => [
@@ -380,7 +389,7 @@ class Editor {
 		);
 
 		wp_register_style(
-			'elementor-admin',
+			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'font-awesome',
@@ -392,7 +401,7 @@ class Editor {
 			Plugin::instance()->get_version()
 		);
 
-		wp_enqueue_style( 'elementor-admin' );
+		wp_enqueue_style( 'elementor-editor' );
 	}
 
 	protected function _get_wp_editor_config() {
@@ -413,6 +422,10 @@ class Editor {
 		do_action( 'elementor/editor/wp_head' );
 	}
 
+	public function add_editor_template( $template_path ) {
+		$this->_editor_templates[] = $template_path;
+	}
+
 	public function wp_footer() {
 		Plugin::instance()->controls_manager->render_controls();
 		Plugin::instance()->widgets_manager->render_widgets_content();
@@ -420,11 +433,9 @@ class Editor {
 
 		Plugin::instance()->schemes_manager->print_schemes_templates();
 
-		include( 'editor-templates/global.php' );
-		include( 'editor-templates/panel.php' );
-		include( 'editor-templates/panel-elements.php' );
-		include( 'editor-templates/repeater.php' );
-		include( 'editor-templates/templates.php' );
+		foreach ( $this->_editor_templates as $editor_template ) {
+			include $editor_template;
+		}
 	}
 
 	/**

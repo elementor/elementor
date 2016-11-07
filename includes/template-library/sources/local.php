@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Source_Local extends Source_Base {
 
 	const CPT = 'elementor_library';
+
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	const TYPE_META_KEY = '_elementor_template_type';
@@ -59,6 +60,7 @@ class Source_Local extends Source_Base {
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => false,
+			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
@@ -122,25 +124,30 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', 'The specified template type doesn\'t exists' );
 		}
 
-		$post_id = wp_insert_post(
-			[
-				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-				'post_status' => 'publish',
-				'post_type' => self::CPT,
-			]
-		);
+		$post_id = wp_insert_post( [
+			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
+			'post_status' => 'publish',
+			'post_type' => self::CPT,
+		] );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}
 
 		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
+
 		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
 		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
 
 		return $post_id;
+	}
+
+	public function update_item( $new_data ) {
+		Plugin::instance()->db->save_editor( $new_data['id'], $new_data['data'] );
+
+		return true;
 	}
 
 	/**
@@ -169,17 +176,18 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_content( $item_id, $context = 'display' ) {
+		$db = Plugin::instance()->db;
+
 		// TODO: Valid the data (in JS too!)
 		if ( 'display' === $context ) {
-			$data = Plugin::instance()->db->get_builder( $item_id );
+			$data = $db->get_builder( $item_id );
 		} else {
-			$data = Plugin::instance()->db->get_plain_editor( $item_id );
+			$data = $db->get_plain_editor( $item_id );
 		}
 
-		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
-			$element['id'] = Utils::generate_random_string();
-			return $element;
-		} );
+		$data = $this->replace_elements_ids( $data );
+
+		return $data;
 	}
 
 	public function delete_template( $item_id ) {
@@ -188,6 +196,9 @@ class Source_Local extends Source_Base {
 
 	public function export_template( $item_id ) {
 		$template_data = $this->get_content( $item_id, 'raw' );
+
+		$template_data = $this->process_export_import_data( $template_data, 'on_export' );
+
 		if ( empty( $template_data ) )
 			return new \WP_Error( '404', 'The template does not exist' );
 
@@ -213,10 +224,12 @@ class Source_Local extends Source_Base {
 
 		// Clear buffering just in case
 		@ob_end_clean();
+
 		flush();
 
 		// Output file contents
 		echo $template_contents;
+
 		die;
 	}
 
@@ -232,51 +245,7 @@ class Source_Local extends Source_Base {
 		if ( $is_invalid_file )
 			return new \WP_Error( 'file_error', 'Invalid File' );
 
-		// Fetch all images and replace to new
-		$import_images = new Classes\Import_Images();
-
-		/** @var Element_Base $element_type */
-		$content_data = Plugin::instance()->db->iterate_data( $content['data'], function( $element ) use ( $import_images ) {
-			if ( 'widget' === $element['elType'] ) {
-				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
-			} else {
-				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
-			}
-
-			if ( ! $element_type )
-				return $element;
-
-			foreach ( $element_type->get_controls() as $control ) {
-				if ( Controls_Manager::MEDIA === $control['type'] ) {
-					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
-						continue;
-
-					$imported_image = $import_images->import( $element['settings'][ $control['name'] ] );
-
-					if ( ! $imported_image ) {
-						$element['settings'][ $control['name'] ] = [
-							'id' => null,
-							'url' => Utils::get_placeholder_image_src(),
-						];
-
-						continue;
-					}
-
-					$element['settings'][ $control['name'] ] = $import_images->import( $element['settings'][ $control['name'] ] );
-				}
-
-				if ( Controls_Manager::GALLERY === $control['type'] ) {
-					foreach ( $element['settings'][ $control['name'] ] as &$attachment ) {
-						if ( empty( $attachment['url'] ) )
-							continue;
-
-						$attachment = $import_images->import( $attachment );
-					}
-				}
-			}
-
-			return $element;
-		} );
+		$content_data = $this->process_export_import_data( $content['data'], 'on_import' );
 
 		$item_id = $this->save_item( [
 			'data' => $content_data,

@@ -9,6 +9,20 @@ class Control_Gallery extends Control_Base {
 		return 'gallery';
 	}
 
+	public function on_import( $settings ) {
+		foreach ( $settings as &$attachment ) {
+			if ( empty( $attachment['url'] ) )
+				continue;
+
+			$attachment = Plugin::instance()->templates_manager->get_import_images_instance()->import( $attachment );
+		}
+
+		// Filter out attachments that doesn't exist
+		$settings = array_filter( $settings );
+
+		return $settings;
+	}
+
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">

@@ -82,9 +82,9 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 */
 	public function register_controls() {
-		include( 'controls/base.php' );
-		include( 'controls/base-multiple.php' );
-		include( 'controls/base-units.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
 
 		$available_controls = [
 			self::TEXT,
@@ -127,22 +127,22 @@ class Controls_Manager {
 
 		foreach ( $available_controls as $control_id ) {
 			$control_filename = str_replace( '_', '-', $control_id );
-			$control_filename = "controls/{$control_filename}.php";
-			include( $control_filename );
+			$control_filename = ELEMENTOR_PATH . "includes/controls/{$control_filename}.php";
+			require( $control_filename );
 
 			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id );
 			$this->register_control( $control_id, $class_name );
 		}
 
 		// Group Controls
-		include( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
-		include( 'controls/groups/base.php' );
+		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
 
-		include( 'controls/groups/background.php' );
-		include( 'controls/groups/border.php' );
-		include( 'controls/groups/typography.php' );
-		include( 'controls/groups/image-size.php' );
-		include( 'controls/groups/box-shadow.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/background.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/border.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/typography.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/image-size.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/box-shadow.php' );
 
 		$this->_group_controls['background'] = new Group_Control_Background();
 		$this->_group_controls['border'] = new Group_Control_Border();
@@ -327,6 +327,6 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_controls' ] );
+		$this->register_controls();
 	}
 }

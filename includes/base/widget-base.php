@@ -5,12 +5,99 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Widget_Base extends Element_Base {
 
+	protected $_has_template_content = true;
+
 	public static function get_type() {
 		return 'widget';
 	}
 
+	protected static function get_default_edit_tools() {
+		return [
+			'edit' => [
+				'title' => __( 'Edit', 'elementor' ),
+				'icon' => 'pencil',
+			],
+			'duplicate' => [
+				'title' => __( 'Duplicate', 'elementor' ),
+				'icon' => 'files-o',
+			],
+			'remove' => [
+				'title' => __( 'Remove', 'elementor' ),
+				'icon' => 'times',
+			],
+		];
+	}
+
 	public function get_icon() {
 		return 'apps';
+	}
+
+	public function __construct( $data = [], $args = [] ) {
+		do_action( 'elementor/element/before_construct', $this, $data, $args );
+		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
+
+		parent::__construct( $data, $args );
+
+		do_action( 'elementor/element/after_construct', $this );
+		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
+
+		// First instance
+		if ( ! $data ) {
+			do_action( 'elementor/widget/' . $this->get_name() . '/before_register_skins', $this );
+			$this->_register_skins();
+			do_action( 'elementor/widget/' . $this->get_name() . '/after_register_skins', $this );
+		}
+	}
+
+	public function start_controls_section( $section_id, $args ) {
+		parent::start_controls_section( $section_id, $args );
+
+		static $is_first_section = true;
+
+		if ( $is_first_section ) {
+			$this->_register_skin_control();
+
+			$is_first_section = false;
+		}
+	}
+
+	private function _register_skin_control() {
+		$skins = $this->get_skins();
+		if ( ! empty( $skins ) ) {
+			$skin_options = [];
+
+			if ( $this->_has_template_content ) {
+				$skin_options[''] = __( 'Default', 'elementor' );
+			}
+
+			foreach ( $skins as $skin_id => $skin ) {
+				$skin_options[ $skin_id ] = $skin->get_title();
+			}
+
+			// Get the first item for default value
+			$default_value = array_keys( $skin_options );
+			$default_value = array_shift( $default_value );
+
+			$this->add_control(
+				'_skin',
+				[
+					'label' => __( 'Skin', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => $default_value,
+					'options' => $skin_options,
+				]
+			);
+		}
+	}
+
+	protected function _register_skins() {}
+
+	public function get_config( $item = null ) {
+		$config = parent::get_config( $item );
+
+		$config['widget_type'] = $this->get_name();
+
+		return $config;
 	}
 
 	public final function print_template() {
@@ -39,24 +126,14 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
 			<ul class="elementor-editor-element-settings-list">
-				<li class="elementor-editor-element-setting elementor-editor-element-edit">
-					<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-						<i class="fa fa-pencil"></i>
-					</a>
-				</li>
-				<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-					<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-						<i class="fa fa-files-o"></i>
-					</a>
-				</li>
-				<li class="elementor-editor-element-setting elementor-editor-element-remove">
-					<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-						<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-						<i class="fa fa-times"></i>
-					</a>
-				</li>
+				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
+						<a href="#" title="<?php echo $edit_tool['title']; ?>">
+							<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+							<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+						</a>
+					</li>
+				<?php endforeach; ?>
 			</ul>
 		</div>
 		<?php
@@ -84,7 +161,12 @@ abstract class Widget_Base extends Element_Base {
 			<?php
 			ob_start();
 
-			$this->render();
+			$skin = $this->get_current_skin();
+			if ( $skin ) {
+				$skin->render();
+			} else {
+				$this->render();
+			}
 
 			echo apply_filters( 'elementor/widget/render_content', ob_get_clean(), $this );
 			?>
@@ -97,7 +179,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function before_render() {
-		$this->add_render_attribute( 'wrapper', 'class', [
+		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
 			'elementor-element-' . $this->get_id(),
@@ -120,16 +202,18 @@ abstract class Widget_Base extends Element_Base {
 			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
 		if ( ! empty( $settings['_animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
+			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
+		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
+
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 
@@ -171,5 +255,36 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
+	}
+
+	public function add_skin( Skin_Base $skin ) {
+		Plugin::instance()->skins_manager->add_skin( $this, $skin );
+	}
+
+	public function get_skin( $skin_id ) {
+		$skins = $this->get_skins();
+		if ( isset( $skins[ $skin_id ] ) )
+			return $skins[ $skin_id ];
+
+		return false;
+	}
+
+	public function get_current_skin_id() {
+		return $this->get_settings( '_skin' );
+	}
+
+	public function get_current_skin() {
+		return $this->get_skin( $this->get_current_skin_id() );
+	}
+
+	public function remove_skin( $skin_id ) {
+		return Plugin::instance()->skins_manager->remove_skin( $this, $skin_id );
+	}
+
+	/**
+	 * @return Skin_Base[]
+	 */
+	public function get_skins() {
+		return Plugin::instance()->skins_manager->get_skins( $this );
 	}
 }
