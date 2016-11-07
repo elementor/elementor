@@ -138,7 +138,7 @@ class Plugin {
 	}
 
 	public function widgets_init() {
-		register_widget( 'Elementor\Widget_Library_Template' );
+		register_widget( 'Elementor\Widget_Elementor_Template' );
 	}
 
 	private function _includes() {
@@ -171,7 +171,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-elementor-library-template.php' );
+		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-elementor-template.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
