@@ -655,7 +655,7 @@ html.elementor-html {
 
 	#elementor-add-template-button {
 		background-color: $editor-dark;
-		margin-left: 25px;
+		@include margin-start(25px);
 	}
 
 	#elementor-add-section-drag-title {
