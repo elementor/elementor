@@ -184,9 +184,6 @@ class Plugin {
 
 	private function init_components() {
 		$this->db = new DB();
-	public function widgets_init() {
-		register_widget( 'Elementor\Widget_Elementor_Library_Template' );
-	}
 
 		$this->controls_manager = new Controls_Manager();
 		$this->schemes_manager = new Schemes_Manager();
