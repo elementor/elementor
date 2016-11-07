@@ -365,7 +365,7 @@ class Frontend {
 	}
 
 	public function __construct() {
-		// Allow on AJAX in order to load the shortcode content from the panel
+		// We don't need this class in admin side, but in AJAX requests
 		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 			return;
 		}
