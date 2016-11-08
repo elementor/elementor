@@ -321,9 +321,9 @@ class Frontend {
 		}
 
 		$wp_admin_bar->add_node( [
-			'id'    => 'elementor_edit_page',
+			'id' => 'elementor_edit_page',
 			'title' => __( 'Edit with Elementor', 'elementor' ),
-			'href'  => Utils::get_edit_link( $post_id ),
+			'href' => Utils::get_edit_link( $post_id ),
 		] );
 	}
 
