@@ -332,7 +332,7 @@ class Source_Local extends Source_Base {
 		if ( 'shortcode' === $column_name ) {
 			// %s = shortcode, %d = post_id
 			$shortcode = esc_attr( sprintf( '[%s id="%d"]', self::SHORTCODE, $post_id ) );
-			printf( '<input class="elementor-shortcode-input" readonly onfocus="this.select()" value="%s" />', $shortcode );
+			printf( '<input class="elementor-shortcode-input" readonly onfocus="this.select()" value="%s" />', esc_attr( $shortcode ) );
 		}
 	}
 
