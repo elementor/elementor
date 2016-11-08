@@ -23,6 +23,7 @@ class Controls_Manager {
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
 	const SECTION = 'section';
+	const TAB = 'tab';
 	const DIVIDER = 'divider';
 
 	const COLOR = 'color';
@@ -99,6 +100,7 @@ class Controls_Manager {
 			self::HEADING,
 			self::RAW_HTML,
 			self::SECTION,
+			self::TAB,
 			self::DIVIDER,
 
 			self::COLOR,

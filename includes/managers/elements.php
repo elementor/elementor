@@ -136,5 +136,6 @@ class Elements_Manager {
 
 		require ELEMENTOR_PATH . 'includes/elements/column.php';
 		require ELEMENTOR_PATH . 'includes/elements/section.php';
+		require ELEMENTOR_PATH . 'includes/elements/repeater.php';
 	}
 }
