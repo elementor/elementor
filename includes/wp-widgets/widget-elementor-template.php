@@ -1,12 +1,12 @@
 <?php
 namespace Elementor;
 
-class Widget_Library_Template extends \WP_Widget {
+class Widget_Elementor_Template extends \WP_Widget {
 
 	public function __construct() {
 		parent::__construct(
-			'elementor-library-template',
-			esc_html__( 'Elementor Library Template', 'elementor' ),
+			'elementor-template',
+			esc_html__( 'Elementor Template', 'elementor' ),
 			[
 				'description' => esc_html__( 'Include your Elementor template anywhere', 'elementor' ),
 			]

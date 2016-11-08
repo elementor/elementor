@@ -19,6 +19,8 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	const SHORTCODE = 'elementor-template';
+
 	public static function get_template_types() {
 		return [
 			'page',
@@ -321,13 +323,38 @@ class Source_Local extends Source_Base {
 		);
 	}
 
+	public function admin_columns_headers( $defaults ) {
+		$defaults['shortcode'] = __( 'Shortcode', 'elementor' );
+		return $defaults;
+	}
+
+	public function admin_columns_content( $column_name, $post_id ) {
+		if ( 'shortcode' === $column_name ) {
+			// %s = shortcode, %d = post_id
+			$shortcode = esc_attr( sprintf( '[%s id="%d"]', self::SHORTCODE, $post_id ) );
+			printf( '<input class="elementor-shortcode-input" readonly onfocus="this.select()" value="%s" />', $shortcode );
+		}
+	}
+
+	public function shortcode( $attributes = [] ) {
+		if ( empty( $attributes['id'] ) ) {
+			return '';
+		}
+
+		return Plugin::instance()->frontend->get_builder_content_for_display( $attributes['id'] );
+	}
+
 	private function _add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
+			add_action( 'manage_posts_columns', [ $this, 'admin_columns_headers' ] );
+			add_action( 'manage_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+
+		add_shortcode( self::SHORTCODE, [ $this, 'shortcode' ] );
 	}
 }
