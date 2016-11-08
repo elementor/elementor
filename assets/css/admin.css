@@ -251,7 +251,7 @@ body.elementor-editor-inactive #elementor-editor {
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {
-  border-left-color: #0073aa !important;
+  border-left-color: #9b0a46 !important;
   padding: 20px; }
   .notice.elementor-message .elementor-message-inner {
     display: table;
@@ -262,7 +262,7 @@ body.elementor-editor-inactive #elementor-editor {
       display: table-cell;
       vertical-align: middle; }
   .notice.elementor-message .elementor-message-icon {
-    color: #0073aa;
+    color: #9b0a46;
     font-size: 50px;
     width: 50px; }
   .notice.elementor-message .elementor-message-content {
@@ -275,7 +275,7 @@ body.elementor-editor-inactive #elementor-editor {
   .notice.elementor-message .elementor-update-now {
     text-align: center; }
     .notice.elementor-message .elementor-update-now .elementor-button {
-      background-color: #0073aa;
+      background-color: #9b0a46;
       color: #fff;
       border-color: #7c1337;
       box-shadow: 0 1px 0 #7c1337;
@@ -391,7 +391,7 @@ body.elementor-editor-inactive #elementor-editor {
   text-align: left;
   padding: 20px 30px 30px; }
 #elementor-deactivate-feedback-modal .dialog-submit {
-  background-color: #0073aa;
+  background-color: #9b0a46;
   border-radius: 3px;
   color: #fff;
   line-height: 1;
@@ -412,7 +412,7 @@ body.elementor-editor-inactive #elementor-editor {
   float: right; }
 
 #elementor-deactivate-feedback-dialog-header i {
-  color: #0073aa;
+  color: #9b0a46;
   font-size: 19px; }
 
 #elementor-deactivate-feedback-dialog-header-title {
