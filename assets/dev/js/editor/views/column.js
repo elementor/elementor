@@ -172,6 +172,12 @@ ColumnView = BaseElementView.extend( {
 					return;
 				}
 
+				var customData = elementView.model.get( 'custom' );
+
+				if ( customData ) {
+					_.extend( itemData, customData );
+				}
+
 				self.triggerMethod( 'request:add', itemData, { at: newIndex } );
 			}
 		} );
