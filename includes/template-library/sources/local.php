@@ -19,10 +19,13 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	const WIDGET_TYPE_META_KEY = '_elementor_template_widget_type';
+
 	public static function get_template_types() {
 		return [
 			'page',
 			'section',
+			'widget',
 		];
 	}
 
@@ -137,6 +140,11 @@ class Source_Local extends Source_Base {
 		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
+
+		if ( 'widget' === $template_data['type'] ) {
+			update_post_meta( $post_id, self::WIDGET_TYPE_META_KEY, $template_data['widget_type'] );
+		}
+
 		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
 
 		return $post_id;
@@ -158,7 +166,7 @@ class Source_Local extends Source_Base {
 
 		$user = get_user_by( 'id', $post->post_author );
 
-		return [
+		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
 			'type' => get_post_meta( $post->ID, self::TYPE_META_KEY, true ),
@@ -171,6 +179,12 @@ class Source_Local extends Source_Base {
 			'export_link' => $this->_get_export_link( $item_id ),
 			'url' => get_permalink( $post->ID ),
 		];
+
+		if ( 'widget' === $data['type'] ) {
+			$data['widget_type'] = get_post_meta( $post->ID, self::WIDGET_TYPE_META_KEY, true );
+		}
+
+		return $data;
 	}
 
 	public function get_content( $item_id, $context = 'display' ) {
