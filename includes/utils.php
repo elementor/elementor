@@ -9,6 +9,10 @@ class Utils {
 		return ( defined( 'DOING_AJAX' ) && DOING_AJAX );
 	}
 
+	public static function is_script_debug() {
+		return ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
+	}
+
 	public static function get_edit_link( $post_id = 0 ) {
 		return apply_filters( 'elementor/utils/get_edit_link', add_query_arg( 'elementor', '', get_permalink( $post_id ) ), $post_id );
 	}
