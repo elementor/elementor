@@ -141,9 +141,9 @@ module.exports = ElementsHandler;
 } )( jQuery );
 
 jQuery( function() {
-	 if ( ! elementorFrontend.isEditMode() ) {
+	if ( ! elementorFrontend.isEditMode() ) {
 		elementorFrontend.init();
-	 }
+	}
 } );
 
 },{"../utils/hooks":16,"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/template":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/utils":15}],3:[function(require,module,exports){

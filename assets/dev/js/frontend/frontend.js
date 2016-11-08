@@ -120,7 +120,7 @@
 } )( jQuery );
 
 jQuery( function() {
-	 if ( ! elementorFrontend.isEditMode() ) {
+	if ( ! elementorFrontend.isEditMode() ) {
 		elementorFrontend.init();
-	 }
+	}
 } );
