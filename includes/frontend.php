@@ -300,7 +300,14 @@ class Frontend {
 		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
 
-		ob_start(); ?>
+		ob_start();
+
+		// Handle JS and Customizer requests, with css inline
+		if ( is_customize_preview() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			echo '<style>' . $css_file->get_css() . '</style>';
+		}
+
+		?>
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">

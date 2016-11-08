@@ -117,6 +117,14 @@ class Post_CSS_File {
 		return $this->is_build_with_elementor;
 	}
 
+	public function get_css() {
+		if ( empty( $this->css ) ) {
+			$this->parse_elements_css();
+		}
+
+		return $this->css;
+	}
+
 	protected function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
