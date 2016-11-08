@@ -768,7 +768,7 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
-	protected function _get_child_type( array $element_data ) {
+	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'column' );
 	}
 }

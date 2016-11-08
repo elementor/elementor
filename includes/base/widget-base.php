@@ -246,7 +246,7 @@ abstract class Widget_Base extends Element_Base {
 		return $data;
 	}
 
-	protected function _get_child_type( array $element_data ) {
+	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
 	}
 
