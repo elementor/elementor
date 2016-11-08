@@ -547,10 +547,20 @@ select {
     font-size: 12px; }
   #elementor-panel .select2-container {
     width: 100% !important; }
-    #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single {
+    #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single,
+    #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--multiple {
       border-color: #d5dadf; }
-    #elementor-panel .select2-container.select2-container--open .select2-selection--single, #elementor-panel .select2-container.select2-container--focus .select2-selection--single {
+    #elementor-panel .select2-container.select2-container--open .select2-selection--single,
+    #elementor-panel .select2-container.select2-container--open .select2-selection--multiple, #elementor-panel .select2-container.select2-container--focus .select2-selection--single,
+    #elementor-panel .select2-container.select2-container--focus .select2-selection--multiple {
       border-color: #a4afb7; }
+    #elementor-panel .select2-container.select2-container--default .select2-selection--multiple .select2-selection__clear {
+      display: none; }
+    #elementor-panel .select2-container.select2-container--default .select2-selection--multiple .select2-selection__choice {
+      line-height: 1.5;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 0; }
   #elementor-panel .select2-selection--single {
     height: 27px; }
   #elementor-panel .select2-selection__rendered {

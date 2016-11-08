@@ -72,18 +72,37 @@
 
 	&:not(.select2-container--open):not(.select2-container--focus) {
 
-		.select2-selection--single {
+		.select2-selection--single,
+		.select2-selection--multiple {
 			border-color: $editor-lightest;
 		}
 	}
 
-	&.select2-container--open, &.select2-container--focus {
+	&.select2-container--open,
+	&.select2-container--focus {
 
-		.select2-selection--single {
+		.select2-selection--single,
+		.select2-selection--multiple {
 			border-color: $editor-light;
 		}
 	}
 
+	&.select2-container--default {
+
+		.select2-selection--multiple {
+
+			.select2-selection__clear {
+				display: none;
+			}
+
+			.select2-selection__choice {
+				line-height: 1.5;
+				font-size: 0.9em;
+				border: none;
+				border-radius: 0;
+			}
+		}
+	}
 }
 
 .select2-selection--single {
