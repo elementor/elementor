@@ -39,11 +39,23 @@ ElementModel = Backbone.Model.extend( {
 		// Make call to remote server as throttle function
 		this.renderRemoteServer = _.throttle( this.renderRemoteServer, 1000 );
 
-		var settingModels = {
-			widget: WidgetSettingsModel,
-			column: ColumnSettingsModel,
-			section: SectionSettingsModel
-		};
+		this.initSettings();
+
+		this.initEditSettings();
+
+		this.on( {
+			destroy: this.onDestroy,
+			'editor:close': this.onCloseEditor
+		} );
+	},
+
+	initSettings: function() {
+		var elType = this.get( 'elType' ),
+			settingModels = {
+				widget: WidgetSettingsModel,
+				column: ColumnSettingsModel,
+				section: SectionSettingsModel
+			};
 
 		var SettingsModel = settingModels[ elType ] || BaseSettingsModel,
 			settings = this.get( 'settings' ) || {};
@@ -58,11 +70,6 @@ ElementModel = Backbone.Model.extend( {
 		settings = new SettingsModel( settings );
 
 		this.set( 'settings', settings );
-
-		this.initEditSettings();
-
-		this.on( 'destroy', this.onDestroy );
-		this.on( 'editor:close', this.onCloseEditor );
 	},
 
 	initEditSettings: function() {
