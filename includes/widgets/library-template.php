@@ -10,11 +10,11 @@ class Widget_Library_Template extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Library Template', 'elementor' );
+		return __( 'Elementor Template', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'posts-masonry';
+		return 'document-file';
 	}
 
 	public function is_reload_preview_required() {
