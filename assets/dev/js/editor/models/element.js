@@ -86,7 +86,10 @@ ElementModel = Backbone.Model.extend( {
 				model.destroy();
 			} );
 		}
-		settings.destroy();
+
+		if ( settings instanceof BaseSettingsModel ) {
+			settings.destroy();
+		}
 	},
 
 	onCloseEditor: function() {
