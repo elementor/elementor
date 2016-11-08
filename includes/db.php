@@ -24,8 +24,11 @@ class DB {
 	 * @return void
 	 */
 	public function save_editor( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
-		// Set current post as the global post, for library template parsing in a widget/shortcode
-		$GLOBALS['post'] = get_post( $post_id );
+		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
+		if ( isset( $GLOBALS['post'] ) ) {
+			$global_post = $GLOBALS['post'];
+			$GLOBALS['post'] = get_post( $post_id );
+		}
 
 		$editor_data = $this->_get_editor_data( $posted );
 
@@ -41,6 +44,11 @@ class DB {
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
+
+		// Restore global post
+		if ( isset( $global_post ) ) {
+			$GLOBALS['post'] = $global_post;
+		}
 	}
 
 	/**
