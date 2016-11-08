@@ -1329,11 +1329,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
-
-		this.elements = new ElementModel.Collection( this.config.data );
-
 		this.initPreview();
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -1347,6 +1342,11 @@ App = Marionette.Application.extend( {
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		// Init Base elements collection from the server
+		var ElementModel = require( 'elementor-models/element' );
+
+		this.elements = new ElementModel.Collection( this.config.data );
 
 		this.initFrontend();
 
@@ -3195,11 +3195,23 @@ ElementModel = Backbone.Model.extend( {
 		// Make call to remote server as throttle function
 		this.renderRemoteServer = _.throttle( this.renderRemoteServer, 1000 );
 
-		var settingModels = {
-			widget: WidgetSettingsModel,
-			column: ColumnSettingsModel,
-			section: SectionSettingsModel
-		};
+		this.initSettings();
+
+		this.initEditSettings();
+
+		this.on( {
+			destroy: this.onDestroy,
+			'editor:close': this.onCloseEditor
+		} );
+	},
+
+	initSettings: function() {
+		var elType = this.get( 'elType' ),
+			settingModels = {
+				widget: WidgetSettingsModel,
+				column: ColumnSettingsModel,
+				section: SectionSettingsModel
+			};
 
 		var SettingsModel = settingModels[ elType ] || BaseSettingsModel,
 			settings = this.get( 'settings' ) || {};
@@ -3214,11 +3226,6 @@ ElementModel = Backbone.Model.extend( {
 		settings = new SettingsModel( settings );
 
 		this.set( 'settings', settings );
-
-		this.initEditSettings();
-
-		this.on( 'destroy', this.onDestroy );
-		this.on( 'editor:close', this.onCloseEditor );
 	},
 
 	initEditSettings: function() {
@@ -3235,7 +3242,10 @@ ElementModel = Backbone.Model.extend( {
 				model.destroy();
 			} );
 		}
-		settings.destroy();
+
+		if ( settings instanceof BaseSettingsModel ) {
+			settings.destroy();
+		}
 	},
 
 	onCloseEditor: function() {
@@ -3375,10 +3385,13 @@ ElementCollection = Backbone.Collection.extend( {
 	},
 
 	model: function( attrs, options ) {
+		var ModelClass = Backbone.Model;
+
 		if ( attrs.elType ) {
-			return new ElementModel( attrs, options );
+			ModelClass = elementor.hooks.applyFilters( 'elementor/element/model', ElementModel, attrs );
 		}
-		return new Backbone.Model( attrs, options );
+
+		return new ModelClass( attrs, options );
 	},
 
 	clone: function() {
@@ -5606,6 +5619,12 @@ ColumnView = BaseElementView.extend( {
 					itemData.isInner = true;
 				} else {
 					return;
+				}
+
+				var customData = elementView.model.get( 'custom' );
+
+				if ( customData ) {
+					_.extend( itemData, customData );
 				}
 
 				self.triggerMethod( 'request:add', itemData, { at: newIndex } );
