@@ -211,6 +211,8 @@ App = Marionette.Application.extend( {
 		this.setWorkSaver();
 
 		this.initClearPageDialog();
+
+		this.$window.trigger( 'elementor:init' );
 	},
 
 	onPreviewLoaded: function() {
