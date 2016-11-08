@@ -49,6 +49,10 @@ abstract class Widget_Base extends Element_Base {
 		}
 	}
 
+	public function show_in_panel() {
+		return true;
+	}
+
 	public function start_controls_section( $section_id, $args ) {
 		parent::start_controls_section( $section_id, $args );
 

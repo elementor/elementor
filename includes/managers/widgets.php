@@ -131,7 +131,7 @@ class Widgets_Manager {
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
-			if ( 'common' === $widget_key ) {
+			if ( ! $widget->show_in_panel() ) {
 				continue;
 			}
 
