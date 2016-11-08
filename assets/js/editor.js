@@ -1317,6 +1317,8 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
+		this.$window = Backbone.$( window );
+
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -1339,6 +1341,8 @@ App = Marionette.Application.extend( {
 		this.setWorkSaver();
 
 		this.initClearPageDialog();
+
+		this.$window.trigger( 'elementor:init' );
 	},
 
 	onPreviewLoaded: function() {
@@ -1464,7 +1468,7 @@ App = Marionette.Application.extend( {
 	},
 
 	setWorkSaver: function() {
-		Backbone.$( window ).on( 'beforeunload', function() {
+		this.$window.on( 'beforeunload', function() {
 			if ( elementor.isEditorChanged() ) {
 				return elementor.translate( 'before_unload_alert' );
 			}
