@@ -642,18 +642,18 @@
   .elementor-button:hover, .elementor-button:focus, .elementor-button:visited {
     color: #fff;
     opacity: .9; }
-  .elementor-button.elementor-size-small {
+  .elementor-button.elementor-size-xs {
     font-size: 13px;
     padding: 10px 20px; }
-  .elementor-button.elementor-size-medium {
+  .elementor-button.elementor-size-sm {
     font-size: 15px; }
-  .elementor-button.elementor-size-large {
+  .elementor-button.elementor-size-md {
     font-size: 16px;
     padding: 15px 30px; }
-  .elementor-button.elementor-size-xl {
+  .elementor-button.elementor-size-lg {
     font-size: 18px;
     padding: 20px 40px; }
-  .elementor-button.elementor-size-xxl {
+  .elementor-button.elementor-size-xl {
     font-size: 20px;
     padding: 25px 50px; }
   .elementor-button .elementor-align-icon-right {
