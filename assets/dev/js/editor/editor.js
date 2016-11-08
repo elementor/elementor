@@ -199,11 +199,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
-
-		this.elements = new ElementModel.Collection( this.config.data );
-
 		this.initPreview();
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -217,6 +212,11 @@ App = Marionette.Application.extend( {
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		// Init Base elements collection from the server
+		var ElementModel = require( 'elementor-models/element' );
+
+		this.elements = new ElementModel.Collection( this.config.data );
 
 		this.initFrontend();
 
