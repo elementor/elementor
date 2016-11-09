@@ -671,7 +671,7 @@ select {
     cursor: pointer; }
   #elementor-panel #elementor-panel-elements {
     overflow: hidden;
-    padding: 5px; }
+    padding: 0 5px; }
   #elementor-panel .elementor-element-wrapper {
     float: right;
     width: 50%;
