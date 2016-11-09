@@ -106,7 +106,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'small',
+				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 			]
 		);
