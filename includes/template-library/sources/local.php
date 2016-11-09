@@ -19,8 +19,6 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
-	const WIDGET_TYPE_META_KEY = '_elementor_template_widget_type';
-
 	public static function get_template_types() {
 		return [
 			'page',
@@ -112,11 +110,13 @@ class Source_Local extends Source_Base {
 		);
 
 		$templates = [];
+
 		if ( $templates_query->have_posts() ) {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
 		}
+
 		return $templates;
 	}
 
@@ -141,11 +141,9 @@ class Source_Local extends Source_Base {
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
 
-		if ( 'widget' === $template_data['type'] ) {
-			update_post_meta( $post_id, self::WIDGET_TYPE_META_KEY, $template_data['widget_type'] );
-		}
-
 		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
+
+		do_action( 'elementor/template-library/after_save_template', $post_id, $template_data );
 
 		return $post_id;
 	}
@@ -180,11 +178,7 @@ class Source_Local extends Source_Base {
 			'url' => get_permalink( $post->ID ),
 		];
 
-		if ( 'widget' === $data['type'] ) {
-			$data['widget_type'] = get_post_meta( $post->ID, self::WIDGET_TYPE_META_KEY, true );
-		}
-
-		return $data;
+		return apply_filters( 'elementor/template-library/get_template', $data );
 	}
 
 	public function get_content( $item_id, $context = 'display' ) {
