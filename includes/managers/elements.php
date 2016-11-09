@@ -117,7 +117,6 @@ class Elements_Manager {
 	private function init_categories() {
 		$this->_categories = [
 			'basic' => [
-				'title' => __( 'Elements', 'elementor' ),
 				'icon' => 'font',
 			],
 			'pojo' => [
