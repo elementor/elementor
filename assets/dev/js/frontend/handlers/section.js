@@ -86,23 +86,28 @@ var StretchedSection = function( $section, $ ) {
 
 	var stretchSection = function() {
 		// Clear any previously existing css associated with this script
-		$section.css( {
-			'width': 'auto',
-			'left': '0'
-		} );
+		var direction = settings.is_rtl ? 'right' : 'left',
+			resetCss = {
+				width: 'auto'
+			};
+
+		resetCss[ direction ] = 0;
+
+		$section.css( resetCss );
 
 		if ( ! $section.hasClass( 'elementor-section-stretched' ) ) {
 			return;
 		}
 
-		var sectionWidth = elements.$scopeWindow.width(),
+		var containerWidth = elements.$scopeWindow.width(),
+			sectionWidth = $section.width(),
 			sectionOffset = $section.offset().left,
 			correctOffset = sectionOffset;
 
 		if ( elements.$sectionContainer.length ) {
 			var containerOffset = elements.$sectionContainer.offset().left;
 
-			sectionWidth = elements.$sectionContainer.outerWidth();
+			containerWidth = elements.$sectionContainer.outerWidth();
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -111,14 +116,15 @@ var StretchedSection = function( $section, $ ) {
 			}
 		}
 
-		if ( ! settings.is_rtl ) {
-			correctOffset = -correctOffset;
+		if ( settings.is_rtl ) {
+			correctOffset = containerWidth - ( sectionWidth + correctOffset );
 		}
 
-		$section.css( {
-			'width': sectionWidth + 'px',
-			'left': correctOffset + 'px'
-		} );
+		resetCss.width = containerWidth + 'px';
+
+		resetCss[ direction ] = -correctOffset + 'px';
+
+		$section.css( resetCss );
 	};
 
 	var initSettings = function() {

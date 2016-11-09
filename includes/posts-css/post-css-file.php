@@ -53,7 +53,7 @@ class Post_CSS_File {
 
 		$meta = [
 			'version' => ELEMENTOR_VERSION,
-			'time' => date( 'Y-m-d-H-i' ),
+			'time' => time(),
 			'fonts' => array_unique( $this->fonts ),
 		];
 

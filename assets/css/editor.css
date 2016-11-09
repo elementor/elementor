@@ -547,10 +547,20 @@ select {
     font-size: 12px; }
   #elementor-panel .select2-container {
     width: 100% !important; }
-    #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single {
+    #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single,
+    #elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--multiple {
       border-color: #d5dadf; }
-    #elementor-panel .select2-container.select2-container--open .select2-selection--single, #elementor-panel .select2-container.select2-container--focus .select2-selection--single {
+    #elementor-panel .select2-container.select2-container--open .select2-selection--single,
+    #elementor-panel .select2-container.select2-container--open .select2-selection--multiple, #elementor-panel .select2-container.select2-container--focus .select2-selection--single,
+    #elementor-panel .select2-container.select2-container--focus .select2-selection--multiple {
       border-color: #a4afb7; }
+    #elementor-panel .select2-container.select2-container--default .select2-selection--multiple .select2-selection__clear {
+      display: none; }
+    #elementor-panel .select2-container.select2-container--default .select2-selection--multiple .select2-selection__choice {
+      line-height: 1.5;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 0; }
   #elementor-panel .select2-selection--single {
     height: 27px; }
   #elementor-panel .select2-selection__rendered {
@@ -1205,8 +1215,8 @@ select {
     margin-top: 7px;
     height: initial;
     line-height: 1;
-    font-size: 11px;
-    padding: 3px 9px;
+    font-size: 10px;
+    padding: 3px 7px;
     background-color: #e6e9ec; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .ed_button {
     height: 22px;
@@ -1219,8 +1229,8 @@ select {
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-switch-editor {
     border: none;
     color: #6d7882;
-    font-size: 11px;
-    padding: 3px 12px 4px;
+    font-size: 10px;
+    padding: 3px 9px 4px;
     border-radius: 3px 3px 0 0; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .html-active .switch-tmce {
     background-color: transparent; }
@@ -1239,8 +1249,11 @@ select {
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-ico {
     color: #6d7882;
     font-size: 16px; }
-  #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:hover, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:active, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn.mce-active {
-    border-color: #d5dadf; }
+  #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn {
+    margin-right: 0;
+    margin-left: 0; }
+    #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:hover, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:active, #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn.mce-active {
+      border-color: #d5dadf; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-path {
     padding: 5px 10px; }
   #elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-path-item {
