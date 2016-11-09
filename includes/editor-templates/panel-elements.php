@@ -28,3 +28,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-panel-global">
+	<div class="elementor-panel-nerd-box">
+		<i class="elementor-panel-nerd-box-icon eicon-hypster"></i>
+		<div class="elementor-panel-nerd-box-title"><?php echo __( 'What about you?', 'elementor' ); ?></div>
+		<div class="elementor-panel-nerd-box-message"><?php echo __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ); ?></div>
+		<a class="elementor-panel-nerd-box-link" href="https://go.elementor.com/pro/" target="_blank"><?php echo __( 'Get Elementor Pro', 'elementor' ); ?></a>
+	</div>
+</script>

@@ -3,6 +3,7 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
 	PanelElementsElementsView = require( './views/elements' ),
 	PanelElementsSearchView = require( './views/search' ),
+	PanelElementsGlobalView = require( './views/global' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -11,6 +12,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
 		search: '#elementor-panel-elements-search-area'
+	},
+
+	ui: {
+		tabs: '.elementor-panel-navigation-tab'
+	},
+
+	events: {
+		'click @ui.tabs': 'onTabClick'
 	},
 
 	elementsCollection: null,
@@ -81,11 +90,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showCategoriesView: function() {
-		this.getRegion( 'elements' ).show( new PanelElementsCategoriesView( { collection: this.categoriesCollection } ) );
+		this.elements.show( new PanelElementsCategoriesView( { collection: this.categoriesCollection } ) );
 	},
 
 	showElementsView: function() {
-		this.getRegion( 'elements' ).show( new PanelElementsElementsView( { collection: this.elementsCollection } ) );
+		this.elements.show( new PanelElementsElementsView( { collection: this.elementsCollection } ) );
+	},
+
+	showGlobalView: function() {
+		this.elements.show( new PanelElementsGlobalView() );
+	},
+
+	showSearchView: function() {
+		this.search.show( new PanelElementsSearchView() );
 	},
 
 	clearSearchInput: function() {
@@ -128,15 +145,27 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		var searchRegion = this.getRegion( 'search' );
-
 		this.initElementsCollection();
 
 		this.initCategoriesCollection();
 
 		this.showCategoriesView();
 
-		searchRegion.show( new PanelElementsSearchView() );
+		this.showSearchView();
+	},
+
+	onTabClick: function( event ) {
+		var $clickedTab = Backbone.$( event.currentTarget );
+
+		this.ui.tabs.removeClass( 'active' );
+
+		$clickedTab.addClass( 'active' );
+
+		if ( 'global' === $clickedTab.data( 'view' ) ) {
+			this.showGlobalView();
+		} else {
+			this.showCategoriesView();
+		}
 	},
 
 	updateElementsScrollbar: function() {
