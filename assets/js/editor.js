@@ -6853,7 +6853,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	events: {
 		'click @ui.btnAddRow': 'onButtonAddRowClick',
 		'sortstart @ui.fieldContainer': 'onSortStart',
-		'sortupdate @ui.fieldContainer': 'onSortUpdate'
+		'sortupdate @ui.fieldContainer': 'onSortUpdate',
+		'sortstop @ui.fieldContainer': 'onSortStop'
 	},
 
 	childView: RepeaterRowView,
@@ -6883,7 +6884,14 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	editRow: function( rowView ) {
 		if ( this.currentEditableChild ) {
-			this.currentEditableChild.getChildViewContainer( this.currentEditableChild ).removeClass( 'editable' );
+
+			var currentEditable = this.currentEditableChild.getChildViewContainer( this.currentEditableChild );
+			currentEditable.removeClass( 'editable' );
+
+			// If the repeater contains tinymce editors, fire the `hide` trigger to hide floated toolbars
+			currentEditable.find( '.elementor-wp-editor' ).each( function () {
+				tinymce.get( this.id ).fire( 'hide' );
+			} );
 		}
 
 		if ( this.currentEditableChild === rowView ) {
@@ -6930,6 +6938,15 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onSortStart: function( event, ui ) {
 		ui.item.data( 'oldIndex', ui.item.index() );
+	},
+
+	onSortStop: function( event, ui ) {
+		// Reload tinymce editors (if exist), it's a bug that tinymce content is missing after stop dragging
+		ui.item.find( '.elementor-wp-editor' ).each( function () {
+			var settings = tinymce.get( this.id ).settings;
+			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
+			tinymce.init( settings );
+		} );
 	},
 
 	onSortUpdate: function( event, ui ) {
