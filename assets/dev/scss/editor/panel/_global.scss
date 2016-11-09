@@ -172,18 +172,23 @@
 	vertical-align: baseline;
 	border-radius: .25em;
 	text-transform: capitalize;
+
 	&.elementor-label-default {
 		background-color: $editor-light;
 	}
+
 	&.elementor-label-info {
 		background-color: $info;
 	}
+
 	&.elementor-label-success {
 		background-color: $success;
 	}
+
 	&.elementor-label-warning {
 		background-color: $warning;
 	}
+
 	&.elementor-label-danger {
 		background-color: $danger;
 	}
@@ -195,30 +200,3 @@
 	line-height: 1.2;
 	color: $editor-light;
 }
-//
-// Variables
-//
-
-// Info
-$info:			#5bc0de;
-$info-text:		#31708f;
-$info-bg:		#d9edf7;
-$info-border:	darken($info-bg, 7%);
-
-// Success
-$success:		#5cb85c;
-$success-text:	#3c763d;
-$success-bg:	#dff0d8;
-$success-border:darken($success-bg, 7%);
-
-// Warning
-$warning:		#f0ad4e;
-$warning-text:	#8a6d3b;
-$warning-bg:	#fcf8e3;
-$warning-border:darken($warning-bg, 7%);
-
-// Danger
-$danger:		#d9534f;
-$danger-text:	#a94442;
-$danger-bg:		#f2dede;
-$danger-border:	darken($danger-bg, 7%);
