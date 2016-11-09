@@ -269,6 +269,9 @@ class Editor {
 			Plugin::instance()->get_version(),
 			true
 		);
+
+		do_action( 'elementor/editor/before_enqueue_scripts' );
+
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons

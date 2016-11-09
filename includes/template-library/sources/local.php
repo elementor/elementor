@@ -19,13 +19,6 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
-	public static function get_template_types() {
-		return [
-			'page',
-			'section',
-		];
-	}
-
 	public function get_id() {
 		return 'local';
 	}
@@ -109,19 +102,17 @@ class Source_Local extends Source_Base {
 		);
 
 		$templates = [];
+
 		if ( $templates_query->have_posts() ) {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
 		}
+
 		return $templates;
 	}
 
 	public function save_item( $template_data ) {
-		if ( ! empty( $template_data['type'] ) && ! in_array( $template_data['type'], self::get_template_types() ) ) {
-			return new \WP_Error( 'save_error', 'The specified template type doesn\'t exists' );
-		}
-
 		$post_id = wp_insert_post( [
 			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 			'post_status' => 'publish',
@@ -137,7 +128,10 @@ class Source_Local extends Source_Base {
 		Plugin::instance()->db->set_edit_mode( $post_id );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
+
 		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
+
+		do_action( 'elementor/template-library/after_save_template', $post_id, $template_data );
 
 		return $post_id;
 	}
@@ -158,7 +152,7 @@ class Source_Local extends Source_Base {
 
 		$user = get_user_by( 'id', $post->post_author );
 
-		return [
+		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
 			'type' => get_post_meta( $post->ID, self::TYPE_META_KEY, true ),
@@ -171,6 +165,8 @@ class Source_Local extends Source_Base {
 			'export_link' => $this->_get_export_link( $item_id ),
 			'url' => get_permalink( $post->ID ),
 		];
+
+		return apply_filters( 'elementor/template-library/get_template', $data );
 	}
 
 	public function get_content( $item_id, $context = 'display' ) {
