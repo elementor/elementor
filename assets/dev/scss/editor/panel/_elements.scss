@@ -73,11 +73,9 @@
 
 #elementor-panel-elements-search-input {
 	width: 100%;
-	background-color: #fff;
 	font-size: 11px;
-	@include padding(8px, 42px, 8px, 15px);
+	@include padding(12px, 42px, 12px, 15px);
 	font-style: italic;
 	color: $editor-light;
 	border: none;
-	border-radius: 0;
 }
