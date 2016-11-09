@@ -19,14 +19,6 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
-	public static function get_template_types() {
-		return [
-			'page',
-			'section',
-			'widget',
-		];
-	}
-
 	public function get_id() {
 		return 'local';
 	}
@@ -121,10 +113,6 @@ class Source_Local extends Source_Base {
 	}
 
 	public function save_item( $template_data ) {
-		if ( ! empty( $template_data['type'] ) && ! in_array( $template_data['type'], self::get_template_types() ) ) {
-			return new \WP_Error( 'save_error', 'The specified template type doesn\'t exists' );
-		}
-
 		$post_id = wp_insert_post( [
 			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 			'post_status' => 'publish',
