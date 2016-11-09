@@ -11,8 +11,6 @@ class Elementor_Test_Base extends WP_UnitTestCase {
 		if ( ! defined( 'WP_ADMIN' ) ) {
 			define( 'WP_ADMIN', true );
 		}
-		
-		add_filter( 'elementor/utils/is_development_mode', '__return_true' );
 
 		// Make sure the main class is running
 		\Elementor\Plugin::instance();

@@ -60,7 +60,7 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
 			'waypoints',
@@ -321,9 +321,9 @@ class Frontend {
 		}
 
 		$wp_admin_bar->add_node( [
-			'id'    => 'elementor_edit_page',
+			'id' => 'elementor_edit_page',
 			'title' => __( 'Edit with Elementor', 'elementor' ),
-			'href'  => Utils::get_edit_link( $post_id ),
+			'href' => Utils::get_edit_link( $post_id ),
 		] );
 	}
 

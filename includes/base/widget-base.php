@@ -82,15 +82,26 @@ abstract class Widget_Base extends Element_Base {
 			$default_value = array_keys( $skin_options );
 			$default_value = array_shift( $default_value );
 
-			$this->add_control(
-				'_skin',
-				[
-					'label' => __( 'Skin', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $default_value,
-					'options' => $skin_options,
-				]
-			);
+			if ( 1 >= sizeof( $skin_options ) ) {
+				$this->add_control(
+					'_skin',
+					[
+						'label' => __( 'Skin', 'elementor' ),
+						'type' => Controls_Manager::HIDDEN,
+						'default' => $default_value,
+					]
+				);
+			} else {
+				$this->add_control(
+					'_skin',
+					[
+						'label' => __( 'Skin', 'elementor' ),
+						'type' => Controls_Manager::SELECT,
+						'default' => $default_value,
+						'options' => $skin_options,
+					]
+				);
+			}
 		}
 	}
 

@@ -5,8 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Utils {
 
-	public static function is_development_mode() {
-		return apply_filters( 'elementor/utils/is_development_mode', false );
+	public static function is_ajax() {
+		return ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+	}
+
+	public static function is_script_debug() {
+		return ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
 	}
 
 	public static function get_edit_link( $post_id = 0 ) {

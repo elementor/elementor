@@ -524,30 +524,30 @@
   cursor: pointer; }
 
 .elementor-field-textual.elementor-size-xs {
-  font-size: 0.9em;
-  line-height: 1.2;
+  font-size: 13px;
+  line-height: 1.4;
   padding: 6px 12px;
-  border-radius: 1px; }
+  border-radius: 2px; }
 .elementor-field-textual.elementor-size-sm {
-  font-size: 1em;
+  font-size: 15px;
   line-height: 1.4;
   padding: 9px 16px;
-  border-radius: 2px; }
+  border-radius: 3px; }
 .elementor-field-textual.elementor-size-md {
-  font-size: 1.2em;
+  font-size: 16px;
   line-height: 1.5;
   padding: 10px 16px;
-  border-radius: 3px; }
-.elementor-field-textual.elementor-size-lg {
-  font-size: 1.4em;
-  line-height: 1.6;
-  padding: 11px 16px;
   border-radius: 4px; }
-.elementor-field-textual.elementor-size-xl {
-  font-size: 1.6em;
-  line-height: 1.8;
-  padding: 18px 20px;
+.elementor-field-textual.elementor-size-lg {
+  font-size: 18px;
+  line-height: 1.5;
+  padding: 14px 16px;
   border-radius: 5px; }
+.elementor-field-textual.elementor-size-xl {
+  font-size: 20px;
+  line-height: 1.6;
+  padding: 18px 20px;
+  border-radius: 6px; }
 
 .elementor-button-align-center {
   -webkit-box-pack: center;
@@ -632,8 +632,6 @@
 .elementor-button {
   display: inline-block;
   line-height: 1;
-  border-radius: 3px;
-  padding: 12px 24px;
   background-color: #818a91;
   color: #fff;
   text-align: center;
@@ -642,20 +640,26 @@
   .elementor-button:hover, .elementor-button:focus, .elementor-button:visited {
     color: #fff;
     opacity: .9; }
-  .elementor-button.elementor-size-small {
+  .elementor-button.elementor-size-xs {
     font-size: 13px;
-    padding: 10px 20px; }
-  .elementor-button.elementor-size-medium {
-    font-size: 15px; }
-  .elementor-button.elementor-size-large {
+    padding: 10px 20px;
+    border-radius: 2px; }
+  .elementor-button.elementor-size-sm {
+    font-size: 15px;
+    padding: 12px 24px;
+    border-radius: 3px; }
+  .elementor-button.elementor-size-md {
     font-size: 16px;
-    padding: 15px 30px; }
-  .elementor-button.elementor-size-xl {
+    padding: 15px 30px;
+    border-radius: 4px; }
+  .elementor-button.elementor-size-lg {
     font-size: 18px;
-    padding: 20px 40px; }
-  .elementor-button.elementor-size-xxl {
+    padding: 20px 40px;
+    border-radius: 5px; }
+  .elementor-button.elementor-size-xl {
     font-size: 20px;
-    padding: 25px 50px; }
+    padding: 25px 50px;
+    border-radius: 6px; }
   .elementor-button .elementor-align-icon-right {
     float: right;
     margin-left: 5px; }
