@@ -6949,12 +6949,11 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	editRow: function( rowView ) {
 		if ( this.currentEditableChild ) {
-
 			var currentEditable = this.currentEditableChild.getChildViewContainer( this.currentEditableChild );
 			currentEditable.removeClass( 'editable' );
 
-			// If the repeater contains tinymce editors, fire the `hide` trigger to hide floated toolbars
-			currentEditable.find( '.elementor-wp-editor' ).each( function () {
+			// If the repeater contains TinyMCE editors, fire the `hide` trigger to hide floated toolbars
+			currentEditable.find( '.elementor-wp-editor' ).each( function() {
 				tinymce.get( this.id ).fire( 'hide' );
 			} );
 		}
