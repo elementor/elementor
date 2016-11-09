@@ -3435,7 +3435,7 @@ ElementCollection = Backbone.Collection.extend( {
 		var ModelClass = Backbone.Model;
 
 		if ( attrs.elType ) {
-			ModelClass = elementor.hooks.applyFilters( 'elementor/element/model', ElementModel, attrs );
+			ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
 		}
 
 		return new ModelClass( attrs, options );
