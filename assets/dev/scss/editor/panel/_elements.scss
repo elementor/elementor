@@ -1,9 +1,15 @@
 //
 // Panel Elements
 //
+#elementor-panel-elements-navigation {
 
-#elementor-panel-elements-search-area {
-	box-shadow: $panel-bottom-shadow;
+	.elementor-panel-navigation-tab {
+		text-align: center;
+		padding: 12px 0;
+		font-size: 11px;
+		text-transform: uppercase;
+		cursor: pointer;
+	}
 }
 
 #elementor-panel-elements {
