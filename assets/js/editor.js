@@ -7006,8 +7006,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onSortStop: function( event, ui ) {
-		// Reload tinymce editors (if exist), it's a bug that tinymce content is missing after stop dragging
-		ui.item.find( '.elementor-wp-editor' ).each( function () {
+		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
+		ui.item.find( '.elementor-wp-editor' ).each( function() {
 			var settings = tinymce.get( this.id ).settings;
 			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
 			tinymce.init( settings );
