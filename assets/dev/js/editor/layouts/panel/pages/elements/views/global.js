@@ -1,6 +1,8 @@
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-global',
 
+	id: 'elementor-panel-global',
+
 	initialize: function() {
 		elementor.getPanelView().content.currentView.search.reset();
 	},
