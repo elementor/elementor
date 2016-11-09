@@ -4,6 +4,10 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements">
+	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
+		<div id="elementor-panel-elements-navigation-all" class="elementor-panel-navigation-tab active"><?php echo __( 'Elements', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-global" class="elementor-panel-navigation-tab" data-view="global"><?php echo __( 'Global', 'elementor' ); ?></div>
+	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
 </script>

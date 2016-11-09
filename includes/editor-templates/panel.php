@@ -132,16 +132,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-editor-content">
-	<div class="elementor-tabs-controls">
-		<ul>
-			<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-			<li class="elementor-tab-control-{{ tabSlug }}">
-				<a href="#" data-tab="{{ tabSlug }}">
-					{{{ tabTitle }}}
-				</a>
-			</li>
-			<# } ); #>
-		</ul>
+	<div class="elementor-panel-navigation">
+		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
+		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}">
+			<a href="#" data-tab="{{ tabSlug }}">
+				{{{ tabTitle }}}
+			</a>
+		</div>
+		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
 		<div id="elementor-update-preview">
