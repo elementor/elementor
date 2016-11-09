@@ -116,38 +116,38 @@
 	&.elementor-size- {
 
 		&xs {
-			font-size: 0.9em;
-			line-height: 1.2;
-			padding: 6px 12px;
-			border-radius: 1px;
-		}
-
-		&sm {
-			font-size: 1em;
+			font-size: 13px;
 			line-height: 1.4;
-			padding: 9px 16px;
+			padding: 6px 12px;
 			border-radius: 2px;
 		}
 
-		&md {
-			font-size: 1.2em;
-			line-height: 1.5;
-			padding: 10px 16px;
+		&sm {
+			font-size: 15px;
+			line-height: 1.4;
+			padding: 9px 16px;
 			border-radius: 3px;
 		}
 
-		&lg {
-			font-size: 1.4em;
-			line-height: 1.6;
-			padding: 11px 16px;
+		&md {
+			font-size: 16px;
+			line-height: 1.5;
+			padding: 10px 16px;
 			border-radius: 4px;
 		}
 
-		&xl {
-			font-size: 1.6em;
-			line-height: 1.8;
-			padding: 18px 20px;
+		&lg {
+			font-size: 18px;
+			line-height: 1.5;
+			padding: 14px 16px;
 			border-radius: 5px;
+		}
+
+		&xl {
+			font-size: 20px;
+			line-height: 1.6;
+			padding: 18px 20px;
+			border-radius: 6px;
 		}
 	}
 }
