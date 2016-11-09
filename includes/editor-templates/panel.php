@@ -153,9 +153,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<i class="eicon-nerd"></i>
-	<div id="elementor-panel-schemes-disabled-title">{{{ '<?php echo __( '{0} are disabled', 'elementor' ); ?>'.replace( '{0}', disabledTitle ) }}}</div>
-	<div id="elementor-panel-schemes-disabled-content"><?php printf( __( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
+	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
+	<div class="elementor-panel-nerd-box-title">{{{ '<?php echo __( '{0} are disabled', 'elementor' ); ?>'.replace( '{0}', disabledTitle ) }}}</div>
+	<div class="elementor-panel-nerd-box-message"><?php printf( __( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
