@@ -39,7 +39,6 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
-			'library-template',
 		];
 
 		$this->_widget_types = [];
@@ -79,9 +78,8 @@ class Widgets_Manager {
 			'Pojo_Widget_WC_Product_Categories',
 		];
 
-		$black_list = [
-			'Elementor\Widget_Elementor_Template',
-		];
+		// Allow themes/plugins to filter out their widgets
+		$black_list = apply_filters( 'elementor/widgets/black_list', [] );
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 
