@@ -107,7 +107,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRender: function() {
-		this.ui.fieldContainer.sortable( { axis: 'y' } );
+		this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
 
 		this.toggleMinRowsClass();
 	},
@@ -119,7 +119,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	onSortStop: function( event, ui ) {
 		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
 		ui.item.find( '.elementor-wp-editor' ).each( function() {
-			var settings = tinymce.get( this.id ).settings;
+			var editor = tinymce.get( this.id ),
+				settings = editor.settings;
+
+			settings.height = jQuery(editor.getContainer()).height();
 			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
 			tinymce.init( settings );
 		} );
