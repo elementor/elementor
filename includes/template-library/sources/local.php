@@ -294,12 +294,6 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public function __construct() {
-		parent::__construct();
-
-		$this->_add_actions();
-	}
-
 	private function _is_base_templates_screen() {
 		global $current_screen;
 
@@ -329,5 +323,11 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->_add_actions();
 	}
 }
