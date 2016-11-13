@@ -249,6 +249,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'simple-date-time-picker',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.js',
+			[],
+			'1.12.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -265,6 +273,7 @@ class Editor {
 				'heartbeat',
 				'elementor-dialog',
 				'jquery-select2',
+				'simple-date-time-picker',
 			],
 			Plugin::instance()->get_version(),
 			true
@@ -389,6 +398,13 @@ class Editor {
 		);
 
 		wp_register_style(
+			'simple-date-time-picker',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.css',
+			[],
+			'1.12.0'
+		);
+
+		wp_register_style(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
@@ -397,6 +413,7 @@ class Editor {
 				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
+				'simple-date-time-picker',
 			],
 			Plugin::instance()->get_version()
 		);
