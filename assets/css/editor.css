@@ -204,18 +204,11 @@ body {
 
 .elementor-button {
   outline: none;
-  background-color: #a4afb7;
-  color: #fff;
-  font-size: 11px;
-  text-transform: uppercase;
-  padding: 6.5px 15px;
   border: none;
   cursor: pointer;
   border-radius: 3px;
   -webkit-transition: box-shadow .5s, opacity .5s;
   transition: box-shadow .5s, opacity .5s; }
-  .elementor-button:hover {
-    background-color: #6d7882; }
   .elementor-button:not(.elementor-button-state) .elementor-state-icon {
     display: none; }
   .elementor-button .elementor-state-icon {
@@ -235,6 +228,14 @@ body {
     display: inline-block;
     margin-top: 15px;
     color: #fff; }
+  .elementor-button.elementor-button-default {
+    background-color: #a4afb7;
+    color: #fff;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 6.5px 15px; }
+    .elementor-button.elementor-button-default:hover {
+      background-color: #6d7882; }
 
 input, select, textarea {
   border-radius: 3px;
@@ -1708,8 +1709,7 @@ select {
       width: 100%;
       height: 26px;
       background-color: #556068;
-      color: #a4afb7;
-      padding: 0; }
+      color: #a4afb7; }
   .elementor-panel #elementor-panel-footer-publish .elementor-icon, .elementor-panel #elementor-panel-footer-publish .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
