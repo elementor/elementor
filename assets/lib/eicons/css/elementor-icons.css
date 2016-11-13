@@ -380,28 +380,28 @@
 .eicon-hypster:before {
   content: '\e920'; }
 
-.eicon-align-left:before {
+.eicon-h-align-left:before {
   content: '\e921'; }
 
-.eicon-align-right:before {
+.eicon-h-align-right:before {
   content: '\e922'; }
 
-.eicon-align-center:before {
+.eicon-h-align-center:before {
   content: '\e923'; }
 
-.eicon-align-stretch:before {
+.eicon-h-align-stretch:before {
   content: '\e924'; }
 
-.eicon-valign-top:before {
+.eicon-v-align-top:before {
   content: '\e925'; }
 
-.eicon-valign-bottom:before {
+.eicon-v-align-bottom:before {
   content: '\e926'; }
 
-.eicon-valign-middle:before {
+.eicon-v-align-middle:before {
   content: '\e927'; }
 
-.eicon-valign-stretch:before {
+.eicon-v-align-stretch:before {
   content: '\e928'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */
