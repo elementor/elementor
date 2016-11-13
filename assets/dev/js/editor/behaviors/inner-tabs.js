@@ -16,17 +16,17 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 		_.each( tabsWrappers, function( view ) {
 			view.$el.addClass( 'type-tabs' );
 
-			var tabs_id = view.model.get('name'),
+			var tabsId = view.model.get( 'name' ),
 				tabs = parent.children.filter( function( childView ) {
-					return ( childView.model.get( 'type' ) === 'tab' && childView.model.get( 'tabs_wrapper' ) === tabs_id );
+					return ( 'tab' === childView.model.get( 'type' ) && childView.model.get( 'tabs_wrapper' ) === tabsId );
 				} );
 
 			_.each( tabs, function( childView, index ) {
 				view._addChildView( childView );
 
-				var tab_id =  childView.model.get( 'name' ),
+				var tabId =  childView.model.get( 'name' ),
 					controlsUnderTab = parent.children.filter( function( view ) {
-						return ( view.model.get( 'inner_tab' ) === tab_id );
+						return ( tabId === view.model.get( 'inner_tab' ) );
 					} );
 
 				if ( 0 === index ) {
