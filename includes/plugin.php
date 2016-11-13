@@ -137,10 +137,6 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
-	public function widgets_init() {
-		register_widget( 'Elementor\Widget_Library_Template' );
-	}
-
 	private function _includes() {
 		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
 		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
@@ -171,7 +167,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/wp-widgets/widget-library-template.php' );
+		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
 		if ( is_admin() ) {
@@ -222,7 +218,6 @@ class Plugin {
 	 */
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ] );
-		add_action( 'widgets_init', [ $this, 'widgets_init' ] );
 
 		// TODO: Declare this fields
 		$this->_includes();

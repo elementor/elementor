@@ -248,6 +248,14 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-library-sync-button.success:before {
   content: "\f147"; }
 
+.elementor-shortcode-input {
+  min-width: 205px; }
+
+#available-widgets [class*="elementor-template"] .widget-title:before {
+  content: "\e801";
+  font-family: eicon;
+  font-size: 17px; }
+
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {
