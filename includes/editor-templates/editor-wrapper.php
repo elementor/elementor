@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			?>
 		</div>
 	</div>
-	<div id="elementor-panel"></div>
+	<div id="elementor-panel" class="elementor-panel"></div>
 </div>
 <?php wp_footer(); ?>
 </body>
