@@ -275,7 +275,7 @@ class Editor {
 				'heartbeat',
 				'elementor-dialog',
 				'jquery-select2',
-				'simple-date-time-picker',
+				'jquery-simple-dtpicker',
 			],
 			Plugin::instance()->get_version(),
 			true
@@ -417,7 +417,7 @@ class Editor {
 				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
-				'simple-date-time-picker',
+				'jquery-simple-dtpicker',
 			],
 			Plugin::instance()->get_version()
 		);
