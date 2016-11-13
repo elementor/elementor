@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?1.8");
-  src: url("../fonts/eicons.eot?1.8#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.8") format("woff2"), url("../fonts/eicons.woff?1.8") format("woff"), url("../fonts/eicons.ttf?1.8") format("truetype"), url("../fonts/eicons.svg?1.8#eicon") format("svg");
+  src: url("../fonts/eicons.eot?1.9");
+  src: url("../fonts/eicons.eot?1.9#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.9") format("woff2"), url("../fonts/eicons.woff?1.9") format("woff"), url("../fonts/eicons.ttf?1.9") format("truetype"), url("../fonts/eicons.svg?1.9#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -379,5 +379,29 @@
 
 .eicon-hypster:before {
   content: '\e920'; }
+
+.eicon-align-left:before {
+  content: '\e921'; }
+
+.eicon-align-right:before {
+  content: '\e922'; }
+
+.eicon-align-center:before {
+  content: '\e923'; }
+
+.eicon-align-stretch:before {
+  content: '\e924'; }
+
+.eicon-valign-top:before {
+  content: '\e925'; }
+
+.eicon-valign-bottom:before {
+  content: '\e926'; }
+
+.eicon-valign-middle:before {
+  content: '\e927'; }
+
+.eicon-valign-stretch:before {
+  content: '\e928'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */
