@@ -161,7 +161,7 @@ class Settings {
 		$usage_section = 'elementor_usage_section';
 		add_settings_section(
 			$usage_section,
-			__( 'Usage', 'elementor' ),
+			__( 'Improve Elementor', 'elementor' ),
 			'__return_empty_string', // No need intro text for this section right now
 			self::PAGE_ID
 		);
