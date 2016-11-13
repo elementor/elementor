@@ -1708,7 +1708,8 @@ select {
       width: 100%;
       height: 26px;
       background-color: #556068;
-      color: #a4afb7; }
+      color: #a4afb7;
+      padding: 0; }
   .elementor-panel #elementor-panel-footer-publish .elementor-icon, .elementor-panel #elementor-panel-footer-publish .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
