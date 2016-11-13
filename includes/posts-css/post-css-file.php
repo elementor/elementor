@@ -121,6 +121,14 @@ class Post_CSS_File {
 		return '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
 	}
 
+	public function get_css() {
+		if ( empty( $this->css ) ) {
+			$this->parse_elements_css();
+		}
+
+		return $this->css;
+	}
+
 	protected function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 

@@ -284,6 +284,7 @@ class Editor {
 			'ElementorConfig',
 			[
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'home_url' => home_url( ),
 				'nonce' => wp_create_nonce( 'elementor-editing' ),
 				'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
 				'elements_categories' => Plugin::instance()->elements_manager->get_categories(),
@@ -348,6 +349,7 @@ class Editor {
 					'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 					'asc' => __( 'Ascending order', 'elementor' ),
 					'desc' => __( 'Descending order', 'elementor' ),
+					'edit' => __( 'Edit', 'elementor' ),
 				],
 			]
 		);
