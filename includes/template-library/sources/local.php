@@ -1,13 +1,10 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Controls_Manager;
 use Elementor\DB;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
