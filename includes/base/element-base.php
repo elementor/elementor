@@ -500,7 +500,6 @@ abstract class Element_Base {
 	}
 
 	public function start_controls_tabs( $tabs_id ) {
-
 		if ( null !== $this->_current_tab ) {
 			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) );
 		}
