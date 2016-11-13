@@ -11,6 +11,12 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	behaviors: {
+		HandleInnerTabs: {
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
+		}
+	},
+
 	childViewContainer: '#elementor-controls',
 
 	modelEvents: {

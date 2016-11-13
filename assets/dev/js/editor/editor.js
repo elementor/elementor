@@ -89,6 +89,7 @@ App = Marionette.Application.extend( {
 				url: require( 'elementor-views/controls/url' ),
 				font: require( 'elementor-views/controls/font' ),
 				section: require( 'elementor-views/controls/section' ),
+				tab: require( 'elementor-views/controls/tab' ),
 				repeater: require( 'elementor-views/controls/repeater' ),
 				wp_widget: require( 'elementor-views/controls/wp_widget' ),
 				icon: require( 'elementor-views/controls/icon' ),

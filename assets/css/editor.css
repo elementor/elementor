@@ -557,6 +557,16 @@ select {
     padding: 20px 20px 10px; }
   .elementor-panel .elementor-control-title {
     font-size: 12px; }
+  .elementor-panel .elementor-control-type-tab:not(.type-tabs) {
+    display: inline-block;
+    border: 1px solid #d6d6d6;
+    border-bottom: none;
+    padding: 10px 10px 0 !important;
+    cursor: pointer; }
+    .elementor-panel .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
+      font-weight: bold; }
+  .elementor-panel .elementor-tab-close {
+    display: none !important; }
   .elementor-panel .select2-container {
     width: 100% !important; }
     .elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single,
