@@ -449,11 +449,13 @@ class Editor {
 	}
 
 	public function wp_footer() {
-		Plugin::instance()->controls_manager->render_controls();
-		Plugin::instance()->widgets_manager->render_widgets_content();
-		Plugin::instance()->elements_manager->render_elements_content();
+		$plugin = Plugin::instance();
 
-		Plugin::instance()->schemes_manager->print_schemes_templates();
+		$plugin->controls_manager->render_controls();
+		$plugin->widgets_manager->render_widgets_content();
+		$plugin->elements_manager->render_elements_content();
+
+		$plugin->schemes_manager->print_schemes_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
 			include $editor_template;
