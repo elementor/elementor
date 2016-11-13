@@ -32,7 +32,6 @@ class Tools {
 			self::PAGE_ID
 		);
 
-
 		$field_id = 'elementor_clear_cache';
 		add_settings_field(
 			$field_id,
