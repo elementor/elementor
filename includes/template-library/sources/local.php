@@ -1,13 +1,10 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Controls_Manager;
 use Elementor\DB;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -58,6 +55,7 @@ class Source_Local extends Source_Base {
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => false,
+			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
@@ -182,10 +180,9 @@ class Source_Local extends Source_Base {
 			$data = $db->get_plain_editor( $item_id );
 		}
 
-		return $db->iterate_data( $data, function( $element ) {
-			$element['id'] = Utils::generate_random_string();
-			return $element;
-		} );
+		$data = $this->replace_elements_ids( $data );
+
+		return $data;
 	}
 
 	public function delete_template( $item_id ) {
@@ -194,6 +191,8 @@ class Source_Local extends Source_Base {
 
 	public function export_template( $item_id ) {
 		$template_data = $this->get_content( $item_id, 'raw' );
+
+		$template_data = $this->process_export_import_data( $template_data, 'on_export' );
 
 		if ( empty( $template_data ) )
 			return new \WP_Error( '404', 'The template does not exist' );
@@ -241,51 +240,7 @@ class Source_Local extends Source_Base {
 		if ( $is_invalid_file )
 			return new \WP_Error( 'file_error', 'Invalid File' );
 
-		// Fetch all images and replace to new
-		$import_images = new Classes\Import_Images();
-
-		/** @var Element_Base $element_type */
-		$content_data = Plugin::instance()->db->iterate_data( $content['data'], function( $element ) use ( $import_images ) {
-			if ( 'widget' === $element['elType'] ) {
-				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
-			} else {
-				$element_type = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
-			}
-
-			if ( ! $element_type )
-				return $element;
-
-			foreach ( $element_type->get_controls() as $control ) {
-				if ( Controls_Manager::MEDIA === $control['type'] ) {
-					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
-						continue;
-
-					$imported_image = $import_images->import( $element['settings'][ $control['name'] ] );
-
-					if ( ! $imported_image ) {
-						$element['settings'][ $control['name'] ] = [
-							'id' => null,
-							'url' => Utils::get_placeholder_image_src(),
-						];
-
-						continue;
-					}
-
-					$element['settings'][ $control['name'] ] = $import_images->import( $element['settings'][ $control['name'] ] );
-				}
-
-				if ( Controls_Manager::GALLERY === $control['type'] ) {
-					foreach ( $element['settings'][ $control['name'] ] as &$attachment ) {
-						if ( empty( $attachment['url'] ) )
-							continue;
-
-						$attachment = $import_images->import( $attachment );
-					}
-				}
-			}
-
-			return $element;
-		} );
+		$content_data = $this->process_export_import_data( $content['data'], 'on_import' );
 
 		$item_id = $this->save_item( [
 			'data' => $content_data,
@@ -336,12 +291,6 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public function __construct() {
-		parent::__construct();
-
-		$this->_add_actions();
-	}
-
 	private function _is_base_templates_screen() {
 		global $current_screen;
 
@@ -371,5 +320,11 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->_add_actions();
 	}
 }

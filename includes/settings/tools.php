@@ -22,24 +22,61 @@ class Tools {
 		);
 	}
 
+	public function register_settings_fields() {
+		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
+		$tools_section = 'elementor_tools_section';
+		add_settings_section(
+			$tools_section,
+			'',
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_clear_cache';
+		add_settings_field(
+			$field_id,
+			__( 'Regenerate CSS', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$tools_section,
+			[
+				'id' => $field_id,
+				'type' => 'raw_html',
+				'html' => sprintf( '<button data-nonce="%s" class="button" name="tool_name" value="clear_cache" id="elementor-clear-cache">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files', 'elementor' ) ),
+				'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
+			]
+		);
+
+		$field_id = 'elementor_raw_reset_api_data';
+		add_settings_field(
+			$field_id,
+			__( 'Sync Library', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$tools_section,
+			[
+				'id' => $field_id,
+				'type' => 'raw_html',
+				'html' => sprintf( '<button data-nonce="%s" class="button" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
+				'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
+			]
+		);
+	}
+
 	public function display_settings_page() {
 		?>
 		<div class="wrap">
 			<h2><?php _e( 'Elementor Tools', 'elementor' ); ?></h2>
 			<form method="post" action="">
-				<h3><?php _e( 'Clear Cache', 'elementor' ); ?></h3>
-
-				<p><?php _e( 'Regenerate CSS files', 'elementor' ); ?></p>
-
-				<input type="hidden" name="tool_name" value="clear_cache" />
-
 				<?php
 				settings_fields( self::PAGE_ID );
-				submit_button( __( 'Clear Cache', 'elementor' ) );
+				do_settings_sections( self::PAGE_ID );
 				?>
 			</form>
 		</div><!-- /.wrap -->
+
 		<?php
+
 	}
 
 	public function process_form() {
@@ -63,7 +100,8 @@ class Tools {
 	}
 
 	public function __construct() {
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
+		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 
 		if ( ! empty( $_POST ) ) {
 			add_action( 'admin_init', [ $this, 'process_form' ], 10 );

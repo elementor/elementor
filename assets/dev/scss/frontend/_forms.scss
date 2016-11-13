@@ -2,70 +2,78 @@
 // Forms (Input, Textarea, Select Etc..)
 //
 
-//
+.elementor-form-fields-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+
+	&.elementor-labels-above {
+
+		> .elementor-field-group {
+
+			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
+				flex-basis: 100%;
+			}
+		}
+	}
+
+	&.elementor-labels-inline {
+
+		> .elementor-field-group {
+
+			> input, .elementor-select-wrapper {
+				flex-grow: 1;
+			}
+		}
+	}
+}
+
 .elementor-field-group {
 	flex-wrap: wrap;
 	align-items: center;
 
-	label {
-		cursor: pointer;
-	}
+	&.elementor-button-vertical-align- {
 
-	input {
-
-		&[type=text],
-		&[type=email],
-		&[type=url],
-		&[type=password],
-		&[type=tel],
-		&[type=search] {
-			@include input-style();
-			@include input-focus();
-			@include input-placeholder();
+		&start {
+			align-items: flex-start;
 		}
 
-		&[type=radio] {
-			-webkit-appearance: radio;
-			-moz-appearance: radio;
-			appearance: radio;
+		&end {
+			align-items: flex-end;
 		}
 
-		&[type=checkbox] {
-			-webkit-appearance: checkbox;
-			-moz-appearance: checkbox;
-			appearance: checkbox;
+		&stretch {
+			align-items: stretch;
 		}
 	}
 
-	textarea {
-		@include input-style();
-		@include input-focus();
-		@include input-placeholder();
+	.elementor-field-textual {
+		width: auto;
+		border: 1px solid $gray;
+		background-color: transparent;
+		color: $gray-darker;
+		vertical-align: middle;
+		flex-grow: 1;
+
+		&:focus {
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+			outline: 0;
+		}
+
+		&::-moz-placeholder, &::-webkit-input-placeholder, :-ms-input-placeholder {
+			color: inherit;
+			opacity: 0.6;
+		}
 	}
 
-	// Select Input
 	.elementor-select-wrapper {
-		@include input-style();
 		display: flex;
 		position: relative;
-		padding: 0;
 
 		select {
-			-webkit-appearance: none;
-			-moz-appearance: none;
 			appearance: none;
-			background: transparent;
-			padding: 9px 16px; // Inherit from input size
-			border-radius: 2px;
-			border: 0;
-			font-size: inherit;
 			color: inherit;
-			line-height: inherit;
 			flex-basis: 100%;
-			@include input-focus();
 			@include padding-end(20px);
-			position: relative;
-			z-index: 1;
 		}
 
 		&:before {
@@ -73,10 +81,136 @@
 			font-family: 'FontAwesome';
 			font-size: 15px;
 			position: absolute;
-			z-index: 0;
 			top: 50%;
 			transform: translateY(-50%);
 			@include end(10px);
 		}
+	}
+}
+
+.elementor-field-subgroup {
+	display: flex;
+	flex-wrap: wrap;
+
+	&.elementor-subgroup-inline {
+
+		.elementor-field-option {
+			@include padding-end(10px);
+		}
+	}
+	&:not(.elementor-subgroup-inline) {
+
+		.elementor-field-option {
+			flex-basis: 100%;
+		}
+	}
+}
+
+.elementor-field-label {
+	cursor: pointer;
+}
+
+// Keep the following out from another parent selector!
+.elementor-field-textual {
+
+	&.elementor-size- {
+
+		&xs {
+			font-size: 13px;
+			line-height: 1.4;
+			padding: 6px 12px;
+			border-radius: 2px;
+		}
+
+		&sm {
+			font-size: 15px;
+			line-height: 1.4;
+			padding: 9px 16px;
+			border-radius: 3px;
+		}
+
+		&md {
+			font-size: 16px;
+			line-height: 1.5;
+			padding: 10px 16px;
+			border-radius: 4px;
+		}
+
+		&lg {
+			font-size: 18px;
+			line-height: 1.5;
+			padding: 14px 16px;
+			border-radius: 5px;
+		}
+
+		&xl {
+			font-size: 20px;
+			line-height: 1.6;
+			padding: 18px 20px;
+			border-radius: 6px;
+		}
+	}
+}
+
+.elementor-button-align- {
+
+	&center {
+		justify-content: center;
+	}
+
+	&stretch {
+
+		button {
+			flex-basis: 100%;
+		}
+	}
+
+	&start {
+		justify-content: getValueByDirection(flex-start, flex-end);
+	}
+
+	&end {
+		justify-content: getValueByDirection(flex-end, flex-start);
+	}
+}
+
+// Form Messages
+.error {
+
+	.elementor-field {
+		border-color: $danger;
+	}
+
+	.help-inline {
+		color: $danger;
+		font-size: 0.9em;
+	}
+}
+
+.elementor-form-message {
+	margin: 10px 0;
+	font-size: 1em;
+	line-height: 1;
+
+	&:before {
+		content: "\f00c";
+		display: inline-block;
+		font-family: fontawesome;
+		font-weight: normal;
+		font-style: normal;
+		vertical-align: middle;
+		margin-right: 5px;
+	}
+
+	&.form-message-danger {
+		color: $danger;
+
+		&:before {
+			content: "\f00d";
+		}
+	}
+
+	&.form-message-success {
+		color: $success;
 	}
 }

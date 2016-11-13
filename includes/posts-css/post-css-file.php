@@ -53,7 +53,7 @@ class Post_CSS_File {
 
 		$meta = [
 			'version' => ELEMENTOR_VERSION,
-			'time' => date( 'Y-m-d-H-i' ),
+			'time' => time(),
 			'fonts' => array_unique( $this->fonts ),
 		];
 
@@ -117,6 +117,18 @@ class Post_CSS_File {
 		return $this->is_build_with_elementor;
 	}
 
+	public function get_element_unique_selector( Element_Base $element ) {
+		return '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
+	}
+
+	public function get_css() {
+		if ( empty( $this->css ) ) {
+			$this->parse_elements_css();
+		}
+
+		return $this->css;
+	}
+
 	protected function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
@@ -162,7 +174,7 @@ class Post_CSS_File {
 
 		foreach ( $data as $section_data ) {
 			$section = new Element_Section( $section_data );
-			$this->parse_style_item( $section );
+			$this->render_styles( $section );
 		}
 
 		$css .= $this->stylesheet_obj;
@@ -178,59 +190,68 @@ class Post_CSS_File {
 		$this->css = $css;
 	}
 
-	protected function parse_style_item( Element_Base $element ) {
+	private function add_element_style_rules( Element_Base $element, $controls, $values, $placeholders, $replacements ) {
+		foreach ( $controls as $control ) {
+			$control_value = $values[ $control['name'] ];
+
+			if ( ! empty( $control['style_fields'] ) ) {
+				foreach ( $control_value as $field_value ) {
+					$this->add_element_style_rules(
+						$element,
+						$control['style_fields'],
+						$field_value,
+						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
+						array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
+					);
+				}
+			}
+
+			if ( ! $element->is_control_visible( $control, $values ) ) {
+				continue;
+			}
+
+			$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
+		}
+
+		foreach ( $element->get_children() as $child_element ) {
+			$this->render_styles( $child_element );
+		}
+	}
+
+	private function add_control_style_rules( $control, $value, $placeholders, $replacements ) {
+		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
+			return;
+		}
+
+		if ( Controls_Manager::FONT === $control['type'] ) {
+			$this->fonts[] = $value;
+		}
+
+		$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+
+		foreach ( $control['selectors'] as $selector => $css_property ) {
+			$parsed_css_property = $control_obj->get_replaced_style_values( $css_property, $value );
+
+			if ( ! $parsed_css_property ) {
+				continue;
+			}
+
+			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
+
+			$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
+
+			$this->stylesheet_obj->add_rules( $parsed_selector, $parsed_css_property, $device );
+		}
+	}
+
+	private function render_styles( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
-		$element_unique_class = '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
+		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{WRAPPER}}' ], [ $this->get_element_unique_selector( $element ) ] );
 
 		if ( 'column' === $element->get_name() ) {
 			if ( ! empty( $element_settings['_inline_size'] ) ) {
-				$this->_columns_width[] = $element_unique_class . '{width:' . $element_settings['_inline_size'] . '%;}';
-			}
-		}
-
-		foreach ( $element->get_style_controls() as $control ) {
-			if ( ! isset( $element_settings[ $control['name'] ] ) ) {
-				continue;
-			}
-
-			$control_value = $element_settings[ $control['name'] ];
-			if ( ! is_numeric( $control_value ) && ! is_float( $control_value ) && empty( $control_value ) ) {
-				continue;
-			}
-
-			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-			if ( ! $control_obj ) {
-				continue;
-			}
-
-			if ( ! $element->is_control_visible( $control ) ) {
-				continue;
-			}
-
-			if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-				$this->fonts[] = $control_value;
-			}
-
-			foreach ( $control['selectors'] as $selector => $css_property ) {
-				$output_selector = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
-				$output_css_property = $control_obj->get_replace_style_values( $css_property, $control_value );
-
-				if ( ! $output_css_property ) {
-					continue;
-				}
-
-				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
-
-				$this->stylesheet_obj->add_rules( $output_selector, $output_css_property, $device );
-			}
-		}
-
-		$children = $element->get_children();
-
-		if ( ! empty( $children ) ) {
-			foreach ( $children as $child_element ) {
-				$this->parse_style_item( $child_element );
+				$this->_columns_width[] = $this->get_element_unique_selector( $element ) . '{width:' . $element_settings['_inline_size'] . '%;}';
 			}
 		}
 	}

@@ -90,7 +90,8 @@ body {
 	}
 }
 
-#elementor-preview, #elementor-panel {
+#elementor-preview,
+#elementor-panel {
 
 	&:not(.ui-resizable-resizing) {
 		transition: $start .5s, width 0.5s;

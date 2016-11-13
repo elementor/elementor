@@ -5,8 +5,6 @@
 .elementor-button {
 	display: inline-block;
 	line-height: 1;
-	border-radius: 3px;
-	padding: 12px 24px;
 	background-color: $gray;
 	color: #fff;
 	text-align: center;
@@ -20,24 +18,35 @@
 	}
 
 	&.elementor-size- {
-		&small {
+
+		&xs {
 			font-size: 13px;
 			padding: 10px 20px;
+			border-radius: 2px;
 		}
-		&medium {
+
+		&sm {
 			font-size: 15px;
+			padding: 12px 24px;
+			border-radius: 3px;
 		}
-		&large {
+
+		&md {
 			font-size: 16px;
 			padding: 15px 30px;
+			border-radius: 4px;
 		}
-		&xl {
+
+		&lg {
 			font-size: 18px;
 			padding: 20px 40px;
+			border-radius: 5px;
 		}
-		&xxl {
+
+		&xl {
 			font-size: 20px;
 			padding: 25px 50px;
+			border-radius: 6px;
 		}
 	}
 

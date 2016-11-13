@@ -362,13 +362,6 @@ html.elementor-html {
 			}
 		}
 
-		.elementor-widget {
-
-			&:hover {
-				outline: 1px solid $editor-info;
-			}
-		}
-
 		.elementor-editor-element-setting {
 
 			&:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
@@ -512,7 +505,7 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable {
+		&.elementor-element-editable, &:not(.elementor-widget-edit-disabled):hover {
 			outline: 1px solid $editor-info;
 		}
 
@@ -662,7 +655,7 @@ html.elementor-html {
 
 	#elementor-add-template-button {
 		background-color: $editor-dark;
-		margin-left: 25px;
+		@include margin-start(25px);
 	}
 
 	#elementor-add-section-drag-title {

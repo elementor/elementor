@@ -23,6 +23,7 @@ class Controls_Manager {
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
 	const SECTION = 'section';
+	const TAB = 'tab';
 	const DIVIDER = 'divider';
 
 	const COLOR = 'color';
@@ -43,6 +44,7 @@ class Controls_Manager {
 	const GALLERY = 'gallery';
 	const STRUCTURE = 'structure';
 	const SELECT2 = 'select2';
+	const DATE_TIME_PICKER = 'date_time_picker';
 	const BOX_SHADOW = 'box_shadow';
 	const ANIMATION = 'animation';
 	const HOVER_ANIMATION = 'hover_animation';
@@ -99,6 +101,7 @@ class Controls_Manager {
 			self::HEADING,
 			self::RAW_HTML,
 			self::SECTION,
+			self::TAB,
 			self::DIVIDER,
 
 			self::COLOR,
@@ -119,6 +122,7 @@ class Controls_Manager {
 			self::GALLERY,
 			self::STRUCTURE,
 			self::SELECT2,
+			self::DATE_TIME_PICKER,
 			self::BOX_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,

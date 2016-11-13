@@ -33,6 +33,13 @@ abstract class Element_Base {
 	 */
 	private $_current_section = null;
 
+	/**
+	 * Holds the current tab while render a set of controls tabs
+	 *
+	 * @var null|array
+	 */
+	protected $_current_tab = null;
+
 	public final static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
@@ -107,13 +114,17 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
-	public final function add_control( $id, $args ) {
+	public function add_control( $id, $args ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
 					_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . $id, '1.0.0' );
 				}
 				$args = array_merge( $args, $this->_current_section );
+
+				if ( null !== $this->_current_tab ) {
+					$args = array_merge( $args, $this->_current_tab );
+				}
 			} elseif ( empty( $args['section'] ) ) {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
 			}
@@ -144,10 +155,24 @@ abstract class Element_Base {
 		} );
 	}
 
-	public final function get_style_controls() {
-		return array_filter( $this->get_controls(), function( $control ) {
-			return ( ! empty( $control['selectors'] ) );
-		} );
+	public final function get_style_controls( $controls = null ) {
+		if ( null === $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		$style_controls = [];
+
+		foreach ( $controls as $control_name => $control ) {
+			if ( Controls_Manager::REPEATER === $control['type'] ) {
+				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
+			}
+
+			if ( ! empty( $control['style_fields'] ) || ! empty( $control['selectors'] ) ) {
+				$style_controls[ $control_name ] = $control;
+			}
+		}
+
+		return $style_controls;
 	}
 
 	public final function get_class_controls() {
@@ -321,7 +346,16 @@ abstract class Element_Base {
 		return $child;
 	}
 
-	public function is_control_visible( $control ) {
+	public function is_control_visible( $control, $values = null ) {
+		if ( null === $values ) {
+			$values = $this->get_settings();
+		}
+
+		// Repeater fields
+		if ( ! empty( $control['conditions'] ) ) {
+			return Conditions::check( $control['conditions'], $values );
+		}
+
 		if ( empty( $control['condition'] ) ) {
 			return true;
 		}
@@ -333,7 +367,7 @@ abstract class Element_Base {
 			$condition_sub_key = $condition_key_parts[2];
 			$is_negative_condition = ! ! $condition_key_parts[3];
 
-			$instance_value = $this->get_settings( $pure_condition_key );
+			$instance_value = $values[ $pure_condition_key ];
 
 			if ( null === $instance_value ) {
 				return false;
@@ -463,6 +497,45 @@ abstract class Element_Base {
 
 		do_action( 'elementor/element/after_section_end', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
+	}
+
+	public function start_controls_tabs( $tabs_id ) {
+		if ( null !== $this->_current_tab ) {
+			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) );
+		}
+
+		$this->add_control(
+			$tabs_id,
+			[
+				'type' => Controls_Manager::TAB,
+				'is_tabs_wrapper' => true,
+			]
+		);
+
+		$this->_current_tab = [
+			'tabs_wrapper' => $tabs_id,
+		];
+	}
+
+	public function end_controls_tabs() {
+		$this->_current_tab = null;
+	}
+
+	public function start_controls_tab( $tab_id, $args ) {
+		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
+			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) );
+		}
+
+		$args['type'] = Controls_Manager::TAB;
+		$args['tabs_wrapper'] = $this->_current_tab['tabs_wrapper'];
+
+		$this->add_control( $tab_id, $args );
+
+		$this->_current_tab['inner_tab'] = $tab_id;
+	}
+
+	public function end_controls_tab() {
+		unset( $this->_current_tab['inner_tab'] );
 	}
 
 	public final function set_settings( $key, $value = null ) {

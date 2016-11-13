@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?1.7");
-  src: url("../fonts/eicons.eot?1.7#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.7") format("woff2"), url("../fonts/eicons.woff?1.7") format("woff"), url("../fonts/eicons.ttf?1.7") format("truetype"), url("../fonts/eicons.svg?1.7#eicon") format("svg");
+  src: url("../fonts/eicons.eot?1.9");
+  src: url("../fonts/eicons.eot?1.9#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?1.9") format("woff2"), url("../fonts/eicons.woff?1.9") format("woff"), url("../fonts/eicons.ttf?1.9") format("truetype"), url("../fonts/eicons.svg?1.9#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="eicon-"],
@@ -209,7 +209,7 @@
 .eicon-search:before {
   content: '\e863'; }
 
-.eicon-selec:before {
+.eicon-select:before {
   content: '\e864'; }
 
 .eicon-share:before {
@@ -370,5 +370,38 @@
 
 .eicon-device-mobile:before {
   content: '\e917'; }
+
+.eicon-document-file:before {
+  content: '\e918'; }
+
+.eicon-folder:before {
+  content: '\e919'; }
+
+.eicon-hypster:before {
+  content: '\e920'; }
+
+.eicon-h-align-left:before {
+  content: '\e921'; }
+
+.eicon-h-align-right:before {
+  content: '\e922'; }
+
+.eicon-h-align-center:before {
+  content: '\e923'; }
+
+.eicon-h-align-stretch:before {
+  content: '\e924'; }
+
+.eicon-v-align-top:before {
+  content: '\e925'; }
+
+.eicon-v-align-bottom:before {
+  content: '\e926'; }
+
+.eicon-v-align-middle:before {
+  content: '\e927'; }
+
+.eicon-v-align-stretch:before {
+  content: '\e928'; }
 
 /*# sourceMappingURL=elementor-icons.css.map */

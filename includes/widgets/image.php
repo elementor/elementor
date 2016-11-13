@@ -282,35 +282,49 @@ class Widget_Image extends Widget_Base {
 		if ( empty( $settings['image']['url'] ) ) {
 			return;
 		}
+
 		$has_caption = ! empty( $settings['caption'] );
 
-		$image_html = '<div class="elementor-image' . ( ! empty( $settings['shape'] ) ? ' elementor-image-shape-' . $settings['shape'] : '' ) . '">';
+		$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
 
-		if ( $has_caption ) {
-			$image_html .= '<figure class="wp-caption">';
+		if ( ! empty( $settings['shape'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-image-shape-' . $settings['shape'] );
 		}
-
-		$image_html .= Group_Control_Image_Size::get_attachment_image_html( $settings );
 
 		$link = $this->get_link_url( $settings );
+
 		if ( $link ) {
-			$target = '';
+			$this->add_render_attribute( 'link', 'href', $link['url'] );
+
 			if ( ! empty( $link['is_external'] ) ) {
-				$target = ' target="_blank"';
+				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
-			$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
-		}
+		} ?>
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<?php
+		if ( $has_caption ) : ?>
+			<figure class="wp-caption">
+		<?php endif;
 
-		if ( $has_caption ) {
-			$image_html .= sprintf( '<figcaption class="widget-image-caption wp-caption-text">%s</figcaption>', $settings['caption'] );
-		}
+		if ( $link ) : ?>
+				<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
+		<?php endif;
 
-		if ( $has_caption ) {
-			$image_html .= '</figure>';
-		}
-		$image_html .= '</div>';
+		echo Group_Control_Image_Size::get_attachment_image_html( $settings );
 
-		echo $image_html;
+		if ( $link ) : ?>
+				</a>
+		<?php endif;
+
+		if ( $has_caption ) : ?>
+				<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+		<?php endif;
+
+		if ( $has_caption ) : ?>
+			</figure>
+		<?php endif; ?>
+		</div>
+		<?php
 	}
 
 	protected function _content_template() {
@@ -325,57 +339,55 @@ class Widget_Image extends Widget_Base {
 			// If it's not in cache, like a new dropped widget or a custom size - get from settings
 			if ( ! image_url ) {
 
-			if ( 'custom' === settings.image_size ) {
-			return;
-			}
-
-			// If it's a new dropped widget
-			image_url = settings.image.url;
-			}
-
-			#>
-			<div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}">
-				<#
-					var imgClass = '', image_html = '',
-					hasCaption = '' !== settings.caption,
-					image_html = '';
-
-					if ( '' !== settings.hover_animation ) {
-					imgClass = 'elementor-animation-' + settings.hover_animation;
-					}
-
-					if ( hasCaption ) {
-					image_html += '<figure class="wp-caption">';
+				if ( 'custom' === settings.image_size ) {
+					return;
 				}
 
-				image_html += '<img src="' + image_url + '" class="' + imgClass + '" />';
+				// If it's a new dropped widget
+				image_url = settings.image.url;
+			}
 
-				var link_url;
-				if ( 'custom' === settings.link_to ) {
+			var link_url;
+
+			if ( 'custom' === settings.link_to ) {
 				link_url = settings.link.url;
-				}
+			}
 
-				if ( 'file' === settings.link_to ) {
+			if ( 'file' === settings.link_to ) {
 				link_url = settings.image.url;
-				}
+			}
 
-				if ( link_url ) {
-				image_html = '<a href="' + link_url + '">' + image_html + '</a>';
-				}
+			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
+			var imgClass = '',
+				hasCaption = '' !== settings.caption;
 
-				if ( hasCaption ) {
-				image_html += '<figcaption class="widget-image-caption wp-caption-text">' + settings.caption + '</figcaption>';
-				}
+			if ( '' !== settings.hover_animation ) {
+				imgClass = 'elementor-animation-' + settings.hover_animation;
+			}
 
-				if ( hasCaption ) {
-				image_html += '</figure>';
-				}
+			if ( hasCaption ) {
+				#><figure class="wp-caption"><#
+			}
 
-				print( image_html );
+			if ( link_url ) {
+					#><a href="{{ link_url }}"><#
+			}
+						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
 
-				#>
-			</div>
-			<# } #>
+			if ( link_url ) {
+					#></a><#
+			}
+
+			if ( hasCaption ) {
+					#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
+			}
+
+			if ( hasCaption ) {
+				#></figure><#
+			}
+
+			#></div><#
+		} #>
 		<?php
 	}
 

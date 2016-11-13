@@ -78,15 +78,26 @@ abstract class Widget_Base extends Element_Base {
 			$default_value = array_keys( $skin_options );
 			$default_value = array_shift( $default_value );
 
-			$this->add_control(
-				'_skin',
-				[
-					'label' => __( 'Skin', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $default_value,
-					'options' => $skin_options,
-				]
-			);
+			if ( 1 >= sizeof( $skin_options ) ) {
+				$this->add_control(
+					'_skin',
+					[
+						'label' => __( 'Skin', 'elementor' ),
+						'type' => Controls_Manager::HIDDEN,
+						'default' => $default_value,
+					]
+				);
+			} else {
+				$this->add_control(
+					'_skin',
+					[
+						'label' => __( 'Skin', 'elementor' ),
+						'type' => Controls_Manager::SELECT,
+						'default' => $default_value,
+						'options' => $skin_options,
+					]
+				);
+			}
 		}
 	}
 
@@ -179,12 +190,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function before_render() {
-		$this->add_render_attribute( 'wrapper', 'class', [
+		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
 			'elementor-element-' . $this->get_id(),
 			'elementor-widget-' . $this->get_name(),
 		] );
+
+		// Add a `disabled` class if it's a shortcode/wp-widget within the editor
+		if ( ! Plugin::instance()->editor->is_edit_mode() ) {
+			$this->add_render_attribute( '_wrapper', 'class', [
+				'elementor-widget-edit-disabled',
+			] );
+		}
 
 		$settings = $this->get_settings();
 
@@ -195,18 +213,18 @@ abstract class Widget_Base extends Element_Base {
 			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
 		if ( ! empty( $settings['_animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['_animation'] );
+			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
 		}
 
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 

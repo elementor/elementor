@@ -19,11 +19,11 @@ class Widget_Button extends Widget_Base {
 
 	public static function get_button_sizes() {
 		return [
-			'small' => __( 'Small', 'elementor' ),
-			'medium' => __( 'Medium', 'elementor' ),
-			'large' => __( 'Large', 'elementor' ),
-			'xl' => __( 'XL', 'elementor' ),
-			'xxl' => __( 'XXL', 'elementor' ),
+			'xs' => __( 'Extra Small', 'elementor' ),
+			'sm' => __( 'Small', 'elementor' ),
+			'md' => __( 'Medium', 'elementor' ),
+			'lg' => __( 'Large', 'elementor' ),
+			'xl' => __( 'Extra Large', 'elementor' ),
 		];
 	}
 
@@ -106,7 +106,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'medium',
+				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 			]
 		);
