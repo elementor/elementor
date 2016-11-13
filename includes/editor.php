@@ -249,9 +249,11 @@ class Editor {
 		);
 
 		wp_register_script(
-			'simple-date-time-picker',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-datetimepicker/jquery.simple-dtpicker' . $suffix . '.js',
-			[],
+			'jquery-simple-dtpicker',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.js',
+			[
+				'jquery',
+			],
 			'1.12.0',
 			true
 		);
@@ -400,8 +402,8 @@ class Editor {
 		);
 
 		wp_register_style(
-			'simple-date-time-picker',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-datetimepicker/jquery.simple-dtpicker' . $suffix . '.css',
+			'jquery-simple-dtpicker',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.css',
 			[],
 			'1.12.0'
 		);
