@@ -137,8 +137,9 @@ class Editor {
 		global $wp_styles, $wp_scripts;
 
 		$post_id = get_the_ID();
+		$plugin = Plugin::instance();
 
-		$editor_data = Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT );
+		$editor_data = $plugin->db->get_builder( $post_id, DB::REVISION_DRAFT );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -158,7 +159,7 @@ class Editor {
 		);
 
 		// Enqueue frontend scripts too
-		Plugin::instance()->frontend->enqueue_scripts();
+		$plugin->frontend->enqueue_scripts();
 
 		wp_register_script(
 			'backbone-marionette',
@@ -277,7 +278,7 @@ class Editor {
 				'jquery-select2',
 				'jquery-simple-dtpicker',
 			],
-			Plugin::instance()->get_version(),
+			$plugin->get_version(),
 			true
 		);
 		wp_enqueue_script( 'elementor-editor' );
@@ -298,16 +299,16 @@ class Editor {
 				'home_url' => home_url(),
 				'nonce' => wp_create_nonce( 'elementor-editing' ),
 				'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
-				'elements_categories' => Plugin::instance()->elements_manager->get_categories(),
-				'controls' => Plugin::instance()->controls_manager->get_controls_data(),
-				'elements' => Plugin::instance()->elements_manager->get_element_types_config(),
-				'widgets' => Plugin::instance()->widgets_manager->get_widget_types_config(),
+				'elements_categories' => $plugin->elements_manager->get_categories(),
+				'controls' => $plugin->controls_manager->get_controls_data(),
+				'elements' => $plugin->elements_manager->get_element_types_config(),
+				'widgets' => $plugin->widgets_manager->get_widget_types_config(),
 				'schemes' => [
-					'items' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
+					'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 					'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 				],
-				'default_schemes' => Plugin::instance()->schemes_manager->get_schemes_defaults(),
-				'system_schemes' => Plugin::instance()->schemes_manager->get_system_schemes(),
+				'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
+				'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 				'wp_editor' => $this->_get_wp_editor_config(),
 				'post_id' => $post_id,
 				'post_permalink' => get_the_permalink(),
@@ -365,7 +366,7 @@ class Editor {
 			]
 		);
 
-		Plugin::instance()->controls_manager->enqueue_control_scripts();
+		$plugin->controls_manager->enqueue_control_scripts();
 	}
 
 	public function enqueue_styles() {
