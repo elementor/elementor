@@ -1,13 +1,10 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Controls_Manager;
 use Elementor\DB;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -294,12 +291,6 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public function __construct() {
-		parent::__construct();
-
-		$this->_add_actions();
-	}
-
 	private function _is_base_templates_screen() {
 		global $current_screen;
 
@@ -329,5 +320,11 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->_add_actions();
 	}
 }

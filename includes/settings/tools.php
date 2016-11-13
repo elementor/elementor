@@ -32,19 +32,18 @@ class Tools {
 			self::PAGE_ID
 		);
 
-
 		$field_id = 'elementor_clear_cache';
 		add_settings_field(
 			$field_id,
-			__( 'Clear Cache', 'elementor' ),
+			__( 'Regenerate CSS', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
 			$tools_section,
 			[
 				'id' => $field_id,
 				'type' => 'raw_html',
-				'html' => sprintf( '<button data-nonce="%s" class="button" name="tool_name" value="clear_cache" id="elementor-clear-cache">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Clear Cache', 'elementor' ) ),
-				'desc' => __( 'Delete generated css files', 'elementor' ),
+				'html' => sprintf( '<button data-nonce="%s" class="button" name="tool_name" value="clear_cache" id="elementor-clear-cache">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files', 'elementor' ) ),
+				'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
 			]
 		);
 

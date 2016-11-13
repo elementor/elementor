@@ -559,6 +559,31 @@
       -ms-flex-pack: start;
           justify-content: flex-start; }
 
+.error .elementor-field {
+  border-color: #d9534f; }
+.error .help-inline {
+  color: #d9534f;
+  font-size: 0.9em; }
+
+.elementor-form-message {
+  margin: 10px 0;
+  font-size: 1em;
+  line-height: 1; }
+  .elementor-form-message:before {
+    content: "\f00c";
+    display: inline-block;
+    font-family: fontawesome;
+    font-weight: normal;
+    font-style: normal;
+    vertical-align: middle;
+    margin-right: 5px; }
+  .elementor-form-message.form-message-danger {
+    color: #d9534f; }
+    .elementor-form-message.form-message-danger:before {
+      content: "\f00d"; }
+  .elementor-form-message.form-message-success {
+    color: #5cb85c; }
+
 .elementor-widget-heading .elementor-heading-title {
   padding: 0;
   margin: 0;
