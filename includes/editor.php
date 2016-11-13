@@ -295,7 +295,7 @@ class Editor {
 			'ElementorConfig',
 			[
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'home_url' => home_url( ),
+				'home_url' => home_url(),
 				'nonce' => wp_create_nonce( 'elementor-editing' ),
 				'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
 				'elements_categories' => Plugin::instance()->elements_manager->get_categories(),
