@@ -9,7 +9,9 @@ class Control_Date_Time_Picker extends Control_Base {
 	}
 
 	function get_default_settings() {
-		return [];
+		return [
+			'label_block' => true,
+		];
 	}
 
 	public function content_template() {
