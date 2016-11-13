@@ -18,7 +18,7 @@ class Source_Local extends Source_Base {
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	const TYPE_META_KEY = '_elementor_template_type';
-	
+
 	public static function get_template_types() {
 		return [
 			'page',
