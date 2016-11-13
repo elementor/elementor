@@ -12,6 +12,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		itemTitle: '.elementor-repeater-row-item-title'
 	},
 
+	behaviors: {
+		HandleInnerTabs: {
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
+		}
+	},
+
 	triggers: {
 		'click @ui.removeButton': 'click:remove',
 		'click @ui.duplicateButton': 'click:duplicate',
