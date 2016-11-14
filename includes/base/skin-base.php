@@ -36,7 +36,7 @@ abstract class Skin_Base {
 		return $skin_id . '_' . $control_base_id;
 	}
 
-	protected function get_instance_value( $control_base_id ) {
+	public function get_instance_value( $control_base_id ) {
 		$control_id = $this->get_control_id( $control_base_id );
 		return $this->parent->get_settings( $control_id );
 	}
