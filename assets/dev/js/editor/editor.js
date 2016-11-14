@@ -95,7 +95,7 @@ App = Marionette.Application.extend( {
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
-				date_time_picker: require( 'elementor-views/controls/date-time-picker' ),
+				date_time: require( 'elementor-views/controls/date-time' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
