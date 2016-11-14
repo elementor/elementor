@@ -236,6 +236,8 @@ body {
     padding: 6.5px 15px; }
     .elementor-button.elementor-button-default:hover {
       background-color: #6d7882; }
+    .elementor-button.elementor-button-default:visited {
+      color: #fff; }
 
 input, select, textarea {
   border-radius: 3px;

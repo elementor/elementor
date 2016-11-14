@@ -57,5 +57,9 @@
 		&:hover {
 			background-color: $editor-dark;
 		}
+
+		&:visited {
+			color: #fff;
+		}
 	}
 }
