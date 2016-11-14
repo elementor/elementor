@@ -50,4 +50,8 @@ abstract class Skin_Base {
 
 		$this->parent->add_group_control( $group_name, $args );
 	}
+
+	public function set_parent( $parent ) {
+		$this->parent = $parent;
+	}
 }
