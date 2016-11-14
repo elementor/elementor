@@ -17,6 +17,10 @@ class Widget_Shortcode extends Widget_Base {
 		return 'shortcode';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	public function is_reload_preview_required() {
 		return true;
 	}

@@ -17,6 +17,10 @@ class Widget_Social_Icons extends Widget_Base {
 		return 'social-icons';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_social_icon',
