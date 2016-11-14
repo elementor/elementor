@@ -67,6 +67,21 @@
 				} );
 			} );
 
+			$( '#elementor-clear-cache-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success' ).addClass( 'loading' );
+
+				$.post( ajaxurl, {
+					action: 'elementor_clear_cache',
+					_nonce: $thisButton.data( 'nonce' )
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} );
+			} );
+
 			$( '#elementor-library-sync-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );
