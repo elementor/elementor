@@ -42,7 +42,7 @@ class Tools {
 			[
 				'id' => $field_id,
 				'type' => 'raw_html',
-				'html' => sprintf( '<button data-nonce="%s" class="button" name="tool_name" value="clear_cache" id="elementor-clear-cache">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files', 'elementor' ) ),
+				'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files', 'elementor' ) ),
 				'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
 			]
 		);
@@ -57,7 +57,7 @@ class Tools {
 			[
 				'id' => $field_id,
 				'type' => 'raw_html',
-				'html' => sprintf( '<button data-nonce="%s" class="button" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
+				'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
 				'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
 			]
 		);
@@ -79,24 +79,12 @@ class Tools {
 
 	}
 
-	public function process_form() {
-		if ( empty( $_POST['option_page'] ) || self::PAGE_ID !== $_POST['option_page'] ) {
-			return;
-		}
+	public function ajax_elementor_clear_cache() {
+		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
-		switch ( $_POST['tool_name'] ) {
-			case 'clear_cache':
-				$errors = Plugin::instance()->posts_css_manager->clear_cache();
+		Plugin::instance()->posts_css_manager->clear_cache();
 
-				add_action( 'admin_notices', function() use ( $errors ) {
-					if ( empty( $errors ) ) {
-						echo '<div class="notice notice-success"><p>' . __( 'Cache has been cleared', 'elementor' ) . '</p></div>';
-					} else {
-						echo '<div class="notice notice-error"><p>' . implode( '<br>', $errors ) . '</p></div>';
-					}
-				} );
-				break;
-		}
+		wp_send_json_success();
 	}
 
 	public function __construct() {
@@ -104,7 +92,7 @@ class Tools {
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 
 		if ( ! empty( $_POST ) ) {
-			add_action( 'admin_init', [ $this, 'process_form' ], 10 );
+			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ], 10 );
 		}
 	}
 }
