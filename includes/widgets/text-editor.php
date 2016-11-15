@@ -105,7 +105,7 @@ class Widget_Text_Editor extends Widget_Base {
 
 		$editor_content = $this->parse_text_editor( $editor_content );
 		?>
-		<div class="elementor-text-editor"><?php echo $editor_content; ?></div>
+		<div class="elementor-text-editor elementor-clearfix"><?php echo $editor_content; ?></div>
 		<?php
 	}
 
@@ -116,7 +116,7 @@ class Widget_Text_Editor extends Widget_Base {
 
 	protected function _content_template() {
 		?>
-		<div class="elementor-text-editor">{{{ settings.editor }}}</div>
+		<div class="elementor-text-editor elementor-clearfix">{{{ settings.editor }}}</div>
 		<?php
 	}
 }

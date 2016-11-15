@@ -223,7 +223,7 @@ class Widget_Tabs extends Widget_Base {
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper">
 				<?php foreach ( $tabs as $item ) : ?>
-					<div class="elementor-tab-content" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div class="elementor-tab-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				<?php
 					$counter++;
 				endforeach; ?>
@@ -251,7 +251,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-content-wrapper">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-content elementor-repeater-item-{{ item._id }}" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }}" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
 					<#
 					counter++;
 					} ); #>

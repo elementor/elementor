@@ -853,8 +853,7 @@
     padding: 20px;
     display: none;
     border: 1px solid #D4D4D4;
-    border-top: none;
-    overflow: hidden; }
+    border-top: none; }
 
 @media (max-width: 767px) {
   .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title > span {
@@ -888,8 +887,7 @@
   .elementor-accordion .elementor-accordion-content {
     display: none;
     padding: 15px 20px;
-    border-top: 1px solid #D4D4D4;
-    overflow: hidden; }
+    border-top: 1px solid #D4D4D4; }
 
 @media (max-width: 767px) {
   .elementor-accordion .elementor-accordion-title {
@@ -918,8 +916,7 @@
   .elementor-toggle .elementor-toggle-content {
     padding: 0 15px 15px;
     border-bottom: 1px solid #D4D4D4;
-    display: none;
-    overflow: hidden; }
+    display: none; }
 
 @media (max-width: 767px) {
   .elementor-toggle .elementor-toggle-title {
