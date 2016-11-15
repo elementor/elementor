@@ -21,6 +21,8 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		moveToBasic: {
 			underline: 'italic'
 		},
+		removeFromBasic: [ 'unlink' ],
+		removeFromAdvanced: []
 	},
 
 	initialize: function() {
@@ -76,6 +78,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
 			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
+
+		editorBasicToolbarButtons = _.difference( editorBasicToolbarButtons, this.buttons.removeFromBasic );
+
+		editorAdvancedToolbarButtons = _.difference( editorAdvancedToolbarButtons, this.buttons.removeFromAdvanced );
 
 		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
 			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
