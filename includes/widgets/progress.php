@@ -17,6 +17,10 @@ class Widget_Progress extends Widget_Base {
 		return 'skill-bar';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_progress',
