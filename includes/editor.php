@@ -433,7 +433,7 @@ class Editor {
 			'elementorwpeditor',
 			[
 				'editor_class' => 'elementor-wp-editor',
-				'textarea_rows' => 15,
+				'editor_height' => 250,
 				'drag_drop_upload' => true,
 			]
 		);
