@@ -11,12 +11,16 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		moveToAdvanced: {
 			fullscreen: 'wp_help',
 			hr: 'wp_help',
-			wp_more: 'wp_help'
+			wp_more: 'wp_help',
+			blockquote: 'removeformat',
+			alignleft: 'blockquote',
+			aligncenter: 'alignleft',
+			alignright: 'aligncenter',
+			strikethrough: 'alignjustify'
 		},
 		moveToBasic: {
-			underline: 'italic',
-			alignjustify: 'alignright'
-		}
+			underline: 'italic'
+		},
 	},
 
 	initialize: function() {
