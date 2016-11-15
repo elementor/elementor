@@ -236,7 +236,7 @@ body {
     margin-top: 15px;
     color: #fff; }
 
-input, select, textarea {
+input, select, textarea, .elementor-input-style {
   border-radius: 3px;
   font-size: 12px;
   width: 100%;
@@ -245,18 +245,18 @@ input, select, textarea {
   color: #495157;
   border: 1px solid;
   outline: none; }
-  input:not(:focus), select:not(:focus), textarea:not(:focus) {
+  input:not(:focus), select:not(:focus), textarea:not(:focus), .elementor-input-style:not(:focus) {
     border-color: #d5dadf; }
-  input:focus, select:focus, textarea:focus {
+  input:focus, select:focus, textarea:focus, .elementor-input-style:focus {
     border-color: #a4afb7; }
 
 .elementor-error input, .elementor-error select, .elementor-error textarea {
   border-color: #b01b1b; }
 
-input, textarea {
+input, textarea, .elementor-input-style {
   padding: 5px 8px; }
 
-textarea {
+textarea, .elementor-input-style {
   resize: vertical; }
 
 input[type="checkbox"],
