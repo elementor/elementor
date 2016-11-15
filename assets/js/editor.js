@@ -1553,7 +1553,7 @@ App = Marionette.Application.extend( {
 		self.panel.$el.resizable( {
 			handles: elementor.config.is_rtl ? 'w' : 'e',
 			minWidth: 200,
-			maxWidth: 500,
+			maxWidth: 680,
 			start: function() {
 				self.$previewWrapper
 					.addClass( 'ui-resizable-resizing' )
@@ -7468,12 +7468,18 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		moveToAdvanced: {
 			fullscreen: 'wp_help',
 			hr: 'wp_help',
-			wp_more: 'wp_help'
+			wp_more: 'wp_help',
+			blockquote: 'removeformat',
+			alignleft: 'blockquote',
+			aligncenter: 'alignleft',
+			alignright: 'aligncenter',
+			strikethrough: 'alignjustify'
 		},
 		moveToBasic: {
-			underline: 'italic',
-			alignjustify: 'alignright'
-		}
+			underline: 'italic'
+		},
+		removeFromBasic: [ 'unlink' ],
+		removeFromAdvanced: []
 	},
 
 	initialize: function() {
@@ -7529,6 +7535,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
 			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
+
+		editorBasicToolbarButtons = _.difference( editorBasicToolbarButtons, this.buttons.removeFromBasic );
+
+		editorAdvancedToolbarButtons = _.difference( editorAdvancedToolbarButtons, this.buttons.removeFromAdvanced );
 
 		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
 			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
