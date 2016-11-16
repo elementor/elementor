@@ -286,7 +286,7 @@ class Frontend {
 		return $content;
 	}
 
-	public function get_builder_content( $post_id ) {
+	public function get_builder_content( $post_id, $with_css = false ) {
 		if ( post_password_required( $post_id ) ) {
 			return '';
 		}
@@ -303,7 +303,11 @@ class Frontend {
 		ob_start();
 
 		// Handle JS and Customizer requests, with css inline
-		if ( is_customize_preview() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+		if ( is_customize_preview() || Utils::is_ajax() ) {
+			$with_css = true;
+		}
+
+		if ( $with_css ) {
 			echo '<style>' . $css_file->get_css() . '</style>';
 		}
 
@@ -349,24 +353,28 @@ class Frontend {
 			return $content;
 		}
 
-		// Set edit mode as false, so don't render settings and etc
+		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
+		$is_edit_mode = Plugin::instance()->editor->is_edit_mode();
 		Plugin::instance()->editor->set_edit_mode( false );
 
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
 		if ( isset( $GLOBALS['post'] ) ) {
 			$global_post = $GLOBALS['post'];
-			$GLOBALS['post'] = get_post( $post_id );
 		}
 
-		$content = $this->get_builder_content( $post_id );
+		$GLOBALS['post'] = get_post( $post_id );
+
+		$content = $this->get_builder_content( $post_id, $is_edit_mode );
 
 		// Restore global post
 		if ( isset( $global_post ) ) {
 			$GLOBALS['post'] = $global_post;
+		} else {
+			unset( $GLOBALS['post'] );
 		}
 
 		// Restore edit mode state
-		Plugin::instance()->editor->set_edit_mode( null );
+		Plugin::instance()->editor->set_edit_mode( $is_edit_mode );
 
 		return $content;
 	}

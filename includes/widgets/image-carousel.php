@@ -17,6 +17,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		return 'slider-push';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_image_carousel',

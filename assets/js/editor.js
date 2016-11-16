@@ -5219,9 +5219,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	initStylesheet: function() {
-		this.stylesheet = new Stylesheet();
-
 		var viewportBreakpoints = elementor.config.viewportBreakpoints;
+
+		this.stylesheet = new Stylesheet();
 
 		this.stylesheet
 			.addDevice( 'mobile', 0 )
@@ -5246,7 +5246,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, settings ) ) {
+			if ( ! elementor.helpers.isControlVisible( control, settings.attributes ) ) {
 				return;
 			}
 
@@ -8080,6 +8080,7 @@ WidgetView = BaseElementView.extend( {
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
 	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) )
+	        .addClass( 'elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
