@@ -159,6 +159,19 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.11.0 - 16.11.2016 =
+* New! - Elementor now generates an external CSS file for each page instead of inline CSS ([#325](https://github.com/pojome/elementor/issues/325))
+* New! - Added a tool to regenerate Elementor pages CSS files
+* New! - Added TinyMCE editor for Repeater control, such as Tabs, Accordion and Toggle widgets ([#176](https://github.com/pojome/elementor/issues/176))
+* New! - Added Time Picker control for future widgets
+* Tweak! - 'Edit with Elementor' button color now uses the Admin Color Scheme
+* Tweak! - Improved style for Multiple Select2 control
+* Tweak! - Removed development mode flag
+* Tweak! - Elementor Icon library updated with new icons
+* Tweak! - Align button sizes as a new forms style
+* Tweak! - Panel width expanded for better comfortable editing
+* Tweak! - TinyMCE editor toolbar reduced to basic toolbar, for comfortable editing
+
 = 0.10.7 - 07.11.2016 =
 * Fix! - Image widget template for link and caption ([Topic](https://wordpress.org/support/topic/image-not-aligning-when-linked/))
 * Fix! - Exclude Library from search ([Topic](https://wordpress.org/support/topic/custom-templates-accidentally-show-up-in-search-results/))
