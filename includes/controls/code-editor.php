@@ -12,7 +12,7 @@ class Control_Code_Editor extends Control_Base {
 	function get_default_settings() {
 		return [
 			'label_block' => true,
-			'use_advanced_editor' => true,
+			'use_advanced_editor' => ( 'yes' === get_option( 'elementor_use_advanced_code_editor' ) ),
 			'language' => 'html', // html / css
 		];
 	}
