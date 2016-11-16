@@ -12,6 +12,7 @@ class Control_Code_Editor extends Control_Base {
 	function get_default_settings() {
 		return [
 			'label_block' => true,
+			'use_advanced_editor' => true,
 			'language' => 'html', // html / css
 		];
 	}
@@ -21,7 +22,7 @@ class Control_Code_Editor extends Control_Base {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<pre class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></pre>
+				<textarea rows="10" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

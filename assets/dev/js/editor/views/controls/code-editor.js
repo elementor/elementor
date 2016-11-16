@@ -13,10 +13,16 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
+		if ( ! ace || ! self.model.attributes.use_advanced_editor ) {
+			return;
+		}
+
 		self.editor = ace.edit( this.ui.editor[0] );
-		
+
+		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
+
 		self.editor.setOptions({
-			mode: 'ace/mode/' + this.model.attributes.language,
+			mode: 'ace/mode/' + self.model.attributes.language,
 			minLines: 10,
 			maxLines: Infinity,
 			showGutter: true,
