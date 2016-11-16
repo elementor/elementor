@@ -736,6 +736,8 @@ select {
     border-radius: 0; }
   .elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
     padding-top: 14px; }
+  .elementor-panel .panel-elements-category-title-basic {
+    display: none; }
   .elementor-panel .panel-elements-category-title {
     padding: 7px 15px;
     text-transform: uppercase;
