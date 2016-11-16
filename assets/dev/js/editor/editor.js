@@ -91,11 +91,13 @@ App = Marionette.Application.extend( {
 				url: require( 'elementor-views/controls/url' ),
 				font: require( 'elementor-views/controls/font' ),
 				section: require( 'elementor-views/controls/section' ),
+				tab: require( 'elementor-views/controls/tab' ),
 				repeater: require( 'elementor-views/controls/repeater' ),
 				wp_widget: require( 'elementor-views/controls/wp_widget' ),
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
+				date_time: require( 'elementor-views/controls/date-time' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
@@ -352,7 +354,7 @@ App = Marionette.Application.extend( {
 		self.panel.$el.resizable( {
 			handles: elementor.config.is_rtl ? 'w' : 'e',
 			minWidth: 200,
-			maxWidth: 500,
+			maxWidth: 680,
 			start: function() {
 				self.$previewWrapper
 					.addClass( 'ui-resizable-resizing' )

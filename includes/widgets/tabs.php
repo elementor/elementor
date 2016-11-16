@@ -17,6 +17,10 @@ class Widget_Tabs extends Widget_Base {
 		return 'tabs';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_tabs',
@@ -54,7 +58,7 @@ class Widget_Tabs extends Widget_Base {
 						'label' => __( 'Content', 'elementor' ),
 						'default' => __( 'Tab Content', 'elementor' ),
 						'placeholder' => __( 'Tab Content', 'elementor' ),
-						'type' => Controls_Manager::TEXTAREA,
+						'type' => Controls_Manager::WYSIWYG,
 						'show_label' => false,
 					],
 				],
@@ -251,7 +255,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-content-wrapper">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-content" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+						<div class="elementor-tab-content elementor-repeater-item-{{ item._id }}" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
 					<#
 					counter++;
 					} ); #>

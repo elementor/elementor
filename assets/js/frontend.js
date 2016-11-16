@@ -2,7 +2,6 @@
 var ElementsHandler;
 
 ElementsHandler = function( $ ) {
-
 	this.runReadyTrigger = function( $scope ) {
 		var elementType = $scope.data( 'element_type' );
 
@@ -11,6 +10,11 @@ ElementsHandler = function( $ ) {
 		}
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
+
+		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
+		if ( isWidgetType ) {
+			elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $scope, $ );
+		}
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
 	};
@@ -31,6 +35,7 @@ module.exports = ElementsHandler;
 
 		var addGlobalHandlers = function() {
 			self.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
+			self.hooks.addAction( 'frontend/element_ready/widget', require( 'elementor-frontend/handlers/widget' ) );
 		};
 
 		var addElementsHandlers = function() {
@@ -40,7 +45,16 @@ module.exports = ElementsHandler;
 		};
 
 		var runElementsHandlers = function() {
-			$( '.elementor-element' ).each( function() {
+			var $elements;
+
+			if ( self.isEditMode() ) {
+				// Elements outside from the Preview
+				$elements = self.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			} else {
+				$elements = $( '.elementor-element' );
+			}
+
+			$elements.each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
 		};
@@ -145,7 +159,7 @@ jQuery( function() {
 	}
 } );
 
-},{"../utils/hooks":15,"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/utils":14}],3:[function(require,module,exports){
+},{"../utils/hooks":16,"elementor-frontend/elements-handler":1,"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/handlers/widget":14,"elementor-frontend/utils":15}],3:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -214,7 +228,6 @@ module.exports = function( $scoop, $ ) {
 	$scoop.waypoint( function() {
 		$scoop.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
-
 };
 
 },{}],7:[function(require,module,exports){
@@ -536,6 +549,21 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],14:[function(require,module,exports){
+module.exports = function( $scoop, $ ) {
+	if ( ! elementorFrontend.isEditMode() ) {
+		return;
+	}
+
+	if ( $scoop.hasClass( 'elementor-widget-edit-disabled' ) ) {
+		return;
+	}
+
+	$scoop.find( '.elementor-element' ).each( function() {
+		elementorFrontend.elementsHandler.runReadyTrigger( $( this ) );
+	} );
+};
+
+},{}],15:[function(require,module,exports){
 var Utils;
 
 Utils = function( $ ) {
@@ -559,7 +587,7 @@ Utils = function( $ ) {
 
 module.exports = Utils;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**

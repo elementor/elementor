@@ -173,3 +173,44 @@
 		justify-content: getValueByDirection(flex-end, flex-start);
 	}
 }
+
+// Form Messages
+.elementor-error {
+
+	.elementor-field {
+		border-color: $danger;
+	}
+
+	.help-inline {
+		color: $danger;
+		font-size: 0.9em;
+	}
+}
+
+.elementor-message {
+	margin: 10px 0;
+	font-size: 1em;
+	line-height: 1;
+
+	&:before {
+		content: "\f00c";
+		display: inline-block;
+		font-family: fontawesome;
+		font-weight: normal;
+		font-style: normal;
+		vertical-align: middle;
+		margin-right: 5px;
+	}
+
+	&.elementor-message-danger {
+		color: $danger;
+
+		&:before {
+			content: "\f00d";
+		}
+	}
+
+	&.form-message-success {
+		color: $success;
+	}
+}

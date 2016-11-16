@@ -25,12 +25,20 @@ class Elements_Manager {
 		return $this->_categories;
 	}
 
-	public function add_category( $category_name, $category_properties ) {
+	public function add_category( $category_name, $category_properties, $offset = null ) {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
 		}
 
-		$this->_categories[ $category_name ] = $category_properties;
+		if ( null === $offset ) {
+			$this->_categories[ $category_name ] = $category_properties;
+		}
+
+		$this->_categories = array_slice( $this->_categories, 0, $offset, true )
+			+ [
+				$category_name => $category_properties,
+			]
+			+ array_slice( $this->_categories, $offset, null, true );
 	}
 
 	public function register_element_type( Element_Base $element ) {
@@ -117,6 +125,11 @@ class Elements_Manager {
 	private function init_categories() {
 		$this->_categories = [
 			'basic' => [
+				'title' => __( 'Basic', 'elementor' ),
+				'icon' => 'font',
+			],
+			'general-elements' => [
+				'title' => __( 'General Elements', 'elementor' ),
 				'icon' => 'font',
 			],
 			'pojo' => [
@@ -135,5 +148,6 @@ class Elements_Manager {
 
 		require ELEMENTOR_PATH . 'includes/elements/column.php';
 		require ELEMENTOR_PATH . 'includes/elements/section.php';
+		require ELEMENTOR_PATH . 'includes/elements/repeater.php';
 	}
 }

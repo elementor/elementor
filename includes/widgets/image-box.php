@@ -17,6 +17,10 @@ class Widget_Image_Box extends Widget_Base {
 		return 'image-box';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_image',

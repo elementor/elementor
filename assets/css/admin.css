@@ -232,7 +232,7 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 11px;
   letter-spacing: 5px; }
 
-#elementor-library-sync-button:before {
+button.elementor-button-spinner:before {
   font: normal 20px/.5 dashicons;
   speak: none;
   display: inline-block;
@@ -242,11 +242,20 @@ body.elementor-editor-inactive #elementor-editor {
   position: relative;
   vertical-align: top;
   content: "\f463"; }
-#elementor-library-sync-button.loading:before {
+button.elementor-button-spinner.loading:before {
   -webkit-animation: rotation 1s infinite linear;
   animation: rotation 1s infinite linear; }
-#elementor-library-sync-button.success:before {
-  content: "\f147"; }
+button.elementor-button-spinner.success:before {
+  content: "\f147";
+  color: #46b450; }
+
+.elementor-shortcode-input {
+  min-width: 205px; }
+
+#available-widgets [class*="elementor-template"] .widget-title:before {
+  content: "\e801";
+  font-family: eicon;
+  font-size: 17px; }
 
 /*= Elementor Message
 ---------------------------------------*/

@@ -17,6 +17,10 @@ class Widget_Accordion extends Widget_Base {
 		return 'accordion';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_title',
@@ -51,7 +55,7 @@ class Widget_Accordion extends Widget_Base {
 					[
 						'name' => 'tab_content',
 						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::TEXTAREA,
+						'type' => Controls_Manager::WYSIWYG,
 						'default' => __( 'Accordion Content', 'elementor' ),
 						'show_label' => false,
 					],

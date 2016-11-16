@@ -258,7 +258,7 @@ class Frontend {
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
-					$output_css_property = $control_obj->get_replace_style_values( $css_property, $scheme_value );
+					$output_css_property = $control_obj->get_replaced_style_values( $css_property, $scheme_value );
 
 					$this->stylesheet->add_rules( $output_selector, $output_css_property );
 				}
@@ -286,7 +286,7 @@ class Frontend {
 		return $content;
 	}
 
-	public function get_builder_content( $post_id ) {
+	public function get_builder_content( $post_id, $with_css = false ) {
 		if ( post_password_required( $post_id ) ) {
 			return '';
 		}
@@ -300,7 +300,18 @@ class Frontend {
 		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
 
-		ob_start(); ?>
+		ob_start();
+
+		// Handle JS and Customizer requests, with css inline
+		if ( is_customize_preview() || Utils::is_ajax() ) {
+			$with_css = true;
+		}
+
+		if ( $with_css ) {
+			echo '<style>' . $css_file->get_css() . '</style>';
+		}
+
+		?>
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">
@@ -332,40 +343,49 @@ class Frontend {
 			return '';
 		}
 
-		// Set edit mode as false, so dont render settings and etc
+		// Avoid recursion
+		if ( get_the_ID() === (int) $post_id ) {
+			$content = '';
+			if ( Plugin::instance()->editor->is_edit_mode() ) {
+				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
+			}
+
+			return $content;
+		}
+
+		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
+		$is_edit_mode = Plugin::instance()->editor->is_edit_mode();
 		Plugin::instance()->editor->set_edit_mode( false );
 
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		$global_post = $GLOBALS['post'];
+		if ( isset( $GLOBALS['post'] ) ) {
+			$global_post = $GLOBALS['post'];
+		}
+
 		$GLOBALS['post'] = get_post( $post_id );
 
-		$content = $this->get_builder_content( $post_id );
+		$content = $this->get_builder_content( $post_id, $is_edit_mode );
 
 		// Restore global post
-		$GLOBALS['post'] = $global_post;
+		if ( isset( $global_post ) ) {
+			$GLOBALS['post'] = $global_post;
+		} else {
+			unset( $GLOBALS['post'] );
+		}
 
 		// Restore edit mode state
-		Plugin::instance()->editor->set_edit_mode( null );
+		Plugin::instance()->editor->set_edit_mode( $is_edit_mode );
 
 		return $content;
 	}
 
-	public function library_shortcode( $attributes = [] ) {
-		if ( empty( $attributes['id'] ) ) {
-			return '';
-		}
-
-		return $this->get_builder_content_for_display( $attributes['id'] );
-	}
-
 	public function __construct() {
-		if ( is_admin() ) {
+		// We don't need this class in admin side, but in AJAX requests
+		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 			return;
 		}
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
-
-		add_shortcode( 'elementor-library', [ $this, 'library_shortcode' ] );
 	}
 }

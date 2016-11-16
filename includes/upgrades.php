@@ -29,8 +29,8 @@ class Upgrades {
 		}
 
 		if ( version_compare( $elementor_version, '0.11.0', '<' ) ) {
-			//self::_upgrade_v0110();
-			//update_option( 'elementor_version', '0.11.0' );
+			self::_upgrade_v0110();
+			update_option( 'elementor_version', '0.11.0' );
 		}
 	}
 
@@ -135,15 +135,15 @@ class Upgrades {
 					return $element;
 				}
 
-				$size_to_replace = [
-					'small' => 'xs',
-					'medium' => 'sm',
-					'large' => 'md',
-					'xl' => 'lg',
-					'xxl' => 'xl',
-				];
-
 				if ( 'button' === $element['widgetType'] ) {
+					$size_to_replace = [
+						'small' => 'xs',
+						'medium' => 'sm',
+						'large' => 'md',
+						'xl' => 'lg',
+						'xxl' => 'xl',
+					];
+
 					if ( ! empty( $element['settings']['size'] ) ) {
 						$old_size = $element['settings']['size'];
 

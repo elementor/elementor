@@ -12,6 +12,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		itemTitle: '.elementor-repeater-row-item-title'
 	},
 
+	behaviors: {
+		HandleInnerTabs: {
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
+		}
+	},
+
 	triggers: {
 		'click @ui.removeButton': 'click:remove',
 		'click @ui.duplicateButton': 'click:duplicate',
@@ -28,6 +34,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
+
 		return elementor.getControlItemView( controlType );
 	},
 
@@ -42,10 +49,15 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 		self.collection.each( function( model ) {
 			var conditions = model.get( 'conditions' ),
+				parentConditions = model.get( 'parent_conditions' ),
 				isVisible = true;
 
 			if ( conditions ) {
 				isVisible = elementor.conditions.check( conditions, self.model.attributes );
+			}
+
+			if ( parentConditions ) {
+				isVisible = elementor.conditions.check( parentConditions, self.getOption( 'parentModel' ).attributes );
 			}
 
 			var child = self.children.findByModelCid( model.cid );
@@ -92,6 +104,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		self.collection = new Backbone.Collection( options.controlFields );
 
 		self.listenTo( self.model, 'change', self.checkConditions );
+		self.listenTo( self.getOption( 'parentModel' ), 'change', self.checkConditions );
 
 		if ( options.titleField ) {
 			self.listenTo( self.model, 'change', self.setTitle );

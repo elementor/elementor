@@ -17,6 +17,10 @@ class Widget_Image_Gallery extends Widget_Base {
 		return 'gallery-grid';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_gallery',

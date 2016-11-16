@@ -3,11 +3,11 @@
 //
 
 .elementor-button {
+	outline: none;
 	border: none;
 	cursor: pointer;
 	border-radius: 3px;
 	transition: box-shadow .5s, opacity .5s;
-	outline: none;
 
 	&:not(.elementor-button-state) {
 
@@ -19,25 +19,47 @@
 	.elementor-state-icon {
 		@include padding-end(10px);
 	}
-}
 
-.elementor-button-success {
-	color: #fff;
+	&.elementor-button-success {
+		color: #fff;
 
-	&[disabled] {
-		background-color: $editor-lighter;
-	}
-
-	&:not([disabled]) {
-		background-color: #38B54A;
-
-		&:hover {
-			opacity: 0.85;
-			box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+		&[disabled] {
+			background-color: $editor-lighter;
 		}
 
-		&:active {
-			box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
+		&:not([disabled]) {
+			background-color: #38B54A;
+
+			&:hover {
+				opacity: 0.85;
+				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+			}
+
+			&:active {
+				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
+			}
+		}
+	}
+
+	&.elementor-edit-template {
+		display: inline-block;
+		margin-top: 15px;
+		color: #fff;
+	}
+
+	&.elementor-button-default {
+		background-color: $editor-light;
+		color: #fff;
+		font-size: 11px;
+		text-transform: uppercase;
+		padding: 6.5px 15px;
+
+		&:hover {
+			background-color: $editor-dark;
+		}
+
+		&:visited {
+			color: #fff;
 		}
 	}
 }

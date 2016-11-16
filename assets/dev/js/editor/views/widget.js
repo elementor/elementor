@@ -83,7 +83,7 @@ WidgetView = BaseElementView.extend( {
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueClass() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( html );
 		}, this ) );
 
 		return this;
@@ -98,6 +98,7 @@ WidgetView = BaseElementView.extend( {
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
 	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) )
+	        .addClass( 'elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 

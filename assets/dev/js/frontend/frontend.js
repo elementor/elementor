@@ -10,6 +10,7 @@
 
 		var addGlobalHandlers = function() {
 			self.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
+			self.hooks.addAction( 'frontend/element_ready/widget', require( 'elementor-frontend/handlers/widget' ) );
 		};
 
 		var addElementsHandlers = function() {
@@ -19,7 +20,16 @@
 		};
 
 		var runElementsHandlers = function() {
-			$( '.elementor-element' ).each( function() {
+			var $elements;
+
+			if ( self.isEditMode() ) {
+				// Elements outside from the Preview
+				$elements = self.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			} else {
+				$elements = $( '.elementor-element' );
+			}
+
+			$elements.each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
 		};

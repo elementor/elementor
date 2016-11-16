@@ -178,6 +178,7 @@ abstract class Widget_Base extends Element_Base {
 
 			$skin = $this->get_current_skin();
 			if ( $skin ) {
+				$skin->set_parent( $this );
 				$skin->render();
 			} else {
 				$this->render();

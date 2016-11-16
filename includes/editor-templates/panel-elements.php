@@ -13,9 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<# if ( title ) { #>
-		<div class="panel-elements-category-title">{{{ title }}}</div>
-	<# } #>
+	<div class="panel-elements-category-title panel-elements-category-title-{{ name }}">{{{ title }}}</div>
 	<div class="panel-elements-category-items"></div>
 </script>
 
