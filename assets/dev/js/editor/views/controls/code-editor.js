@@ -34,6 +34,27 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 		self.editor.on( 'change', function () {
 			self.setValue( self.editor.getValue() );
 		});
+
+		if ( 'html' === self.model.attributes.language ) {
+			// Remove the `doctype` annotation
+			var session = self.editor.getSession();
+
+			session.on( 'changeAnnotation', function () {
+				var annotations = session.getAnnotations() || [],
+					annotationsLength = annotations.length,
+					index = annotations.length;
+
+				while ( index-- ) {
+					if ( /doctype first\. Expected/.test( annotations[ index ].text ) ) {
+						annotations.splice( index, 1 );
+					}
+				}
+
+				if ( annotationsLength > annotations.length ) {
+					session.setAnnotations( annotations );
+				}
+			});
+		}
 	}
 } );
 
