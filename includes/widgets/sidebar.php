@@ -17,6 +17,10 @@ class Widget_Sidebar extends Widget_Base {
 		return 'sidebar';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		global $wp_registered_sidebars;
 

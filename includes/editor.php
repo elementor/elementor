@@ -290,6 +290,9 @@ class Editor {
 			$plugin->get_version(),
 			true
 		);
+
+		do_action( 'elementor/editor/before_enqueue_scripts' );
+
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -441,7 +444,7 @@ class Editor {
 			'elementorwpeditor',
 			[
 				'editor_class' => 'elementor-wp-editor',
-				'textarea_rows' => 15,
+				'editor_height' => 250,
 				'drag_drop_upload' => true,
 			]
 		);

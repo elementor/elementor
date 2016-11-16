@@ -218,3 +218,32 @@
 	line-height: 1.2;
 	color: $editor-light;
 }
+
+.elementor-panel-nerd-box {
+	padding: 40px 35px;
+	text-align: center;
+
+	.elementor-panel-nerd-box-icon {
+		font-size: 52px;
+		color: #a4afb7;
+	}
+
+	.elementor-panel-nerd-box-title {
+		margin-top: 30px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.elementor-panel-nerd-box-message {
+		margin-top: 25px;
+		line-height: 1.4;
+	}
+
+	.elementor-panel-nerd-box-link {
+		margin-top: 15px;
+		display: inline-block;
+		font-size: 12px;
+		font-weight: 500;
+		text-decoration: underline;
+	}
+}

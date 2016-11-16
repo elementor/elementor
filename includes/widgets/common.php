@@ -9,6 +9,10 @@ class Widget_Common extends Widget_Base {
 		return 'common';
 	}
 
+	public function show_in_panel() {
+		return false;
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'_section_style',

@@ -17,6 +17,10 @@ class Widget_Icon_List extends Widget_Base {
 		return 'bullet-list';
 	}
 
+	public function get_categories() {
+		return [ 'general-elements' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_icon',

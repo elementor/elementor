@@ -1,6 +1,5 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
-	WidgetView = require( 'elementor-views/widget' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
@@ -27,14 +26,6 @@ ColumnView = BaseElementView.extend( {
 		HandleElementsRelation: {
 			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
-	},
-
-	getChildView: function( model ) {
-		if ( 'section' === model.get( 'elType' ) ) {
-			return require( 'elementor-views/section' ); // We need to require the section dynamically
-		}
-
-		return WidgetView;
 	},
 
 	className: function() {
@@ -179,6 +170,12 @@ ColumnView = BaseElementView.extend( {
 					itemData.isInner = true;
 				} else {
 					return;
+				}
+
+				var customData = elementView.model.get( 'custom' );
+
+				if ( customData ) {
+					_.extend( itemData, customData );
 				}
 
 				self.triggerMethod( 'request:add', itemData, { at: newIndex } );

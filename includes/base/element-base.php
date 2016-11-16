@@ -98,7 +98,7 @@ abstract class Element_Base {
 	 *
 	 * @return Element_Base
 	 */
-	abstract protected function _get_child_type( array $element_data );
+	abstract protected function _get_default_child_type( array $element_data );
 
 	abstract public function get_name();
 
@@ -614,6 +614,12 @@ abstract class Element_Base {
 		foreach ( $this->get_children() as $child ) {
 			$child->print_element();
 		}
+	}
+
+	private function _get_child_type( $element_data ) {
+		$child_type = $this->_get_default_child_type( $element_data );
+
+		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 	}
 
 	private function _init_controls() {

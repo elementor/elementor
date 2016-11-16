@@ -1237,6 +1237,8 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	modules: {},
+
 	// Private Members
 	_controlsItemView: null,
 
@@ -1300,7 +1302,7 @@ App = Marionette.Application.extend( {
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
-				date_time_picker: require( 'elementor-views/controls/date-time-picker' ),
+				date_time: require( 'elementor-views/controls/date-time' ),
 				code_editor: require( 'elementor-views/controls/code-editor' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
@@ -1393,6 +1395,8 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
+		this.$window = Backbone.$( window );
+
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -1403,11 +1407,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
-
-		this.elements = new ElementModel.Collection( this.config.data );
-
 		this.initPreview();
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -1415,10 +1414,17 @@ App = Marionette.Application.extend( {
 		this.setWorkSaver();
 
 		this.initClearPageDialog();
+
+		this.$window.trigger( 'elementor:init' );
 	},
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		// Init Base elements collection from the server
+		var ElementModel = require( 'elementor-models/element' );
+
+		this.elements = new ElementModel.Collection( this.config.data );
 
 		this.initFrontend();
 
@@ -1540,7 +1546,7 @@ App = Marionette.Application.extend( {
 	},
 
 	setWorkSaver: function() {
-		Backbone.$( window ).on( 'beforeunload', function() {
+		this.$window.on( 'beforeunload', function() {
 			if ( elementor.isEditorChanged() ) {
 				return elementor.translate( 'before_unload_alert' );
 			}
@@ -1554,7 +1560,7 @@ App = Marionette.Application.extend( {
 		self.panel.$el.resizable( {
 			handles: elementor.config.is_rtl ? 'w' : 'e',
 			minWidth: 200,
-			maxWidth: 500,
+			maxWidth: 680,
 			start: function() {
 				self.$previewWrapper
 					.addClass( 'ui-resizable-resizing' )
@@ -1676,7 +1682,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"../utils/hooks":101,"elementor-layouts/panel/panel":50,"elementor-models/element":53,"elementor-templates/manager":8,"elementor-utils/ajax":56,"elementor-utils/conditions":57,"elementor-utils/heartbeat":58,"elementor-utils/helpers":59,"elementor-utils/images-manager":60,"elementor-utils/introduction":61,"elementor-utils/modals":64,"elementor-utils/presets-factory":65,"elementor-utils/schemes":66,"elementor-views/controls/animation":71,"elementor-views/controls/base":74,"elementor-views/controls/box-shadow":75,"elementor-views/controls/choose":76,"elementor-views/controls/code-editor":77,"elementor-views/controls/color":78,"elementor-views/controls/date-time-picker":79,"elementor-views/controls/dimensions":80,"elementor-views/controls/font":81,"elementor-views/controls/gallery":82,"elementor-views/controls/icon":83,"elementor-views/controls/image-dimensions":84,"elementor-views/controls/media":85,"elementor-views/controls/order":86,"elementor-views/controls/repeater":88,"elementor-views/controls/section":89,"elementor-views/controls/select2":90,"elementor-views/controls/slider":91,"elementor-views/controls/structure":92,"elementor-views/controls/tab":93,"elementor-views/controls/url":94,"elementor-views/controls/wp_widget":95,"elementor-views/controls/wysiwyg":96,"elementor-views/preview":98}],27:[function(require,module,exports){
+},{"../utils/hooks":102,"elementor-layouts/panel/panel":51,"elementor-models/element":54,"elementor-templates/manager":8,"elementor-utils/ajax":57,"elementor-utils/conditions":58,"elementor-utils/heartbeat":59,"elementor-utils/helpers":60,"elementor-utils/images-manager":61,"elementor-utils/introduction":62,"elementor-utils/modals":65,"elementor-utils/presets-factory":66,"elementor-utils/schemes":67,"elementor-views/controls/animation":72,"elementor-views/controls/base":75,"elementor-views/controls/box-shadow":76,"elementor-views/controls/choose":77,"elementor-views/controls/code-editor":78,"elementor-views/controls/color":79,"elementor-views/controls/date-time":80,"elementor-views/controls/dimensions":81,"elementor-views/controls/font":82,"elementor-views/controls/gallery":83,"elementor-views/controls/icon":84,"elementor-views/controls/image-dimensions":85,"elementor-views/controls/media":86,"elementor-views/controls/order":87,"elementor-views/controls/repeater":89,"elementor-views/controls/section":90,"elementor-views/controls/select2":91,"elementor-views/controls/slider":92,"elementor-views/controls/structure":93,"elementor-views/controls/tab":94,"elementor-views/controls/url":95,"elementor-views/controls/wp_widget":96,"elementor-views/controls/wysiwyg":97,"elementor-views/preview":99}],27:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -1967,7 +1973,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	ui: {
-		tabs: '.elementor-tabs-controls li',
+		tabs: '.elementor-panel-navigation-tab',
 		reloadButton: '#elementor-update-preview-button'
 	},
 
@@ -2050,7 +2056,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		var $thisTab = this.$( event.target );
 
 		this.ui.tabs.removeClass( 'active' );
-		$thisTab.closest( 'li' ).addClass( 'active' );
+
+		$thisTab.closest( '.elementor-panel-navigation-tab' ).addClass( 'active' );
 
 		this.model.get( 'settings' ).trigger( 'control:switch:tab', $thisTab.data( 'tab' ) );
 
@@ -2168,6 +2175,7 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
 	PanelElementsElementsView = require( './views/elements' ),
 	PanelElementsSearchView = require( './views/search' ),
+	PanelElementsGlobalView = require( './views/global' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -2176,6 +2184,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
 		search: '#elementor-panel-elements-search-area'
+	},
+
+	ui: {
+		tabs: '.elementor-panel-navigation-tab'
+	},
+
+	events: {
+		'click @ui.tabs': 'onTabClick'
 	},
 
 	elementsCollection: null,
@@ -2246,11 +2262,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showCategoriesView: function() {
-		this.getRegion( 'elements' ).show( new PanelElementsCategoriesView( { collection: this.categoriesCollection } ) );
+		this.elements.show( new PanelElementsCategoriesView( { collection: this.categoriesCollection } ) );
 	},
 
 	showElementsView: function() {
-		this.getRegion( 'elements' ).show( new PanelElementsElementsView( { collection: this.elementsCollection } ) );
+		this.elements.show( new PanelElementsElementsView( { collection: this.elementsCollection } ) );
+	},
+
+	showGlobalView: function() {
+		this.elements.show( new PanelElementsGlobalView() );
+	},
+
+	showSearchView: function() {
+		this.search.show( new PanelElementsSearchView() );
 	},
 
 	clearSearchInput: function() {
@@ -2293,15 +2317,27 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		var searchRegion = this.getRegion( 'search' );
-
 		this.initElementsCollection();
 
 		this.initCategoriesCollection();
 
 		this.showCategoriesView();
 
-		searchRegion.show( new PanelElementsSearchView() );
+		this.showSearchView();
+	},
+
+	onTabClick: function( event ) {
+		var $clickedTab = Backbone.$( event.currentTarget );
+
+		this.ui.tabs.removeClass( 'active' );
+
+		$clickedTab.addClass( 'active' );
+
+		if ( 'global' === $clickedTab.data( 'view' ) ) {
+			this.showGlobalView();
+		} else {
+			this.showCategoriesView();
+		}
 	},
 
 	updateElementsScrollbar: function() {
@@ -2311,7 +2347,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 module.exports = PanelElementsLayoutView;
 
-},{"./collections/categories":31,"./collections/elements":32,"./views/categories":35,"./views/elements":38,"./views/search":39}],34:[function(require,module,exports){
+},{"./collections/categories":31,"./collections/elements":32,"./views/categories":35,"./views/elements":38,"./views/global":39,"./views/search":40}],34:[function(require,module,exports){
 var PanelElementsElementModel;
 
 PanelElementsElementModel = Backbone.Model.extend( {
@@ -2428,6 +2464,21 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 module.exports = PanelElementsElementsView;
 
 },{"./element":37}],39:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-panel-global',
+
+	id: 'elementor-panel-global',
+
+	initialize: function() {
+		elementor.getPanelView().content.currentView.search.reset();
+	},
+
+	onDestroy: function() {
+		elementor.getPanelView().content.currentView.showSearchView();
+	}
+} );
+
+},{}],40:[function(require,module,exports){
 var PanelElementsSearchView;
 
 PanelElementsSearchView = Marionette.ItemView.extend( {
@@ -2460,7 +2511,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 
 module.exports = PanelElementsSearchView;
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var PanelMenuItemView = require( 'elementor-panel/pages/menu/views/item' ),
 	PanelMenuPageView;
 
@@ -2552,7 +2603,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 
 module.exports = PanelMenuPageView;
 
-},{"elementor-panel/pages/menu/views/item":41}],41:[function(require,module,exports){
+},{"elementor-panel/pages/menu/views/item":42}],42:[function(require,module,exports){
 var PanelMenuItemView;
 
 PanelMenuItemView = Marionette.ItemView.extend( {
@@ -2567,7 +2618,7 @@ PanelMenuItemView = Marionette.ItemView.extend( {
 
 module.exports = PanelMenuItemView;
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var childViewTypes = {
 		color: require( 'elementor-panel/pages/schemes/items/color' ),
 		typography: require( 'elementor-panel/pages/schemes/items/typography' )
@@ -2703,7 +2754,7 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 
 module.exports = PanelSchemeBaseView;
 
-},{"elementor-panel/pages/schemes/items/color":47,"elementor-panel/pages/schemes/items/typography":48}],43:[function(require,module,exports){
+},{"elementor-panel/pages/schemes/items/color":48,"elementor-panel/pages/schemes/items/typography":49}],44:[function(require,module,exports){
 var PanelSchemeColorsView = require( 'elementor-panel/pages/schemes/colors' ),
 	PanelSchemeColorPickerView;
 
@@ -2729,7 +2780,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend( {
 
 module.exports = PanelSchemeColorPickerView;
 
-},{"elementor-panel/pages/schemes/colors":44}],44:[function(require,module,exports){
+},{"elementor-panel/pages/schemes/colors":45}],45:[function(require,module,exports){
 var PanelSchemeBaseView = require( 'elementor-panel/pages/schemes/base' ),
 	PanelSchemeColorsView;
 
@@ -2765,11 +2816,15 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 
 module.exports = PanelSchemeColorsView;
 
-},{"elementor-panel/pages/schemes/base":42}],45:[function(require,module,exports){
+},{"elementor-panel/pages/schemes/base":43}],46:[function(require,module,exports){
 var PanelSchemeDisabledView;
 
 PanelSchemeDisabledView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-schemes-disabled',
+
+	id: 'elementor-panel-schemes-disabled',
+
+	className: 'elementor-panel-nerd-box',
 
 	disabledTitle: '',
 
@@ -2777,14 +2832,12 @@ PanelSchemeDisabledView = Marionette.ItemView.extend( {
 		return {
 			disabledTitle: this.disabledTitle
 		};
-	},
-
-	id: 'elementor-panel-schemes-disabled'
+	}
 } );
 
 module.exports = PanelSchemeDisabledView;
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var PanelSchemeItemView;
 
 PanelSchemeItemView = Marionette.ItemView.extend( {
@@ -2799,7 +2852,7 @@ PanelSchemeItemView = Marionette.ItemView.extend( {
 
 module.exports = PanelSchemeItemView;
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
 	PanelSchemeColorView;
 
@@ -2833,7 +2886,7 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 
 module.exports = PanelSchemeColorView;
 
-},{"elementor-panel/pages/schemes/items/base":46}],48:[function(require,module,exports){
+},{"elementor-panel/pages/schemes/items/base":47}],49:[function(require,module,exports){
 var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
 	PanelSchemeTypographyView;
 
@@ -2909,7 +2962,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 
 module.exports = PanelSchemeTypographyView;
 
-},{"elementor-panel/pages/schemes/items/base":46}],49:[function(require,module,exports){
+},{"elementor-panel/pages/schemes/items/base":47}],50:[function(require,module,exports){
 var PanelSchemeBaseView = require( 'elementor-panel/pages/schemes/base' ),
 	PanelSchemeTypographyView;
 
@@ -2921,7 +2974,7 @@ PanelSchemeTypographyView = PanelSchemeBaseView.extend( {
 
 module.exports = PanelSchemeTypographyView;
 
-},{"elementor-panel/pages/schemes/base":42}],50:[function(require,module,exports){
+},{"elementor-panel/pages/schemes/base":43}],51:[function(require,module,exports){
 var EditModeItemView = require( 'elementor-layouts/edit-mode' ),
 	PanelLayoutView;
 
@@ -3111,7 +3164,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 module.exports = PanelLayoutView;
 
-},{"elementor-layouts/edit-mode":27,"elementor-layouts/panel/footer":28,"elementor-layouts/panel/header":29,"elementor-panel/pages/editor":30,"elementor-panel/pages/elements/elements":33,"elementor-panel/pages/menu/menu":40,"elementor-panel/pages/schemes/color-picker":43,"elementor-panel/pages/schemes/colors":44,"elementor-panel/pages/schemes/disabled":45,"elementor-panel/pages/schemes/typography":49}],51:[function(require,module,exports){
+},{"elementor-layouts/edit-mode":27,"elementor-layouts/panel/footer":28,"elementor-layouts/panel/header":29,"elementor-panel/pages/editor":30,"elementor-panel/pages/elements/elements":33,"elementor-panel/pages/menu/menu":41,"elementor-panel/pages/schemes/color-picker":44,"elementor-panel/pages/schemes/colors":45,"elementor-panel/pages/schemes/disabled":46,"elementor-panel/pages/schemes/typography":50}],52:[function(require,module,exports){
 var BaseSettingsModel;
 
 BaseSettingsModel = Backbone.Model.extend( {
@@ -3220,7 +3273,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 module.exports = BaseSettingsModel;
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ColumnSettingsModel;
 
@@ -3233,7 +3286,7 @@ ColumnSettingsModel = BaseSettingsModel.extend( {
 
 module.exports = ColumnSettingsModel;
 
-},{"elementor-models/base-settings":51}],53:[function(require,module,exports){
+},{"elementor-models/base-settings":52}],54:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetSettingsModel = require( 'elementor-models/widget-settings' ),
 	ColumnSettingsModel = require( 'elementor-models/column-settings' ),
@@ -3275,11 +3328,23 @@ ElementModel = Backbone.Model.extend( {
 		// Make call to remote server as throttle function
 		this.renderRemoteServer = _.throttle( this.renderRemoteServer, 1000 );
 
-		var settingModels = {
-			widget: WidgetSettingsModel,
-			column: ColumnSettingsModel,
-			section: SectionSettingsModel
-		};
+		this.initSettings();
+
+		this.initEditSettings();
+
+		this.on( {
+			destroy: this.onDestroy,
+			'editor:close': this.onCloseEditor
+		} );
+	},
+
+	initSettings: function() {
+		var elType = this.get( 'elType' ),
+			settingModels = {
+				widget: WidgetSettingsModel,
+				column: ColumnSettingsModel,
+				section: SectionSettingsModel
+			};
 
 		var SettingsModel = settingModels[ elType ] || BaseSettingsModel,
 			settings = this.get( 'settings' ) || {};
@@ -3294,11 +3359,6 @@ ElementModel = Backbone.Model.extend( {
 		settings = new SettingsModel( settings );
 
 		this.set( 'settings', settings );
-
-		this.initEditSettings();
-
-		this.on( 'destroy', this.onDestroy );
-		this.on( 'editor:close', this.onCloseEditor );
 	},
 
 	initEditSettings: function() {
@@ -3315,7 +3375,10 @@ ElementModel = Backbone.Model.extend( {
 				model.destroy();
 			} );
 		}
-		settings.destroy();
+
+		if ( settings instanceof BaseSettingsModel ) {
+			settings.destroy();
+		}
 	},
 
 	onCloseEditor: function() {
@@ -3455,10 +3518,13 @@ ElementCollection = Backbone.Collection.extend( {
 	},
 
 	model: function( attrs, options ) {
+		var ModelClass = Backbone.Model;
+
 		if ( attrs.elType ) {
-			return new ElementModel( attrs, options );
+			ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
 		}
-		return new Backbone.Model( attrs, options );
+
+		return new ModelClass( attrs, options );
 	},
 
 	clone: function() {
@@ -3493,12 +3559,12 @@ ElementModel.prototype.save = function() {
 	return null;
 };
 
-module.exports = {
+module.exports = elementor.modules.element = {
 	Model: ElementModel,
 	Collection: ElementCollection
 };
 
-},{"elementor-models/base-settings":51,"elementor-models/column-settings":52,"elementor-models/section-settings":54,"elementor-models/widget-settings":55}],54:[function(require,module,exports){
+},{"elementor-models/base-settings":52,"elementor-models/column-settings":53,"elementor-models/section-settings":55,"elementor-models/widget-settings":56}],55:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	SectionSettingsModel;
 
@@ -3508,7 +3574,7 @@ SectionSettingsModel = BaseSettingsModel.extend( {
 
 module.exports = SectionSettingsModel;
 
-},{"elementor-models/base-settings":51}],55:[function(require,module,exports){
+},{"elementor-models/base-settings":52}],56:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	WidgetSettingsModel;
 
@@ -3518,7 +3584,7 @@ WidgetSettingsModel = BaseSettingsModel.extend( {
 
 module.exports = WidgetSettingsModel;
 
-},{"elementor-models/base-settings":51}],56:[function(require,module,exports){
+},{"elementor-models/base-settings":52}],57:[function(require,module,exports){
 var Ajax;
 
 Ajax = {
@@ -3583,7 +3649,7 @@ Ajax = {
 
 module.exports = Ajax;
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 var Conditions;
 
 Conditions = function() {
@@ -3656,7 +3722,7 @@ Conditions = function() {
 
 module.exports = new Conditions();
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 var heartbeat;
 
 heartbeat = {
@@ -3730,7 +3796,7 @@ heartbeat = {
 
 module.exports = heartbeat;
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 var helpers;
 
 helpers = {
@@ -3939,7 +4005,7 @@ helpers = {
 
 module.exports = helpers;
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 var ImagesManager;
 
 ImagesManager = function() {
@@ -4058,7 +4124,7 @@ ImagesManager = function() {
 
 module.exports = new ImagesManager();
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var Introduction;
 
 Introduction = function() {
@@ -4119,7 +4185,7 @@ Introduction = function() {
 
 module.exports = new Introduction();
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /**
  * HTML5 - Drag and Drop
  */
@@ -4491,7 +4557,7 @@ module.exports = new Introduction();
 	} );
 })( jQuery );
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /*!
  * jQuery Serialize Object v1.0.1
  */
@@ -4539,7 +4605,7 @@ module.exports = new Introduction();
 	};
 })( jQuery );
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 var Modals;
 
 Modals = {
@@ -4600,7 +4666,7 @@ Modals = {
 
 module.exports = Modals;
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 var presetsFactory;
 
 presetsFactory = {
@@ -4717,7 +4783,7 @@ presetsFactory = {
 
 module.exports = presetsFactory;
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var Schemes;
 
 Schemes = function() {
@@ -4883,7 +4949,7 @@ Schemes = function() {
 
 module.exports = new Schemes();
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 ( function( $ ) {
 
 	var Stylesheet = function() {
@@ -5083,7 +5149,7 @@ module.exports = new Schemes();
 	module.exports = Stylesheet;
 } )( jQuery );
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	Stylesheet = require( 'elementor-utils/stylesheet' ),
 	BaseElementView;
@@ -5137,6 +5203,21 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
+	},
+
+	getChildView: function( model ) {
+		var ChildView,
+			elType = model.get( 'elType' );
+
+		if ( 'section' === elType ) {
+			ChildView = require( 'elementor-views/section' );
+		} else if ( 'column' === elType ) {
+			ChildView = require( 'elementor-views/column' );
+		} else {
+			ChildView = require( 'elementor-views/widget' );
+		}
+
+		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
 	templateHelpers: function() {
@@ -5220,9 +5301,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	initStylesheet: function() {
-		this.stylesheet = new Stylesheet();
-
 		var viewportBreakpoints = elementor.config.viewportBreakpoints;
+
+		this.stylesheet = new Stylesheet();
 
 		this.stylesheet
 			.addDevice( 'mobile', 0 )
@@ -5247,7 +5328,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, settings ) ) {
+			if ( ! elementor.helpers.isControlVisible( control, settings.attributes ) ) {
 				return;
 			}
 
@@ -5308,6 +5389,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	addStyleToDocument: function() {
 		var styleText = this.stylesheet.toString();
+
+		styleText = elementor.hooks.applyFilters( 'editor/style/styleText', styleText, this );
 
 		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
 			return;
@@ -5454,7 +5537,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 module.exports = BaseElementView;
 
-},{"elementor-models/base-settings":51,"elementor-utils/stylesheet":67}],69:[function(require,module,exports){
+},{"elementor-models/base-settings":52,"elementor-utils/stylesheet":68,"elementor-views/column":71,"elementor-views/section":100,"elementor-views/widget":101}],70:[function(require,module,exports){
 var SectionView = require( 'elementor-views/section' ),
 	BaseSectionsContainerView;
 
@@ -5535,10 +5618,9 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 
 module.exports = BaseSectionsContainerView;
 
-},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/sortable":6,"elementor-views/section":99}],70:[function(require,module,exports){
+},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/sortable":6,"elementor-views/section":100}],71:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
-	WidgetView = require( 'elementor-views/widget' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
@@ -5565,14 +5647,6 @@ ColumnView = BaseElementView.extend( {
 		HandleElementsRelation: {
 			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
-	},
-
-	getChildView: function( model ) {
-		if ( 'section' === model.get( 'elType' ) ) {
-			return require( 'elementor-views/section' ); // We need to require the section dynamically
-		}
-
-		return WidgetView;
 	},
 
 	className: function() {
@@ -5719,6 +5793,12 @@ ColumnView = BaseElementView.extend( {
 					return;
 				}
 
+				var customData = elementView.model.get( 'custom' );
+
+				if ( customData ) {
+					_.extend( itemData, customData );
+				}
+
 				self.triggerMethod( 'request:add', itemData, { at: newIndex } );
 			}
 		} );
@@ -5748,7 +5828,7 @@ ColumnView = BaseElementView.extend( {
 
 module.exports = ColumnView;
 
-},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/resizable":5,"elementor-behaviors/sortable":6,"elementor-views/base-element":68,"elementor-views/element-empty":97,"elementor-views/section":99,"elementor-views/widget":100}],71:[function(require,module,exports){
+},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/resizable":5,"elementor-behaviors/sortable":6,"elementor-views/base-element":69,"elementor-views/element-empty":98}],72:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlAnimationItemView;
 
@@ -5761,7 +5841,7 @@ ControlAnimationItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlAnimationItemView;
 
-},{"elementor-views/controls/base":74}],72:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],73:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlBaseMultipleItemView;
 
@@ -5844,7 +5924,7 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlBaseMultipleItemView;
 
-},{"elementor-views/controls/base":74}],73:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],74:[function(require,module,exports){
 var ControlBaseMultipleItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlBaseUnitsItemView;
 
@@ -5867,7 +5947,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 module.exports = ControlBaseUnitsItemView;
 
-},{"elementor-views/controls/base-multiple":72}],74:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":73}],75:[function(require,module,exports){
 var ControlBaseItemView;
 
 ControlBaseItemView = Marionette.CompositeView.extend( {
@@ -6102,7 +6182,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 module.exports = ControlBaseItemView;
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlBoxShadowItemView;
 
@@ -6189,7 +6269,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlBoxShadowItemView;
 
-},{"elementor-views/controls/base-multiple":72}],76:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":73}],77:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlChooseItemView;
 
@@ -6242,7 +6322,7 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlChooseItemView;
 
-},{"elementor-views/controls/base":74}],77:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],78:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlCodeEditorItemView;
 
@@ -6258,10 +6338,16 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
+		if ( ! ace || ! self.model.attributes.use_advanced_editor ) {
+			return;
+		}
+
 		self.editor = ace.edit( this.ui.editor[0] );
-		
+
+		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
+
 		self.editor.setOptions({
-			mode: 'ace/mode/' + this.model.attributes.language,
+			mode: 'ace/mode/' + self.model.attributes.language,
 			minLines: 10,
 			maxLines: Infinity,
 			showGutter: true,
@@ -6273,12 +6359,33 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 		self.editor.on( 'change', function () {
 			self.setValue( self.editor.getValue() );
 		});
+
+		if ( 'html' === self.model.attributes.language ) {
+			// Remove the `doctype` annotation
+			var session = self.editor.getSession();
+
+			session.on( 'changeAnnotation', function () {
+				var annotations = session.getAnnotations() || [],
+					annotationsLength = annotations.length,
+					index = annotations.length;
+
+				while ( index-- ) {
+					if ( /doctype first\. Expected/.test( annotations[ index ].text ) ) {
+						annotations.splice( index, 1 );
+					}
+				}
+
+				if ( annotationsLength > annotations.length ) {
+					session.setAnnotations( annotations );
+				}
+			});
+		}
 	}
 } );
 
 module.exports = ControlCodeEditorItemView;
 
-},{"elementor-views/controls/base":74}],78:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],79:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlColorItemView;
 
@@ -6317,7 +6424,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlColorItemView;
 
-},{"elementor-views/controls/base":74}],79:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],80:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlDateTimePickerItemView;
 
@@ -6355,7 +6462,7 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlDateTimePickerItemView;
 
-},{"elementor-views/controls/base":74}],80:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],81:[function(require,module,exports){
 var ControlBaseUnitsItemView = require( 'elementor-views/controls/base-units' ),
 	ControlDimensionsItemView;
 
@@ -6519,7 +6626,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
 module.exports = ControlDimensionsItemView;
 
-},{"elementor-views/controls/base-units":73}],81:[function(require,module,exports){
+},{"elementor-views/controls/base-units":74}],82:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlFontItemView;
 
@@ -6552,7 +6659,7 @@ ControlFontItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlFontItemView;
 
-},{"elementor-views/controls/base":74}],82:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],83:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlMediaItemView;
 
@@ -6718,7 +6825,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlMediaItemView;
 
-},{"elementor-views/controls/base":74}],83:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],84:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlIconItemView;
 
@@ -6774,7 +6881,7 @@ ControlIconItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlIconItemView;
 
-},{"elementor-views/controls/base":74}],84:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],85:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlImageDimensionsItemView;
 
@@ -6805,7 +6912,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlImageDimensionsItemView;
 
-},{"elementor-views/controls/base-multiple":72}],85:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":73}],86:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -6895,7 +7002,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlMediaItemView;
 
-},{"elementor-views/controls/base-multiple":72}],86:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":73}],87:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlOrderItemView;
 
@@ -6927,7 +7034,7 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlOrderItemView;
 
-},{"elementor-views/controls/base-multiple":72}],87:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":73}],88:[function(require,module,exports){
 var RepeaterRowView;
 
 RepeaterRowView = Marionette.CompositeView.extend( {
@@ -7049,7 +7156,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 module.exports = RepeaterRowView;
 
-},{"elementor-behaviors/inner-tabs":4}],88:[function(require,module,exports){
+},{"elementor-behaviors/inner-tabs":4}],89:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
 	ControlRepeaterItemView;
@@ -7237,7 +7344,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlRepeaterItemView;
 
-},{"elementor-views/controls/base":74,"elementor-views/controls/repeater-row":87}],89:[function(require,module,exports){
+},{"elementor-views/controls/base":75,"elementor-views/controls/repeater-row":88}],90:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSectionItemView;
 
@@ -7257,7 +7364,7 @@ ControlSectionItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlSectionItemView;
 
-},{"elementor-views/controls/base":74}],90:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],91:[function(require,module,exports){
 // Attention: DO NOT use this control since it has bugs
 // TODO: This control is unused
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
@@ -7290,7 +7397,7 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlSelect2ItemView;
 
-},{"elementor-views/controls/base":74}],91:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],92:[function(require,module,exports){
 var ControlBaseUnitsItemView = require( 'elementor-views/controls/base-units' ),
 	ControlSliderItemView;
 
@@ -7350,7 +7457,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 module.exports = ControlSliderItemView;
 
-},{"elementor-views/controls/base-units":73}],92:[function(require,module,exports){
+},{"elementor-views/controls/base-units":74}],93:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlStructureItemView;
 
@@ -7400,7 +7507,7 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlStructureItemView;
 
-},{"elementor-views/controls/base":74}],93:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],94:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlTabItemView;
 
@@ -7412,7 +7519,7 @@ ControlTabItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlTabItemView;
 
-},{"elementor-views/controls/base":74}],94:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],95:[function(require,module,exports){
 var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlUrlItemView;
 
@@ -7450,7 +7557,7 @@ ControlUrlItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlUrlItemView;
 
-},{"elementor-views/controls/base-multiple":72}],95:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":73}],96:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlWPWidgetItemView;
 
@@ -7491,7 +7598,7 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlWPWidgetItemView;
 
-},{"elementor-views/controls/base":74}],96:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],97:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlWysiwygItemView;
 
@@ -7505,12 +7612,18 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		moveToAdvanced: {
 			fullscreen: 'wp_help',
 			hr: 'wp_help',
-			wp_more: 'wp_help'
+			wp_more: 'wp_help',
+			blockquote: 'removeformat',
+			alignleft: 'blockquote',
+			aligncenter: 'alignleft',
+			alignright: 'aligncenter',
+			strikethrough: 'alignjustify'
 		},
 		moveToBasic: {
-			underline: 'italic',
-			alignjustify: 'alignright'
-		}
+			underline: 'italic'
+		},
+		removeFromBasic: [ 'unlink' ],
+		removeFromAdvanced: []
 	},
 
 	initialize: function() {
@@ -7567,6 +7680,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
 			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
 
+		editorBasicToolbarButtons = _.difference( editorBasicToolbarButtons, this.buttons.removeFromBasic );
+
+		editorAdvancedToolbarButtons = _.difference( editorAdvancedToolbarButtons, this.buttons.removeFromAdvanced );
+
 		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
 			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
 				afterButtonIndex = editorAdvancedToolbarButtons.indexOf( afterButton );
@@ -7606,7 +7723,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlWysiwygItemView;
 
-},{"elementor-views/controls/base":74}],97:[function(require,module,exports){
+},{"elementor-views/controls/base":75}],98:[function(require,module,exports){
 var ElementEmptyView;
 
 ElementEmptyView = Marionette.ItemView.extend( {
@@ -7625,7 +7742,7 @@ ElementEmptyView = Marionette.ItemView.extend( {
 
 module.exports = ElementEmptyView;
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
 	Preview;
 
@@ -7743,15 +7860,12 @@ Preview = BaseSectionsContainerView.extend( {
 
 module.exports = Preview;
 
-},{"elementor-views/base-sections-container":69}],99:[function(require,module,exports){
+},{"elementor-views/base-sections-container":70}],100:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
-	ColumnView = require( 'elementor-views/column' ),
 	SectionView;
 
 SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
-
-	childView: ColumnView,
 
 	className: function() {
 		var classes = 'elementor-section',
@@ -8006,7 +8120,7 @@ SectionView = BaseElementView.extend( {
 
 module.exports = SectionView;
 
-},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/sortable":6,"elementor-views/base-element":68,"elementor-views/column":70}],100:[function(require,module,exports){
+},{"elementor-behaviors/duplicate":1,"elementor-behaviors/elements-relation":2,"elementor-behaviors/handle-duplicate":3,"elementor-behaviors/sortable":6,"elementor-views/base-element":69}],101:[function(require,module,exports){
 var BaseElementView = require( 'elementor-views/base-element' ),
 	WidgetView;
 
@@ -8127,9 +8241,9 @@ WidgetView = BaseElementView.extend( {
 	}
 } );
 
-module.exports = WidgetView;
+module.exports = elementor.modules.WidgetView = WidgetView;
 
-},{"elementor-views/base-element":68}],101:[function(require,module,exports){
+},{"elementor-views/base-element":69}],102:[function(require,module,exports){
 'use strict';
 
 /**
@@ -8374,5 +8488,5 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}]},{},[62,63,26])
+},{}]},{},[63,64,26])
 //# sourceMappingURL=editor.js.map

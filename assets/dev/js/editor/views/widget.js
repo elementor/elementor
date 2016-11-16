@@ -118,4 +118,4 @@ WidgetView = BaseElementView.extend( {
 	}
 } );
 
-module.exports = WidgetView;
+module.exports = elementor.modules.WidgetView = WidgetView;

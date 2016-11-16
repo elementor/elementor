@@ -302,7 +302,6 @@ class Frontend {
 
 		ob_start();
 
-
 		// Handle JS and Customizer requests, with css inline
 		if ( is_customize_preview() || Utils::is_ajax() ) {
 			$with_css = true;

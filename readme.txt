@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh
 Tags: page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.10.7
+Stable tag: 0.11.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -158,6 +158,19 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 0.11.0 - 16.11.2016 =
+* New! - Elementor now generates an external CSS file for each page instead of inline CSS ([#325](https://github.com/pojome/elementor/issues/325))
+* New! - Added a tool to regenerate Elementor pages CSS files
+* New! - Added TinyMCE editor for Repeater control, such as Tabs, Accordion and Toggle widgets ([#176](https://github.com/pojome/elementor/issues/176))
+* New! - Added Time Picker control for future widgets
+* Tweak! - 'Edit with Elementor' button color now uses the Admin Color Scheme
+* Tweak! - Improved style for Multiple Select2 control
+* Tweak! - Removed development mode flag
+* Tweak! - Elementor Icon library updated with new icons
+* Tweak! - Align button sizes as a new forms style
+* Tweak! - Panel width expanded for better comfortable editing
+* Tweak! - TinyMCE editor toolbar reduced to basic toolbar, for comfortable editing
 
 = 0.10.7 - 07.11.2016 =
 * Fix! - Image widget template for link and caption ([Topic](https://wordpress.org/support/topic/image-not-aligning-when-linked/))

@@ -65,18 +65,27 @@ body {
     body a:hover {
       color: #9b0a46; }
   body.elementor-editor-active #elementor-preview {
-    right: 280px;
     left: 0; }
+    @media (max-width: 1439px) {
+      body.elementor-editor-active #elementor-preview {
+        right: 280px; } }
+    @media (min-width: 1440px) {
+      body.elementor-editor-active #elementor-preview {
+        right: 300px; } }
   body.elementor-editor-active #elementor-panel {
     right: 0; }
   body.elementor-editor-active #elementor-mode-switcher-preview .fa:before {
     content: ""; }
   body.elementor-editor-preview #elementor-preview {
     left: 0; }
-  body.elementor-editor-preview #elementor-panel {
-    right: -280px; }
-    body.elementor-editor-preview #elementor-panel > .ui-resizable-e, body.elementor-editor-preview #elementor-panel > .ui-resizable-w {
-      display: none; }
+  @media (max-width: 1439px) {
+    body.elementor-editor-preview #elementor-panel {
+      right: -280px; } }
+  @media (min-width: 1440px) {
+    body.elementor-editor-preview #elementor-panel {
+      right: -300px; } }
+  body.elementor-editor-preview #elementor-panel > .ui-resizable-e, body.elementor-editor-preview #elementor-panel > .ui-resizable-w {
+    display: none; }
   body.elementor-editor-preview #elementor-mode-switcher-preview .fa:before {
     content: ""; }
 
@@ -204,18 +213,11 @@ body {
 
 .elementor-button {
   outline: none;
-  background-color: #a4afb7;
-  color: #fff;
-  font-size: 11px;
-  text-transform: uppercase;
-  padding: 6.5px 15px;
   border: none;
   cursor: pointer;
   border-radius: 3px;
   -webkit-transition: box-shadow .5s, opacity .5s;
   transition: box-shadow .5s, opacity .5s; }
-  .elementor-button:hover {
-    background-color: #6d7882; }
   .elementor-button:not(.elementor-button-state) .elementor-state-icon {
     display: none; }
   .elementor-button .elementor-state-icon {
@@ -235,6 +237,16 @@ body {
     display: inline-block;
     margin-top: 15px;
     color: #fff; }
+  .elementor-button.elementor-button-default {
+    background-color: #a4afb7;
+    color: #fff;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 6.5px 15px; }
+    .elementor-button.elementor-button-default:hover {
+      background-color: #6d7882; }
+    .elementor-button.elementor-button-default:visited {
+      color: #fff; }
 
 input, select, textarea, .elementor-input-style {
   border-radius: 3px;
@@ -471,7 +483,6 @@ select {
   font-size: 13px;
   background-color: #e6e9ec;
   position: fixed;
-  width: 280px;
   height: 100%;
   top: 0;
   bottom: 0;
@@ -486,8 +497,6 @@ select {
     color: #9b0a46;
     -webkit-transition: none;
     transition: none; }
-    .elementor-panel a:visited {
-      color: inherit; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -513,6 +522,12 @@ select {
     border: 0; }
   .elementor-panel :focus {
     outline: 0; }
+  @media (max-width: 1439px) {
+    .elementor-panel {
+      width: 280px; } }
+  @media (min-width: 1440px) {
+    .elementor-panel {
+      width: 300px; } }
   .elementor-panel > .ui-resizable-e, .elementor-panel > .ui-resizable-w {
     position: absolute;
     top: 0;
@@ -641,6 +656,25 @@ select {
     font-style: italic;
     line-height: 1.2;
     color: #a4afb7; }
+  .elementor-panel .elementor-panel-nerd-box {
+    padding: 40px 35px;
+    text-align: center; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-icon {
+      font-size: 52px;
+      color: #a4afb7; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-title {
+      margin-top: 30px;
+      font-size: 16px;
+      font-weight: bold; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-message {
+      margin-top: 25px;
+      line-height: 1.4; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-link {
+      margin-top: 15px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: underline; }
   .elementor-panel #elementor-panel-header {
     display: table;
     height: 40px;
@@ -667,11 +701,15 @@ select {
     font-size: 15px; }
     .elementor-panel #elementor-panel-header-title img {
       width: 66px; }
-  .elementor-panel #elementor-panel-elements-search-area {
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
+  .elementor-panel #elementor-panel-elements-navigation .elementor-panel-navigation-tab {
+    text-align: center;
+    padding: 12px 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    cursor: pointer; }
   .elementor-panel #elementor-panel-elements {
     overflow: hidden;
-    padding: 5px; }
+    padding: 0 5px; }
   .elementor-panel .elementor-element-wrapper {
     float: right;
     width: 50%;
@@ -710,22 +748,22 @@ select {
               transform: translateY(-50%); }
   .elementor-panel #elementor-panel-elements-search-input {
     width: 100%;
-    background-color: #fff;
     font-size: 11px;
-    padding: 8px 15px 8px 42px;
+    padding: 12px 15px 12px 42px;
     font-style: italic;
     color: #a4afb7;
-    border: none;
-    border-radius: 0; }
+    border: none; }
   .elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
     padding-top: 14px; }
+  .elementor-panel .panel-elements-category-title-basic {
+    display: none; }
   .elementor-panel .panel-elements-category-title {
-    padding: 7px 15px;
+    padding: 12px 15px;
     text-transform: uppercase;
     font-size: 11px; }
   .elementor-panel .panel-elements-category-items {
     overflow: hidden;
-    padding: 5px; }
+    padding: 0 5px; }
   .elementor-panel .elementor-panel-scheme-title {
     padding: 10px 20px;
     margin-top: 10px; }
@@ -808,27 +846,8 @@ select {
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1; }
-  .elementor-panel #elementor-panel-schemes-disabled {
-    padding: 20px;
-    text-align: center;
-    margin-top: 10px; }
-    .elementor-panel #elementor-panel-schemes-disabled i {
-      display: block;
-      font-size: 52px;
-      color: #a4afb7; }
-    .elementor-panel #elementor-panel-schemes-disabled a {
-      color: #9b0a46;
-      cursor: pointer; }
-      .elementor-panel #elementor-panel-schemes-disabled a:hover {
-        text-decoration: underline; }
-  .elementor-panel #elementor-panel-schemes-disabled-title {
-    margin-top: 30px;
-    font-size: 15px;
-    font-weight: 500;
-    color: #495157; }
-  .elementor-panel #elementor-panel-schemes-disabled-content {
-    margin-top: 20px;
-    line-height: 1.5; }
+  .elementor-panel #elementor-panel-schemes-disabled a:hover {
+    text-decoration: underline; }
   .elementor-panel #elementor-panel-content-wrapper {
     position: absolute;
     bottom: 40px;
@@ -855,42 +874,41 @@ select {
     font-weight: 500; }
     .elementor-panel .elementor-panel-menu-item-title > span {
       color: #39b54a; }
-  .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls {
+  .elementor-panel .elementor-panel-navigation {
     background-color: #ffffff;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
-    .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul {
-      display: table;
-      table-layout: fixed;
-      width: 100%; }
-      .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li {
-        display: table-cell; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-content a:before {
-          content: '\f040'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-style a:before {
-          content: '\f042'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-advanced a:before {
-          content: '\f013'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
-          content: '\f10a'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-layout a:before {
-          content: '\f0db'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
-          content: '\f0db'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.active {
-          background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
-          background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-          border-bottom: 3px solid #9b0a46; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li a {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    display: table;
+    table-layout: fixed;
+    width: 100%; }
+    .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab {
+      display: table-cell; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-content a:before {
+        content: '\f040'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-style a:before {
+        content: '\f042'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-advanced a:before {
+        content: '\f013'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-responsive a:before {
+        content: '\f10a'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before {
+        content: '\f0db'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
+        content: '\f0db'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.active {
+        background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
+        background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+        border-bottom: 3px solid #9b0a46; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a {
+        display: block;
+        text-align: center;
+        padding: 12px 0 8px;
+        font-size: 10px;
+        color: #6d7882; }
+        .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a:before {
+          font-family: FontAwesome;
+          font-size: 16px;
           display: block;
-          text-align: center;
-          padding: 12px 0 8px;
-          font-size: 10px;
-          color: #6d7882; }
-          .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li a:before {
-            font-family: FontAwesome;
-            font-size: 16px;
-            display: block;
-            margin-bottom: 6px; }
+          margin-bottom: 6px; }
   .elementor-panel #elementor-panel-page-editor #elementor-controls > .elementor-control:not(.elementor-active-tab) {
     display: none; }
   .elementor-panel #elementor-panel-page-editor .elementor-control {

@@ -53,6 +53,21 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
 
+	getChildView: function( model ) {
+		var ChildView,
+			elType = model.get( 'elType' );
+
+		if ( 'section' === elType ) {
+			ChildView = require( 'elementor-views/section' );
+		} else if ( 'column' === elType ) {
+			ChildView = require( 'elementor-views/column' );
+		} else {
+			ChildView = require( 'elementor-views/widget' );
+		}
+
+		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
+	},
+
 	templateHelpers: function() {
 		return {
 			elementModel: this.model
@@ -134,9 +149,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	initStylesheet: function() {
-		this.stylesheet = new Stylesheet();
-
 		var viewportBreakpoints = elementor.config.viewportBreakpoints;
+
+		this.stylesheet = new Stylesheet();
 
 		this.stylesheet
 			.addDevice( 'mobile', 0 )
@@ -161,7 +176,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, settings ) ) {
+			if ( ! elementor.helpers.isControlVisible( control, settings.attributes ) ) {
 				return;
 			}
 

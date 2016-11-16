@@ -32,6 +32,8 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	modules: {},
+
 	// Private Members
 	_controlsItemView: null,
 
@@ -95,7 +97,7 @@ App = Marionette.Application.extend( {
 				icon: require( 'elementor-views/controls/icon' ),
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
-				date_time_picker: require( 'elementor-views/controls/date-time-picker' ),
+				date_time: require( 'elementor-views/controls/date-time' ),
 				code_editor: require( 'elementor-views/controls/code-editor' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
@@ -188,6 +190,8 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
+		this.$window = Backbone.$( window );
+
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -198,11 +202,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
-
-		this.elements = new ElementModel.Collection( this.config.data );
-
 		this.initPreview();
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -210,10 +209,17 @@ App = Marionette.Application.extend( {
 		this.setWorkSaver();
 
 		this.initClearPageDialog();
+
+		this.$window.trigger( 'elementor:init' );
 	},
 
 	onPreviewLoaded: function() {
 		NProgress.done();
+
+		// Init Base elements collection from the server
+		var ElementModel = require( 'elementor-models/element' );
+
+		this.elements = new ElementModel.Collection( this.config.data );
 
 		this.initFrontend();
 
@@ -335,7 +341,7 @@ App = Marionette.Application.extend( {
 	},
 
 	setWorkSaver: function() {
-		Backbone.$( window ).on( 'beforeunload', function() {
+		this.$window.on( 'beforeunload', function() {
 			if ( elementor.isEditorChanged() ) {
 				return elementor.translate( 'before_unload_alert' );
 			}
@@ -349,7 +355,7 @@ App = Marionette.Application.extend( {
 		self.panel.$el.resizable( {
 			handles: elementor.config.is_rtl ? 'w' : 'e',
 			minWidth: 200,
-			maxWidth: 500,
+			maxWidth: 680,
 			start: function() {
 				self.$previewWrapper
 					.addClass( 'ui-resizable-resizing' )
