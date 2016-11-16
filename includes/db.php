@@ -8,7 +8,7 @@ class DB {
 	/**
 	 * Current DB version of the editor.
 	 */
-	const DB_VERSION = '0.3';
+	const DB_VERSION = '0.4';
 
 	const REVISION_PUBLISH = 'publish';
 	const REVISION_DRAFT = 'draft';
@@ -27,8 +27,8 @@ class DB {
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
 		if ( isset( $GLOBALS['post'] ) ) {
 			$global_post = $GLOBALS['post'];
-			$GLOBALS['post'] = get_post( $post_id );
 		}
+		$GLOBALS['post'] = get_post( $post_id );
 
 		$editor_data = $this->_get_editor_data( $posted );
 
@@ -48,6 +48,8 @@ class DB {
 		// Restore global post
 		if ( isset( $global_post ) ) {
 			$GLOBALS['post'] = $global_post;
+		} else {
+			unset( $GLOBALS['post'] );
 		}
 	}
 

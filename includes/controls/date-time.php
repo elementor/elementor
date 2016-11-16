@@ -3,10 +3,10 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Control_Date_Time_Picker extends Control_Base {
+class Control_Date_Time extends Control_Base {
 
 	public function get_type() {
-		return 'date_time_picker';
+		return 'date_time';
 	}
 
 	function get_default_settings() {

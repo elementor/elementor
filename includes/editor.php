@@ -361,7 +361,6 @@ class Editor {
 					'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 					'asc' => __( 'Ascending order', 'elementor' ),
 					'desc' => __( 'Descending order', 'elementor' ),
-					'edit' => __( 'Edit', 'elementor' ),
 				],
 			]
 		);
@@ -433,7 +432,7 @@ class Editor {
 			'elementorwpeditor',
 			[
 				'editor_class' => 'elementor-wp-editor',
-				'textarea_rows' => 15,
+				'editor_height' => 250,
 				'drag_drop_upload' => true,
 			]
 		);

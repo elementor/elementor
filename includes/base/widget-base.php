@@ -174,6 +174,7 @@ abstract class Widget_Base extends Element_Base {
 
 			$skin = $this->get_current_skin();
 			if ( $skin ) {
+				$skin->set_parent( $this );
 				$skin->render();
 			} else {
 				$this->render();
@@ -196,13 +197,6 @@ abstract class Widget_Base extends Element_Base {
 			'elementor-element-' . $this->get_id(),
 			'elementor-widget-' . $this->get_name(),
 		] );
-
-		// Add a `disabled` class if it's a shortcode/wp-widget within the editor
-		if ( ! Plugin::instance()->editor->is_edit_mode() ) {
-			$this->add_render_attribute( '_wrapper', 'class', [
-				'elementor-widget-edit-disabled',
-			] );
-		}
 
 		$settings = $this->get_settings();
 

@@ -29,8 +29,8 @@ class Upgrades {
 		}
 
 		if ( version_compare( $elementor_version, '0.11.0', '<' ) ) {
-			//self::_upgrade_v0110();
-			//update_option( 'elementor_version', '0.11.0' );
+			self::_upgrade_v0110();
+			update_option( 'elementor_version', '0.11.0' );
 		}
 	}
 

@@ -559,17 +559,17 @@
       -ms-flex-pack: end;
           justify-content: flex-end; }
 
-.error .elementor-field {
+.elementor-error .elementor-field {
   border-color: #d9534f; }
-.error .help-inline {
+.elementor-error .help-inline {
   color: #d9534f;
   font-size: 0.9em; }
 
-.elementor-form-message {
+.elementor-message {
   margin: 10px 0;
   font-size: 1em;
   line-height: 1; }
-  .elementor-form-message:before {
+  .elementor-message:before {
     content: "\f00c";
     display: inline-block;
     font-family: fontawesome;
@@ -577,11 +577,11 @@
     font-style: normal;
     vertical-align: middle;
     margin-right: 5px; }
-  .elementor-form-message.form-message-danger {
+  .elementor-message.elementor-message-danger {
     color: #d9534f; }
-    .elementor-form-message.form-message-danger:before {
+    .elementor-message.elementor-message-danger:before {
       content: "\f00d"; }
-  .elementor-form-message.form-message-success {
+  .elementor-message.form-message-success {
     color: #5cb85c; }
 
 .elementor-widget-heading .elementor-heading-title {
@@ -843,7 +843,8 @@
     padding: 20px;
     display: none;
     border: 1px solid #D4D4D4;
-    border-top: none; }
+    border-top: none;
+    overflow: hidden; }
 
 @media (max-width: 767px) {
   .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title > span {
@@ -877,7 +878,8 @@
   .elementor-accordion .elementor-accordion-content {
     display: none;
     padding: 15px 20px;
-    border-top: 1px solid #D4D4D4; }
+    border-top: 1px solid #D4D4D4;
+    overflow: hidden; }
 
 @media (max-width: 767px) {
   .elementor-accordion .elementor-accordion-title {
@@ -906,7 +908,8 @@
   .elementor-toggle .elementor-toggle-content {
     padding: 0 15px 15px;
     border-bottom: 1px solid #D4D4D4;
-    display: none; }
+    display: none;
+    overflow: hidden; }
 
 @media (max-width: 767px) {
   .elementor-toggle .elementor-toggle-title {
