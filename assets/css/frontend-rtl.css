@@ -86,7 +86,7 @@
 .elementor-align-justify .elementor-button {
   width: 100%; }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .elementor-tablet-align-center {
     text-align: center; }
     .elementor-tablet-align-center .elementor-button {
@@ -304,7 +304,7 @@
     width: 90%; }
   .elementor-column.elementor-sm-100 {
     width: 100%; } }
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .elementor-column.elementor-md-10 {
     width: 10%; }
   .elementor-column.elementor-md-11 {
@@ -1449,10 +1449,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   body:not(.elementor-editor-active) .elementor-hidden-tablet {
     display: none; } }
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   body:not(.elementor-editor-active) .elementor-hidden-desktop {
     display: none; } }
 body:not(.elementor-editor-active) .elementor-hidden {
