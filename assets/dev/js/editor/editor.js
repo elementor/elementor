@@ -32,7 +32,13 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
-	modules: {},
+	modules: {
+		element: require( 'elementor-models/element' ),
+		WidgetView: require( 'elementor-views/widget' ),
+		templateLibrary: {
+			ElementView: require( 'elementor-panel/pages/elements/views/element' )
+		}
+	},
 
 	// Private Members
 	_controlsItemView: null,
@@ -216,7 +222,7 @@ App = Marionette.Application.extend( {
 		NProgress.done();
 
 		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
+		var ElementModel = elementor.modules.element;
 
 		this.elements = new ElementModel.Collection( this.config.data );
 
