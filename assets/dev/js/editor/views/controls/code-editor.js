@@ -13,7 +13,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
-		if ( ! ace || ! self.model.attributes.use_advanced_editor ) {
+		if ( _.isUndefined( ace ) || ! self.model.attributes.use_advanced_editor ) {
 			return;
 		}
 
