@@ -146,6 +146,19 @@ ElementModel = Backbone.Model.extend( {
 		return ( elementData ) ? elementData.icon : 'unknown';
 	},
 
+	getRemoteRenderRequest: function() {
+		var data = this.toJSON();
+
+		return elementor.ajax.send( 'render_widget', {
+			data: {
+				post_id: elementor.config.post_id,
+				data: JSON.stringify( data ),
+				_nonce: elementor.config.nonce
+			},
+			success: _.bind( this.onRemoteGetHtml, this )
+		} );
+	},
+
 	renderRemoteServer: function() {
 		if ( ! this.remoteRender ) {
 			return;
@@ -159,16 +172,7 @@ ElementModel = Backbone.Model.extend( {
 			this._jqueryXhr.abort();
 		}
 
-		var data = this.toJSON();
-
-		this._jqueryXhr = elementor.ajax.send( 'render_widget', {
-			data: {
-				post_id: elementor.config.post_id,
-				data: JSON.stringify( data ),
-				_nonce: elementor.config.nonce
-			},
-			success: _.bind( this.onRemoteGetHtml, this )
-		} );
+		this._jqueryXhr = this.getRemoteRenderRequest();
 	},
 
 	onRemoteGetHtml: function( data ) {
@@ -270,7 +274,7 @@ ElementModel.prototype.save = function() {
 	return null;
 };
 
-module.exports = elementor.modules.element = {
+module.exports = {
 	Model: ElementModel,
 	Collection: ElementCollection
 };

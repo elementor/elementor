@@ -571,16 +571,6 @@ select {
     padding: 20px 20px 10px; }
   .elementor-panel .elementor-control-title {
     font-size: 12px; }
-  .elementor-panel .elementor-control-type-tab:not(.type-tabs) {
-    display: inline-block;
-    border: 1px solid #d6d6d6;
-    border-bottom: none;
-    padding: 10px 10px 0 !important;
-    cursor: pointer; }
-    .elementor-panel .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
-      font-weight: bold; }
-  .elementor-panel .elementor-tab-close {
-    display: none !important; }
   .elementor-panel .select2-container {
     width: 100% !important; }
     .elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single,
@@ -703,7 +693,7 @@ select {
       width: 66px; }
   .elementor-panel #elementor-panel-elements-navigation .elementor-panel-navigation-tab {
     text-align: center;
-    padding: 12px 0;
+    padding: 10px 0;
     font-size: 11px;
     text-transform: uppercase;
     cursor: pointer; }
@@ -1428,7 +1418,21 @@ select {
     float: right;
     height: 27px;
     width: 70px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs {
+    display: table;
+    table-layout: fixed;
+    cursor: pointer;
+    width: 100%;
+    margin: 0 20px;
+    border: 2px solid #d5dadf; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs) {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
+      font-weight: bold; }
+  .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
     padding: 0 10px 15px; }
@@ -1604,6 +1608,8 @@ select {
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+    display: none !important; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;

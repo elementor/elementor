@@ -1,0 +1,28 @@
+
+.elementor-control-type-tab {
+
+	&.type-tabs {
+		display: table;
+		table-layout: fixed;
+		cursor: pointer;
+		width: 100%;
+		margin: 0 20px;
+		border: 2px solid $editor-lightest;
+	}
+
+	&:not(.type-tabs) {
+
+		display: table-cell;
+		text-align: center;
+		vertical-align: middle;
+		padding: 0;
+
+		&.elementor-tab-active {
+			font-weight: bold;
+		}
+	}
+}
+
+.elementor-tab-close {
+	display: none !important;
+}
