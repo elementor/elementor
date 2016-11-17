@@ -37,12 +37,7 @@ TemplateLibraryManager = function() {
 	this.importTemplate = function( templateModel ) {
 		layout.showLoadingView();
 
-		elementor.ajax.send( 'get_template_content', {
-			data: {
-				source: templateModel.get( 'source' ),
-				edit_mode: true,
-				template_id: templateModel.get( 'template_id' )
-			},
+		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
 			success: function( data ) {
 				self.closeModal();
 
@@ -75,6 +70,22 @@ TemplateLibraryManager = function() {
 		}
 
 		elementor.ajax.send( 'save_template', ajaxParams );
+	};
+
+	this.requestTemplateContent = function( source, id, ajaxOptions ) {
+		var options = {
+			data: {
+				source: source,
+				edit_mode: true,
+				template_id: id
+			}
+		};
+
+		if ( ajaxOptions ) {
+			_.extend( options, ajaxOptions );
+		}
+
+		return elementor.ajax.send( 'get_template_content', options );
 	};
 
 	this.getDeleteDialog = function() {
