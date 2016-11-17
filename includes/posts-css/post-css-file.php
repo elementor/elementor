@@ -49,7 +49,6 @@ class Post_CSS_File {
 	}
 
 	public function update() {
-
 		if ( ! $this->is_build_with_elementor() ) {
 			return;
 		}
