@@ -82,7 +82,7 @@ class Widget_Icon extends Widget_Base {
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left'    => [
+					'left' => [
 						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'align-left',
 					],
