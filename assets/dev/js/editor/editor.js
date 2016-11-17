@@ -337,8 +337,9 @@ App = Marionette.Application.extend( {
 	},
 
 	setFlagEditorChange: function( status ) {
-		elementor.channels.editor.reply( 'editor:changed', status );
-		elementor.channels.editor.trigger( 'editor:changed', status );
+		elementor.channels.editor
+			.reply( 'editor:changed', status )
+			.trigger( 'editor:changed', status );
 	},
 
 	isEditorChanged: function() {
