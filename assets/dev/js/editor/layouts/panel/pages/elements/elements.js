@@ -145,7 +145,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	changeFilter: function( filterValue ) {
 		elementor.channels.panelElements
 			.reply( 'filter:value', filterValue )
-			.trigger( 'change' );
+			.trigger( 'filter:change' );
 	},
 
 	clearFilters: function() {
