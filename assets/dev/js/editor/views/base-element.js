@@ -70,7 +70,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	templateHelpers: function() {
 		return {
-			elementModel: this.model
+			elementModel: this.model,
+			editModel: this.getEditModel()
 		};
 	},
 
