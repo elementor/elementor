@@ -62,7 +62,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} else if ( 'column' === elType ) {
 			ChildView = require( 'elementor-views/column' );
 		} else {
-			ChildView = require( 'elementor-views/widget' );
+			ChildView = elementor.modules.WidgetView;
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
