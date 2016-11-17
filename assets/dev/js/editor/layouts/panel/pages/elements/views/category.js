@@ -6,7 +6,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-category',
 
-	childView: elementor.modules.templateLibrary.ElementView,
+	childView: require( 'elementor-panel/pages/elements/views/element' ),
 
 	childViewContainer: '.panel-elements-category-items',
 

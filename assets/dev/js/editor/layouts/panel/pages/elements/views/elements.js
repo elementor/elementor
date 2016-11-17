@@ -1,7 +1,7 @@
 var PanelElementsElementsView;
 
 PanelElementsElementsView = Marionette.CollectionView.extend( {
-	childView: elementor.modules.templateLibrary.ElementView,
+	childView: require( 'elementor-panel/pages/elements/views/element' ),
 
 	id: 'elementor-panel-elements',
 

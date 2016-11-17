@@ -36,7 +36,6 @@ App = Marionette.Application.extend( {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
 		templateLibrary: {
-			ElementView: require( 'elementor-panel/pages/elements/views/element' )
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
 	},
