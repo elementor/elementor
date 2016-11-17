@@ -158,19 +158,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onChildviewSearchChangeInput: function( child ) {
-		var value = child.ui.input.val();
-
-		if ( _.isEmpty( value ) ) {
-			this.showView( 'categories' );
-		} else {
-			var oldValue = elementor.channels.panelElements.request( 'filter:value' );
-
-			if ( _.isEmpty( oldValue ) ) {
-				this.showView( 'elements' );
-			}
-		}
-
-		this.changeFilter( value, 'search' );
+		this.changeFilter( child.ui.input.val(), 'search' );
 	},
 
 	onDestroy: function() {
