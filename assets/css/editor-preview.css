@@ -72,7 +72,7 @@ html.elementor-html {
   display: none; }
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(:hover):not(.ui-resizable-resizing) > .elementor-element-overlay .column-title {
   display: none; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-element > .elementor-element-overlay .column-title {
     display: none; } }
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element[data-side] {
@@ -109,7 +109,7 @@ html.elementor-html {
     line-height: 1; }
     .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list {
       background-color: #a4afb7; }
-      @media (min-width: 1024px) {
+      @media (min-width: 1025px) {
         .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:not(:last-child) {
           border-right: 1px solid #c2cbd2; } }
       .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting.elementor-editor-element-trigger:not(.elementor-active) {
@@ -146,7 +146,7 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list {
     float: left;
     background-color: #495157; }
-    @media (min-width: 1024px) {
+    @media (min-width: 1025px) {
       .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting:not(:last-child) {
         border-right: 1px solid #556068; } }
     .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting > a:hover {
@@ -155,7 +155,7 @@ html.elementor-html {
     display: none; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger > a {
     padding: 8.5px; }
-  @media (min-width: 1024px) {
+  @media (min-width: 1025px) {
     .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger > a {
       cursor: move; }
       .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger > a:hover:after {
@@ -186,7 +186,7 @@ html.elementor-html {
     color: #f00; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit a {
     cursor: move; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
     display: none; } }
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-section-filled .elementor-editor-column-settings .elementor-editor-element-add, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section-filled .elementor-editor-column-settings .elementor-editor-element-duplicate {
@@ -233,7 +233,7 @@ html.elementor-html {
   height: 100%; }
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-column:last-of-type > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column:last-of-type > .ui-resizable-w {
   display: none !important; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-w {
     display: none !important; } }
 .elementor-editor-active #elementor-inner:before {

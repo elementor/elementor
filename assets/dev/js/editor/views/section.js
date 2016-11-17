@@ -1,11 +1,8 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
-	ColumnView = require( 'elementor-views/column' ),
 	SectionView;
 
 SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
-
-	childView: ColumnView,
 
 	className: function() {
 		var classes = 'elementor-section',

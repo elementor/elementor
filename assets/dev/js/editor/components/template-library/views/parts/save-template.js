@@ -18,45 +18,13 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.model ? this.model.get( 'elType' ) : 'page',
-			elementsData;
+			saveType = this.model ? this.model.get( 'elType' ) : 'page';
 
-		switch ( saveType ) {
-			case 'section':
-				elementsData = [ this.model.toJSON() ];
-				break;
-			case 'widget':
-				elementsData = this.model.toJSON();
-				break;
-			default:
-				elementsData = elementor.elements.toJSON();
-		}
-
-		_.extend( formData, {
-			data: JSON.stringify( elementsData ),
-			source: 'local',
-			type: saveType
-		} );
-
-		if ( 'widget' === formData.type ) {
-			formData.widget_type = elementsData.widgetType;
-		}
+		formData.data = this.model ? [ this.model.toJSON() ] : elementor.elements.toJSON();
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
-		elementor.ajax.send( 'save_template', {
-			data: formData,
-			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data );
-
-				elementor.templates.setTemplatesSource( 'local' );
-
-				elementor.templates.showTemplates();
-			},
-			error: function( data ) {
-				elementor.templates.showErrorDialog( data );
-			}
-		} );
+		elementor.templates.saveTemplate( saveType, formData );
 	}
 } );
 

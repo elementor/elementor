@@ -62,7 +62,7 @@ class Elements_Manager {
 			$this->_init_elements();
 		}
 
-		if ( $element_name ) {
+		if ( null !== $element_name ) {
 			return isset( $this->_element_types[ $element_name ] ) ? $this->_element_types[ $element_name ] : null;
 		}
 
