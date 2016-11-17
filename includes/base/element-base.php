@@ -196,8 +196,8 @@ abstract class Element_Base {
 		}
 
 		unset( $control_args['desktop_default'] );
-		unset( $control_args['mobile_default'] );
 		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
 
 		$this->add_control(
 			$id,
@@ -218,8 +218,8 @@ abstract class Element_Base {
 		}
 
 		unset( $control_args['desktop_default'] );
-		unset( $control_args['mobile_default'] );
 		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
 
 		$this->add_control(
 			$id . '_tablet',
@@ -240,8 +240,8 @@ abstract class Element_Base {
 		}
 
 		unset( $control_args['desktop_default'] );
-		unset( $control_args['mobile_default'] );
 		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
 
 		$this->add_control(
 			$id . '_mobile',
