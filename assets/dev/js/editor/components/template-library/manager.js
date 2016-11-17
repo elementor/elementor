@@ -44,7 +44,7 @@ TemplateLibraryManager = function() {
 				template_id: templateModel.get( 'template_id' )
 			},
 			success: function( data ) {
-				self.getModal().hide();
+				self.closeModal();
 
 				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
 			},
@@ -135,6 +135,10 @@ TemplateLibraryManager = function() {
 				onModalReady();
 			}
 		} );
+	};
+
+	this.closeModal = function() {
+		self.getModal().hide();
 	};
 
 	this.setTemplatesSource = function( source, trigger ) {
