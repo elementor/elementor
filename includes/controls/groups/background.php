@@ -19,18 +19,18 @@ class Group_Control_Background extends Group_Control_Base {
 		$available_types = [
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
-				'icon' => 'paint-brush',
+				'icon' => 'fa fa-paint-brush',
 			],
 			'video' => [
 				'title' => _x( 'Background Video', 'Background Control', 'elementor' ),
-				'icon' => 'video-camera',
+				'icon' => 'fa fa-video-camera',
 			],
 		];
 
 		$choose_types = [
 			'none' => [
 				'title' => _x( 'None', 'Background Control', 'elementor' ),
-				'icon' => 'ban',
+				'icon' => 'fa fa-ban',
 			],
 		];
 

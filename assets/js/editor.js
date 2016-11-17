@@ -5531,6 +5531,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	onClickEdit: function( event ) {
 		event.preventDefault();
+		event.stopPropagation();
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
