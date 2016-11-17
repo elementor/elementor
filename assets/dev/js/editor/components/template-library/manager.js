@@ -8,10 +8,40 @@ TemplateLibraryManager = function() {
 		deleteDialog,
 		errorDialog,
 		layout,
+		templateTypes = {},
 		templatesCollection;
 
 	var initLayout = function() {
 		layout = new TemplateLibraryLayoutView();
+	};
+
+	var registerDefaultTemplateTypes = function() {
+		var data = {
+			ajaxParams: {
+				success: function( data ) {
+					self.getTemplatesCollection().add( data );
+
+					self.setTemplatesSource( 'local' );
+
+					self.showTemplates();
+				},
+				error: function( data ) {
+					self.showErrorDialog( data );
+				}
+			}
+		};
+
+		_.each( [ 'page', 'section' ], function( type ) {
+			self.registerTemplateType( type, data );
+		} );
+	};
+
+	var init = function() {
+		registerDefaultTemplateTypes();
+	};
+
+	this.registerTemplateType = function( type, data ) {
+		templateTypes[ type ] = data;
 	};
 
 	this.deleteTemplate = function( templateModel ) {
@@ -194,6 +224,8 @@ TemplateLibraryManager = function() {
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
+
+	init();
 };
 
 module.exports = new TemplateLibraryManager();
