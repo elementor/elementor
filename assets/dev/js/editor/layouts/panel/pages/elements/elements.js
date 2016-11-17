@@ -22,12 +22,45 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		'click @ui.tabs': 'onTabClick'
 	},
 
+	regionViews: {},
+
 	elementsCollection: null,
 
 	categoriesCollection: null,
 
 	initialize: function() {
 		this.listenTo( elementor.channels.panelElements, 'element:selected', this.destroy );
+
+		this.initElementsCollection();
+
+		this.initCategoriesCollection();
+
+		this.initRegionViews();
+	},
+
+	initRegionViews: function() {
+		var regionViews = {
+			elements: {
+				region: this.elements,
+				view: PanelElementsElementsView,
+				options: { collection: this.elementsCollection }
+			},
+			categories: {
+				region: this.elements,
+				view: PanelElementsCategoriesView,
+				options: { collection: this.categoriesCollection }
+			},
+			search: {
+				region: this.search,
+				view: PanelElementsSearchView
+			},
+			global: {
+				region: this.elements,
+				view: PanelElementsGlobalView
+			}
+		};
+
+		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
 	},
 
 	initElementsCollection: function() {
@@ -89,20 +122,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.categoriesCollection = categoriesCollection;
 	},
 
-	showCategoriesView: function() {
-		this.elements.show( new PanelElementsCategoriesView( { collection: this.categoriesCollection } ) );
+	activateTab: function( tabName ) {
+		this.ui.tabs
+			.removeClass( 'active' )
+			.filter( '[data-view="' + tabName + '"]' )
+			.addClass( 'active' );
+
+		this.showView( tabName );
 	},
 
-	showElementsView: function() {
-		this.elements.show( new PanelElementsElementsView( { collection: this.elementsCollection } ) );
-	},
+	showView: function( viewName ) {
+		var viewDetails = this.regionViews[ viewName ],
+			options = viewDetails.options || {};
 
-	showGlobalView: function() {
-		this.elements.show( new PanelElementsGlobalView() );
-	},
-
-	showSearchView: function() {
-		this.search.show( new PanelElementsSearchView() );
+		viewDetails.region.show( new viewDetails.view( options ) );
 	},
 
 	clearSearchInput: function() {
@@ -128,12 +161,12 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var value = child.ui.input.val();
 
 		if ( _.isEmpty( value ) ) {
-			this.showCategoriesView();
+			this.showView( 'categories' );
 		} else {
 			var oldValue = elementor.channels.panelElements.request( 'filter:value' );
 
 			if ( _.isEmpty( oldValue ) ) {
-				this.showElementsView();
+				this.showView( 'elements' );
 			}
 		}
 
@@ -145,27 +178,13 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		this.initElementsCollection();
+		this.showView( 'categories' );
 
-		this.initCategoriesCollection();
-
-		this.showCategoriesView();
-
-		this.showSearchView();
+		this.showView( 'search' );
 	},
 
 	onTabClick: function( event ) {
-		var $clickedTab = Backbone.$( event.currentTarget );
-
-		this.ui.tabs.removeClass( 'active' );
-
-		$clickedTab.addClass( 'active' );
-
-		if ( 'global' === $clickedTab.data( 'view' ) ) {
-			this.showGlobalView();
-		} else {
-			this.showCategoriesView();
-		}
+		this.activateTab( event.currentTarget.dataset.view );
 	},
 
 	updateElementsScrollbar: function() {
