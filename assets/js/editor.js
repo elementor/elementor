@@ -769,11 +769,11 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showLoadingView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryLoadingView() );
+		this.modalContent.show( new TemplateLibraryLoadingView() );
 	},
 
 	showTemplatesView: function( templatesCollection ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryCollectionView( {
+		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection
 		} ) );
 
@@ -785,11 +785,11 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showImportView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryImportView() );
+		this.modalContent.show( new TemplateLibraryImportView() );
 	},
 
 	showSaveTemplateView: function( elementModel ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
+		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 
 		var headerView = this.getHeaderView();
 
@@ -799,7 +799,7 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showPreviewView: function( templateModel ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryPreviewView( {
+		this.modalContent.show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' )
 		} ) );
 
