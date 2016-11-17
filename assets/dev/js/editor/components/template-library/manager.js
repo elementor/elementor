@@ -54,6 +54,29 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
+	this.saveTemplate = function( type, data ) {
+		var templateType = templateTypes[ type ];
+
+		_.extend( data, {
+			source: 'local',
+			type: type
+		} );
+
+		if ( templateType.prepareSavedData ) {
+			data = templateType.prepareSavedData( data );
+		}
+
+		data.data = JSON.stringify( data.data );
+
+		var ajaxParams = { data: data };
+
+		if ( templateType.ajaxParams ) {
+			_.extend( ajaxParams, templateType.ajaxParams );
+		}
+
+		elementor.ajax.send( 'save_template', ajaxParams );
+	};
+
 	this.getDeleteDialog = function() {
 		if ( ! deleteDialog ) {
 			deleteDialog = elementor.dialogsManager.createWidget( 'confirm', {
