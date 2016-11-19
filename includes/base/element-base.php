@@ -130,6 +130,9 @@ abstract class Element_Base {
 			}
 		}
 
+		$args = apply_filters( 'elementor/elements/add_control', $args, $id );
+		$args = apply_filters( 'elementor/elements/add_control/' . $id, $args, $id );
+
 		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
 
