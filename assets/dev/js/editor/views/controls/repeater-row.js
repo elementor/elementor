@@ -62,12 +62,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 			var child = self.children.findByModelCid( model.cid );
 
-			if( isVisible ) {
-				child.$el.removeClass( 'elementor-panel-hide' );
-			} else {
-				child.$el.addClass( 'elementor-panel-hide' );
-			}
-
+			child.$el.toggleClass( 'elementor-panel-hide', ! isVisible );
 		} );
 	},
 
