@@ -1419,19 +1419,22 @@ select {
     height: 27px;
     width: 70px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs {
-    display: table;
-    table-layout: fixed;
-    cursor: pointer;
-    width: 100%;
-    margin: 0 20px;
-    border: 2px solid #d5dadf; }
+    font-size: 0.9em;
+    color: #a4afb7;
+    text-transform: uppercase; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs > div:first-child {
+      display: none; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs) {
-    display: table-cell;
+    display: inline-block;
     text-align: center;
     vertical-align: middle;
-    padding: 0; }
+    padding: 9px;
+    border: 1px solid #a4afb7;
+    width: 50%;
+    cursor: pointer; }
     .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
-      font-weight: bold; }
+      background-color: #a4afb7;
+      color: #ffffff; }
   .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
