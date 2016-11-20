@@ -66,23 +66,7 @@ Preview = BaseSectionsContainerView.extend( {
 				self.ui.addSectionArea.removeAttr( 'data-side' );
 			},
 			onDropping: function() {
-				var elementView = elementor.channels.panelElements.request( 'element:selected' ),
-					newSection = self.addSection(),
-					elType = elementView.model.get( 'elType' );
-
-				var elementData = {
-					id: elementor.helpers.getUniqueID(),
-					elType: elType
-				};
-
-				if ( 'widget' === elType ) {
-					elementData.widgetType = elementView.model.get( 'widgetType' );
-				} else {
-					elementData.elements = [];
-					elementData.isInner = true;
-				}
-
-				newSection.triggerMethod( 'request:add', elementData );
+				self.addSection().addElementFromPanel();
 			}
 		} );
 

@@ -139,6 +139,32 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return newView;
 	},
 
+	addElementFromPanel: function( options ) {
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+
+		var itemData = {
+			id: elementor.helpers.getUniqueID(),
+			elType: elementView.model.get( 'elType' )
+		};
+
+		if ( 'widget' === itemData.elType ) {
+			itemData.widgetType = elementView.model.get( 'widgetType' );
+		} else if ( 'section' === itemData.elType ) {
+			itemData.elements = [];
+			itemData.isInner = true;
+		} else {
+			return;
+		}
+
+		var customData = elementView.model.get( 'custom' );
+
+		if ( customData ) {
+			_.extend( itemData, customData );
+		}
+
+		this.addChildElement( itemData, options );
+	},
+
 	isCollectionFilled: function() {
 		return false;
 	},
