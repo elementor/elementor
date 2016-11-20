@@ -116,6 +116,55 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return this.collection.add( model, options, true );
 	},
 
+	addChildElement: function( itemData, options ) {
+		options = options || {};
+
+		var myChildType = this.getChildType();
+
+		if ( -1 === myChildType.indexOf( itemData.elType ) ) {
+			delete options.at;
+
+			return this.children.last().addChildElement( itemData, options );
+		}
+
+		var newModel = this.addChildModel( itemData, options ),
+			newView = this.children.findByModel( newModel );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
+		newView.edit();
+
+		return newView;
+	},
+
+	addElementFromPanel: function( options ) {
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+
+		var itemData = {
+			id: elementor.helpers.getUniqueID(),
+			elType: elementView.model.get( 'elType' )
+		};
+
+		if ( 'widget' === itemData.elType ) {
+			itemData.widgetType = elementView.model.get( 'widgetType' );
+		} else if ( 'section' === itemData.elType ) {
+			itemData.elements = [];
+			itemData.isInner = true;
+		} else {
+			return;
+		}
+
+		var customData = elementView.model.get( 'custom' );
+
+		if ( customData ) {
+			_.extend( itemData, customData );
+		}
+
+		this.addChildElement( itemData, options );
+	},
+
 	isCollectionFilled: function() {
 		return false;
 	},
