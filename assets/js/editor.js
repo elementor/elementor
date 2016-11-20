@@ -1707,8 +1707,12 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	translate: function( stringKey, templateArgs ) {
-		var string = this.config.i18n[ stringKey ];
+	translate: function( stringKey, templateArgs, i18nStack ) {
+		if ( ! i18nStack ) {
+			i18nStack = this.config.i18n;
+		}
+
+		var string = i18nStack[ stringKey ];
 
 		if ( undefined === string ) {
 			string = stringKey;
