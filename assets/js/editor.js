@@ -7034,7 +7034,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 			var child = self.children.findByModelCid( model.cid );
 
-			child.$el.toggle( isVisible );
+			if( isVisible ) {
+				child.$el.removeClass( 'elementor-panel-hide' );
+			} else {
+				child.$el.addClass( 'elementor-panel-hide' );
+			}
+
 		} );
 	},
 
