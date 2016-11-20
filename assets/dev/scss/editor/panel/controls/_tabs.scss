@@ -2,23 +2,27 @@
 .elementor-control-type-tab {
 
 	&.type-tabs {
-		display: table;
-		table-layout: fixed;
-		cursor: pointer;
-		width: 100%;
-		margin: 0 20px;
-		border: 2px solid $editor-lightest;
+		font-size: 0.9em;
+		color: $editor-light;
+		text-transform: uppercase;
+
+		> div:first-child {
+			display: none;
+		}
 	}
 
 	&:not(.type-tabs) {
-
-		display: table-cell;
+		display: inline-block;
 		text-align: center;
 		vertical-align: middle;
-		padding: 0;
+		padding: 9px;
+		border: 1px solid $editor-light;
+		width: 50%;
+		cursor: pointer;
 
 		&.elementor-tab-active {
-			font-weight: bold;
+			background-color: $editor-light;
+			color: #ffffff;
 		}
 	}
 }
