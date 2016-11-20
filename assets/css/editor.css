@@ -1747,6 +1747,8 @@ select {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
     color: #b01b1b; }
+  .elementor-panel .elementor-panel-hide {
+    display: none; }
 
 #elementor-mode-switcher {
   position: absolute;
