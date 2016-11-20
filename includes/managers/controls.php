@@ -245,6 +245,18 @@ class Controls_Manager {
 
 	/**
 	 * @since 1.0.0
+	 *
+	 * @param $id
+	 * @param $instance
+	 *
+	 * @return Group_Control_Base[]
+	 */
+	public function add_group_control( $id, $instance ) {
+		return $this->_group_controls[ $id ] = $instance;
+	}
+
+	/**
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function enqueue_control_scripts() {
