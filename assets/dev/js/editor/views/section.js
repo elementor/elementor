@@ -27,9 +27,6 @@ SectionView = BaseElementView.extend( {
 		},
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		},
-		HandleElementsRelation: {
-			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
 	},
 
@@ -55,9 +52,9 @@ SectionView = BaseElementView.extend( {
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-		this.listenTo( this.collection, 'remove', this.onCollectionRemove );
-		this.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
+		this.listenTo( this.collection, 'add remove reset', this._checkIsFull )
+			.listenTo( this.collection, 'remove', this.onCollectionRemove )
+			.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
 	},
 
 	addEmptyColumn: function() {
