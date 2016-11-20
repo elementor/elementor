@@ -116,6 +116,29 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return this.collection.add( model, options, true );
 	},
 
+	addChildElement: function( itemData, options ) {
+		options = options || {};
+
+		var myChildType = this.getChildType();
+
+		if ( -1 === myChildType.indexOf( itemData.elType ) ) {
+			delete options.at;
+
+			return this.children.last().addChildElement( itemData, options );
+		}
+
+		var newModel = this.addChildModel( itemData, options ),
+			newView = this.children.findByModel( newModel );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
+		newView.edit();
+
+		return newView;
+	},
+
 	isCollectionFilled: function() {
 		return false;
 	},
