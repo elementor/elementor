@@ -1338,6 +1338,12 @@ App = Marionette.Application.extend( {
 		this.dialogsManager = new DialogsManager.Instance();
 	},
 
+	initElements: function() {
+		var ElementModel = elementor.modules.element;
+
+		this.elements = new ElementModel.Collection( this.config.data );
+	},
+
 	initPreview: function() {
 		this.$previewWrapper = Backbone.$( '#elementor-preview' );
 
@@ -1358,6 +1364,8 @@ App = Marionette.Application.extend( {
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+
+		this.initElements();
 	},
 
 	initFrontend: function() {
@@ -1422,11 +1430,6 @@ App = Marionette.Application.extend( {
 
 	onPreviewLoaded: function() {
 		NProgress.done();
-
-		// Init Base elements collection from the server
-		var ElementModel = elementor.modules.element;
-
-		this.elements = new ElementModel.Collection( this.config.data );
 
 		this.initFrontend();
 
