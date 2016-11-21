@@ -16,11 +16,19 @@ class Post_CSS_File {
 
 	const META_KEY_CSS = '_elementor_css';
 
+	/*
+	 * @var int
+	 */
 	protected $post_id;
+
 	protected $is_built_with_elementor;
+
 	protected $path;
+
 	protected $url;
+
 	protected $css = '';
+
 	protected $fonts = [];
 
 	/**
