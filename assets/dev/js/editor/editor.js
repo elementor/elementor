@@ -32,7 +32,13 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
-	modules: {},
+	modules: {
+		element: require( 'elementor-models/element' ),
+		WidgetView: require( 'elementor-views/widget' ),
+		templateLibrary: {
+			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
+		}
+	},
 
 	// Private Members
 	_controlsItemView: null,
@@ -98,6 +104,7 @@ App = Marionette.Application.extend( {
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
 				date_time: require( 'elementor-views/controls/date-time' ),
+				code: require( 'elementor-views/controls/code' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
@@ -216,7 +223,7 @@ App = Marionette.Application.extend( {
 		NProgress.done();
 
 		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
+		var ElementModel = elementor.modules.element;
 
 		this.elements = new ElementModel.Collection( this.config.data );
 
@@ -331,8 +338,9 @@ App = Marionette.Application.extend( {
 	},
 
 	setFlagEditorChange: function( status ) {
-		elementor.channels.editor.reply( 'editor:changed', status );
-		elementor.channels.editor.trigger( 'editor:changed', status );
+		elementor.channels.editor
+			.reply( 'editor:changed', status )
+			.trigger( 'editor:changed', status );
 	},
 
 	isEditorChanged: function() {
@@ -457,8 +465,12 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	translate: function( stringKey, templateArgs ) {
-		var string = this.config.i18n[ stringKey ];
+	translate: function( stringKey, templateArgs, i18nStack ) {
+		if ( ! i18nStack ) {
+			i18nStack = this.config.i18n;
+		}
+
+		var string = i18nStack[ stringKey ];
 
 		if ( undefined === string ) {
 			string = stringKey;

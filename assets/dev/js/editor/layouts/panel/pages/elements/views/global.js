@@ -4,10 +4,10 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-panel-global',
 
 	initialize: function() {
-		elementor.getPanelView().content.currentView.search.reset();
+		elementor.getPanelView().getCurrentPageView().search.reset();
 	},
 
 	onDestroy: function() {
-		elementor.getPanelView().content.currentView.showSearchView();
+		elementor.getPanelView().getCurrentPageView().showView( 'search' );
 	}
 } );

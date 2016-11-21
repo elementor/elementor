@@ -248,7 +248,7 @@ body {
     .elementor-button.elementor-button-default:visited {
       color: #fff; }
 
-input, select, textarea {
+input, select, textarea, .elementor-input-style {
   border-radius: 3px;
   font-size: 12px;
   width: 100%;
@@ -257,18 +257,18 @@ input, select, textarea {
   color: #495157;
   border: 1px solid;
   outline: none; }
-  input:not(:focus), select:not(:focus), textarea:not(:focus) {
+  input:not(:focus), select:not(:focus), textarea:not(:focus), .elementor-input-style:not(:focus) {
     border-color: #d5dadf; }
-  input:focus, select:focus, textarea:focus {
+  input:focus, select:focus, textarea:focus, .elementor-input-style:focus {
     border-color: #a4afb7; }
 
 .elementor-error input, .elementor-error select, .elementor-error textarea {
   border-color: #b01b1b; }
 
-input, textarea {
+input, textarea, .elementor-input-style {
   padding: 5px 8px; }
 
-textarea {
+textarea, .elementor-input-style {
   resize: vertical; }
 
 input[type="checkbox"],
@@ -703,7 +703,7 @@ select {
       width: 66px; }
   .elementor-panel #elementor-panel-elements-navigation .elementor-panel-navigation-tab {
     text-align: center;
-    padding: 12px 0;
+    padding: 10px 0;
     font-size: 11px;
     text-transform: uppercase;
     cursor: pointer; }
@@ -1428,7 +1428,24 @@ select {
     float: left;
     height: 27px;
     width: 70px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs {
+    font-size: 0.9em;
+    color: #a4afb7;
+    text-transform: uppercase; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs > div:first-child {
+      display: none; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs) {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 9px;
+    border: 1px solid #a4afb7;
+    width: 50%;
+    cursor: pointer; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
+      background-color: #a4afb7;
+      color: #ffffff; }
+  .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
     padding: 0 10px 15px; }
@@ -1604,6 +1621,8 @@ select {
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+    display: none !important; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;

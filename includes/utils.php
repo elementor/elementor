@@ -18,7 +18,10 @@ class Utils {
 	}
 
 	public static function is_post_type_support( $post_id = 0 ) {
-		return post_type_supports( get_post_type( $post_id ), 'elementor' );
+		$post_type = get_post_type( $post_id );
+		$is_supported = post_type_supports( $post_type, 'elementor' );
+
+		return apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 	}
 
 	public static function get_placeholder_image_src() {

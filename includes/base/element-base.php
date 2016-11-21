@@ -191,6 +191,14 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_DESKTOP;
 
+		if ( isset( $control_args['desktop_default'] ) ) {
+			$control_args['default'] = $control_args['desktop_default'];
+		}
+
+		unset( $control_args['desktop_default'] );
+		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
+
 		$this->add_control(
 			$id,
 			$control_args
@@ -205,6 +213,14 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_TABLET;
 
+		if ( isset( $control_args['tablet_default'] ) ) {
+			$control_args['default'] = $control_args['tablet_default'];
+		}
+
+		unset( $control_args['desktop_default'] );
+		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
+
 		$this->add_control(
 			$id . '_tablet',
 			$control_args
@@ -218,6 +234,14 @@ abstract class Element_Base {
 		}
 
 		$control_args['responsive'] = self::RESPONSIVE_MOBILE;
+
+		if ( isset( $control_args['mobile_default'] ) ) {
+			$control_args['default'] = $control_args['mobile_default'];
+		}
+
+		unset( $control_args['desktop_default'] );
+		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
 
 		$this->add_control(
 			$id . '_mobile',

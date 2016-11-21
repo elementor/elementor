@@ -1,0 +1,32 @@
+
+.elementor-control-type-tab {
+
+	&.type-tabs {
+		font-size: 0.9em;
+		color: $editor-light;
+		text-transform: uppercase;
+
+		> div:first-child {
+			display: none;
+		}
+	}
+
+	&:not(.type-tabs) {
+		display: inline-block;
+		text-align: center;
+		vertical-align: middle;
+		padding: 9px;
+		border: 1px solid $editor-light;
+		width: 50%;
+		cursor: pointer;
+
+		&.elementor-tab-active {
+			background-color: $editor-light;
+			color: #ffffff;
+		}
+	}
+}
+
+.elementor-tab-close {
+	display: none !important;
+}

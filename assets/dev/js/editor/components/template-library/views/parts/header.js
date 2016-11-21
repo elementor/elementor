@@ -21,7 +21,7 @@ TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
 	},
 
 	onCloseModalClick: function() {
-		elementor.templates.getModal().hide();
+		elementor.templates.closeModal();
 	}
 } );
 

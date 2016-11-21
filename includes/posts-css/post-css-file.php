@@ -49,6 +49,10 @@ class Post_CSS_File {
 	}
 
 	public function update() {
+		if ( ! $this->is_build_with_elementor() ) {
+			return;
+		}
+
 		$this->parse_elements_css();
 
 		$meta = [
@@ -190,6 +194,10 @@ class Post_CSS_File {
 		$this->css = $css;
 	}
 
+	public function get_stylesheet() {
+		return $this->stylesheet_obj;
+	}
+
 	private function add_element_style_rules( Element_Base $element, $controls, $values, $placeholders, $replacements ) {
 		foreach ( $controls as $control ) {
 			$control_value = $values[ $control['name'] ];
@@ -254,5 +262,7 @@ class Post_CSS_File {
 				$this->_columns_width[] = $this->get_element_unique_selector( $element ) . '{width:' . $element_settings['_inline_size'] . '%;}';
 			}
 		}
+
+		do_action( 'elementor/element_css/parse_css', $this, $element );
 	}
 }
