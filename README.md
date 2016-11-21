@@ -2,10 +2,10 @@
 
 
 **Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [yehudah](https://profiles.wordpress.org/yehudah), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh)  
-**Tags:** page builder, editor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
+**Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.6  
-**Stable tag:** 0.11.0  
+**Stable tag:** 0.11.2  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -160,6 +160,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 0.11.2 - 21.11.2016 ###
+* Fix! - Don't Generate CSS if it's not build with Elementor
+* Fix! - Global font goes wrong after changing weight ([#888](https://github.com/pojome/elementor/issues/888))
+
+### 0.11.1 - 17.11.2016 ###
+* Fix! - Columns widget bug with edit options
+* Tweak! - Changed breakpoint for tablet from 1023px to 1024px ([#860](https://github.com/pojome/elementor/issues/860))
 
 ### 0.11.0 - 16.11.2016 ###
 * New! - Elementor now generates an external CSS file for each page instead of inline CSS ([#325](https://github.com/pojome/elementor/issues/325))

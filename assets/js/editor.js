@@ -2893,7 +2893,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 
 	onFieldChange: function( event ) {
 		var $select = this.$( event.currentTarget ),
-			currentValue = elementor.helpers.cloneObject( this.model.get( 'value' ) ),
+			currentValue = elementor.schemes.getSchemeValue( 'typography', this.model.get( 'key' ) ).value,
 			fieldKey = $select.attr( 'name' );
 
 		currentValue[ fieldKey ] = $select.val();
@@ -5377,6 +5377,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	onClickEdit: function( event ) {
 		event.preventDefault();
+		event.stopPropagation();
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
