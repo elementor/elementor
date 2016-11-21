@@ -129,6 +129,13 @@ class Post_CSS_File {
 		return $this->is_built_with_elementor;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function get_post_id() {
+		return $this->post_id;
+	}
+
 	public function get_element_unique_selector( Element_Base $element ) {
 		return '.elementor-' . $this->post_id . ' .elementor-element' . $element->get_unique_selector();
 	}
