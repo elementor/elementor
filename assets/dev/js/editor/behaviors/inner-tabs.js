@@ -10,11 +10,11 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 		var closedClass = 'elementor-tab-close',
 			activeClass = 'elementor-tab-active',
 			tabsWrappers = parent.children.filter( function( view ) {
-				return  'tabs' === view.model.get( 'type' );
+				return 'tabs' === view.model.get( 'type' );
 			} );
 
 		_.each( tabsWrappers, function( view ) {
-			view.$el.find('.elementor-control-content').remove();
+			view.$el.find( '.elementor-control-content' ).remove();
 
 			var tabsId = view.model.get( 'name' ),
 				tabs = parent.children.filter( function( childView ) {

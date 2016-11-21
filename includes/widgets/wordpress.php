@@ -107,7 +107,7 @@ class Widget_WordPress extends Widget_Base {
 
 	protected function content_template() {}
 
-	public function __construct( $data = [], $args = [] ) {
+	public function __construct( $data = [], $args = null ) {
 		$this->_widget_name = $args['widget_name'];
 
 		parent::__construct( $data, $args );
