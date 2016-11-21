@@ -288,6 +288,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	addStyleToDocument: function() {
 		var styleText = this.stylesheet.toString();
 
+		styleText = elementor.hooks.applyFilters( 'editor/style/styleText', styleText, this );
+
 		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
 			return;
 		}

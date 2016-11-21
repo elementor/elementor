@@ -260,6 +260,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'ace',
+			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
+			[],
+			'1.2.5',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -277,6 +285,7 @@ class Editor {
 				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
+				'ace',
 			],
 			$plugin->get_version(),
 			true
