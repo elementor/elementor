@@ -679,10 +679,10 @@ abstract class Element_Base {
 		$this->_settings = $this->_get_parsed_settings();
 	}
 
-	public function __construct( $data = [], $args = [] ) {
+	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
 			$this->_init( $data );
-		} else {
+		} elseif ( $args ) {
 			$this->_default_args = $args;
 		}
 	}

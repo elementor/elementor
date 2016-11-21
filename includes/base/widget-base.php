@@ -32,7 +32,7 @@ abstract class Widget_Base extends Element_Base {
 		return 'apps';
 	}
 
-	public function __construct( $data = [], $args = [] ) {
+	public function __construct( $data = [], $args = null ) {
 		do_action( 'elementor/element/before_construct', $this, $data, $args );
 		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
 
@@ -40,6 +40,10 @@ abstract class Widget_Base extends Element_Base {
 
 		do_action( 'elementor/element/after_construct', $this );
 		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
+
+		if ( $data && null === $args  ) {
+			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
+		}
 
 		// First instance
 		if ( ! $data ) {
