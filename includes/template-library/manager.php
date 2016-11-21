@@ -131,8 +131,14 @@ class Manager {
 
 	public function update_templates( array $args ) {
 		foreach ( $args['templates'] as $template_data ) {
-			$this->update_template( $template_data );
+			$result = $this->update_template( $template_data );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
 		}
+
+		return true;
 	}
 
 	public function get_template_content( array $args ) {
