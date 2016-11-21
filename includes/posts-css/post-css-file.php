@@ -99,7 +99,7 @@ class Post_CSS_File {
 	}
 
 	public function enqueue() {
-		if ( ! $this->is_build_with_elementor() ) {
+		if ( ! $this->is_built_with_elementor() ) {
 			return;
 		}
 
