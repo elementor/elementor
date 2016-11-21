@@ -45,6 +45,7 @@ class Controls_Manager {
 	const STRUCTURE = 'structure';
 	const SELECT2 = 'select2';
 	const DATE_TIME = 'date_time';
+	const CODE_EDITOR = 'code_editor';
 	const BOX_SHADOW = 'box_shadow';
 	const ANIMATION = 'animation';
 	const HOVER_ANIMATION = 'hover_animation';
@@ -123,6 +124,7 @@ class Controls_Manager {
 			self::STRUCTURE,
 			self::SELECT2,
 			self::DATE_TIME,
+			self::CODE_EDITOR,
 			self::BOX_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,

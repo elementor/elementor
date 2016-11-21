@@ -2,7 +2,7 @@
 // Forms
 //
 
-input, select, textarea {
+input, select, textarea, .elementor-input-style {
 	border-radius: 3px;
 	font-size: 12px;
 	width: 100%;
@@ -28,11 +28,11 @@ input, select, textarea {
 	}
 }
 
-input, textarea {
+input, textarea, .elementor-input-style {
 	padding: 5px 8px;
 }
 
-textarea {
+textarea, .elementor-input-style {
 	resize: vertical;
 }
 
