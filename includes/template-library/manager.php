@@ -106,7 +106,7 @@ class Manager {
 	}
 
 	public function update_template( array $template_data ) {
-		$validate_args = $this->ensure_args( [ 'source', 'data' ], $template_data );
+		$validate_args = $this->ensure_args( [ 'source', 'data', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
