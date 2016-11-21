@@ -51,6 +51,8 @@ class DB {
 		} else {
 			unset( $GLOBALS['post'] );
 		}
+
+		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 
 	/**
