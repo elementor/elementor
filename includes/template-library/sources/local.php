@@ -130,11 +130,15 @@ class Source_Local extends Source_Base {
 
 		do_action( 'elementor/template-library/after_save_template', $post_id, $template_data );
 
+		do_action( 'elementor/template-library/after_update_template', $post_id, $template_data );
+
 		return $post_id;
 	}
 
 	public function update_item( $new_data ) {
 		Plugin::instance()->db->save_editor( $new_data['id'], $new_data['data'] );
+
+		do_action( 'elementor/template-library/after_update_template', $new_data['id'], $new_data );
 
 		return true;
 	}

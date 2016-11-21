@@ -106,7 +106,7 @@ class Manager {
 	}
 
 	public function update_template( array $template_data ) {
-		$validate_args = $this->ensure_args( [ 'source', 'data' ], $template_data );
+		$validate_args = $this->ensure_args( [ 'source', 'data', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -131,8 +131,14 @@ class Manager {
 
 	public function update_templates( array $args ) {
 		foreach ( $args['templates'] as $template_data ) {
-			$this->update_template( $template_data );
+			$result = $this->update_template( $template_data );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
 		}
+
+		return true;
 	}
 
 	public function get_template_content( array $args ) {
