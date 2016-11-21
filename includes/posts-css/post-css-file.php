@@ -91,6 +91,10 @@ class Post_CSS_File {
 	}
 
 	public function enqueue() {
+		if ( ! $this->is_build_with_elementor() ) {
+			return;
+		}
+
 		$meta = $this->get_meta();
 
 		if ( self::CSS_STATUS_EMPTY === $meta['status'] ) {
