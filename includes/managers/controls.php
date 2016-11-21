@@ -24,6 +24,7 @@ class Controls_Manager {
 	const RAW_HTML = 'raw_html';
 	const SECTION = 'section';
 	const TAB = 'tab';
+	const TABS = 'tabs';
 	const DIVIDER = 'divider';
 
 	const COLOR = 'color';
@@ -102,6 +103,7 @@ class Controls_Manager {
 			self::RAW_HTML,
 			self::SECTION,
 			self::TAB,
+			self::TABS,
 			self::DIVIDER,
 
 			self::COLOR,

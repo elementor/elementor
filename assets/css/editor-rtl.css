@@ -571,13 +571,13 @@ select {
     padding: 20px 20px 10px; }
   .elementor-panel .elementor-control-title {
     font-size: 12px; }
-  .elementor-panel .elementor-control-type-tab:not(.type-tabs) {
+  .elementor-panel .elementor-control-type-tab {
     display: inline-block;
     border: 1px solid #d6d6d6;
     border-bottom: none;
     padding: 10px 10px 0 !important;
     cursor: pointer; }
-    .elementor-panel .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
+    .elementor-panel .elementor-control-type-tab.elementor-tab-active {
       font-weight: bold; }
   .elementor-panel .elementor-tab-close {
     display: none !important; }
