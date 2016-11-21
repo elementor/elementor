@@ -122,7 +122,7 @@ class Post_CSS_File {
 	}
 
 	public function get_element_unique_selector( Element_Base $element ) {
-		return '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
+		return '.elementor-' . $this->post_id . ' .elementor-element' . $element->get_unique_selector();
 	}
 
 	public function get_css() {
