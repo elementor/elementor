@@ -314,7 +314,7 @@ class Controls_Manager {
 
 		$stack = $this->_controls_stack[ $stack_id ];
 
-		if ( 'widget' === $element->get_type() && 'common' !== $element->get_name() ) {
+		if ( 'widget' === $element->get_type() && 'common' !== $stack_id ) {
 			$common_widget = Plugin::instance()->widgets_manager->get_widget_types( 'common' );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
