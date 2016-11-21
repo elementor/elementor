@@ -159,6 +159,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 0.11.2 - 21.11.2016 =
+* Fix! - Don't Generate CSS if it's not build with Elementor
+* Fix! - Global font goes wrong after changing weight ([#888](https://github.com/pojome/elementor/issues/888))
+
 = 0.11.1 - 17.11.2016 =
 * Fix! - Columns widget bug with edit options
 * Tweak! - Changed breakpoint for tablet from 1023px to 1024px ([#860](https://github.com/pojome/elementor/issues/860))
