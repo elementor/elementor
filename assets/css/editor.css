@@ -644,7 +644,7 @@ select {
   .elementor-panel .elementor-descriptor, .elementor-panel #elementor-panel-page-editor .elementor-control-description {
     font-size: 11px;
     font-style: italic;
-    line-height: 1.2;
+    line-height: 1.4;
     color: #a4afb7; }
   .elementor-panel .elementor-panel-nerd-box {
     padding: 40px 35px;
@@ -1418,24 +1418,40 @@ select {
     float: right;
     height: 27px;
     width: 70px; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-code {
+    padding: 0 10px 15px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-tabs {
     font-size: 0.9em;
     color: #a4afb7;
-    text-transform: uppercase; }
+    text-transform: uppercase;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab {
     display: inline-block;
     text-align: center;
     vertical-align: middle;
     padding: 9px;
-    border: 1px solid #a4afb7;
-    width: 50%;
+    border-top: 1px solid #a4afb7;
+    border-bottom: 1px solid #a4afb7;
+    border-right: 1px solid #a4afb7;
+    width: 100%;
     cursor: pointer; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:first-child {
+      border-left: 1px solid #a4afb7;
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:last-child {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px; }
     .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.elementor-tab-active {
       background-color: #a4afb7;
       color: #ffffff; }
   .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater,
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
     padding: 0 10px 15px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:before {
     display: none; }
