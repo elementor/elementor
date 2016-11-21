@@ -6,9 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Stylesheet {
 
 	private $rules = [];
-
 	private $devices = [];
-
 	private $raw = [];
 
 	/**
@@ -90,6 +88,16 @@ class Stylesheet {
 		return $this;
 	}
 
+	public function add_raw_css( $css, $device = '' ) {
+		if ( ! isset( $this->raw[ $device ] ) ) {
+			$this->raw[ $device ] = [];
+		}
+
+		$this->raw[ $device ][] = trim( $css );
+
+		return $this;
+	}
+
 	public function __toString() {
 		$style_text = '';
 
@@ -104,7 +112,6 @@ class Stylesheet {
 		}
 
 		foreach ( $this->raw as $device_name => $raw ) {
-
 			$raw = implode( "\n", $raw );
 
 			if ( $raw && isset( $this->devices[ $device_name ] ) ) {
@@ -115,15 +122,5 @@ class Stylesheet {
 		}
 
 		return $style_text;
-	}
-
-	public function add_raw_css( $css, $device = '' ) {
-		if ( ! isset( $this->raw[ $device ] ) ) {
-			$this->raw[ $device ] = [];
-		}
-
-		$this->raw[ $device ][] = trim( $css );
-
-		return $this;
 	}
 }

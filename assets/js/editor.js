@@ -1306,7 +1306,7 @@ App = Marionette.Application.extend( {
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
 				date_time: require( 'elementor-views/controls/date-time' ),
-				code_editor: require( 'elementor-views/controls/code-editor' ),
+				code: require( 'elementor-views/controls/code' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
@@ -1690,7 +1690,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"../utils/hooks":101,"elementor-layouts/panel/panel":50,"elementor-models/element":53,"elementor-panel/pages/elements/views/elements":37,"elementor-templates/manager":7,"elementor-utils/ajax":56,"elementor-utils/conditions":57,"elementor-utils/heartbeat":58,"elementor-utils/helpers":59,"elementor-utils/images-manager":60,"elementor-utils/introduction":61,"elementor-utils/modals":64,"elementor-utils/presets-factory":65,"elementor-utils/schemes":66,"elementor-views/controls/animation":71,"elementor-views/controls/base":74,"elementor-views/controls/box-shadow":75,"elementor-views/controls/choose":76,"elementor-views/controls/code-editor":77,"elementor-views/controls/color":78,"elementor-views/controls/date-time":79,"elementor-views/controls/dimensions":80,"elementor-views/controls/font":81,"elementor-views/controls/gallery":82,"elementor-views/controls/icon":83,"elementor-views/controls/image-dimensions":84,"elementor-views/controls/media":85,"elementor-views/controls/order":86,"elementor-views/controls/repeater":88,"elementor-views/controls/section":89,"elementor-views/controls/select2":90,"elementor-views/controls/slider":91,"elementor-views/controls/structure":92,"elementor-views/controls/tab":93,"elementor-views/controls/url":94,"elementor-views/controls/wp_widget":95,"elementor-views/controls/wysiwyg":96,"elementor-views/preview":98,"elementor-views/widget":100}],26:[function(require,module,exports){
+},{"../utils/hooks":101,"elementor-layouts/panel/panel":50,"elementor-models/element":53,"elementor-panel/pages/elements/views/elements":37,"elementor-templates/manager":7,"elementor-utils/ajax":56,"elementor-utils/conditions":57,"elementor-utils/heartbeat":58,"elementor-utils/helpers":59,"elementor-utils/images-manager":60,"elementor-utils/introduction":61,"elementor-utils/modals":64,"elementor-utils/presets-factory":65,"elementor-utils/schemes":66,"elementor-views/controls/animation":71,"elementor-views/controls/base":74,"elementor-views/controls/box-shadow":75,"elementor-views/controls/choose":76,"elementor-views/controls/code":77,"elementor-views/controls/color":78,"elementor-views/controls/date-time":79,"elementor-views/controls/dimensions":80,"elementor-views/controls/font":81,"elementor-views/controls/gallery":82,"elementor-views/controls/icon":83,"elementor-views/controls/image-dimensions":84,"elementor-views/controls/media":85,"elementor-views/controls/order":86,"elementor-views/controls/repeater":88,"elementor-views/controls/section":89,"elementor-views/controls/select2":90,"elementor-views/controls/slider":91,"elementor-views/controls/structure":92,"elementor-views/controls/tab":93,"elementor-views/controls/url":94,"elementor-views/controls/wp_widget":95,"elementor-views/controls/wysiwyg":96,"elementor-views/preview":98,"elementor-views/widget":100}],26:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -6387,6 +6387,7 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlCodeEditorItemView;
 
 ControlCodeEditorItemView = ControlBaseItemView.extend( {
+
 	ui: function() {
 		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
 
@@ -6398,7 +6399,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
-		if ( _.isUndefined( ace ) || ! self.model.attributes.use_advanced_editor ) {
+		if ( _.isUndefined( ace ) || ! self.model.get( 'use_advanced_editor' ) ) {
 			return;
 		}
 
@@ -6406,19 +6407,19 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 
 		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
 
-		self.editor.setOptions({
+		self.editor.setOptions( {
 			mode: 'ace/mode/' + self.model.attributes.language,
 			minLines: 10,
 			maxLines: Infinity,
 			showGutter: true,
 			useWorker: true
-		});
+		} );
 
 		self.editor.setValue( self.getControlValue(), -1 ); // -1 =  move cursor to the start
 
-		self.editor.on( 'change', function () {
+		self.editor.on( 'change', function() {
 			self.setValue( self.editor.getValue() );
-		});
+		} );
 
 		if ( 'html' === self.model.attributes.language ) {
 			// Remove the `doctype` annotation
@@ -6438,7 +6439,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 				if ( annotationsLength > annotations.length ) {
 					session.setAnnotations( annotations );
 				}
-			});
+			}) ;
 		}
 	}
 } );

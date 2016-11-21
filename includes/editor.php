@@ -260,8 +260,8 @@ class Editor {
 		);
 
 		wp_register_script(
-			'ace-builds',
-			ELEMENTOR_ASSETS_URL . 'lib/ace-builds/src-noconflict' . $suffix . '/ace.js',
+			'ace',
+			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
 			[],
 			'1.2.5',
 			true
@@ -285,7 +285,7 @@ class Editor {
 				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
-				'ace-builds',
+				'ace',
 			],
 			$plugin->get_version(),
 			true
