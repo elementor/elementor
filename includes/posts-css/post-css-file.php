@@ -16,11 +16,19 @@ class Post_CSS_File {
 
 	const META_KEY_CSS = '_elementor_css';
 
+	/*
+	 * @var int
+	 */
 	protected $post_id;
-	protected $is_build_with_elementor;
+
+	protected $is_built_with_elementor;
+
 	protected $path;
+
 	protected $url;
+
 	protected $css = '';
+
 	protected $fonts = [];
 
 	/**
@@ -38,9 +46,9 @@ class Post_CSS_File {
 		$data = $db->get_plain_editor( $post_id );
 		$edit_mode = $db->get_edit_mode( $post_id );
 
-		$this->is_build_with_elementor = ( ! empty( $data ) && 'builder' === $edit_mode );
+		$this->is_built_with_elementor = ( ! empty( $data ) && 'builder' === $edit_mode );
 
-		if ( ! $this->is_build_with_elementor ) {
+		if ( ! $this->is_built_with_elementor ) {
 			return;
 		}
 
@@ -49,7 +57,7 @@ class Post_CSS_File {
 	}
 
 	public function update() {
-		if ( ! $this->is_build_with_elementor() ) {
+		if ( ! $this->is_built_with_elementor() ) {
 			return;
 		}
 
@@ -101,7 +109,7 @@ class Post_CSS_File {
 			return;
 		}
 
-		if ( version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ) ) {
+		if ( apply_filters( 'elementor/css_file/update', version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ), $this ) ) {
 			$this->update();
 			// Refresh new meta
 			$meta = $this->get_meta();
@@ -121,12 +129,19 @@ class Post_CSS_File {
 		}
 	}
 
-	public function is_build_with_elementor() {
-		return $this->is_build_with_elementor;
+	public function is_built_with_elementor() {
+		return $this->is_built_with_elementor;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_post_id() {
+		return $this->post_id;
 	}
 
 	public function get_element_unique_selector( Element_Base $element ) {
-		return '.elementor-' . $this->post_id . ' .elementor-element.elementor-element-' . $element->get_id();
+		return '.elementor-' . $this->post_id . ' .elementor-element' . $element->get_unique_selector();
 	}
 
 	public function get_css() {
@@ -172,7 +187,7 @@ class Post_CSS_File {
 	}
 
 	protected function parse_elements_css() {
-		if ( ! $this->is_build_with_elementor() ) {
+		if ( ! $this->is_built_with_elementor() ) {
 			return;
 		}
 

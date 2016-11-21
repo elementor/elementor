@@ -6424,7 +6424,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			// Remove the `doctype` annotation
 			var session = self.editor.getSession();
 
-			session.on( 'changeAnnotation', function () {
+			session.on( 'changeAnnotation', function() {
 				var annotations = session.getAnnotations() || [],
 					annotationsLength = annotations.length,
 					index = annotations.length;

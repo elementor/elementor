@@ -102,6 +102,10 @@ abstract class Element_Base {
 
 	abstract public function get_name();
 
+	public function get_stack_id() {
+		return $this->get_name();
+	}
+
 	public final function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
@@ -485,6 +489,10 @@ abstract class Element_Base {
 			'elements' => $elements,
 			'isInner' => $data['isInner'],
 		];
+	}
+
+	public function get_unique_selector() {
+		return '.elementor-element-' . $this->get_id();
 	}
 
 	public function start_controls_section( $section_id, $args ) {
