@@ -539,8 +539,7 @@ abstract class Element_Base {
 		$this->add_control(
 			$tabs_id,
 			[
-				'type' => Controls_Manager::TAB,
-				'is_tabs_wrapper' => true,
+				'type' => Controls_Manager::TABS,
 			]
 		);
 

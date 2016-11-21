@@ -3,19 +3,13 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Control_Tab extends Control_Base {
+class Control_Tabs extends Control_Base {
 
 	public function get_type() {
-		return 'tab';
+		return 'tabs';
 	}
 
-	public function content_template() {
-		?>
-			<div class="elementor-panel-tab-heading">
-				{{{ data.label }}}
-			</div>
-		<?php
-	}
+	public function content_template() {}
 
 	protected function get_default_settings() {
 		return [
