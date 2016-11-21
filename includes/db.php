@@ -51,6 +51,8 @@ class DB {
 		} else {
 			unset( $GLOBALS['post'] );
 		}
+
+		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 
 	/**
@@ -173,10 +175,8 @@ class DB {
 
 	private function _render_element_plain_content( $element_data ) {
 		if ( 'widget' === $element_data['elType'] ) {
-			$widget_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
-
 			/** @var Widget_Base $widget */
-			$widget = new $widget_type( $element_data );
+			$widget = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
 			$widget->render_plain_content();
 		}
@@ -234,16 +234,7 @@ class DB {
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
-			if ( 'widget' === $element_data['elType'] ) {
-				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
-			} else {
-				$element_type = Plugin::instance()->elements_manager->get_element_types( $element_data['elType'] );
-			}
-
-			$element_class = $element_type->get_class_name();
-
-			/** @var Element_Base $element */
-			$element = new $element_class( $element_data );
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
 			$editor_data[] = $element->get_raw_data( $with_html_content );
 		} // End Section

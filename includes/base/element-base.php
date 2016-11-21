@@ -102,6 +102,10 @@ abstract class Element_Base {
 
 	abstract public function get_name();
 
+	public function get_stack_id() {
+		return $this->get_name();
+	}
+
 	public final function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
@@ -487,6 +491,10 @@ abstract class Element_Base {
 		];
 	}
 
+	public function get_unique_selector() {
+		return '.elementor-element-' . $this->get_id();
+	}
+
 	public function start_controls_section( $section_id, $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
@@ -531,8 +539,7 @@ abstract class Element_Base {
 		$this->add_control(
 			$tabs_id,
 			[
-				'type' => Controls_Manager::TAB,
-				'is_tabs_wrapper' => true,
+				'type' => Controls_Manager::TABS,
 			]
 		);
 
@@ -672,10 +679,10 @@ abstract class Element_Base {
 		$this->_settings = $this->_get_parsed_settings();
 	}
 
-	public function __construct( $data = [], $args = [] ) {
+	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
 			$this->_init( $data );
-		} else {
+		} elseif ( $args ) {
 			$this->_default_args = $args;
 		}
 	}

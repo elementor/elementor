@@ -1418,15 +1418,11 @@ select {
     float: left;
     height: 27px;
     width: 70px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-code {
-    padding: 0 10px 15px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tabs {
     font-size: 0.9em;
     color: #a4afb7;
     text-transform: uppercase; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.type-tabs > div:first-child {
-      display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs) {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab {
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -1434,13 +1430,12 @@ select {
     border: 1px solid #a4afb7;
     width: 50%;
     cursor: pointer; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.elementor-tab-active {
       background-color: #a4afb7;
       color: #ffffff; }
   .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater,
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
     padding: 0 10px 15px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:before {
     display: none; }
