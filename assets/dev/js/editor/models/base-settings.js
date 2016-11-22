@@ -28,9 +28,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		_.each( this.controls, function( field ) {
 			if ( 'repeater' === field.type ) {
-				attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
-					model: BaseSettingsModel
-				} );
+				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
+					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
+						model: BaseSettingsModel
+					} );
+				}
 			}
 		} );
 
