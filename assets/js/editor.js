@@ -8187,11 +8187,6 @@ WidgetView = BaseElementView.extend( {
 		return 'elementor-widget';
 	},
 
-	modelEvents: {
-		'before:remote:render': 'onModelBeforeRemoteRender',
-		'remote:render': 'onModelRemoteRender'
-	},
-
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
@@ -8208,6 +8203,11 @@ WidgetView = BaseElementView.extend( {
 		if ( ! editModel.getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
+
+		editModel.on( {
+			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
+			'remote:render': _.bind( this.onModelRemoteRender, this )
+		} );
 	},
 
 	getTemplateType: function() {
