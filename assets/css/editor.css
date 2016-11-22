@@ -1648,7 +1648,7 @@ select {
     .elementor-panel .wp-color-result:focus, .elementor-panel .wp-color-result:active {
       outline: 0; }
   .elementor-panel .wp-picker-clear {
-    height: 24px;
+    height: 26px;
     width: 48px;
     padding: 0;
     background-color: #d5dadf;
