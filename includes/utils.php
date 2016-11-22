@@ -69,13 +69,13 @@ class Utils {
 	}
 
 	public static function get_timezone_string() {
-		$current_offset = get_option( 'gmt_offset' );
+		$current_offset = (float) get_option( 'gmt_offset' );
 		$timezone_string = get_option( 'timezone_string' );
 
 		if ( empty( $timezone_string ) ) { // Create a UTC+- zone if no timezone string exists
-			if ( 0 == $current_offset )
+			if ( 0 === $current_offset )
 				$timezone_string = 'UTC+0';
-			elseif ($current_offset < 0)
+			elseif ( $current_offset < 0 )
 				$timezone_string = 'UTC' . $current_offset;
 			else $timezone_string = 'UTC+' . $current_offset;
 		}
