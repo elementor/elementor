@@ -141,6 +141,8 @@ class Elements_Manager {
 				'icon' => 'wordpress',
 			],
 		];
+		
+		do_action( 'elementor/elements/categories_registered' );
 	}
 
 	private function require_files() {
