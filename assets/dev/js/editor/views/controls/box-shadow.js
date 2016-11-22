@@ -43,9 +43,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 			clear: function() {
 				self.setValue( this.dataset.setting, '' );
-			},
-
-			width: 251
+			}
 		} );
 	},
 
