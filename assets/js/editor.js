@@ -4032,6 +4032,7 @@ helpers = {
 				return self.getColorPickerPaletteIndex( item.key );
 			} ),
 			defaultOptions = {
+				width: window.innerWidth >= 1440 ? 271 : 251,
 				palettes: _.pluck( items, 'value' )
 			};
 
@@ -6292,9 +6293,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 			clear: function() {
 				self.setValue( this.dataset.setting, '' );
-			},
-
-			width: 251
+			}
 		} );
 	},
 
@@ -6471,9 +6470,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 
 			clear: _.bind( function() {
 				this.setValue( '' );
-			}, this ),
-
-			width: 251
+			}, this )
 		} ).wpColorPicker( 'instance' )
 			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );

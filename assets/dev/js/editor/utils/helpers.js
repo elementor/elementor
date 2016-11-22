@@ -193,6 +193,7 @@ helpers = {
 				return self.getColorPickerPaletteIndex( item.key );
 			} ),
 			defaultOptions = {
+				width: window.innerWidth >= 1440 ? 271 : 251,
 				palettes: _.pluck( items, 'value' )
 			};
 

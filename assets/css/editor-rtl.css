@@ -784,13 +784,21 @@ select {
     position: relative; }
   .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item {
     display: inline-block; }
-    .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
-      margin-left: 13px; }
+    @media (max-width: 1439px) {
+      .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
+        margin-left: 13px; } }
+    @media (min-width: 1440px) {
+      .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
+        margin-left: 19px; } }
   .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(-37px);
-            transform: translateY(-37px); }
-    .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
-      margin-right: 7px; }
+    -webkit-transform: translateY(10px);
+            transform: translateY(10px); }
+    @media (max-width: 1439px) {
+      .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
+        margin-right: 4px; } }
+    @media (min-width: 1440px) {
+      .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
+        margin-right: 6px; } }
   .elementor-panel .elementor-panel-scheme-color-title {
     text-align: center;
     text-transform: uppercase;
@@ -1231,8 +1239,8 @@ select {
   .elementor-panel #elementor-panel-page-editor .wp-picker-container:not(.wp-picker-active) {
     float: left; }
   .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(-18px);
-            transform: translateY(-18px); }
+    -webkit-transform: translateY(5px);
+            transform: translateY(5px); }
     .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg * {
@@ -1630,6 +1638,7 @@ select {
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
+    top: 0;
     left: 0;
     background-color: #fff;
     border: solid #fff;
@@ -1661,7 +1670,7 @@ select {
     .elementor-panel .wp-color-result:focus, .elementor-panel .wp-color-result:active {
       outline: 0; }
   .elementor-panel .wp-picker-clear {
-    height: 24px;
+    height: 26px;
     width: 48px;
     padding: 0;
     background-color: #d5dadf;
