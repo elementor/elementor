@@ -1641,7 +1641,7 @@ select {
     padding: 0;
     border-radius: 3px;
     border: 1px solid #d5dadf; }
-    .elementor-panel .wp-color-result:after {
+    .elementor-panel .wp-color-result:after, .elementor-panel .wp-color-result.wp-picker-open:after {
       content: none; }
     .elementor-panel .wp-color-result:hover {
       border: 1px solid #a4afb7; }
