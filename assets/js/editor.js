@@ -6403,7 +6403,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
-		if ( 'undefined' === typeof ace || ! self.model.get( 'use_advanced_editor' ) ) {
+		if ( 'undefined' === typeof ace ) {
 			return;
 		}
 
@@ -6511,12 +6511,13 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 			}
 		};
 
-		this.ui.picker.appendDtpicker( options ).handleDtpicker( 'setDate', new Date( this.getControlValue() * 1000 ) );
+		this.ui.picker.appendDtpicker( options ).handleDtpicker( 'setDate', new Date( this.getControlValue() ) );
 	},
 
 	saveValue: function() {
 		var date = this.ui.picker.handleDtpicker( 'getDate' );
-		this.setValue( date.getTime() / 1000 );
+
+		this.setValue( date.toISOString().substring( 0, 16 ).replace( 'T', ' ' ) );
 	},
 
 	onBeforeDestroy: function() {

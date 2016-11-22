@@ -182,35 +182,7 @@ class Settings {
 			]
 		);
 
-		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );// Tools section
-
-		// Advanced Editor
-		$advanced_code_editor_section = 'elementor_advanced_code_editor_section';
-
-		add_settings_section(
-			$advanced_code_editor_section,
-			__( 'Advanced Editor', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
-			self::PAGE_ID
-		);
-
-		$field_id = 'elementor_use_advanced_code_editor';
-		add_settings_field(
-			$field_id,
-			__( 'Advanced Code Editor', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$advanced_code_editor_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox',
-				'value' => 'yes',
-				'default' => 'yes',
-				'sub_desc' => __( 'Enable the advanced code editor', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
+		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
 	}
 
 	public function register_admin_menu() {
