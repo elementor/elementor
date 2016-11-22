@@ -6403,7 +6403,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
-		if ( 'undefined' === typeof ace || ! self.model.get( 'use_advanced_editor' ) ) {
+		if ( 'undefined' === typeof ace ) {
 			return;
 		}
 

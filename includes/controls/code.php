@@ -12,7 +12,6 @@ class Control_Code extends Control_Base {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'use_advanced_editor' => ( 'yes' === get_option( 'elementor_use_advanced_code_editor', 'yes' ) ),
 			'language' => 'html', // html/css
 		];
 	}
