@@ -17,6 +17,9 @@ TemplateLibraryManager = function() {
 
 	var registerDefaultTemplateTypes = function() {
 		var data = {
+			saveDialog: {
+				description: elementor.translate( 'save_your_template_description' )
+			},
 			ajaxParams: {
 				success: function( data ) {
 					self.getTemplatesCollection().add( data );
@@ -32,7 +35,9 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			self.registerTemplateType( type, data );
+			data.saveDialog.title = elementor.translate( 'save_your_template', [ elementor.translate( type ) ] );
+
+			self.registerTemplateType( type, elementor.helpers.cloneObject( data ) );
 		} );
 	};
 

@@ -14,6 +14,13 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit'
 	},
 
+	templateHelpers: function() {
+		var saveType = this.getSaveType(),
+			templateType = elementor.templates.getTemplateTypes( saveType );
+
+		return templateType.saveDialog;
+	},
+
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
