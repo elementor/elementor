@@ -3176,6 +3176,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			model: model,
 			editedElementView: view
 		} );
+
+		// Example: panel/open_editor/widget/slides
+		var action = 'panel/open_editor/' + elementData.elType + '/' + elementData.widget_type;
+		elementorFrontend.hooks.doAction( action, this, model, view );
 	},
 
 	onBeforeShow: function() {

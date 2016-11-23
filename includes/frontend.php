@@ -113,6 +113,8 @@ class Frontend {
 				'is_rtl' => is_rtl(),
 			]
 		);
+
+		do_action( 'elementor/frontend/enqueue_scripts' );
 	}
 
 	public function enqueue_styles() {
