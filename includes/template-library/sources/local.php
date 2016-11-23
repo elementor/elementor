@@ -260,7 +260,10 @@ class Source_Local extends Source_Base {
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( $this->_is_base_templates_screen() ) {
-			$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			if ( $this->is_template_supports_export( $post->ID ) ) {
+				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			}
+
 			unset( $actions['inline hide-if-no-js'] );
 		}
 
@@ -293,6 +296,10 @@ class Source_Local extends Source_Base {
 			wp_redirect( site_url(), 301 );
 			die;
 		}
+	}
+
+	public function is_template_supports_export( $template_id ) {
+		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
 	private function _is_base_templates_screen() {
