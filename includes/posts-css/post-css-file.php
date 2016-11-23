@@ -233,7 +233,7 @@ class Post_CSS_File {
 				}
 			}
 
-			if ( ! $element->is_control_visible( $control, $values ) ) {
+			if ( ! $element->is_control_visible( $control, $values ) || empty( $control['selectors'] ) ) {
 				continue;
 			}
 
