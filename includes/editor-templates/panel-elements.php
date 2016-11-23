@@ -36,8 +36,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-panel-global">
 	<div class="elementor-panel-nerd-box">
 		<i class="elementor-panel-nerd-box-icon eicon-hypster"></i>
-		<div class="elementor-panel-nerd-box-title"><?php echo __( 'What about you?', 'elementor' ); ?></div>
-		<div class="elementor-panel-nerd-box-message"><?php echo __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ); ?></div>
-		<a class="elementor-panel-nerd-box-link" href="https://go.elementor.com/pro/" target="_blank"><?php echo __( 'Get Elementor Pro', 'elementor' ); ?></a>
+		<div class="elementor-panel-nerd-box-title"><?php echo __( 'Meet Our Global Widget', 'elementor' ); ?></div>
+		<div class="elementor-panel-nerd-box-message"><?php echo __( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
+		<div class="elementor-panel-nerd-box-message"><?php echo __( 'This feature is only available on Elementor Pro.', 'elementor' ); ?></div>
+		<a class="elementor-panel-nerd-box-link" href="https://go.elementor.com/pro/" target="_blank"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 	</div>
 </script>
