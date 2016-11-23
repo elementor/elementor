@@ -1437,14 +1437,13 @@ select {
     display: -ms-flexbox;
     display: flex; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab {
-    display: inline-block;
     text-align: center;
-    vertical-align: middle;
-    padding: 9px;
+    width: 100%;
+    padding: 0;
+    line-height: 30px;
     border-top: 1px solid #a4afb7;
     border-bottom: 1px solid #a4afb7;
     border-left: 1px solid #a4afb7;
-    width: 100%;
     cursor: pointer; }
     .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:first-child {
       border-right: 1px solid #a4afb7;
@@ -1459,7 +1458,7 @@ select {
   .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater,
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:not(.elementor-control-type-tab) {
     padding: 0 10px 15px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:before {
     display: none; }
