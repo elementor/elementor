@@ -462,6 +462,9 @@ TemplateLibraryManager = function() {
 
 	var registerDefaultTemplateTypes = function() {
 		var data = {
+			saveDialog: {
+				description: elementor.translate( 'save_your_template_description' )
+			},
 			ajaxParams: {
 				success: function( data ) {
 					self.getTemplatesCollection().add( data );
@@ -477,12 +480,22 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			self.registerTemplateType( type, data );
+			data.saveDialog.title = elementor.translate( 'save_your_template', [ elementor.translate( type ) ] );
+
+			self.registerTemplateType( type, elementor.helpers.cloneObject( data ) );
 		} );
 	};
 
-	var init = function() {
+	this.init = function() {
 		registerDefaultTemplateTypes();
+	};
+
+	this.getTemplateTypes = function( type ) {
+		if ( type ) {
+			return templateTypes[ type ];
+		}
+
+		return templateTypes;
 	};
 
 	this.registerTemplateType = function( type, data ) {
@@ -669,8 +682,6 @@ TemplateLibraryManager = function() {
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
-
-	init();
 };
 
 module.exports = new TemplateLibraryManager();
@@ -1030,6 +1041,17 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit'
 	},
 
+	getSaveType: function() {
+		return this.model ? this.model.get( 'elType' ) : 'page';
+	},
+
+	templateHelpers: function() {
+		var saveType = this.getSaveType(),
+			templateType = elementor.templates.getTemplateTypes( saveType );
+
+		return templateType.saveDialog;
+	},
+
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
@@ -1112,8 +1134,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return filterValue === model.get( 'source' );
 	},
 
+	filterByType: function( model ) {
+		return false !== elementor.templates.getTemplateTypes( model.get( 'type' ) ).showInLibrary;
+	},
+
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterBySource( childModel );
+		return this.filterByName( childModel ) && this.filterBySource( childModel ) && this.filterByType( childModel );
 	},
 
 	onRenderCollection: function() {
@@ -1326,6 +1352,7 @@ App = Marionette.Application.extend( {
 	initComponents: function() {
 		var EventManager = require( '../utils/hooks' );
 		this.hooks = new EventManager();
+		this.templates.init();
 
 		this.initDialogsManager();
 
