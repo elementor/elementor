@@ -254,10 +254,6 @@ class Post_CSS_File {
 			$this->fonts[] = $value;
 		}
 
-		if ( ! isset( $control['selectors'] ) ) {
-			return;
-		}
-
 		$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
