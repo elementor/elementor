@@ -237,9 +237,7 @@ class Post_CSS_File {
 				continue;
 			}
 
-			if ( ! empty( $control['selectors'] ) ) {
-				$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
-			}
+			$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
 		}
 
 		foreach ( $element->get_children() as $child_element ) {
