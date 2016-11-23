@@ -35,9 +35,13 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			data.saveDialog.title = elementor.translate( 'save_your_template', [ elementor.translate( type ) ] );
+			var safeData = Backbone.$.extend( true, {}, data, {
+				saveDialog: {
+					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] )
+				}
+			} );
 
-			self.registerTemplateType( type, elementor.helpers.cloneObject( data ) );
+			self.registerTemplateType( type, safeData );
 		} );
 	};
 
