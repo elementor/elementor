@@ -20,7 +20,7 @@ class Source_Local extends Source_Base {
 		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
 	}
 
-	public static function _is_base_templates_screen() {
+	public static function is_base_templates_screen() {
 		global $current_screen;
 
 		if ( ! $current_screen ) {
@@ -269,7 +269,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
-		if ( self::_is_base_templates_screen() ) {
+		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
 				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
@@ -281,7 +281,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_import_template_form() {
-		if ( ! self::_is_base_templates_screen() ) {
+		if ( ! self::is_base_templates_screen() ) {
 			return;
 		}
 		?>
