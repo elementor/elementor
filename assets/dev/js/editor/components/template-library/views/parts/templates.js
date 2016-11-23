@@ -52,8 +52,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return filterValue === model.get( 'source' );
 	},
 
+	filterByType: function( model ) {
+		return false !== elementor.templates.getTemplateTypes( model.get( 'type' ) ).showInLibrary;
+	},
+
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterBySource( childModel );
+		return this.filterByName( childModel ) && this.filterBySource( childModel ) && this.filterByType( childModel );
 	},
 
 	onRenderCollection: function() {

@@ -1239,8 +1239,8 @@ select {
   .elementor-panel #elementor-panel-page-editor .wp-picker-container:not(.wp-picker-active) {
     float: left; }
   .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(5px);
-            transform: translateY(5px); }
+    -webkit-transform: translateY(6px);
+            transform: translateY(6px); }
     .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg * {
@@ -1657,19 +1657,20 @@ select {
     margin: 0;
     width: 48px;
     height: 25px;
-    box-shadow: inset 0 0 0 3px white;
     -webkit-transition: border .5s;
     transition: border .5s;
     padding: 0;
     border-radius: 3px;
     border: 1px solid #d5dadf; }
+    .elementor-panel .wp-color-result, .elementor-panel .wp-color-result:focus {
+      box-shadow: inset 0 0 0 3px white; }
     .elementor-panel .wp-color-result:after, .elementor-panel .wp-color-result.wp-picker-open:after {
       content: none; }
     .elementor-panel .wp-color-result:hover {
       border: 1px solid #a4afb7; }
     .elementor-panel .wp-color-result:focus, .elementor-panel .wp-color-result:active {
       outline: 0; }
-  .elementor-panel .wp-picker-clear {
+  .elementor-panel .wp-picker-clear.button {
     height: 26px;
     width: 48px;
     padding: 0;

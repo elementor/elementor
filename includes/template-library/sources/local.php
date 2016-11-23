@@ -16,6 +16,20 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	public static function get_template_type( $template_id ) {
+		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
+	}
+
+	public static function is_base_templates_screen() {
+		global $current_screen;
+
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		return 'edit' === $current_screen->base && self::CPT === $current_screen->post_type;
+	}
+
 	public function get_id() {
 		return 'local';
 	}
@@ -156,7 +170,7 @@ class Source_Local extends Source_Base {
 		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
-			'type' => get_post_meta( $post->ID, self::TYPE_META_KEY, true ),
+			'type' => self::get_template_type( $post->ID ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
@@ -201,7 +215,7 @@ class Source_Local extends Source_Base {
 		$export_data = [
 			'version' => DB::DB_VERSION,
 			'title' => get_the_title( $item_id ),
-			'type' => get_post_meta( $item_id, self::TYPE_META_KEY, true ),
+			'type' => self::get_template_type( $item_id ),
 			'data' => $template_data,
 		];
 
@@ -255,8 +269,11 @@ class Source_Local extends Source_Base {
 	}
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
-		if ( $this->_is_base_templates_screen() ) {
-			$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+		if ( self::is_base_templates_screen() ) {
+			if ( $this->is_template_supports_export( $post->ID ) ) {
+				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+			}
+
 			unset( $actions['inline hide-if-no-js'] );
 		}
 
@@ -264,7 +281,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_import_template_form() {
-		if ( ! $this->_is_base_templates_screen() ) {
+		if ( ! self::is_base_templates_screen() ) {
 			return;
 		}
 		?>
@@ -291,14 +308,8 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	private function _is_base_templates_screen() {
-		global $current_screen;
-
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		return 'edit' === $current_screen->base && self::CPT === $current_screen->post_type;
+	public function is_template_supports_export( $template_id ) {
+		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
 	private function _get_export_link( $item_id ) {
