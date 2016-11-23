@@ -51,18 +51,6 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		sass: {
-			dist: {
-				files: [ {
-					expand: true,
-					cwd: 'assets/dev/scss/direction',
-					src: '*.scss',
-					dest: 'assets/css',
-					ext: '.css'
-				} ]
-			}
-		},
-
 		browserify: {
 			options: {
 				browserifyOptions: {
@@ -199,6 +187,18 @@ module.exports = function( grunt ) {
 				'Gruntfile.js',
 				'assets/js/dev/**/*.js'
 			]
+		},
+
+		sass: {
+			dist: {
+				files: [ {
+					expand: true,
+					cwd: 'assets/dev/scss/direction',
+					src: '*.scss',
+					dest: 'assets/css',
+					ext: '.css'
+				} ]
+			}
 		},
 
 		postcss: {
