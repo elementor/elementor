@@ -36,7 +36,7 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	var init = function() {
+	this.init = function() {
 		registerDefaultTemplateTypes();
 	};
 
@@ -224,8 +224,6 @@ TemplateLibraryManager = function() {
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
-
-	init();
 };
 
 module.exports = new TemplateLibraryManager();
