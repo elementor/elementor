@@ -45,6 +45,14 @@ TemplateLibraryManager = function() {
 		registerDefaultTemplateTypes();
 	};
 
+	this.getTemplateTypes = function( type ) {
+		if ( type ) {
+			return templateTypes[ type ];
+		}
+
+		return templateTypes;
+	};
+
 	this.registerTemplateType = function( type, data ) {
 		templateTypes[ type ] = data;
 	};
