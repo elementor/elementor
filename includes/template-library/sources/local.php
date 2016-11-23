@@ -16,6 +16,10 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	public static function get_template_type( $template_id ) {
+		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
+	}
+
 	public function get_id() {
 		return 'local';
 	}
@@ -156,7 +160,7 @@ class Source_Local extends Source_Base {
 		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
-			'type' => get_post_meta( $post->ID, self::TYPE_META_KEY, true ),
+			'type' => self::get_template_type( $post->ID ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
@@ -201,7 +205,7 @@ class Source_Local extends Source_Base {
 		$export_data = [
 			'version' => DB::DB_VERSION,
 			'title' => get_the_title( $item_id ),
-			'type' => get_post_meta( $item_id, self::TYPE_META_KEY, true ),
+			'type' => self::get_template_type( $item_id ),
 			'data' => $template_data,
 		];
 
