@@ -72,7 +72,8 @@ class Utils {
 		$current_offset = (float) get_option( 'gmt_offset' );
 		$timezone_string = get_option( 'timezone_string' );
 
-		if ( empty( $timezone_string ) ) { // Create a UTC+- zone if no timezone string exists
+		// Create a UTC+- zone if no timezone string exists
+		if ( empty( $timezone_string ) ) {
 			if ( 0 === $current_offset )
 				$timezone_string = 'UTC+0';
 			elseif ( $current_offset < 0 )

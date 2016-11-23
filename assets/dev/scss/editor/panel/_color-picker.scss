@@ -3,6 +3,7 @@
 	&.wp-picker-active {
 		position: absolute;
 		z-index: 1;
+		top: 0;
 		left: 0;
 		background-color: #fff;
 		border: solid #fff;
@@ -38,8 +39,11 @@
 	border-radius: 3px;
 	border: 1px solid $editor-lightest;
 
-	&:after {
-		content: none;
+	&, &.wp-picker-open {
+
+		&:after {
+			content: none;
+		}
 	}
 
 	&:hover {
@@ -53,7 +57,7 @@
 }
 
 .wp-picker-clear {
-	height: 24px;
+	height: 26px;
 	width: 48px;
 	padding: 0;
 	background-color: #d5dadf;
