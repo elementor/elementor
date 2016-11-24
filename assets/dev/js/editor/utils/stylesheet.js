@@ -77,6 +77,17 @@
 			rules = sortedRules;
 		};
 
+		var getQueryHashStyleFormat = function( queryHash ) {
+			var query = hashToQuery( queryHash ),
+				styleFormat = [];
+
+			$.each( query, function( endPoint ) {
+				styleFormat.push( '(' + endPoint + '-width:' + this + 'px)' );
+			} );
+
+			return '@media' + styleFormat.join( ' and ' );
+		};
+
 		this.addDevice = function( deviceName, deviceValue ) {
 			devices[ deviceName ] = deviceValue;
 
@@ -102,17 +113,6 @@
 			return self;
 		};
 
-		var getQueryHashStyleFormat = function( queryHash ) {
-			var query = hashToQuery( queryHash ),
-				styleFormat = [];
-
-			$.each( query, function( endPoint ) {
-				styleFormat.push( '(' + endPoint + '-width:' + this + 'px)' );
-			} );
-
-			return '@media' + styleFormat.join( ' and ' );
-		};
-
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
 
@@ -122,6 +122,18 @@
 
 			if ( ! rules[ queryHash ] ) {
 				addQueryHash( queryHash );
+			}
+
+			if ( ! styleRules ) {
+				var parsedRules = selector.match( /[^\s\\].+?(?=\{)\{.+?(?=})}/g );
+
+				$.each( parsedRules, function() {
+					var parsedRule = this.match( /(.+?(?=\{))\{(.+?(?=}))}/ );
+
+					self.addRules( parsedRule[1], parsedRule[2], query );
+				} );
+
+				return;
 			}
 
 			if ( ! rules[ queryHash ][ selector ] ) {
@@ -145,6 +157,10 @@
 			$.extend( rules[ queryHash ][ selector ], styleRules );
 
 			return self;
+		};
+
+		this.getRules = function() {
+			return rules;
 		};
 
 		this.empty = function() {
