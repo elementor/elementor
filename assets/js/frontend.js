@@ -293,21 +293,10 @@ module.exports = function( $scoop, $ ) {
 
 },{}],9:[function(require,module,exports){
 module.exports = function( $scoop, $ ) {
-	var interval = 80;
-
 	$scoop.find( '.elementor-progress-bar' ).waypoint( function() {
-		var $progressbar = $( this ),
-			max = parseInt( $progressbar.data( 'max' ), 10 ),
-			$inner = $progressbar.next(),
-			$innerTextWrap = $inner.find( '.elementor-progress-text' ),
-			$percent = $inner.find( '.elementor-progress-percentage' ),
-			innerText = $inner.data( 'inner' ) ? $inner.data( 'inner' ) : '';
+		var $progressbar = $( this );
 
-		$progressbar.css( 'width', max + '%' );
-		$inner.css( 'width', max + '%' );
-		$innerTextWrap.html( innerText + '' );
-		$percent.html(  max + '%' );
-
+		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
 	}, { offset: '90%' } );
 };
 

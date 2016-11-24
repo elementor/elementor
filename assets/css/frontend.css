@@ -772,26 +772,31 @@
   height: 30px;
   line-height: 30px;
   border-radius: 2px; }
-  .elementor-progress-wrapper .elementor-progress-bar {
-    display: inline-block;
-    background-color: #818a91;
-    height: 100%;
-    width: 0;
-    border-radius: 2px;
-    -webkit-transition: width 1s ease-in-out;
-    transition: width 1s ease-in-out; }
-  .elementor-progress-wrapper .elementor-progress-inner-text {
-    display: inline-block;
-    position: absolute;
-    left: 0;
-    padding: 0 15px;
-    font-size: 11px;
-    width: 0;
-    -webkit-transition: width 1s ease-in-out;
-    transition: width 1s ease-in-out; }
-    .elementor-progress-wrapper .elementor-progress-inner-text .elementor-progress-percentage {
-      position: relative;
-      float: right; }
+
+.elementor-progress-bar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  background-color: #818a91;
+  width: 0;
+  font-size: 11px;
+  border-radius: 2px;
+  -webkit-transition: width 1s ease-in-out;
+  transition: width 1s ease-in-out; }
+
+.elementor-progress-text {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 15px; }
+
+.elementor-progress-percentage {
+  padding-right: 15px; }
 
 .elementor-widget-progress .elementor-progress-wrapper.progress-info .elementor-progress-bar {
   background-color: #5bc0de; }
@@ -808,9 +813,7 @@
 @media (max-width: 767px) {
   .elementor-progress-wrapper {
     height: 25px;
-    line-height: 25px; }
-    .elementor-progress-wrapper .elementor-progress-inner-text {
-      padding: 0 10px; } }
+    line-height: 25px; } }
 .elementor-tabs {
   text-align: left; }
   .elementor-tabs .elementor-tabs-wrapper {
