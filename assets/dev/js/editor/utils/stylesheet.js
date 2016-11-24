@@ -77,6 +77,17 @@
 			rules = sortedRules;
 		};
 
+		var getQueryHashStyleFormat = function( queryHash ) {
+			var query = hashToQuery( queryHash ),
+				styleFormat = [];
+
+			$.each( query, function( endPoint ) {
+				styleFormat.push( '(' + endPoint + '-width:' + this + 'px)' );
+			} );
+
+			return '@media' + styleFormat.join( ' and ' );
+		};
+
 		this.addDevice = function( deviceName, deviceValue ) {
 			devices[ deviceName ] = deviceValue;
 
@@ -100,17 +111,6 @@
 			devices = sortedDevices;
 
 			return self;
-		};
-
-		var getQueryHashStyleFormat = function( queryHash ) {
-			var query = hashToQuery( queryHash ),
-				styleFormat = [];
-
-			$.each( query, function( endPoint ) {
-				styleFormat.push( '(' + endPoint + '-width:' + this + 'px)' );
-			} );
-
-			return '@media' + styleFormat.join( ' and ' );
 		};
 
 		this.addRules = function( selector, styleRules, query ) {
