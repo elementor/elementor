@@ -101,7 +101,7 @@ class Source_Local extends Source_Base {
 		);
 	}
 
-	public function get_items() {
+	public function get_items( $args = [] ) {
 		$templates_query = new \WP_Query(
 			[
 				'post_type' => self::CPT,
@@ -118,6 +118,10 @@ class Source_Local extends Source_Base {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
+		}
+
+		if ( ! empty( $args ) ) {
+			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;
