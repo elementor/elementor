@@ -71,11 +71,15 @@ class Manager {
 		return $sources[ $id ];
 	}
 
-	public function get_templates() {
+	public function get_templates( $args = [] ) {
 		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
 			$templates = array_merge( $templates, $source->get_items() );
+		}
+
+		if ( ! empty( $args ) ) {
+			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;
