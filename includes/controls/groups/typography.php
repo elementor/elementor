@@ -139,6 +139,9 @@ class Group_Control_Typography extends Group_Control_Base {
 			];
 		} );
 
+		/*
+		 *  Custom Typography old (select control) version
+		 *
 		$typography_control = [
 			'typography' => [
 				'label' => _x( 'Typography', 'Typography Control', 'elementor' ),
@@ -150,10 +153,8 @@ class Group_Control_Typography extends Group_Control_Base {
 				],
 			],
 		];
+		*/
 
-		/*
-		 *  Custom Typography switch control version
-		 *
 		$typography_control = [
 			'typography' => [
 				'label' => _x( 'Custom Typography', 'Typography Control', 'elementor' ),
@@ -162,7 +163,6 @@ class Group_Control_Typography extends Group_Control_Base {
 				'return_value' => 'custom',
 			],
 		];
-		*/
 
 		$controls = $typography_control + $controls;
 

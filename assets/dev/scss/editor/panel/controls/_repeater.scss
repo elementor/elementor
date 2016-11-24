@@ -5,7 +5,7 @@
 .elementor-control-type-repeater {
 
 	&,
-	.elementor-control {
+	.elementor-control:not(.elementor-control-type-tab) {
 		padding: 0 10px 15px;
 	}
 
