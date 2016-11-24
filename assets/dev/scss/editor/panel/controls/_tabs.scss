@@ -8,14 +8,13 @@
 }
 
 .elementor-control-type-tab {
-	display: inline-block;
 	text-align: center;
-	vertical-align: middle;
-	padding: 9px;
+	width: 100%;
+	padding: 0;
+	line-height: 30px;
 	border-top: 1px solid $editor-light;
 	border-bottom: 1px solid $editor-light;
 	@include border-end(1px solid $editor-light);
-	width: 100%;
 	cursor: pointer;
 
 	&:first-child {

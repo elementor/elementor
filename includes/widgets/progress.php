@@ -144,7 +144,7 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Inner Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-inner-text' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-progress-bar' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -189,71 +189,44 @@ class Widget_Progress extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		$html = '';
-
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-progress-wrapper' );
 
 		if ( ! empty( $settings['progress_type'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'class', 'progress-' . $settings['progress_type'] );
 		}
 
-		if ( ! empty( $settings['title'] ) ) {
-			$html .= '<span class="elementor-title">' . $settings['title'] . '</span>';
-		}
+		$this->add_render_attribute( 'progress-bar', [
+			'class' => 'elementor-progress-bar',
+			'data-max' => $settings['percent']['size'],
+		] );
 
-		$html .= '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' role="timer">';
+		if ( ! empty( $settings['title'] ) ) { ?>
+			<span class="elementor-title"><?php echo $settings['title']; ?></span>
+		<?php } ?>
 
-		$html .= '<span class="elementor-progress-bar" data-max="' . $settings['percent']['size'] . '"></span>';
-
-		if ( ! empty( $settings['inner_text'] ) ) {
-			$data_inner = ' data-inner="' . $settings['inner_text'] . '"';
-		} else {
-			$data_inner = '';
-		}
-
-		$html .= '<span class="elementor-progress-inner-text"' . $data_inner . '>';
-
-		$html .= '<span class="elementor-progress-text"></span>';
-
-		if ( 'hide' !== $settings['display_percentage'] ) {
-			$html .= '<span class="elementor-progress-percentage"></span>';
-		}
-
-		$html .= '</span></div>';
-
-		echo $html;
-	}
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?> role="timer">
+			<div <?php echo $this->get_render_attribute_string( 'progress-bar' ); ?>>
+				<span class="elementor-progress-text"><?php echo $settings['inner_text']; ?></span>
+				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
+					<span class="elementor-progress-percentage"><?php echo $settings['percent']['size']; ?>%</span>
+				<?php } ?>
+			</div>
+		</div>
+	<?php }
 
 	protected function _content_template() {
 		?>
-		<#
-		var html = '';
-
-		if ( '' !== settings.title ) {
-			html += '<span class="elementor-title">' + settings.title + '</span>';
-		}
-
-		html += '<div class="elementor-progress-wrapper progress-' + settings.progress_type + '" role="timer">';
-
-		html += '<span class="elementor-progress-bar" data-max="' + settings.percent.size + '"></span>';
-
-		if ( '' !== settings.sub_title ) {
-			var data_inner = ' data-inner="' + settings.inner_text + '"';
-		} else {
-			var data_inner = '';
-		}
-
-		html += '<span class="elementor-progress-inner-text"' + data_inner + '>';
-		html += '<span class="elementor-progress-text"></span>';
-
-		if ( 'hide' !== settings.display_percentage ) {
-			html += '<span class="elementor-progress-percentage"></span>';
-		}
-
-		html += '</span></div>';
-
-		print( html );
-		#>
+		<# if ( settings.title ) { #>
+		<span class="elementor-title">{{{ settings.title }}}</span><#
+		} #>
+		<div class="elementor-progress-wrapper progress-{{ settings.progress_type }}" role="timer">
+			<div class="elementor-progress-bar" data-max="{{ settings.percent.size }}">
+				<span class="elementor-progress-text">{{{ settings.inner_text }}}</span>
+			<# if ( 'hide' !== settings.display_percentage ) { #>
+				<span class="elementor-progress-percentage">{{{ settings.percent.size }}}%</span>
+			<# } #>
+			</div>
+		</div>
 		<?php
 	}
 }
