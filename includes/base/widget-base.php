@@ -224,7 +224,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
 
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_element_type() . '.' . $skin_type );
 		?>
 		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php

@@ -102,7 +102,7 @@ abstract class Element_Base {
 
 	abstract public function get_name();
 
-	public function get_stack_id() {
+	public function get_element_type() {
 		return $this->get_name();
 	}
 
