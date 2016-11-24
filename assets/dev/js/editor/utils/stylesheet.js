@@ -159,6 +159,10 @@
 			return self;
 		};
 
+		this.getRules = function() {
+			return rules;
+		};
+
 		this.empty = function() {
 			rules = {};
 		};
