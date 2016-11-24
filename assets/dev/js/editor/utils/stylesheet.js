@@ -124,6 +124,18 @@
 				addQueryHash( queryHash );
 			}
 
+			if ( ! styleRules ) {
+				var parsedRules = selector.match( /[^\s\\].+?(?=\{)\{.+?(?=})}/g );
+
+				$.each( parsedRules, function() {
+					var parsedRule = this.match( /(.+?(?=\{))\{(.+?(?=}))}/ );
+
+					self.addRules( parsedRule[1], parsedRule[2], query );
+				} );
+
+				return;
+			}
+
 			if ( ! rules[ queryHash ][ selector ] ) {
 				rules[ queryHash ][ selector ] = {};
 			}
