@@ -17,6 +17,9 @@ TemplateLibraryManager = function() {
 
 	var registerDefaultTemplateTypes = function() {
 		var data = {
+			saveDialog: {
+				description: elementor.translate( 'save_your_template_description' )
+			},
 			ajaxParams: {
 				success: function( data ) {
 					self.getTemplatesCollection().add( data );
@@ -32,12 +35,26 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			self.registerTemplateType( type, data );
+			var safeData = Backbone.$.extend( true, {}, data, {
+				saveDialog: {
+					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] )
+				}
+			} );
+
+			self.registerTemplateType( type, safeData );
 		} );
 	};
 
-	var init = function() {
+	this.init = function() {
 		registerDefaultTemplateTypes();
+	};
+
+	this.getTemplateTypes = function( type ) {
+		if ( type ) {
+			return templateTypes[ type ];
+		}
+
+		return templateTypes;
 	};
 
 	this.registerTemplateType = function( type, data ) {
@@ -224,8 +241,6 @@ TemplateLibraryManager = function() {
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
-
-	init();
 };
 
 module.exports = new TemplateLibraryManager();
