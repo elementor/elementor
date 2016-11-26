@@ -36,6 +36,18 @@ class Widget_Heading extends Widget_Base {
 		);
 
 		$this->add_control(
+			'is_anchor',
+			[
+				'label' => __( 'Is Anchor', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'label_on' => __( 'Yes', 'elementor' ),
+				'label_off' => __( 'No', 'elementor' ),
+				'return_value' => 1,
+			]
+		);
+
+		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
@@ -168,6 +180,11 @@ class Widget_Heading extends Widget_Base {
 			return;
 
 		$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title' );
+
+		if ( $settings['is_anchor'] ) {
+			$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title-is-anchor' );
+			$this->add_render_attribute( 'heading', 'id', sanitize_title( $settings['title'] ) );
+		}
 
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $settings['size'] );
