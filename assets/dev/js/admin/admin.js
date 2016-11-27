@@ -11,7 +11,9 @@
 				$switchModeInput: $( '#elementor-switch-mode-input' ),
 				$switchModeButton: $( '#elementor-switch-mode-button' ),
 				$elementorLoader: $( '.elementor-loader' ),
-				$builderEditor: $( '#elementor-editor' )
+				$builderEditor: $( '#elementor-editor' ),
+				$importButton: $( '#elementor-import-template-trigger' ),
+				$importArea: $( '#elementor-import-template-area' )
 			};
 		},
 
@@ -110,14 +112,14 @@
 			}
 
 			var self = this,
-				$importButton = self.cache.$importButton = $( '#elementor-import-template-trigger' ),
-				$importArea = self.cache.$importArea = $( '#elementor-import-template-area' );
+				$importButton = self.cache.$importButton,
+				$importArea = self.cache.$importArea;
 
 			self.cache.$formAnchor = $( 'h1' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).after( $importButton );
 
-			self.cache.$formAnchor.after( self.cache.$importArea );
+			self.cache.$formAnchor.after( $importArea );
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
