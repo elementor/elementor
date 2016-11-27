@@ -243,8 +243,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
-						_.extend( {}, placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						_.extend( {}, replacements, [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
 				} );
 			}
@@ -408,7 +408,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			editModel.setHtmlCache();
+			this.model.setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {

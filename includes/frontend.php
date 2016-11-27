@@ -44,11 +44,11 @@ class Frontend {
 			->add_device( 'tablet', $breakpoints['lg'] - 1 );
 	}
 
-	protected function _print_sections( $sections_data ) {
-		foreach ( $sections_data as $section_data ) {
-			$section = new Element_Section( $section_data );
+	protected function _print_elements( $elements_data ) {
+		foreach ( $elements_data as $element_data ) {
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
-			$section->print_element();
+			$element->print_element();
 		}
 	}
 
@@ -317,7 +317,7 @@ class Frontend {
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">
-					<?php $this->_print_sections( $data ); ?>
+					<?php $this->_print_elements( $data ); ?>
 				</div>
 			</div>
 		</div>

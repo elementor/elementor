@@ -395,7 +395,7 @@ class Element_Column extends Element_Base {
 			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', self::get_name() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_element_type() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">

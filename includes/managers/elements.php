@@ -17,6 +17,11 @@ class Elements_Manager {
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 
+	/**
+	 * @param array $element_data
+	 *
+	 * @return Element_Base
+	 */
 	public function create_element_instance( array $element_data ) {
 		$args = [];
 

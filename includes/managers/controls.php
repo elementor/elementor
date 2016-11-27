@@ -266,7 +266,7 @@ class Controls_Manager {
 	}
 
 	public function open_stack( Element_Base $element ) {
-		$stack_id = $element->get_stack_id();
+		$stack_id = $element->get_element_type();
 
 		$this->_controls_stack[ $stack_id ] = [
 			'tabs' => [],
@@ -285,7 +285,7 @@ class Controls_Manager {
 
 		$control_data = array_merge( $default_args, $control_data );
 
-		$stack_id = $element->get_stack_id();
+		$stack_id = $element->get_element_type();
 
 		if ( isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
@@ -306,7 +306,7 @@ class Controls_Manager {
 	}
 
 	public function remove_control_from_stack( Element_Base $element, $control_id ) {
-		$stack_id = $element->get_stack_id();
+		$stack_id = $element->get_element_type();
 
 		if ( empty( $this->_controls_stack[ $stack_id ][ $control_id ] ) ) {
 			return new \WP_Error( 'Cannot remove not-exists control.' );
@@ -318,7 +318,7 @@ class Controls_Manager {
 	}
 
 	public function get_element_stack( Element_Base $element ) {
-		$stack_id = $element->get_stack_id();
+		$stack_id = $element->get_element_type();
 
 		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
 			return null;

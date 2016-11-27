@@ -211,6 +211,9 @@ body {
   font-size: 13px;
   color: #6d7882; }
 
+.elementor-hidden {
+  display: none; }
+
 .elementor-button {
   outline: none;
   border: none;
