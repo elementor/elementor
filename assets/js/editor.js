@@ -5487,8 +5487,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
-						_.extend( {}, placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						_.extend( {}, replacements, [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
 				} );
 			}
@@ -7311,13 +7311,13 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
-
 		this.collection.each( function( model ) {
 			if ( ! model.get( '_id' ) ) {
 				model.set( '_id', elementor.helpers.getUniqueID() );
 			}
 		} );
+
+		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
 	},
 
 	addRow: function( data, options ) {
