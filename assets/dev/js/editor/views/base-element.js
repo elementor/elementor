@@ -243,8 +243,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
-						_.extend( {}, placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						_.extend( {}, replacements, [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
 				} );
 			}
