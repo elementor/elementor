@@ -120,7 +120,7 @@
 			self.cache.$formAnchor.after( self.cache.$importArea );
 
 			$importButton.on( 'click', function() {
-				$importArea.toggle();
+				$( '#elementor-import-template-area' ).toggle();
 			} );
 		},
 
