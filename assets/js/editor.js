@@ -5652,7 +5652,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			editModel.setHtmlCache();
+			this.model.setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {
@@ -8249,7 +8249,7 @@ WidgetView = BaseElementView.extend( {
 
 		var editModel = this.getEditModel();
 
-		if ( ! editModel.getHtmlCache() ) {
+		if ( ! this.model.getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
 
@@ -8293,7 +8293,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlCache = this.getEditModel().getHtmlCache();
+		var htmlCache = this.model.getHtmlCache();
 
 		if ( htmlCache ) {
 			html = htmlCache;
