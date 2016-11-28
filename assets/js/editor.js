@@ -3177,8 +3177,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			editedElementView: view
 		} );
 
+		// Example: panel/open_editor/widget
+		var action = 'panel/open_editor/' + elementData.elType;
+			elementorFrontend.hooks.doAction( action, this, model, view );
+
 		// Example: panel/open_editor/widget/slides
-		var action = 'panel/open_editor/' + elementData.elType + '/' + elementData.widget_type;
+		action = 'panel/open_editor/' + elementData.elType + '/' + elementData.widget_type;
 		elementorFrontend.hooks.doAction( action, this, model, view );
 	},
 
