@@ -21,7 +21,7 @@ class Source_Remote extends Source_Base {
 
 	public function register_data() {}
 
-	public function get_items() {
+	public function get_items( $args = [] ) {
 		$templates_data = Api::get_templates_data();
 
 		$templates = [];
@@ -30,6 +30,11 @@ class Source_Remote extends Source_Base {
 				$templates[] = $this->get_item( $template_data );
 			}
 		}
+
+		if ( ! empty( $args ) ) {
+			$templates = wp_list_filter( $templates, $args );
+		}
+
 		return $templates;
 	}
 
