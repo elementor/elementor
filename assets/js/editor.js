@@ -5487,8 +5487,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
-						_.extend( {}, placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						_.extend( {}, replacements, [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
 				} );
 			}
@@ -5652,7 +5652,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			editModel.setHtmlCache();
+			this.model.setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {
@@ -7311,13 +7311,13 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
-
 		this.collection.each( function( model ) {
 			if ( ! model.get( '_id' ) ) {
 				model.set( '_id', elementor.helpers.getUniqueID() );
 			}
 		} );
+
+		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
 	},
 
 	addRow: function( data, options ) {
@@ -8249,7 +8249,7 @@ WidgetView = BaseElementView.extend( {
 
 		var editModel = this.getEditModel();
 
-		if ( ! editModel.getHtmlCache() ) {
+		if ( ! this.model.getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
 
@@ -8293,7 +8293,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlCache = this.getEditModel().getHtmlCache();
+		var htmlCache = this.model.getHtmlCache();
 
 		if ( htmlCache ) {
 			html = htmlCache;
