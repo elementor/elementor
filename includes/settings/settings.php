@@ -196,6 +196,20 @@ class Settings {
 			99
 		);
 	}
+	public function register_pro_menu() {
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
+			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . __( 'Go Pro', 'elementor' ),
+			'manage_options',
+			'go_elementor_pro',
+			[ $this, 'go_elementor_pro' ]
+		);
+	}
+
+	public function go_elementor_pro() {
+		wp_redirect( 'https://go.elementor.com/pro-admin-menu/' );
+	}
 
 	public function admin_menu_change_name() {
 		global $submenu;
@@ -227,5 +241,6 @@ class Settings {
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], 502 );
 	}
 }

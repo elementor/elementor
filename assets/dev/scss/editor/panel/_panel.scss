@@ -55,6 +55,7 @@
     @import "categories";
     // Schemes
     @import "schemes";
+
     // Main Panel
     #elementor-panel-content-wrapper {
         position: absolute;
@@ -63,6 +64,14 @@
         left: 0;
         width: 100%;
     }
+
+	// Go Pro
+	#elementor-panel-elements-go-pro-wrapper {
+		a {
+			display: block;
+			margin: 0 13px;
+		}
+	}
 
 	// Menu
 	@import "menu";
