@@ -10,20 +10,21 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * @param array $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]
+	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]
+	 *
+	 * @param string $setting_key
 	 *
 	 * @return string
 	 */
-	public static function get_attachment_image_html( $settings ) {
-		$id  = $settings['image']['id'];
-		$url = $settings['image']['url'];
+	public static function get_attachment_image_html( $settings, $setting_key = 'image' ) {
+		$id  = $settings[ $setting_key ]['id'];
 
 		// Old version of image settings
-		if ( ! isset( $settings['image_size'] ) ) {
-			$settings['image_size'] = '';
+		if ( ! isset( $settings[ $setting_key . '_size' ] ) ) {
+			$settings[ $setting_key . '_size' ] = '';
 		}
 
-		$size = $settings['image_size'];
+		$size = $settings[ $setting_key . '_size' ];
 
 		$image_class = ! empty( $settings['hover_animation'] ) ? 'elementor-animation-' . $settings['hover_animation'] : '';
 
@@ -38,15 +39,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 			$html .= wp_get_attachment_image( $id, $size, false, [ 'class' => trim( $image_class ) ] );
 		} else {
-			$image_src = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $settings );
+			$image_src = Group_Control_Image_Size::get_attachment_image_src( $id, $setting_key, $settings );
 
-			if ( ! $image_src ) {
-				$image_src = $url;
+			if ( ! $image_src && isset( $settings[ $setting_key ]['url'] ) ) {
+				$image_src = $settings[ $setting_key ]['url'] ;
 			}
 
 			$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
 
-			$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings['image'] ), Control_Media::get_image_alt( $settings['image'] ), $image_class_html );
+			$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings[ $setting_key ] ), Control_Media::get_image_alt( $settings[ $setting_key ] ), $image_class_html );
 		}
 
 		return $html;
