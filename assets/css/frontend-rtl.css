@@ -686,7 +686,8 @@
   -webkit-transition: all 0.5s;
   transition: all 0.5s; }
   .elementor-button:hover, .elementor-button:focus, .elementor-button:visited {
-    color: #fff; }
+    color: #fff;
+    opacity: .9; }
   .elementor-button.elementor-size-xs {
     font-size: 13px;
     padding: 10px 20px;
