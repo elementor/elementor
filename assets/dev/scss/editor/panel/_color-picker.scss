@@ -59,13 +59,17 @@
 	}
 }
 
-.wp-picker-clear.button {
-	height: 26px;
-	width: 48px;
-	padding: 0;
-	background-color: #d5dadf;
-	border-radius: 0 3px 3px 0;
-	margin: 0;
+.wp-picker-default,
+.wp-picker-clear {
+
+	&.button {
+		height: 26px;
+		width: 48px;
+		padding: 0;
+		background-color: #d5dadf;
+		border-radius: 0 3px 3px 0;
+		margin: 0;
+	}
 }
 
 .wp-color-picker {
