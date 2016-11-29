@@ -2181,6 +2181,14 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 80%;
   padding: 8px 0; }
 
+#elementor-template-library-header-preview-get-pro {
+  width: 90%;
+  padding: 8px 0; }
+  #elementor-template-library-header-preview-get-pro .dashicons {
+    font-size: 12px;
+    height: auto;
+    width: 10px; }
+
 #elementor-template-library-header-preview-back {
   padding: 16.5px 16.5px 15px 0;
   border-right: 1px solid #e6e9ec;
@@ -2233,9 +2241,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
     background-color: rgba(0, 0, 0, 0.5);
     -webkit-transition: opacity .5s;
     transition: opacity .5s; }
-  .elementor-template-library-template-remote .elementor-template-library-template-insert {
+  .elementor-template-library-template-remote .elementor-template-library-template-insert, .elementor-template-library-template-remote .elementor-template-library-template-get-pro {
     font-size: 11px;
     width: 150px; }
+  .elementor-template-library-template-remote .elementor-template-library-template-get-pro .dashicons {
+    font-size: 12px;
+    height: auto; }
   .elementor-template-library-template-remote .elementor-template-library-template-preview {
     position: relative;
     height: 180px;
@@ -2248,9 +2259,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
-  .elementor-template-library-template-remote .elementor-template-library-template-insert {
+  .elementor-template-library-template-remote .elementor-template-library-template-insert, .elementor-template-library-template-remote .elementor-template-library-template-get-pro {
     padding: 11px; }
-    .elementor-template-library-template-remote .elementor-template-library-template-insert i {
+    .elementor-template-library-template-remote .elementor-template-library-template-insert i, .elementor-template-library-template-remote .elementor-template-library-template-get-pro i {
       padding-right: 5px; }
   .elementor-template-library-template-remote .elementor-template-library-template-name {
     margin: 13px 0 10px;
@@ -2302,7 +2313,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     margin-left: 6px; }
   .elementor-template-library-template-local .elementor-template-library-template-delete:hover {
     color: #b01b1b; }
-  .elementor-template-library-template-local .elementor-template-library-template-insert {
+  .elementor-template-library-template-local .elementor-template-library-template-insert, .elementor-template-library-template-local .elementor-template-library-template-remote .elementor-template-library-template-get-pro, .elementor-template-library-template-remote .elementor-template-library-template-local .elementor-template-library-template-get-pro {
     padding: 8px 18px;
     margin: 0 20px; }
 
