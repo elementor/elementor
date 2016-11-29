@@ -31,23 +31,12 @@
 	flex-wrap: wrap;
 	align-items: center;
 
-	&.elementor-button-vertical-align- {
-
-		&start {
-			align-items: flex-start;
-		}
-
-		&end {
-			align-items: flex-end;
-		}
-
-		&stretch {
-			align-items: stretch;
-		}
+	&.elementor-field-type-submit {
+		align-items: flex-end;
 	}
 
 	.elementor-field-textual {
-		width: auto;
+		width: 100%;
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
@@ -68,6 +57,7 @@
 	.elementor-select-wrapper {
 		display: flex;
 		position: relative;
+		width: 100%;
 
 		select {
 			appearance: none;
@@ -112,41 +102,37 @@
 
 // Keep the following out from another parent selector!
 .elementor-field-textual {
+	line-height: 1.2;
 
 	&.elementor-size- {
-
 		&xs {
 			font-size: 13px;
-			line-height: 1.4;
-			padding: 6px 12px;
+			min-height: 33px;
+			padding: 0 10px;
 			border-radius: 2px;
 		}
-
 		&sm {
 			font-size: 15px;
-			line-height: 1.4;
-			padding: 9px 16px;
+			min-height: 40px;
+			padding: 0 12px;
 			border-radius: 3px;
 		}
-
 		&md {
 			font-size: 16px;
-			line-height: 1.5;
-			padding: 10px 16px;
+			min-height: 47px;
+			padding: 0 16px;
 			border-radius: 4px;
 		}
-
 		&lg {
 			font-size: 18px;
-			line-height: 1.5;
-			padding: 14px 16px;
+			min-height: 59px;
+			padding: 0 20px;
 			border-radius: 5px;
 		}
-
 		&xl {
 			font-size: 20px;
-			line-height: 1.6;
-			padding: 18px 20px;
+			min-height: 72px;
+			padding: 0 24px;
 			border-radius: 6px;
 		}
 	}
