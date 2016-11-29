@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Settings {
 
 	const PAGE_ID = 'elementor';
+	const MENU_PRIORITY_GO_PRO = 502;
 
 	public static function get_url() {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID );
@@ -241,6 +242,6 @@ class Settings {
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], 502 );
+		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
 	}
 }

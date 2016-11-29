@@ -855,9 +855,11 @@ select {
     top: 40px;
     left: 0;
     width: 100%; }
-  .elementor-panel #elementor-panel-elements-go-pro-wrapper a {
-    display: block;
-    margin: 0 13px; }
+  .elementor-panel #elementor-panel-elements-get-more-elements-wrapper {
+    margin: 0 0 20px; }
+    .elementor-panel #elementor-panel-elements-get-more-elements-wrapper a {
+      display: block;
+      margin: 0 13px; }
   .elementor-panel #elementor-panel-page-menu {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
   .elementor-panel .elementor-panel-menu-item {

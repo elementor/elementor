@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-categories">
 	<div id="elementor-panel-categories"></div>
-	
-	<div id="elementor-panel-elements-go-pro-wrapper">
+
+	<div id="elementor-panel-elements-get-more-elements-wrapper">
 		<div class="panel-elements-category-title panel-elements-category-title-{{ name }}"><?php _e( 'Go Pro', 'elementor' ); ?></div>
 		<a target="_blank" href="https://go.elementor.com/pro-widgets/"><?php _e( 'Get more elements with pro version', 'elementor' ); ?></a>
 	</div>
