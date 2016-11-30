@@ -439,23 +439,13 @@
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center; }
-  .elementor-field-group.elementor-button-vertical-align-start {
-    -webkit-box-align: start;
-    -webkit-align-items: flex-start;
-        -ms-flex-align: start;
-            align-items: flex-start; }
-  .elementor-field-group.elementor-button-vertical-align-end {
+  .elementor-field-group.elementor-field-type-submit {
     -webkit-box-align: end;
     -webkit-align-items: flex-end;
         -ms-flex-align: end;
             align-items: flex-end; }
-  .elementor-field-group.elementor-button-vertical-align-stretch {
-    -webkit-box-align: stretch;
-    -webkit-align-items: stretch;
-        -ms-flex-align: stretch;
-            align-items: stretch; }
   .elementor-field-group .elementor-field-textual {
-    width: auto;
+    width: 100%;
     border: 1px solid #818a91;
     background-color: transparent;
     color: #373a3c;
@@ -467,7 +457,8 @@
     .elementor-field-group .elementor-field-textual:focus {
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
       outline: 0; }
-    .elementor-field-group .elementor-field-textual::-moz-placeholder, .elementor-field-group .elementor-field-textual::-webkit-input-placeholder, .elementor-field-group .elementor-field-textual :-ms-input-placeholder {
+    .elementor-field-group .elementor-field-textual::-moz-placeholder, .elementor-field-group .elementor-field-textual::-webkit-input-placeholder,
+    .elementor-field-group .elementor-field-textual :-ms-input-placeholder {
       color: inherit;
       opacity: 0.6; }
   .elementor-field-group .elementor-select-wrapper {
@@ -475,7 +466,8 @@
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    position: relative; }
+    position: relative;
+    width: 100%; }
     .elementor-field-group .elementor-select-wrapper select {
       -webkit-appearance: none;
          -moz-appearance: none;
@@ -513,31 +505,33 @@
 .elementor-field-label {
   cursor: pointer; }
 
-.elementor-field-textual.elementor-size-xs {
-  font-size: 13px;
-  line-height: 1.4;
-  padding: 6px 12px;
-  border-radius: 2px; }
-.elementor-field-textual.elementor-size-sm {
-  font-size: 15px;
-  line-height: 1.4;
-  padding: 9px 16px;
-  border-radius: 3px; }
-.elementor-field-textual.elementor-size-md {
-  font-size: 16px;
-  line-height: 1.5;
-  padding: 10px 16px;
-  border-radius: 4px; }
-.elementor-field-textual.elementor-size-lg {
-  font-size: 18px;
-  line-height: 1.5;
-  padding: 14px 16px;
-  border-radius: 5px; }
-.elementor-field-textual.elementor-size-xl {
-  font-size: 20px;
-  line-height: 1.6;
-  padding: 18px 20px;
-  border-radius: 6px; }
+.elementor-field-textual {
+  line-height: 1.4; }
+  .elementor-field-textual.elementor-size-xs {
+    font-size: 13px;
+    min-height: 33px;
+    padding: 4px 12px;
+    border-radius: 2px; }
+  .elementor-field-textual.elementor-size-sm {
+    font-size: 15px;
+    min-height: 40px;
+    padding: 5px 14px;
+    border-radius: 3px; }
+  .elementor-field-textual.elementor-size-md {
+    font-size: 16px;
+    min-height: 47px;
+    padding: 6px 16px;
+    border-radius: 4px; }
+  .elementor-field-textual.elementor-size-lg {
+    font-size: 18px;
+    min-height: 59px;
+    padding: 7px 20px;
+    border-radius: 5px; }
+  .elementor-field-textual.elementor-size-xl {
+    font-size: 20px;
+    min-height: 72px;
+    padding: 8px 24px;
+    border-radius: 6px; }
 
 .elementor-button-align-center {
   -webkit-box-pack: center;
@@ -583,6 +577,45 @@
       content: "\f00d"; }
   .elementor-message.form-message-success {
     color: #5cb85c; }
+
+.elementor-form .elementor-button {
+  padding-top: 0;
+  padding-bottom: 0;
+  border: 0 none; }
+  .elementor-form .elementor-button > span {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .elementor-form .elementor-button .elementor-align-icon-right {
+    -webkit-box-ordinal-group: 3;
+    -webkit-order: 2;
+        -ms-flex-order: 2;
+            order: 2; }
+  .elementor-form .elementor-button .elementor-align-icon-left {
+    -webkit-box-ordinal-group: 1;
+    -webkit-order: 0;
+        -ms-flex-order: 0;
+            order: 0; }
+  .elementor-form .elementor-button.elementor-size-xs {
+    min-height: 33px;
+    border-radius: 2px; }
+  .elementor-form .elementor-button.elementor-size-sm {
+    min-height: 40px;
+    border-radius: 3px; }
+  .elementor-form .elementor-button.elementor-size-md {
+    min-height: 47px;
+    border-radius: 4px; }
+  .elementor-form .elementor-button.elementor-size-lg {
+    min-height: 59px;
+    border-radius: 5px; }
+  .elementor-form .elementor-button.elementor-size-xl {
+    min-height: 72px;
+    border-radius: 6px; }
 
 .elementor-widget-heading .elementor-heading-title {
   padding: 0;
