@@ -18,6 +18,8 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 
 		var templateId = isPro ? '#tmpl-elementor-template-library-get-pro-button' : '#tmpl-elementor-template-library-insert-button';
 
+		templateId = elementor.hooks.applyFilters( 'elementor/editor/templateLibrary/remote/actionButton', templateId );
+
 		var template = Marionette.TemplateCache.get( templateId );
 
 		return Marionette.Renderer.render( template );

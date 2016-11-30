@@ -27,6 +27,8 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 
 		var templateId = isPro ? '#tmpl-elementor-template-library-header-preview-get-pro-button' : '#tmpl-elementor-template-library-header-preview-insert-button';
 
+		templateId = elementor.hooks.applyFilters( 'elementor/editor/templateLibrary/preview/actionButton', templateId );
+
 		var template = Marionette.TemplateCache.get( templateId );
 
 		return Marionette.Renderer.render( template );
