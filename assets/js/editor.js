@@ -4150,6 +4150,12 @@ ImagesManager = function() {
 		return size;
 	};
 
+	self.onceTriggerChange = _.once( function( model ) {
+		window.setTimeout( function() {
+			model.get( 'settings' ).trigger( 'change' );
+		}, 700 );
+	} );
+
 	self.getImageUrl = function( image ) {
 		// Register for AJAX checking
 		self.registerItem( image );
@@ -4160,7 +4166,13 @@ ImagesManager = function() {
 		if ( ! imageUrl ) {
 
 			if ( 'custom' === image.size ) {
-				return;
+
+				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().currentPageName && image.model ) {
+					// Trigger change again, so it's will load from the cache
+					self.onceTriggerChange( image.model );
+				}
+
+				return ;
 			}
 
 			// If it's a new dropped widget
@@ -4203,11 +4215,14 @@ ImagesManager = function() {
 
 	self.getRemoteItems = function() {
 		var requestedItems = [],
+		registeredItemsLength = Object.keys( registeredItems ).length,
 			image,
 			index;
 
 		// It's one item, so we can render it from remote server
-		if ( 1 === Object.keys( registeredItems ).length ) {
+		if ( 0 === registeredItemsLength ) {
+			return;
+		} else if ( 1 === registeredItemsLength ) {
 			for ( index in registeredItems ) {
 				image = registeredItems[ index ];
 				break;
