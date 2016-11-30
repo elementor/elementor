@@ -1437,7 +1437,7 @@ select {
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-code {
     padding: 0 10px 15px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-tabs {
-    font-size: 0.9em;
+    font-size: 0.8em;
     color: #a4afb7;
     text-transform: uppercase;
     display: -webkit-box;
@@ -1677,6 +1677,7 @@ select {
       border: 1px solid #a4afb7; }
     .elementor-panel .wp-color-result:focus, .elementor-panel .wp-color-result:active {
       outline: 0; }
+  .elementor-panel .wp-picker-default.button,
   .elementor-panel .wp-picker-clear.button {
     height: 26px;
     width: 48px;
