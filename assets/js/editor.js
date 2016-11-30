@@ -8257,7 +8257,7 @@ WidgetView = BaseElementView.extend( {
 
 		var editModel = this.getEditModel();
 
-		if ( ! this.model.getHtmlCache() ) {
+		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
 
