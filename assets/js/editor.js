@@ -4123,7 +4123,7 @@ module.exports = helpers;
 var ImagesManager;
 
 ImagesManager = function() {
-	var _this = this;
+	var self = this;
 
 	var cache = {};
 
@@ -4131,12 +4131,13 @@ ImagesManager = function() {
 
 	var registeredItems = [];
 
-	var getNormalizedSize = function( model ) {
+	var getNormalizedSize = function( image ) {
 		var size,
-			imageSize = model.getSetting( 'image_size' ),
-			customDimension = model.getSetting( 'image_custom_dimension' );
+			imageSize = image.size;
 
 		if ( 'custom' === imageSize ) {
+			var customDimension = image.dimension;
+
 			if ( customDimension.width || customDimension.height ) {
 				size = 'custom_' + customDimension.width + 'x' + customDimension.height;
 			} else {
@@ -4149,9 +4150,29 @@ ImagesManager = function() {
 		return size;
 	};
 
-	_this.getItem = function( model ) {
-		var size = getNormalizedSize( model ),
-			id =  model.getSetting( 'image' ).id;
+	self.getImageUrl = function( image ) {
+		// Register for AJAX checking
+		self.registerItem( image );
+
+		var imageUrl = self.getItem( image );
+
+		// If it's not in cache, like a new dropped widget or a custom size - get from settings
+		if ( ! imageUrl ) {
+
+			if ( 'custom' === image.size ) {
+				return;
+			}
+
+			// If it's a new dropped widget
+			imageUrl = image.url;
+		}
+
+		return imageUrl;
+	};
+
+	self.getItem = function( image ) {
+		var size = getNormalizedSize( image ),
+			id =  image.id;
 
 		if ( ! size ) {
 			return false;
@@ -4164,42 +4185,45 @@ ImagesManager = function() {
 		return false;
 	};
 
-	_this.registerItem = function( model ) {
-		if ( '' === model.getSetting( 'image' ).id ) {
+	self.registerItem = function( image ) {
+		if ( '' === image.id ) {
 			// It's a new dropped widget
 			return;
 		}
 
-		if ( _this.getItem( model ) ) {
+		if ( self.getItem( image ) ) {
 			// It's already in cache
 			return;
 		}
 
-		registeredItems.push( model );
+		registeredItems.push( image );
 
-		_this.debounceGetRemoteItems();
+		self.debounceGetRemoteItems();
 	};
 
-	_this.getRemoteItems = function() {
+	self.getRemoteItems = function() {
 		var requestedItems = [],
-			model,
+			image,
 			index;
 
 		// It's one item, so we can render it from remote server
 		if ( 1 === Object.keys( registeredItems ).length ) {
 			for ( index in registeredItems ) {
-				model = registeredItems[ index ];
+				image = registeredItems[ index ];
+				break;
 			}
 
-			model.renderRemoteServer();
-			return;
+			if ( image && image.model ) {
+				image.model.renderRemoteServer();
+				return;
+			}
 		}
 
 		for ( index in registeredItems ) {
-			model = registeredItems[ index ];
+			image = registeredItems[ index ];
 
-			var size = getNormalizedSize( model ),
-				id = model.getSetting( 'image' ).id,
+			var size = getNormalizedSize( image ),
+				id = image.id,
 				isFirstTime = ! cache[ id ] || 0 === Object.keys( cache[ id ] ).length;
 
 			requestedItems.push( {
@@ -4233,7 +4257,7 @@ ImagesManager = function() {
 		);
 	};
 
-	_this.debounceGetRemoteItems = _.debounce( _this.getRemoteItems, debounceDelay );
+	self.debounceGetRemoteItems = _.debounce( self.getRemoteItems, debounceDelay );
 };
 
 module.exports = new ImagesManager();
