@@ -29,7 +29,13 @@ WidgetView = BaseElementView.extend( {
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.getEditModel().on( {
+		var editModel = this.getEditModel();
+
+		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
+			editModel.renderRemoteServer();
+		}
+
+		editModel.on( {
 			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
 			'remote:render': _.bind( this.onModelRemoteRender, this )
 		} );
