@@ -238,7 +238,7 @@ button.elementor-button-spinner:before {
   display: inline-block;
   padding: 0;
   top: 8px;
-  left: -4px;
+  right: -4px;
   position: relative;
   vertical-align: top;
   content: "\f463"; }
