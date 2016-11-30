@@ -54,6 +54,23 @@
 					background-color: $editor-lightest;
 				}
 			}
+
+			&after {
+
+				&:after {
+					content: '';
+					position: absolute;
+					height: 3px;
+					width: 100%;
+					bottom: 0;
+					left: 0;
+					background-color: $editor-lightest;
+				}
+
+				+ .elementor-control-type-tabs {
+					padding-top: 15px;
+				}
+			}
 		}
 
 		&.elementor-control-deprecated {
