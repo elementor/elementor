@@ -126,13 +126,6 @@
 
 	.elementor-label-block {
 
-		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
-
-			.elementor-control-title {
-
-			}
-		}
-
 		.elementor-control-field {
 			display: flex;
 			flex-wrap: wrap;
@@ -142,6 +135,13 @@
 		.elementor-control-input-wrapper {
 			flex-basis: 100%;
 			margin-top: 10px;
+		}
+
+		&.elementor-control-hidden-label {
+
+			.elementor-control-input-wrapper {
+				margin-top: 0;
+			}
 		}
 	}
 
