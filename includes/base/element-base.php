@@ -40,6 +40,8 @@ abstract class Element_Base {
 	 */
 	protected $_current_tab = null;
 
+	private $_is_type_instance = true;
+
 	public final static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
@@ -614,6 +616,13 @@ abstract class Element_Base {
 		<?php
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public function is_type_instance() {
+		return $this->_is_type_instance;
+	}
+
 	protected function render() {}
 
 	protected function get_default_data() {
@@ -677,6 +686,7 @@ abstract class Element_Base {
 
 	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
+		    $this->_is_type_instance = false;
 			$this->_init( $data );
 		} elseif ( $args ) {
 			$this->_default_args = $args;
