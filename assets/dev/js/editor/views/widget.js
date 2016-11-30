@@ -46,11 +46,7 @@ WidgetView = BaseElementView.extend( {
 			var editModel = this.getEditModel(),
 				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
-			if ( 0 === $template.length ) {
-				this._templateType = 'remote';
-			} else {
-				this._templateType = 'js';
-			}
+			this._templateType = $template.length ? 'js' : 'remote';
 		}
 
 		return this._templateType;
