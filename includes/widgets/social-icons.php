@@ -64,6 +64,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-foursquare',
 							'fa fa-github',
 							'fa fa-google-plus',
+							'fa fa-houzz',
 							'fa fa-instagram',
 							'fa fa-jsfiddle',
 							'fa fa-linkedin',

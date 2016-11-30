@@ -54,6 +54,23 @@
 					background-color: $editor-lightest;
 				}
 			}
+
+			&after {
+
+				&:after {
+					content: '';
+					position: absolute;
+					height: 3px;
+					width: 100%;
+					bottom: 0;
+					left: 0;
+					background-color: $editor-lightest;
+				}
+
+				+ .elementor-control-type-tabs {
+					padding-top: 15px;
+				}
+			}
 		}
 
 		&.elementor-control-deprecated {
@@ -126,13 +143,6 @@
 
 	.elementor-label-block {
 
-		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
-
-			.elementor-control-title {
-
-			}
-		}
-
 		.elementor-control-field {
 			display: flex;
 			flex-wrap: wrap;
@@ -142,6 +152,13 @@
 		.elementor-control-input-wrapper {
 			flex-basis: 100%;
 			margin-top: 10px;
+		}
+
+		&.elementor-control-hidden-label {
+
+			.elementor-control-input-wrapper {
+				margin-top: 0;
+			}
 		}
 	}
 
