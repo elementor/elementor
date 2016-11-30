@@ -70,16 +70,18 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	attachElContent: function( html ) {
-		var htmlCache = this.model.getHtmlCache();
+	getHTMLContent: function( html ) {
+		var htmlCache = this.getEditModel().getHtmlCache();
 
-		if ( htmlCache ) {
-			html = htmlCache;
-		}
+		return htmlCache || html;
+	},
+
+	attachElContent: function( html ) {
+		var htmlContent = this.getHTMLContent( html );
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
 		}, this ) );
 
 		return this;
