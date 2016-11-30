@@ -602,20 +602,15 @@
         -ms-flex-order: 2;
             order: 2; }
   .elementor-form .elementor-button.elementor-size-xs {
-    min-height: 33px;
-    border-radius: 2px; }
+    min-height: 33px; }
   .elementor-form .elementor-button.elementor-size-sm {
-    min-height: 40px;
-    border-radius: 3px; }
+    min-height: 40px; }
   .elementor-form .elementor-button.elementor-size-md {
-    min-height: 47px;
-    border-radius: 4px; }
+    min-height: 47px; }
   .elementor-form .elementor-button.elementor-size-lg {
-    min-height: 59px;
-    border-radius: 5px; }
+    min-height: 59px; }
   .elementor-form .elementor-button.elementor-size-xl {
-    min-height: 72px;
-    border-radius: 6px; }
+    min-height: 72px; }
 
 .elementor-widget-heading .elementor-heading-title {
   padding: 0;
