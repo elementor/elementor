@@ -38,37 +38,32 @@ abstract class Source_Base {
 	 * @return mixed
 	 */
 	protected function process_export_import_data( $data, $method ) {
-		return Plugin::instance()->db->iterate_data( $data, function( $element ) use ( $method ) {
-
-			if ( 'widget' === $element['elType'] ) {
-				$element_class = Plugin::instance()->widgets_manager->get_widget_types( $element['widgetType'] );
-			} else {
-				$element_class = Plugin::instance()->elements_manager->get_element_types( $element['elType'] );
-			}
+		return Plugin::instance()->db->iterate_data( $data, function( $element_data ) use ( $method ) {
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
 			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
-			if ( ! $element_class ) {
-				return $element;
+			if ( ! $element ) {
+				return $element_data;
 			}
 
-			if ( method_exists( $element_class, $method ) ) {
-				$element = $element_class->{$method}( $element );
+			if ( method_exists( $element, $method ) ) {
+				$element_data = $element->{$method}( $element_data );
 			}
 
-			foreach ( $element_class->get_controls() as $control ) {
+			foreach ( $element->get_controls() as $control ) {
 				$control_class = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 				// If the control isn't exist, like a plugin that creates the control but deactivated
 				if ( ! $control_class ) {
-					return $element;
+					return $element_data;
 				}
 
 				if ( method_exists( $control_class, $method ) ) {
-					$element['settings'][ $control['name'] ] = $control_class->{$method}( $element['settings'][ $control['name'] ] );
+					$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element_data['settings'][ $control['name'] ] );
 				}
 			}
 
-			return $element;
+			return $element_data;
 		} );
 	}
 }
