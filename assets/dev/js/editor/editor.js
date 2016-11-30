@@ -218,8 +218,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		this.initPreview();
-
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
@@ -227,6 +225,8 @@ App = Marionette.Application.extend( {
 		this.initClearPageDialog();
 
 		this.$window.trigger( 'elementor:init' );
+
+		this.initPreview();
 	},
 
 	onPreviewLoaded: function() {
