@@ -197,7 +197,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'section_custom_css_pro',
 			[
-				'label' => __( 'Custom CSS', 'elementor-pro' ),
+				'label' => __( 'Custom CSS', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_ADVANCED,
 			]
 		);
