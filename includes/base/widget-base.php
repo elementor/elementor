@@ -43,7 +43,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$is_type_instance = $this->is_type_instance();
 
-		if ( ! $is_type_instance && null === $args  ) {
+		if ( ! $is_type_instance && null === $args ) {
 			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
 		}
 
