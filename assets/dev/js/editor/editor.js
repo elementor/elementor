@@ -72,12 +72,13 @@ App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' ),
-			isInner = modelElement.get( 'isInner' );
+		var elType = modelElement.get( 'elType' );
 
 		if ( 'widget' === elType ) {
 			return elementData.controls;
 		}
+
+		var isInner = modelElement.get( 'isInner' );
 
 		return _.filter( elementData.controls, function( controlData ) {
 			return ! ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top );
