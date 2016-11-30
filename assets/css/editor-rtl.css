@@ -1482,6 +1482,11 @@ select {
     padding-top: 15px; }
     .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls:not(.editable) {
       display: none; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls .wp-picker-container.wp-picker-active {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      border-width: 0;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4); }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
     table-layout: fixed;
@@ -1690,6 +1695,7 @@ select {
   .elementor-panel .wp-color-picker {
     float: left;
     width: 100px;
+    max-width: 100px;
     border-radius: 3px 0 0 3px;
     line-height: 1; }
   .elementor-panel .wp-picker-holder * {
