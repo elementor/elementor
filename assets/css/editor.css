@@ -981,6 +981,8 @@ select {
         -ms-flex-preferred-size: 100%;
             flex-basis: 100%;
     margin-top: 10px; }
+  .elementor-panel #elementor-panel-page-editor .elementor-label-block.elementor-control-hidden-label .elementor-control-input-wrapper {
+    margin-top: 0; }
   .elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field {
     display: table;
     width: 100%; }
