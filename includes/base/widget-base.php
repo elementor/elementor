@@ -41,12 +41,13 @@ abstract class Widget_Base extends Element_Base {
 		do_action( 'elementor/element/after_construct', $this );
 		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
 
-		if ( $data && null === $args  ) {
+		$is_type_instance = $this->is_type_instance();
+
+		if ( ! $is_type_instance && null === $args  ) {
 			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
 		}
 
-		// First instance
-		if ( ! $data ) {
+		if ( $is_type_instance ) {
 			do_action( 'elementor/widget/' . $this->get_name() . '/before_register_skins', $this );
 			$this->_register_skins();
 			do_action( 'elementor/widget/' . $this->get_name() . '/after_register_skins', $this );
@@ -224,7 +225,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
 
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_element_type() . '.' . $skin_type );
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
 		?>
 		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php

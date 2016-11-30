@@ -163,6 +163,7 @@ class Frontend {
 
 	public function print_css() {
 		$container_width = absint( get_option( 'elementor_container_width' ) );
+
 		if ( ! empty( $container_width ) ) {
 			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
 		}
@@ -241,6 +242,7 @@ class Frontend {
 		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
 			foreach ( $widget->get_scheme_controls() as $control ) {
 				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
+
 				if ( empty( $scheme_value ) )
 					continue;
 
@@ -252,6 +254,7 @@ class Frontend {
 					continue;
 
 				$element_unique_class = 'elementor-widget-' . $widget->get_name();
+
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
@@ -260,6 +263,7 @@ class Frontend {
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
+
 					$output_css_property = $control_obj->get_replaced_style_values( $css_property, $scheme_value );
 
 					$this->stylesheet->add_rules( $output_selector, $output_css_property );
