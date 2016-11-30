@@ -102,10 +102,6 @@ abstract class Element_Base {
 
 	abstract public function get_name();
 
-	public function get_element_type() {
-		return $this->get_name();
-	}
-
 	public final function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
