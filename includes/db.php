@@ -52,6 +52,9 @@ class DB {
 			unset( $GLOBALS['post'] );
 		}
 
+		$css_file = new Post_CSS_File( $post_id );
+		$css_file->update();
+
 		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 

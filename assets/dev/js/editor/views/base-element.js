@@ -408,7 +408,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			this.model.setHtmlCache();
+			this.getEditModel().setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {
