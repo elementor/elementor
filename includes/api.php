@@ -74,14 +74,19 @@ class Api {
 
 	public static function get_template_content( $template_id ) {
 		$url = sprintf( self::$api_get_template_content_url, $template_id );
+
+		$body_args = [
+			// Which API version is used
+			'api_version' => ELEMENTOR_VERSION,
+			// Which language to return
+			'site_lang' => get_bloginfo( 'language' ),
+		];
+
+		$body_args = apply_filters( 'elementor/api/get_templates/body_args', $body_args );
+
 		$response = wp_remote_get( $url, [
 			'timeout' => 40,
-			'body' => [
-				// Which API version is used
-				'api_version' => ELEMENTOR_VERSION,
-				// Which language to return
-				'site_lang' => get_bloginfo( 'language' ),
-			],
+			'body' => $body_args,
 		] );
 
 		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {

@@ -29,10 +29,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
-		<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
-		</button>
+		{{{ getActionButton( isPro ) }}}
 	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-header-preview-insert-button">
+	<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
+		<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+	</button>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-header-preview-get-pro-button">
+	<button id="elementor-template-library-header-preview-get-pro" class="elementor-template-library-template-get-pro elementor-button elementor-button-success">
+		<a target="_blank" href="https://go.elementor.com/pro-library/">
+			<span class="dashicons dashicons-star-filled"></span><span class="elementor-button-title"><?php _e( 'Get Pro', 'elementor' ); ?></span>
+		</a>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
@@ -66,13 +78,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-template-library-template-preview">
 				<i class="fa fa-search-plus"></i>
 			</div>
-			<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-				<i class="eicon-file-download"></i>
-				<?php _e( 'Insert', 'elementor' ); ?>
-			</button>
+			{{{ getActionButton( isPro ) }}}
 		</div>
 	</div>
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-insert-button">
+	<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+		<i class="eicon-file-download"></i>
+		<?php _e( 'Insert', 'elementor' ); ?>
+	</button>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
+	<button class="elementor-template-library-template-get-pro elementor-button elementor-button-success">
+		<a target="_blank" href="https://go.elementor.com/pro-library/">
+			<span class="dashicons dashicons-star-filled"></span>
+			<?php _e( 'Get Pro', 'elementor' ); ?>
+		</a>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
