@@ -1337,12 +1337,13 @@ App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' ),
-			isInner = modelElement.get( 'isInner' );
+		var elType = modelElement.get( 'elType' );
 
 		if ( 'widget' === elType ) {
 			return elementData.controls;
 		}
+
+		var isInner = modelElement.get( 'isInner' );
 
 		return _.filter( elementData.controls, function( controlData ) {
 			return ! ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top );
@@ -1482,8 +1483,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		this.initPreview();
-
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
@@ -1491,6 +1490,8 @@ App = Marionette.Application.extend( {
 		this.initClearPageDialog();
 
 		this.$window.trigger( 'elementor:init' );
+
+		this.initPreview();
 	},
 
 	onPreviewLoaded: function() {
@@ -2085,7 +2086,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	onBeforeRender: function() {
-		var controls = elementor.getElementControls( this.model.get( 'settings' ) );
+		var controls = elementor.getElementControls( this.model );
 
 		if ( ! controls ) {
 			throw new Error( 'Editor controls not found' );
@@ -3304,6 +3305,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 		// TODO: Change method to recursive
 		attrs = _.defaults( {}, attrs, defaults );
 
+		this.handleRepeaterData( attrs );
+
+		this.set( attrs );
+	},
+
+	handleRepeaterData: function( attrs ) {
 		_.each( this.controls, function( field ) {
 			if ( 'repeater' === field.type ) {
 				// TODO: Apply defaults on each field in repeater fields
@@ -3314,8 +3321,6 @@ BaseSettingsModel = Backbone.Model.extend( {
 				}
 			}
 		} );
-
-		this.set( attrs );
 	},
 
 	getFontControls: function() {
@@ -5734,7 +5739,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			this.model.setHtmlCache();
+			this.getEditModel().setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {
@@ -8329,7 +8334,7 @@ WidgetView = BaseElementView.extend( {
 
 		var editModel = this.getEditModel();
 
-		if ( ! this.model.getHtmlCache() ) {
+		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
 
@@ -8344,11 +8349,7 @@ WidgetView = BaseElementView.extend( {
 			var editModel = this.getEditModel(),
 				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
-			if ( 0 === $template.length ) {
-				this._templateType = 'remote';
-			} else {
-				this._templateType = 'js';
-			}
+			this._templateType = $template.length ? 'js' : 'remote';
 		}
 
 		return this._templateType;
@@ -8372,16 +8373,18 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	attachElContent: function( html ) {
-		var htmlCache = this.model.getHtmlCache();
+	getHTMLContent: function( html ) {
+		var htmlCache = this.getEditModel().getHtmlCache();
 
-		if ( htmlCache ) {
-			html = htmlCache;
-		}
+		return htmlCache || html;
+	},
+
+	attachElContent: function( html ) {
+		var htmlContent = this.getHTMLContent( html );
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
 		}, this ) );
 
 		return this;
@@ -8395,8 +8398,7 @@ WidgetView = BaseElementView.extend( {
         self.$el
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) )
-	        .addClass( 'elementor-widget-can-edit' )
+	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) + ' elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 

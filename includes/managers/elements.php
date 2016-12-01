@@ -124,6 +124,7 @@ class Elements_Manager {
 		} else {
 			$revision = DB::REVISION_DRAFT;
 		}
+
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
 		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $revision );

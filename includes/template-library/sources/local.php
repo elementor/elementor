@@ -138,9 +138,9 @@ class Source_Local extends Source_Base {
 			return $post_id;
 		}
 
-		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
-
 		Plugin::instance()->db->set_edit_mode( $post_id );
+
+		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
 
 		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
 

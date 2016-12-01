@@ -195,9 +195,9 @@ class Post_CSS_File {
 
 		$css = '';
 
-		foreach ( $data as $section_data ) {
-			$section = new Element_Section( $section_data );
-			$this->render_styles( $section );
+		foreach ( $data as $element_data ) {
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$this->render_styles( $element );
 		}
 
 		$css .= $this->stylesheet_obj;

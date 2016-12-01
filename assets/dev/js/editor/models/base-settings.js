@@ -26,6 +26,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 		// TODO: Change method to recursive
 		attrs = _.defaults( {}, attrs, defaults );
 
+		this.handleRepeaterData( attrs );
+
+		this.set( attrs );
+	},
+
+	handleRepeaterData: function( attrs ) {
 		_.each( this.controls, function( field ) {
 			if ( 'repeater' === field.type ) {
 				// TODO: Apply defaults on each field in repeater fields
@@ -36,8 +42,6 @@ BaseSettingsModel = Backbone.Model.extend( {
 				}
 			}
 		} );
-
-		this.set( attrs );
 	},
 
 	getFontControls: function() {
