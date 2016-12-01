@@ -891,6 +891,12 @@ var TemplateLibraryHeaderPreviewView;
 TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-preview',
 
+	templateHelpers: function() {
+		return {
+			getActionButton: this.getActionButton
+		};
+	},
+
 	id: 'elementor-template-library-header-preview',
 
 	ui: {
@@ -903,6 +909,17 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 
 	onInsertButtonClick: function() {
 		elementor.templates.importTemplate( this.model );
+	},
+
+	getActionButton: function( isPro ) {
+
+		var templateId = isPro ? '#tmpl-elementor-template-library-header-preview-get-pro-button' : '#tmpl-elementor-template-library-header-preview-insert-button';
+
+		templateId = elementor.hooks.applyFilters( 'elementor/editor/templateLibrary/preview/actionButton', templateId );
+
+		var template = Marionette.TemplateCache.get( templateId );
+
+		return Marionette.Renderer.render( template );
 	}
 } );
 
@@ -1221,8 +1238,24 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-remote',
 
+	templateHelpers: function() {
+		return {
+			getActionButton: this.getActionButton
+		};
+	},
+
 	onPreviewButtonClick: function() {
 		elementor.templates.getLayout().showPreviewView( this.model );
+	},
+
+	getActionButton: function( isPro ) {
+		var templateId = isPro ? '#tmpl-elementor-template-library-get-pro-button' : '#tmpl-elementor-template-library-insert-button';
+
+		templateId = elementor.hooks.applyFilters( 'elementor/editor/templateLibrary/remote/actionButton', templateId );
+
+		var template = Marionette.TemplateCache.get( templateId );
+
+		return Marionette.Renderer.render( template );
 	}
 } );
 
@@ -3283,6 +3316,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	handleRepeaterData: function( attrs ) {
 		_.each( this.controls, function( field ) {
 			if ( 'repeater' === field.type ) {
+				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
 					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
 						model: BaseSettingsModel
@@ -4102,7 +4136,7 @@ module.exports = helpers;
 var ImagesManager;
 
 ImagesManager = function() {
-	var _this = this;
+	var self = this;
 
 	var cache = {};
 
@@ -4110,12 +4144,13 @@ ImagesManager = function() {
 
 	var registeredItems = [];
 
-	var getNormalizedSize = function( model ) {
+	var getNormalizedSize = function( image ) {
 		var size,
-			imageSize = model.getSetting( 'image_size' ),
-			customDimension = model.getSetting( 'image_custom_dimension' );
+			imageSize = image.size;
 
 		if ( 'custom' === imageSize ) {
+			var customDimension = image.dimension;
+
 			if ( customDimension.width || customDimension.height ) {
 				size = 'custom_' + customDimension.width + 'x' + customDimension.height;
 			} else {
@@ -4128,9 +4163,41 @@ ImagesManager = function() {
 		return size;
 	};
 
-	_this.getItem = function( model ) {
-		var size = getNormalizedSize( model ),
-			id =  model.getSetting( 'image' ).id;
+	self.onceTriggerChange = _.once( function( model ) {
+		window.setTimeout( function() {
+			model.get( 'settings' ).trigger( 'change' );
+		}, 700 );
+	} );
+
+	self.getImageUrl = function( image ) {
+		// Register for AJAX checking
+		self.registerItem( image );
+
+		var imageUrl = self.getItem( image );
+
+		// If it's not in cache, like a new dropped widget or a custom size - get from settings
+		if ( ! imageUrl ) {
+
+			if ( 'custom' === image.size ) {
+
+				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().currentPageName && image.model ) {
+					// Trigger change again, so it's will load from the cache
+					self.onceTriggerChange( image.model );
+				}
+
+				return ;
+			}
+
+			// If it's a new dropped widget
+			imageUrl = image.url;
+		}
+
+		return imageUrl;
+	};
+
+	self.getItem = function( image ) {
+		var size = getNormalizedSize( image ),
+			id =  image.id;
 
 		if ( ! size ) {
 			return false;
@@ -4143,42 +4210,48 @@ ImagesManager = function() {
 		return false;
 	};
 
-	_this.registerItem = function( model ) {
-		if ( '' === model.getSetting( 'image' ).id ) {
+	self.registerItem = function( image ) {
+		if ( '' === image.id ) {
 			// It's a new dropped widget
 			return;
 		}
 
-		if ( _this.getItem( model ) ) {
+		if ( self.getItem( image ) ) {
 			// It's already in cache
 			return;
 		}
 
-		registeredItems.push( model );
+		registeredItems.push( image );
 
-		_this.debounceGetRemoteItems();
+		self.debounceGetRemoteItems();
 	};
 
-	_this.getRemoteItems = function() {
+	self.getRemoteItems = function() {
 		var requestedItems = [],
-			model,
+		registeredItemsLength = Object.keys( registeredItems ).length,
+			image,
 			index;
 
 		// It's one item, so we can render it from remote server
-		if ( 1 === Object.keys( registeredItems ).length ) {
+		if ( 0 === registeredItemsLength ) {
+			return;
+		} else if ( 1 === registeredItemsLength ) {
 			for ( index in registeredItems ) {
-				model = registeredItems[ index ];
+				image = registeredItems[ index ];
+				break;
 			}
 
-			model.renderRemoteServer();
-			return;
+			if ( image && image.model ) {
+				image.model.renderRemoteServer();
+				return;
+			}
 		}
 
 		for ( index in registeredItems ) {
-			model = registeredItems[ index ];
+			image = registeredItems[ index ];
 
-			var size = getNormalizedSize( model ),
-				id = model.getSetting( 'image' ).id,
+			var size = getNormalizedSize( image ),
+				id = image.id,
 				isFirstTime = ! cache[ id ] || 0 === Object.keys( cache[ id ] ).length;
 
 			requestedItems.push( {
@@ -4212,7 +4285,7 @@ ImagesManager = function() {
 		);
 	};
 
-	_this.debounceGetRemoteItems = _.debounce( _this.getRemoteItems, debounceDelay );
+	self.debounceGetRemoteItems = _.debounce( self.getRemoteItems, debounceDelay );
 };
 
 module.exports = new ImagesManager();
@@ -6580,9 +6653,7 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 	},
 
 	saveValue: function() {
-		var date = this.ui.picker.handleDtpicker( 'getDate' );
-
-		this.setValue( date.toISOString().substring( 0, 16 ).replace( 'T', ' ' ) );
+		this.setValue( this.ui.input.val() );
 	},
 
 	onBeforeDestroy: function() {

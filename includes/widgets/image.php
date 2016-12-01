@@ -330,21 +330,18 @@ class Widget_Image extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# if ( '' !== settings.image.url ) {
+			var image = {
+				id: settings.image.id,
+				url: settings.image.url,
+				size: settings.image_size,
+				dimension: settings.image_custom_dimension,
+				model: editModel
+			};
 
-			elementor.imagesManager.registerItem( editModel );
+			var image_url = elementor.imagesManager.getImageUrl( image );
 
-			// Get url from imagesManager.
-			var image_url = elementor.imagesManager.getItem( editModel );
-
-			// If it's not in cache, like a new dropped widget or a custom size - get from settings
 			if ( ! image_url ) {
-
-				if ( 'custom' === settings.image_size ) {
-					return;
-				}
-
-				// If it's a new dropped widget
-				image_url = settings.image.url;
+				return;
 			}
 
 			var link_url;

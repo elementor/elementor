@@ -23,9 +23,7 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 	},
 
 	saveValue: function() {
-		var date = this.ui.picker.handleDtpicker( 'getDate' );
-
-		this.setValue( date.toISOString().substring( 0, 16 ).replace( 'T', ' ' ) );
+		this.setValue( this.ui.input.val() );
 	},
 
 	onBeforeDestroy: function() {
