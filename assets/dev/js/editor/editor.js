@@ -269,7 +269,11 @@ App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				elementor.getPanelView().setPage( 'elements' );
+				var panelView = elementor.getPanelView();
+
+				if ( 'elements' !== panelView.getCurrentPageName() ) {
+					panelView.setPage( 'elements' );
+				}
 			}
 		} );
 
