@@ -167,6 +167,9 @@ abstract class Widget_Base extends Element_Base {
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
 			$this->_render_settings();
 		}
+
+		do_action( 'elementor/widget/before_render_content', $this );
+
 		?>
 		<div class="elementor-widget-container">
 			<?php
