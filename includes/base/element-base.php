@@ -622,7 +622,9 @@ abstract class Element_Base {
 	private function _init_controls() {
 		Plugin::instance()->controls_manager->open_stack( $this );
 
+		do_action( 'elementor/element/before_register_controls', $this );
 		$this->_register_controls();
+		do_action( 'elementor/element/after_register_controls', $this );
 	}
 
 	private function _init_children() {
