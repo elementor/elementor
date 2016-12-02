@@ -163,6 +163,17 @@
 	padding: 8px 0;
 }
 
+#elementor-template-library-header-preview-get-pro{
+	width: 90%;
+	padding: 8px 0;
+
+	.dashicons{
+		font-size: 12px;
+		height: auto;
+		width: 10px;
+	}
+}
+
 #elementor-template-library-header-preview-back {
 	@include padding(16.5px, 16.5px, 15px, 0);
 	@include border-end(1px solid $editor-background);
@@ -249,6 +260,15 @@
 	.elementor-template-library-template-insert {
 		font-size: 11px;
 		width: 150px;
+	}
+
+	.elementor-template-library-template-get-pro{
+		@extend .elementor-template-library-template-insert;
+
+		.dashicons{
+			font-size: 12px;
+			height: auto;
+		}
 	}
 
 	.elementor-template-library-template-preview {

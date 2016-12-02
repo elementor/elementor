@@ -54,6 +54,23 @@
 					background-color: $editor-lightest;
 				}
 			}
+
+			&after {
+
+				&:after {
+					content: '';
+					position: absolute;
+					height: 3px;
+					width: 100%;
+					bottom: 0;
+					left: 0;
+					background-color: $editor-lightest;
+				}
+
+				+ .elementor-control-type-tabs {
+					padding-top: 15px;
+				}
+			}
 		}
 
 		&.elementor-control-deprecated {
@@ -126,13 +143,6 @@
 
 	.elementor-label-block {
 
-		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
-
-			.elementor-control-title {
-
-			}
-		}
-
 		.elementor-control-field {
 			display: flex;
 			flex-wrap: wrap;
@@ -142,6 +152,13 @@
 		.elementor-control-input-wrapper {
 			flex-basis: 100%;
 			margin-top: 10px;
+		}
+
+		&.elementor-control-hidden-label {
+
+			.elementor-control-input-wrapper {
+				margin-top: 0;
+			}
 		}
 	}
 
@@ -611,7 +628,7 @@
 		}
 
 		&.wp-picker-active {
-			transform: translateY(-18px);
+			transform: translateY(6px);
 
 			.wp-color-result {
 				margin-right: 3px;
@@ -949,10 +966,13 @@
 		}
 	}
 
-	// Hidden control
-	.elementor-control-type-hidden {
-		display: none !important;
+	// Code Editor
+	.elementor-control-type-code {
+		padding: 0 10px 15px;
 	}
+
+	// Tabs Control
+	@import "controls/tabs";
 
 	// Repeater control
 	@import "controls/repeater";
@@ -968,4 +988,9 @@
 
 	// Order control
 	@import "controls/order";
+
+	// Hidden control
+	.elementor-control-type-hidden {
+		display: none !important;
+	}
 }

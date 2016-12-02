@@ -40,6 +40,8 @@ abstract class Element_Base {
 	 */
 	protected $_current_tab = null;
 
+	private $_is_type_instance = true;
+
 	public final static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
@@ -98,11 +100,11 @@ abstract class Element_Base {
 	 *
 	 * @return Element_Base
 	 */
-	abstract protected function _get_child_type( array $element_data );
+	abstract protected function _get_default_child_type( array $element_data );
 
 	abstract public function get_name();
 
-	public final function get_controls( $control_id = null ) {
+	public function get_controls( $control_id = null ) {
 		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
@@ -191,6 +193,14 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_DESKTOP;
 
+		if ( isset( $control_args['desktop_default'] ) ) {
+			$control_args['default'] = $control_args['desktop_default'];
+		}
+
+		unset( $control_args['desktop_default'] );
+		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
+
 		$this->add_control(
 			$id,
 			$control_args
@@ -205,6 +215,14 @@ abstract class Element_Base {
 
 		$control_args['responsive'] = self::RESPONSIVE_TABLET;
 
+		if ( isset( $control_args['tablet_default'] ) ) {
+			$control_args['default'] = $control_args['tablet_default'];
+		}
+
+		unset( $control_args['desktop_default'] );
+		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
+
 		$this->add_control(
 			$id . '_tablet',
 			$control_args
@@ -218,6 +236,14 @@ abstract class Element_Base {
 		}
 
 		$control_args['responsive'] = self::RESPONSIVE_MOBILE;
+
+		if ( isset( $control_args['mobile_default'] ) ) {
+			$control_args['default'] = $control_args['mobile_default'];
+		}
+
+		unset( $control_args['desktop_default'] );
+		unset( $control_args['tablet_default'] );
+		unset( $control_args['mobile_default'] );
 
 		$this->add_control(
 			$id . '_mobile',
@@ -463,6 +489,10 @@ abstract class Element_Base {
 		];
 	}
 
+	public function get_unique_selector() {
+		return '.elementor-element-' . $this->get_id();
+	}
+
 	public function start_controls_section( $section_id, $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
@@ -507,8 +537,7 @@ abstract class Element_Base {
 		$this->add_control(
 			$tabs_id,
 			[
-				'type' => Controls_Manager::TAB,
-				'is_tabs_wrapper' => true,
+				'type' => Controls_Manager::TABS,
 			]
 		);
 
@@ -587,6 +616,13 @@ abstract class Element_Base {
 		<?php
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public function is_type_instance() {
+		return $this->_is_type_instance;
+	}
+
 	protected function render() {}
 
 	protected function get_default_data() {
@@ -616,6 +652,12 @@ abstract class Element_Base {
 		}
 	}
 
+	private function _get_child_type( $element_data ) {
+		$child_type = $this->_get_default_child_type( $element_data );
+
+		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
+	}
+
 	private function _init_controls() {
 		Plugin::instance()->controls_manager->open_stack( $this );
 
@@ -642,10 +684,11 @@ abstract class Element_Base {
 		$this->_settings = $this->_get_parsed_settings();
 	}
 
-	public function __construct( $data = [], $args = [] ) {
+	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
+		    $this->_is_type_instance = false;
 			$this->_init( $data );
-		} else {
+		} elseif ( $args ) {
 			$this->_default_args = $args;
 		}
 	}

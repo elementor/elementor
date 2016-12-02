@@ -44,11 +44,11 @@ class Frontend {
 			->add_device( 'tablet', $breakpoints['lg'] - 1 );
 	}
 
-	protected function _print_sections( $sections_data ) {
-		foreach ( $sections_data as $section_data ) {
-			$section = new Element_Section( $section_data );
+	protected function _print_elements( $elements_data ) {
+		foreach ( $elements_data as $element_data ) {
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
-			$section->print_element();
+			$element->print_element();
 		}
 	}
 
@@ -68,7 +68,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'2.0.2',
+			'4.0.1',
 			true
 		);
 
@@ -113,6 +113,8 @@ class Frontend {
 				'is_rtl' => is_rtl(),
 			]
 		);
+
+		do_action( 'elementor/frontend/enqueue_scripts' );
 	}
 
 	public function enqueue_styles() {
@@ -161,6 +163,7 @@ class Frontend {
 
 	public function print_css() {
 		$container_width = absint( get_option( 'elementor_container_width' ) );
+
 		if ( ! empty( $container_width ) ) {
 			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
 		}
@@ -239,6 +242,7 @@ class Frontend {
 		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
 			foreach ( $widget->get_scheme_controls() as $control ) {
 				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
+
 				if ( empty( $scheme_value ) )
 					continue;
 
@@ -250,6 +254,7 @@ class Frontend {
 					continue;
 
 				$element_unique_class = 'elementor-widget-' . $widget->get_name();
+
 				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
 				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
@@ -258,6 +263,7 @@ class Frontend {
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
+
 					$output_css_property = $control_obj->get_replaced_style_values( $css_property, $scheme_value );
 
 					$this->stylesheet->add_rules( $output_selector, $output_css_property );
@@ -315,7 +321,7 @@ class Frontend {
 		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
 				<div id="elementor-section-wrap">
-					<?php $this->_print_sections( $data ); ?>
+					<?php $this->_print_elements( $data ); ?>
 				</div>
 			</div>
 		</div>

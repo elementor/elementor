@@ -139,7 +139,7 @@ class Widgets_Manager {
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
-			if ( 'common' === $widget_key ) {
+			if ( ! $widget->show_in_panel() ) {
 				continue;
 			}
 
@@ -170,13 +170,7 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
-		/** @var Widget_Base|Widget_WordPress $widget_type */
-		$widget_type = $this->get_widget_types( $data['widgetType'] );
-
-		$widget_class = $widget_type->get_class_name();
-
-		/** @var Widget_Base $widget */
-		$widget = new $widget_class( $data, $widget_type->get_default_args() );
+		$widget = Plugin::instance()->elements_manager->create_element_instance( $data );
 
 		$widget->render_content();
 

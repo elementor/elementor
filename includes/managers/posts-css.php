@@ -20,11 +20,6 @@ class Posts_CSS_Manager {
 		}
 	}
 
-	public function on_save_post( $post_id ) {
-		$css_file = new Post_CSS_File( $post_id );
-		$css_file->update();
-	}
-
 	public function on_delete_post( $post_id ) {
 		$css_file = new Post_CSS_File( $post_id );
 		$css_file->delete();
@@ -74,7 +69,6 @@ class Posts_CSS_Manager {
 	}
 
 	private function register_actions() {
-		add_action( 'save_post', [ $this, 'on_save_post' ] );
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );

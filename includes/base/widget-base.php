@@ -32,7 +32,7 @@ abstract class Widget_Base extends Element_Base {
 		return 'apps';
 	}
 
-	public function __construct( $data = [], $args = [] ) {
+	public function __construct( $data = [], $args = null ) {
 		do_action( 'elementor/element/before_construct', $this, $data, $args );
 		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
 
@@ -41,12 +41,21 @@ abstract class Widget_Base extends Element_Base {
 		do_action( 'elementor/element/after_construct', $this );
 		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
 
-		// First instance
-		if ( ! $data ) {
+		$is_type_instance = $this->is_type_instance();
+
+		if ( ! $is_type_instance && null === $args ) {
+			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
+		}
+
+		if ( $is_type_instance ) {
 			do_action( 'elementor/widget/' . $this->get_name() . '/before_register_skins', $this );
 			$this->_register_skins();
 			do_action( 'elementor/widget/' . $this->get_name() . '/after_register_skins', $this );
 		}
+	}
+
+	public function show_in_panel() {
+		return true;
 	}
 
 	public function start_controls_section( $section_id, $args ) {
@@ -258,7 +267,7 @@ abstract class Widget_Base extends Element_Base {
 		return $data;
 	}
 
-	protected function _get_child_type( array $element_data ) {
+	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
 	}
 

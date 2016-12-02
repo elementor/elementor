@@ -87,7 +87,9 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	public function test_checkCondition() {
 		Elementor\Plugin::instance()->widgets_manager->get_widget_types(); // Ensure the widgets initialized
 
-		$element_obj = new \Elementor\Widget_Text_Editor( [
+		$element_obj = \Elementor\Plugin::instance()->elements_manager->create_element_instance( [
+			'elType' => 'widget',
+			'widgetType' => 'text-editor',
 			'id' => 'test_id',
 			'settings' => [
 				'control_1' => 'value',

@@ -32,6 +32,14 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	modules: {
+		element: require( 'elementor-models/element' ),
+		WidgetView: require( 'elementor-views/widget' ),
+		templateLibrary: {
+			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
+		}
+	},
+
 	// Private Members
 	_controlsItemView: null,
 
@@ -64,12 +72,13 @@ App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' ),
-			isInner = modelElement.get( 'isInner' );
+		var elType = modelElement.get( 'elType' );
 
 		if ( 'widget' === elType ) {
 			return elementData.controls;
 		}
+
+		var isInner = modelElement.get( 'isInner' );
 
 		return _.filter( elementData.controls, function( controlData ) {
 			return ! ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top );
@@ -96,6 +105,7 @@ App = Marionette.Application.extend( {
 				gallery: require( 'elementor-views/controls/gallery' ),
 				select2: require( 'elementor-views/controls/select2' ),
 				date_time: require( 'elementor-views/controls/date-time' ),
+				code: require( 'elementor-views/controls/code' ),
 				box_shadow: require( 'elementor-views/controls/box-shadow' ),
 				structure: require( 'elementor-views/controls/structure' ),
 				animation: require( 'elementor-views/controls/animation' ),
@@ -116,6 +126,7 @@ App = Marionette.Application.extend( {
 	initComponents: function() {
 		var EventManager = require( '../utils/hooks' );
 		this.hooks = new EventManager();
+		this.templates.init();
 
 		this.initDialogsManager();
 
@@ -126,6 +137,12 @@ App = Marionette.Application.extend( {
 
 	initDialogsManager: function() {
 		this.dialogsManager = new DialogsManager.Instance();
+	},
+
+	initElements: function() {
+		var ElementModel = elementor.modules.element;
+
+		this.elements = new ElementModel.Collection( this.config.data );
 	},
 
 	initPreview: function() {
@@ -148,6 +165,8 @@ App = Marionette.Application.extend( {
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+
+		this.initElements();
 	},
 
 	initFrontend: function() {
@@ -187,6 +206,8 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
+		this.$window = Backbone.$( window );
+
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -197,18 +218,15 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		// Init Base elements collection from the server
-		var ElementModel = require( 'elementor-models/element' );
-
-		this.elements = new ElementModel.Collection( this.config.data );
-
-		this.initPreview();
-
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
 
 		this.initClearPageDialog();
+
+		this.$window.trigger( 'elementor:init' );
+
+		this.initPreview();
 	},
 
 	onPreviewLoaded: function() {
@@ -251,7 +269,11 @@ App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				elementor.getPanelView().setPage( 'elements' );
+				var panelView = elementor.getPanelView();
+
+				if ( 'elements' !== panelView.getCurrentPageName() ) {
+					panelView.setPage( 'elements' );
+				}
 			}
 		} );
 
@@ -325,8 +347,9 @@ App = Marionette.Application.extend( {
 	},
 
 	setFlagEditorChange: function( status ) {
-		elementor.channels.editor.reply( 'editor:changed', status );
-		elementor.channels.editor.trigger( 'editor:changed', status );
+		elementor.channels.editor
+			.reply( 'editor:changed', status )
+			.trigger( 'editor:changed', status );
 	},
 
 	isEditorChanged: function() {
@@ -334,7 +357,7 @@ App = Marionette.Application.extend( {
 	},
 
 	setWorkSaver: function() {
-		Backbone.$( window ).on( 'beforeunload', function() {
+		this.$window.on( 'beforeunload', function() {
 			if ( elementor.isEditorChanged() ) {
 				return elementor.translate( 'before_unload_alert' );
 			}
@@ -451,8 +474,12 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	translate: function( stringKey, templateArgs ) {
-		var string = this.config.i18n[ stringKey ];
+	translate: function( stringKey, templateArgs, i18nStack ) {
+		if ( ! i18nStack ) {
+			i18nStack = this.config.i18n;
+		}
+
+		var string = i18nStack[ stringKey ];
 
 		if ( undefined === string ) {
 			string = stringKey;

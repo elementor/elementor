@@ -53,9 +53,25 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
 
+	getChildView: function( model ) {
+		var ChildView,
+			elType = model.get( 'elType' );
+
+		if ( 'section' === elType ) {
+			ChildView = require( 'elementor-views/section' );
+		} else if ( 'column' === elType ) {
+			ChildView = require( 'elementor-views/column' );
+		} else {
+			ChildView = elementor.modules.WidgetView;
+		}
+
+		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
+	},
+
 	templateHelpers: function() {
 		return {
-			elementModel: this.model
+			elementModel: this.model,
+			editModel: this.getEditModel()
 		};
 	},
 
@@ -98,6 +114,55 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	addChildModel: function( model, options ) {
 		return this.collection.add( model, options, true );
+	},
+
+	addChildElement: function( itemData, options ) {
+		options = options || {};
+
+		var myChildType = this.getChildType();
+
+		if ( -1 === myChildType.indexOf( itemData.elType ) ) {
+			delete options.at;
+
+			return this.children.last().addChildElement( itemData, options );
+		}
+
+		var newModel = this.addChildModel( itemData, options ),
+			newView = this.children.findByModel( newModel );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
+		newView.edit();
+
+		return newView;
+	},
+
+	addElementFromPanel: function( options ) {
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+
+		var itemData = {
+			id: elementor.helpers.getUniqueID(),
+			elType: elementView.model.get( 'elType' )
+		};
+
+		if ( 'widget' === itemData.elType ) {
+			itemData.widgetType = elementView.model.get( 'widgetType' );
+		} else if ( 'section' === itemData.elType ) {
+			itemData.elements = [];
+			itemData.isInner = true;
+		} else {
+			return;
+		}
+
+		var customData = elementView.model.get( 'custom' );
+
+		if ( customData ) {
+			_.extend( itemData, customData );
+		}
+
+		this.addChildElement( itemData, options );
 	},
 
 	isCollectionFilled: function() {
@@ -178,8 +243,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
-						_.extend( {}, placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						_.extend( {}, replacements, [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
 				} );
 			}
@@ -222,6 +287,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	addStyleToDocument: function() {
 		var styleText = this.stylesheet.toString();
+
+		styleText = elementor.hooks.applyFilters( 'editor/style/styleText', styleText, this );
 
 		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
 			return;
@@ -341,7 +408,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var templateType = this.getTemplateType();
 
 		if ( 'js' === templateType ) {
-			editModel.setHtmlCache();
+			this.getEditModel().setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {

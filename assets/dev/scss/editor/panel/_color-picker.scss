@@ -3,6 +3,7 @@
 	&.wp-picker-active {
 		position: absolute;
 		z-index: 1;
+		top: 0;
 		left: 0;
 		background-color: #fff;
 		border: solid #fff;
@@ -32,14 +33,20 @@
 	margin: 0;
 	width: 48px;
 	height: 25px;
-	box-shadow: inset 0 0 0 3px white;
 	transition: border .5s;
 	padding: 0;
 	border-radius: 3px;
 	border: 1px solid $editor-lightest;
 
-	&:after {
-		content: none;
+	&, &:focus {
+		box-shadow: inset 0 0 0 3px white;
+	}
+
+	&, &.wp-picker-open {
+
+		&:after {
+			content: none;
+		}
 	}
 
 	&:hover {
@@ -52,18 +59,23 @@
 	}
 }
 
+.wp-picker-default,
 .wp-picker-clear {
-	height: 24px;
-	width: 48px;
-	padding: 0;
-	background-color: #d5dadf;
-	border-radius: 0 3px 3px 0;
-	margin: 0;
+
+	&.button {
+		height: 26px;
+		width: 48px;
+		padding: 0;
+		background-color: #d5dadf;
+		border-radius: 0 3px 3px 0;
+		margin: 0;
+	}
 }
 
 .wp-color-picker {
 	float: left;
 	width: 100px;
+	max-width: 100px;
 	border-radius: 3px 0 0 3px;
 	line-height: 1;
 }

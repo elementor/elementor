@@ -17,6 +17,27 @@ class Elements_Manager {
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 
+	/**
+	 * @param array $element_data
+	 *
+	 * @return Element_Base
+	 */
+	public function create_element_instance( array $element_data ) {
+		$args = [];
+
+		if ( 'widget' === $element_data['elType'] ) {
+			$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
+
+			$args = $element_type->get_default_args();
+		} else {
+			$element_type = $this->get_element_types( $element_data['elType'] );
+		}
+
+		$element_class = $element_type->get_class_name();
+
+		return new $element_class( $element_data, $args );
+	}
+
 	public function get_categories() {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -62,7 +83,7 @@ class Elements_Manager {
 			$this->_init_elements();
 		}
 
-		if ( $element_name ) {
+		if ( null !== $element_name ) {
 			return isset( $this->_element_types[ $element_name ] ) ? $this->_element_types[ $element_name ] : null;
 		}
 
@@ -103,6 +124,7 @@ class Elements_Manager {
 		} else {
 			$revision = DB::REVISION_DRAFT;
 		}
+
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
 		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $revision );

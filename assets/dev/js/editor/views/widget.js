@@ -18,11 +18,6 @@ WidgetView = BaseElementView.extend( {
 		return 'elementor-widget';
 	},
 
-	modelEvents: {
-		'before:remote:render': 'onModelBeforeRemoteRender',
-		'remote:render': 'onModelRemoteRender'
-	},
-
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
@@ -36,9 +31,14 @@ WidgetView = BaseElementView.extend( {
 
 		var editModel = this.getEditModel();
 
-		if ( ! editModel.getHtmlCache() ) {
+		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
+
+		editModel.on( {
+			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
+			'remote:render': _.bind( this.onModelRemoteRender, this )
+		} );
 	},
 
 	getTemplateType: function() {
@@ -46,11 +46,7 @@ WidgetView = BaseElementView.extend( {
 			var editModel = this.getEditModel(),
 				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
-			if ( 0 === $template.length ) {
-				this._templateType = 'remote';
-			} else {
-				this._templateType = 'js';
-			}
+			this._templateType = $template.length ? 'js' : 'remote';
 		}
 
 		return this._templateType;
@@ -74,16 +70,18 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	attachElContent: function( html ) {
+	getHTMLContent: function( html ) {
 		var htmlCache = this.getEditModel().getHtmlCache();
 
-		if ( htmlCache ) {
-			html = htmlCache;
-		}
+		return htmlCache || html;
+	},
+
+	attachElContent: function( html ) {
+		var htmlContent = this.getHTMLContent( html );
 
 		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( html );
+			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
 		}, this ) );
 
 		return this;
@@ -97,8 +95,7 @@ WidgetView = BaseElementView.extend( {
         self.$el
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) )
-	        .addClass( 'elementor-widget-can-edit' )
+	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) + ' elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 

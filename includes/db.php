@@ -51,6 +51,11 @@ class DB {
 		} else {
 			unset( $GLOBALS['post'] );
 		}
+
+		$css_file = new Post_CSS_File( $post_id );
+		$css_file->update();
+
+		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 
 	/**
@@ -80,6 +85,7 @@ class DB {
 
 	public function get_plain_editor( $post_id, $revision = self::REVISION_PUBLISH ) {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
+
 		if ( self::REVISION_DRAFT === $revision ) {
 			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
 
@@ -91,11 +97,13 @@ class DB {
 				$data = $this->_get_new_editor_from_wp_editor( $post_id );
 			}
 		}
+
 		return $data;
 	}
 
 	protected function _get_new_editor_from_wp_editor( $post_id ) {
 		$post = get_post( $post_id );
+
 		if ( empty( $post ) || empty( $post->post_content ) ) {
 			return [];
 		}
@@ -168,24 +176,29 @@ class DB {
 		}
 	}
 
+	private function _render_element_plain_content( $element_data ) {
+		if ( 'widget' === $element_data['elType'] ) {
+			/** @var Widget_Base $widget */
+			$widget = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+
+			$widget->render_plain_content();
+		}
+
+		if ( ! empty( $element_data['elements'] ) ) {
+			foreach ( $element_data['elements'] as $element ) {
+				$this->_render_element_plain_content( $element );
+			}
+		}
+	}
+
 	private function _save_plain_text( $post_id ) {
 		ob_start();
 
 		$data = $this->get_plain_editor( $post_id );
-		if ( ! empty( $data ) ) {
-			foreach ( $data as $section ) {
-				foreach ( $section['elements'] as $column_data ) {
-					$column = new Element_Column( $column_data );
 
-					/** @var Widget_Base $widget */
-					foreach ( $column->get_children() as $widget ) {
-						if ( 'element' === $widget::get_type() ) {
-							continue;
-						}
-
-						$widget->render_plain_content();
-					}
-				}
+		if ( $data ) {
+			foreach ( $data as $element_data ) {
+				$this->_render_element_plain_content( $element_data );
 			}
 		}
 
@@ -221,25 +234,12 @@ class DB {
 	 * @return array
 	 */
 	private function _get_editor_data( $data, $with_html_content = false ) {
-		if ( isset( $data['elType'] ) ) {
-			if ( 'widget' === $data['elType'] ) {
-				$element_type = Plugin::instance()->widgets_manager->get_widget_types( $data['widgetType'] );
-			} else {
-				$element_type = Plugin::instance()->elements_manager->get_element_types( $data['elType'] );
-			}
-
-			$element_class = $element_type->get_class_name();
-
-			/** @var Element_Base $element */
-			$element = new $element_class( $data );
-
-			return $element->get_raw_data( $with_html_content );
-		}
-
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
-			$editor_data[] = $this->_get_editor_data( $element_data, $with_html_content );
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+
+			$editor_data[] = $element->get_raw_data( $with_html_content );
 		} // End Section
 
 		return $editor_data;

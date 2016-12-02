@@ -238,7 +238,7 @@ button.elementor-button-spinner:before {
   display: inline-block;
   padding: 0;
   top: 8px;
-  left: -4px;
+  right: -4px;
   position: relative;
   vertical-align: top;
   content: "\f463"; }
@@ -248,9 +248,6 @@ button.elementor-button-spinner.loading:before {
 button.elementor-button-spinner.success:before {
   content: "\f147";
   color: #46b450; }
-
-.elementor-shortcode-input {
-  min-width: 205px; }
 
 #available-widgets [class*="elementor-template"] .widget-title:before {
   content: "\e801";

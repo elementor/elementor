@@ -17,13 +17,13 @@ class Controls_Manager {
 	const SELECT = 'select';
 	const CHECKBOX = 'checkbox';
 	const SWITCHER = 'switcher';
-	const CHECKBOX_LIST = 'checkbox_list';
 
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
 	const SECTION = 'section';
 	const TAB = 'tab';
+	const TABS = 'tabs';
 	const DIVIDER = 'divider';
 
 	const COLOR = 'color';
@@ -95,13 +95,13 @@ class Controls_Manager {
 			self::SELECT,
 			self::CHECKBOX,
 			self::SWITCHER,
-			self::CHECKBOX_LIST,
 
 			self::HIDDEN,
 			self::HEADING,
 			self::RAW_HTML,
 			self::SECTION,
 			self::TAB,
+			self::TABS,
 			self::DIVIDER,
 
 			self::COLOR,
@@ -245,6 +245,18 @@ class Controls_Manager {
 
 	/**
 	 * @since 1.0.0
+	 *
+	 * @param $id
+	 * @param $instance
+	 *
+	 * @return Group_Control_Base[]
+	 */
+	public function add_group_control( $id, $instance ) {
+		return $this->_group_controls[ $id ] = $instance;
+	}
+
+	/**
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function enqueue_control_scripts() {
@@ -314,7 +326,7 @@ class Controls_Manager {
 
 		$stack = $this->_controls_stack[ $stack_id ];
 
-		if ( 'widget' === $element->get_type() && 'common' !== $element->get_name() ) {
+		if ( 'widget' === $element->get_type() && 'common' !== $stack_id ) {
 			$common_widget = Plugin::instance()->widgets_manager->get_widget_types( 'common' );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );

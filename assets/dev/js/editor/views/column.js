@@ -1,6 +1,5 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
-	WidgetView = require( 'elementor-views/widget' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
@@ -23,18 +22,7 @@ ColumnView = BaseElementView.extend( {
 		},
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		},
-		HandleElementsRelation: {
-			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
-	},
-
-	getChildView: function( model ) {
-		if ( 'section' === model.get( 'elType' ) ) {
-			return require( 'elementor-views/section' ); // We need to require the section dynamically
-		}
-
-		return WidgetView;
 	},
 
 	className: function() {
@@ -160,28 +148,13 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
-				var elementView = elementor.channels.panelElements.request( 'element:selected' ),
-					newIndex = Backbone.$( this ).index();
+				var newIndex = Backbone.$( this ).index();
 
 				if ( 'bottom' === side ) {
 					newIndex++;
 				}
 
-				var itemData = {
-					id: elementor.helpers.getUniqueID(),
-					elType: elementView.model.get( 'elType' )
-				};
-
-				if ( 'widget' === itemData.elType ) {
-					itemData.widgetType = elementView.model.get( 'widgetType' );
-				} else if ( 'section' === itemData.elType ) {
-					itemData.elements = [];
-					itemData.isInner = true;
-				} else {
-					return;
-				}
-
-				self.triggerMethod( 'request:add', itemData, { at: newIndex } );
+				self.addElementFromPanel( { at: newIndex } );
 			}
 		} );
 	},

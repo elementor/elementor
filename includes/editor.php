@@ -154,7 +154,7 @@ class Editor {
 			[
 				'jquery',
 			],
-			'2.0.2',
+			'4.0.1',
 			true
 		);
 
@@ -260,6 +260,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'ace',
+			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
+			[],
+			'1.2.5',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -277,10 +285,14 @@ class Editor {
 				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
+				'ace',
 			],
 			$plugin->get_version(),
 			true
 		);
+
+		do_action( 'elementor/editor/before_enqueue_scripts' );
+
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -352,6 +364,7 @@ class Editor {
 					'an_error_occurred' => __( 'An error occurred', 'elementor' ),
 					'templates_request_error' => __( 'The following error occurred when processing the request:', 'elementor' ),
 					'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
+					'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 					'page' => __( 'Page', 'elementor' ),
 					'section' => __( 'Section', 'elementor' ),
 					'delete_template' => __( 'Delete Template', 'elementor' ),

@@ -31,23 +31,12 @@
 	flex-wrap: wrap;
 	align-items: center;
 
-	&.elementor-button-vertical-align- {
-
-		&start {
-			align-items: flex-start;
-		}
-
-		&end {
-			align-items: flex-end;
-		}
-
-		&stretch {
-			align-items: stretch;
-		}
+	&.elementor-field-type-submit {
+		align-items: flex-end;
 	}
 
 	.elementor-field-textual {
-		width: auto;
+		width: 100%;
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
@@ -59,7 +48,9 @@
 			outline: 0;
 		}
 
-		&::-moz-placeholder, &::-webkit-input-placeholder, :-ms-input-placeholder {
+		&::-moz-placeholder,
+		&::-webkit-input-placeholder,
+		:-ms-input-placeholder {
 			color: inherit;
 			opacity: 0.6;
 		}
@@ -68,6 +59,7 @@
 	.elementor-select-wrapper {
 		display: flex;
 		position: relative;
+		width: 100%;
 
 		select {
 			appearance: none;
@@ -112,41 +104,42 @@
 
 // Keep the following out from another parent selector!
 .elementor-field-textual {
+	line-height: 1.4;
 
 	&.elementor-size- {
 
 		&xs {
 			font-size: 13px;
-			line-height: 1.4;
-			padding: 6px 12px;
+			min-height: 33px;
+			padding: 4px 12px;
 			border-radius: 2px;
 		}
 
 		&sm {
 			font-size: 15px;
-			line-height: 1.4;
-			padding: 9px 16px;
+			min-height: 40px;
+			padding: 5px 14px;
 			border-radius: 3px;
 		}
 
 		&md {
 			font-size: 16px;
-			line-height: 1.5;
-			padding: 10px 16px;
+			min-height: 47px;
+			padding: 6px 16px;
 			border-radius: 4px;
 		}
 
 		&lg {
 			font-size: 18px;
-			line-height: 1.5;
-			padding: 14px 16px;
+			min-height: 59px;
+			padding: 7px 20px;
 			border-radius: 5px;
 		}
 
 		&xl {
 			font-size: 20px;
-			line-height: 1.6;
-			padding: 18px 20px;
+			min-height: 72px;
+			padding: 8px 24px;
 			border-radius: 6px;
 		}
 	}
@@ -212,5 +205,51 @@
 
 	&.form-message-success {
 		color: $success;
+	}
+}
+
+// Form Submit Button
+.elementor-form {
+
+	.elementor-button {
+		padding-top: 0;
+		padding-bottom: 0;
+		border: 0 none;
+
+		& > span {
+			display: flex;
+			justify-content: center;
+		}
+
+		.elementor-align-icon-right {
+			order: getValueByDirection( 2 ,0 );
+		}
+
+		.elementor-align-icon-left {
+			order: getValueByDirection( 0 ,2 );
+		}
+
+		&.elementor-size- {
+
+			&xs {
+				min-height: 33px;
+			}
+
+			&sm {
+				min-height: 40px;
+			}
+
+			&md {
+				min-height: 47px;
+			}
+
+			&lg {
+				min-height: 59px;
+			}
+
+			&xl {
+				min-height: 72px;
+			}
+		}
 	}
 }

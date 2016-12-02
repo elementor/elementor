@@ -28,7 +28,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 		$widget_class = '\Elementor\Widget_Text_editor';
 		$widget_id = 'text-editor';
 
-		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->register_widget_type( new $widget_class( [ 'id' => $widget_id ] ) ) );
+		$this->assertTrue( Elementor\Plugin::instance()->widgets_manager->register_widget_type( new $widget_class() ) );
 
 		$widget = Elementor\Plugin::instance()->widgets_manager->get_widget_types( $widget_id );
 		$this->assertInstanceOf( $widget_class, $widget );

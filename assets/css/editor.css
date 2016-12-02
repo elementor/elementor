@@ -211,6 +211,9 @@ body {
   font-size: 13px;
   color: #6d7882; }
 
+.elementor-hidden {
+  display: none; }
+
 .elementor-button {
   outline: none;
   border: none;
@@ -248,7 +251,7 @@ body {
     .elementor-button.elementor-button-default:visited {
       color: #fff; }
 
-input, select, textarea {
+input, select, textarea, .elementor-input-style {
   border-radius: 3px;
   font-size: 12px;
   width: 100%;
@@ -257,18 +260,18 @@ input, select, textarea {
   color: #495157;
   border: 1px solid;
   outline: none; }
-  input:not(:focus), select:not(:focus), textarea:not(:focus) {
+  input:not(:focus), select:not(:focus), textarea:not(:focus), .elementor-input-style:not(:focus) {
     border-color: #d5dadf; }
-  input:focus, select:focus, textarea:focus {
+  input:focus, select:focus, textarea:focus, .elementor-input-style:focus {
     border-color: #a4afb7; }
 
 .elementor-error input, .elementor-error select, .elementor-error textarea {
   border-color: #b01b1b; }
 
-input, textarea {
+input, textarea, .elementor-input-style {
   padding: 5px 8px; }
 
-textarea {
+textarea, .elementor-input-style {
   resize: vertical; }
 
 input[type="checkbox"],
@@ -497,8 +500,6 @@ select {
     color: #9b0a46;
     -webkit-transition: none;
     transition: none; }
-    .elementor-panel a:visited {
-      color: inherit; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -573,16 +574,6 @@ select {
     padding: 20px 20px 10px; }
   .elementor-panel .elementor-control-title {
     font-size: 12px; }
-  .elementor-panel .elementor-control-type-tab:not(.type-tabs) {
-    display: inline-block;
-    border: 1px solid #d6d6d6;
-    border-bottom: none;
-    padding: 10px 10px 0 !important;
-    cursor: pointer; }
-    .elementor-panel .elementor-control-type-tab:not(.type-tabs).elementor-tab-active {
-      font-weight: bold; }
-  .elementor-panel .elementor-tab-close {
-    display: none !important; }
   .elementor-panel .select2-container {
     width: 100% !important; }
     .elementor-panel .select2-container:not(.select2-container--open):not(.select2-container--focus) .select2-selection--single,
@@ -656,8 +647,27 @@ select {
   .elementor-panel .elementor-descriptor, .elementor-panel #elementor-panel-page-editor .elementor-control-description {
     font-size: 11px;
     font-style: italic;
-    line-height: 1.2;
+    line-height: 1.4;
     color: #a4afb7; }
+  .elementor-panel .elementor-panel-nerd-box {
+    padding: 40px 35px;
+    text-align: center; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-icon {
+      font-size: 52px;
+      color: #a4afb7; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-title {
+      margin-top: 30px;
+      font-size: 16px;
+      font-weight: bold; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-message {
+      margin-top: 25px;
+      line-height: 1.4; }
+    .elementor-panel .elementor-panel-nerd-box .elementor-panel-nerd-box-link {
+      margin-top: 15px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: underline; }
   .elementor-panel #elementor-panel-header {
     display: table;
     height: 40px;
@@ -684,11 +694,15 @@ select {
     font-size: 15px; }
     .elementor-panel #elementor-panel-header-title img {
       width: 66px; }
-  .elementor-panel #elementor-panel-elements-search-area {
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
+  .elementor-panel #elementor-panel-elements-navigation .elementor-panel-navigation-tab {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    cursor: pointer; }
   .elementor-panel #elementor-panel-elements {
     overflow: hidden;
-    padding: 5px; }
+    padding: 0 5px; }
   .elementor-panel .elementor-element-wrapper {
     float: left;
     width: 50%;
@@ -717,34 +731,42 @@ select {
       vertical-align: middle;
       height: 40px; }
   .elementor-panel #elementor-panel-elements-search-wrapper {
-    position: relative; }
-    .elementor-panel #elementor-panel-elements-search-wrapper .fa {
+    position: relative;
+    margin: 10px 10px 5px; }
+    .elementor-panel #elementor-panel-elements-search-wrapper i {
       position: absolute;
-      right: 15px;
+      right: 0;
       top: 50%;
       color: #a4afb7;
       -webkit-transform: translateY(-50%);
-              transform: translateY(-50%); }
+              transform: translateY(-50%);
+      -webkit-transition: right 1s;
+      transition: right 1s; }
   .elementor-panel #elementor-panel-elements-search-input {
-    width: 100%;
-    background-color: #fff;
     font-size: 11px;
-    padding: 8px 42px 8px 15px;
+    border-radius: 0;
+    padding: 10px 27px 10px 0;
     font-style: italic;
     color: #a4afb7;
     border: none;
-    border-radius: 0; }
+    -webkit-transition: all 1s;
+    transition: all 1s; }
+    .elementor-panel #elementor-panel-elements-search-input:focus {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding-left: 15px; }
+      .elementor-panel #elementor-panel-elements-search-input:focus + i {
+        right: 15px; }
   .elementor-panel .elementor-panel-category:first-child .panel-elements-category-title {
     padding-top: 14px; }
   .elementor-panel .panel-elements-category-title-basic {
     display: none; }
   .elementor-panel .panel-elements-category-title {
-    padding: 7px 15px;
+    padding: 12px 15px;
     text-transform: uppercase;
     font-size: 11px; }
   .elementor-panel .panel-elements-category-items {
     overflow: hidden;
-    padding: 5px; }
+    padding: 0 5px; }
   .elementor-panel .elementor-panel-scheme-title {
     padding: 10px 20px;
     margin-top: 10px; }
@@ -775,13 +797,21 @@ select {
     position: relative; }
   .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item {
     display: inline-block; }
-    .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
-      margin-right: 13px; }
+    @media (max-width: 1439px) {
+      .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
+        margin-right: 13px; } }
+    @media (min-width: 1440px) {
+      .elementor-panel .elementor-panel-scheme-color .elementor-panel-scheme-item:not(:nth-child(4n)) {
+        margin-right: 19px; } }
   .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(-37px);
-            transform: translateY(-37px); }
-    .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
-      margin-right: 7px; }
+    -webkit-transform: translateY(10px);
+            transform: translateY(10px); }
+    @media (max-width: 1439px) {
+      .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
+        margin-right: 4px; } }
+    @media (min-width: 1440px) {
+      .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
+        margin-right: 6px; } }
   .elementor-panel .elementor-panel-scheme-color-title {
     text-align: center;
     text-transform: uppercase;
@@ -827,33 +857,19 @@ select {
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1; }
-  .elementor-panel #elementor-panel-schemes-disabled {
-    padding: 20px;
-    text-align: center;
-    margin-top: 10px; }
-    .elementor-panel #elementor-panel-schemes-disabled i {
-      display: block;
-      font-size: 52px;
-      color: #a4afb7; }
-    .elementor-panel #elementor-panel-schemes-disabled a {
-      color: #9b0a46;
-      cursor: pointer; }
-      .elementor-panel #elementor-panel-schemes-disabled a:hover {
-        text-decoration: underline; }
-  .elementor-panel #elementor-panel-schemes-disabled-title {
-    margin-top: 30px;
-    font-size: 15px;
-    font-weight: 500;
-    color: #495157; }
-  .elementor-panel #elementor-panel-schemes-disabled-content {
-    margin-top: 20px;
-    line-height: 1.5; }
+  .elementor-panel #elementor-panel-schemes-disabled a:hover {
+    text-decoration: underline; }
   .elementor-panel #elementor-panel-content-wrapper {
     position: absolute;
     bottom: 40px;
     top: 40px;
     left: 0;
     width: 100%; }
+  .elementor-panel #elementor-panel-elements-get-more-elements-wrapper {
+    margin: 0 0 20px; }
+    .elementor-panel #elementor-panel-elements-get-more-elements-wrapper a {
+      display: block;
+      margin: 0 13px; }
   .elementor-panel #elementor-panel-page-menu {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
   .elementor-panel .elementor-panel-menu-item {
@@ -874,42 +890,41 @@ select {
     font-weight: 500; }
     .elementor-panel .elementor-panel-menu-item-title > span {
       color: #39b54a; }
-  .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls {
+  .elementor-panel .elementor-panel-navigation {
     background-color: #ffffff;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
-    .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul {
-      display: table;
-      table-layout: fixed;
-      width: 100%; }
-      .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li {
-        display: table-cell; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-content a:before {
-          content: '\f040'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-style a:before {
-          content: '\f042'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-advanced a:before {
-          content: '\f013'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-responsive a:before {
-          content: '\f10a'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-layout a:before {
-          content: '\f0db'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.elementor-tab-control-column a:before {
-          content: '\f0db'; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li.active {
-          background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
-          background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-          border-bottom: 3px solid #9b0a46; }
-        .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li a {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    display: table;
+    table-layout: fixed;
+    width: 100%; }
+    .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab {
+      display: table-cell; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-content a:before {
+        content: '\f040'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-style a:before {
+        content: '\f042'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-advanced a:before {
+        content: '\f013'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-responsive a:before {
+        content: '\f10a'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before {
+        content: '\f0db'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
+        content: '\f0db'; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.active {
+        background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
+        background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+        border-bottom: 3px solid #9b0a46; }
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a {
+        display: block;
+        text-align: center;
+        padding: 12px 0 8px;
+        font-size: 10px;
+        color: #6d7882; }
+        .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a:before {
+          font-family: FontAwesome;
+          font-size: 16px;
           display: block;
-          text-align: center;
-          padding: 12px 0 8px;
-          font-size: 10px;
-          color: #6d7882; }
-          .elementor-panel #elementor-panel-page-editor .elementor-tabs-controls ul li a:before {
-            font-family: FontAwesome;
-            font-size: 16px;
-            display: block;
-            margin-bottom: 6px; }
+          margin-bottom: 6px; }
   .elementor-panel #elementor-panel-page-editor #elementor-controls > .elementor-control:not(.elementor-active-tab) {
     display: none; }
   .elementor-panel #elementor-panel-page-editor .elementor-control {
@@ -936,6 +951,16 @@ select {
         top: 0;
         left: 0;
         background-color: #d5dadf; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-after:after {
+      content: '';
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      background-color: #d5dadf; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-after + .elementor-control-type-tabs {
+      padding-top: 15px; }
     .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-deprecated {
       color: #b01b1b; }
       .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-deprecated .elementor-control-description {
@@ -976,6 +1001,8 @@ select {
         -ms-flex-preferred-size: 100%;
             flex-basis: 100%;
     margin-top: 10px; }
+  .elementor-panel #elementor-panel-page-editor .elementor-label-block.elementor-control-hidden-label .elementor-control-input-wrapper {
+    margin-top: 0; }
   .elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field {
     display: table;
     width: 100%; }
@@ -1242,8 +1269,8 @@ select {
   .elementor-panel #elementor-panel-page-editor .wp-picker-container:not(.wp-picker-active) {
     float: right; }
   .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(-18px);
-            transform: translateY(-18px); }
+    -webkit-transform: translateY(6px);
+            transform: translateY(6px); }
     .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg * {
@@ -1429,9 +1456,39 @@ select {
     float: right;
     height: 27px;
     width: 70px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-code {
+    padding: 0 10px 15px; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tabs {
+    font-size: 0.8em;
+    color: #a4afb7;
+    text-transform: uppercase;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab {
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    line-height: 30px;
+    border-top: 1px solid #a4afb7;
+    border-bottom: 1px solid #a4afb7;
+    border-right: 1px solid #a4afb7;
+    cursor: pointer; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:first-child {
+      border-left: 1px solid #a4afb7;
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:last-child {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.elementor-tab-active {
+      background-color: #a4afb7;
+      color: #ffffff; }
+  .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
     display: none !important; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater, .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater,
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:not(.elementor-control-type-tab) {
     padding: 0 10px 15px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:before {
     display: none; }
@@ -1445,6 +1502,11 @@ select {
     padding-top: 15px; }
     .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls:not(.editable) {
       display: none; }
+    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls .wp-picker-container.wp-picker-active {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      border-width: 0;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4); }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
     table-layout: fixed;
@@ -1605,9 +1667,12 @@ select {
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+    display: none !important; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
+    top: 0;
     left: 0;
     background-color: #fff;
     border: solid #fff;
@@ -1626,20 +1691,22 @@ select {
     margin: 0;
     width: 48px;
     height: 25px;
-    box-shadow: inset 0 0 0 3px white;
     -webkit-transition: border .5s;
     transition: border .5s;
     padding: 0;
     border-radius: 3px;
     border: 1px solid #d5dadf; }
-    .elementor-panel .wp-color-result:after {
+    .elementor-panel .wp-color-result, .elementor-panel .wp-color-result:focus {
+      box-shadow: inset 0 0 0 3px white; }
+    .elementor-panel .wp-color-result:after, .elementor-panel .wp-color-result.wp-picker-open:after {
       content: none; }
     .elementor-panel .wp-color-result:hover {
       border: 1px solid #a4afb7; }
     .elementor-panel .wp-color-result:focus, .elementor-panel .wp-color-result:active {
       outline: 0; }
-  .elementor-panel .wp-picker-clear {
-    height: 24px;
+  .elementor-panel .wp-picker-default.button,
+  .elementor-panel .wp-picker-clear.button {
+    height: 26px;
     width: 48px;
     padding: 0;
     background-color: #d5dadf;
@@ -1648,6 +1715,7 @@ select {
   .elementor-panel .wp-color-picker {
     float: left;
     width: 100px;
+    max-width: 100px;
     border-radius: 3px 0 0 3px;
     line-height: 1; }
   .elementor-panel .wp-picker-holder * {
@@ -1742,6 +1810,8 @@ select {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
     color: #b01b1b; }
+  .elementor-panel .elementor-panel-hide {
+    display: none; }
 
 #elementor-mode-switcher {
   position: absolute;
@@ -2140,6 +2210,14 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 80%;
   padding: 8px 0; }
 
+#elementor-template-library-header-preview-get-pro {
+  width: 90%;
+  padding: 8px 0; }
+  #elementor-template-library-header-preview-get-pro .dashicons {
+    font-size: 12px;
+    height: auto;
+    width: 10px; }
+
 #elementor-template-library-header-preview-back {
   padding: 16.5px 16.5px 15px 0;
   border-right: 1px solid #e6e9ec;
@@ -2192,9 +2270,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
     background-color: rgba(0, 0, 0, 0.5);
     -webkit-transition: opacity .5s;
     transition: opacity .5s; }
-  .elementor-template-library-template-remote .elementor-template-library-template-insert {
+  .elementor-template-library-template-remote .elementor-template-library-template-insert, .elementor-template-library-template-remote .elementor-template-library-template-get-pro {
     font-size: 11px;
     width: 150px; }
+  .elementor-template-library-template-remote .elementor-template-library-template-get-pro .dashicons {
+    font-size: 12px;
+    height: auto; }
   .elementor-template-library-template-remote .elementor-template-library-template-preview {
     position: relative;
     height: 180px;
@@ -2207,9 +2288,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
-  .elementor-template-library-template-remote .elementor-template-library-template-insert {
+  .elementor-template-library-template-remote .elementor-template-library-template-insert, .elementor-template-library-template-remote .elementor-template-library-template-get-pro {
     padding: 11px; }
-    .elementor-template-library-template-remote .elementor-template-library-template-insert i {
+    .elementor-template-library-template-remote .elementor-template-library-template-insert i, .elementor-template-library-template-remote .elementor-template-library-template-get-pro i {
       padding-right: 5px; }
   .elementor-template-library-template-remote .elementor-template-library-template-name {
     margin: 13px 0 10px;
@@ -2261,7 +2342,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     margin-left: 6px; }
   .elementor-template-library-template-local .elementor-template-library-template-delete:hover {
     color: #b01b1b; }
-  .elementor-template-library-template-local .elementor-template-library-template-insert {
+  .elementor-template-library-template-local .elementor-template-library-template-insert, .elementor-template-library-template-local .elementor-template-library-template-remote .elementor-template-library-template-get-pro, .elementor-template-library-template-remote .elementor-template-library-template-local .elementor-template-library-template-get-pro {
     padding: 8px 18px;
     margin: 0 20px; }
 

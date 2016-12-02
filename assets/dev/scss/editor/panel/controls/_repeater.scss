@@ -4,7 +4,8 @@
 
 .elementor-control-type-repeater {
 
-	&, .elementor-control {
+	&,
+	.elementor-control:not(.elementor-control-type-tab) {
 		padding: 0 10px 15px;
 	}
 
@@ -33,6 +34,16 @@
 
 		&:not(.editable) {
 			display: none;
+		}
+
+		// Color Picker control
+		.wp-picker-container {
+
+			&.wp-picker-active {
+				transform: translateY(0);
+				border-width: 0;
+				box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+			}
 		}
 	}
 

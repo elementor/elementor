@@ -13,30 +13,27 @@
 	height: 30px;
 	line-height: 30px;
 	border-radius: 2px;
+}
 
-	.elementor-progress-bar {
-		display: inline-block;
-		background-color: $gray;
-		height: 100%;
-		width: 0;
-		border-radius: 2px;
-		transition: width 1s ease-in-out;
-	}
+.elementor-progress-bar {
+	display: flex;
+	background-color: $gray;
+	width: 0;
+	font-size: 11px;
+	border-radius: 2px;
+	transition: width 1s ease-in-out;
+}
 
-	.elementor-progress-inner-text {
-		display: inline-block;
-		position: absolute;
-		@include start(0);
-		padding: 0 15px;
-		font-size: 11px;
-		width: 0;
-		transition: width 1s ease-in-out;
+.elementor-progress-text {
+	flex-grow: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	@include padding-start(15px);
+}
 
-		.elementor-progress-percentage {
-			position: relative;
-			float: $end;
-		}
-	}
+.elementor-progress-percentage {
+	@include padding-end(15px);
 }
 
 .elementor-widget-progress {
@@ -82,9 +79,5 @@
 	.elementor-progress-wrapper {
 		height: 25px;
 		line-height: 25px;
-
-		.elementor-progress-inner-text {
-			padding: 0 10px;
-		}
 	}
 }
