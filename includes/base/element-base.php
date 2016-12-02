@@ -115,6 +115,9 @@ abstract class Element_Base {
 	}
 
 	public function add_control( $id, $args ) {
+		$args = apply_filters( 'elementor/elements/add_control', $args, $id, $this );
+		$args = apply_filters( 'elementor/elements/add_control/' . $id, $args, $id, $this );
+
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
