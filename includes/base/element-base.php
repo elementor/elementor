@@ -115,6 +115,9 @@ abstract class Element_Base {
 	}
 
 	public function add_control( $id, $args ) {
+		$args = apply_filters( 'elementor/elements/add_control', $args, $id, $this );
+		$args = apply_filters( 'elementor/elements/add_control/' . $id, $args, $id, $this );
+		
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
@@ -129,9 +132,6 @@ abstract class Element_Base {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
 			}
 		}
-
-		$args = apply_filters( 'elementor/elements/add_control', $args, $id );
-		$args = apply_filters( 'elementor/elements/add_control/' . $id, $args, $id );
 
 		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
