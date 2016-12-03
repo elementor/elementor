@@ -73,8 +73,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private function _filter_controls() {
 		$args = $this->get_args();
+		$args = apply_filters( 'elementor/elements/filter_controls/args', $args, $this );
 
 		$controls = $this->_get_controls( $args );
+
+		$controls = apply_filters( 'elementor/elements/filter_controls/controls', $controls, $this, $args );
 
 		if ( ! is_array( $args['fields'] ) ) {
 			return $controls;
