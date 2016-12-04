@@ -246,6 +246,10 @@ class Post_CSS_File {
 	}
 
 	private function add_control_style_rules( $control, $value, $placeholders, $replacements ) {
+		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
+			$value = $control['selectors_dictionary'][ $value ];
+		}
+
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
 			return;
 		}

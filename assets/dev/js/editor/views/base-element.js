@@ -257,6 +257,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var self = this,
 			value = values[ control.name ];
 
+		if ( control.selectors_dictionary ) {
+			value = control.selectors_dictionary[ value ] || value;
+		}
+
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
 		}
