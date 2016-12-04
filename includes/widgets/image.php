@@ -330,7 +330,6 @@ class Widget_Image extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# if ( '' !== settings.image.url ) {
-
 			var image = {
 				id: settings.image.id,
 				url: settings.image.url,

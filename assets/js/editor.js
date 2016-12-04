@@ -1249,7 +1249,6 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	},
 
 	getActionButton: function( isPro ) {
-
 		var templateId = isPro ? '#tmpl-elementor-template-library-get-pro-button' : '#tmpl-elementor-template-library-insert-button';
 
 		templateId = elementor.hooks.applyFilters( 'elementor/editor/templateLibrary/remote/actionButton', templateId );
@@ -1534,7 +1533,11 @@ App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				elementor.getPanelView().setPage( 'elements' );
+				var panelView = elementor.getPanelView();
+
+				if ( 'elements' !== panelView.getCurrentPageName() ) {
+					panelView.setPage( 'elements' );
+				}
 			}
 		} );
 
@@ -5588,6 +5591,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var self = this,
 			value = values[ control.name ];
 
+		if ( control.selectors_dictionary ) {
+			value = control.selectors_dictionary[ value ] || value;
+		}
+
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
 		}
@@ -7465,6 +7472,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRender: function() {
+		//ControlBaseItemView.prototype.onRender.apply( this, arguments );
+
 		this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
 
 		this.toggleMinRowsClass();

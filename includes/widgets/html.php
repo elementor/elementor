@@ -33,7 +33,7 @@ class Widget_Html extends Widget_Base {
 			'html',
 			[
 				'label' => '',
-				'type' => Controls_Manager::TEXTAREA,
+				'type' => Controls_Manager::CODE,
 				'default' => '',
 				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
 				'show_label' => false,
