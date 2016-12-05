@@ -34,7 +34,7 @@ class Utils {
 	}
 
 	public static function get_youtube_id_from_url( $url ) {
-		preg_match( '/^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/', $url, $video_id_parts );
+		preg_match( '/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/', $url, $video_id_parts );
 
 		if ( empty( $video_id_parts[1] ) ) {
 			return false;

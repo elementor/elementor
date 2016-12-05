@@ -11,6 +11,7 @@ ElementsHandler = function( $ ) {
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
 		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
+
 		if ( isWidgetType ) {
 			elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $scope, $ );
 		}

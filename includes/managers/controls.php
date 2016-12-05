@@ -276,7 +276,6 @@ class Controls_Manager {
 
 	public function add_control_to_stack( Element_Base $element, $control_id, $control_data ) {
 		$default_args = [
-			'default' => '',
 			'type' => self::TEXT,
 			'tab' => self::TAB_CONTENT,
 		];
@@ -284,6 +283,21 @@ class Controls_Manager {
 		$control_data['name'] = $control_id;
 
 		$control_data = array_merge( $default_args, $control_data );
+
+		$control_type_instance = $this->get_control( $control_data['type'] );
+
+		if ( ! $control_type_instance ) {
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Control type `' . $control_data['type'] . '` not found`', '1.0.0' );
+			return false;
+		}
+
+		$control_default_value = $control_type_instance->get_default_value();
+
+		if ( is_array( $control_default_value ) ) {
+			$control_data['default'] = isset( $control_data['default'] ) ? array_merge( $control_default_value, $control_data['default'] ) : $control_default_value;
+		} else {
+			$control_data['default'] = isset( $control_data['default'] ) ? $control_data['default'] : $control_default_value;
+		}
 
 		$stack_id = $element->get_name();
 

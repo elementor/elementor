@@ -999,7 +999,7 @@ select {
     line-height: 1.5; }
     .elementor-panel #elementor-panel-page-editor .elementor-control-wp p {
       margin: 15px 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-block .elementor-control-field {
+  .elementor-panel #elementor-panel-page-editor .elementor-label-block > .elementor-control-content > .elementor-control-field {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -1011,21 +1011,21 @@ select {
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-block .elementor-control-input-wrapper {
-    -webkit-flex-basis: 100%;
-        -ms-flex-preferred-size: 100%;
-            flex-basis: 100%;
-    margin-top: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-block.elementor-control-hidden-label .elementor-control-input-wrapper {
+    .elementor-panel #elementor-panel-page-editor .elementor-label-block > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+      -webkit-flex-basis: 100%;
+          -ms-flex-preferred-size: 100%;
+              flex-basis: 100%;
+      margin-top: 10px; }
+  .elementor-panel #elementor-panel-page-editor .elementor-label-block.elementor-control-hidden-label > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
     margin-top: 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field {
+  .elementor-panel #elementor-panel-page-editor .elementor-label-inline > .elementor-control-content > .elementor-control-field {
     display: table;
     width: 100%; }
-    .elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-field > * {
+    .elementor-panel #elementor-panel-page-editor .elementor-label-inline > .elementor-control-content > .elementor-control-field > * {
       display: table-cell;
       vertical-align: middle; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-inline .elementor-control-title {
-    width: 45%; }
+    .elementor-panel #elementor-panel-page-editor .elementor-label-inline > .elementor-control-content > .elementor-control-field > .elementor-control-title {
+      width: 45%; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-description {
     margin-top: 10px; }
   .elementor-panel #elementor-panel-page-editor .elementor-choices {
