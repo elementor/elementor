@@ -194,36 +194,6 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_section();
 
-		$this->start_controls_section(
-			'section_custom_css_pro',
-			[
-				'label' => __( 'Custom CSS', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->add_control(
-			'custom_css_pro',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<div class="elementor-panel-nerd-box">
-						<i class="elementor-panel-nerd-box-icon eicon-hypster"></i>
-						<div class="elementor-panel-nerd-box-title">' .
-						__( 'Meet Our Custom CSS', 'elementor' ) .
-					'</div>
-					<div class="elementor-panel-nerd-box-message">' .
-					__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ) .
-					'</div>
-					<div class="elementor-panel-nerd-box-message">' .
-					__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-					'</div>
-					<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="https://go.elementor.com/pro-custom-css/" target="_blank">' .
-					__( 'Go Pro', 'elementor' ) .
-					'</a>
-					</div>',
-			]
-		);
-
-		$this->end_controls_section();
+		Plugin::instance()->controls_manager->add_custom_css_controls( $this );
 	}
 }
