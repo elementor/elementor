@@ -588,8 +588,11 @@ html.elementor-html {
 
 	.elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] {
 
-		.elementor-sortable-placeholder {
-			display: none;
+		.elementor-inner-column {
+
+			.elementor-sortable-placeholder {
+				display: none;
+			}
 		}
 	}
 
