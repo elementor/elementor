@@ -199,7 +199,7 @@ abstract class Widget_Base extends Element_Base {
 		$this->render_content();
 	}
 
-	public function before_render() {
+	protected function _add_render_attributes() {
 		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-widget',
 			'elementor-element',
@@ -226,6 +226,10 @@ abstract class Widget_Base extends Element_Base {
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
+	}
+
+	public function before_render() {
+	    $this->_add_render_attributes();
 		?>
 		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php
