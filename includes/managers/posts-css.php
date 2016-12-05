@@ -49,8 +49,8 @@ class Posts_CSS_Manager {
 			'meta_key' => Post_CSS_File::META_KEY_CSS,
 		] );
 
-		if ( false === $deleted ) {
-			$errors['db'] = __( 'Cannot delete DB cache', 'elementor' );
+		if ( false !== $deleted ) {
+			$errors['db'] = 'Cannot delete DB cache';
 		}
 
 		// Delete files
@@ -61,7 +61,7 @@ class Posts_CSS_Manager {
 			$deleted = unlink( $file );
 
 			if ( ! $deleted ) {
-				$errors['files'] = __( 'Cannot delete files cache', 'elementor' );
+				$errors['files'] = 'Cannot delete files cache';
 			}
 		}
 
