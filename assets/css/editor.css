@@ -678,7 +678,8 @@ select {
       transition: .5s; }
       .elementor-panel .elementor-panel-nerd-box .elementor-button.elementor-panel-nerd-box-link:hover {
         background-color: #fdca5e; }
-  .elementor-panel #elementor-panel-global .elementor-panel-nerd-box {
+  .elementor-panel #elementor-panel-global .elementor-panel-nerd-box,
+  .elementor-panel #elementor-global-templates .elementor-panel-nerd-box {
     padding: 30px 25px; }
   .elementor-panel #elementor-panel-get-pro-elements.elementor-panel-nerd-box {
     padding: 40px 0; }
