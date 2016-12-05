@@ -48,11 +48,20 @@
 			outline: 0;
 		}
 
-		&::-moz-placeholder,
-		&::-webkit-input-placeholder,
-		:-ms-input-placeholder {
+		// Keep the following rules each alone!
+		&::-webkit-input-placeholder {
 			color: inherit;
-			opacity: 0.6;
+			opacity: 0.5;
+		}
+
+		&::-moz-placeholder {
+			color: inherit;
+			opacity: 0.5;
+		}
+
+		&:-ms-input-placeholder {
+			color: inherit;
+			opacity: 0.5;
 		}
 	}
 
