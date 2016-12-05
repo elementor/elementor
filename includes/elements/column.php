@@ -358,9 +358,22 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
+	private function get_column_wrap_class_names( $is_inline = false)
+	{
+		$class_names[] = 'elementor-column-wrap';
+
+		if ( ! $is_inline && $this->get_children() ) {
+			$class_names[] = 'elementor-element-populated';
+		}
+
+		$class_names = apply_filters( 'elementor/element/column/class_names', $class_names, $this, $is_inline );
+
+		return implode( ' ', $class_names );
+	}
+
 	protected function _content_template() {
 		?>
-		<div class="elementor-column-wrap">
+		<div class="<?php echo $this->get_column_wrap_class_names(true); ?>">
 			<div class="elementor-widget-wrap"></div>
 		</div>
 		<?php
@@ -398,7 +411,7 @@ class Element_Column extends Element_Base {
 		$this->add_render_attribute( 'wrapper', 'data-element_type', self::get_name() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
+			<div class="<?php $this->get_column_wrap_class_names(); ?>">
 				<div class="elementor-widget-wrap">
 		<?php
 	}
