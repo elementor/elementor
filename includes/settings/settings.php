@@ -157,9 +157,12 @@ class Settings {
 		);
 
 		register_setting( self::PAGE_ID, $field_id );
+	}
 
-		// Tools section
+	public function register_improve_elementor_settings() {
+		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 		$usage_section = 'elementor_usage_section';
+
 		add_settings_section(
 			$usage_section,
 			__( 'Improve Elementor', 'elementor' ),
@@ -240,6 +243,7 @@ class Settings {
 		include( ELEMENTOR_PATH . 'includes/settings/validations.php' );
 
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
+		add_action( 'admin_init', [ $this, 'register_improve_elementor_settings' ], 999 ); // Keep it the last settings in page
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
