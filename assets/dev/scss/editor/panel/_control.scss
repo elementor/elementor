@@ -143,39 +143,51 @@
 
 	.elementor-label-block {
 
-		.elementor-control-field {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-		}
+		> .elementor-control-content {
 
-		.elementor-control-input-wrapper {
-			flex-basis: 100%;
-			margin-top: 10px;
+			> .elementor-control-field {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+
+				> .elementor-control-input-wrapper {
+					flex-basis: 100%;
+					margin-top: 10px;
+				}
+			}
 		}
 
 		&.elementor-control-hidden-label {
 
-			.elementor-control-input-wrapper {
-				margin-top: 0;
+			> .elementor-control-content {
+
+				> .elementor-control-field {
+
+					> .elementor-control-input-wrapper {
+						margin-top: 0;
+					}
+				}
 			}
 		}
 	}
 
 	.elementor-label-inline {
 
-		.elementor-control-field {
-			display: table;
-			width: 100%;
+		> .elementor-control-content {
 
-			> * {
-				display: table-cell;
-				vertical-align: middle;
+			> .elementor-control-field {
+				display: table;
+				width: 100%;
+
+				> * {
+					display: table-cell;
+					vertical-align: middle;
+				}
+
+				> .elementor-control-title {
+					width: 45%;
+				}
 			}
-		}
-
-		.elementor-control-title {
-			width: 45%;
 		}
 	}
 
