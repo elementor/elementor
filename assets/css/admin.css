@@ -119,28 +119,15 @@ body.elementor-editor-inactive .elementor-switch-mode-on {
 body.elementor-editor-inactive #elementor-editor {
   display: none; }
 
-/*
-.elementor-editor-inactive #elementor-switch-mode-button, #elementor-editor-button {
-	background-color: $editor-accent;
-	color: #fff;
-	border-color: #7c1337;
-	box-shadow: 0 1px 0 #7c1337;
-
-	&:hover {
-		background-color: #a0124a;
-	}
-
-	&:active {
-		box-shadow: inset 0 1px 0 #7c1337;
-		transform: translateY(1px);
-	}
-}
-*/
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
   content: "\e800";
   font-family: eicon;
   font-size: 14px;
   margin-top: 3px; }
+#adminmenu #toplevel_page_elementor a[href="admin.php?page=go_elementor_pro"] {
+  color: #d54e21; }
+#adminmenu #toplevel_page_elementor .dashicons.dashicons-star-filled {
+  height: auto; }
 
 #elementor-switch-mode {
   margin: 15px 0; }
