@@ -320,6 +320,8 @@ class Element_Column extends Element_Base {
 		}
 
 		$this->end_controls_section();
+
+		Plugin::instance()->controls_manager->add_custom_css_controls( $this );
 	}
 
 	protected function _render_settings() {

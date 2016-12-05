@@ -40,9 +40,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview-get-pro-button">
-	<button id="elementor-template-library-header-preview-get-pro" class="elementor-template-library-template-get-pro elementor-button elementor-button-success">
+	<button id="elementor-template-library-header-preview-get-pro" class="elementor-template-library-template-get-pro elementor-button elementor-button-go-pro">
 		<a target="_blank" href="https://go.elementor.com/pro-library/">
-			<span class="dashicons dashicons-star-filled"></span><span class="elementor-button-title"><?php _e( 'Get Pro', 'elementor' ); ?></span>
+			<span class="fa fa-external-link-square"></span><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
 		</a>
 	</button>
 </script>
@@ -92,10 +92,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
-	<button class="elementor-template-library-template-get-pro elementor-button elementor-button-success">
+	<button class="elementor-template-library-template-get-pro elementor-button elementor-button-go-pro">
 		<a target="_blank" href="https://go.elementor.com/pro-library/">
-			<span class="dashicons dashicons-star-filled"></span>
-			<?php _e( 'Get Pro', 'elementor' ); ?>
+			<span class="fa fa-external-link-square"></span>
+			<?php _e( 'Go Pro', 'elementor' ); ?>
 		</a>
 	</button>
 </script>
