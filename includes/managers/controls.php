@@ -338,6 +338,43 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @param $element Element_Base
+	 */
+	public function add_custom_css_controls( $element ) {
+		$element->start_controls_section(
+			'section_custom_css_pro',
+			[
+				'label' => __( 'Custom CSS', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$element->add_control(
+			'custom_css_pro',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '<div class="elementor-panel-nerd-box">
+						<i class="elementor-panel-nerd-box-icon eicon-hypster"></i>
+						<div class="elementor-panel-nerd-box-title">' .
+							__( 'Meet Our Custom CSS', 'elementor' ) .
+						'</div>
+						<div class="elementor-panel-nerd-box-message">' .
+							__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ) .
+						'</div>
+						<div class="elementor-panel-nerd-box-message">' .
+							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
+						'</div>
+						<a class="elementor-panel-nerd-box-link elementor-panel-button elementor-go-pro" href="https://go.elementor.com/pro-custom-css/" target="_blank">' .
+							__( 'Go Pro', 'elementor' ) .
+						'</a>
+						</div>',
+			]
+		);
+
+		$element->end_controls_section();
+	}
+
+	/**
 	 * Controls_Manager constructor.
 	 *
 	 * @since 1.0.0
