@@ -217,7 +217,7 @@ class Widget_Common extends Widget_Base {
 					<div class="elementor-panel-nerd-box-message">' .
 					__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
 					'</div>
-					<a class="elementor-panel-nerd-box-link elementor-panel-button elementor-go-pro" href="https://go.elementor.com/pro-custom-css/" target="_blank">' .
+					<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="https://go.elementor.com/pro-custom-css/" target="_blank">' .
 					__( 'Go Pro', 'elementor' ) .
 					'</a>
 					</div>',
