@@ -2,8 +2,9 @@ var BaseSettingsModel;
 
 BaseSettingsModel = Backbone.Model.extend( {
 
-	initialize: function( data ) {
-		this.controls = elementor.getElementControls( this );
+	initialize: function( data, options ) {
+		this.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( this );
+
 		if ( ! this.controls ) {
 			return;
 		}
@@ -37,7 +38,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
 					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
-						model: BaseSettingsModel
+						model: function( attrs, options ) {
+							options = options || {};
+
+							options.controls = field.fields;
+
+							return new BaseSettingsModel( attrs, options );
+						}
 					} );
 				}
 			}
