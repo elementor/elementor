@@ -411,7 +411,7 @@ class Element_Column extends Element_Base {
 		$this->add_render_attribute( 'wrapper', 'data-element_type', self::get_name() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<div class="<?php $this->get_column_wrap_class_names(); ?>">
+			<div class="<?php echo $this->get_column_wrap_class_names(); ?>">
 				<div class="elementor-widget-wrap">
 		<?php
 	}
