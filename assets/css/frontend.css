@@ -457,10 +457,15 @@
     .elementor-field-group .elementor-field-textual:focus {
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
       outline: 0; }
-    .elementor-field-group .elementor-field-textual::-moz-placeholder, .elementor-field-group .elementor-field-textual::-webkit-input-placeholder,
-    .elementor-field-group .elementor-field-textual :-ms-input-placeholder {
+    .elementor-field-group .elementor-field-textual::-webkit-input-placeholder {
       color: inherit;
-      opacity: 0.6; }
+      opacity: 0.5; }
+    .elementor-field-group .elementor-field-textual::-moz-placeholder {
+      color: inherit;
+      opacity: 0.5; }
+    .elementor-field-group .elementor-field-textual:-ms-input-placeholder {
+      color: inherit;
+      opacity: 0.5; }
   .elementor-field-group .elementor-select-wrapper {
     display: -webkit-box;
     display: -webkit-flex;
