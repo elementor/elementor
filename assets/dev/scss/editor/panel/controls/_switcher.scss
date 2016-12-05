@@ -1,14 +1,7 @@
 .elementor-control-type-switcher {
 
-	.elementor-control-field {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		.elementor-control-title {
-			flex-grow: 1;
-		}
-
+	.elementor-control-input-wrapper {
+		text-align: $end;
 	}
 
 	.elementor-switch {
