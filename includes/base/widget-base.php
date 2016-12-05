@@ -126,10 +126,10 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
 			<?php self::_render_settings();
-			$container_class_name = apply_filters( 'elementor/widget/print_template/container_class_name', ["'elementor-widget-container '"], $this );
+			$container_class_name = apply_filters( 'elementor/widget/print_template/container_class_name', [ "'elementor-widget-container '" ], $this );
 			?>
 			<#
-				var container_class_name = <?php echo implode(" + ", $container_class_name); ?>;
+				var container_class_name = <?php echo implode( ' + ', $container_class_name ); ?>;
 			#>
 
 			<div class="{{ container_class_name }}">
@@ -173,9 +173,9 @@ abstract class Widget_Base extends Element_Base {
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
 			$this->_render_settings();
 		}
-		$container_class_name = apply_filters( 'elementor/widget/render/container_class_name', ['elementor-widget-container'], $this );
+		$container_class_name = apply_filters( 'elementor/widget/render/container_class_name', [ 'elementor-widget-container' ], $this );
 		?>
-		<div class="<?php echo implode(' ', $container_class_name) ?>">
+		<div class="<?php echo implode( ' ', $container_class_name ) ?>">
 			<?php
 			ob_start();
 
