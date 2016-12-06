@@ -136,7 +136,7 @@ abstract class Element_Base {
 	}
 
 	public function remove_control( $id ) {
-		return Plugin::instance()->controls_manager->remove_control_from_stack( $this, $id );
+		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $id );
 	}
 
 	public final function add_group_control( $group_name, $args = [] ) {
