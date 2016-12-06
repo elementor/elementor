@@ -159,6 +159,23 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+* New! - Added code editor for HTML widget
+* New! - Added social icon for Houzz
+* New! - Added Code control base on ACE
+* New! - Added Tabs control for editor panel
+* New! - Forms style for future widgets
+* Tweak! - Update Waypoints library to v4.0.1
+* Tweak! - Added support for multiple icon fonts in Choose control
+* Fix! - Progress Bar "glitch" on page refresh ([#909](https://github.com/pojome/elementor/issues/909))
+* Fix! - post-css-file don't enqueue if isn't elementor post ([#902](https://github.com/pojome/elementor/issues/902))
+* Fix! - Columns widget not render on search ([#862](https://github.com/pojome/elementor/issues/862))
+* Fix! - Conflict with Bootstrap 3 Shortcodes plugin ([#924](https://github.com/pojome/elementor/issues/924))
+* Fix! - Don't generate or enqueue CSS file if post not built with elementor
+* Fix! - Icon button RTL bug in tools page
+* Fix! - Color Picker control bug on FireFox
+* Fix! - Video background for section works again
+* Fix! - Draggable line for columns widget
+
 = 0.11.2 - 21.11.2016 =
 * Fix! - Don't Generate CSS if it's not build with Elementor
 * Fix! - Global font goes wrong after changing weight ([#888](https://github.com/pojome/elementor/issues/888))
