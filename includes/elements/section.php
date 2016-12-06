@@ -82,6 +82,8 @@ class Element_Section extends Element_Base {
 			],
 		];
 
+		$additional_presets = apply_filters( 'elementor/element/section/column_preset', $additional_presets );
+
 		foreach ( range( 1, 10 ) as $columns_count ) {
 			self::$presets[ $columns_count ] = [
 				[
