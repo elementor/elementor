@@ -358,8 +358,7 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
-	private function get_column_wrap_class_names( $is_inline = false)
-	{
+	private function get_column_wrap_class_names( $is_inline = false ) {
 		$class_names[] = 'elementor-column-wrap';
 
 		if ( ! $is_inline && $this->get_children() ) {
@@ -373,7 +372,7 @@ class Element_Column extends Element_Base {
 
 	protected function _content_template() {
 		?>
-		<div class="<?php echo $this->get_column_wrap_class_names(true); ?>">
+		<div class="<?php echo $this->get_column_wrap_class_names( true ); ?>">
 			<div class="elementor-widget-wrap"></div>
 		</div>
 		<?php
