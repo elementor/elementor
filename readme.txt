@@ -159,6 +159,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.0.0 - 06.12.2016 =
 * New! - Added code editor for HTML widget
 * New! - Added social icon for Houzz
 * New! - Added Code control base on ACE
