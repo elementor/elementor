@@ -60,6 +60,8 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
+		do_action( 'elementor/frontend/enqueue_scripts/before' );
+
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
@@ -114,7 +116,7 @@ class Frontend {
 			]
 		);
 
-		do_action( 'elementor/frontend/enqueue_scripts' );
+		do_action( 'elementor/frontend/enqueue_scripts/after' );
 	}
 
 	public function enqueue_styles() {
