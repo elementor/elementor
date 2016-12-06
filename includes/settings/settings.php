@@ -187,6 +187,8 @@ class Settings {
 		);
 
 		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
+
+		do_action( 'elementor/settings/register/fields' );
 	}
 
 	public function register_admin_menu() {
