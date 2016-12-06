@@ -2,7 +2,7 @@
 Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 0.11.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
