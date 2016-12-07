@@ -6654,11 +6654,11 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
-		var options = {
+		var options = _.extend( this.model.get( 'picker_options' ), {
 			onHide: function() {
 				self.saveValue();
 			}
-		};
+		} );
 
 		this.ui.picker.appendDtpicker( options ).handleDtpicker( 'setDate', new Date( this.getControlValue() ) );
 	},

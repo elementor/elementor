@@ -142,9 +142,7 @@ class Source_Local extends Source_Base {
 
 		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
 
-		update_post_meta( $post_id, self::TYPE_META_KEY, $template_data['type'] );
-
-		wp_set_object_terms( $post_id, $template_data['type'], self::TAXONOMY_TYPE_SLUG );
+		$this->save_item_type( $post_id, $template_data['type'] );
 
 		do_action( 'elementor/template-library/after_save_template', $post_id, $template_data );
 
@@ -327,11 +325,30 @@ class Source_Local extends Source_Base {
 		);
 	}
 
+	public function on_save_post( $post_id, $post ) {
+		if ( self::CPT !== $post->post_type ) {
+			return;
+		}
+
+		if ( self::get_template_type( $post_id ) ) { // It's already with a type
+			return;
+		}
+
+		$this->save_item_type( $post_id, 'page' );
+	}
+
+	private function save_item_type( $post_id, $type ) {
+		update_post_meta( $post_id, self::TYPE_META_KEY, $type );
+
+		wp_set_object_terms( $post_id, $type, self::TAXONOMY_TYPE_SLUG );
+	}
+
 	private function _add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
+			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
