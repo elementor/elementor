@@ -4,9 +4,9 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Add A Box Shadow set of controls
+ * A Box Shadow set of controls
  *
- * @param array  $default   {
+ * @param array $default {
  *		@type integer $horizontal Default 0
  *		@type integer $vertical   Default 0
  *		@type integer $blur       Default 10
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *		@type string  $color      Shadow color, in rgb|rgba|hex format.
  * }
  *
- * @since                    1.0.0
+ * @since 1.0.0
  */
 class Control_Box_Shadow extends Control_Base_Multiple {
 
