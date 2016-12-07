@@ -19,6 +19,22 @@ ElementsHandler = function( $ ) {
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
 	};
+
+	this.addExternalListener = function( $scope, event, callback, externalElement ) {
+		var $externalElement = $( externalElement || elementorFrontend.getScopeWindow() );
+
+		if ( ! elementorFrontend.isEditMode() ) {
+			$externalElement.on( event, callback );
+
+			return;
+		}
+
+		var eventNS = event + '.' + $scope.attr( 'id' );
+
+		$externalElement
+			.off( eventNS )
+			.on( eventNS, callback );
+	};
 };
 
 module.exports = ElementsHandler;
@@ -443,7 +459,7 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var bindEvents = function() {
-		elements.$scopeWindow.on( 'resize', stretchSection );
+		elementorFrontend.elementsHandler.addExternalListener( $section, 'resize', stretchSection );
 	};
 
 	var init = function() {

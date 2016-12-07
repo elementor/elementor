@@ -139,7 +139,7 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var bindEvents = function() {
-		elements.$scopeWindow.on( 'resize', stretchSection );
+		elementorFrontend.elementsHandler.addExternalListener( $section, 'resize', stretchSection );
 	};
 
 	var init = function() {
