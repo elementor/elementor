@@ -14,7 +14,7 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'skill-bar';
+		return 'eicon-skill-bar';
 	}
 
 	public function get_categories() {

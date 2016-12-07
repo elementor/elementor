@@ -14,7 +14,7 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'toggle';
+		return 'eicon-toggle';
 	}
 
 	public function get_categories() {

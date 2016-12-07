@@ -14,7 +14,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'icon-box';
+		return 'eicon-icon-box';
 	}
 
 	public function get_categories() {

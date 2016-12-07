@@ -14,7 +14,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'button';
+		return 'eicon-button';
 	}
 
 	public static function get_button_sizes() {

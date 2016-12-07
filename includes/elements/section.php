@@ -35,7 +35,7 @@ class Element_Section extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'columns';
+		return 'eicon-columns';
 	}
 
 	public static function get_presets( $columns_count = null, $preset_index = null ) {

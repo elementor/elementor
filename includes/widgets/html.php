@@ -14,7 +14,7 @@ class Widget_Html extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'coding';
+		return 'eicon-coding';
 	}
 
 	public function get_categories() {

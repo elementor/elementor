@@ -33,7 +33,7 @@ class Element_Column extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'columns';
+		return 'eicon-columns';
 	}
 
 	protected function _register_controls() {
