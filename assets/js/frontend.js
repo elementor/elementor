@@ -179,9 +179,9 @@ var activateSection = function( sectionIndex, $accordionTitles ) {
 	}
 };
 
-module.exports = function( $scoop, $ ) {
-	var defaultActiveSection = $scoop.find( '.elementor-accordion' ).data( 'active-section' ),
-		$accordionTitles = $scoop.find( '.elementor-accordion-title' );
+module.exports = function( $scope, $ ) {
+	var defaultActiveSection = $scope.find( '.elementor-accordion' ).data( 'active-section' ),
+		$accordionTitles = $scope.find( '.elementor-accordion-title' );
 
 	if ( ! defaultActiveSection ) {
 		defaultActiveSection = 1;
@@ -195,15 +195,15 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],4:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	$scoop.find( '.elementor-alert-dismiss' ).on( 'click', function() {
+module.exports = function( $scope, $ ) {
+	$scope.find( '.elementor-alert-dismiss' ).on( 'click', function() {
 		$( this ).parent().fadeOut();
 	} );
 };
 
 },{}],5:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	$scoop.find( '.elementor-counter-number' ).waypoint( function() {
+module.exports = function( $scope, $ ) {
+	elementorFrontend.utils.waypoint( $scope.find( '.elementor-counter-number' ), function() {
 		var $number = $( this );
 
 		$number.numerator( {
@@ -213,27 +213,27 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],6:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
+module.exports = function( $scope, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var animation = $scoop.data( 'animation' );
+	var animation = $scope.data( 'animation' );
 
 	if ( ! animation ) {
 		return;
 	}
 
-	$scoop.addClass( 'elementor-invisible' ).removeClass( animation );
+	$scope.addClass( 'elementor-invisible' ).removeClass( animation );
 
-	$scoop.waypoint( function() {
-		$scoop.removeClass( 'elementor-invisible' ).addClass( animation );
+	elementorFrontend.utils.waypoint( $scope, function() {
+		$scope.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
 };
 
 },{}],7:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	var $carousel = $scoop.find( '.elementor-image-carousel' );
+module.exports = function( $scope, $ ) {
+	var $carousel = $scope.find( '.elementor-image-carousel' );
 	if ( ! $carousel.length ) {
 		return;
 	}
@@ -265,12 +265,12 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],8:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
+module.exports = function( $scope, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var $anchor = $scoop.find( '.elementor-menu-anchor' ),
+	var $anchor = $scope.find( '.elementor-menu-anchor' ),
 		anchorID = $anchor.attr( 'id' ),
 		$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
 		$scrollable = $( 'html, body' ),
@@ -293,8 +293,8 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],9:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	$scoop.find( '.elementor-progress-bar' ).waypoint( function() {
+module.exports = function( $scope, $ ) {
+	elementorFrontend.utils.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
 
 		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
@@ -456,10 +456,10 @@ var StretchedSection = function( $section, $ ) {
 	init();
 };
 
-module.exports = function( $scoop, $ ) {
-	new StretchedSection( $scoop, $ );
+module.exports = function( $scope, $ ) {
+	new StretchedSection( $scope, $ );
 
-	var $backgroundVideoContainer = $scoop.find( '.elementor-background-video-container' );
+	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
 	if ( $backgroundVideoContainer ) {
 		new BackgroundVideo( $backgroundVideoContainer, $ );
@@ -467,10 +467,10 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],11:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	var defaultActiveTab = $scoop.find( '.elementor-tabs' ).data( 'active-tab' ),
-		$tabsTitles = $scoop.find( '.elementor-tab-title' ),
-		$tabs = $scoop.find( '.elementor-tab-content' ),
+module.exports = function( $scope, $ ) {
+	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
+		$tabsTitles = $scope.find( '.elementor-tab-title' ),
+		$tabs = $scope.find( '.elementor-tab-content' ),
 		$active,
 		$content;
 
@@ -502,8 +502,8 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],12:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	var $toggleTitles = $scoop.find( '.elementor-toggle-title' );
+module.exports = function( $scope, $ ) {
+	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
 	$toggleTitles.on( 'click', function() {
 		var $active = $( this ),
@@ -520,9 +520,9 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],13:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
-	var $imageOverlay = $scoop.find( '.elementor-custom-embed-image-overlay' ),
-		$videoFrame = $scoop.find( 'iframe' );
+module.exports = function( $scope, $ ) {
+	var $imageOverlay = $scope.find( '.elementor-custom-embed-image-overlay' ),
+		$videoFrame = $scope.find( 'iframe' );
 
 	if ( ! $imageOverlay.length ) {
 		return;
@@ -539,16 +539,16 @@ module.exports = function( $scoop, $ ) {
 };
 
 },{}],14:[function(require,module,exports){
-module.exports = function( $scoop, $ ) {
+module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	if ( $scoop.hasClass( 'elementor-widget-edit-disabled' ) ) {
+	if ( $scope.hasClass( 'elementor-widget-edit-disabled' ) ) {
 		return;
 	}
 
-	$scoop.find( '.elementor-element' ).each( function() {
+	$scope.find( '.elementor-element' ).each( function() {
 		elementorFrontend.elementsHandler.runReadyTrigger( $( this ) );
 	} );
 };
@@ -572,6 +572,16 @@ Utils = function( $ ) {
 
 	this.insertYTApi = function() {
 		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
+	};
+
+	this.waypoint = function( $element, callback, options ) {
+		var correctCallback = function() {
+			var element = this.element || this;
+
+			return callback.apply( element, arguments );
+		};
+
+		$element.waypoint( correctCallback, options );
 	};
 };
 
