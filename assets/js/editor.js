@@ -7826,17 +7826,13 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	buttons: {
 		moveToAdvanced: {
 			fullscreen: 'wp_help',
-			hr: 'wp_help',
 			wp_more: 'wp_help',
 			blockquote: 'removeformat',
 			alignleft: 'blockquote',
 			aligncenter: 'alignleft',
-			alignright: 'aligncenter',
-			strikethrough: 'alignjustify'
+			alignright: 'aligncenter'
 		},
-		moveToBasic: {
-			underline: 'italic'
-		},
+		moveToBasic: {},
 		removeFromBasic: [ 'unlink' ],
 		removeFromAdvanced: []
 	},
@@ -7890,6 +7886,25 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		return this;
 	},
 
+	moveButtons: function( buttonsToMove, from, to ) {
+		_.each( buttonsToMove, function( afterButton, button ) {
+			var buttonIndex = from.indexOf( button ),
+				afterButtonIndex = to.indexOf( afterButton );
+
+			if ( -1 === buttonIndex ) {
+				throw new ReferenceError( 'Trying to move non-existing button `' + button + '`' );
+			}
+
+			if ( -1 === afterButtonIndex ) {
+				throw new ReferenceError( 'Trying to move button after non-existing button `' + afterButton + '`' );
+			}
+
+			from.splice( buttonIndex, 1 );
+
+			to.splice( afterButtonIndex + 1, 0, button );
+		} );
+	},
+
 	rearrangeButtons: function() {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
@@ -7899,27 +7914,9 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		editorAdvancedToolbarButtons = _.difference( editorAdvancedToolbarButtons, this.buttons.removeFromAdvanced );
 
-		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
-			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
-				afterButtonIndex = editorAdvancedToolbarButtons.indexOf( afterButton );
+		this.moveButtons( this.buttons.moveToBasic, editorAdvancedToolbarButtons, editorBasicToolbarButtons );
 
-			editorBasicToolbarButtons.splice( buttonIndex, 1 );
-
-			if ( -1 !== afterButtonIndex ) {
-				editorAdvancedToolbarButtons.splice( afterButtonIndex + 1, 0, button );
-			}
-		} );
-
-		_.each( this.buttons.moveToBasic, function( afterButton, button ) {
-			var buttonIndex = editorAdvancedToolbarButtons.indexOf( button ),
-				afterButtonIndex = editorBasicToolbarButtons.indexOf( afterButton );
-
-			editorAdvancedToolbarButtons.splice( buttonIndex, 1 );
-
-			if ( -1 !== afterButtonIndex ) {
-				editorBasicToolbarButtons.splice( afterButtonIndex + 1, 0, button );
-			}
-		} );
+		this.moveButtons( this.buttons.moveToAdvanced, editorBasicToolbarButtons, editorAdvancedToolbarButtons );
 
 		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
