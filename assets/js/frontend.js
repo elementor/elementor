@@ -203,7 +203,7 @@ module.exports = function( $scoop, $ ) {
 
 },{}],5:[function(require,module,exports){
 module.exports = function( $scoop, $ ) {
-	$scoop.find( '.elementor-counter-number' ).waypoint( function() {
+	elementorFrontend.utils.waypoint( $scoop.find( '.elementor-counter-number' ), function() {
 		var $number = $( this );
 
 		$number.numerator( {
@@ -226,7 +226,7 @@ module.exports = function( $scoop, $ ) {
 
 	$scoop.addClass( 'elementor-invisible' ).removeClass( animation );
 
-	$scoop.waypoint( function() {
+	elementorFrontend.utils.waypoint( $scoop, function() {
 		$scoop.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
 };
@@ -294,7 +294,7 @@ module.exports = function( $scoop, $ ) {
 
 },{}],9:[function(require,module,exports){
 module.exports = function( $scoop, $ ) {
-	$scoop.find( '.elementor-progress-bar' ).waypoint( function() {
+	elementorFrontend.utils.waypoint( $scoop.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
 
 		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
@@ -572,6 +572,16 @@ Utils = function( $ ) {
 
 	this.insertYTApi = function() {
 		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
+	};
+
+	this.waypoint = function( $element, callback, options ) {
+		var correctCallback = function() {
+			var element = this.element || this;
+
+			return callback.apply( element, arguments );
+		};
+
+		$element.waypoint( correctCallback, options );
 	};
 };
 

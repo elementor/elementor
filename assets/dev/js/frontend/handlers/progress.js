@@ -1,5 +1,5 @@
 module.exports = function( $scoop, $ ) {
-	$scoop.find( '.elementor-progress-bar' ).waypoint( function() {
+	elementorFrontend.utils.waypoint( $scoop.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
 
 		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );

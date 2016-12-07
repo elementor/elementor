@@ -11,7 +11,7 @@ module.exports = function( $scoop, $ ) {
 
 	$scoop.addClass( 'elementor-invisible' ).removeClass( animation );
 
-	$scoop.waypoint( function() {
+	elementorFrontend.utils.waypoint( $scoop, function() {
 		$scoop.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
 };
