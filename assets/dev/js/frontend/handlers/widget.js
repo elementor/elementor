@@ -1,13 +1,13 @@
-module.exports = function( $scoop, $ ) {
+module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	if ( $scoop.hasClass( 'elementor-widget-edit-disabled' ) ) {
+	if ( $scope.hasClass( 'elementor-widget-edit-disabled' ) ) {
 		return;
 	}
 
-	$scoop.find( '.elementor-element' ).each( function() {
+	$scope.find( '.elementor-element' ).each( function() {
 		elementorFrontend.elementsHandler.runReadyTrigger( $( this ) );
 	} );
 };
