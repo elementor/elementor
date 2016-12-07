@@ -14,7 +14,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'align-left';
+		return 'eicon-align-left';
 	}
 
 	protected function _register_controls() {

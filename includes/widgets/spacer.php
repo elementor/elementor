@@ -13,12 +13,12 @@ class Widget_Spacer extends Widget_Base {
 		return __( 'Spacer', 'elementor' );
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
+	public function get_icon() {
+		return 'eicon-spacer';
 	}
 
-	public function get_icon() {
-		return 'spacer';
+	public function get_categories() {
+		return [ 'basic' ];
 	}
 
 	protected function _register_controls() {

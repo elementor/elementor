@@ -14,7 +14,7 @@ class Widget_Google_Maps extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'google-maps';
+		return 'eicon-google-maps';
 	}
 
 	protected function _register_controls() {

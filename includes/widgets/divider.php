@@ -14,7 +14,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'divider';
+		return 'eicon-divider';
 	}
 
 	protected function _register_controls() {

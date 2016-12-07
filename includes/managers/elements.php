@@ -148,19 +148,19 @@ class Elements_Manager {
 		$this->_categories = [
 			'basic' => [
 				'title' => __( 'Basic', 'elementor' ),
-				'icon' => 'font',
+				'icon' => 'eicon-font',
 			],
 			'general-elements' => [
 				'title' => __( 'General Elements', 'elementor' ),
-				'icon' => 'font',
+				'icon' => 'eicon-font',
 			],
 			'pojo' => [
 				'title' => __( 'Pojo Themes', 'elementor' ),
-				'icon' => 'pojome',
+				'icon' => 'eicon-pojome',
 			],
 			'wordpress' => [
 				'title' => __( 'WordPress', 'elementor' ),
-				'icon' => 'wordpress',
+				'icon' => 'eicon-wordpress',
 			],
 		];
 	}

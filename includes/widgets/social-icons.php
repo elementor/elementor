@@ -14,7 +14,7 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'social-icons';
+		return 'eicon-social-icons';
 	}
 
 	public function get_categories() {

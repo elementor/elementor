@@ -14,7 +14,7 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'favorite';
+		return 'eicon-favorite';
 	}
 
 	protected function _register_controls() {
