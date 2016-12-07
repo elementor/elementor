@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Add A Box Shadow set of controls
  *
- * @param array  $defaults   {
+ * @param array  $default   {
  *
  * @type integer $horizontal Default 0
  * @type integer $vertical   Default 0
