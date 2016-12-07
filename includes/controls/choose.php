@@ -3,6 +3,15 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Radio Buttons controls.
+ *
+ * @property array $options   array of arrays `[ [ 'title' => ??, 'icon' => ?? ], [ 'title' ... ]`.
+ *                            The icon can be any icon-font class that appears in the panel, e.g. 'fa fa-align-left'
+ * @property bool  $toggle    Whether to allow deselect the selected button
+ *                            Default true
+ * @since 1.0.0
+ */
 class Control_Choose extends Control_Base {
 
 	public function get_type() {
@@ -33,6 +42,7 @@ class Control_Choose extends Control_Base {
 
 	protected function get_default_settings() {
 		return [
+			'options' => [],
 			'label_block' => true,
 			'toggle' => true,
 		];
