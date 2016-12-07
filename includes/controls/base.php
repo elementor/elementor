@@ -3,6 +3,24 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * @property string $label          The title of the control
+ * @property mixed  $default        The default value
+ * @property string $separator      Set the position of the control separator.
+ *                                  'default' means that the separator will be posited depending on the control type.
+ *                             		'before' || 'after' will force the separator position before/after the control.
+ *                             		'none' will hide the separator
+ *                             		Default: 'default'
+ * @property bool   $show_label     Sets whether to show the title
+ *                            		Default: true
+ * @property bool   $label_block    Sets whether to display the title in a separate line
+ *                             		Default: false
+ * @property string $title          The title that will appear on mouse hover
+ * @property string $placeholder    Available for fields that support placeholder
+ * @property string $description    The field description that appears below the field
+ *
+ * @since 0.8.1
+ */
 abstract class Control_Base {
 
 	private $_base_settings = [

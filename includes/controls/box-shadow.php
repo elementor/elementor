@@ -3,6 +3,19 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * Add A Box Shadow set of controls
+ *
+ * @property integer $horizontal - default: 0
+ * @property integer $vertical - default: 0
+ * @property integer $blur - default: 10
+ * @property integer $spread - default: 0
+ * @property bool $inset - unused //TODO: allow set an inset shadow
+ * @property string $color - rgb|rgba|hex values. default: rgba(0,0,0,0.5)
+ *
+ * @since 0.8.1
+ *
+ */
 class Control_Box_Shadow extends Control_Base_Multiple {
 
 	public function get_type() {

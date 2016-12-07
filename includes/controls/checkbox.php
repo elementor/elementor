@@ -3,6 +3,10 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A single checkbox
+ * @since 0.8.1
+ */
 class Control_Checkbox extends Control_Base {
 
 	public function get_type() {
