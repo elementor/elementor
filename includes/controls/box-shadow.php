@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                           }
  *
  * @since                    1.0.0
- *
  */
 class Control_Box_Shadow extends Control_Base_Multiple {
 
