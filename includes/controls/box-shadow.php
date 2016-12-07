@@ -6,15 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Add A Box Shadow set of controls
  *
- * @property integer $horizontal Default 0
- * @property integer $vertical   Default 0
- * @property integer $blur       Default 10
- * @property integer $spread     Default 0
- * @property bool    $inset      Unused //TODO: allow set an inset shadow
- * @property string  $color      Shadow color, in rgb|rgba|hex format.
- *                               Default 'rgba(0,0,0,0.5)'
+ * @param array  $defaults   {
  *
- * @since 0.8.1
+ * @type integer $horizontal Default 0
+ * @type integer $vertical   Default 0
+ * @type integer $blur       Default 10
+ * @type integer $spread     Default 0
+ * @type bool    $inset      Unused //TODO: allow set an inset shadow
+ * @type string  $color      Shadow color, in rgb|rgba|hex format.
+ *                           }
+ *
+ * @since                    1.0.0
  *
  */
 class Control_Box_Shadow extends Control_Base_Multiple {
