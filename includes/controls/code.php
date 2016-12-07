@@ -3,6 +3,14 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Radio Buttons controls.
+ *
+ * @property array $language  Any language(mode) supported by Ace editor. @see https://ace.c9.io/build/kitchen-sink.html
+ *                            Default 'html'
+ *
+ * @since 1.0.0
+ */
 class Control_Code extends Control_Base {
 
 	public function get_type() {

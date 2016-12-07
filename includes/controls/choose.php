@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                            The icon can be any icon-font class that appears in the panel, e.g. 'fa fa-align-left'
  * @property bool  $toggle    Whether to allow deselect the selected button
  *                            Default true
+ *
  * @since 1.0.0
  */
 class Control_Choose extends Control_Base {
