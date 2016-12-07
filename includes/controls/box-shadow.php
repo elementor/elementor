@@ -6,12 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Add A Box Shadow set of controls
  *
- * @property integer $horizontal - default: 0
- * @property integer $vertical - default: 0
- * @property integer $blur - default: 10
- * @property integer $spread - default: 0
- * @property bool $inset - unused //TODO: allow set an inset shadow
- * @property string $color - rgb|rgba|hex values. default: rgba(0,0,0,0.5)
+ * @property integer $horizontal Default 0
+ * @property integer $vertical   Default 0
+ * @property integer $blur       Default 10
+ * @property integer $spread     Default 0
+ * @property bool    $inset      Unused //TODO: allow set an inset shadow
+ * @property string  $color      Shadow color, in rgb|rgba|hex format.
+ *                               Default 'rgba(0,0,0,0.5)'
  *
  * @since 0.8.1
  *
@@ -69,7 +70,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 				<div class="elementor-control-input-wrapper">
 					<div class="elementor-slider" data-input="<?php echo $slider['type']; ?>"></div>
 					<div class="elementor-slider-input">
-						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" step="{{ data.step }}" data-setting="<?php echo $slider['type']; ?>"/>
+						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" data-setting="<?php echo $slider['type']; ?>"/>
 					</div>
 				</div>
 			</div>
