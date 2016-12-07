@@ -14,7 +14,7 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'accordion';
+		return 'eicon-accordion';
 	}
 
 	public function get_categories() {

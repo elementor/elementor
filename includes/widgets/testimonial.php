@@ -14,7 +14,7 @@ class Widget_Testimonial extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'testimonial';
+		return 'eicon-testimonial';
 	}
 
 	public function get_categories() {

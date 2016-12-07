@@ -14,7 +14,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'sidebar';
+		return 'eicon-sidebar';
 	}
 
 	public function get_categories() {

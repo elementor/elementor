@@ -14,7 +14,7 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'type-tool';
+		return 'eicon-type-tool';
 	}
 
 	protected function _register_controls() {

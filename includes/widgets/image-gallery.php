@@ -14,7 +14,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'gallery-grid';
+		return 'eicon-gallery-grid';
 	}
 
 	public function get_categories() {

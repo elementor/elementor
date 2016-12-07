@@ -14,7 +14,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'slider-push';
+		return 'eicon-slider-push';
 	}
 
 	public function get_categories() {
