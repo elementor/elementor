@@ -20,9 +20,8 @@ ElementsHandler = function( $ ) {
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
 	};
 
-	this.addExternalListener = function( scope, event, callback, externalElement ) {
-		var $scope = $( scope ),
-			$externalElement = $( externalElement || elementorFrontend.getScopeWindow() );
+	this.addExternalListener = function( $scope, event, callback, externalElement ) {
+		var $externalElement = $( externalElement || elementorFrontend.getScopeWindow() );
 
 		if ( ! elementorFrontend.isEditMode() ) {
 			$externalElement.on( event, callback );
