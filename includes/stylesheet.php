@@ -63,7 +63,17 @@ class Stylesheet {
 	 *
 	 * @return $this
 	 */
-	public function add_rules( $selector, $rules, $device = 'desktop' ) {
+	public function add_rules( $selector, $rules = null, $device = 'desktop' ) {
+		if ( null === $rules ) {
+			preg_match_all( '/([^\s].+?(?=\{))\{((?s:.)+?(?=}))}/', $selector, $parsed_rules );
+
+			foreach ( $parsed_rules[1] as $index => $selector ) {
+				$this->add_rules( $selector, $parsed_rules[2][ $index ], $device );
+			}
+
+			return $this;
+		}
+
 		if ( ! isset( $this->rules[ $device ][ $selector ] ) ) {
 			$this->rules[ $device ][ $selector ] = [];
 		}
