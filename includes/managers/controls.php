@@ -320,6 +320,14 @@ class Controls_Manager {
 	}
 
 	public function remove_control_from_stack( $stack_id, $control_id ) {
+		if ( is_array( $control_id ) ) {
+			foreach ( $control_id as $id ) {
+				$this->remove_control_from_stack( $stack_id, $id );
+			}
+
+			return true;
+		}
+
 		if ( empty( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			return new \WP_Error( 'Cannot remove not-exists control.' );
 		}
