@@ -11,11 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * 		@type integer $right    Default 0
  * 		@type integer $bottom   Default 0
  * 		@type integer $left     Default 0
+ * 		@type string  $unit     The selected CSS Unit. 'px', '%', 'em'
+ *                         		Default 'px'
  * 		@type bool    $isLinked Whether to link them together ( prevent set different values )
  *                         		Default true
  * }
  *
- * @property array|string $allowed_dimensions 	Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
+ * @property array        $size_units            Array of available CSS Units like 'px', '%', 'em'
+ * @property array|string $allowed_dimensions    Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
  *                                              Default 'all'
  *
  * @since 1.0.0
