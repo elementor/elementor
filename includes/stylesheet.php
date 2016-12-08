@@ -36,7 +36,7 @@ class Stylesheet {
 		$parsed_properties = '';
 
 		foreach ( $properties as $property_key => $property_value ) {
-			if ( $property_value ) {
+			if ( '' !== $property_value ) {
 				$parsed_properties .= $property_key . ':' . $property_value . ';';
 			}
 		}
