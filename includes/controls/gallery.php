@@ -3,6 +3,14 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A gallery creation control. Uses the WordPress media gallery creator
+ *
+ * @property array $default   The selected images array [ [ 'id' => ??, 'url' => ?? ], [ 'id' => ??, 'url' => ?? ], ... ]
+ *                            Default empty
+ *
+ * @since 1.0.0
+ */
 class Control_Gallery extends Control_Base {
 
 	public function get_type() {
