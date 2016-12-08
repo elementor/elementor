@@ -500,6 +500,8 @@
   -webkit-flex-wrap: wrap;
       -ms-flex-wrap: wrap;
           flex-wrap: wrap; }
+  .elementor-field-subgroup .elementor-field-option label {
+    display: inline-block; }
   .elementor-field-subgroup.elementor-subgroup-inline .elementor-field-option {
     padding-left: 10px; }
   .elementor-field-subgroup:not(.elementor-subgroup-inline) .elementor-field-option {
