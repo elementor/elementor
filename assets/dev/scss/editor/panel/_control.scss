@@ -651,6 +651,13 @@
 	// Wysiwyg control
 	.elementor-control-type-wysiwyg {
 
+		&.elementor-rich-editing-disabled {
+
+			.wp-editor-container {
+				margin-top: 10px;
+			}
+		}
+
 		* {
 			box-sizing: content-box;
 		}
