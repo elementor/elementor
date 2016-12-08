@@ -139,7 +139,7 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var bindEvents = function() {
-		elements.$scopeWindow.on( 'resize', stretchSection );
+		elementorFrontend.elementsHandler.addExternalListener( $section, 'resize', stretchSection );
 	};
 
 	var init = function() {
@@ -152,10 +152,10 @@ var StretchedSection = function( $section, $ ) {
 	init();
 };
 
-module.exports = function( $scoop, $ ) {
-	new StretchedSection( $scoop, $ );
+module.exports = function( $scope, $ ) {
+	new StretchedSection( $scope, $ );
 
-	var $backgroundVideoContainer = $scoop.find( '.elementor-background-video-container' );
+	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
 	if ( $backgroundVideoContainer ) {
 		new BackgroundVideo( $backgroundVideoContainer, $ );

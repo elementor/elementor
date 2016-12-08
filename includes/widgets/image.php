@@ -14,7 +14,7 @@ class Widget_Image extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'insert-image';
+		return 'eicon-insert-image';
 	}
 
 	protected function _register_controls() {

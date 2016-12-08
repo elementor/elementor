@@ -38,9 +38,9 @@ class Widget_WordPress extends Widget_Base {
 
 	public function get_icon() {
 		if ( $this->_is_pojo_widget() ) {
-			return 'pojome';
+			return 'eicon-pojome';
 		}
-		return 'wordpress';
+		return 'eicon-wordpress';
 	}
 
 	public function is_reload_preview_required() {

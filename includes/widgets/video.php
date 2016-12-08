@@ -14,7 +14,7 @@ class Widget_Video extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'youtube';
+		return 'eicon-youtube';
 	}
 
 	protected function _register_controls() {

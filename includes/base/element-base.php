@@ -272,7 +272,7 @@ abstract class Element_Base {
 	}
 
 	public function get_icon() {
-		return 'columns';
+		return 'eicon-columns';
 	}
 
 	public function is_reload_preview_required() {

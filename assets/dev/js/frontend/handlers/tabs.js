@@ -1,7 +1,7 @@
-module.exports = function( $scoop, $ ) {
-	var defaultActiveTab = $scoop.find( '.elementor-tabs' ).data( 'active-tab' ),
-		$tabsTitles = $scoop.find( '.elementor-tab-title' ),
-		$tabs = $scoop.find( '.elementor-tab-content' ),
+module.exports = function( $scope, $ ) {
+	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
+		$tabsTitles = $scope.find( '.elementor-tab-title' ),
+		$tabs = $scope.find( '.elementor-tab-content' ),
 		$active,
 		$content;
 

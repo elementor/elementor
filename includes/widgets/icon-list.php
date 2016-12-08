@@ -14,7 +14,7 @@ class Widget_Icon_List extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'bullet-list';
+		return 'eicon-bullet-list';
 	}
 
 	public function get_categories() {

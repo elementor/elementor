@@ -14,7 +14,7 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'tabs';
+		return 'eicon-tabs';
 	}
 
 	public function get_categories() {

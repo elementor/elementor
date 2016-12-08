@@ -288,7 +288,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			cid: $item.data( 'model-cid' )
 		} );
 
-		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="eicon-' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
+		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
 	},
 
 	deactivate: function() {
@@ -6654,11 +6654,11 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		var self = this;
 
-		var options = {
+		var options = _.extend( this.model.get( 'picker_options' ), {
 			onHide: function() {
 				self.saveValue();
 			}
-		};
+		} );
 
 		this.ui.picker.appendDtpicker( options ).handleDtpicker( 'setDate', new Date( this.getControlValue() ) );
 	},
@@ -7826,17 +7826,13 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	buttons: {
 		moveToAdvanced: {
 			fullscreen: 'wp_help',
-			hr: 'wp_help',
 			wp_more: 'wp_help',
 			blockquote: 'removeformat',
 			alignleft: 'blockquote',
 			aligncenter: 'alignleft',
-			alignright: 'aligncenter',
-			strikethrough: 'alignjustify'
+			alignright: 'aligncenter'
 		},
-		moveToBasic: {
-			underline: 'italic'
-		},
+		moveToBasic: {},
 		removeFromBasic: [ 'unlink' ],
 		removeFromAdvanced: []
 	},
@@ -7890,6 +7886,25 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		return this;
 	},
 
+	moveButtons: function( buttonsToMove, from, to ) {
+		_.each( buttonsToMove, function( afterButton, button ) {
+			var buttonIndex = from.indexOf( button ),
+				afterButtonIndex = to.indexOf( afterButton );
+
+			if ( -1 === buttonIndex ) {
+				throw new ReferenceError( 'Trying to move non-existing button `' + button + '`' );
+			}
+
+			if ( -1 === afterButtonIndex ) {
+				throw new ReferenceError( 'Trying to move button after non-existing button `' + afterButton + '`' );
+			}
+
+			from.splice( buttonIndex, 1 );
+
+			to.splice( afterButtonIndex + 1, 0, button );
+		} );
+	},
+
 	rearrangeButtons: function() {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
@@ -7899,27 +7914,9 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		editorAdvancedToolbarButtons = _.difference( editorAdvancedToolbarButtons, this.buttons.removeFromAdvanced );
 
-		_.each( this.buttons.moveToAdvanced, function( afterButton, button ) {
-			var buttonIndex = editorBasicToolbarButtons.indexOf( button ),
-				afterButtonIndex = editorAdvancedToolbarButtons.indexOf( afterButton );
+		this.moveButtons( this.buttons.moveToBasic, editorAdvancedToolbarButtons, editorBasicToolbarButtons );
 
-			editorBasicToolbarButtons.splice( buttonIndex, 1 );
-
-			if ( -1 !== afterButtonIndex ) {
-				editorAdvancedToolbarButtons.splice( afterButtonIndex + 1, 0, button );
-			}
-		} );
-
-		_.each( this.buttons.moveToBasic, function( afterButton, button ) {
-			var buttonIndex = editorAdvancedToolbarButtons.indexOf( button ),
-				afterButtonIndex = editorBasicToolbarButtons.indexOf( afterButton );
-
-			editorAdvancedToolbarButtons.splice( buttonIndex, 1 );
-
-			if ( -1 !== afterButtonIndex ) {
-				editorBasicToolbarButtons.splice( afterButtonIndex + 1, 0, button );
-			}
-		} );
+		this.moveButtons( this.buttons.moveToAdvanced, editorBasicToolbarButtons, editorAdvancedToolbarButtons );
 
 		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
@@ -8426,7 +8423,7 @@ WidgetView = BaseElementView.extend( {
 
                     // TODO: REMOVE THIS !!
                     // TEMP CODING !!
-                    self.$el.append( '<i class="elementor-widget-empty-icon eicon-' + editModel.getIcon() + '"></i>' );
+                    self.$el.append( '<i class="elementor-widget-empty-icon ' + editModel.getIcon() + '"></i>' );
                 }
             }, 200 );
             // Is element empty?

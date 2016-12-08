@@ -29,7 +29,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'apps';
+		return 'eicon-apps';
 	}
 
 	public function __construct( $data = [], $args = null ) {
