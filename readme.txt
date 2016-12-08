@@ -159,6 +159,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.0.1 - 08.12.2016 =
+* Fix! - Waypoint script for multiple versions ([#933](https://github.com/pojome/elementor/issues/933), [#1001](https://github.com/pojome/elementor/issues/1001))
+* Fix! - Text Editor widget compatible for WordPress 4.7
+* Fix! - Label form compatible for TwentySeventy theme
+
 = 1.0.0 - 06.12.2016 =
 * New! - Added code editor for HTML widget
 * New! - Added social icon for Houzz
