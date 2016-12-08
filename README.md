@@ -161,6 +161,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.0.2 - 08.12.2016 ###
+* Fix! - Adjusting Text Editor widget when visual editor is disabled ([Topic](https://wordpress.org/support/topic/text-editing-menu-is-blank/))
+* Fix! - Conflict with Advanced TinyMCE plugin ([Topic](https://wordpress.org/support/topic/1-0-1-disabled-the-text-edit-widget/))
+
 ### 1.0.1 - 08.12.2016 ###
 * Fix! - Waypoint script for multiple versions ([#933](https://github.com/pojome/elementor/issues/933), [#1001](https://github.com/pojome/elementor/issues/1001))
 * Fix! - Text Editor widget compatible for WordPress 4.7
