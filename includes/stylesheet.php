@@ -79,7 +79,7 @@ class Stylesheet {
 		}
 
 		if ( is_string( $rules ) ) {
-			$rules = array_filter( explode( ';', $rules ) );
+			$rules = array_filter( explode( ';', trim( $rules ) ) );
 
 			$ordered_rules = [];
 
