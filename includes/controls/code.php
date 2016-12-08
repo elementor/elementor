@@ -4,10 +4,11 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Radio Buttons controls.
+ * A Code Editor control.
  *
- * @property array $language  Any language(mode) supported by Ace editor. @see https://ace.c9.io/build/kitchen-sink.html
- *                            Default 'html'
+ * @property string $default     Default code editor content
+ * @property array  $language    Any language(mode) supported by Ace editor. @see https://ace.c9.io/build/kitchen-sink.html
+ *                               Default 'html'
  *
  * @since 1.0.0
  */
