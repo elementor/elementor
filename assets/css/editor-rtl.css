@@ -1292,6 +1292,8 @@ select {
             transform: translateY(6px); }
     .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg.elementor-rich-editing-disabled .wp-editor-container {
+    margin-top: 10px; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg * {
     box-sizing: content-box; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-editor-container {

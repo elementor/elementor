@@ -26,27 +26,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		var self = this;
 
-		this.editorID = 'elementorwpeditor' + this.cid;
-
-		var editorConfig = {
-			id: this.editorID,
-			selector: '#' + this.editorID,
-			setup: function( editor ) {
-				editor.on( 'keyup change undo redo SetContent', function() {
-					editor.save();
-
-					self.setValue( editor.getContent() );
-				} );
-			}
-		};
-
-		tinyMCEPreInit.mceInit[ this.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
-
-		this.rearrangeButtons();
-
-		// This class allows us to reduce "flicker" by hiding the editor
-		// until we are done loading and modifying it.
-		this.$el.addClass( 'elementor-loading-editor' );
+		self.editorID = 'elementorwpeditor' + self.cid;
 
 		// Wait a cycle before initializing the editors.
 		_.defer( function() {
@@ -56,10 +36,34 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 				id: self.editorID
 			} );
 
-			switchEditors.go( self.editorID, 'tmce' );
+			if ( elementor.config.rich_editing_enabled ) {
+				switchEditors.go( self.editorID, 'tmce' );
+			}
 
 			delete QTags.instances[ 0 ];
 		} );
+
+		if ( ! elementor.config.rich_editing_enabled ) {
+			self.$el.addClass( 'elementor-rich-editing-disabled' );
+
+			return;
+		}
+
+		var editorConfig = {
+			id: self.editorID,
+			selector: '#' + self.editorID,
+			setup: function( editor ) {
+				editor.on( 'keyup change undo redo SetContent', function() {
+					editor.save();
+
+					self.setValue( editor.getContent() );
+				} );
+			}
+		};
+
+		tinyMCEPreInit.mceInit[ self.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
+
+		self.rearrangeButtons();
 	},
 
 	attachElContent: function() {
@@ -108,8 +112,13 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		// Remove TinyMCE and QuickTags instances
-		tinymce.EditorManager.execCommand( 'mceRemoveEditor', true, this.editorID );
 		delete QTags.instances[ this.editorID ];
+
+		if ( ! elementor.config.rich_editing_enabled ) {
+			return;
+		}
+
+		tinymce.EditorManager.execCommand( 'mceRemoveEditor', true, this.editorID );
 
 		// Cleanup PreInit data
 		delete tinyMCEPreInit.mceInit[ this.editorID ];
