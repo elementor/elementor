@@ -20,8 +20,8 @@ class Control_Checkbox extends Control_Base {
 	public function content_template() {
 		?>
 		<label class="elementor-control-title">
-			<span>{{{ data.label }}}</span>
 			<input type="checkbox" data-setting="{{ data.name }}" />
+			<span>{{{ data.label }}}</span>
 		</label>
 		<# if ( data.description ) { #>
 		<div class="elementor-control-description">{{{ data.description }}}</div>
