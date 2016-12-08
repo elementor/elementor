@@ -9,15 +9,13 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
 		moveToAdvanced: {
-			fullscreen: 'wp_help',
-			wp_more: 'wp_help',
 			blockquote: 'removeformat',
 			alignleft: 'blockquote',
 			aligncenter: 'alignleft',
 			alignright: 'aligncenter'
 		},
 		moveToBasic: {},
-		removeFromBasic: [ 'unlink' ],
+		removeFromBasic: [ 'unlink', 'wp_more' ],
 		removeFromAdvanced: []
 	},
 
