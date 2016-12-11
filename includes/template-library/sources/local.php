@@ -16,6 +16,8 @@ class Source_Local extends Source_Base {
 
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	private static $_template_types = [ 'page', 'section' ];
+
 	public static function get_template_type( $template_id ) {
 		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
 	}
@@ -28,6 +30,10 @@ class Source_Local extends Source_Base {
 		}
 
 		return 'edit' === $current_screen->base && self::CPT === $current_screen->post_type;
+	}
+
+	public static function add_template_type( $type ) {
+		self::$_template_types[] = $type;
 	}
 
 	public function get_id() {
@@ -109,6 +115,12 @@ class Source_Local extends Source_Base {
 				'posts_per_page' => -1,
 				'orderby' => 'title',
 				'order' => 'ASC',
+				'meta_query' => [
+					[
+						'key' => self::TYPE_META_KEY,
+						'value' => self::$_template_types,
+					],
+				],
 			]
 		);
 
@@ -128,6 +140,10 @@ class Source_Local extends Source_Base {
 	}
 
 	public function save_item( $template_data ) {
+	    if ( ! in_array( $template_data['type'], self::$_template_types ) ) {
+			return new \WP_Error( 'save_error', 'Invalid template type `' . $template_data['type'] . '`' );
+		}
+
 		$post_id = wp_insert_post( [
 			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 			'post_status' => 'publish',
