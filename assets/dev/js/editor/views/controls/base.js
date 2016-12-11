@@ -130,6 +130,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			return $input.prop( 'checked' ) ? inputValue : '';
 		}
 
+		// Temp fix for jQuery (< 3.0) that return null instead of empty array
+		if ( 'SELECT' === input.tagName && $input.prop( 'multiple' ) && null === inputValue ) {
+			inputValue = [];
+		}
+
 		return inputValue;
 	},
 
