@@ -6297,6 +6297,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			return $input.prop( 'checked' ) ? inputValue : '';
 		}
 
+		// Temp fix for jQuery (< 3.0) that return null instead of empty array
+		if ( 'SELECT' === input.tagName && $input.prop( 'multiple' ) && null === inputValue ) {
+			inputValue = [];
+		}
+
 		return inputValue;
 	},
 
@@ -7596,7 +7601,10 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 
 	onReady: function() {
 		var options = {
-			allowClear: true
+			allowClear: true,
+			placeholder: { // The `allowClear` must be used with the `placeholder` option
+				id: ''
+			}
 		};
 
 		this.ui.select.select2( options );

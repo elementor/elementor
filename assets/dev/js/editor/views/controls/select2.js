@@ -14,7 +14,10 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 
 	onReady: function() {
 		var options = {
-			allowClear: true
+			allowClear: true,
+			placeholder: { // The `allowClear` must be used with the `placeholder` option
+				id: ''
+			}
 		};
 
 		this.ui.select.select2( options );
