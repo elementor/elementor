@@ -212,7 +212,9 @@ class Settings {
 	}
 
 	public function go_elementor_pro() {
-		wp_redirect( 'https://go.elementor.com/pro-admin-menu/' );
+		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
+			wp_redirect( 'https://go.elementor.com/pro-admin-menu/' );
+		}
 	}
 
 	public function admin_menu_change_name() {
@@ -244,6 +246,7 @@ class Settings {
 
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 		add_action( 'admin_init', [ $this, 'register_improve_elementor_settings' ], 999 ); // Keep it the last settings in page
+		add_action( 'admin_init', [ $this, 'go_elementor_pro' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
