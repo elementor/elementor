@@ -198,6 +198,14 @@
 }
 
 // Responsive Grid
+
+@media (min-width: $screen-md-min) {
+
+	.elementor-column {
+		@include elementor-grid-classes;
+	}
+}
+
 .elementor-column {
 
 	@media (max-width: $screen-xs-max) {
@@ -210,13 +218,6 @@
 
 	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
 		@include elementor-responsive(md);
-	}
-}
-
-@media (min-width: $screen-md-min) {
-
-	.elementor-column {
-		@include elementor-grid-classes;
 	}
 }
 
