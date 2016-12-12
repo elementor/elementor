@@ -957,7 +957,8 @@
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
   color: #818a91;
-  font-size: 50px; }
+  font-size: 50px;
+  text-align: center; }
   .elementor-icon:hover {
     color: #818a91; }
   .elementor-icon i {
