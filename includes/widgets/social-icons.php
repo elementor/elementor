@@ -200,7 +200,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'icon_size',
 			[
 				'label' => __( 'Icon Size', 'elementor' ),
@@ -217,7 +217,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'icon_padding',
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
@@ -239,7 +239,7 @@ class Widget_Social_Icons extends Widget_Base {
 
 		$icon_spacing = is_rtl() ? 'margin-left: {{SIZE}}{{UNIT}};' : 'margin-right: {{SIZE}}{{UNIT}};';
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'icon_spacing',
 			[
 				'label' => __( 'Icon Spacing', 'elementor' ),
