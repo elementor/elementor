@@ -288,7 +288,7 @@ class DB {
 	}
 
 	private function copy_elementor_meta( $from_post_id, $to_post_id, $update = false ) {
-		if ( ! $this->is_build_with_elementor( $from_post_id ) ) {
+		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
 			return;
 		}
 
@@ -313,7 +313,7 @@ class DB {
 		}
 	}
 
-	public function is_build_with_elementor( $post_id ) {
+	public function is_built_with_elementor( $post_id ) {
 		$data = $this->get_plain_editor( $post_id );
 		$edit_mode = $this->get_edit_mode( $post_id );
 
