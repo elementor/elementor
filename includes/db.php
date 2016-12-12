@@ -37,7 +37,12 @@ class DB {
 
 		if ( self::REVISION_PUBLISH === $revision ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', $json_value );
+			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
+
+			if ( $is_meta_updated ) {
+				$this->handle_revision();
+			}
+
 			$this->_save_plain_text( $post_id );
 		} else {
 			update_post_meta( $post_id, '_elementor_draft_data', $json_value );
@@ -259,5 +264,63 @@ class DB {
 		}
 
 		return $data_container;
+	}
+
+	function handle_revision() {
+		add_filter( 'wp_save_post_revision_post_has_changed', '__return_true' );
+		add_action( '_wp_put_post_revision', [ $this, 'save_revision' ] );
+	}
+
+	function save_revision( $revision_id ) {
+		$parent_id = wp_is_post_revision( $revision_id );
+		if ( ! $parent_id ) {
+			return;
+		}
+
+		$this->copy_elementor_meta( $parent_id, $revision_id );
+	}
+
+	function restore_revision( $parent_id, $revision_id ) {
+		$this->copy_elementor_meta( $revision_id, $parent_id, true );
+		$post_css = new Post_CSS_File( $parent_id );
+		$post_css->update();
+
+	}
+
+	private function copy_elementor_meta( $from_post_id, $to_post_id, $update = false ) {
+		if ( ! $this->is_build_with_elementor( $from_post_id ) ) {
+			return;
+		}
+
+		$from_post_meta = get_post_meta( $from_post_id );
+
+		foreach ( $from_post_meta as $meta_key => $values ) {
+			// Copy only meta with the `_elementor` prefix
+			if ( 0 === strpos( $meta_key, '_elementor' ) ) {
+				$value = $values[0];
+
+				// The elementor JSON needs slashes before saving
+				if ( '_elementor_data' === $meta_key ) {
+					$value = wp_slash( $value );
+				}
+
+				if ( $update ) {
+					update_metadata( 'post', $to_post_id, $meta_key, $value );
+				} else {
+					add_metadata( 'post', $to_post_id, $meta_key, $value );
+				}
+			}
+		}
+	}
+
+	public function is_build_with_elementor( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
+	}
+
+	public function __construct() {
+		add_action( 'wp_restore_post_revision', [ $this, 'restore_revision' ], 10, 2 );
 	}
 }
