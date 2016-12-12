@@ -344,7 +344,7 @@
   .elementor-column.elementor-md-100 {
     width: 100%; } }
 
-@media (min-width: 768px) {
+@media (min-width: 1025px) {
   .elementor-column.elementor-col-10, .elementor-column[data-col="10"] {
     width: 10%; }
   .elementor-column.elementor-col-11, .elementor-column[data-col="11"] {

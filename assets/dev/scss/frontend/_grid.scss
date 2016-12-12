@@ -213,7 +213,7 @@
 	}
 }
 
-@media (min-width: $screen-md-min) {
+@media (min-width: $screen-lg-min) {
 
 	.elementor-column {
 		@include elementor-grid-classes;
