@@ -320,6 +320,7 @@ class Editor {
 					'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 				],
 				'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
+				'revisions' => $plugin->db->get_revisions(),
 				'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 				'wp_editor' => $this->_get_wp_editor_config(),
 				'post_id' => $post_id,

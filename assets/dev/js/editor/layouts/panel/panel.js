@@ -109,6 +109,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			throw new ReferenceError( 'Elementor panel doesn\'t have page named \'' + page + '\'' );
 		}
 
+		if ( pageData.options ) {
+			viewOptions = _.extend( pageData.options, viewOptions );
+		}
+
 		this.showChildView( 'content', new pageData.view( viewOptions ) );
 
 		this.getHeaderView().setTitle( title || pageData.title );

@@ -1,0 +1,16 @@
+.elementor-revision-item {
+	padding: 10px 10px 20px;
+	border-bottom: 1px solid #a5a5a5;
+}
+
+.elementor-button-default {
+	&.elementor-revisions-preview,
+	&.elementor-revisions-revert{
+		font-size: 10px;
+		padding: 4.5px 6px;
+	}
+}
+
+.elementor-revision-item-title {
+	@include padding-end( 30px );
+}

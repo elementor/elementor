@@ -107,6 +107,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/frontend',
 							src: '**/*.js',
 							expose: 'elementor-frontend'
+						},
+						{
+							cwd: 'assets/dev/js/editor/revisions',
+							src: '**/*.js',
+							expose: 'elementor-revisions'
 						}
 					] );
 				}

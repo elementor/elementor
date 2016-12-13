@@ -35,7 +35,9 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 			},
 			{
 				icon: 'history',
-				title: elementor.translate( 'revisions_history' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
+				title: elementor.translate( 'revisions_history' ),
+				type: 'page',
+				pageName: 'revisionsPage'
 			},
             {
                 icon: 'eraser',

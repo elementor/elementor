@@ -323,4 +323,17 @@ class DB {
 	public function __construct() {
 		add_action( 'wp_restore_post_revision', [ $this, 'restore_revision' ], 10, 2 );
 	}
+
+	public function get_revisions() {
+		$revisions = [];
+		/** @var \WP_Post $revision */
+		foreach ( wp_get_post_revisions() as $revision ) {
+			$revisions[] = [
+				'id' => $revision->ID,
+				'date' => $revision->post_date,
+				];
+		}
+
+		return $revisions;
+	}
 }

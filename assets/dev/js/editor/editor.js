@@ -37,7 +37,8 @@ App = Marionette.Application.extend( {
 		WidgetView: require( 'elementor-views/widget' ),
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
-		}
+		},
+		revisions:  require( 'elementor-revisions/editor' )
 	},
 
 	// Private Members
@@ -133,6 +134,8 @@ App = Marionette.Application.extend( {
 		this.heartbeat.init();
 		this.modals.init();
 		this.ajax.init();
+
+		this.revisions = new this.modules.revisions;
 	},
 
 	initDialogsManager: function() {
