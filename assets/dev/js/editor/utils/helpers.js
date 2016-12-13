@@ -136,7 +136,7 @@ helpers = {
 			}
 
 			/* If it's a non empty array - check if the conditionValue contains the controlValue,
-			 otherwise check if they are equal and give the ability to check if the value is an empty array */
+			 otherwise check if they are equal. ( and give the ability to check if the value is an empty array ) */
 			var isContains = ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : _.isEqual( conditionValue, controlValue );
 
 			return isNegativeCondition ? isContains : ! isContains;
