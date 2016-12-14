@@ -246,7 +246,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
 	<div class="elementor-revision-item">
 		<span class="elementor-revision-item-title">
-			{{ date }}
+			{{ date }} / {{ author }}
 		</span>
 		<button class="elementor-revisions-preview elementor-button elementor-button-default elementor-button-success">
 			<span class="elementor-state-icon"><i class="fa fa-spin fa-circle-o-notch"></i></span>

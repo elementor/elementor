@@ -3734,14 +3734,7 @@ module.exports = function() {
 
 		var revisionsCollection = new Backbone.Collection();
 
-		_.each( elementor.config.revisions, function( revision ) {
-			var revisionModel = new Backbone.Model( {
-				id: revision.id,
-				date: revision.date
-			} );
-
-			revisionsCollection.add( revisionModel );
-		} );
+		revisionsCollection.add( elementor.config.revisions );
 
 		elementor.getPanelView().addPage( 'revisionsPage', {
 			view: require( './revisions-page' ),

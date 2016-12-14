@@ -331,6 +331,7 @@ class DB {
 			$revisions[] = [
 				'id' => $revision->ID,
 				'date' => $revision->post_date,
+				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
 				];
 		}
 
