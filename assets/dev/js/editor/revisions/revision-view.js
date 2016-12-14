@@ -31,6 +31,11 @@ module.exports =  Marionette.ItemView.extend( {
 
 				self.ui.previewButton.removeClass( 'elementor-button-state' ).hide();
 				self.ui.revertButton.show();
+			},
+			error: function( data ) {
+				alert( 'An error occurs' );
+				self.ui.previewButton.removeClass( 'elementor-button-state' ).hide();
+				self.ui.revertButton.show();
 			}
 		} );
 	},
