@@ -1859,7 +1859,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-revision-item {
   padding: 10px 10px 20px;
-  border-bottom: 1px solid #a5a5a5; }
+  border-bottom: 1px solid #a5a5a5;
+  cursor: pointer; }
+  .elementor-revision-item:not(.elementor-state-show) .elementor-state-icon {
+    display: none; }
 
 .elementor-button-default.elementor-revisions-preview, .elementor-button-default.elementor-revisions-revert {
   font-size: 10px;
@@ -1867,6 +1870,13 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-revision-item-title {
   padding-right: 20px; }
+
+.elementor-revision-current-preview {
+  background: #a8afb6;
+  color: white; }
+
+.elementor-revision-current-published {
+  background: #5a805f; }
 
 #elementor-preview {
   background-color: #333;

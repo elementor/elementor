@@ -2,23 +2,20 @@ module.exports =  Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-revisions-revision-item',
 
 	ui: {
-		previewButton: '.elementor-revisions-preview',
-		revertButton: '.elementor-revisions-revert'
+		item: '.elementor-revision-item',
+		spinner: '.elementor-state-icon'
 	},
 
 	events: {
-		'click @ui.previewButton': 'onPreviewButtonClick',
-		'click @ui.revertButton': 'onRevertButtonClick'
+		'click @ui.item': 'onItemClick'
 	},
 
-	onPreviewButtonClick: function() {
+	onItemClick: function() {
 		var self = this,
 			id = this.model.get( 'id' );
 
-		Backbone.$( '.elementor-revisions-revert:visible' ).hide();
-		Backbone.$( '.elementor-revisions-preview:not(:visible)' ).show();
-
-		self.ui.previewButton.addClass( 'elementor-button-state' );
+		Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+		self.ui.item.addClass( 'elementor-state-show' );
 
 		elementor.ajax.send( 'get_revision_preview', {
 			data: {
@@ -29,23 +26,12 @@ module.exports =  Marionette.ItemView.extend( {
 				collection.reset();
 				collection.set( data );
 
-				self.ui.previewButton.removeClass( 'elementor-button-state' ).hide();
-				self.ui.revertButton.show();
+				self.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
 			},
 			error: function( data ) {
 				alert( 'An error occurs' );
-				self.ui.previewButton.removeClass( 'elementor-button-state' ).hide();
-				self.ui.revertButton.show();
+				self.ui.previewButton.removeClass( 'elementor-state-show' );
 			}
 		} );
 	},
-
-	onRevertButtonClick: function() {
-		var collection = elementor.getRegion( 'sections' ).currentView.collection;
-		collection.reset();
-		collection.set( elementor.config.data );
-
-		this.ui.revertButton.hide();
-		this.ui.previewButton.show();
-	}
 } );

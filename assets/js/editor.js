@@ -3767,23 +3767,20 @@ module.exports =  Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-revisions-revision-item',
 
 	ui: {
-		previewButton: '.elementor-revisions-preview',
-		revertButton: '.elementor-revisions-revert'
+		item: '.elementor-revision-item',
+		spinner: '.elementor-state-icon'
 	},
 
 	events: {
-		'click @ui.previewButton': 'onPreviewButtonClick',
-		'click @ui.revertButton': 'onRevertButtonClick'
+		'click @ui.item': 'onItemClick'
 	},
 
-	onPreviewButtonClick: function() {
+	onItemClick: function() {
 		var self = this,
 			id = this.model.get( 'id' );
 
-		Backbone.$( '.elementor-revisions-revert:visible' ).hide();
-		Backbone.$( '.elementor-revisions-preview:not(:visible)' ).show();
-
-		self.ui.previewButton.addClass( 'elementor-button-state' );
+		Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+		self.ui.item.addClass( 'elementor-state-show' );
 
 		elementor.ajax.send( 'get_revision_preview', {
 			data: {
@@ -3794,25 +3791,14 @@ module.exports =  Marionette.ItemView.extend( {
 				collection.reset();
 				collection.set( data );
 
-				self.ui.previewButton.removeClass( 'elementor-button-state' ).hide();
-				self.ui.revertButton.show();
+				self.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
 			},
 			error: function( data ) {
 				alert( 'An error occurs' );
-				self.ui.previewButton.removeClass( 'elementor-button-state' ).hide();
-				self.ui.revertButton.show();
+				self.ui.previewButton.removeClass( 'elementor-state-show' );
 			}
 		} );
 	},
-
-	onRevertButtonClick: function() {
-		var collection = elementor.getRegion( 'sections' ).currentView.collection;
-		collection.reset();
-		collection.set( elementor.config.data );
-
-		this.ui.revertButton.hide();
-		this.ui.previewButton.show();
-	}
 } );
 
 },{}],59:[function(require,module,exports){
@@ -3825,7 +3811,38 @@ module.exports = Marionette.CompositeView.extend( {
 
 	childViewContainer: '#elementor-revisions-list',
 
-	emptyView: require( './no-revisions-view' )
+	emptyView: require( './no-revisions-view' ),
+
+	ui: {
+		discard: '.elementor-panel-scheme-discard .elementor-button',
+		apply: '.elementor-panel-scheme-save .elementor-button'
+	},
+
+	events: {
+		'click @ui.discard': 'onDiscardClick',
+		'click @ui.apply': 'onApplyClick'
+	},
+
+	initialize: function() {
+		this.listenTo( elementor.channels.editor, 'editor:changed', this.setApplyButtonState );
+	},
+
+	setApplyButtonState: function( status ) {
+		this.ui.apply.prop( 'disabled', ! status );
+	},
+
+	onApplyClick: function() {
+		elementor.getPanelView().getChildView( 'footer' )._publishBuilder();
+	},
+
+	onDiscardClick: function() {
+		var collection = elementor.getRegion( 'sections' ).currentView.collection;
+		collection.reset();
+		collection.set( elementor.config.data );
+
+		Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+		elementor.setFlagEditorChange( false );
+	}
 } );
 
 },{"./no-revisions-view":57,"./revision-view":58}],60:[function(require,module,exports){

@@ -326,8 +326,13 @@ class DB {
 
 	public function get_revisions() {
 		$revisions = [];
+
+		$query_args = [
+			'meta_key' => '_elementor_data',
+		];
+
 		/** @var \WP_Post $revision */
-		foreach ( wp_get_post_revisions() as $revision ) {
+		foreach ( wp_get_post_revisions( 0, $query_args ) as $revision ) {
 			$revisions[] = [
 				'id' => $revision->ID,
 				'date' => $revision->post_date,

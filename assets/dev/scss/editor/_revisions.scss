@@ -1,7 +1,16 @@
 .elementor-revision-item {
 	padding: 10px 10px 20px;
 	border-bottom: 1px solid #a5a5a5;
+	cursor: pointer;
+
+	&:not(.elementor-state-show) {
+		.elementor-state-icon {
+			display: none;
+		}
+	}
+
 }
+
 
 .elementor-button-default {
 	&.elementor-revisions-preview,
@@ -13,4 +22,13 @@
 
 .elementor-revision-item-title {
 	@include padding-end( 20px );
+}
+
+.elementor-revision-current-preview {
+	background: #a8afb6;
+	color: white;
+}
+
+.elementor-revision-current-published {
+	background: #5a805f;
 }

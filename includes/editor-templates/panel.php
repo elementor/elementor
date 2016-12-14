@@ -230,8 +230,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions">
-	<div class="elementor-revisions-header">
-		<?php _e( 'Restore an old revision', 'elementor' ); ?>
+	<div class="elementor-panel-scheme-buttons">
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
+		</div>
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
+			<button class="elementor-button">
+				<i class="fa fa-times"></i>
+				<?php _e( 'Discard', 'elementor' ); ?>
+			</button>
+		</div>
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
+			<button class="elementor-button elementor-button-success" disabled><?php _e( 'Apply', 'elementor' ); ?></button>
+		</div>
 	</div>
 	<div id="elementor-revisions-list">
 	</div>
@@ -246,15 +256,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
 	<div class="elementor-revision-item">
 		<span class="elementor-revision-item-title">
-			{{ date }} / {{ author }}
+		{{ id }}. {{ date }} / {{ author }}
 		</span>
-		<button class="elementor-revisions-preview elementor-button elementor-button-default elementor-button-success">
-			<span class="elementor-state-icon"><i class="fa fa-spin fa-circle-o-notch"></i></span>
-			<?php _e( 'Preview', 'elementor' ); ?>
-		</button>
-		<div class="elementor-revisions-revert elementor-button elementor-button-default" style="display: none">
-			<?php _e( 'Revert', 'elementor' ); ?>
-		</div>
+		<span class="elementor-state-icon"><i class="fa fa-spin fa-circle-o-notch"></i></span>
+
 	</div>
 </script>
 
