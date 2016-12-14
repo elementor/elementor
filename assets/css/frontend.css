@@ -208,19 +208,15 @@
   display: -ms-flexbox;
   display: flex; }
 
-.elementor-column-gap-default .elementor-element-populated {
-  padding: 10px; }
-
-.elementor-column-gap-narrow .elementor-element-populated {
+.elementor-column-gap-narrow > .elementor-row > .elementor-column > .elementor-element-populated {
   padding: 5px; }
-
-.elementor-column-gap-extended .elementor-element-populated {
+.elementor-column-gap-default > .elementor-row > .elementor-column > .elementor-element-populated {
+  padding: 10px; }
+.elementor-column-gap-extended > .elementor-row > .elementor-column > .elementor-element-populated {
   padding: 15px; }
-
-.elementor-column-gap-wide .elementor-element-populated {
+.elementor-column-gap-wide > .elementor-row > .elementor-column > .elementor-element-populated {
   padding: 20px; }
-
-.elementor-column-gap-wider .elementor-element-populated {
+.elementor-column-gap-wider > .elementor-row > .elementor-column > .elementor-element-populated {
   padding: 30px; }
 
 .elementor-inner-section .elementor-column-gap-no .elementor-element-populated {
