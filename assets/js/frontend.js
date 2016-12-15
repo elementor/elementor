@@ -419,12 +419,12 @@ var StretchedSection = function( $section, $ ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.width(),
-			sectionWidth = $section.width(),
+		var containerWidth = elements.$scopeWindow.outerWidth(),
+			sectionWidth = $section.outerWidth(),
 			sectionOffset = $section.offset().left,
 			correctOffset = sectionOffset;
 
-		if ( elements.$sectionContainer.length ) {
+        if ( elements.$sectionContainer.length ) {
 			var containerOffset = elements.$sectionContainer.offset().left;
 
 			containerWidth = elements.$sectionContainer.outerWidth();
