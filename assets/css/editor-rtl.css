@@ -1860,7 +1860,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-revision-item {
   padding: 10px 10px 20px;
   border-bottom: 1px solid #a5a5a5;
-  cursor: pointer; }
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; }
   .elementor-revision-item:not(.elementor-state-show) .elementor-state-icon {
     display: none; }
 
