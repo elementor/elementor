@@ -667,6 +667,10 @@ abstract class Element_Base {
 	private function _get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
 
+		// If it's not a valid widget ( like a deactivated plugin )
+		if ( ! $child_type ) {
+			return false;
+		}
 		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 	}
 

@@ -72,7 +72,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var self = this;
 
 		var options = {
-			revision: 'publish',
+			status: 'publish',
 			onSuccess: function() {
 				self.getDialog().show();
 
