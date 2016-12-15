@@ -161,6 +161,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.0.4 - 12.12.2016 ###
+* Tweak! - Added mobile editing options for social icons widget
+* Fix! - Icon alignment CSS issue (Icon and Icon-Box widget) 
+* Fix! - Conflict panel with Safari browser
+* Fix! - Responsive grid bug with tablet screen
+
 ### 1.0.3 - 11.12.2016 ###
 * New! - Ready for Elementor Pro
 * Tweak! - Added template type validation
