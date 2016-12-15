@@ -26,6 +26,8 @@ module.exports =  Marionette.ItemView.extend( {
 				collection.reset();
 				collection.set( data );
 
+				self.triggerMethod( 'preview:loaded' );
+
 				self.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
 			},
 			error: function( data ) {

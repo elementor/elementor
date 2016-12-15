@@ -3791,6 +3791,8 @@ module.exports =  Marionette.ItemView.extend( {
 				collection.reset();
 				collection.set( data );
 
+				self.triggerMethod( 'preview:loaded' );
+
 				self.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
 			},
 			error: function( data ) {
@@ -3823,16 +3825,28 @@ module.exports = Marionette.CompositeView.extend( {
 		'click @ui.apply': 'onApplyClick'
 	},
 
+	isRevisionApplied: false,
+
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'editor:changed', this.setApplyButtonState );
 	},
 
-	setApplyButtonState: function( status ) {
-		this.ui.apply.prop( 'disabled', ! status );
+	setApplyButtonState: function( editorChanged ) {
+		this.ui.apply.prop( 'disabled', ! editorChanged );
+	},
+
+	setDiscardButtonDisabled: function( disabled ) {
+		this.ui.discard.prop( 'disabled', disabled );
 	},
 
 	onApplyClick: function() {
 		elementor.getPanelView().getChildView( 'footer' )._publishBuilder();
+		this.isRevisionApplied = true;
+		this.setDiscardButtonDisabled( false );
+	},
+
+	onChildviewPreviewLoaded: function() {
+		this.setDiscardButtonDisabled( false );
 	},
 
 	onDiscardClick: function() {
@@ -3840,8 +3854,15 @@ module.exports = Marionette.CompositeView.extend( {
 		collection.reset();
 		collection.set( elementor.config.data );
 
+		elementor.setFlagEditorChange( this.isRevisionApplied );
+
+		if ( this.isRevisionApplied ) {
+			this.isRevisionApplied = false;
+		}
+
+		this.setDiscardButtonDisabled( true );
+
 		Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
-		elementor.setFlagEditorChange( false );
 	}
 } );
 
@@ -4195,7 +4216,9 @@ helpers = {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
-			var isContains = ( _.isArray( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : conditionValue === controlValue;
+			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			var isContains = ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : _.isEqual( conditionValue, controlValue );
 
 			return isNegativeCondition ? isContains : ! isContains;
 		} );

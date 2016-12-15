@@ -407,7 +407,9 @@ abstract class Element_Base {
 				$instance_value = $instance_value[ $condition_sub_key ];
 			}
 
-			$is_contains = is_array( $condition_value ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
+			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			$is_contains = ( is_array( $condition_value ) && ! empty( $condition_value ) ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
 
 			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
 				return false;

@@ -234,13 +234,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
 		</div>
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-			<button class="elementor-button">
+			<button class="elementor-button" disabled >
 				<i class="fa fa-times"></i>
 				<?php _e( 'Discard', 'elementor' ); ?>
 			</button>
 		</div>
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-			<button class="elementor-button elementor-button-success" disabled><?php _e( 'Apply', 'elementor' ); ?></button>
+			<button class="elementor-button elementor-button-success" disabled >
+				<?php _e( 'Apply', 'elementor' ); ?>
+			</button>
 		</div>
 	</div>
 	<div id="elementor-revisions-list">
