@@ -429,18 +429,18 @@ App = Marionette.Application.extend( {
 
 	saveEditor: function( options ) {
 		options = _.extend( {
-			revision: 'draft',
+			status: 'draft',
 			onSuccess: null
 		}, options );
 
 		NProgress.start();
 
 		return this.ajax.send( 'save_builder', {
-			data: {
-				post_id: this.config.post_id,
-				revision: options.revision,
-				data: JSON.stringify( elementor.elements.toJSON() )
-			},
+	        data: {
+		        post_id: this.config.post_id,
+				status: options.status,
+		        data: JSON.stringify( elementor.elements.toJSON() )
+	        },
 			success: function( data ) {
 				NProgress.done();
 

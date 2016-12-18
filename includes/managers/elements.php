@@ -119,15 +119,15 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
-		if ( isset( $_POST['status'] ) || in_array( $_POST['status'], [ DB::REVISION_PUBLISH, DB::REVISION_DRAFT, DB::REVISION_AUTOSAVE ] ) ) {
-			$revision = $_POST['status'];
+		if ( isset( $_POST['status'] ) || in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_DRAFT, DB::STATUS_AUTOSAVE ] ) ) {
+			$status = $_POST['status'];
 		} else {
-			$revision = DB::REVISION_DRAFT;
+			$status = DB::STATUS_DRAFT;
 		}
 
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $revision );
+		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $status );
 
 		$return_data = [];
 

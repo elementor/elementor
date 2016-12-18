@@ -139,7 +139,7 @@ class Editor {
 		$post_id = get_the_ID();
 		$plugin = Plugin::instance();
 
-		$editor_data = $plugin->db->get_builder( $post_id, DB::REVISION_DRAFT );
+		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
