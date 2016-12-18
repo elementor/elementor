@@ -161,6 +161,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.0.5 - 18.12.2016 =
+* Tweak! - Added VH unit in min-height control for section
+* Fix! - Bug with section-content-position in Columns widget
+* Fix! - Bug with stretched section
+* Fix! - Avoid fatal error for invalid widgets
+* Deprecated! - Removed `#elementor` ID from frontend output
+
 = 1.0.4 - 12.12.2016 =
 * Tweak! - Added mobile editing options for social icons widget
 * Fix! - Icon alignment CSS issue (Icon and Icon-Box widget) 
