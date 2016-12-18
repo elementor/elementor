@@ -1,8 +1,10 @@
-var Schemes;
+var Schemes,
+	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	BaseElementView = require( 'elementor-views/base-element' );
 
 Schemes = function() {
 	var self = this,
-		styleRules = {},
+		stylesheet = new Stylesheet(),
 		schemes = {},
 		settings = {
 			selectorWrapperPrefix: '.elementor-widget-'
@@ -25,36 +27,17 @@ Schemes = function() {
 		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
 	};
 
-	var addStyleRule = function( selector, property ) {
-		if ( ! styleRules[ selector ] ) {
-			styleRules[ selector ] = [];
-		}
-
-		styleRules[ selector ].push( property );
-	};
-
-	var fetchControlStyles = function( control, widgetType ) {
-		_.each( control.selectors, function( cssProperty, selector ) {
-			var currentSchemeValue = self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ),
-				outputSelector,
-				outputCssProperty;
-
-			if ( _.isEmpty( currentSchemeValue.value ) ) {
-				return;
-			}
-
-			outputSelector = selector.replace( /\{\{WRAPPER\}\}/g, settings.selectorWrapperPrefix + widgetType );
-			outputCssProperty = elementor.getControlItemView().replaceStyleValues( cssProperty, currentSchemeValue.value );
-
-			addStyleRule( outputSelector, outputCssProperty );
-		} );
+	var fetchControlStyles = function( control, controlsStack, widgetType ) {
+		BaseElementView.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
+			return self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ).value;
+		}, [ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
 	};
 
 	var fetchWidgetControlsStyles = function( widget ) {
 		var widgetSchemeControls = self.getWidgetSchemeControls( widget );
 
 		_.each( widgetSchemeControls, function( control ) {
-			fetchControlStyles( control, widget.widget_type );
+			fetchControlStyles( control, widgetSchemeControls, widget.widget_type );
 		} );
 	};
 
@@ -62,20 +45,6 @@ Schemes = function() {
 		_.each( elementor.config.widgets, function( widget ) {
 			fetchWidgetControlsStyles(  widget  );
 		} );
-	};
-
-	var parseSchemeStyle = function() {
-		var stringOutput = '';
-
-		_.each( styleRules, function( properties, selector ) {
-			stringOutput += selector + '{' + properties.join( '' ) + '}';
-		} );
-
-		return stringOutput;
-	};
-
-	var resetStyleRules = function() {
-		styleRules = {};
 	};
 
 	this.init = function() {
@@ -124,10 +93,11 @@ Schemes = function() {
 	};
 
 	this.printSchemesStyle = function() {
-		resetStyleRules();
+		stylesheet.empty();
+
 		fetchAllWidgetsSchemesStyle();
 
-		elements.$style.text( parseSchemeStyle() );
+		elements.$style.text( stylesheet );
 	};
 
 	this.resetSchemes = function( schemeName ) {

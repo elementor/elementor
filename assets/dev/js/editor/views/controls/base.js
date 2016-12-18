@@ -228,10 +228,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	}
 }, {
 	// Static methods
-	replaceStyleValues: function( cssProperty, controlValue ) {
-		var replaceArray = { '\{\{VALUE\}\}': controlValue };
-
-		return elementor.helpers.stringReplaceAll( cssProperty, replaceArray );
+	getStyleValue: function( placeholder, controlValue ) {
+		return controlValue;
 	}
 } );
 
