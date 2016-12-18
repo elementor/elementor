@@ -59,28 +59,59 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_replaceStyleValues() {
-		$text_control = Elementor\Plugin::instance()->controls_manager->get_control( 'text' );
+		$stylesheet = new \Elementor\Stylesheet();
+
+		$controls_stack = [
+			'margin' => [
+				'name' => 'margin',
+				'type' => \Elementor\Controls_Manager::DIMENSIONS,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element' => 'margin: {{TOP}}px {{RIGHT}}px {{BOTTOM}}px {{LEFT}}px;',
+				]
+			],
+			'color' => [
+				'name' => 'color',
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element' => 'color: {{VALUE}};',
+				]
+			]
+		];
+
+		$values = [
+			'color' => '#fff',
+			'margin' => [
+				'top' => '1',
+				'right' => '2',
+				'bottom' => '3',
+				'left' => '4',
+			]
+		];
+
+		$value_callback = function ( $control ) use ( $values ) {
+			return $values[ $control['name'] ];
+		};
+
+		$placeholders = [ '{{WRAPPER}}' ];
+
+		$replacements = [ '.elementor-test-element' ];
+
+		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['color'], $controls_stack, $value_callback, $placeholders, $replacements );
 
 		$this->assertEquals(
-			'10px;',
-			$text_control->get_style_value(
-				'{{VALUE}};',
-				'10px'
-			)
+			'#fff',
+			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'color' )
 		);
 
-		$dimensions_control = Elementor\Plugin::instance()->controls_manager->get_control( 'dimensions' );
+		$value_callback = function ( $control ) use ( $values ) {
+			return $values[ $control['name'] ];
+		};
+
+		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['margin'], $controls_stack, $value_callback, $placeholders, $replacements );
+
 		$this->assertEquals(
-			'4px',
-			$dimensions_control->get_style_value(
-				'left',
-				[
-					'top' => '1px',
-					'right' => '2px',
-					'bottom' => '3px',
-					'left' => '4px',
-				]
-			)
+			'1px 2px 3px 4px',
+			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'margin' )
 		);
 	}
 
