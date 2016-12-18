@@ -12,6 +12,7 @@ class DB {
 
 	const REVISION_PUBLISH = 'publish';
 	const REVISION_DRAFT = 'draft';
+	const REVISION_AUTOSAVE = 'autosave';
 
 	/**
 	 * Save builder method.
@@ -44,8 +45,17 @@ class DB {
 			}
 
 			$this->_save_plain_text( $post_id );
-		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', $json_value );
+		} elseif ( self::REVISION_AUTOSAVE === $revision ) {
+			$this->handle_revision();
+
+			$autosave_id = wp_create_post_autosave( [
+				'post_ID' => $post_id,
+				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
+			] );
+
+			if ( $autosave_id ) {
+				update_metadata('post',  $autosave_id, '_elementor_data', $json_value );
+			}
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
@@ -324,20 +334,20 @@ class DB {
 		add_action( 'wp_restore_post_revision', [ $this, 'restore_revision' ], 10, 2 );
 	}
 
-	public function get_revisions() {
+	public function get_revisions( $post_id = 0, $query_args = [] ) {
 		$revisions = [];
 
-		$query_args = [
-			'meta_key' => '_elementor_data',
-		];
+		$query_args['meta_key'] = '_elementor_data';
 
 		/** @var \WP_Post $revision */
-		foreach ( wp_get_post_revisions( 0, $query_args ) as $revision ) {
+		foreach ( wp_get_post_revisions( $post_id, $query_args ) as $revision ) {
+			$type = ( false !== strpos( $revision->post_name, 'autosave' ) ) ? 'autosave' : 'revision';
 			$revisions[] = [
 				'id' => $revision->ID,
 				'date' => $revision->post_date,
 				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
-				];
+				'type' => $type,
+			];
 		}
 
 		return $revisions;

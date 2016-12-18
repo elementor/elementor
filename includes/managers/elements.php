@@ -119,8 +119,8 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
-		if ( isset( $_POST['revision'] ) && DB::REVISION_PUBLISH === $_POST['revision'] ) {
-			$revision = DB::REVISION_PUBLISH;
+		if ( isset( $_POST['status'] ) || in_array( $_POST['status'], [ DB::REVISION_PUBLISH, DB::REVISION_DRAFT, DB::REVISION_AUTOSAVE ] ) ) {
+			$revision = $_POST['status'];
 		} else {
 			$revision = DB::REVISION_DRAFT;
 		}
@@ -129,7 +129,17 @@ class Elements_Manager {
 
 		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $revision );
 
-		wp_send_json_success();
+		$return_data = [];
+
+		$latest_revisions = Plugin::instance()->db->get_revisions( $_POST['post_id'], [
+			'posts_per_page' => 1,
+		] );
+
+		if ( ! empty( $latest_revisions ) ) {
+			$return_data['last_revision'] = $latest_revisions[0];
+		}
+
+		wp_send_json_success( $return_data );
 	}
 
 	private function _init_elements() {

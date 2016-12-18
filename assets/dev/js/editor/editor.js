@@ -394,25 +394,37 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function() {
-		this.$previewContents
-		    .find( 'body' )
-		    .add( 'body' )
-		    .removeClass( 'elementor-editor-active' )
-		    .addClass( 'elementor-editor-preview' );
+	enterPreviewMode: function( PreviewAreaOnly ) {
+		var $elements = this.$previewContents
+			.find( 'body' );
 
-		// Handle panel resize
-		this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+		if ( ! PreviewAreaOnly ) {
+			$elements = $elements.add( 'body' );
+		}
 
-		this.panel.$el.css( 'width', '' );
+		$elements
+			.removeClass( 'elementor-editor-active' )
+			.addClass( 'elementor-editor-preview' );
+
+		if ( ! PreviewAreaOnly ) {
+			// Handle panel resize
+			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+
+			this.panel.$el.css( 'width', '' );
+		}
 	},
 
-	exitPreviewMode: function() {
-		this.$previewContents
-		    .find( 'body' )
-		    .add( 'body' )
-		    .removeClass( 'elementor-editor-preview' )
-		    .addClass( 'elementor-editor-active' );
+	exitPreviewMode: function( PreviewAreaOnly ) {
+		var $elements = this.$previewContents
+			.find( 'body' );
+
+		if ( ! PreviewAreaOnly ) {
+			$elements = $elements.add( 'body' );
+		}
+
+		$elements
+			.removeClass( 'elementor-editor-preview' )
+			.addClass( 'elementor-editor-active' );
 	},
 
 	saveEditor: function( options ) {
@@ -424,21 +436,23 @@ App = Marionette.Application.extend( {
 		NProgress.start();
 
 		return this.ajax.send( 'save_builder', {
-	        data: {
-		        post_id: this.config.post_id,
-		        revision: options.revision,
-		        data: JSON.stringify( elementor.elements.toJSON() )
-	        },
+			data: {
+				post_id: this.config.post_id,
+				revision: options.revision,
+				data: JSON.stringify( elementor.elements.toJSON() )
+			},
 			success: function( data ) {
 				NProgress.done();
 
 				elementor.setFlagEditorChange( false );
 
+				elementor.channels.editor.trigger( 'editor:saved', data );
+
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
 				}
 			}
-        } );
+		} );
 	},
 
 	reloadPreview: function() {

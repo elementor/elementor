@@ -2,15 +2,10 @@ module.exports = function() {
 	var self = this;
 
 	self.addPanelPage = function() {
-
-		var revisionsCollection = new Backbone.Collection();
-
-		revisionsCollection.add( elementor.config.revisions );
-
 		elementor.getPanelView().addPage( 'revisionsPage', {
 			view: require( './revisions-page' ),
 			options: {
-				collection: revisionsCollection
+				collection: new Backbone.Collection( elementor.config.revisions )
 			}
 		} );
 	};

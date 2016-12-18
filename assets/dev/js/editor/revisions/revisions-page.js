@@ -25,8 +25,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentPreviewId: null,
 
+	isFirstChange: true,
+
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'editor:changed', this.setApplyButtonState );
+		this.listenTo( elementor.channels.editor, 'editor:saved', this.onEditorSaved );
 	},
 
 	setApplyButtonState: function( editorChanged ) {
@@ -41,6 +44,46 @@ module.exports = Marionette.CompositeView.extend( {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 		collection.reset();
 		collection.set( data );
+	},
+
+	addRevisionToList: function( revision ) {
+		elementor.getPanelView().getPages( 'revisionsPage' ).options.collection.add( revision, { at: 0 } );
+	},
+
+	saveAutoDraft: function() {
+		var self = this;
+		return elementor.ajax.send( 'save_builder', {
+			data: {
+				post_id: elementor.config.post_id,
+				status: 'autosave',
+				data: JSON.stringify( elementor.elements.toJSON() )
+			},
+			success: function( data ) {
+				if ( data.last_revision ) {
+					self.addRevisionToList( data.last_revision );
+				}
+			}
+		} );
+	},
+
+	enterPreviewMode: function() {
+		elementor.enterPreviewMode( true );
+		elementor.channels.dataEditMode.reply( 'activeMode', 'preview' );
+	},
+
+	exitPreviewMode: function() {
+		elementor.exitPreviewMode( true );
+		elementor.channels.dataEditMode.reply( 'activeMode', 'edit' );
+	},
+
+	onEditorSaved: function( data ) {
+		if ( data.last_revision ) {
+			this.addRevisionToList( data.last_revision );
+		}
+
+		elementor.exitPreviewMode( true );
+		dataEditMode.reply( 'activeMode', 'edit' );
+
 	},
 
 	onApplyClick: function() {
@@ -61,6 +104,11 @@ module.exports = Marionette.CompositeView.extend( {
 			this.jqueryXhr.abort();
 		}
 
+		if ( elementor.isEditorChanged() && self.isFirstChange && null === self.currentPreviewId ) {
+			this.saveAutoDraft();
+			self.isFirstChange = false;
+		}
+
 		childView.ui.item.addClass( 'elementor-state-show' );
 
 		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
@@ -76,6 +124,9 @@ module.exports = Marionette.CompositeView.extend( {
 
 				Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
 				childView.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
+
+				self.enterPreviewMode();
+
 			},
 			error: function( data ) {
 				childView.ui.item.removeClass( 'elementor-state-show elementor-revision-current-preview' );
@@ -91,6 +142,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onDiscardClick: function() {
 		this.setEditorData( elementor.config.data );
+
 		elementor.setFlagEditorChange( this.isRevisionApplied );
 
 		if ( this.isRevisionApplied ) {
@@ -100,6 +152,10 @@ module.exports = Marionette.CompositeView.extend( {
 		this.setDiscardButtonDisabled( true );
 
 		this.currentPreviewId = null;
+		this.isFirstChange = true;
+
+		this.exitPreviewMode();
+
 		Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
 	}
 } );
