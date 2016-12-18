@@ -69,19 +69,21 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Translations =
+- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
+- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
 - [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
+- [Spanish (Mexico)](https://translate.wordpress.org/locale/es-mx/default/wp-plugins/elementor) - (es_MX)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
-- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
+- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Swedish](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (sv_SE)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
-- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
-- [Arabic](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (ar) - in progress
+- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO) - in progress
+- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar) - in progress
+- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
