@@ -103,10 +103,6 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'color' )
 		);
 
-		$value_callback = function ( $control ) use ( $values ) {
-			return $values[ $control['name'] ];
-		};
-
 		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['margin'], $controls_stack, $value_callback, $placeholders, $replacements );
 
 		$this->assertEquals(
