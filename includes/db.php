@@ -51,10 +51,11 @@ class DB {
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
+				'post_modified' => current_time( 'mysql' ),
 			] );
 
 			if ( $autosave_id ) {
-				update_metadata('post',  $autosave_id, '_elementor_data', $json_value );
+				update_metadata( 'post',  $autosave_id, '_elementor_data', $json_value );
 			}
 		}
 
