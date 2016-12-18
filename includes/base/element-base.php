@@ -284,7 +284,7 @@ abstract class Element_Base {
 			'name' => $this->get_name(),
 			'elType' => $this->get_type(),
 			'title' => $this->get_title(),
-			'controls' => array_values( $this->get_controls() ),
+			'controls' => $this->get_controls(),
 			'tabs_controls' => $this->get_tabs_controls(),
 			'categories' => $this->get_categories(),
 			'keywords' => $this->get_keywords(),

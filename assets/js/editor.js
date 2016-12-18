@@ -2113,7 +2113,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		}
 
 		// Create new instance of that collection
-		this.collection = new Backbone.Collection( controls );
+		this.collection = new Backbone.Collection( _.values( controls ) );
 	},
 
 	onRender: function() {
@@ -5188,11 +5188,13 @@ presetsFactory = {
 module.exports = presetsFactory;
 
 },{}],70:[function(require,module,exports){
-var Schemes;
+var Schemes,
+	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	BaseElementView = require( 'elementor-views/base-element' );
 
 Schemes = function() {
 	var self = this,
-		styleRules = {},
+		stylesheet = new Stylesheet(),
 		schemes = {},
 		settings = {
 			selectorWrapperPrefix: '.elementor-widget-'
@@ -5215,36 +5217,17 @@ Schemes = function() {
 		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
 	};
 
-	var addStyleRule = function( selector, property ) {
-		if ( ! styleRules[ selector ] ) {
-			styleRules[ selector ] = [];
-		}
-
-		styleRules[ selector ].push( property );
-	};
-
-	var fetchControlStyles = function( control, widgetType ) {
-		_.each( control.selectors, function( cssProperty, selector ) {
-			var currentSchemeValue = self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ),
-				outputSelector,
-				outputCssProperty;
-
-			if ( _.isEmpty( currentSchemeValue.value ) ) {
-				return;
-			}
-
-			outputSelector = selector.replace( /\{\{WRAPPER\}\}/g, settings.selectorWrapperPrefix + widgetType );
-			outputCssProperty = elementor.getControlItemView().replaceStyleValues( cssProperty, currentSchemeValue.value );
-
-			addStyleRule( outputSelector, outputCssProperty );
-		} );
+	var fetchControlStyles = function( control, controlsStack, widgetType ) {
+		BaseElementView.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
+			return self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ).value;
+		}, [ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
 	};
 
 	var fetchWidgetControlsStyles = function( widget ) {
 		var widgetSchemeControls = self.getWidgetSchemeControls( widget );
 
 		_.each( widgetSchemeControls, function( control ) {
-			fetchControlStyles( control, widget.widget_type );
+			fetchControlStyles( control, widgetSchemeControls, widget.widget_type );
 		} );
 	};
 
@@ -5252,20 +5235,6 @@ Schemes = function() {
 		_.each( elementor.config.widgets, function( widget ) {
 			fetchWidgetControlsStyles(  widget  );
 		} );
-	};
-
-	var parseSchemeStyle = function() {
-		var stringOutput = '';
-
-		_.each( styleRules, function( properties, selector ) {
-			stringOutput += selector + '{' + properties.join( '' ) + '}';
-		} );
-
-		return stringOutput;
-	};
-
-	var resetStyleRules = function() {
-		styleRules = {};
 	};
 
 	this.init = function() {
@@ -5314,10 +5283,11 @@ Schemes = function() {
 	};
 
 	this.printSchemesStyle = function() {
-		resetStyleRules();
+		stylesheet.empty();
+
 		fetchAllWidgetsSchemesStyle();
 
-		elements.$style.text( parseSchemeStyle() );
+		elements.$style.text( stylesheet );
 	};
 
 	this.resetSchemes = function( schemeName ) {
@@ -5353,7 +5323,7 @@ Schemes = function() {
 
 module.exports = new Schemes();
 
-},{}],71:[function(require,module,exports){
+},{"elementor-utils/stylesheet":71,"elementor-views/base-element":72}],71:[function(require,module,exports){
 ( function( $ ) {
 
 	var Stylesheet = function() {
@@ -5821,44 +5791,16 @@ BaseElementView = Marionette.CompositeView.extend( {
 				} );
 			}
 
-			self.addControlStyleRules( control, values, placeholders, replacements );
+			self.addControlStyleRules( control, values, self.getEditModel().get( 'settings' ).controls, placeholders, replacements );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, placeholders, replacements ) {
-		var self = this,
-			value = values[ control.name ];
+	addControlStyleRules: function( control, values, controlsStack, placeholders, replacements ) {
+		var self = this;
 
-		if ( control.selectors_dictionary ) {
-			value = control.selectors_dictionary[ value ] || value;
-		}
-
-		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
-			return;
-		}
-
-		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
-			return;
-		}
-
-		_.each( control.selectors, function( cssProperty, selector ) {
-			var outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, value ),
-				query;
-
-			if ( _.isEmpty( outputCssProperty ) ) {
-				return;
-			}
-
-			_.each( placeholders, function( placeholder, index ) {
-				selector = selector.replace( placeholder, replacements[ index ] );
-			} );
-
-			if ( control.responsive && 'desktop' !== control.responsive ) {
-				query = { max: control.responsive };
-			}
-
-			self.stylesheet.addRules( selector, outputCssProperty, query );
-		} );
+		BaseElementView.addControlStyleRules( self.stylesheet, control, controlsStack, function( control ) {
+			return self.getStyleControlValue( control, values );
+		}, placeholders, replacements );
 	},
 
 	addStyleToDocument: function() {
@@ -5875,6 +5817,24 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		this.$stylesheetElement.text( styleText );
+	},
+
+	getStyleControlValue: function( control, values ) {
+		var value = values[ control.name ];
+
+		if ( control.selectors_dictionary ) {
+			value = control.selectors_dictionary[ value ] || value;
+		}
+
+		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
+			return '';
+		}
+
+		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
+			return '';
+		}
+
+		return value;
 	},
 
 	renderStyles: function() {
@@ -6006,6 +5966,71 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView( model );
+		} );
+	}
+}, {
+	addControlStyleRules: function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
+		var value = valueCallback( control );
+
+		if ( undefined === value ) {
+			return;
+		}
+
+		_.each( control.selectors, function( cssProperty, selector ) {
+			var outputCssProperty;
+
+			try {
+				outputCssProperty = cssProperty.replace( /\{\{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
+					var parserControl = control,
+						valueToInsert = value;
+
+					if ( controlName ) {
+						parserControl = _.findWhere( controlsStack, { name: controlName } );
+
+						valueToInsert = valueCallback( parserControl );
+					}
+
+					var parsedValue = elementor.getControlItemView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+
+					if ( '' === parsedValue ) {
+						throw '';
+					}
+
+					return parsedValue;
+				} );
+			} catch ( e ) {
+				return;
+			}
+
+			if ( _.isEmpty( outputCssProperty ) ) {
+				return;
+			}
+
+			var devicePattern = /^\(([^)]+)\)/,
+				deviceRule = selector.match( devicePattern );
+
+			if ( deviceRule ) {
+				selector = selector.replace( devicePattern, '' );
+
+				deviceRule = deviceRule[1];
+			}
+
+			_.each( placeholders, function( placeholder, index ) {
+				selector = selector.replace( placeholder, replacements[ index ] );
+			} );
+
+			var device = deviceRule,
+				query;
+
+			if ( ! device && control.responsive ) {
+				device = control.responsive;
+			}
+
+			if ( device && 'desktop' !== device ) {
+				query = { max: device };
+			}
+
+			stylesheet.addRules( selector, outputCssProperty, query );
 		} );
 	}
 } );
@@ -6345,28 +6370,12 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 	}
 }, {
 	// Static methods
-	replaceStyleValues: function( cssProperty, controlValue ) {
+	getStyleValue: function( placeholder, controlValue ) {
 		if ( ! _.isObject( controlValue ) ) {
 			return ''; // invalid
 		}
 
-		// Trying to retrieve whole the related properties
-		// according to the string matches.
-		// When one of the properties is empty, aborting
-		// the action and returning an empty string.
-		try {
-			return cssProperty.replace( /\{\{([A-Z]+)}}/g, function( fullMatch, pureMatch ) {
-				var value = controlValue[ pureMatch.toLowerCase() ];
-
-				if ( '' === value ) {
-					throw '';
-				}
-
-				return value;
-			} );
-		} catch ( exception ) {
-			return '';
-		}
+		return controlValue[ placeholder ];
 	}
 } );
 
@@ -6626,10 +6635,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	}
 }, {
 	// Static methods
-	replaceStyleValues: function( cssProperty, controlValue ) {
-		var replaceArray = { '\{\{VALUE\}\}': controlValue };
-
-		return elementor.helpers.stringReplaceAll( cssProperty, replaceArray );
+	getStyleValue: function( placeholder, controlValue ) {
+		return controlValue;
 	}
 } );
 
