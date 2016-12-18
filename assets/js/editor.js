@@ -3865,7 +3865,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onEditorSaved: function( data ) {
-		debugger;
 		if ( data.last_revision ) {
 			this.addRevisionToList( data.last_revision );
 		}
