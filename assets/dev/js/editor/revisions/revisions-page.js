@@ -81,9 +81,7 @@ module.exports = Marionette.CompositeView.extend( {
 			this.addRevisionToList( data.last_revision );
 		}
 
-		elementor.exitPreviewMode( true );
-		dataEditMode.reply( 'activeMode', 'edit' );
-
+		this.exitPreviewMode();
 	},
 
 	onApplyClick: function() {
