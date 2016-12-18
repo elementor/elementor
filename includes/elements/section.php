@@ -217,11 +217,16 @@ class Element_Section extends Element_Base {
 					'size' => 400,
 				],
 				'range' => [
-					'px' => [
+				    'px' => [
 						'min' => 0,
 						'max' => 1440,
 					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+				    ],
 				],
+				'size_units' => [ 'px', 'vh' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
