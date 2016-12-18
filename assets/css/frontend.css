@@ -537,26 +537,66 @@
     padding: 8px 24px;
     border-radius: 6px; }
 
-.elementor-button-align-center {
+.elementor-button-align-center .elementor-field-type-submit {
   -webkit-box-pack: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center; }
-.elementor-button-align-stretch button {
+.elementor-button-align-stretch .elementor-field-type-submit button {
   -webkit-flex-basis: 100%;
       -ms-flex-preferred-size: 100%;
           flex-basis: 100%; }
-.elementor-button-align-start {
+.elementor-button-align-start .elementor-field-type-submit {
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
       -ms-flex-pack: start;
           justify-content: flex-start; }
-.elementor-button-align-end {
+.elementor-button-align-end .elementor-field-type-submit {
   -webkit-box-pack: end;
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end; }
 
+@media screen and (max-width: 1024px) {
+  .elementor-tablet-button-align-center .elementor-field-type-submit {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .elementor-tablet-button-align-stretch .elementor-field-type-submit button {
+    -webkit-flex-basis: 100%;
+        -ms-flex-preferred-size: 100%;
+            flex-basis: 100%; }
+  .elementor-tablet-button-align-start .elementor-field-type-submit {
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+        -ms-flex-pack: start;
+            justify-content: flex-start; }
+  .elementor-tablet-button-align-end .elementor-field-type-submit {
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+            justify-content: flex-end; } }
+@media screen and (max-width: 767px) {
+  .elementor-mobile-button-align-center .elementor-field-type-submit {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .elementor-mobile-button-align-stretch .elementor-field-type-submit button {
+    -webkit-flex-basis: 100%;
+        -ms-flex-preferred-size: 100%;
+            flex-basis: 100%; }
+  .elementor-mobile-button-align-start .elementor-field-type-submit {
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+        -ms-flex-pack: start;
+            justify-content: flex-start; }
+  .elementor-mobile-button-align-end .elementor-field-type-submit {
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+            justify-content: flex-end; } }
 .elementor-error .elementor-field {
   border-color: #d9534f; }
 .elementor-error .help-inline {
