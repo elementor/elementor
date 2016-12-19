@@ -53,28 +53,12 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 	}
 }, {
 	// Static methods
-	replaceStyleValues: function( cssProperty, controlValue ) {
+	getStyleValue: function( placeholder, controlValue ) {
 		if ( ! _.isObject( controlValue ) ) {
 			return ''; // invalid
 		}
 
-		// Trying to retrieve whole the related properties
-		// according to the string matches.
-		// When one of the properties is empty, aborting
-		// the action and returning an empty string.
-		try {
-			return cssProperty.replace( /\{\{([A-Z]+)}}/g, function( fullMatch, pureMatch ) {
-				var value = controlValue[ pureMatch.toLowerCase() ];
-
-				if ( '' === value ) {
-					throw '';
-				}
-
-				return value;
-			} );
-		} catch ( exception ) {
-			return '';
-		}
+		return controlValue[ placeholder ];
 	}
 } );
 

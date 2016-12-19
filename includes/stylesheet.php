@@ -97,6 +97,22 @@ class Stylesheet {
 		return $this;
 	}
 
+	public function get_rules( $device = null, $selector = null, $property = null ) {
+		if ( ! $device ) {
+			return $this->rules;
+		}
+
+		if ( $property ) {
+			return isset( $this->rules[ $device ][ $selector ][ $property ] ) ? $this->rules[ $device ][ $selector ][ $property ] : null;
+		}
+
+		if ( $selector ) {
+			return isset( $this->rules[ $device ][ $selector ] ) ? $this->rules[ $device ][ $selector ] : null;
+		}
+
+		return isset( $this->rules[ $device ] ) ? $this->rules[ $device ] : null;
+	}
+
 	public function __toString() {
 		$style_text = '';
 
