@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A media chooser control. Based on the WordPress media library
+ * A Media Chooser control. Based on the WordPress media library
  *
  * @param array  $default {
  * 		@type string  $url   Default empty

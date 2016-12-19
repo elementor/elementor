@@ -3,6 +3,15 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Textarea control.
+ *
+ * @param string  $default    A default value
+ *                            Default empty
+ * @param integer $rows       Number of rows
+ *
+ * @since 1.0.0
+ */
 class Control_Textarea extends Control_Base {
 
 	public function get_type() {

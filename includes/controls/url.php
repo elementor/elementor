@@ -3,6 +3,18 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A URL input control. with the ability to set it as an external URL
+ *
+ * @param array $default {
+ * 		@type string $url         Default empty
+ * 		@type bool   $is_external Default false
+ * }
+ *
+ * @param bool  $show_external 	  Whether to show the External button
+ *
+ * @since 1.0.0
+ */
 class Control_URL extends Control_Base_Multiple {
 
 	public function get_type() {
