@@ -267,7 +267,7 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-w {
     display: none !important; } }
 
-.elementor-editor-active #elementor-inner:before {
+.elementor-editor-active .elementor-inner:before {
   content: '';
   display: table;
   clear: both; }
