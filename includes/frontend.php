@@ -320,7 +320,7 @@ class Frontend {
 		?>
 		<div class="elementor elementor-<?php echo $post_id; ?>">
 			<div id="elementor-inner">
-				<div id="elementor-section-wrap">
+				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
 				</div>
 			</div>

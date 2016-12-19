@@ -6,7 +6,7 @@ Preview = BaseSectionsContainerView.extend( {
 
 	id: 'elementor-inner',
 
-	childViewContainer: '#elementor-section-wrap',
+	childViewContainer: '.elementor-section-wrap',
 
 	ui: {
 		addSectionArea: '#elementor-add-section',
