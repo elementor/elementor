@@ -4,7 +4,7 @@ var BaseSectionsContainerView = require( 'elementor-views/base-sections-containe
 Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
 
-	id: 'elementor-inner',
+	className: 'elementor-inner',
 
 	childViewContainer: '.elementor-section-wrap',
 
@@ -36,7 +36,7 @@ Preview = BaseSectionsContainerView.extend( {
 			elTopOffsetRange = sectionHandleHeight - elTopOffset;
 
 		if ( 0 < elTopOffsetRange ) {
-			var $style = Backbone.$( '<style>' ).text( '.elementor-editor-active #elementor-inner{margin-top: ' + elTopOffsetRange + 'px}' );
+			var $style = Backbone.$( '<style>' ).text( '.elementor-editor-active .elementor-inner{margin-top: ' + elTopOffsetRange + 'px}' );
 
 			elementor.$previewContents.children().children( 'head' ).append( $style );
 		}
