@@ -162,25 +162,43 @@
 	}
 }
 
-.elementor-button-align- {
+@mixin btn-align() {
 
-	&center {
+	&center .elementor-field-type-submit{
 		justify-content: center;
 	}
 
-	&stretch {
+	&stretch .elementor-field-type-submit{
 
 		button {
 			flex-basis: 100%;
 		}
 	}
 
-	&start {
+	&start .elementor-field-type-submit{
 		justify-content: getValueByDirection(flex-start, flex-end);
 	}
 
-	&end {
+	&end .elementor-field-type-submit{
 		justify-content: getValueByDirection(flex-end, flex-start);
+	}
+}
+
+.elementor-button-align- {
+	@include btn-align();
+}
+
+@media screen and ( max-width: $screen-md-max ){
+
+	.elementor-tablet-button-align- {
+		@include btn-align();
+	}
+}
+
+@media screen and ( max-width: $screen-sm-max ){
+
+	.elementor-mobile-button-align- {
+		@include btn-align();
 	}
 }
 
@@ -270,3 +288,4 @@
 		}
 	}
 }
+
