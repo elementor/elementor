@@ -3,6 +3,13 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * !! UNDER DEVELOPMENT !!
+ *
+ *
+ *
+ * @since 1.0.0
+ */
 class Control_Repeater extends Control_Base {
 
 	public function get_type() {

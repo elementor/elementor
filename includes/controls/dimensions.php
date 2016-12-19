@@ -4,24 +4,24 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Group of Dimensions settings (Top, Right, Bottom, Left) With the option to link them together
+ * A group of Dimensions settings (Top, Right, Bottom, Left) With the option to link them together
  *
- * @property array $default {
- * 		@type integer $top      Default 0
- * 		@type integer $right    Default 0
- * 		@type integer $bottom   Default 0
- * 		@type integer $left     Default 0
- * 		@type string  $unit     The selected CSS Unit. 'px', '%', 'em'
- *                         		Default 'px'
- * 		@type bool    $isLinked Whether to link them together ( prevent set different values )
- *                         		Default true
+ * @param array  $default {
+ * 		@type integer       $top                     Default 0
+ * 		@type integer       $right                   Default 0
+ * 		@type integer       $bottom                  Default 0
+ * 		@type integer       $left                    Default 0
+ * 		@type string        $unit                    The selected CSS Unit. 'px', '%', 'em'
+ * 		                               				 Default 'px'
+ * 		@type bool          $isLinked                Whether to link them together ( prevent set different values )
+ * 		                               				 Default true
  * }
  *
- * @property array        $size_units            Array of available CSS Units like 'px', '%', 'em'
- * @property array|string $allowed_dimensions    Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
+ * @param array        $size_units              Array of available CSS Units like 'px', '%', 'em'
+ * @param array|string $allowed_dimensions      Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
  *                                              Default 'all'
  *
- * @since 1.0.0
+ * @since                         1.0.0
  */
 class Control_Dimensions extends Control_Base_Units {
 

@@ -4,10 +4,10 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A gallery creation control. Uses the WordPress media gallery creator
+ * A Gallery creation control. Based on the WordPress media gallery creator
  *
- * @property array $default   The selected images array [ [ 'id' => ??, 'url' => ?? ], [ 'id' => ??, 'url' => ?? ], ... ]
- *                            Default empty
+ * @param array $default   The selected images array [ [ 'id' => ??, 'url' => ?? ], [ 'id' => ??, 'url' => ?? ], ... ]
+ *                         Default empty
  *
  * @since 1.0.0
  */

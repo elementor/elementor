@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * A Code Editor control.
  *
- * @property string $default     Default code editor content
- * @property array  $language    Any language(mode) supported by Ace editor. @see https://ace.c9.io/build/kitchen-sink.html
+ * @param string $default        Default code editor content
+ * @param array  $language       Any language(mode) supported by Ace editor. @see https://ace.c9.io/build/kitchen-sink.html
  *                               Default 'html'
  *
  * @since 1.0.0

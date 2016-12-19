@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * A Date/Time Picker control.
  *
- * @property string $default        A date in mysql format (YYYY-mm-dd HH:ii)
+ * @param string $default           A date in mysql format (YYYY-mm-dd HH:ii)
  *                                  Default empty
- * @property array  $picker_options The picker config. @see http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.html
+ * @param array  $picker_options    The picker config. @see http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.html
  *
  * @since 1.0.0
  */
