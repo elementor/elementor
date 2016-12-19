@@ -3,6 +3,12 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A UI only control. Shows a collapsible header for a set of controls.
+ * Do not use it directly, instead use: `$widget->start_controls_section()` and in the end `$widget->end_controls_section()`
+ *
+ * @since 1.0.0
+ */
 class Control_Section extends Control_Base {
 
 	public function get_type() {
