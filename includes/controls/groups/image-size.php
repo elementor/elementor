@@ -39,7 +39,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 			$html .= wp_get_attachment_image( $id, $size, false, [ 'class' => trim( $image_class ) ] );
 		} else {
-			$image_src = Group_Control_Image_Size::get_attachment_image_src( $id, $setting_key, $settings );
+			$image_src = self::get_attachment_image_src( $id, $setting_key, $settings );
 
 			if ( ! $image_src && isset( $settings[ $setting_key ]['url'] ) ) {
 				$image_src = $settings[ $setting_key ]['url'] ;
