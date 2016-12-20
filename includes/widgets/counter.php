@@ -204,7 +204,7 @@ class Widget_Counter extends Widget_Base {
 			'data-to-value' => $settings['ending_number'],
 		] );
 
-		if ( ! empty( $settings['delimiter'] ) ) {
+		if ( ! empty( $settings['thousand_separator'] ) ) {
 			$this->add_render_attribute( 'counter', 'data-delimiter', ',' );
 		}
 		?>
