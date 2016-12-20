@@ -359,12 +359,28 @@ class Source_Local extends Source_Base {
 		wp_set_object_terms( $post_id, $type, self::TAXONOMY_TYPE_SLUG );
 	}
 
+	/**
+	 * @param $query \WP_Query
+	 */
+	public function admin_query_filter_types( $query ) {
+		$library_screen_id = 'edit-' . self::CPT;
+		$current_screen = get_current_screen();
+
+		if ( ! isset( $current_screen->id ) || $library_screen_id !== $current_screen->id ) {
+			return;
+		}
+
+		$query->query_vars['meta_key'] = self::TYPE_META_KEY;
+		$query->query_vars['meta_value'] = self::$_template_types;
+	}
+
 	private function _add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
+			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
