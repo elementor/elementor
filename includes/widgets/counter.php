@@ -34,7 +34,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Starting Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
 				'default' => 0,
 			]
 		);
@@ -44,7 +43,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Ending Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 100,
 				'default' => 100,
 			]
 		);
@@ -77,6 +75,17 @@ class Widget_Counter extends Widget_Base {
 				'default' => 2000,
 				'min' => 100,
 				'step' => 100,
+			]
+		);
+
+		$this->add_control(
+			'thousand_separator',
+			[
+				'label' => __( 'Thousand Separator', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => 'yes',
+				'label_on' => __( 'Show', 'elementor' ),
+				'label_off' => __( 'Hide', 'elementor' ),
 			]
 		);
 
@@ -176,25 +185,22 @@ class Widget_Counter extends Widget_Base {
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
 				<#
-				var prefix = '',
-					suffix = '';
 
-				if ( settings.prefix ) {
-					prefix = '<span class="elementor-counter-number-prefix">' + settings.prefix + '</span>';
+                if ( settings.prefix ) {
+					#><span class="elementor-counter-number-prefix">{{{ settings.prefix }}}</span><#
 				}
 
-				var duration = '<span class="elementor-counter-number" data-duration="' + settings.duration + '" data-to_value="' + settings.ending_number + '">' + settings.starting_number + '</span>';
+				#><span class="elementor-counter-number" data-duration="{{ settings.duration }}" data-to-value="{{ settings.ending_number }}" data-delimiter="{{ settings.thousand_separator ? ',' : '' }}">{{{ settings.starting_number }}}</span><#
 
 				if ( settings.suffix ) {
-					suffix = '<span class="elementor-counter-number-suffix">' + settings.suffix + '</span>';
+					#><span class="elementor-counter-number-suffix">{{{ settings.suffix }}}</span><#
 				}
 
-				print( prefix + duration + suffix );
 				#>
 			</div>
-			<# if ( settings.title ) { #>
-				<div class="elementor-counter-title">{{{ settings.title }}}</div>
-			<# } #>
+			<# if ( settings.title ) {
+				#><div class="elementor-counter-title">{{{ settings.title }}}</div><#
+			} #>
 		</div>
 		<?php
 	}
@@ -204,21 +210,25 @@ class Widget_Counter extends Widget_Base {
 		?>
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
-				<?php
-				$prefix = $suffix = '';
+				<?php if ( $settings['prefix'] ) { ?>
+					<span class="elementor-counter-number-prefix"><?php echo $settings['prefix']; ?></span>
+				<?php }
 
-				if ( $settings['prefix'] ) {
-					$prefix = '<span class="elementor-counter-number-prefix">' . $settings['prefix'] . '</span>';
-				}
+				$this->add_render_attribute( 'counter', [
+					'class' => 'elementor-counter-number',
+					'data-duration' => $settings['duration'],
+					'data-to-value' => $settings['ending_number'],
+				] );
 
-				$duration = '<span class="elementor-counter-number" data-duration="' . $settings['duration'] . '" data-to_value="' . $settings['ending_number'] . '">' . $settings['starting_number'] . '</span>';
+				if ( ! empty( $settings['delimiter'] ) ) {
+					$this->add_render_attribute( 'counter', 'data-delimiter', ',' );
+				} ?>
 
-				if ( $settings['suffix'] ) {
-					$suffix = '<span class="elementor-counter-number-suffix">' . $settings['suffix'] . '</span>';
-				}
+				<span <?php echo $this->get_render_attribute_string( 'counter' ); ?>><?php echo $settings['starting_number']; ?></span>
 
-				echo $prefix . $duration . $suffix;
-				?>
+				<?php if ( $settings['suffix'] ) { ?>
+					<span class="elementor-counter-number-suffix"><?php echo $settings['suffix']; ?></span>
+				<?php } ?>
 			</div>
 			<?php if ( $settings['title'] ) : ?>
 				<div class="elementor-counter-title"><?php echo $settings['title']; ?></div>
