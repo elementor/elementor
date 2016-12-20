@@ -363,6 +363,10 @@ class Source_Local extends Source_Base {
 	 * @param $query \WP_Query
 	 */
 	public function admin_query_filter_types( $query ) {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return;
+		}
+
 		$library_screen_id = 'edit-' . self::CPT;
 		$current_screen = get_current_screen();
 
