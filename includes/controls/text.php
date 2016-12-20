@@ -8,7 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @param string $default     A default value
  *                            Default empty
- * @param string $input_type  any valid HTML5 input type: email, tel, and etc
+ * @param string $input_type  any valid HTML5 input type: email, tel, etc.
+ *                            Default 'text'
  *
  * @since 1.0.0
  */

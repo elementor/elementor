@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * 		                               				 Default true
  * }
  *
- * @param array        $size_units              Array of available CSS Units like 'px', '%', 'em'
  * @param array|string $allowed_dimensions      Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
  *                                              Default 'all'
  *

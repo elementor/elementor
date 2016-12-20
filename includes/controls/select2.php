@@ -8,7 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @param string|array $default  The selected option key, or an array of selected values if multiple == true
  *                               Default empty
- * @param array        $options  Array of arrays `[ 'key' => 'value', ... ]`
+ * @param array        $options  Array of of key & value pairs: `[ 'key' => 'value', ... ]`
+ *                               Default empty
  * @param bool         $multiple Whether to allow multi choices
  *                               Default false
  *

@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @param string  $default    A default value
  *                            Default empty
  * @param integer $rows       Number of rows
+ *                            Default 5
  *
  * @since 1.0.0
  */

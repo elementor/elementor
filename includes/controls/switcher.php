@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			'type' => Controls_Manager::SWITCHER,
 			'default' => 'yes',
 			'label_on' => __( 'Show', 'plugin-domain' ),
-			'label_off' => __( 'Hide', ''plugin-domain' ),
+			'label_off' => __( 'Hide', 'plugin-domain' ),
 			'return_value' => 'yes',
 		]
 	);

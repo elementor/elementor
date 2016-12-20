@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * A Select box control.
  *
- * @param string $default      The selected option key
+ * @param string $default     The selected option key
  *                            Default empty
- * @param array $options      Array of arrays `[ 'key' => 'value', ... ]`
+ * @param array $options      Array of key & value pairs: `[ 'key' => 'value', ... ]`
+ *                            Default empty
  *
  * @since 1.0.0
  */
