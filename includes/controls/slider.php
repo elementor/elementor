@@ -10,21 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * 		@type integer $size       The initial value of slider
  *                           	  Default empty
- * 		@type string  $unit       The selected unit type from $size_units (px|em|rem|%|deg)
- *                           	  Default 'px'
- * }
- *
- * @param array  $size_units The allowed unit types
- *
- * The range param is default populated with ranges for px|em|rem|%|deg @see Control_Base_Units::get_default_settings()
- *
- * @param array  $range {
- *     {
- * 		@type integer $min        The minimum value of range
- * 		@type integer $max        The maximum value of range
- * 		@type integer $step       The interval that the slider moves on
- *    },
- *    ...
  * }
  *
  * @since              1.0.0

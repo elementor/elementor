@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * A UI only control. Show HTML markup between controls
  *
  * @param string $raw     The HTML markup
- * @param string $label   A label to show
  *                        Default empty
  * @param string $classes Additional classes for the HTML wrapper
  *                        Default empty

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * A Gallery creation control. Based on the WordPress media gallery creator
  *
  * @param array $default   The selected images array [ [ 'id' => ??, 'url' => ?? ], [ 'id' => ??, 'url' => ?? ], ... ]
- *                         Default empty
+ *                         Default empty array
  *
  * @since 1.0.0
  */
