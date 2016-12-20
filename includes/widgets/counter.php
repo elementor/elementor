@@ -79,6 +79,17 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_control(
+			'thousand_separator',
+			[
+				'label' => __( 'Thousand Separator', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => 'yes',
+				'label_on' => __( 'Show', 'elementor' ),
+				'label_off' => __( 'Hide', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'title',
 			[
 				'label' => __( 'Title', 'elementor' ),
