@@ -34,7 +34,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Starting Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
 				'default' => 0,
 			]
 		);
@@ -44,7 +43,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Ending Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 100,
 				'default' => 100,
 			]
 		);
