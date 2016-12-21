@@ -5598,11 +5598,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
-			return '';
+			return;
 		}
 
 		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
-			return '';
+			return;
 		}
 
 		return value;
