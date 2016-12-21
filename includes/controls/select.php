@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Select box control.
+ * A simple Select box control.
  *
  * @param string $default     The selected option key
  *                            Default empty

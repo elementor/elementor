@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A URL input control. with the ability to set it as an external URL
+ * A URL input control. with the ability to set the target of the link to `_blank` to open in a new tab.
  *
  * @param array $default {
  * 		@type string $url         Default empty

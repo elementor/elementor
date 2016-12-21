@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A UI only control. Show an heading text between controls
+ * A UI only control. Show a text heading between controls.
  *
  * @param string $label   The label to show
  *

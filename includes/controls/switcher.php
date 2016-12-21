@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Switcher (on/off) control.
+ * A Switcher (on/off) control - basically a fancy UI representation of a checkbox.
  *
  * @param string $label_off           The label for off status
  *                                    Default ''
