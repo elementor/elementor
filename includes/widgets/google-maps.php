@@ -78,12 +78,10 @@ class Widget_Google_Maps extends Widget_Base {
 			'prevent_scroll',
 			[
 				'label' => __( 'Prevent Scroll', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
-				'options' => [
-					'' => __( 'No', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-				],
+				'label_on' => __( 'Yes', 'elementor' ),
+				'label_off' => __( 'No', 'elementor' ),
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'pointer-events: none;',
 				],
