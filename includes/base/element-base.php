@@ -690,6 +690,10 @@ abstract class Element_Base {
 		}
 
 		foreach ( $children_data as $child_data ) {
+			if ( ! $child_data ) {
+				continue;
+			}
+
 			$this->add_child( $child_data );
 		}
 	}

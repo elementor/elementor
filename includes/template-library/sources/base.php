@@ -43,7 +43,7 @@ abstract class Source_Base {
 
 			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
 			if ( ! $element ) {
-				return $element_data;
+				return null;
 			}
 
 			if ( method_exists( $element, $method ) ) {
