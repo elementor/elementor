@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Range Slider control.
+ * A draggable Range Slider control.
  *
  * @param array  $default    {
  *

@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A base control for controls that return more than a single value.
+ * A base control for controls that return more than a single value. Extends `Control_Base`.
  * Each value of a multiple-value control will be returned as an item in a key => value array
  *
  * @since 1.0.0

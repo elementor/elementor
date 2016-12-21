@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A simple Input control.
+ * A simple text input control.
  *
  * @param string $default     A default value
  *                            Default empty

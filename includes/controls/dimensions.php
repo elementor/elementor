@@ -7,10 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * A group of Dimensions settings (Top, Right, Bottom, Left) With the option to link them together
  *
  * @param array  $default {
- * 		@type integer       $top                     Default 0
- * 		@type integer       $right                   Default 0
- * 		@type integer       $bottom                  Default 0
- * 		@type integer       $left                    Default 0
+ * 		@type integer       $top                     Default empty
+ * 		@type integer       $right                   Default empty
+ * 		@type integer       $bottom                  Default empty
+ * 		@type integer       $left                    Default empty
  * 		@type string        $unit                    The selected CSS Unit. 'px', '%', 'em'
  * 		                               				 Default 'px'
  * 		@type bool          $isLinked                Whether to link them together ( prevent set different values )

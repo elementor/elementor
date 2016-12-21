@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A WordPress WYSIWYG editor control.
+ * A WordPress WYSIWYG (TinyMCE) editor control.
  *
  * @param string $default     A default value
  *                            Default empty

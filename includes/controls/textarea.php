@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Textarea control.
+ * A classic Textarea control.
  *
  * @param string  $default    A default value
  *                            Default empty

@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Select box control.
+ * A Select box control based on select2 jQuery plugin @see https://select2.github.io/ .
  *
  * @param string|array $default  The selected option key, or an array of selected values if multiple == true
  *                               Default empty

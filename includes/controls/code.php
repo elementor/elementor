@@ -4,7 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Code Editor control.
+ * A Code Editor control based on Ace editor. @see https://ace.c9.io/
  *
  * @param string $default        Default code editor content
  * @param array  $language       Any language(mode) supported by Ace editor. @see https://ace.c9.io/build/kitchen-sink.html

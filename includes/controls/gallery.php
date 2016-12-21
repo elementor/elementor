@@ -25,7 +25,7 @@ class Control_Gallery extends Control_Base {
 			$attachment = Plugin::instance()->templates_manager->get_import_images_instance()->import( $attachment );
 		}
 
-		// Filter out attachments that doesn't exist
+		// Filter out attachments that don't exist
 		$settings = array_filter( $settings );
 
 		return $settings;
