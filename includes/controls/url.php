@@ -8,10 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @param array $default {
  * 		@type string $url         Default empty
- * 		@type bool   $is_external Default false
+ * 		@type bool   $is_external Determine whether to open the url in the same tab or in a new one
+ *                                Default empty
  * }
  *
- * @param bool  $show_external 	  Whether to show the External button
+ * @param bool  $show_external 	  Whether to show the 'Is External' button
+ *                                Default true
  *
  * @since 1.0.0
  */

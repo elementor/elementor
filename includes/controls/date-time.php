@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @param string $default           A date in mysql format (YYYY-mm-dd HH:ii)
  *                                  Default empty
  * @param array  $picker_options    The picker config. @see http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.html
- *
+ *                                  Default empty array
  * @since 1.0.0
  */
 class Control_Date_Time extends Control_Base {
