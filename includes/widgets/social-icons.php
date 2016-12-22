@@ -53,6 +53,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'label_block' => true,
 						'default' => 'fa fa-wordpress',
 						'include' => [
+							'fa fa-apple',
 							'fa fa-behance',
 							'fa fa-bitbucket',
 							'fa fa-codepen',
@@ -74,6 +75,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-reddit',
 							'fa fa-snapchat',
 							'fa fa-soundcloud',
+							'fa fa-spotify',
 							'fa fa-stack-overflow',
 							'fa fa-tumblr',
 							'fa fa-twitch',

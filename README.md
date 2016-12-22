@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
-**Stable tag:** 1.0.5  
+**Stable tag:** 1.0.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -162,6 +162,16 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 1.0.6 - 20.12.2016 ###
+* New! - Added social icons for Apple & Spotify
+* New! - Added Thousand Separator control for counter widget
+* Tweak! - Added Filter template types in library backend
+* Tweak! - Updated jQuery Numerator Plugin v0.2.1
+* Fix! - Added support for floating numbers in counter widget
+* Fix! - Removed limit from counter widget
+* Deprecated! - Removed `#elementor-section-wrap` ID from frontend output
+* Deprecated! - Removed `#elementor-inner` ID from frontend output
 
 ### 1.0.5 - 18.12.2016 ###
 * Tweak! - Added VH unit in min-height control for section

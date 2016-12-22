@@ -318,7 +318,7 @@ class Post_CSS_File {
 		}
 
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
-			return '';
+			return null;
 		}
 
 		return $value;
