@@ -3,6 +3,17 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * NOTE! THIS CONTROL IS UNDER DEVELOPMENT, USE AT YOUR OWN RISK.
+ *
+ * Repeater control allows you to build repeatable blocks of fields. You can create for example a set of fields that
+ * will contain a checkbox and a textfield. The user will then be able to add “rows”, and each row will contain a
+ * checkbox and a textfield.
+ *
+ *
+ *
+ * @since 1.0.0
+ */
 class Control_Repeater extends Control_Base {
 
 	public function get_type() {

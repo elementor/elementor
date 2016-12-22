@@ -6,13 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * A Box Shadow set of controls
  *
- * @param array $default {
- *		@type integer $horizontal Default 0
- *		@type integer $vertical   Default 0
- *		@type integer $blur       Default 10
- *		@type integer $spread     Default 0
- *		@type bool    $inset      Unused //TODO: allow set an inset shadow
- *		@type string  $color      Shadow color, in rgb|rgba|hex format.
+ * @param array  $default    {
+ * 		@type integer $horizontal Default 0
+ * 		@type integer $vertical   Default 0
+ * 		@type integer $blur       Default 10
+ * 		@type integer $spread     Default 0
+ * 		@type bool    $inset      Unused //TODO: allow set an inset shadow
+ * 		@type string  $color      Shadow color, in rgb|rgba|hex format.
  * }
  *
  * @since 1.0.0

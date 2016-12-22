@@ -3,6 +3,15 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * An Hover Animation effect select box control.
+ * @see Control_Hover_Animation::get_animations() fot all available animations.
+ *
+ * @param string $default     The selected effect key
+ *                            Default empty
+ *
+ * @since 1.0.0
+ */
 class Control_Hover_Animation extends Control_Base {
 
 	private static $_animations;

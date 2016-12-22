@@ -4,13 +4,13 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A group of Radio Buttons controls.
+ * A group of Radio Buttons controls represented as a stylized component with an icon for each option.
  *
- * @property mixed $default   The selected option key
+ * @param mixed $default      The selected option key
  *                            Default ''
- * @property array $options   Array of arrays `[ [ 'title' => ??, 'icon' => ?? ], [ 'title' ... ]`.
+ * @param array $options      Array of arrays `[ [ 'title' => ??, 'icon' => ?? ], [ 'title' ... ]`.
  *                            The icon can be any icon-font class that appears in the panel, e.g. 'fa fa-align-left' for Font Awesome
- * @property bool  $toggle    Whether to allow toggle the selected button (cancel the selection)
+ * @param bool  $toggle       Whether to allow toggle the selected button (unset the selection)
  *                            Default true
  *
  * @since 1.0.0

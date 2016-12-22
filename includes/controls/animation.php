@@ -3,6 +3,14 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * An Animation effect select box control.
+ *
+ * @param string $default     The selected option key
+ *                            Default empty
+ *
+ * @since 1.0.0
+ */
 class Control_Animation extends Control_Base {
 
 	private static $_animations;
