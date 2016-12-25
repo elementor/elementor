@@ -44,18 +44,18 @@ Each control has a set of default settings that determine the structure and desi
 
 Here is the list of control settings that all control have in common:
 
-- `Label` - The title of the control
+* `label` - The title of the control
 
-- `Default` - The default value
+* `default` - The default value
 
-- `Separator` - Sets the position of the separator: `'before'` / `'default'` / `'after'` / `'none'`. *Default*: `'default'`
+* `separator` - Sets the position of the separator: `'before'` / `'default'` / `'after'` / `'none'`. *Default*: `'default'`
 
-- `Label_block` - Sets whether to display the title in a separate line: `true` / `false`. *Default*: `false`
+* `label_block` - Sets whether to display the title in a separate line: `true` / `false`. *Default*: `false`
 
-- `Show_label` - sets whether to show the title: `true` / `false`. *Default*: true
+* `show_label` - sets whether to show the title: `true` / `false`. *Default*: `true`
 
-- `Title` - The title that will appear on mouse over
+* `title` - The title that will appear on mouse over
 
-- `Placeholder` - Available for fields that support placeholder
+* `placeholder` - Available for fields that support placeholder
 
-- `Description` - A description of the field, that appears below the field
+* `description` - A description of the field, that appears below the field
