@@ -14,12 +14,12 @@
   * [Controls](#controls)
 - [Extensibility](#extensibility)
   * [Elements Panel](#elements-panel)
-  * [Editor Panel]()
-  * [Preview]()
-  * [Frontend]()
-  * [Template Library]()
-  * [Icons]()
-  * [Menus]()
+  * [Editor Panel](#editor-panel)
+  * [Preview](#preview)
+  * [Frontend](#frontend)
+  * [Template Library](#template-library)
+  * [Icons](#icons)
+  * [Menus](#menus)
 
 ##Definition
 
@@ -94,7 +94,7 @@ The Template Library lets you save areas for reuse, as well as use predesigned E
 
 #####Icons
 
-You can use the Elementor icon library, as well as font awesome.
+You can use the Elementor icon library, as well as [font awesome](http://fontawesome.io/).
 
 #####Menus
 

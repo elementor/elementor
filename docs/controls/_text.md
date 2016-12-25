@@ -19,11 +19,11 @@ $this->add_control(
 
 **Arguments**
 
-Argument     | Required   | Type       | Default                      | Options   | Description
------------- | :--------: | :------:   | :--------------------------: | :-------: | ---------------------------------------------
-**label**    | yes        | *string*   |                              |           | The label of the control - displayed next to it
-**type**     | yes        | *string*   | ```Controls_Manager::TEXT``` |           | The type of the control
-**default**  | no         | *string*   |                              |           | The default value of the control
+Argument     | Required   | Type       | Default                      | Description
+------------ | :--------: | :------:   | :--------------------------: | ---------------------------------------------
+**label**    | yes        | *string*   |                              | The label of the control - displayed next to it
+**type**     | yes        | *string*   | ```Controls_Manager::TEXT``` | The type of the control
+**default**  | no         | *string*   |                              | The default value of the control
 
 ####Usage
 
