@@ -9,30 +9,46 @@ Here is the structure of the class:
 
 ```php
 abstract class Control_Base {
+  // Contains the base control settings. (e.g. whether to show a label, the separator type etc.).
+  private $_base_settings = [];
 
-  private $_base_settings = []; // Contains the base control settings. (e.g. whether to show a label, the separator type etc.).
+  // Contains a merge of the base control settings and the specific type additional settings.
+  // (e.g. ‘color’ control contains a setting called ‘alpha’,
+  // which determines whether to show an alpha slider in the color picker ).
+  private $_settings = [];
 
-  private $_settings = []; // Contains a merge of the base control settings and the specific type additional settings (e.g. ‘color’ control contains a setting called ‘alpha’, which determines whether to show an alpha slider in the color picker ).
+  //  The control template (See below). Each control has to implement this method.
+  abstract public function content_template();
 
-  abstract public function content_template(); //  The control template (See below). Each control has to implement this method.
+  //  The control type. Each control has to implement this method.
+  abstract public function get_type();
 
-  abstract public function get_type(); //  The control type. Each control has to implement this method.
+  //  The control constructor. Each control may override this method or leave its default functionality.
+  public function __construct() {}
 
-  public function __construct() {} //  The control constructor. Each control may override this method or leave its default functionality.
+  // If the control need an additional assets libraries (such as JS, CSS etc.), It will be enqueued here.
+  public function enqueue() {}
 
-  public function enqueue() {} // If the control need an additional assets libraries (such as JS, CSS etc.), It will be enqueued here.
+  // Determines the default value that the control will return.
+  public function get_default_value() {}
 
-  public function get_default_value() {} // Determines the default value that the control will return.
+  // Determines how the control returns its value.
+  // This method gets a control instance settings and widget instance settings and decides the value will be returned.
+  // Each control may override this method or leave its default functionality.
+  public function get_value( $control, $widget ) {}
 
-  public function get_value( $control, $widget ) {} // Determines how the control returns its value. This method gets a control instance settings and widget instance settings and decides the value will be returned. Each control may override this method or leave its default functionality.
+  // Determines how the control returns a style value. (See values types below).
+  public function get_style_value( $css_property, $control_value ) {}
 
-  public function get_style_value( $css_property, $control_value ) {} // Determines how the control returns a style value. (See values types below).
+  // Get whole settings of the control. This method could not be overrided.
+  final public function get_settings( $setting_key = null ) {}
 
-  final public function get_settings( $setting_key = null ) {} // Get whole settings of the control. This method could not be overrided.
+  // Prints the control template. This method could not be overrided.
+  final public function print_template() {}
 
-  final public function print_template() {} // Prints the control template. This method could not be overrided.
-
-  protected function get_default_settings() {} // Return the specific control type additional settings. Each control may override this method or leave its default (empty).
+  // Return the specific control type additional settings.
+  // Each control may override this method or leave its default (empty).
+  protected function get_default_settings() {}
 
 }
 ```
