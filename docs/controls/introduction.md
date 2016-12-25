@@ -26,14 +26,16 @@ abstract class Control_Base {
   //  The control constructor. Each control may override this method or leave its default functionality.
   public function __construct() {}
 
-  // If the control need an additional assets libraries (such as JS, CSS etc.), It will be enqueued here.
+  // If the control need an additional assets libraries (such as JS, CSS etc.),
+  // It will be enqueued here.
   public function enqueue() {}
 
   // Determines the default value that the control will return.
   public function get_default_value() {}
 
   // Determines how the control returns its value.
-  // This method gets a control instance settings and widget instance settings and decides the value will be returned.
+  // This method gets a control instance settings and widget instance settings
+  // and decides the value will be returned.
   // Each control may override this method or leave its default functionality.
   public function get_value( $control, $widget ) {}
 
