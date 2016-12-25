@@ -3,7 +3,7 @@
 
 *Returns* `string`
 
-**Example**
+##Example
 
 ```php
 $this->add_control(
@@ -17,15 +17,7 @@ $this->add_control(
 );
 ```
 
-**Arguments**
-
-Argument       | Required   | Type         | Default                      | Description
-------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**     | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
-**`default`**  | no         | *`string`*   |                              | The default value of the control
-
-####Usage
+##Usage
 
 **PHP:** *(Under `render()` method)*
 ```php
@@ -38,3 +30,11 @@ echo ‘<h2>’ . $settings[‘widget_title’] . ‘</h2>’;
 ```html
 <h2>{{{ settings.text }}}</h2>
 ```
+
+##Arguments
+
+Argument       | Required   | Type         | Default                      | Description
+------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
+**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
+**`type`**     | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
+**`default`**  | no         | *`string`*   |                              | The default value of the control
