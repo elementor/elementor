@@ -8,18 +8,18 @@
 
 ##Table Of Contents
 
-- [Definition]()
-  * [Element](#element)
-  * [Areas](#areas)
-  * [Controls](#controls)
-- [Extensibility](#extensibility)
-  * [Elements Panel](#elements-panel)
-  * [Editor Panel](#editor-panel)
-  * [Preview](#preview)
-  * [Frontend](#frontend)
-  * [Template Library](#template-library)
-  * [Icons](#icons)
-  * [Menus](#menus)
+* [Definition]()
+  - [Element](#element)
+  - [Areas](#areas)
+  - [Controls](#controls)
+* [Extensibility](#extensibility)
+  - [Elements Panel](#elements-panel)
+  - [Editor Panel](#editor-panel)
+  - [Preview](#preview)
+  - [Frontend](#frontend)
+  - [Template Library](#template-library)
+  - [Icons](#icons)
+  - [Menus](#menus)
 
 ##Definition
 
