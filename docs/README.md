@@ -43,11 +43,13 @@ Each element consists of functions and definitions for four main areas:
 
 * **Elements Panel - Elements display area**
 
-    ![alt tag](images/2.jpg?raw=true)
+    ![](content/images/elements-panel.jpg "Elements Panel")
 
     This area contains elements which the user can drag & drop onto the page.
     
 * **Editor Panel - Element editor panel**
+
+    ![](content/images/editor-panel.jpg "Editor Panel")
 
     This area allows to edit the properties and settings of each element.
 
