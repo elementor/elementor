@@ -3,15 +3,15 @@ namespace Elementor;
 
 class Repeater extends Element_Base {
 
-	static $counter = 0;
+	private static $counter = 0;
 
-	function __construct() {
+	public function __construct() {
 		self::$counter++;
 
 		parent::__construct();
 	}
 
-	function get_name() {
+	public function get_name() {
 		return 'repeater-' . self::$counter;
 	}
 
