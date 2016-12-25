@@ -9,11 +9,11 @@
 ##Table Of Contents
 
 - [Definition]()
-  * [Element]()
-  * [Areas]()
-  * [Controls]()
-- [Extensibility]()
-  * [Elements Panel]()
+  * [Element](#element)
+  * [Areas](#areas)
+  * [Controls](#controls)
+- [Extensibility](#extensibility)
+  * [Elements Panel](#elements panel)
   * [Editor Panel]()
   * [Preview]()
   * [Frontend]()
