@@ -28,6 +28,10 @@ class Elements_Manager {
 		if ( 'widget' === $element_data['elType'] ) {
 			$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
 
+			if ( ! $element_type ) {
+				return null;
+			}
+
 			$args = $element_type->get_default_args();
 		} else {
 			$element_type = $this->get_element_types( $element_data['elType'] );
