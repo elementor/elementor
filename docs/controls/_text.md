@@ -25,6 +25,8 @@ Argument     | Required   | Type       | Default                      | Options 
 **type**     | yes        | *string*   | ```Controls_Manager::TEXT``` |           | The type of the control
 **default**  | no         | *string*   |                              |           | The default value of the control
 
+####Usage
+
 **PHP:** *(Under `render()` method)*
 ```php
 $settings = $this->get_settings();
