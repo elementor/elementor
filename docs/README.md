@@ -13,7 +13,7 @@
   * [Areas](#areas)
   * [Controls](#controls)
 - [Extensibility](#extensibility)
-  * [Elements Panel](#elements panel)
+  * [Elements Panel](#elements-panel)
   * [Editor Panel]()
   * [Preview]()
   * [Frontend]()
