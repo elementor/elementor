@@ -24,3 +24,15 @@ Argument     | Required   | Type       | Default                      | Options 
 **label**    | yes        | *string*   |                              |           | The label of the control - displayed next to it
 **type**     | yes        | *string*   | ```Controls_Manager::TEXT``` |           | The type of the control
 **default**  | no         | *string*   |                              |           | The default value of the control
+
+**PHP:** *(Under `render()` method)*
+```php
+$settings = $this->get_settings();
+
+echo ‘<h2>’ . $settings[‘widget_title’] . ‘</h2>’;
+```
+
+**JS:** *(Under `_content_template()` method)*
+```html
+<h2>{{{ settings.text }}}</h2>
+```
