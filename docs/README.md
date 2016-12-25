@@ -55,9 +55,13 @@ Each element consists of functions and definitions for four main areas:
 
 * **Preview**
 
+    ![](content/images/preview.png "Preview")
+
     This area displays a live preview of the element, rendered by a JavaScript engine, typically without loading from the server side.
 
 * **Frontend - visitor display**
+
+    ![](content/images/frontend.jpg "Frontend")
 
     The final result displayed to the visitors on the frontend, is comprised of PHP rendered markup and a page-specific CSS file generated on the server side.
 
