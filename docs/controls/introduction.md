@@ -1,9 +1,9 @@
 #Controls Introduction
 
 ###Table of Contents
-* [What is a Control?](#what-is-a-control?)
+* [What is a Control?](#what-is-a-control)
 * [The structure of a control](#the-structure-of-a-control)
-  - [`Control_Base` class]()
+  - [`Control_Base` class](#control_base-class)
 * [Control settings](#control-settings)
   - [Default settings](#default-settings)
   - [Settings Hierarchy](#settings-hierarchy)
@@ -169,8 +169,8 @@ For example, the value returned by a 'media' control can look like this:
 
 ```php
 [
-   ‘id’ => 123,
-   ‘url’ => ‘http://some-domain.com/media/awesome-image.png’
+   'id' => 123,
+   'url' => 'http://some-domain.com/media/awesome-image.png'
 ]
 ```
 
