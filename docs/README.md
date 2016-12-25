@@ -2,7 +2,7 @@
 
 **What is Elementor built with?**
 
-* Server side: PHP OOP, compatible with PHP 5.4 and above.
+* Server side: PHP OOP, compatible with PHP 5.4 and above
 * Client side: jQuery, Backbone & Marionette
 * Style: SCSS
 
@@ -94,7 +94,7 @@ The Template Library lets you save areas for reuse, as well as use predesigned E
 
 #####Icons
 
-You can use the Elementor icon library, as well as [font awesome](http://fontawesome.io/).
+You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as well as [Font Awesome](http://fontawesome.io/).
 
 #####Menus
 
