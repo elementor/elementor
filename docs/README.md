@@ -59,7 +59,7 @@ Each element consists of functions and definitions for four main areas:
 
 ####Controls
 
-Elementor contains a wide array of settings controls. Can be found [here](controls/README.md).
+Elementor contains a wide array of settings controls. Can be found [here](content/controls/README.md).
 
 ##Extensibility
 
