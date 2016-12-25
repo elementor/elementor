@@ -161,6 +161,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.0.7 - 25.12.2016 =
+* Fix! - Validate export import for elementor template
+* Fix! - Excluded `elementor_library` custom post type from the sitemap by Yoast SEO
+* Fix! - Prevent Scroll BUG in Google Map widget
+* Fix! - Added unique name for repeater control
+
 = 1.0.6 - 20.12.2016 =
 * New! - Added social icons for Apple & Spotify
 * New! - Added Thousand Separator control for counter widget
