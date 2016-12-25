@@ -3,7 +3,7 @@
 But before we start, let's examine the proper way to write code in Elementor.
 
 ###Code standard
-The code should be written in accordance with the WordPress code standards.(This is [how you can define a check for code standard in PHPStorm](https://kellenmace.com/set-up-php-codesniffer-in-phpstorm-with-wordpress-coding-standards/)).
+The code should be written in accordance with the [WordPress code standards](https://codex.wordpress.org/WordPress_Coding_Standards). (This is [how you can define a check for code standard in PHPStorm](https://kellenmace.com/set-up-php-codesniffer-in-phpstorm-with-wordpress-coding-standards/)).
 
 ###File names
 The name of the file that runs the plugin should be in-tune with the plugin folder name. For example: `plugin-name/plugin-name.php`
