@@ -3,6 +3,20 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A simple number input control
+ *
+ * @param integer $default  The default value
+ *                          Default empty
+ * @param integer $min      The minimum number (Only affects the spinners, the user can still type a lower value)
+ *                          Default empty
+ * @param integer $max      The maximum number (Only affects the spinners, the user can still type a higher value)
+ *                          Default empty
+ * @param integer $step     The intervals for the scroll bars
+ *                          Default empty (The value will be incremented by 1)
+ *
+ * @since 1.0.0
+ */
 class Control_Number extends Control_Base {
 
 	public function get_type() {

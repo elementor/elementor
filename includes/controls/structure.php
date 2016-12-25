@@ -3,6 +3,11 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A private control for section columns structure.
+ *
+ * @since 1.0.0
+ */
 class Control_Structure extends Control_Base {
 
 	public function get_type() {

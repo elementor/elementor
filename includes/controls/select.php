@@ -3,6 +3,16 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A simple Select box control.
+ *
+ * @param string $default     The selected option key
+ *                            Default empty
+ * @param array $options      Array of key & value pairs: `[ 'key' => 'value', ... ]`
+ *                            Default empty
+ *
+ * @since 1.0.0
+ */
 class Control_Select extends Control_Base {
 
 	public function get_type() {

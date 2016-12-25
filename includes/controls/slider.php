@@ -3,6 +3,17 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A draggable Range Slider control.
+ *
+ * @param array  $default    {
+ *
+ * 		@type integer $size       The initial value of slider
+ *                           	  Default empty
+ * }
+ *
+ * @since              1.0.0
+ */
 class Control_Slider extends Control_Base_Units {
 
 	public function get_type() {

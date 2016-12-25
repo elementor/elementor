@@ -3,6 +3,16 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Media Chooser control. Based on the WordPress media library
+ *
+ * @param array  $default {
+ * 		@type string  $url   Default empty
+ * 		@type integer $id    Default empty
+ * }
+ *
+ * @since 1.0.0
+ */
 class Control_Media extends Control_Base_Multiple {
 
 	public function get_type() {

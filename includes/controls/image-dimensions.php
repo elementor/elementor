@@ -3,6 +3,16 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * An Image Dimensions control. Shows Width and Height inputs and an Apply button
+ *
+ * @param array  $default {
+ * 		@type integer $width   Default empty
+ * 		@type integer $height  Default empty
+ * }
+ *
+ * @since 1.0.0
+ */
 class Control_Image_Dimensions extends Control_Base_Multiple {
 
 	public function get_type() {

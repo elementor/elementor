@@ -3,6 +3,21 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * An 'Order By' select box control.
+ *
+ *	@param array $default {
+ * 		@type string $order_by      The selected order
+ *                                  Default empty
+ * 		@type string $reverse_order Whether to reverse the order
+ *                                  Default empty
+ * }
+ *
+ * @param array $options      Array of key & value pairs: `[ 'key' => 'value', ... ]`
+ *                            Default empty
+ *
+ * @since 1.0.0
+ */
 class Control_Order extends Control_Base_Multiple {
 
 	public function get_type() {

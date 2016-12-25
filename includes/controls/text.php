@@ -3,6 +3,16 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A simple text input control.
+ *
+ * @param string $default     A default value
+ *                            Default empty
+ * @param string $input_type  any valid HTML5 input type: email, tel, etc.
+ *                            Default 'text'
+ *
+ * @since 1.0.0
+ */
 class Control_Text extends Control_Base {
 
 	public function get_type() {
