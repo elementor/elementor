@@ -2,7 +2,7 @@
 
 **What is Elementor built with?**
 
-* Server side: PHP OOP, compatible with PHP 5.4 and above.
+* Server side: PHP OOP, compatible with PHP 5.4 and above
 * Client side: jQuery, Backbone & Marionette
 * Style: SCSS
 
@@ -43,23 +43,31 @@ Each element consists of functions and definitions for four main areas:
 
 * **Elements Panel - Elements display area**
 
+    ![](content/images/elements-panel.jpg "Elements Panel")
+
     This area contains elements which the user can drag & drop onto the page.
     
 * **Editor Panel - Element editor panel**
+
+    ![](content/images/editor-panel.jpg "Editor Panel")
 
     This area allows to edit the properties and settings of each element.
 
 * **Preview**
 
+    ![](content/images/preview.png "Preview")
+
     This area displays a live preview of the element, rendered by a JavaScript engine, typically without loading from the server side.
 
 * **Frontend - visitor display**
+
+    ![](content/images/frontend.jpg "Frontend")
 
     The final result displayed to the visitors on the frontend, is comprised of PHP rendered markup and a page-specific CSS file generated on the server side.
 
 ####Controls
 
-Elementor contains a wide array of settings controls. Can be found [here](controls/README.md).
+Elementor contains a wide array of settings controls. Can be found [here](content/controls/README.md).
 
 ##Extensibility
 
@@ -94,7 +102,7 @@ The Template Library lets you save areas for reuse, as well as use predesigned E
 
 #####Icons
 
-You can use the Elementor icon library, as well as [font awesome](http://fontawesome.io/).
+You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as well as [Font Awesome](http://fontawesome.io/).
 
 #####Menus
 
