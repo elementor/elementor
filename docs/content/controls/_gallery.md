@@ -44,6 +44,6 @@ foreach ( $images as $image ) {
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**         | yes        | *`string`*   | `Controls_Manager::MEDIA`    | The type of the control
-**`default`**      | no         | *`array`*    |                              | The default value can be set as an array of single image arrays
+`label`            | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`             | yes        | *`string`*   | `Controls_Manager::MEDIA`    | The type of the control
+`default`          | no         | *`array`*    |                              | The default value can be set as an array of single image arrays

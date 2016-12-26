@@ -35,6 +35,6 @@ echo ‘<h2>’ . $settings[‘widget_title’] . ‘</h2>’;
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**     | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
-**`default`**  | no         | *`string`*   |                              | The default value of the control
+`label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`         | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
+`default`      | no         | *`string`*   |                              | The default value of the control

@@ -38,9 +38,9 @@ echo ‘<span class=”price”>’ . $settings[‘price’] . ‘</span>’;
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**     | yes        | *`string`*   | `Controls_Manager::NUMBER`   | The type of the control
-**`default`**  | no         | *`string`*   |                              | The default value of the control
-**`min`**      | no         | *`int`*      |                              | The minimum number (Only affects the spinners, the user can still type a lower value)
-**`max`**      | no         | *`int`*      |                              | The maximum number (Only affects the spinners, the user can still type a higher value)
-**`step`**     | no         | *`int`*      |                              | The intervals value that will be incremented or decremented when using the controls' spinners
+`label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`         | yes        | *`string`*   | `Controls_Manager::NUMBER`   | The type of the control
+`default`      | no         | *`string`*   |                              | The default value of the control
+`min`          | no         | *`int`*      |                              | The minimum number (Only affects the spinners, the user can still type a lower value)
+`max`          | no         | *`int`*      |                              | The maximum number (Only affects the spinners, the user can still type a higher value)
+`step`         | no         | *`int`*      |                              | The intervals value that will be incremented or decremented when using the controls' spinners
