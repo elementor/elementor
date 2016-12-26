@@ -28,7 +28,7 @@ $this->add_control(
 $show_elements = $this->get_settings( 'show_elements' );
 
 foreach ( $show_elements as $element ) {
-    echo '<div>' . $this->get_settings( $element ) . </div>;
+    echo '<div>' . $this->get_settings( $element ) . '</div>';
 }
 ```
 
@@ -36,7 +36,7 @@ foreach ( $show_elements as $element ) {
 ```html
 <# _.each( settings.show_elements, function( element ) { #>
     <div>{{{ settings.element }}}</div>
-<# }); #>
+<# } ); #>
 ```
 
 ##Arguments
