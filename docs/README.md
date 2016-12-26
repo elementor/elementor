@@ -2,9 +2,9 @@
 
 **What is Elementor built with?**
 
-* Server side: PHP OOP, compatible with PHP 5.4 and above
-* Client side: jQuery, Backbone & Marionette
-* Style: SCSS
+* Server side: [PHP](http://php.net/) OOP, compatible with PHP 5.4 and above
+* Client side: [jQuery](https://jquery.com/), [Backbone](http://backbonejs.org/) & [Marionette](http://marionettejs.com/)
+* Style: [SCSS](http://sass-lang.com/)
 
 ##Table Of Contents
 
