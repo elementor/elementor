@@ -2,13 +2,13 @@
 
 **What is Elementor built with?**
 
-* Server side: PHP OOP, compatible with PHP 5.4 and above
-* Client side: jQuery, Backbone & Marionette
-* Style: SCSS
+* Server side: [PHP](http://php.net/) OOP, compatible with PHP 5.4 and above
+* Client side: [jQuery](https://jquery.com/), [Backbone](http://backbonejs.org/) & [Marionette](http://marionettejs.com/)
+* Style: [SCSS](http://sass-lang.com/)
 
 ##Table Of Contents
 
-* [Definition]()
+* [Definition](#definition)
   - [Element](#element)
   - [Areas](#areas)
   - [Controls](#controls)
@@ -67,7 +67,7 @@ Each element consists of functions and definitions for four main areas:
 
 ####Controls
 
-Elementor contains a wide array of settings controls. Can be found [here](content/controls/README.md).
+Elementor contains a wide array of element settings controls. Please refer to [this article](content/controls/README.md) to learn more.
 
 ##Extensibility
 
