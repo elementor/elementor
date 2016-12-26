@@ -1,0 +1,40 @@
+#WYSIWYG
+
+The WordPress rich-text editor (TinyMCE)
+
+*Returns:* `string`
+
+##Example
+
+```php
+$this->add_control(
+  'item_description',
+  [
+     'label'   => __( 'Description', 'your-plugin' ),
+     'type'    => Controls_Manager::WYSIWYG,
+     'default' => __( 'Default description', 'your-plugin' ),
+  ]
+);
+```
+
+##Usage
+
+**PHP** *(Under `render()` method)*
+```php
+$settings = $this->get_settings(); 
+
+echo ‘<div class="description">’ . $settings[‘item_description’] . ‘</div>’;
+```
+
+**JS** *(Under `_content_template()` method)*
+```html
+<div class="description">{{{ settings.item_description }}}</div>
+```
+
+##Arguments
+
+Argument       | Required   | Type         | Default                      | Description
+------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
+**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
+**`type`**     | yes        | *`string`*   | `Controls_Manager::WYSIWYG`  | The type of the control
+**`default`**  | no         | *`string`*   |                              | The default value of the control
