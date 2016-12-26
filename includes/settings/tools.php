@@ -102,7 +102,6 @@ class Tools {
 		</div><!-- /.wrap -->
 
 		<?php
-
 	}
 
 	public function ajax_elementor_clear_cache() {
