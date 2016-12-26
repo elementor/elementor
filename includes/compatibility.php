@@ -42,6 +42,14 @@ class Compatibility {
 			return $post_types;
 		} );
 
+		add_filter( 'wpseo_sitemap_exclude_post_type', function( $retval, $post_type ) {
+			if ( TemplateLibrary\Source_Local::CPT === $post_type ) {
+				$retval = true;
+			}
+
+			return $retval;
+		}, 10, 2 );
+
 		// Disable optimize files in Editor from Autoptimize plugin
 		add_filter( 'autoptimize_filter_noptimize', function( $retval ) {
 			if ( Plugin::instance()->editor->is_edit_mode() ) {
