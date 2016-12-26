@@ -40,7 +40,7 @@ var target = settings.website_url.is_external ? ‘target=”_blank”’ : ‘�
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**         | yes        | *`string`*   | `Controls_Manager::TEXTAREA` | The type of the control
-**`default`**      | no         | *`array`*    |                              | The default value of the control
-**`show_external`**| no         | *`bool`*     |                              | Shows a toggle button that allows user to set it to open the link in a new tab
+`label`            | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`             | yes        | *`string`*   | `Controls_Manager::TEXTAREA` | The type of the control
+`default`          | no         | *`array`*    |                              | The default value of the control
+`show_external`    | no         | *`bool`*     |                              | Shows a toggle button that allows user to set it to open the link in a new tab

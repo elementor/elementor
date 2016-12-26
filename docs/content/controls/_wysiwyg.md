@@ -35,6 +35,7 @@ echo ‘<div class="description">’ . $settings[‘item_description’] . ‘</
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**     | yes        | *`string`*   | `Controls_Manager::WYSIWYG`  | The type of the control
-**`default`**  | no         | *`string`*   |                              | The default value of the control
+`label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`         | yes        | *`string`*   | `Controls_Manager::WYSIWYG`  | The type of the control
+`default`      | no         | *`string`*   |                              | The default value of the control
+`label_block`  | no         | *`bool`*     | `true`                       | Display the label above the control by setting to true

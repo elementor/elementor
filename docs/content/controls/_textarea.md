@@ -35,7 +35,8 @@ echo ‘<p>’ . $settings[‘item_description’] . ‘</p>’;
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**    | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**     | yes        | *`string`*   | `Controls_Manager::TEXTAREA` | The type of the control
-**`default`**  | no         | *`string`*   |                              | The default value of the control
-**`rows`**     | no         | *`int`*      |                              | Sets the height of the textarea defined by rows of text
+`label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`         | yes        | *`string`*   | `Controls_Manager::TEXTAREA` | The type of the control
+`default`      | no         | *`string`*   |                              | The default value of the control
+`rows`         | no         | *`int`*      |                              | Sets the height of the textarea defined by rows of text
+`label_block`  | no         | *`bool`*     | `true`                       | Display the label above the control by setting to true

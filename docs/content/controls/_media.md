@@ -37,9 +37,10 @@ echo wp_get_attachment_image( $image['id'], 'thumbnail' );
 
 ##Arguments
 
-Argument           | Required   | Type         | Default                      | Description
-------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-**`label`**        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-**`type`**         | yes        | *`string`*   | `Controls_Manager::MEDIA`    | The type of the control
-**`default`**      | no         | *`array`*    |                              | You may set the `url` property of the default array to: `Utils::get_placeholder_image_src()` to show Elementor’s placeholder image.
-**`show_external`**| no         | *`bool`*     |                              | Shows a toggle button that allows user to set it to open the link in a new tab
+Argument        | Required   | Type         | Default                      | Description
+------------    | :--------: | :------:     | :--------------------------: | ---------------------------------------------
+`label`         | yes        | *`string`*   |                              | The label of the control - displayed next to it
+`type`          | yes        | *`string`*   | `Controls_Manager::MEDIA`    | The type of the control
+`default`       | no         | *`array`*    |                              | You may set the `url` property of the default array to: `Utils::get_placeholder_image_src()` to show Elementor’s placeholder image.
+`show_external` | no         | *`bool`*     |                              | Shows a toggle button that allows user to set it to open the link in a new tab
+`label_block`   | no         | *`bool`*     | `true`                       | Display the label above the control by setting to true
