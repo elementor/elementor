@@ -3753,9 +3753,20 @@ module.exports = function() {
 		} );
 	};
 
+	self.attachEvents = function() {
+		elementor.channels.editor.on( 'editor:saved', self.onEditorSaved );
+	};
+
+	self.onEditorSaved = function( data ) {
+		if ( data.last_revision ) {
+			elementor.getPanelView().getPages( 'revisionsPage' ).options.collection.add( data.last_revision, { at: 0 } );
+		}
+	};
+
 	self.init = function() {
 		elementor.on( 'preview:loaded', function() {
 			self.addPanelPage();
+			self.attachEvents();
 		} );
 	};
 
@@ -3777,11 +3788,13 @@ module.exports =  Marionette.ItemView.extend( {
 
 	ui: {
 		item: '.elementor-revision-item',
+		deleteButton: '.elementor-revision-delete',
 		spinner: '.elementor-state-icon'
 	},
 
 	triggers: {
-		'click @ui.item': 'item:click'
+		'click @ui.item': 'item:click',
+		'click @ui.deleteButton': 'delete:click'
 	}
 } );
 
@@ -3865,10 +3878,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onEditorSaved: function( data ) {
-		if ( data.last_revision ) {
-			this.addRevisionToList( data.last_revision );
-		}
-
 		this.exitPreviewMode();
 	},
 
@@ -3876,6 +3885,40 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.getPanelView().getChildView( 'footer' )._publishBuilder();
 		this.isRevisionApplied = true;
 		this.setDiscardButtonDisabled( false );
+	},
+
+	onChildviewDeleteClick: function( childView ) {
+		var self = this,
+			removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+			message: elementor.translate( 'dialog_confirm_delete', [ childView.model.get( 'type' ) ] ),
+			headerMessage: elementor.translate( 'delete_element', [ childView.model.get( 'type' ) ] ),
+			strings: {
+				confirm: elementor.translate( 'delete' ),
+				cancel: elementor.translate( 'cancel' )
+			},
+			defaultOption: 'confirm',
+			onConfirm: _.bind( function() {
+				childView.ui.item.addClass( 'elementor-state-show' );
+
+				elementor.ajax.send( 'delete_revision', {
+					data: {
+						id: childView.model.get( 'id' )
+					},
+					success: function() {
+						if ( childView.model.get( 'id' ) === self.currentPreviewId ) {
+							self.onDiscardClick();
+						}
+						self.collection.remove( childView.model );
+					},
+					error: function( data ) {
+						childView.ui.item.removeClass( 'elementor-state-show' );
+						alert( 'An error occurs' );
+					}
+				} );
+			}, this )
+		} );
+
+		removeDialog.show();
 	},
 
 	onChildviewItemClick: function( childView ) {

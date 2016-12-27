@@ -257,11 +257,30 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
 	<div class="elementor-revision-item">
-		<span class="elementor-revision-item-title">
-		{{ id }}. {{ date }} / {{ author }} {{ type }}
-		</span>
-		<span class="elementor-state-icon"><i class="fa fa-spin fa-circle-o-notch"></i></span>
-
+		<div class="elementor-revision-item__gravatar">
+			{{{ gravatar }}}
+		</div>
+		<div class="elementor-revision-item__details">
+			<div class="elementor-revision-date">
+				{{ date }}
+			</div>
+			<div class="elementor-revision-meta">
+				<span class="elementor-revision-type elementor-revision-type-{{ type }}">
+					{{{ type }}}
+				</span>
+				<span class="elementor-revision-author">
+				<?php _e( 'By', 'elementor' ); ?> {{ author }}
+				</span>
+			</div>
+			<span class="elementor-state-icon">
+				<i class="fa fa-spin fa-circle-o-notch"></i>
+			</span>
+		</div>
+		<div class="elementor-revision-item__delete">
+			<span class="elementor-revision-delete">
+				<i class="fa fa-times"></i>
+			</span>
+		</div>
 	</div>
 </script>
 

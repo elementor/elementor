@@ -336,18 +336,34 @@ class DB {
 	}
 
 	public function get_revisions( $post_id = 0, $query_args = [] ) {
+		$post = get_post( $post_id );
+		if ( ! $post || empty( $post->ID ) ) {
+			return [];
+		}
+
 		$revisions = [];
 
 		$query_args['meta_key'] = '_elementor_data';
 
+		$posts = wp_get_post_revisions( $post->ID, $query_args );
+
 		/** @var \WP_Post $revision */
-		foreach ( wp_get_post_revisions( $post_id, $query_args ) as $revision ) {
-			$type = ( false !== strpos( $revision->post_name, 'autosave' ) ) ? 'autosave' : 'revision';
+		foreach ( $posts as $revision ) {
+			$date = date_i18n( _x( 'F j@ H:i:s', 'revision date format' ), strtotime( $revision->post_modified ) );
+			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
+
+			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
+				$type = __( 'Autosave', 'elementor' );
+			} else {
+				$type = __( 'Revision', 'elementor' );
+			}
+
 			$revisions[] = [
 				'id' => $revision->ID,
-				'date' => $revision->post_date,
 				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
+				'date' => sprintf( __( '%1$s ago (%2$s)' ), $human_time, $date ),
 				'type' => $type,
+				'gravatar' => get_avatar( $revision->post_author, 24 ),
 			];
 		}
 

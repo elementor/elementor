@@ -3,10 +3,12 @@ module.exports =  Marionette.ItemView.extend( {
 
 	ui: {
 		item: '.elementor-revision-item',
+		deleteButton: '.elementor-revision-delete',
 		spinner: '.elementor-state-icon'
 	},
 
 	triggers: {
-		'click @ui.item': 'item:click'
+		'click @ui.item': 'item:click',
+		'click @ui.deleteButton': 'delete:click'
 	}
 } );
