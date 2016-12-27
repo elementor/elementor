@@ -163,6 +163,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.0.9 - 27.12.2016 ###
+* Fix! - Elementor library import remote template
+
 ### 1.0.8 - 27.12.2016 ###
 * Tweak! - Added raw css support for stylesheet class ([#1086](https://github.com/pojome/elementor/issues/1086))
 * Tweak! - Improve memory used in the editor mode ([Topic](https://wordpress.org/support/topic/need-update-folks/))
