@@ -226,7 +226,7 @@ class Post_CSS_File {
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, self::FILE_PREFIX, $this->post_id );
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
-		$this->url = $wp_upload_dir['baseurl'] . $relative_path;
+		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
 	}
 
 	protected function get_meta() {
