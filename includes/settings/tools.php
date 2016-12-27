@@ -66,9 +66,9 @@ class Tools {
 
 		add_settings_section(
 			$replace_url_section,
-			__( 'Replace URL', 'elementor-pro' ),
+			__( 'Replace URL', 'elementor' ),
 			function () {
-				echo __( '<p><strong>Important:</strong> before updating, please <a target="_blank" href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.</p>', 'elementor-pro' );
+				echo __( '<p><strong>Important:</strong> before updating, please <a target="_blank" href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.</p>', 'elementor' );
 			},
 			self::PAGE_ID
 		);
