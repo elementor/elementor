@@ -912,7 +912,6 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 	},
 
 	getActionButton: function( isPro ) {
-
 		var templateId = isPro ? '#tmpl-elementor-template-library-header-preview-get-pro-button' : '#tmpl-elementor-template-library-header-preview-insert-button';
 
 		templateId = elementor.hooks.applyFilters( 'elementor/editor/templateLibrary/preview/actionButton', templateId );
