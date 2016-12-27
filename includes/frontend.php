@@ -60,9 +60,19 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
-		do_action( 'elementor/frontend/enqueue_scripts/before' );
-
 		$suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_register_script(
+			'elementor-safe-loader',
+			ELEMENTOR_ASSETS_URL . 'js/safe-loader' . $suffix . '.js',
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_enqueue_script( 'elementor-safe-loader' );
+
+		do_action( 'elementor/frontend/enqueue_scripts/before' );
 
 		wp_register_script(
 			'waypoints',
@@ -105,6 +115,7 @@ class Frontend {
 			Plugin::instance()->get_version(),
 			true
 		);
+
 		wp_enqueue_script( 'elementor-frontend' );
 
 		wp_localize_script(
