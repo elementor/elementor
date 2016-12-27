@@ -317,6 +317,8 @@ class Editor {
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
+			'revisions' => $plugin->db->get_revisions(),
+			'revisions_enabled' => 0 !== wp_revisions_to_keep( get_post() ),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
@@ -372,6 +374,8 @@ class Editor {
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 				'asc' => __( 'Ascending order', 'elementor' ),
 				'desc' => __( 'Descending order', 'elementor' ),
+				'no_revisions' => __( 'Revision history lets you save your previous versions of your work, and restore them any time. Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+				'revisions_disabled' => sprintf( __( 'It looks like the post revision feature is unavailable in your website. Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 			],
 		];
 

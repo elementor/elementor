@@ -251,7 +251,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
 	<div class="elementor-revisions-header">
-		<?php _e( 'No Revisions', 'elementor' ); ?>
+		<?php _e( 'No Revisions Saved Yet', 'elementor' ); ?>
+	</div>
+
+	<#
+		var message;
+		if ( elementor.config.revisions_enabled ) {
+			message = elementor.translate( 'no_revisions' );
+		} else {
+			message = elementor.translate( 'revisions_disabled' );
+		}
+	#>
+	<div class="elementor-revisions-message">
+		{{{ message }}}
 	</div>
 </script>
 
