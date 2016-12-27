@@ -1,5 +1,5 @@
 #Text
-*A Simple text field*
+A Simple text field
 
 *Returns* `string`
 

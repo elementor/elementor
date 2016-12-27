@@ -37,7 +37,7 @@ foreach ( $images as $image ) {
 ```html
 <# _.each( settings.gallery, function( image ) { #>
     <img src="{{ image.url }}">
-<# } #>
+<# }); #>
 ```
 
 ##Arguments
