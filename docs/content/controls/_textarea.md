@@ -34,7 +34,7 @@ echo ‘<p>’ . $settings[‘item_description’] . ‘</p>’;
 ##Arguments
 
 Argument       | Required   | Type         | Default                      | Description
-------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
+------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------
 `label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `type`         | yes        | *`string`*   | `Controls_Manager::TEXTAREA` | The type of the control
 `default`      | no         | *`string`*   |                              | The default value of the control

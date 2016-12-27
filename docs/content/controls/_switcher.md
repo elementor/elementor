@@ -42,7 +42,7 @@ if ( 'yes' == $settings['show_title'] ) {
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
 `label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-`type`         | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
+`type`         | yes        | *`string`*   | `Controls_Manager::SWITCHER` | The type of the control
 `default`      | no         | *`string`*   |                              | The default value of the control
 `label_on`     | no         | *`string`*   |                              | The label for the "checked" state
 `label_off`    | no         | *`string`*   |                              | The label for the "unchecked" state
