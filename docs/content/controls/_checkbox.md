@@ -1,7 +1,7 @@
 #Checkbox
 A simple checkbox.
 
-*Returns* `string|empty` Returns the `on` if checked or empty if unchecked
+*Returns* `string|empty` Returns the string `on` if checked or empty if unchecked
 
 ##Example
 
