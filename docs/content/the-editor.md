@@ -1,36 +1,33 @@
-#Ready... steady... start extending Elementor!
+#Editor
 
-But before we start, let's examine the proper way to write code in Elementor.
+Each element consists of functions and definitions for four main areas:
 
-###Code standard
-The code should be written in accordance with the [WordPress code standards](https://codex.wordpress.org/WordPress_Coding_Standards). (This is [how you can define a check for code standard in PHPStorm](https://kellenmace.com/set-up-php-codesniffer-in-phpstorm-with-wordpress-coding-standards/)).
+###Elements Panel
 
-###File names
-The name of the file that runs the plugin should be in-tune with the plugin folder name. For example: `plugin-name/plugin-name.php`
+This area contains elements which the user can drag & drop onto the page. You can extension options:
+                                                                          
+* Add new elements
+* Add new categories of elements
 
-###Domain names
-We recommend using autoloader and namespace according to the [PSR-2](http://www.php-fig.org/psr/psr-2/) standard.
+![](images/elements-panel.jpg "Elements Panel")
 
+###Editing Panel
+    
+This area allows to edit the properties and settings of each element. Editor panel extension options:
+* Add / Change / Remove attributes of existing elements
 
-###Translation
-The texts oriented for the user should be written in English, while using the WordPress translation function:  `__()` / `_e()`.
+![](images/editing-panel.jpg "Editor Panel")
 
-The translation domain should be consistent with the plugin name. For example: `plugin-name` and not initials: `pn`.
+###Preview
 
-###Readme
-The Readme file should be written in a clear manner.
+This area displays a live preview of the element, rendered by a JavaScript engine, typically without loading from the server side.
+* Add / change / remove HTML while rendering the JavaScript
+* Add action controls to every element
 
-It is recommended to include the 'Elementor' tag so the plugin turns up in search results in the WordPress repository.
+![](images/preview.png "Preview")
 
-You should write the minimal version of Elementor required for the plugin to work, and also what is the latest Elementor version the plugin was tested for:
+###Frontend - Visitor display
 
->Elementor requires at least: 1.0.0
+The final result displayed to the visitors on the frontend, is comprised of PHP rendered markup and a page-specific CSS file generated on the server side. * Add / Change / Remove HTML while rendering the PHP
 
->Elementor tested up to: 1.3.2
-
-###Security aspects
-Every PHP file should begin with a check that there is no direct access to the file:
-
-```php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-```
+![](images/frontend.jpg "Frontend")
