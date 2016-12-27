@@ -117,6 +117,9 @@ abstract class Element_Base {
 	}
 
 	public function add_control( $id, $args ) {
+		$args = apply_filters( 'elementor/elements/add_control', $args, $id, $this );
+		$args = apply_filters( 'elementor/elements/add_control/' . $id, $args, $id, $this );
+
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
@@ -677,7 +680,9 @@ abstract class Element_Base {
 	private function _init_controls() {
 		Plugin::instance()->controls_manager->open_stack( $this );
 
+		do_action( 'elementor/element/before_register_controls', $this );
 		$this->_register_controls();
+		do_action( 'elementor/element/after_register_controls', $this );
 	}
 
 	private function _init_children() {
