@@ -29,11 +29,11 @@ In Elementor, the main component is the 'Element'.
 
 A standard Element structure is consisted of the following settings and functions:
 
-* id
+* ID
 * Name
 * Icon
 * Category
-* List of settings controls (Text / checkboxes / radio buttons etc.)
+* List of setting controls (Text / Select / Color Picker etc.)
 * Preview render function - Written as a Backbone JavaScript template
 * Frontend HTML render function - Written in PHP
 
@@ -41,25 +41,25 @@ A standard Element structure is consisted of the following settings and function
 
 Each element consists of functions and definitions for four main areas:
 
-* **Elements Panel - Elements display area**
+* **Editor Panel - Elements display area**
 
     ![](content/images/elements-panel.jpg "Elements Panel")
 
     This area contains elements which the user can drag & drop onto the page.
     
-* **Editor Panel - Element editor panel**
+* **Editor Panel - Element editing area**
 
     ![](content/images/editor-panel.jpg "Editor Panel")
 
     This area allows to edit the properties and settings of each element.
 
-* **Preview**
+* **Editor Preview**
 
     ![](content/images/preview.png "Preview")
 
     This area displays a live preview of the element, rendered by a JavaScript engine, typically without loading from the server side.
 
-* **Frontend - visitor display**
+* **Frontend - Visitor display**
 
     ![](content/images/frontend.jpg "Frontend")
 
