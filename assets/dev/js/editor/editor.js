@@ -495,4 +495,6 @@ App = Marionette.Application.extend( {
 	}
 } );
 
-module.exports = ( window.elementor = new App() ).start();
+safeLoader.load( function() {
+	module.exports = ( window.elementor = new App() ).start();
+} );
