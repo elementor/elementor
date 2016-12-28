@@ -199,7 +199,7 @@ Elementor offers a number of ways to use the returned value of a control. These 
 * Adding the value to the element stylesheet file.
 * Adding a class to the element template wrapper.
 
-#####Printing out the value in the element template
+####Printing out the value in the element template
 It is possible to get the value of the control inside the element render method, and print it out, or use it to set the structure of the template.
 
 Let's examine how to do this using the 'title' control we created earlier:
@@ -218,7 +218,7 @@ And this is the result:
 
 ![](../images/text-control-render.jpg)
 
-#####Adding the value to the style definitions of the element
+####Adding the value to the style definitions of the element
 Each element in the page includes a set of style settings that are printed as CSS rules under a unique element selector. You can easily define it so the returned control value is included as part of the element design rules. We also need to include these settings when adding the control.
 
 Back to the 'color' control we created earlier, we'll add a 'selectors' property to it:
@@ -252,7 +252,7 @@ Let's examine the 'selectors' property from before:
 `{{WRAPPER}} h2` - The `WRAPPER` placeholder represents the unique element selector. After replacing the placeholder, the full selector that includes the style rules can look something like:
 `.elementor-element-u5bnmwa h2`
 
-`color: {{VALUE}}` - The 'VALUE' placeholder represent the value returned by the control. In the previous 'color' control example mentioned earlier, the complete value of the style rule will be `color: #f00`
+`color: {{VALUE}}` - The `VALUE` placeholder represent the value returned by the control. In the previous 'color' control example mentioned earlier, the complete value of the style rule will be `color: #f00`
 
 At the end of the process, the element CSS will look something like:
 
@@ -264,7 +264,7 @@ At the end of the process, the element CSS will look something like:
 
 <sub>*Note: Make sure placeholders are named with capital letters only.*</sub>
 
-#####Adding a class to the element template wrapper
+####Adding a class to the element template wrapper
 
 A third way to affect the element structure through the control is by adding a class that comprises of the returned control value. The class will be added to the wrapper html tag of the element.
 
