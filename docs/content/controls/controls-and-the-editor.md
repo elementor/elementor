@@ -24,6 +24,9 @@ The Elementor editor panel is where you set all the settings for every element, 
 ####The editor panel layout
 
 #####Tabs
+
+![](../images/editor-tabs.jpg)
+
 The controls of the element settings are usually organized under three tabs:
 * **Content** - Designated for settings that involve the content of the element. For example: Text fields and images.
 * **Style** - Designated for settings that involve the style of the element. For example: Choosing colors and fonts.
@@ -32,6 +35,9 @@ The controls of the element settings are usually organized under three tabs:
 Most elements include these 3 tabs, but some have different tabs, or are missing some of the tabs.
 
 #####Sections
+
+![](../images/editor-sections.jpg)
+
 In addition to the controls being separated into the three tabs mentioned before, each set of controls is arranged under a titled section. Pressing on the section's title will show or hide the set of controls under the section.
 
 ###Adding a control to an element
