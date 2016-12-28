@@ -10,22 +10,18 @@
 
 * [Definition](#definition)
   - [Element](#element)
-  - [Areas](#areas)
+  - [Editor](#areas)
   - [Controls](#controls)
-* [Extensibility](#extensibility)
-  - [Elements Panel](#elements-panel)
-  - [Editor Panel](#editor-panel)
-  - [Preview](#preview)
-  - [Frontend](#frontend)
+* [Additional components](#additional-components)
   - [Template Library](#template-library)
   - [Icons](#icons)
   - [Menus](#menus)
 
-##Definition
+###Definition
 
-###Element
+####Element
 
-Elementor, the main component is the 'Element'.
+In Elementor, the main component is the 'Element'.
 
 A standard Element structure is consisted of the following settings and functions:
 
@@ -37,22 +33,24 @@ A standard Element structure is consisted of the following settings and function
 * Preview render function - Written as a Backbone JavaScript template
 * Frontend HTML render function - Written in PHP
 
-###Editor
+####Editor
 
-The editor contains a some areas to manage the design page. Please refer to [this article](content/the-editor.md) to learn more.
+The editor contains a some areas to manage the design page. To learn more about the areas you can read [this article](content/the-editor.md).
 
-###Controls
+####Controls
 
 Elementor contains a wide array of element settings controls. Please refer to [this article](content/controls/README.md) to learn more.
 
-###Template Library
+###Additional components
 
-The Template Library lets you save areas for reuse, as well as use predesigned Elementor templates. The Library is not extendable.
+####Template Library
 
-###Icons
+The Template Library lets you save areas for reuse, as well as use predesigned Elementor templates.
+
+####Icons
 
 You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as well as [Font Awesome](http://fontawesome.io/).
 
-###Menus
+####Menus
 
 You can add admin menu under the Elementor menu. As long as it involves simple definitions - use the Elementor settings page.
