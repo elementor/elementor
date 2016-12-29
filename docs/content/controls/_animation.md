@@ -1,6 +1,6 @@
 #Animation (Entrance Animation)
 A control that lets the user choose an entrance animation type from a list of animations. Based on [Animate.css](https://daneden.github.io/animate.css/).<br>
-Note that the usage of this control is by adding the selected animation as a class to the element, along with the class `animated` the best way to go about that is using the `prefix_class` argument as demonstrated in the example below. [Read more about `prefix_class`](controls-and-the-editor.md#adding-a-class-to-the-element-template-wrapper)
+Note that the usage of this control is by adding the selected animation as a class to the element, along with the class `animated`. Usually, the best way to go about that is using the `prefix_class` argument as demonstrated in the example below. [Read more about `prefix_class`](controls-and-the-editor.md#adding-a-class-to-the-element-template-wrapper).
 
 *Returns* `string`
 
@@ -18,17 +18,18 @@ $this->add_control(
 ```
 
 ##Usage
+Most times you won’t have to manually retrieve the value of animation controls since the prefix_class argument can cover most use-cases.
 
 **PHP:** *(Under `render()` method)*
 ```php
-$settings = $this->get_settings();
+$animation = $this->get_settings( 'animation' );
 
-echo ‘<div style="border-style: ' . $settings[‘border_style’] . ‘"> ... </div>’;
+echo ‘<div class="animated ' . $animation . '"> ... </div>’;
 ```
 
 **JS:** *(Under `_content_template()` method)*
 ```html
-<div style="border-style: {{ settings.text }}"> ... </div>
+<div class="animated  {{ settings.animation }}"> ... </div>
 ```
 
 ##Arguments
