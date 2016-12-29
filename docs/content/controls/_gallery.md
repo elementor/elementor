@@ -16,7 +16,7 @@ array(
 $this->add_control(
   'gallery',
   [
-     'label' => __( 'Add Images', 'elementor' ),
+     'label' => __( 'Add Images', 'your-plugin' ),
      'type' => Controls_Manager::GALLERY,
   ]
 );
