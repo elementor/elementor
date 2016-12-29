@@ -22,19 +22,19 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [Select2](_select2.md) - A select field based on the select2 plugin.
 * [Slider](_slider.md) - A draggable scale to choose between a range of numeric values
 * [Date-Time](_date.md) picker - A field that opens up a calendar + hours
-* [Repeater](_repeater.md) - Repeater controls allow you to build repeatable blocks of fields. You can create for example a set of fields that will contain a checkbox and a textfield. The user will then be able to add “rows”, and each row will contain a checkbox and a textfield.
+* [Repeater](_repeater.md) - Repeater controls allow you to build repeatable blocks of fields. You can create for example a set of fields that will contain a checkbox and a textfield. The user will then be able to add “rows”, and each row will contain a checkbox and a textfield. (coming soon)
 
 ####Design Controls
 
 * [Color](_color.md) - A Color-Picker control with an alpha slider. Includes a customizable color palette that can be preset by the user
 * [Dimensions](_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
-* [Font](_font.md) - Choose a font from the Google font library.
-* [Icon](_icon.md) - Choose icon within the font-awesome library.
+* [Font](_font.md) - Choose a font from the Google font library. (coming soon)
+* [Icon](_icon.md) - Choose icon within the font-awesome library. (coming soon)
 * [Entrance Animation](_animation.md) - Choose an entrance animation type from a list of animations.
-* [Hover Animation](_hover-animation.md) - Choose a hover animation type from a list of animations.
+* [Hover Animation](_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 
 ####UI controls
 
-* [Heading](_heading.md) - Display the a heading in the panel
+* [Heading](_heading.md) - Display the a heading in the panel (coming soon)
 * [Raw HTML](_raw-html.md) - Display HTML content in the panel
-* [Separator](_separator.md) - Display a separator between fields
+* [Separator](_separator.md) - Display a separator between fields (coming soon)
