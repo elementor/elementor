@@ -47,14 +47,14 @@ abstract class Control_Base {
 		return '';
 	}
 
-	public function get_value( $control, $instance ) {
+	public function get_value( $control, $widget ) {
 		if ( ! isset( $control['default'] ) )
 			$control['default'] = $this->get_default_value();
 
-		if ( ! isset( $instance[ $control['name'] ] ) )
+		if ( ! isset( $widget[ $control['name'] ] ) )
 			return $control['default'];
 
-		return $instance[ $control['name'] ];
+		return $widget[ $control['name'] ];
 	}
 
 	public function get_style_value( $css_property, $control_value ) {
