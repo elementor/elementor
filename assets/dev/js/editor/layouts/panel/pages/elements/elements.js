@@ -71,7 +71,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			title: elementor.translate( 'inner_section' ),
 			elType: 'section',
 			categories: sectionConfig.categories,
-			keywords: sectionConfig.keywords,
 			icon: sectionConfig.icon
 		} );
 

@@ -269,10 +269,6 @@ abstract class Element_Base {
 		return '';
 	}
 
-	public function get_keywords() {
-		return [];
-	}
-
 	public function get_categories() {
 		return [ 'basic' ];
 	}
@@ -293,7 +289,6 @@ abstract class Element_Base {
 			'controls' => $this->get_controls(),
 			'tabs_controls' => $this->get_tabs_controls(),
 			'categories' => $this->get_categories(),
-			'keywords' => $this->get_keywords(),
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
