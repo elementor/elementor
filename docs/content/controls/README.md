@@ -138,7 +138,7 @@ class Widget_Fake extends Widget_Base {
      $this->add_control(
         'alignment',
         [
-           'label' => __( 'Alignment', 'elementor' ),
+           'label' => __( 'Alignment', 'your-plugin' ),
            'type' => Controls_Manager::CHOOSE,
            'toggle' => false,
         ]
@@ -152,7 +152,7 @@ The current control settings for this example would be:
 ```php
 [
     'separator' => 'default', // Added by the base control
-    'label' => __( 'Alignment', 'elementor' ), // Added from the widget settings
+    'label' => __( 'Alignment', 'your-plugin' ), // Added from the widget settings
     'label_block' => true, // Overriden by the `choose` control
     'options' => [], // Added by the `choose` control
     'toggle' => false, // Overriden from the widget settings

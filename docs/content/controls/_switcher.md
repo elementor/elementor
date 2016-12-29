@@ -26,7 +26,7 @@ $this->add_control(
 $settings = $this->get_settings();
 
 if ( 'yes' == $settings['show_title'] ) {
-    echo '<h2>' . $this->get_settings( 'title' ) . '</h2>';
+    echo '<h2>' . $settings['title'] . '</h2>';
 }
 ```
 
