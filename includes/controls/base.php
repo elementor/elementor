@@ -26,9 +26,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 abstract class Control_Base {
 
 	private $_base_settings = [
+		'label' => '',
 		'separator' => 'default',
-		'label_block' => false,
 		'show_label' => true,
+		'label_block' => false,
+		'title' => '',
+		'placeholder' => '',
+		'description' => '',
 	];
 
 	private $_settings = [];
