@@ -140,7 +140,13 @@ abstract class Element_Base {
 	}
 
 	public final function add_group_control( $group_name, $args = [] ) {
-		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ $this, $args ] );
+		$group = Plugin::instance()->controls_manager->get_control_groups( $group_name );
+
+		if ( ! $group ) {
+			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
+		}
+
+		$group->add_controls( $this, $args );
 	}
 
 	public final function get_tabs_controls() {
