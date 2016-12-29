@@ -23,17 +23,17 @@ $this->add_control(
 ```php
 $website_link = $this->get_settings( 'website_link' );
 $url = $website_link['url'];
-$target = $website_link['is_external'] ? 'target=”_blank”' : '';
+$target = $website_link['is_external'] ? 'target="_blank"' : '';
 
-echo '<a href=”' . $url . '“ ' . $target .'>Visit Website</a>';
+echo '<a href="' . $url . '" ' . $target .'>Visit Website</a>';
 ```
 
 **JS** *(Under `_content_template()` method)*
 ```html
 <# // JavaScript code 
-var target = settings.website_url.is_external ? 'target=”_blank”' : '';
+var target = settings.website_url.is_external ? 'target="_blank"' : '';
 #>
-<a href=”{{ settings.website_url.url }}” {{ target }}>Visit Website</a>
+<a href="{{ settings.website_url.url }}" {{ target }}>Visit Website</a>
 ```
 
 ##Arguments
