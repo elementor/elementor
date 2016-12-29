@@ -24,9 +24,14 @@ It is recommended to include the 'Elementor' tag so the plugin turns up in searc
 
 You should write the minimal version of Elementor required for the plugin to work, and also what is the latest Elementor version the plugin was tested for:
 
->Elementor requires at least: 1.0.0
-
->Elementor tested up to: 1.3.2
+``` 
+/**
+* Plugin Name: ...
+* ...
+* Elementor requires at least: 1.0.0
+* Elementor tested up to: 1.3.2
+*/
+```
 
 ###Security aspects
 Every PHP file should begin with a check that there is no direct access to the file:

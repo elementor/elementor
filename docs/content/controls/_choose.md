@@ -9,19 +9,19 @@ A field that represents radio buttons as a stylized component with icons accepts
 $this->add_control(
     'align',
     [
-        'label' => __( 'Alignment', 'elementor' ),
+        'label' => __( 'Alignment', 'your-plugin' ),
         'type' => Controls_Manager::CHOOSE,
         'options' => [
             'left'    => [
-                'title' => __( 'Left', 'elementor' ),
+                'title' => __( 'Left', 'your-plugin' ),
                 'icon' => 'fa fa-align-left',
             ],
             'center' => [
-                'title' => __( 'Center', 'elementor' ),
+                'title' => __( 'Center', 'your-plugin' ),
                 'icon' => 'fa fa-align-center',
             ],
             'right' => [
-                'title' => __( 'Right', 'elementor' ),
+                'title' => __( 'Right', 'your-plugin' ),
                 'icon' => 'fa fa-align-right',
             ],
         ],

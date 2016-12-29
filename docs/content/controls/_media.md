@@ -9,7 +9,7 @@ A control that allows the user to select an image from the WordPress media libra
 $this->add_control(
   'image',
   [
-     'label' => __( 'Choose Image', 'elementor' ),
+     'label' => __( 'Choose Image', 'your-plugin' ),
      'type' => Controls_Manager::MEDIA,
      'default' => [
         'url' => Utils::get_placeholder_image_src(),
