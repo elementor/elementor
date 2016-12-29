@@ -32,7 +32,7 @@ $this->add_control(
 ```php
 $settings = $this->get_settings();
 
-echo ‘<div style="border-style: ' . $settings[‘border_style’] . ‘"> ... </div>’;
+echo '<div style="border-style: ' . $settings['border_style'] . '"> ... </div>';
 ```
 
 **JS:** *(Under `_content_template()` method)*

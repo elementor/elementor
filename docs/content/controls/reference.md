@@ -22,7 +22,7 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [Select2](_select2.md) - A select field based on the select2 plugin.
 * [Slider](_slider.md) - A draggable scale to choose between a range of numeric values
 * [Date-Time](_date.md) picker - A field that opens up a calendar + hours
-* [Repeater](_repeater.md) - Repeater controls allow you to build repeatable blocks of fields. You can create for example a set of fields that will contain a checkbox and a textfield. The user will then be able to add “rows”, and each row will contain a checkbox and a textfield. (coming soon)
+* [Repeater](_repeater.md) - Repeater controls allow you to build repeatable blocks of fields. You can create for example a set of fields that will contain a checkbox and a textfield. The user will then be able to add "rows", and each row will contain a checkbox and a textfield. (coming soon)
 
 ####Design Controls
 

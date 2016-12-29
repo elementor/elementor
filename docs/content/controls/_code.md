@@ -24,7 +24,7 @@ $this->add_control(
 ```php
 $settings = $this->get_settings(); 
 
-echo $settings[‘custom_html’];
+echo $settings['custom_html'];
 ```
 
 **JS** *(Under `_content_template()` method)*

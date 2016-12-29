@@ -26,12 +26,12 @@ $this->add_control(
 ```php
 $settings = $this->get_settings(); 
 
-echo ‘<span class=”price”>’ . $settings[‘price’] . ‘</span>’;
+echo '<span class="price">' . $settings['price'] . '</span>';
 ```
 
 **JS** *(Under `_content_template()` method)*
 ```html
-<span class=”price”>{{{ settings.price }}}</span>
+<span class="price">{{{ settings.price }}}</span>
 ```
 
 ##Arguments

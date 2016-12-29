@@ -18,13 +18,13 @@ $this->add_control(
 ```
 
 ##Usage
-Most times you won’t have to manually retrieve the value of animation controls since the prefix_class argument can cover most use-cases.
+Most times you won't have to manually retrieve the value of animation controls since the prefix_class argument can cover most use-cases.
 
 **PHP:** *(Under `render()` method)*
 ```php
 $animation = $this->get_settings( 'animation' );
 
-echo ‘<div class="animated ' . $animation . '"> ... </div>’;
+echo '<div class="animated ' . $animation . '"> ... </div>';
 ```
 
 **JS:** *(Under `_content_template()` method)*

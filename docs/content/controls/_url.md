@@ -1,7 +1,7 @@
 #URL
 A url field with a `show_external` option that shows a button that allows the user to set it to open the link in a new tab.
 
-*Returns:* `array( ‘url’ => (string), ‘is_external’ => (bool) )`
+*Returns:* `array( 'url' => (string), 'is_external' => (bool) )`
 
 ##Example
 
@@ -12,7 +12,7 @@ $this->add_control(
      'label'   => __( 'Website URL', 'your-plugin' ),
      'type'    => Controls_Manager::URL,
      'default' => 'http://',
-     'show_external' => true, // Show the ‘open in new tab’ button.
+     'show_external' => true, // Show the 'open in new tab' button.
   ]
 );
 ```
@@ -21,19 +21,19 @@ $this->add_control(
 
 **PHP** *(Under `render()` method)*
 ```php
-$website_link = $this->get_settings( ‘website_link’ );
-$url = $website_link[‘url’];
-$target = $website_link[‘is_external’] ? ‘target=”_blank”’ : ‘’;
+$website_link = $this->get_settings( 'website_link' );
+$url = $website_link['url'];
+$target = $website_link['is_external'] ? 'target="_blank"' : '';
 
-echo ‘<a href=”’ . $url . ‘“ ‘ . $target .’>Visit Website</a>’;
+echo '<a href="' . $url . '" ' . $target .'>Visit Website</a>';
 ```
 
 **JS** *(Under `_content_template()` method)*
 ```html
 <# // JavaScript code 
-var target = settings.website_url.is_external ? ‘target=”_blank”’ : ‘’;
+var target = settings.website_url.is_external ? 'target="_blank"' : '';
 #>
-<a href=”{{ settings.website_url.url }}” {{ target }}>Visit Website</a>
+<a href="{{ settings.website_url.url }}" {{ target }}>Visit Website</a>
 ```
 
 ##Arguments

@@ -7,10 +7,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private $_args = [];
 
-	public function __construct() {
-		$this->_init();
-	}
-
 	public function get_controls_prefix() {
 		return $this->get_args()['name'] . '_';
 	}
@@ -19,7 +15,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	final public function add_controls( Element_Base $element, $user_args ) {
+	final public function add_controls( Element_Base $element, array $user_args ) {
 		$this->_init_args( $user_args );
 
 		// Filter witch controls to display
@@ -47,10 +43,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	final public function get_args() {
 		return $this->_args;
-	}
-
-	protected function _init() {
-		add_action( 'elementor/elements/add_group_control/' . static::get_type(), [ $this, 'add_controls' ], 10, 2 );
 	}
 
 	protected function _get_child_default_args() {

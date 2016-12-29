@@ -21,7 +21,7 @@ $this->add_control(
 
 **PHP:** *(Under `render()` method)*
 ```php
-echo ‘<h2>’ . $this->get_settings( 'widget_title' ) . ‘</h2>’;
+echo '<h2>' . $this->get_settings( 'widget_title' ) . '</h2>';
 ```
 
 **JS:** *(Under `_content_template()` method)*

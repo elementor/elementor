@@ -26,8 +26,8 @@ class Control_Repeater extends Control_Base {
 		];
 	}
 
-	public function get_value( $control, $instance ) {
-		$value = parent::get_value( $control, $instance );
+	public function get_value( $control, $widget ) {
+		$value = parent::get_value( $control, $widget );
 
 		if ( ! empty( $value ) ) {
 			foreach ( $value as &$item ) {

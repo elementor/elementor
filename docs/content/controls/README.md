@@ -27,7 +27,7 @@ abstract class Control_Base {
   private $_base_settings = [];
 
   // Contains a merge of the base control settings and the specific type additional settings.
-  // (e.g. ‘color’ control contains a setting called ‘alpha’,
+  // (e.g. 'color' control contains a setting called 'alpha',
   // which determines whether to show an alpha slider in the color picker ).
   private $_settings = [];
 
@@ -105,7 +105,7 @@ abstract class Control_Base {
   // here is some base default settings
   private $_base_settings = [
      'separator' => 'default',
-     'label' => ‘’,
+     'label' => '',
      'label_block' => false,
   ];
 }
@@ -134,7 +134,7 @@ class Widget_Fake extends Widget_Base {
 
   protected function _register_controls() {
 
-     // Adding ‘choose’ control with additional settings
+     // Adding 'choose' control with additional settings
      $this->add_control(
         'alignment',
         [
