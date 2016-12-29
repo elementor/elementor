@@ -53,8 +53,8 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_groupControlsGetTypes() {
-		foreach ( Elementor\Plugin::instance()->controls_manager->get_group_controls() as $group_control ) {
-			$this->assertNotEmpty( $group_control->get_type() );
+		foreach ( Elementor\Plugin::instance()->controls_manager->get_control_groups() as $control_group ) {
+			$this->assertNotEmpty( $control_group->get_type() );
 		}
 	}
 
