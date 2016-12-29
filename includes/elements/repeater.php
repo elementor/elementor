@@ -19,7 +19,7 @@ class Repeater extends Element_Base {
 		return 'repeater';
 	}
 
-	public function add_control( $id, $args ) {
+	public function add_control( $id, array $args ) {
 		if ( null !== $this->_current_tab ) {
 			$args = array_merge( $args, $this->_current_tab );
 		}
@@ -31,4 +31,3 @@ class Repeater extends Element_Base {
 		return false;
 	}
 }
-
