@@ -9,14 +9,14 @@ A select field based on the select2 plugin. Accepts an `array` of `options` in w
 $this->add_control(
   'show_elements',
   [
-     'label'       => __( 'Show Elements', 'your-plugin' ),
+     'label' => __( 'Show Elements', 'your-plugin' ),
      'type' => Controls_Manager::SELECT2,
      'options' => [
-     	'title'       => __( 'Title', 'your-plugin' ),
+     	'title' => __( 'Title', 'your-plugin' ),
      	'desctiption' => __( 'Desctiption', 'your-plugin' ),
-     	'button'      => __( 'Button', 'your-plugin' ),
+     	'button' => __( 'Button', 'your-plugin' ),
      ],
-	 'multiple' => 'true',
+     'multiple' => true,
   ]
 );
 ```
@@ -42,7 +42,7 @@ foreach ( $show_elements as $element ) {
 ##Arguments
 
 Argument       | Required   | Type         | Default                      | Description
-------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
+------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------
 `label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `type`         | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
 `default`      | no         | *`string`*   |                              | The default value of the control
