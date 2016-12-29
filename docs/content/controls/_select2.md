@@ -13,7 +13,7 @@ $this->add_control(
      'type' => Controls_Manager::SELECT2,
      'options' => [
      	'title'       => __( 'Title', 'your-plugin' ),
-     	'desctiption' => __( 'Desctiption', 'your-plugin' ),
+     	'description' => __( 'Desctiption', 'your-plugin' ),
      	'button'      => __( 'Button', 'your-plugin' ),
      ],
 	 'multiple' => 'true',
