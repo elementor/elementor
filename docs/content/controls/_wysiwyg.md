@@ -23,7 +23,7 @@ $this->add_control(
 ```php
 $settings = $this->get_settings(); 
 
-echo ‘<div class="description">’ . $settings[‘item_description’] . ‘</div>’;
+echo '<div class="description">' . $settings['item_description'] . '</div>';
 ```
 
 **JS** *(Under `_content_template()` method)*

@@ -4,8 +4,8 @@ A control that allows the user to choose set of images from the WordPress media 
 *Returns:* An array of single image arrays:
 ```php
 array(
-    array( ‘id’ => (string), ‘url’ => (string) ),
-    array( ‘id’ => (string), ‘url’ => (string) ),
+    array( 'id' => (string), 'url' => (string) ),
+    array( 'id' => (string), 'url' => (string) ),
     ...
 )
 ```
@@ -26,10 +26,10 @@ $this->add_control(
 
 **PHP** *(Under `render()` method)*
 ```php
-$images = $this->get_settings( ‘gallery’ );
+$images = $this->get_settings( 'gallery' );
 
 foreach ( $images as $image ) {
-    echo ‘<img src=”’ . $image[url] . ‘“>’;
+    echo '<img src=”' . $image[url] . '“>';
 }
 ```
 

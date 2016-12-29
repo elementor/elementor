@@ -24,11 +24,11 @@ $this->add_control(
 ```
 
 ##Usage
-Most times you won’t have to manually retrieve the value of color controls since the selectors argument can cover most use-cases.
+Most times you won't have to manually retrieve the value of color controls since the selectors argument can cover most use-cases.
 
 **PHP** *(Under `render()` method)*
 ```php
-$title_color = $this->get_settings( ‘title_color’ );
+$title_color = $this->get_settings( 'title_color' );
 
 echo '<h2 style="color:' . $title_color . '"> ... </h2>'
 ```

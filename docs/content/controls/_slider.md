@@ -38,18 +38,18 @@ $this->add_control(
 ```
 
 ##Usage
-Most times you won’t have to manually retrieve the value of slider controls since the selectors argument can cover most use-cases. 
+Most times you won't have to manually retrieve the value of slider controls since the selectors argument can cover most use-cases. 
 
 **PHP** *(Under `render()` method)*
 ```php
 $width = $this->get_settings( 'width' ); 
 
-echo ‘<div style="width: ’ . $width[‘size’] . $width[‘unit’] ‘"> ... </div>’;
+echo '<div style="width: ' . $width['size'] . $width['unit'] '"> ... </div>';
 ```
 
 **JS** *(Under `_content_template()` method)*
 ```html
-<div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>’;
+<div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
 ```
 
 ##Arguments

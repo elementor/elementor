@@ -20,7 +20,7 @@ $this->add_control(
 
 **PHP** *(Under `render()` method)*
 ```php
-$due_date =  strtotime( $this->get_settings( ‘due_date’ ) );
+$due_date =  strtotime( $this->get_settings( 'due_date' ) );
 
 // If you want it in GMT timezone 
 // $due_date -= ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );

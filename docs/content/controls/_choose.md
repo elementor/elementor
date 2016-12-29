@@ -33,7 +33,7 @@ $this->add_control(
 
 **PHP** *(Under `render()` method)*
 ```php
-$align = $this->get_settings( ‘align’ );
+$align = $this->get_settings( 'align' );
 
 echo '<div style="text-align:' . $align . '"> ... </div>'
 ```
