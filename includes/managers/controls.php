@@ -237,10 +237,17 @@ class Controls_Manager {
 
 	/**
 	 * @since 1.0.0
-	 * @return Group_Control_Base[]
+	 *
+	 * @param string $id
+	 *
+	 * @return Group_Control_Base|Group_Control_Base[]
 	 */
-	public function get_group_controls() {
-		return $this->_group_controls;
+	public function get_control_groups( $id = null ) {
+		if ( $id ) {
+			return isset( $this->_control_groups[ $id ] ) ? $this->_control_groups[ $id ] : null;
+		}
+
+		return $this->_control_groups;
 	}
 
 	/**
