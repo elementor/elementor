@@ -2,7 +2,7 @@
 
 A draggable Range Slider control typically used to obtain a size setting.
 The slider control can optionally have a number of unit types (`size_units`) for the user to choose from.
-The control also accepts a `range` argument that allows yo to set the `min`, `max` and `step` values per unit type.
+The control also accepts a `range` argument that allows you to set the `min`, `max` and `step` values per unit type.
 
 
 *Returns:* `array` of `size` and `unit`;
@@ -13,7 +13,7 @@ The control also accepts a `range` argument that allows yo to set the `min`, `ma
 $this->add_control(
     'width',
     [
-        'label' => __( 'Width', 'elementor' ),
+        'label' => __( 'Width', 'your-plugin' ),
         'type' => Controls_Manager::SLIDER,
         'default' => [
             'size' => 1,
