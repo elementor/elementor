@@ -32,6 +32,10 @@ abstract class Widget_Base extends Element_Base {
 		return 'eicon-apps';
 	}
 
+	public function get_keywords() {
+		return [];
+	}
+
 	public function __construct( $data = [], $args = null ) {
 		do_action( 'elementor/element/before_construct', $this, $data, $args );
 		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
@@ -116,6 +120,8 @@ abstract class Widget_Base extends Element_Base {
 		$config = parent::get_config( $item );
 
 		$config['widget_type'] = $this->get_name();
+
+		$config['keywords'] = $this->get_keywords();
 
 		return $config;
 	}

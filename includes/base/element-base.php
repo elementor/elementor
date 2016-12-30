@@ -116,7 +116,7 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
-	public function add_control( $id, $args ) {
+	public function add_control( $id, array $args ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
@@ -139,8 +139,14 @@ abstract class Element_Base {
 		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $id );
 	}
 
-	public final function add_group_control( $group_name, $args = [] ) {
-		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ $this, $args ] );
+	public final function add_group_control( $group_name, array $args = [] ) {
+		$group = Plugin::instance()->controls_manager->get_control_groups( $group_name );
+
+		if ( ! $group ) {
+			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
+		}
+
+		$group->add_controls( $this, $args );
 	}
 
 	public final function get_tabs_controls() {
@@ -263,10 +269,6 @@ abstract class Element_Base {
 		return '';
 	}
 
-	public function get_keywords() {
-		return [];
-	}
-
 	public function get_categories() {
 		return [ 'basic' ];
 	}
@@ -287,7 +289,6 @@ abstract class Element_Base {
 			'controls' => $this->get_controls(),
 			'tabs_controls' => $this->get_tabs_controls(),
 			'categories' => $this->get_categories(),
-			'keywords' => $this->get_keywords(),
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
