@@ -60,7 +60,9 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
-		do_action( 'elementor/frontend/enqueue_scripts/before' );
+		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
+
+		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -115,8 +117,6 @@ class Frontend {
 				'is_rtl' => is_rtl(),
 			]
 		);
-
-		do_action( 'elementor/frontend/enqueue_scripts/after' );
 	}
 
 	public function enqueue_styles() {
