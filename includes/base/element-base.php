@@ -15,6 +15,8 @@ abstract class Element_Base {
 
 	private $_data;
 
+	private $_config;
+
 	/**
 	 * @var Element_Base[]
 	 */
@@ -277,18 +279,12 @@ abstract class Element_Base {
 		return false;
 	}
 
-	public function get_config( $item = null ) {
-		$config = [
-			'name' => $this->get_name(),
-			'elType' => $this->get_type(),
-			'title' => $this->get_title(),
-			'controls' => $this->get_controls(),
-			'tabs_controls' => $this->get_tabs_controls(),
-			'icon' => $this->get_icon(),
-			'reload_preview' => $this->is_reload_preview_required(),
-		];
+	public final function get_config( $item = null ) {
+		if ( null === $this->_config ) {
+			$this->_config = $this->_get_initial_config();
+		}
 
-		return self::_get_items( $config, $item );
+		return self::_get_items( $this->_config, $item );
 	}
 
 	public function print_template() {
@@ -658,6 +654,18 @@ abstract class Element_Base {
 		foreach ( $this->get_children() as $child ) {
 			$child->print_element();
 		}
+	}
+
+	protected function _get_initial_config() {
+		return [
+			'name' => $this->get_name(),
+			'elType' => $this->get_type(),
+			'title' => $this->get_title(),
+			'controls' => $this->get_controls(),
+			'tabs_controls' => $this->get_tabs_controls(),
+			'icon' => $this->get_icon(),
+			'reload_preview' => $this->is_reload_preview_required(),
+		];
 	}
 
 	private function _get_child_type( $element_data ) {

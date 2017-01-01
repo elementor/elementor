@@ -120,15 +120,13 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _register_skins() {}
 
-	public function get_config( $item = null ) {
-		$config = parent::get_config( $item );
+	protected function _get_initial_config() {
 
-		$config['widget_type'] = $this->get_name();
-
-		$config['keywords'] = $this->get_keywords();
-
-		return $config;
+		return array_merge( parent::_get_initial_config(), [
+			'widget_type' => $this->get_name(),
+			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
+		] );
 	}
 
 	public final function print_template() {
