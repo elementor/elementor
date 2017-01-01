@@ -37,13 +37,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function __construct( $data = [], $args = null ) {
-		do_action( 'elementor/element/before_construct', $this, $data, $args );
-		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
-
 		parent::__construct( $data, $args );
-
-		do_action( 'elementor/element/after_construct', $this );
-		do_action( 'elementor/element/after_construct/' . $this->get_name(), $this );
 
 		$is_type_instance = $this->is_type_instance();
 
@@ -52,9 +46,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( $is_type_instance ) {
-			do_action( 'elementor/widget/' . $this->get_name() . '/before_register_skins', $this );
 			$this->_register_skins();
-			do_action( 'elementor/widget/' . $this->get_name() . '/after_register_skins', $this );
 		}
 	}
 
