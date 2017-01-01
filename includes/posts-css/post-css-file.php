@@ -340,6 +340,11 @@ class Post_CSS_File {
 			}
 		}
 
-		do_action( 'elementor/element_css/parse_css', $this, $element );
+		/**
+		 * @deprecated, use `elementor/element/parse_css`
+		 */
+		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
+
+		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }
