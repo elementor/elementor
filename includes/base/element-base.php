@@ -269,10 +269,6 @@ abstract class Element_Base {
 		return '';
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'eicon-columns';
 	}
@@ -288,7 +284,6 @@ abstract class Element_Base {
 			'title' => $this->get_title(),
 			'controls' => $this->get_controls(),
 			'tabs_controls' => $this->get_tabs_controls(),
-			'categories' => $this->get_categories(),
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
 		];

@@ -36,6 +36,10 @@ abstract class Widget_Base extends Element_Base {
 		return [];
 	}
 
+	public function get_categories() {
+		return [ 'basic' ];
+	}
+
 	public function __construct( $data = [], $args = null ) {
 		do_action( 'elementor/element/before_construct', $this, $data, $args );
 		do_action( 'elementor/element/before_construct/' . $this->get_name(), $this, $data, $args );
@@ -124,6 +128,7 @@ abstract class Widget_Base extends Element_Base {
 		$config['keywords'] = $this->get_keywords();
 
 		return $config;
+			'categories' => $this->get_categories(),
 	}
 
 	public final function print_template() {

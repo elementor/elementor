@@ -70,7 +70,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		elementsCollection.add( {
 			title: elementor.translate( 'inner_section' ),
 			elType: 'section',
-			categories: sectionConfig.categories,
+			categories: [ 'basic' ],
 			icon: sectionConfig.icon
 		} );
 
