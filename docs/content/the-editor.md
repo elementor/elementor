@@ -2,7 +2,7 @@
 
 Each element in the editor consists of functions and definitions for four main areas:
 
-###Elements Panel
+##Elements Panel
 
 This area contains elements which the user can drag & drop onto the page.
 
@@ -13,7 +13,7 @@ This area contains elements which the user can drag & drop onto the page.
 * Add new elements
 * Add new categories of elements
 
-###Editing Panel
+##Editing Panel
     
 This area allows to edit the properties and settings of each element.
 
@@ -23,7 +23,7 @@ This area allows to edit the properties and settings of each element.
 
 * Add / Change / Remove attributes of existing elements
 
-###Preview
+##Preview
 
 This area displays a live preview of the element, rendered by a JavaScript engine, typically without loading from the server side.
 
@@ -34,7 +34,7 @@ This area displays a live preview of the element, rendered by a JavaScript engin
 * Add / change / remove HTML while rendering the JavaScript
 * Add action controls to every element
 
-###Frontend - Visitor display
+##Frontend - Visitor display
 
 The final result displayed to the visitors on the frontend, is comprised of PHP rendered markup and a page-specific CSS file generated on the server side.
 
