@@ -41,6 +41,4 @@ Argument           | Required   | Type         | Default                      | 
 `label`            | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `type`             | yes        | *`string`*   | `Controls_Manager::ICON`     | The type of the control
 `default`          | no         | *`string`*   |                              | The default value - CSS classes for a default icon.
-`icons`            | no         | *`array`*    | an `array` of **Font Awesome** icons               | An associative array of font-icon classes. `[ 'class-name' => 'nicename', ... ]`
-`include`          | no         | *`array`*    |                              | An array of classes of icons to show (Will only show specified icons)
-`exclude`          | no         | *`array`*    |                              | An array of classes of icons to exclude from the options list
+`fonts`            | no         | *`array`*    | A list of **Google Fonts**   | An associative array of fonts. `[ 'Font Name' => 'family-name', ... ]`
