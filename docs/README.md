@@ -75,6 +75,9 @@ Elementor includes a wide array of controls:
 * [Icon](content/controls/_icon.md) - Choose icon within the font-awesome library. (coming soon)
 * [Entrance Animation](content/controls/_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](content/controls/_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
+
+#####Panel UI Controls
+
 * [Heading](content/controls/_heading.md) - Display the a heading in the panel (coming soon)
 * [Raw HTML](content/controls/_raw-html.md) - Display HTML content in the panel
 * [Separator](content/controls/_separator.md) - Display a separator between fields (coming soon)

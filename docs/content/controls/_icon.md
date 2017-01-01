@@ -9,7 +9,7 @@ A select box of font icons based on the [Font Awesome](http://fontawesome.io/) p
 $this->add_control(
     'icon',
     [
-        'label' => __( 'Social Icon', 'elementor' ),
+        'label' => __( 'Social Icon', 'your-plugin' ),
         'type' => Controls_Manager::ICON,
         'include' => [
             'fa fa-facebook',
