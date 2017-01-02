@@ -550,7 +550,7 @@ abstract class Element_Base {
 		];
 	}
 
-	public function end_controls_tabs() {
+	public function end_controls_tabs_wrapper() {
 		$this->_current_tab = null;
 	}
 
