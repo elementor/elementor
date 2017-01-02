@@ -178,7 +178,7 @@ class Post_CSS_File {
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			wp_add_inline_style( 'elementor-frontend', $meta['css'] );
 		} else {
-			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['time'] );
+			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [ 'elementor-frontend' ], $meta['time'] );
 		}
 
 		// Handle fonts
