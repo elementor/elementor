@@ -497,7 +497,7 @@ abstract class Element_Base {
 		return '.elementor-element-' . $this->get_id();
 	}
 
-	public function start_controls_section( $section_id, $args ) {
+	public function start_controls_section( $section_id, array $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
 
