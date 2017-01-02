@@ -261,4 +261,12 @@ class DB {
 
 		return $data_container;
 	}
+
+	public function is_built_with_elementor( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
+	}
+
 }

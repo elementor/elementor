@@ -292,7 +292,11 @@ abstract class Element_Base {
 
 		$this->_content_template();
 
-		$content_template = apply_filters( 'elementor/elements/print_template', ob_get_clean(),  $this );
+		$content_template = ob_get_clean();
+
+		$content_template = Utils::apply_filters_deprecated( 'elementor/elements/print_template', [ $content_template, $this ], '1.0.10', 'elementor/element/print_template' );
+
+		$content_template = apply_filters( 'elementor/element/print_template', $content_template, $this );
 
 		if ( empty( $content_template ) ) {
 			return;
