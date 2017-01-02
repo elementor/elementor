@@ -71,16 +71,16 @@ Elementor includes a wide array of controls:
 
 * [Color](content/controls/_color.md) - A Color-Picker control with an alpha slider. Includes a customizable color palette that can be preset by the user
 * [Dimensions](content/controls/_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
-* [Font](content/controls/_font.md) - Choose a font from the Google font library. (coming soon)
-* [Icon](content/controls/_icon.md) - Choose icon within the font-awesome library. (coming soon)
+* [Font](content/controls/_font.md) - Choose a font from the Google font library.
+* [Icon](content/controls/_icon.md) - Choose icon within the font-awesome library.
 * [Entrance Animation](content/controls/_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](content/controls/_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 
 #####Panel UI Controls
 
-* [Heading](content/controls/_heading.md) - Display the a heading in the panel (coming soon)
+* [Heading](content/controls/_heading.md) - Display the a heading in the panel
 * [Raw HTML](content/controls/_raw-html.md) - Display HTML content in the panel
-* [Separator](content/controls/_separator.md) - Display a separator between fields (coming soon)
+* [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
 
 ##Additional components
