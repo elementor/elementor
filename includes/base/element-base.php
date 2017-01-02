@@ -533,7 +533,7 @@ abstract class Element_Base {
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
 	}
 
-	public function start_controls_tabs_wrapper( $tabs_id ) {
+	public function start_controls_tabs( $tabs_id ) {
 		if ( null !== $this->_current_tab ) {
 			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) );
 		}
