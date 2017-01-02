@@ -9,6 +9,7 @@ class Frontend {
 	private $_enqueue_google_early_access_fonts = [];
 
 	private $_is_frontend_mode = false;
+	private $_has_elementor_in_page = false;
 
 	/**
 	 * @var Stylesheet
@@ -21,13 +22,17 @@ class Frontend {
 		}
 
 		$this->_is_frontend_mode = true;
+		$this->_has_elementor_in_page = Plugin::instance()->db->is_built_with_elementor( get_the_ID() );
 
 		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+
+		if ( $this->_has_elementor_in_page ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		}
+
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar
@@ -188,6 +193,14 @@ class Frontend {
 	 * Handle style that do not printed in header
 	 */
 	function wp_footer() {
+		if ( ! $this->_has_elementor_in_page ) {
+			return;
+		}
+
+		$this->enqueue_styles();
+
+		$this->enqueue_scripts();
+
 		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
@@ -377,6 +390,10 @@ class Frontend {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
+
+		if ( ! empty( $content ) ) {
+			$this->_has_elementor_in_page = true;
+		}
 
 		// Restore global post
 		if ( isset( $global_post ) ) {
