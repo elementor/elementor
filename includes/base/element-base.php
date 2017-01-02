@@ -675,6 +675,7 @@ abstract class Element_Base {
 		if ( ! $child_type ) {
 			return false;
 		}
+
 		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 	}
 
