@@ -15,6 +15,8 @@ abstract class Element_Base {
 
 	private $_data;
 
+	private $_config;
+
 	/**
 	 * @var Element_Base[]
 	 */
@@ -135,8 +137,8 @@ abstract class Element_Base {
 		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
 
-	public function remove_control( $id ) {
-		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $id );
+	public function remove_control( $control_id ) {
+		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
 	}
 
 	public final function add_group_control( $group_name, array $args = [] ) {
@@ -269,10 +271,6 @@ abstract class Element_Base {
 		return '';
 	}
 
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'eicon-columns';
 	}
@@ -281,19 +279,12 @@ abstract class Element_Base {
 		return false;
 	}
 
-	public function get_config( $item = null ) {
-		$config = [
-			'name' => $this->get_name(),
-			'elType' => $this->get_type(),
-			'title' => $this->get_title(),
-			'controls' => $this->get_controls(),
-			'tabs_controls' => $this->get_tabs_controls(),
-			'categories' => $this->get_categories(),
-			'icon' => $this->get_icon(),
-			'reload_preview' => $this->is_reload_preview_required(),
-		];
+	public final function get_config() {
+		if ( null === $this->_config ) {
+			$this->_config = $this->_get_initial_config();
+		}
 
-		return self::_get_items( $config, $item );
+		return $this->_config;
 	}
 
 	public function print_template() {
@@ -506,7 +497,7 @@ abstract class Element_Base {
 		return '.elementor-element-' . $this->get_id();
 	}
 
-	public function start_controls_section( $section_id, $args ) {
+	public function start_controls_section( $section_id, array $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
 
@@ -665,6 +656,18 @@ abstract class Element_Base {
 		}
 	}
 
+	protected function _get_initial_config() {
+		return [
+			'name' => $this->get_name(),
+			'elType' => $this->get_type(),
+			'title' => $this->get_title(),
+			'controls' => $this->get_controls(),
+			'tabs_controls' => $this->get_tabs_controls(),
+			'icon' => $this->get_icon(),
+			'reload_preview' => $this->is_reload_preview_required(),
+		];
+	}
+
 	private function _get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
 
@@ -672,6 +675,7 @@ abstract class Element_Base {
 		if ( ! $child_type ) {
 			return false;
 		}
+
 		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 	}
 
