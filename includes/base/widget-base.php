@@ -66,7 +66,7 @@ abstract class Widget_Base extends Element_Base {
 		return true;
 	}
 
-	public function start_controls_section( $section_id, $args ) {
+	public function start_controls_section( $section_id, array $args ) {
 		parent::start_controls_section( $section_id, $args );
 
 		static $is_first_section = true;
