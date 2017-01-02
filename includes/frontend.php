@@ -297,11 +297,17 @@ class Frontend {
 			return '';
 		}
 
-		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
-
-		if ( empty( $data ) || 'builder' !== $edit_mode )
+		if ( 'builder' !== $edit_mode ) {
 			return '';
+		}
+
+		$data = Plugin::instance()->db->get_plain_editor( $post_id );
+		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
+
+		if ( empty( $data ) ) {
+			return '';
+		}
 
 		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
