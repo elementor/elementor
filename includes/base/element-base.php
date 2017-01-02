@@ -279,12 +279,12 @@ abstract class Element_Base {
 		return false;
 	}
 
-	public final function get_config( $item = null ) {
+	public final function get_config() {
 		if ( null === $this->_config ) {
 			$this->_config = $this->_get_initial_config();
 		}
 
-		return self::_get_items( $this->_config, $item );
+		return $this->_config;
 	}
 
 	public function print_template() {
