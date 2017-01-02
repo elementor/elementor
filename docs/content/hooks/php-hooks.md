@@ -249,3 +249,162 @@ add_action( 'elementor/editor/before_enqueue_scripts', function() {
 	);
 } );
 ```
+
+start_controls_section
+###`elementor/element/before_section_start`
+###`elementor/element/after_section_end`
+Runs before/after an editor section is registered.
+Here is the place to add additional sections before and after each section for all elements in panel
+If you need to add a section in a specific place ( a specific element & section ), prefer to use the [next hook](###`elementor/element/{$element_name}/{$section_id}/before_section_start`)
+
+####Arguments
+
+Argument          | Type              | Description
+------------      | :------:          | ----------------------
+`element`         | *`Element_Base`*  | The edited element.
+`section_id`      | *`string`*        | Current section  id
+`args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
+ 
+####Example
+
+ ```php
+
+add_action( 'elementor/element/before_section_start', function( $element, $section_id, $args ) {
+	/** @var \Elementor\Element_Base $element */
+	if ( 'section' === $element->get_name() && 'section_background' === $section_id ) {
+
+		$element->start_controls_section(
+			'custom_section',
+			[
+				'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+				'label' => __( 'Custom Section', 'plugin-name' ),
+			]
+		);
+
+		$element->add_control(
+			'custom_control',
+			[
+			'type' => \Elementor\Controls_Manager::NUMBER,
+			'label' => __( 'Custom Control', 'plugin-name' ),
+			]
+		);
+
+		$element->end_controls_section();
+	}
+}, 10, 3 );
+```
+
+###`elementor/element/{$element_name}/{$section_id}/before_section_start`
+###`elementor/element/{element_name}/{section_id}/after_section_end`
+Runs before/after a specific element ( like `heading`) and a specific section ( like `section_title` )
+
+####Arguments
+
+Argument          | Type              | Description
+------------      | :------:          | ----------------------
+`element`         | *`Element_Base`*  | The edited element.
+`args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
+ 
+####Example
+
+```php
+add_action( 'elementor/element/heading/section_title/before_section_start', function( $element, $args ) {
+	/** @var \Elementor\Element_Base $element */
+	$element->start_controls_section(
+		'custom_section',
+		[
+			'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+			'label' => __( 'Custom Section', 'plugin-name' ),
+		]
+	);
+
+	$element->add_control(
+		'custom_control',
+		[
+			'type' => \Elementor\Controls_Manager::NUMBER,
+			'label' => __( 'Custom Control', 'plugin-name' ),
+		]
+	);
+
+	$element->end_controls_section();
+}, 10, 2 );
+```
+
+###`elementor/element/after_section_start`
+###`elementor/element/before_section_end`
+Runs within an editor section. after it was opened / before the section is closed.
+Here is the place to add additional controls to existing sections.
+If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](###`elementor/element/{$element_name}/{$section_id}/after_section_start`)
+
+####Arguments
+
+Argument          | Type              | Description
+------------      | :------:          | ----------------------
+`element`         | *`Element_Base`*  | The edited element.
+`section_id`      | *`string`*        | Current section id
+`args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
+ 
+####Example
+
+```php
+add_action( 'elementor/element/after_section_start', function( $element, $section_id, $args ) {
+	/** @var \Elementor\Element_Base $element */
+	if ( 'section' === $element->get_name() && 'section_background' === $section_id ) {
+		$element->add_control(
+			'custom_control',
+			[
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'label' => __( 'Custom Control', 'plugin-name' ),
+			]
+		);
+	}
+}, 10, 3 );
+```
+
+###`elementor/element/{$element_name}/{$section_id}/after_section_start`
+###`elementor/element/{element_name}/{section_id}/before_section_end`
+
+Runs within an editor section. after it was opened / before the section is closed.
+Here is the place to add additional controls before and after a specific element ( like `heading`) and a specific section ( like `section_title` )
+
+####Arguments
+
+Argument          | Type              | Description
+------------      | :------:          | ----------------------
+`element`         | *`Element_Base`*  | The edited element.
+`args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
+ 
+####Example
+
+```php
+add_action( 'elementor/element/heading/section_title/before_section_start', function( $element, $args ) {
+	/** @var \Elementor\Element_Base $element */
+	$element->add_control(
+		'custom_control',
+		[
+			'type' => \Elementor\Controls_Manager::NUMBER,
+			'label' => __( 'Custom Control', 'plugin-name' ),
+		]
+	);
+}, 10, 2 );
+```
+
+##Preview Actions
+###`elementor/preview/enqueue_styles`
+Before the preview styles enqueuing.
+
+####Arguments
+None
+ 
+####Example
+
+ ```php
+add_action( 'elementor/preview/enqueue_styles', function() {
+	wp_enqueue_style(
+		'elementor-preview-style',
+		url/to/style.css',
+		[],
+		'plugin-version'
+	);
+} );
+```
