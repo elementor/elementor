@@ -448,7 +448,7 @@ RevisionsManager = function() {
 	};
 
 	self.attachEvents = function() {
-		elementor.channels.editor.on( 'editor:saved', self.onEditorSaved );
+		elementor.channels.editor.on( 'saved', self.onEditorSaved );
 	};
 
 	self.onEditorSaved = function( data ) {
@@ -523,8 +523,8 @@ module.exports = Marionette.CompositeView.extend( {
 	isFirstChange: true,
 
 	initialize: function() {
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.setApplyButtonState );
-		this.listenTo( elementor.channels.editor, 'editor:saved', this.onEditorSaved );
+		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState );
+		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
 	setApplyButtonState: function( editorChanged ) {
@@ -1623,7 +1623,7 @@ App = Marionette.Application.extend( {
 				order: require( 'elementor-views/controls/order' )
 			};
 
-			this.channels.editor.trigger( 'editor:controls:initialize' );
+			this.channels.editor.trigger( 'controls:initialize' );
 		}
 
 		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
@@ -1861,12 +1861,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'editor:changed', status )
-			.trigger( 'editor:changed', status );
+			.reply( 'change', status )
+			.trigger( 'change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'editor:changed' ) );
+		return ( true === elementor.channels.editor.request( 'change' ) );
 	},
 
 	setWorkSaver: function() {
@@ -1904,11 +1904,10 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function( PreviewAreaOnly ) {
-		var $elements = this.$previewContents
-			.find( 'body' );
+	enterPreviewMode: function( previewAreaOnly ) {
+		var $elements = this.$previewContents.find( 'body' );
 
-		if ( ! PreviewAreaOnly ) {
+		if ( ! previewAreaOnly ) {
 			$elements = $elements.add( 'body' );
 		}
 
@@ -1916,7 +1915,7 @@ App = Marionette.Application.extend( {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		if ( ! PreviewAreaOnly ) {
+		if ( ! previewAreaOnly ) {
 			// Handle panel resize
 			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
 
@@ -1924,11 +1923,10 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	exitPreviewMode: function( PreviewAreaOnly ) {
-		var $elements = this.$previewContents
-			.find( 'body' );
+	exitPreviewMode: function( previewAreaOnly ) {
+		var $elements = this.$previewContents.find( 'body' );
 
-		if ( ! PreviewAreaOnly ) {
+		if ( ! previewAreaOnly ) {
 			$elements = $elements.add( 'body' );
 		}
 
@@ -1956,7 +1954,7 @@ App = Marionette.Application.extend( {
 
 				elementor.setFlagEditorChange( false );
 
-				elementor.channels.editor.trigger( 'editor:saved', data );
+				elementor.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
@@ -2118,7 +2116,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
+		this.listenTo( elementor.channels.editor, 'change', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
