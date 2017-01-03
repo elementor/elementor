@@ -10,7 +10,7 @@ This is the place to add a form handlers.
 
 Argument          | Type                             | Description
 ------------      | :------:                         | ---------------------------------------------
-`module`          | *`ElementorPro\Modules\Forms `*  | The entire Elementor HTML output of current page/post
+`module`          | *`ElementorPro\Modules\Forms`*  | The entire Elementor HTML output of current page/post
  
 ####Example
 
@@ -30,10 +30,10 @@ This is the place to add a form handlers.
 
 Argument        | Type        | Description
 ------------    | :--------:  | ---------------------------------------------
-`return_array`  | *`array `*  | an array of errors. [ 'fields' => [ 0 => 'Cannot be blank', 1 => ... ]  ]
-`form_id`       | *`string `* | The unique form id
-`settings`      | *`array `*  | The form settings
-`form_raw_data` | *`array `*  | The POST data that sent
+`return_array`  | *`array`*  | an array of errors. [ 'fields' => [ 0 => 'Cannot be blank', 1 => ... ]  ]
+`form_id`       | *`string`* | The unique form id
+`settings`      | *`array`*  | The form settings
+`form_raw_data` | *`array`*  | The POST data that sent
  
 ####Example
 
@@ -65,18 +65,17 @@ here is the place to remove/edit the fields that will be sent to the email.
 
 Argument        | Type        | Description
 ------------    | :--------:  | ---------------------------------------------
-`record`        | *`array `*  | The `$record` is an array [ 'fields' => [...], 'meta' => [...] ]. The `fields` are the submitted data, The `meta` is the meta data like user agent, ip and etc that attached to the email message. each of the `fields` and the `meta` fields are arrays: [ 'type' => 'text/select/...', 'title' => 'Field Label', 'value' => 'The submitted value']. Use `Ajax_Handler::get_formatted_data` to get it as an array of `$title => $value`. But if two fields have the same title - one of them will be overridden.
-`form_id`       | *`string `* | The unique form id
-`settings`      | *`array `*  | The form settings
+`record`        | *`array`*  | The `$record` is an array [ 'fields' => [...], 'meta' => [...] ]. The `fields` are the submitted data, The `meta` is the meta data like user agent, ip and etc that attached to the email message. each of the `fields` and the `meta` fields are arrays: [ 'type' => 'text/select/...', 'title' => 'Field Label', 'value' => 'The submitted value']. Use `Ajax_Handler::get_formatted_data` to get it as an array of `$title => $value`. But if two fields have the same title - one of them will be overridden.
+`form_id`       | *`string`* | The unique form id
+`settings`      | *`array`*  | The form settings
 
 ####Example
 
 ```php
-add_filter(	'elementor_pro/forms/validation', function ( $return_array, $form_id, $settings, $form_raw_data ) {
+add_filter( 'elementor_pro/forms/validation', function( $return_array, $form_id, $settings, $form_raw_data ) {
 	// Validate the Ticket ID field is in XXX-XXXX format.
 	$fields = $settings['form_fields'];
 
-	// Get
 	foreach ( $fields as $field_index => $field ) {
 		if ( 'Ticket ID' === $field['field_label'] ) {
 			if ( 1 !== preg_match( '/^\w{3}-\w{4}$/', $form_raw_data[ $field_index ] ) ) {
@@ -104,10 +103,10 @@ If the form has a webhook, it's fires here.
 
 Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
-`args`     | *`array `*  | The `wp_remote_post` $args argument
-`form_id`  | *`string `* | The unique form id
-`settings` | *`array `*  | The form settings
-`record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
+`args`     | *`array`*  | The `wp_remote_post` $args argument
+`form_id`  | *`string`* | The unique form id
+`settings` | *`array`*  | The form settings
+`record`   | *`array`*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
 ##Webhooks Request - Filter 
 
@@ -118,10 +117,10 @@ If the form has a webhook, it's fires here.
 
 Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
-`response`     | *`array/WP_Error `*  | The `wp_remote_post response`. See [https://codex.wordpress.org/Function_Reference/wp_remote_retrieve_response_message]()
-`form_id`  | *`string `* | The unique form id
-`settings` | *`array `*  | The form settings
-`record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
+`response`     | *`array/WP_Error`*  | The `wp_remote_post response`. See [https://codex.wordpress.org/Function_Reference/wp_remote_retrieve_response_message]()
+`form_id`  | *`string`* | The unique form id
+`settings` | *`array`*  | The form settings
+`record`   | *`array`*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
 
 ##Before send to target email - Filters:
@@ -133,9 +132,9 @@ Whether to skip the email sending.
 Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
 `skip`    | *`bool`*    | Whether to skip the email sending. Default false - don't skip..
-`form_id`  | *`string `* | The unique form id
-`settings` | *`array `*  | The form settings
-`record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
+`form_id`  | *`string`* | The unique form id
+`settings` | *`array`*  | The form settings
+`record`   | *`array`*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
 ###`elementor_pro/forms/wp_mail_headers`
 
@@ -162,9 +161,9 @@ Argument   | Type        | Description
 
 Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
-`form_id`  | *`string `* | The unique form id
-`settings` | *`array `*  | The form settings
-`record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
+`form_id`  | *`string`* | The unique form id
+`settings` | *`array`*  | The form settings
+`record`   | *`array`*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
 ###`elementor_pro/forms/mail_blocked`
 If the email sending fails
@@ -173,6 +172,6 @@ If the email sending fails
 
 Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
-`form_id`  | *`string `* | The unique form id
-`settings` | *`array `*  | The form settings
-`record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
+`form_id`  | *`string`* | The unique form id
+`settings` | *`array`*  | The form settings
+`record`   | *`array`*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
