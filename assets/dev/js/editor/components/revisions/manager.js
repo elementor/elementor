@@ -13,7 +13,7 @@ RevisionsManager = function() {
 	};
 
 	self.attachEvents = function() {
-		elementor.channels.editor.on( 'editor:saved', self.onEditorSaved );
+		elementor.channels.editor.on( 'saved', self.onEditorSaved );
 	};
 
 	self.onEditorSaved = function( data ) {

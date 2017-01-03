@@ -114,7 +114,7 @@ App = Marionette.Application.extend( {
 				order: require( 'elementor-views/controls/order' )
 			};
 
-			this.channels.editor.trigger( 'editor:controls:initialize' );
+			this.channels.editor.trigger( 'controls:initialize' );
 		}
 
 		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
@@ -352,12 +352,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'editor:changed', status )
-			.trigger( 'editor:changed', status );
+			.reply( 'change', status )
+			.trigger( 'change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'editor:changed' ) );
+		return ( true === elementor.channels.editor.request( 'change' ) );
 	},
 
 	setWorkSaver: function() {
@@ -447,7 +447,7 @@ App = Marionette.Application.extend( {
 
 				elementor.setFlagEditorChange( false );
 
-				elementor.channels.editor.trigger( 'editor:saved', data );
+				elementor.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );

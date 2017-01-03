@@ -28,8 +28,8 @@ module.exports = Marionette.CompositeView.extend( {
 	isFirstChange: true,
 
 	initialize: function() {
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.setApplyButtonState );
-		this.listenTo( elementor.channels.editor, 'editor:saved', this.onEditorSaved );
+		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState );
+		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
 	setApplyButtonState: function( editorChanged ) {
