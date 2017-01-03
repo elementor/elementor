@@ -22,6 +22,7 @@ App = Marionette.Application.extend( {
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-utils/ajax' ),
 	conditions: require( 'elementor-utils/conditions' ),
+	revisions:  require( 'elementor-revisions/manager' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -37,8 +38,7 @@ App = Marionette.Application.extend( {
 		WidgetView: require( 'elementor-views/widget' ),
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
-		},
-		revisions:  require( 'elementor-revisions/editor' )
+		}
 	},
 
 	// Private Members
@@ -134,8 +134,7 @@ App = Marionette.Application.extend( {
 		this.heartbeat.init();
 		this.modals.init();
 		this.ajax.init();
-
-		this.revisions = new this.modules.revisions;
+		this.revisions.init();
 	},
 
 	initDialogsManager: function() {

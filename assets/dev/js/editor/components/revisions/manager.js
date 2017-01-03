@@ -1,4 +1,6 @@
-module.exports = function() {
+var RevisionsManager;
+
+RevisionsManager = function() {
 	var self = this;
 
 	self.addPanelPage = function() {
@@ -26,6 +28,6 @@ module.exports = function() {
 			self.attachEvents();
 		} );
 	};
-
-	self.init();
 };
+
+module.exports = new RevisionsManager();
