@@ -395,11 +395,10 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function( PreviewAreaOnly ) {
-		var $elements = this.$previewContents
-			.find( 'body' );
+	enterPreviewMode: function( previewAreaOnly ) {
+		var $elements = this.$previewContents.find( 'body' );
 
-		if ( ! PreviewAreaOnly ) {
+		if ( ! previewAreaOnly ) {
 			$elements = $elements.add( 'body' );
 		}
 
@@ -407,7 +406,7 @@ App = Marionette.Application.extend( {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		if ( ! PreviewAreaOnly ) {
+		if ( ! previewAreaOnly ) {
 			// Handle panel resize
 			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
 
@@ -415,11 +414,10 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	exitPreviewMode: function( PreviewAreaOnly ) {
-		var $elements = this.$previewContents
-			.find( 'body' );
+	exitPreviewMode: function( previewAreaOnly ) {
+		var $elements = this.$previewContents.find( 'body' );
 
-		if ( ! PreviewAreaOnly ) {
+		if ( ! previewAreaOnly ) {
 			$elements = $elements.add( 'body' );
 		}
 
