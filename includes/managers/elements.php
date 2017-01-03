@@ -135,7 +135,7 @@ class Elements_Manager {
 
 		$return_data = [];
 
-		$latest_revisions = Plugin::instance()->db->get_revisions( $_POST['post_id'], [
+		$latest_revisions = Revisions_Manager::get_revisions( $_POST['post_id'], [
 			'posts_per_page' => 1,
 		] );
 

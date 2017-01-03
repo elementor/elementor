@@ -41,12 +41,12 @@ class DB {
 			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
 
 			if ( $is_meta_updated ) {
-				$this->handle_revision();
+				Revisions_Manager::handle_revision();
 			}
 
 			$this->_save_plain_text( $post_id );
 		} elseif ( self::STATUS_AUTOSAVE === $status ) {
-			$this->handle_revision();
+			Revisions_Manager::handle_revision();
 
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
@@ -277,28 +277,7 @@ class DB {
 		return $data_container;
 	}
 
-	function handle_revision() {
-		add_filter( 'wp_save_post_revision_post_has_changed', '__return_true' );
-		add_action( '_wp_put_post_revision', [ $this, 'save_revision' ] );
-	}
-
-	function save_revision( $revision_id ) {
-		$parent_id = wp_is_post_revision( $revision_id );
-		if ( ! $parent_id ) {
-			return;
-		}
-
-		$this->copy_elementor_meta( $parent_id, $revision_id );
-	}
-
-	function restore_revision( $parent_id, $revision_id ) {
-		$this->copy_elementor_meta( $revision_id, $parent_id, true );
-		$post_css = new Post_CSS_File( $parent_id );
-		$post_css->update();
-
-	}
-
-	private function copy_elementor_meta( $from_post_id, $to_post_id, $update = false ) {
+	public function copy_elementor_meta( $from_post_id, $to_post_id, $update = false ) {
 		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
 			return;
 		}
@@ -329,45 +308,6 @@ class DB {
 		$edit_mode = $this->get_edit_mode( $post_id );
 
 		return ( ! empty( $data ) && 'builder' === $edit_mode );
-	}
-
-	public function __construct() {
-		add_action( 'wp_restore_post_revision', [ $this, 'restore_revision' ], 10, 2 );
-	}
-
-	public function get_revisions( $post_id = 0, $query_args = [] ) {
-		$post = get_post( $post_id );
-		if ( ! $post || empty( $post->ID ) ) {
-			return [];
-		}
-
-		$revisions = [];
-
-		$query_args['meta_key'] = '_elementor_data';
-
-		$posts = wp_get_post_revisions( $post->ID, $query_args );
-
-		/** @var \WP_Post $revision */
-		foreach ( $posts as $revision ) {
-			$date = date_i18n( _x( 'F j@ H:i:s', 'revision date format' ), strtotime( $revision->post_modified ) );
-			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
-
-			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
-				$type = __( 'Autosave', 'elementor' );
-			} else {
-				$type = __( 'Revision', 'elementor' );
-			}
-
-			$revisions[] = [
-				'id' => $revision->ID,
-				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
-				'date' => sprintf( __( '%1$s ago (%2$s)' ), $human_time, $date ),
-				'type' => $type,
-				'gravatar' => get_avatar( $revision->post_author, 24 ),
-			];
-		}
-
-		return $revisions;
 	}
 
 	public function has_elementor_in_post( $post_id ) {

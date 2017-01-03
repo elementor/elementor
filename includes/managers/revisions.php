@@ -6,10 +6,70 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Revisions_Manager {
 
 	public function __construct() {
-		$this->register_actions();
+		self::register_actions();
 	}
 
-	public function on_revision_preview_request() {
+	public static function handle_revision() {
+		add_filter( 'wp_save_post_revision_post_has_changed', '__return_true' );
+		add_action( '_wp_put_post_revision', [ 'self', 'save_revision' ] );
+	}
+
+	public static function get_revisions( $post_id = 0, $query_args = [] ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post || empty( $post->ID ) ) {
+			return [];
+		}
+
+		$revisions = [];
+
+		$query_args['meta_key'] = '_elementor_data';
+
+		$posts = wp_get_post_revisions( $post->ID, $query_args );
+
+		/** @var \WP_Post $revision */
+		foreach ( $posts as $revision ) {
+			$date = date_i18n( _x( 'F j@ H:i:s', 'revision date format' ), strtotime( $revision->post_modified ) );
+			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
+
+			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
+				$type = __( 'Autosave', 'elementor' );
+			} else {
+				$type = __( 'Revision', 'elementor' );
+			}
+
+			$revisions[] = [
+				'id' => $revision->ID,
+				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
+				'date' => sprintf( __( '%1$s ago (%2$s)' ), $human_time, $date ),
+				'type' => $type,
+				'gravatar' => get_avatar( $revision->post_author, 24 ),
+			];
+		}
+
+		return $revisions;
+	}
+
+	public static function save_revision( $revision_id ) {
+		$parent_id = wp_is_post_revision( $revision_id );
+
+		if ( ! $parent_id ) {
+			return;
+		}
+
+		Plugin::instance()->db->copy_elementor_meta( $parent_id, $revision_id );
+	}
+
+	public static function restore_revision( $parent_id, $revision_id ) {
+		Plugin::instance()->db->copy_elementor_meta( $revision_id, $parent_id, true );
+
+		$post_css = new Post_CSS_File( $parent_id );
+
+		$post_css->update();
+
+	}
+
+	public static function on_revision_preview_request() {
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( __( 'You must set the id', 'elementor' ) );
 		}
@@ -23,7 +83,7 @@ class Revisions_Manager {
 		wp_send_json_success( $revision );
 	}
 
-	public function on_delete_revision_request() {
+	public static function on_delete_revision_request() {
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( __( 'You must set the id', 'elementor' ) );
 		}
@@ -43,10 +103,12 @@ class Revisions_Manager {
 		}
 	}
 
-	private function register_actions() {
+	private static function register_actions() {
+		add_action( 'wp_restore_post_revision', [ 'self', 'restore_revision' ], 10, 2 );
+
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_get_revision_preview', [ $this, 'on_revision_preview_request' ] );
-			add_action( 'wp_ajax_elementor_delete_revision', [ $this, 'on_delete_revision_request' ] );
+			add_action( 'wp_ajax_elementor_get_revision_preview', [ 'self', 'on_revision_preview_request' ] );
+			add_action( 'wp_ajax_elementor_delete_revision', [ 'self', 'on_delete_revision_request' ] );
 		}
 	}
 }
