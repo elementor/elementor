@@ -497,11 +497,34 @@ App = Marionette.Application.extend( {
 	},
 
 	logSite: function() {
-		console.log( '%c  \n' + '%cFor more information, tutorials and issues, please visit our official site:' + '%c https://elementor.com/',
-			'line-height: 1.6; font-size: 20px; background-image: url("http://tinyurl.com/zddf3ct"); color: transparent; background-repeat: no-repeat; background-size: cover',
-			'color: #9B0A46',
-			''
-		);
+		var text = '',
+			style = '';
+
+		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+			var asciiText = [
+				' ;;;;;;;;;;;;;;; ',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				' ;;;;;;;;;;;;;;; '
+			];
+
+			text += '%c' + asciiText.join( '\n' ) + '\n';
+
+			style = 'color: #C42961';
+		} else {
+			text += '%c  ';
+
+			style = 'line-height: 1.6; font-size: 20px; background-image: url("https://tinyurl.com/zddf3ct"); color: transparent; background-repeat: no-repeat; background-size: cover';
+		}
+
+		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+
+		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
 	}
 } );
 
