@@ -95,7 +95,6 @@ add_filter(	'elementor_pro/forms/validation', function ( $return_array, $form_id
 ###`elementor_pro/forms/valid_record_submitted`
 Same as the [`elementor_pro/forms/record`](###`elementor_pro/forms/record`), but an action.
 
-
 ##Webhooks Request - Filter 
 
 ###`elementor_pro/forms/webhooks/request_args`
@@ -109,11 +108,6 @@ Argument   | Type        | Description
 `form_id`  | *`string `* | The unique form id
 `settings` | *`array `*  | The form settings
 `record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
-
-####Example
-
-```php
-```
 
 ##Webhooks Request - Filter 
 
@@ -129,10 +123,6 @@ Argument   | Type        | Description
 `settings` | *`array `*  | The form settings
 `record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
-####Example
-
-```php
-```
 
 ##Before send to target email - Filters:
 ###`elementor_pro/forms/skip_send`
@@ -147,11 +137,6 @@ Argument   | Type        | Description
 `settings` | *`array `*  | The form settings
 `record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
-####Example
-
-```php
-```
-
 ###`elementor_pro/forms/wp_mail_headers`
 
 ####Arguments
@@ -159,11 +144,6 @@ Argument   | Type        | Description
 Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
 `headers`  | *`string`*  | The email headers for `wp_mail` arguments
-
-####Example
-
-```php
-```
 
 ###`elementor_pro/forms/wp_mail_message`
 
@@ -173,10 +153,6 @@ Argument   | Type        | Description
 ---------- | :--------:  | ---------------------------------------------
 `email_html`  | *`string`*  | The email html content for `wp_mail` arguments
 
-####Example
-
-```php
-```
 
 ##After email sent successfully - Actions
 
@@ -190,12 +166,6 @@ Argument   | Type        | Description
 `settings` | *`array `*  | The form settings
 `record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
-####Example
-
-```php
-```
-
-
 ###`elementor_pro/forms/mail_blocked`
 If the email sending fails
 
@@ -206,8 +176,3 @@ Argument   | Type        | Description
 `form_id`  | *`string `* | The unique form id
 `settings` | *`array `*  | The form settings
 `record`   | *`array `*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
-
-####Example
-
-```php
-```
