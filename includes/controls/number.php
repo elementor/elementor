@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                          Default empty
  * @param integer $max      The maximum number (Only affects the spinners, the user can still type a higher value)
  *                          Default empty
- * @param integer $step     The intervals for the scroll bars
+ * @param integer $step     The intervals value that will be incremented or decremented when using the controls' spinners
  *                          Default empty (The value will be incremented by 1)
  *
  * @since 1.0.0

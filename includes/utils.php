@@ -83,4 +83,20 @@ class Utils {
 
 		return $timezone_string;
 	}
+
+	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
+			do_action_deprecated( $tag, $args, $version, $replacement, $message );
+		} else {
+			do_action_ref_array( $tag, $args );
+		}
+	}
+
+	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
+			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
+		} else {
+			return apply_filters_ref_array( $tag, $args );
+		}
+	}
 }

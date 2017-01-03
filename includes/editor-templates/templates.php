@@ -29,22 +29,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
-		{{{ getActionButton( isPro ) }}}
+		{{{ elementor.templates.getLayout().getTemplateActionButton( isPro ) }}}
 	</div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-template-library-header-preview-insert-button">
-	<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-		<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
-	</button>
-</script>
-
-<script type="text/template" id="tmpl-elementor-template-library-header-preview-get-pro-button">
-	<button id="elementor-template-library-header-preview-get-pro" class="elementor-template-library-template-get-pro elementor-button elementor-button-go-pro">
-		<a target="_blank" href="https://go.elementor.com/pro-library/">
-			<span class="fa fa-external-link-square"></span><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
-		</a>
-	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
@@ -78,25 +64,21 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-template-library-template-preview">
 				<i class="fa fa-search-plus"></i>
 			</div>
-			{{{ getActionButton( isPro ) }}}
+			{{{ elementor.templates.getLayout().getTemplateActionButton( isPro ) }}}
 		</div>
 	</div>
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
-	<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-		<i class="eicon-file-download"></i>
-		<?php _e( 'Insert', 'elementor' ); ?>
+	<button class="elementor-template-library-template-insert elementor-button elementor-button-success" data-action="insert">
+		<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
-	<button class="elementor-template-library-template-get-pro elementor-button elementor-button-go-pro">
-		<a target="_blank" href="https://go.elementor.com/pro-library/">
-			<span class="fa fa-external-link-square"></span>
-			<?php _e( 'Go Pro', 'elementor' ); ?>
-		</a>
+	<button class="elementor-template-library-template-insert elementor-button elementor-button-go-pro" data-action="get-pro">
+		<i class="fa fa-external-link-square"></i><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
 	</button>
 </script>
 

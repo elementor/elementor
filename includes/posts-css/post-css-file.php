@@ -173,7 +173,7 @@ class Post_CSS_File {
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			wp_add_inline_style( 'elementor-frontend', $meta['css'] );
 		} else {
-			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['time'] );
+			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [ 'elementor-frontend' ], $meta['time'] );
 		}
 
 		// Handle fonts
@@ -335,6 +335,11 @@ class Post_CSS_File {
 			}
 		}
 
-		do_action( 'elementor/element_css/parse_css', $this, $element );
+		/**
+		 * @deprecated, use `elementor/element/parse_css`
+		 */
+		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
+
+		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }

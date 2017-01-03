@@ -105,8 +105,8 @@ class Element_Section extends Element_Base {
 		}
 	}
 
-	public function get_config( $item = null ) {
-		$config = parent::get_config( $item );
+	protected function _get_initial_config() {
+		$config = parent::_get_initial_config();
 
 		$config['presets'] = self::get_presets();
 
