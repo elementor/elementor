@@ -80,6 +80,11 @@ class Editor {
 			return true;
 		}
 
+		// In some Apache configurations, in the Home page, the $_GET['elementor'] is not set
+		if ( '/?elementor' === $_SERVER['REQUEST_URI'] ) {
+			return true;
+		}
+
 		// Ajax request as Editor mode
 		$actions = [
 			'elementor_render_widget',
