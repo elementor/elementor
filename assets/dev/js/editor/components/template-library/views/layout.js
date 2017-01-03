@@ -27,6 +27,16 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		return this.getRegion( 'modalHeader' ).currentView;
 	},
 
+	getTemplateActionButton: function( isPro ) {
+		var templateId = '#tmpl-elementor-template-library-' + ( isPro ? 'get-pro-button' : 'insert-button' );
+
+		templateId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', templateId );
+
+		var template = Marionette.TemplateCache.get( templateId );
+
+		return Marionette.Renderer.render( template );
+	},
+
 	showLoadingView: function() {
 		this.modalContent.show( new TemplateLibraryLoadingView() );
 	},

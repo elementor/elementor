@@ -26,9 +26,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 abstract class Control_Base {
 
 	private $_base_settings = [
+		'label' => '',
 		'separator' => 'default',
-		'label_block' => false,
 		'show_label' => true,
+		'label_block' => false,
+		'title' => '',
+		'placeholder' => '',
+		'description' => '',
 	];
 
 	private $_settings = [];
@@ -47,14 +51,14 @@ abstract class Control_Base {
 		return '';
 	}
 
-	public function get_value( $control, $instance ) {
+	public function get_value( $control, $widget ) {
 		if ( ! isset( $control['default'] ) )
 			$control['default'] = $this->get_default_value();
 
-		if ( ! isset( $instance[ $control['name'] ] ) )
+		if ( ! isset( $widget[ $control['name'] ] ) )
 			return $control['default'];
 
-		return $instance[ $control['name'] ];
+		return $widget[ $control['name'] ];
 	}
 
 	public function get_style_value( $css_property, $control_value ) {

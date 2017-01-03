@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 1.0.7
+Stable tag: 1.0.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -161,9 +161,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.0.9 - 27.12.2016 =
+* Fix! - Elementor library import remote template
+
 = 1.0.8 - 27.12.2016 =
-* Tweak! - Added raw css support for stylsheet class ([#1086](https://github.com/pojome/elementor/issues/1086))
-* Tweak! - Improve memory used in the editor mode ([Topic](Topic https://wordpress.org/support/topic/need-update-folks/))
+* Tweak! - Added raw css support for stylesheet class ([#1086](https://github.com/pojome/elementor/issues/1086))
+* Tweak! - Improve memory used in the editor mode ([Topic](https://wordpress.org/support/topic/need-update-folks/))
 * Fix! - Issue with post-css-file in HTTPS ([#1077](https://github.com/pojome/elementor/issues/1077))
 
 = 1.0.7 - 25.12.2016 =

@@ -369,4 +369,11 @@ class DB {
 
 		return $revisions;
 	}
+
+	public function has_elementor_in_post( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
+	}
 }

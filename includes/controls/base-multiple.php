@@ -15,8 +15,8 @@ abstract class Control_Base_Multiple extends Control_Base {
 		return [];
 	}
 
-	public function get_value( $control, $instance ) {
-		$value = parent::get_value( $control, $instance );
+	public function get_value( $control, $widget ) {
+		$value = parent::get_value( $control, $widget );
 
 		if ( empty( $control['default'] ) )
 			$control['default'] = [];

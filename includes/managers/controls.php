@@ -58,7 +58,7 @@ class Controls_Manager {
 	/**
 	 * @var Group_Control_Base[]
 	 */
-	private $_group_controls = [];
+	private $_control_groups = [];
 
 	private $_controls_stack = [];
 
@@ -148,11 +148,11 @@ class Controls_Manager {
 		require( ELEMENTOR_PATH . 'includes/controls/groups/image-size.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/groups/box-shadow.php' );
 
-		$this->_group_controls['background'] = new Group_Control_Background();
-		$this->_group_controls['border'] = new Group_Control_Border();
-		$this->_group_controls['typography'] = new Group_Control_Typography();
-		$this->_group_controls['image-size'] = new Group_Control_Image_Size();
-		$this->_group_controls['box-shadow'] = new Group_Control_Box_Shadow();
+		$this->_control_groups['background'] = new Group_Control_Background();
+		$this->_control_groups['border']     = new Group_Control_Border();
+		$this->_control_groups['typography'] = new Group_Control_Typography();
+		$this->_control_groups['image-size'] = new Group_Control_Image_Size();
+		$this->_control_groups['box-shadow'] = new Group_Control_Box_Shadow();
 	}
 
 	/**
@@ -237,10 +237,17 @@ class Controls_Manager {
 
 	/**
 	 * @since 1.0.0
-	 * @return Group_Control_Base[]
+	 *
+	 * @param string $id
+	 *
+	 * @return Group_Control_Base|Group_Control_Base[]
 	 */
-	public function get_group_controls() {
-		return $this->_group_controls;
+	public function get_control_groups( $id = null ) {
+		if ( $id ) {
+			return isset( $this->_control_groups[ $id ] ) ? $this->_control_groups[ $id ] : null;
+		}
+
+		return $this->_control_groups;
 	}
 
 	/**
@@ -252,7 +259,7 @@ class Controls_Manager {
 	 * @return Group_Control_Base[]
 	 */
 	public function add_group_control( $id, $instance ) {
-		return $this->_group_controls[ $id ] = $instance;
+		return $this->_control_groups[ $id ] = $instance;
 	}
 
 	/**

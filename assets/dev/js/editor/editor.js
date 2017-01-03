@@ -230,6 +230,8 @@ App = Marionette.Application.extend( {
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
+
+		this.logSite();
 	},
 
 	onPreviewLoaded: function() {
@@ -509,6 +511,14 @@ App = Marionette.Application.extend( {
 		}
 
 		return string;
+	},
+
+	logSite: function() {
+		console.log( '%c  \n' + '%cFor more information, tutorials and issues, please visit our official site:' + '%c https://elementor.com/',
+			'line-height: 1.6; font-size: 20px; background-image: url("http://tinyurl.com/zddf3ct"); color: transparent; background-repeat: no-repeat; background-size: cover',
+			'color: #9B0A46',
+			''
+		);
 	}
 } );
 
