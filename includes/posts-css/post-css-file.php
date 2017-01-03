@@ -169,7 +169,9 @@ class Post_CSS_File {
 			return;
 		}
 
-		if ( apply_filters( 'elementor/css_file/update', version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ), $this ) ) {
+		$needs_update = version_compare( ELEMENTOR_VERSION, $meta['version'], '>' );
+
+		if ( apply_filters( 'elementor/css_file/update', $needs_update, $this ) ) {
 			$this->update();
 			// Refresh new meta
 			$meta = $this->get_meta();
