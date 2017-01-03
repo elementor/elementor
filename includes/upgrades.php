@@ -32,6 +32,12 @@ class Upgrades {
 			self::_upgrade_v0110();
 			update_option( 'elementor_version', '0.11.0' );
 		}
+
+		if ( version_compare( $elementor_version, ELEMENTOR_VERSION, '<' ) ) {
+			Plugin::instance()->posts_css_manager->clear_cache();
+		}
+
+		update_option( 'elementor_version', ELEMENTOR_VERSION );
 	}
 
 	private static function _upgrade_v032() {

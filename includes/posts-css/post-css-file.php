@@ -124,7 +124,6 @@ class Post_CSS_File {
 		$this->parse_elements_css();
 
 		$meta = [
-			'version' => ELEMENTOR_VERSION,
 			'time' => time(),
 			'fonts' => array_unique( $this->fonts ),
 		];
@@ -167,14 +166,6 @@ class Post_CSS_File {
 
 		if ( self::CSS_STATUS_EMPTY === $meta['status'] ) {
 			return;
-		}
-
-		$needs_update = version_compare( ELEMENTOR_VERSION, $meta['version'], '>' );
-
-		if ( apply_filters( 'elementor/css_file/update', $needs_update, $this ) ) {
-			$this->update();
-			// Refresh new meta
-			$meta = $this->get_meta();
 		}
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
@@ -235,7 +226,6 @@ class Post_CSS_File {
 		$meta = get_post_meta( $this->post_id, self::META_KEY_CSS, true );
 
 		$defaults = [
-			'version' => '',
 			'status'  => '',
 		];
 
