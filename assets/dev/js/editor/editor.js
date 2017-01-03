@@ -522,7 +522,7 @@ App = Marionette.Application.extend( {
 			style = 'line-height: 1.6; font-size: 20px; background-image: url("http://tinyurl.com/zddf3ct"); color: transparent; background-repeat: no-repeat; background-size: cover';
 		}
 
-		text += '%c\nFor more information, tutorials and issues, please visit our official site: %chttps://elementor.com/';
+		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
 
 		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
 	}
