@@ -11,7 +11,7 @@ class Revisions_Manager {
 
 	public static function handle_revision() {
 		add_filter( 'wp_save_post_revision_post_has_changed', '__return_true' );
-		add_action( '_wp_put_post_revision', [ 'self', 'save_revision' ] );
+		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
 	}
 
 	public static function get_revisions( $post_id = 0, $query_args = [] ) {
@@ -104,11 +104,11 @@ class Revisions_Manager {
 	}
 
 	private static function register_actions() {
-		add_action( 'wp_restore_post_revision', [ 'self', 'restore_revision' ], 10, 2 );
+		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_get_revision_preview', [ 'self', 'on_revision_preview_request' ] );
-			add_action( 'wp_ajax_elementor_delete_revision', [ 'self', 'on_delete_revision_request' ] );
+			add_action( 'wp_ajax_elementor_get_revision_preview', [ __CLASS__, 'on_revision_preview_request' ] );
+			add_action( 'wp_ajax_elementor_delete_revision', [ __CLASS__, 'on_delete_revision_request' ] );
 		}
 	}
 }
