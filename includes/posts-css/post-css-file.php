@@ -168,6 +168,12 @@ class Post_CSS_File {
 			return;
 		}
 
+		// First time after clear cache and etc.
+		if ( '' === $meta['status'] ) {
+			$this->update();
+			$meta = $this->get_meta();
+		}
+
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			wp_add_inline_style( 'elementor-frontend', $meta['css'] );
 		} else {
