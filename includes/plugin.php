@@ -225,7 +225,6 @@ class Plugin {
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ], 0 );
 
-		// TODO: Declare this fields
 		$this->_includes();
 	}
 }
