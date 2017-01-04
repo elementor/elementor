@@ -17,10 +17,6 @@
 		}
 	}
 
-	.elementor-state-icon {
-		@include padding-end(10px);
-	}
-
 	&.elementor-button-success {
 		color: #fff;
 
@@ -73,5 +69,9 @@
 		&:visited {
 			color: #fff;
 		}
+	}
+
+	i {
+		@include margin-end(10px);
 	}
 }
