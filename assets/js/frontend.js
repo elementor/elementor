@@ -220,11 +220,16 @@ module.exports = function( $scope, $ ) {
 },{}],5:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	elementorFrontend.utils.waypoint( $scope.find( '.elementor-counter-number' ), function() {
-		var $number = $( this );
+		var $number = $( this ),
+			data = $number.data();
 
-		$number.numerator( {
-			duration: $number.data( 'duration' )
-		} );
+		var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+
+		if ( decimalDigits ) {
+			data.rounding = decimalDigits[1].length;
+		}
+
+		$number.numerator( data );
 	}, { offset: '90%' } );
 };
 
@@ -419,12 +424,12 @@ var StretchedSection = function( $section, $ ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.width(),
-			sectionWidth = $section.width(),
+		var containerWidth = elements.$scopeWindow.outerWidth(),
+			sectionWidth = $section.outerWidth(),
 			sectionOffset = $section.offset().left,
 			correctOffset = sectionOffset;
 
-		if ( elements.$sectionContainer.length ) {
+        if ( elements.$sectionContainer.length ) {
 			var containerOffset = elements.$sectionContainer.offset().left;
 
 			containerWidth = elements.$sectionContainer.outerWidth();

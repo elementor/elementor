@@ -52,31 +52,6 @@
 		}
 	}
 
-	// In columns stretch mode
-	&.elementor-section-content- {
-
-		&top {
-
-			.elementor-column-wrap {
-				align-items: flex-start;
-			}
-		}
-
-		&middle {
-
-			.elementor-column-wrap {
-				align-items: center;
-			}
-		}
-
-		&bottom {
-
-			.elementor-column-wrap {
-				align-items: flex-end;
-			}
-		}
-	}
-
 	@media (min-width: $screen-md-min) {
 
 		// Section Full Height (note: don't be smart - min-height does not work well with the content position)
@@ -89,6 +64,34 @@
 		}
 	}
 }
+
+
+// In columns stretch mode
+
+.elementor-container {
+
+	> .elementor-row {
+
+		> .elementor-column {
+
+			> .elementor-column-wrap {
+
+				.elementor-section-content-top > & {
+					align-items: flex-start;
+				}
+
+				.elementor-section-content-middle > & {
+					align-items: center;
+				}
+
+				.elementor-section-content-bottom > & {
+					align-items: flex-end;
+				}
+			}
+		}
+	}
+}
+
 
 // Row
 .elementor-row {
@@ -151,38 +154,29 @@
 }
 
 // Columns Gap
-.elementor-column-gap-default {
+.elementor-row {
+	> .elementor-column {
+		> .elementor-element-populated {
+			.elementor-column-gap-narrow  > & {
+				padding: 5px;
+			}
 
-	.elementor-element-populated {
-		padding: 10px;
-	}
-}
+			.elementor-column-gap-default > & {
+				padding: 10px;
+			}
 
-.elementor-column-gap-narrow {
+			.elementor-column-gap-extended > & {
+				padding: 15px;
+			}
 
-	.elementor-element-populated {
-		padding: 5px;
-	}
-}
+			.elementor-column-gap-wide > & {
+				padding: 20px;
+			}
 
-.elementor-column-gap-extended {
-
-	.elementor-element-populated {
-		padding: 15px;
-	}
-}
-
-.elementor-column-gap-wide {
-
-	.elementor-element-populated {
-		padding: 20px;
-	}
-}
-
-.elementor-column-gap-wider {
-
-	.elementor-element-populated {
-		padding: 30px;
+			.elementor-column-gap-wider > & {
+				padding: 30px;
+			}
+		}
 	}
 }
 
@@ -198,6 +192,14 @@
 }
 
 // Responsive Grid
+
+@media (min-width: $screen-md-min) {
+
+	.elementor-column {
+		@include elementor-grid-classes;
+	}
+}
+
 .elementor-column {
 
 	@media (max-width: $screen-xs-max) {
@@ -210,13 +212,6 @@
 
 	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
 		@include elementor-responsive(md);
-	}
-}
-
-@media (min-width: $screen-md-min) {
-
-	.elementor-column {
-		@include elementor-grid-classes;
 	}
 }
 

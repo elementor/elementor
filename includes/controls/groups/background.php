@@ -86,7 +86,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
 					'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
 					'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
@@ -111,7 +111,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'scroll' => _x( 'Scroll', 'Background Control', 'elementor' ),
 					'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 				],
@@ -129,7 +129,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'no-repeat' => _x( 'No-repeat', 'Background Control', 'elementor' ),
 					'repeat' => _x( 'Repeat', 'Background Control', 'elementor' ),
 					'repeat-x' => _x( 'Repeat-x', 'Background Control', 'elementor' ),
@@ -149,7 +149,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'auto' => _x( 'Auto', 'Background Control', 'elementor' ),
 					'cover' => _x( 'Cover', 'Background Control', 'elementor' ),
 					'contain' => _x( 'Contain', 'Background Control', 'elementor' ),

@@ -28,6 +28,10 @@ class Elements_Manager {
 		if ( 'widget' === $element_data['elType'] ) {
 			$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
 
+			if ( ! $element_type ) {
+				return null;
+			}
+
 			$args = $element_type->get_default_args();
 		} else {
 			$element_type = $this->get_element_types( $element_data['elType'] );
@@ -119,15 +123,15 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
-		if ( isset( $_POST['revision'] ) && DB::REVISION_PUBLISH === $_POST['revision'] ) {
-			$revision = DB::REVISION_PUBLISH;
+		if ( isset( $_POST['status'] ) && DB::STATUS_PUBLISH === $_POST['status'] ) {
+			$status = DB::STATUS_PUBLISH;
 		} else {
-			$revision = DB::REVISION_DRAFT;
+			$status = DB::STATUS_DRAFT;
 		}
 
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $revision );
+		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $status );
 
 		wp_send_json_success();
 	}

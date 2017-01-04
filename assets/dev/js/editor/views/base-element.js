@@ -249,44 +249,16 @@ BaseElementView = Marionette.CompositeView.extend( {
 				} );
 			}
 
-			self.addControlStyleRules( control, values, placeholders, replacements );
+			self.addControlStyleRules( control, values, self.getEditModel().get( 'settings' ).controls, placeholders, replacements );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, placeholders, replacements ) {
-		var self = this,
-			value = values[ control.name ];
+	addControlStyleRules: function( control, values, controlsStack, placeholders, replacements ) {
+		var self = this;
 
-		if ( control.selectors_dictionary ) {
-			value = control.selectors_dictionary[ value ] || value;
-		}
-
-		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
-			return;
-		}
-
-		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
-			return;
-		}
-
-		_.each( control.selectors, function( cssProperty, selector ) {
-			var outputCssProperty = elementor.getControlItemView( control.type ).replaceStyleValues( cssProperty, value ),
-				query;
-
-			if ( _.isEmpty( outputCssProperty ) ) {
-				return;
-			}
-
-			_.each( placeholders, function( placeholder, index ) {
-				selector = selector.replace( placeholder, replacements[ index ] );
-			} );
-
-			if ( control.responsive && 'desktop' !== control.responsive ) {
-				query = { max: control.responsive };
-			}
-
-			self.stylesheet.addRules( selector, outputCssProperty, query );
-		} );
+		BaseElementView.addControlStyleRules( self.stylesheet, control, controlsStack, function( control ) {
+			return self.getStyleControlValue( control, values );
+		}, placeholders, replacements );
 	},
 
 	addStyleToDocument: function() {
@@ -303,6 +275,24 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		this.$stylesheetElement.text( styleText );
+	},
+
+	getStyleControlValue: function( control, values ) {
+		var value = values[ control.name ];
+
+		if ( control.selectors_dictionary ) {
+			value = control.selectors_dictionary[ value ] || value;
+		}
+
+		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
+			return;
+		}
+
+		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
+			return;
+		}
+
+		return value;
 	},
 
 	renderStyles: function() {
@@ -434,6 +424,71 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView( model );
+		} );
+	}
+}, {
+	addControlStyleRules: function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
+		var value = valueCallback( control );
+
+		if ( undefined === value ) {
+			return;
+		}
+
+		_.each( control.selectors, function( cssProperty, selector ) {
+			var outputCssProperty;
+
+			try {
+				outputCssProperty = cssProperty.replace( /\{\{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
+					var parserControl = control,
+						valueToInsert = value;
+
+					if ( controlName ) {
+						parserControl = _.findWhere( controlsStack, { name: controlName } );
+
+						valueToInsert = valueCallback( parserControl );
+					}
+
+					var parsedValue = elementor.getControlItemView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+
+					if ( '' === parsedValue ) {
+						throw '';
+					}
+
+					return parsedValue;
+				} );
+			} catch ( e ) {
+				return;
+			}
+
+			if ( _.isEmpty( outputCssProperty ) ) {
+				return;
+			}
+
+			var devicePattern = /^\(([^)]+)\)/,
+				deviceRule = selector.match( devicePattern );
+
+			if ( deviceRule ) {
+				selector = selector.replace( devicePattern, '' );
+
+				deviceRule = deviceRule[1];
+			}
+
+			_.each( placeholders, function( placeholder, index ) {
+				selector = selector.replace( placeholder, replacements[ index ] );
+			} );
+
+			var device = deviceRule,
+				query;
+
+			if ( ! device && control.responsive ) {
+				device = control.responsive;
+			}
+
+			if ( device && 'desktop' !== device ) {
+				query = { max: device };
+			}
+
+			stylesheet.addRules( selector, outputCssProperty, query );
 		} );
 	}
 } );

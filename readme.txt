@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 1.0.3
+Stable tag: 1.0.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,19 +69,21 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Translations =
+- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
+- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
 - [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
+- [Spanish (Mexico)](https://translate.wordpress.org/locale/es-mx/default/wp-plugins/elementor) - (es_MX)
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
-- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_PT)
+- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Swedish](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (sv_SE)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR) - in progress
-- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT) - in progress
-- [Arabic](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (ar) - in progress
+- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO) - in progress
+- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar) - in progress
+- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU) - in progress
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -158,6 +160,43 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 1.0.9 - 27.12.2016 =
+* Fix! - Elementor library import remote template
+
+= 1.0.8 - 27.12.2016 =
+* Tweak! - Added raw css support for stylesheet class ([#1086](https://github.com/pojome/elementor/issues/1086))
+* Tweak! - Improve memory used in the editor mode ([Topic](https://wordpress.org/support/topic/need-update-folks/))
+* Fix! - Issue with post-css-file in HTTPS ([#1077](https://github.com/pojome/elementor/issues/1077))
+
+= 1.0.7 - 25.12.2016 =
+* Fix! - Validate export import for elementor template
+* Fix! - Excluded `elementor_library` custom post type from the sitemap by Yoast SEO
+* Fix! - Prevent Scroll BUG in Google Map widget
+* Fix! - Added unique name for repeater control
+
+= 1.0.6 - 20.12.2016 =
+* New! - Added social icons for Apple & Spotify
+* New! - Added Thousand Separator control for counter widget
+* Tweak! - Added Filter template types in library backend
+* Tweak! - Updated jQuery Numerator Plugin v0.2.1
+* Fix! - Added support for floating numbers in counter widget
+* Fix! - Removed limit from counter widget
+* Deprecated! - Removed `#elementor-section-wrap` ID from frontend output
+* Deprecated! - Removed `#elementor-inner` ID from frontend output
+
+= 1.0.5 - 18.12.2016 =
+* Tweak! - Added VH unit in min-height control for section
+* Fix! - Bug with section-content-position in Columns widget
+* Fix! - Bug with stretched section
+* Fix! - Avoid fatal error for invalid widgets
+* Deprecated! - Removed `#elementor` ID from frontend output
+
+= 1.0.4 - 12.12.2016 =
+* Tweak! - Added mobile editing options for social icons widget
+* Fix! - Icon alignment CSS issue (Icon and Icon-Box widget) 
+* Fix! - Conflict panel with Safari browser
+* Fix! - Responsive grid bug with tablet screen
 
 = 1.0.3 - 11.12.2016 =
 * New! - Ready for Elementor Pro

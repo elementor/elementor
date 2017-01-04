@@ -7,6 +7,7 @@ class Stylesheet {
 
 	private $rules = [];
 	private $devices = [];
+	private $raw = [];
 
 	/**
 	 * @param array $rules
@@ -97,6 +98,32 @@ class Stylesheet {
 		return $this;
 	}
 
+	public function add_raw_css( $css, $device = '' ) {
+		if ( ! isset( $this->raw[ $device ] ) ) {
+			$this->raw[ $device ] = [];
+		}
+
+		$this->raw[ $device ][] = trim( $css );
+
+		return $this;
+	}
+
+	public function get_rules( $device = null, $selector = null, $property = null ) {
+		if ( ! $device ) {
+			return $this->rules;
+		}
+
+		if ( $property ) {
+			return isset( $this->rules[ $device ][ $selector ][ $property ] ) ? $this->rules[ $device ][ $selector ][ $property ] : null;
+		}
+
+		if ( $selector ) {
+			return isset( $this->rules[ $device ][ $selector ] ) ? $this->rules[ $device ][ $selector ] : null;
+		}
+
+		return isset( $this->rules[ $device ] ) ? $this->rules[ $device ] : null;
+	}
+
 	public function __toString() {
 		$style_text = '';
 
@@ -108,6 +135,16 @@ class Stylesheet {
 			}
 
 			$style_text .= $device_text;
+		}
+
+		foreach ( $this->raw as $device_name => $raw ) {
+			$raw = implode( "\n", $raw );
+
+			if ( $raw && isset( $this->devices[ $device_name ] ) ) {
+				$raw = '@media(max-width: ' . $this->devices[ $device_name ] . 'px){' . $raw . '}';
+			}
+
+			$style_text .= $raw;
 		}
 
 		return $style_text;

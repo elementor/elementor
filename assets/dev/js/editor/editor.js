@@ -414,7 +414,7 @@ App = Marionette.Application.extend( {
 
 	saveEditor: function( options ) {
 		options = _.extend( {
-			revision: 'draft',
+			status: 'draft',
 			onSuccess: null
 		}, options );
 
@@ -423,7 +423,7 @@ App = Marionette.Application.extend( {
 		return this.ajax.send( 'save_builder', {
 	        data: {
 		        post_id: this.config.post_id,
-		        revision: options.revision,
+				status: options.status,
 		        data: JSON.stringify( elementor.elements.toJSON() )
 	        },
 			success: function( data ) {

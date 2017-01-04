@@ -3,6 +3,12 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A base control for controls that return more than a single value. Extends `Control_Base`.
+ * Each value of a multiple-value control will be returned as an item in a key => value array
+ *
+ * @since 1.0.0
+ */
 abstract class Control_Base_Multiple extends Control_Base {
 
 	public function get_default_value() {
@@ -29,27 +35,7 @@ abstract class Control_Base_Multiple extends Control_Base {
 		);
 	}
 
-	public function get_replaced_style_values( $css_property, $control_value ) {
-		if ( ! is_array( $control_value ) ) {
-			return '';
-		}
-
-		// Trying to retrieve whole the related properties
-		// according to the string matches.
-		// When one of the properties is empty, aborting
-		// the action and returning an empty string.
-		try {
-			return preg_replace_callback( '/\{\{([A-Z]+)}}/', function( $matches ) use ( $control_value ) {
-				$value = $control_value[ strtolower( $matches[1] ) ];
-
-				if ( '' === $value ) {
-					throw new \Exception();
-				}
-
-				return $value;
-			}, $css_property );
-		} catch ( \Exception $e ) {
-			return '';
-		}
+	public function get_style_value( $css_property, $control_value ) {
+		return $control_value[ $css_property ];
 	}
 }

@@ -284,7 +284,7 @@ abstract class Element_Base {
 			'name' => $this->get_name(),
 			'elType' => $this->get_type(),
 			'title' => $this->get_title(),
-			'controls' => array_values( $this->get_controls() ),
+			'controls' => $this->get_controls(),
 			'tabs_controls' => $this->get_tabs_controls(),
 			'categories' => $this->get_categories(),
 			'keywords' => $this->get_keywords(),
@@ -407,7 +407,9 @@ abstract class Element_Base {
 				$instance_value = $instance_value[ $condition_sub_key ];
 			}
 
-			$is_contains = is_array( $condition_value ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
+			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			$is_contains = ( is_array( $condition_value ) && ! empty( $condition_value ) ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
 
 			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
 				return false;
@@ -665,6 +667,10 @@ abstract class Element_Base {
 	private function _get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
 
+		// If it's not a valid widget ( like a deactivated plugin )
+		if ( ! $child_type ) {
+			return false;
+		}
 		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 	}
 
@@ -684,6 +690,10 @@ abstract class Element_Base {
 		}
 
 		foreach ( $children_data as $child_data ) {
+			if ( ! $child_data ) {
+				continue;
+			}
+
 			$this->add_child( $child_data );
 		}
 	}

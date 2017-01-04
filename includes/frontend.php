@@ -80,7 +80,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'0.2.0',
+			'0.2.1',
 			true
 		);
 
@@ -242,34 +242,32 @@ class Frontend {
 
 	protected function _parse_schemes_css_code() {
 		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
-			foreach ( $widget->get_scheme_controls() as $control ) {
-				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
+			$scheme_controls = $widget->get_scheme_controls();
 
-				if ( empty( $scheme_value ) )
-					continue;
+			foreach ( $scheme_controls as $control ) {
+				Post_CSS_File::add_control_rules( $this->stylesheet, $control, $widget->get_controls(), function ( $control ) {
+					$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
-				if ( ! empty( $control['scheme']['key'] ) ) {
-					$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-				}
+					if ( empty( $scheme_value ) ) {
+						return null;
+					}
 
-				if ( empty( $scheme_value ) )
-					continue;
+					if ( ! empty( $control['scheme']['key'] ) ) {
+						$scheme_value = $scheme_value[ $control['scheme']['key'] ];
+					}
 
-				$element_unique_class = 'elementor-widget-' . $widget->get_name();
+					if ( empty( $scheme_value ) ) {
+						return null;
+					}
 
-				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+					$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
-				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-					$this->add_enqueue_font( $scheme_value );
-				}
+					if ( Controls_Manager::FONT === $control_obj->get_type() ) {
+						$this->add_enqueue_font( $scheme_value );
+					}
 
-				foreach ( $control['selectors'] as $selector => $css_property ) {
-					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
-
-					$output_css_property = $control_obj->get_replaced_style_values( $css_property, $scheme_value );
-
-					$this->stylesheet->add_rules( $output_selector, $output_css_property );
-				}
+					return $scheme_value;
+				}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ] );
 			}
 		}
 	}
@@ -320,9 +318,9 @@ class Frontend {
 		}
 
 		?>
-		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
-			<div id="elementor-inner">
-				<div id="elementor-section-wrap">
+		<div class="elementor elementor-<?php echo $post_id; ?>">
+			<div class="elementor-inner">
+				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
 				</div>
 			</div>
