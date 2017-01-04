@@ -5,10 +5,7 @@ RevisionsManager = function() {
 
 	self.addPanelPage = function() {
 		elementor.getPanelView().addPage( 'revisionsPage', {
-			view: require( './revisions-page' ),
-			options: {
-				collection: new Backbone.Collection( elementor.config.revisions )
-			}
+			view: require( './revisions-page' )
 		} );
 	};
 
@@ -18,7 +15,7 @@ RevisionsManager = function() {
 
 	self.onEditorSaved = function( data ) {
 		if ( data.last_revision ) {
-			elementor.getPanelView().getPages( 'revisionsPage' ).options.collection.add( data.last_revision, { at: 0 } );
+			elementor.getPanelView().getPages( 'revisionsPage' ).addRevisionToList( data.last_revision );
 		}
 	};
 

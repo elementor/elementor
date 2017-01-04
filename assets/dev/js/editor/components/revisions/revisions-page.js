@@ -28,8 +28,10 @@ module.exports = Marionette.CompositeView.extend( {
 	isFirstChange: true,
 
 	initialize: function() {
-		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState );
-		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+		this.collection = new Backbone.Collection( elementor.config.revisions );
+
+		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState )
+			.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
 	setApplyButtonState: function( editorChanged ) {
@@ -48,11 +50,12 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	addRevisionToList: function( revision ) {
-		elementor.getPanelView().getPages( 'revisionsPage' ).options.collection.add( revision, { at: 0 } );
+		this.collection.add( revision, { at: 0 } );
 	},
 
 	saveAutoDraft: function() {
 		var self = this;
+
 		return elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
@@ -67,55 +70,67 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 	},
 
+	deleteRevision: function( revisionView ) {
+		var self = this,
+			revisionID = revisionView.model.get( 'id' );
+
+		revisionView.$el.addClass( 'elementor-state-show' );
+
+		elementor.ajax.send( 'delete_revision', {
+			data: {
+				id: revisionID
+			},
+			success: function() {
+				if ( revisionID === self.currentPreviewId ) {
+					self.onDiscardClick();
+				}
+
+				self.collection.remove( revisionView.model );
+			},
+			error: function( data ) {
+				revisionView.$el.removeClass( 'elementor-state-show' );
+
+				alert( 'An error occurs' );
+			}
+		} );
+	},
+
 	enterPreviewMode: function() {
-		elementor.enterPreviewMode( true );
-		elementor.channels.dataEditMode.reply( 'activeMode', 'preview' );
+		elementor.changeEditMode( 'review' );
 	},
 
 	exitPreviewMode: function() {
-		elementor.exitPreviewMode( true );
-		elementor.channels.dataEditMode.reply( 'activeMode', 'edit' );
+		elementor.changeEditMode( 'edit' );
 	},
 
-	onEditorSaved: function( data ) {
+	onEditorSaved: function() {
 		this.exitPreviewMode();
 	},
 
 	onApplyClick: function() {
 		elementor.getPanelView().getChildView( 'footer' )._publishBuilder();
+
 		this.isRevisionApplied = true;
+
 		this.setDiscardButtonDisabled( false );
 	},
 
 	onChildviewDeleteClick: function( childView ) {
 		var self = this,
-			removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-			message: elementor.translate( 'dialog_confirm_delete', [ childView.model.get( 'type' ) ] ),
-			headerMessage: elementor.translate( 'delete_element', [ childView.model.get( 'type' ) ] ),
+			type = childView.model.get( 'type' ),
+			id = childView.model.get( 'id' );
+
+		var removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),
+			headerMessage: elementor.translate( 'delete_element', [ type ] ),
 			strings: {
 				confirm: elementor.translate( 'delete' ),
 				cancel: elementor.translate( 'cancel' )
 			},
 			defaultOption: 'confirm',
-			onConfirm: _.bind( function() {
-				childView.ui.item.addClass( 'elementor-state-show' );
-
-				elementor.ajax.send( 'delete_revision', {
-					data: {
-						id: childView.model.get( 'id' )
-					},
-					success: function() {
-						if ( childView.model.get( 'id' ) === self.currentPreviewId ) {
-							self.onDiscardClick();
-						}
-						self.collection.remove( childView.model );
-					},
-					error: function( data ) {
-						childView.ui.item.removeClass( 'elementor-state-show' );
-						alert( 'An error occurs' );
-					}
-				} );
-			}, this )
+			onConfirm: function() {
+				self.deleteRevision( childView );
+			}
 		} );
 
 		removeDialog.show();
