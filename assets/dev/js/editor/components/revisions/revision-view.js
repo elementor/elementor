@@ -4,8 +4,7 @@ module.exports =  Marionette.ItemView.extend( {
 	className: 'elementor-revision-item',
 
 	ui: {
-		deleteButton: '.elementor-revision-delete',
-		spinner: '.elementor-state-icon'
+		deleteButton: '.elementor-revision-item__tools-delete'
 	},
 
 	triggers: {

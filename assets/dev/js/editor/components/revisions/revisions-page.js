@@ -28,18 +28,16 @@ module.exports = Marionette.CompositeView.extend( {
 	isFirstChange: true,
 
 	initialize: function() {
-		this.collection = new Backbone.Collection( elementor.config.revisions );
-
 		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState )
 			.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
-	setApplyButtonState: function( editorChanged ) {
-		this.ui.apply.prop( 'disabled', ! editorChanged );
+	setApplyButtonState: function( active ) {
+		this.ui.apply.prop( 'disabled', ! active );
 	},
 
-	setDiscardButtonDisabled: function( disabled ) {
-		this.ui.discard.prop( 'disabled', disabled );
+	setDiscardButtonState: function( active ) {
+		this.ui.discard.prop( 'disabled', active );
 	},
 
 	setEditorData: function( data ) {
@@ -47,10 +45,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 		collection.reset();
 		collection.set( data );
-	},
-
-	addRevisionToList: function( revision ) {
-		this.collection.add( revision, { at: 0 } );
 	},
 
 	saveAutoDraft: function() {
@@ -64,7 +58,7 @@ module.exports = Marionette.CompositeView.extend( {
 			},
 			success: function( data ) {
 				if ( data.last_revision ) {
-					self.addRevisionToList( data.last_revision );
+					elementor.revisions.addRevision( data.last_revision );
 				}
 			}
 		} );
@@ -74,7 +68,7 @@ module.exports = Marionette.CompositeView.extend( {
 		var self = this,
 			revisionID = revisionView.model.get( 'id' );
 
-		revisionView.$el.addClass( 'elementor-state-show' );
+		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
 		elementor.ajax.send( 'delete_revision', {
 			data: {
@@ -85,10 +79,10 @@ module.exports = Marionette.CompositeView.extend( {
 					self.onDiscardClick();
 				}
 
-				self.collection.remove( revisionView.model );
+				revisionView.model.destroy();
 			},
 			error: function( data ) {
-				revisionView.$el.removeClass( 'elementor-state-show' );
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				alert( 'An error occurs' );
 			}
@@ -112,7 +106,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.isRevisionApplied = true;
 
-		this.setDiscardButtonDisabled( false );
+		this.setDiscardButtonState( true );
 	},
 
 	onChildviewDeleteClick: function( childView ) {
@@ -154,7 +148,7 @@ module.exports = Marionette.CompositeView.extend( {
 			self.isFirstChange = false;
 		}
 
-		childView.$el.addClass( 'elementor-state-show' );
+		childView.$el.addClass( 'elementor-revision-item-loading' );
 
 		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
 			data: {
@@ -162,19 +156,21 @@ module.exports = Marionette.CompositeView.extend( {
 			},
 			success: function( data ) {
 				self.setEditorData( data );
-				self.setDiscardButtonDisabled( false );
+
+				self.setDiscardButtonState( true );
 
 				self.currentPreviewId = id;
+
 				self.jqueryXhr = null;
 
-				Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
-				childView.$el.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
+				self.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+
+				childView.$el.removeClass( 'elementor-revision-item-loading' ).addClass( 'elementor-revision-current-preview' );
 
 				self.enterPreviewMode();
-
 			},
 			error: function( data ) {
-				childView.$el.removeClass( 'elementor-state-show elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-revision-item-loading elementor-revision-current-preview' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
 					return;
@@ -196,7 +192,7 @@ module.exports = Marionette.CompositeView.extend( {
 			this.isRevisionApplied = false;
 		}
 
-		this.setDiscardButtonDisabled( true );
+		this.setDiscardButtonState( false );
 
 		this.currentPreviewId = null;
 
@@ -204,6 +200,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.exitPreviewMode();
 
-		Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+		this.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
 	}
 } );
