@@ -1681,23 +1681,21 @@ App = Marionette.Application.extend( {
 		NProgress.start();
 
 		return this.ajax.send( 'save_builder', {
-			data: {
-				post_id: this.config.post_id,
+	        data: {
+		        post_id: this.config.post_id,
 				status: options.status,
-				data: JSON.stringify( elementor.elements.toJSON() )
-			},
+		        data: JSON.stringify( elementor.elements.toJSON() )
+	        },
 			success: function( data ) {
 				NProgress.done();
 
 				elementor.setFlagEditorChange( false );
 
-				elementor.channels.editor.trigger( 'saved', data );
-
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
 				}
 			}
-		} );
+        } );
 	},
 
 	reloadPreview: function() {
