@@ -1,33 +1,62 @@
-.elementor-revision-item {
-	padding: 10px 10px 20px;
-	border-bottom: 1px solid #a5a5a5;
-	cursor: pointer;
-	user-select: none;
+.elementor-revision- {
 
-	&:not(.elementor-state-show) {
-		.elementor-state-icon {
-			display: none;
+	&item {
+		display: flex;
+		align-items: center;
+		border: 1px solid $editor-lightest;
+		padding: 10px 15px;
+		margin-bottom: 10px;
+		cursor: pointer;
+
+		&:hover:not(.elementor-revision-current-preview) {
+			background-color: fade_out($editor-background, 0.7) ;
+		}
+
+		&:not(:hover) {
+
+			.elementor-revision-item__tools-delete {
+				display: none;
+			}
+		}
+
+		&-loading {
+
+			.elementor-revision-item__tools-delete {
+				display: none;
+			}
+		}
+
+		&:not(.elementor-revision-item-loading) {
+
+			.elementor-revision-item__tools-spinner {
+				display: none;
+			}
+		}
+
+		&__gravatar {
+			border-radius: 50%;
+			overflow: hidden;
+		}
+
+		&__details {
+			padding: 0 10px;
+			flex-grow: 1;
 		}
 	}
-}
 
-.elementor-button-default {
-	&.elementor-revisions-preview,
-	&.elementor-revisions-revert{
+	&date {
 		font-size: 10px;
-		padding: 4.5px 6px;
 	}
-}
 
-.elementor-revision-item-title {
-	@include padding-end( 20px );
-}
+	&meta {
+		padding-top: 5px;
+		font-size: 9px;
+		font-weight: bold;
+	}
 
-.elementor-revision-current-preview {
-	background: #a8afb6;
-	color: white;
-}
+	&current-preview {
+		background-color: $editor-background;
+	}
 
-.elementor-revision-current-published {
-	background: #5a805f;
+
 }

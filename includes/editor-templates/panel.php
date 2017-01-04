@@ -231,21 +231,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-revisions">
 	<div class="elementor-panel-scheme-buttons">
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
-		</div>
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-			<button class="elementor-button" disabled >
-				<i class="fa fa-times"></i>
-				<?php _e( 'Discard', 'elementor' ); ?>
+			<button class="elementor-button" disabled>
+				<i class="fa fa-times"></i><?php _e( 'Discard', 'elementor' ); ?>
 			</button>
 		</div>
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-			<button class="elementor-button elementor-button-success" disabled >
-				<?php _e( 'Apply', 'elementor' ); ?>
+			<button class="elementor-button elementor-button-success" disabled>
+				<i class="fa fa-check"></i><?php _e( 'Restore', 'elementor' ); ?>
 			</button>
 		</div>
 	</div>
-	<div id="elementor-revisions-list">
+	<div class="elementor-panel-box">
+		<div class="elementor-panel-heading">
+			<div class="elementor-panel-heading-title"><?php _e( 'Revision History', 'elementor' ); ?></div>
+		</div>
+		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
 	</div>
 </script>
 
@@ -268,29 +269,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
-	<div class="elementor-revision-item__gravatar">
-		{{{ gravatar }}}
-	</div>
+	<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
 	<div class="elementor-revision-item__details">
-		<div class="elementor-revision-date">
-			{{ date }}
-		</div>
-		<div class="elementor-revision-meta">
-			<span class="elementor-revision-type elementor-revision-type-{{ type }}">
-				{{{ type }}}
-			</span>
-			<span class="elementor-revision-author">
-			<?php _e( 'By', 'elementor' ); ?> {{ author }}
-			</span>
-		</div>
-		<span class="elementor-state-icon">
-			<i class="fa fa-spin fa-circle-o-notch"></i>
-		</span>
+		<div class="elementor-revision-date">{{ date }}</div>
+		<div class="elementor-revision-meta">{{{ type }}} <?php _e( 'By', 'elementor' ); ?> {{ author }}</div>
 	</div>
-	<div class="elementor-revision-item__delete">
-		<span class="elementor-revision-delete">
-			<i class="fa fa-times"></i>
-		</span>
+	<div class="elementor-revision-item__tools">
+		<i class="elementor-revision-item__tools-delete fa fa-times"></i>
+		<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
 	</div>
 </script>
 

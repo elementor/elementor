@@ -29,7 +29,8 @@ class Revisions_Manager {
 
 		/** @var \WP_Post $revision */
 		foreach ( $posts as $revision ) {
-			$date = date_i18n( _x( 'F j@ H:i:s', 'revision date format' ), strtotime( $revision->post_modified ) );
+			$date = date_i18n( _x( 'M j @ H:i', 'revision date format' ), strtotime( $revision->post_modified ) );
+
 			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
 
 			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
@@ -43,7 +44,7 @@ class Revisions_Manager {
 				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
 				'date' => sprintf( __( '%1$s ago (%2$s)' ), $human_time, $date ),
 				'type' => $type,
-				'gravatar' => get_avatar( $revision->post_author, 24 ),
+				'gravatar' => get_avatar( $revision->post_author, 18 ),
 			];
 		}
 
