@@ -68,7 +68,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		}
 
 		// Create new instance of that collection
-		this.collection = new Backbone.Collection( controls );
+		this.collection = new Backbone.Collection( _.values( controls ) );
 	},
 
 	onRender: function() {

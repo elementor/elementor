@@ -105,8 +105,8 @@ class Element_Section extends Element_Base {
 		}
 	}
 
-	public function get_config( $item = null ) {
-		$config = parent::get_config( $item );
+	protected function _get_initial_config() {
+		$config = parent::_get_initial_config();
 
 		$config['presets'] = self::get_presets();
 
@@ -221,7 +221,12 @@ class Element_Section extends Element_Base {
 						'min' => 0,
 						'max' => 1440,
 					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
 				],
+				'size_units' => [ 'px', 'vh' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],

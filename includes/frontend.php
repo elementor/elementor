@@ -9,6 +9,7 @@ class Frontend {
 	private $_enqueue_google_early_access_fonts = [];
 
 	private $_is_frontend_mode = false;
+	private $_has_elementor_in_page = false;
 
 	/**
 	 * @var Stylesheet
@@ -21,13 +22,17 @@ class Frontend {
 		}
 
 		$this->_is_frontend_mode = true;
+		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
 
 		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+
+		if ( $this->_has_elementor_in_page ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		}
+
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar
@@ -60,7 +65,9 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
-		do_action( 'elementor/frontend/enqueue_scripts/before' );
+		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
+
+		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -80,7 +87,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'0.2.0',
+			'0.2.1',
 			true
 		);
 
@@ -115,8 +122,6 @@ class Frontend {
 				'is_rtl' => is_rtl(),
 			]
 		);
-
-		do_action( 'elementor/frontend/enqueue_scripts/after' );
 	}
 
 	public function enqueue_styles() {
@@ -188,6 +193,14 @@ class Frontend {
 	 * Handle style that do not printed in header
 	 */
 	function wp_footer() {
+		if ( ! $this->_has_elementor_in_page ) {
+			return;
+		}
+
+		$this->enqueue_styles();
+
+		$this->enqueue_scripts();
+
 		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
@@ -242,34 +255,32 @@ class Frontend {
 
 	protected function _parse_schemes_css_code() {
 		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
-			foreach ( $widget->get_scheme_controls() as $control ) {
-				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
+			$scheme_controls = $widget->get_scheme_controls();
 
-				if ( empty( $scheme_value ) )
-					continue;
+			foreach ( $scheme_controls as $control ) {
+				Post_CSS_File::add_control_rules( $this->stylesheet, $control, $widget->get_controls(), function ( $control ) {
+					$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
-				if ( ! empty( $control['scheme']['key'] ) ) {
-					$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-				}
+					if ( empty( $scheme_value ) ) {
+						return null;
+					}
 
-				if ( empty( $scheme_value ) )
-					continue;
+					if ( ! empty( $control['scheme']['key'] ) ) {
+						$scheme_value = $scheme_value[ $control['scheme']['key'] ];
+					}
 
-				$element_unique_class = 'elementor-widget-' . $widget->get_name();
+					if ( empty( $scheme_value ) ) {
+						return null;
+					}
 
-				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+					$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
-				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-					$this->add_enqueue_font( $scheme_value );
-				}
+					if ( Controls_Manager::FONT === $control_obj->get_type() ) {
+						$this->add_enqueue_font( $scheme_value );
+					}
 
-				foreach ( $control['selectors'] as $selector => $css_property ) {
-					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
-
-					$output_css_property = $control_obj->get_replaced_style_values( $css_property, $scheme_value );
-
-					$this->stylesheet->add_rules( $output_selector, $output_css_property );
-				}
+					return $scheme_value;
+				}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ] );
 			}
 		}
 	}
@@ -299,11 +310,17 @@ class Frontend {
 			return '';
 		}
 
-		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
-
-		if ( empty( $data ) || 'builder' !== $edit_mode )
+		if ( 'builder' !== $edit_mode ) {
 			return '';
+		}
+
+		$data = Plugin::instance()->db->get_plain_editor( $post_id );
+		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
+
+		if ( empty( $data ) ) {
+			return '';
+		}
 
 		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
@@ -320,9 +337,9 @@ class Frontend {
 		}
 
 		?>
-		<div id="elementor" class="elementor elementor-<?php echo $post_id; ?>">
-			<div id="elementor-inner">
-				<div id="elementor-section-wrap">
+		<div class="elementor elementor-<?php echo $post_id; ?>">
+			<div class="elementor-inner">
+				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
 				</div>
 			</div>
@@ -373,6 +390,10 @@ class Frontend {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
+
+		if ( ! empty( $content ) ) {
+			$this->_has_elementor_in_page = true;
+		}
 
 		// Restore global post
 		if ( isset( $global_post ) ) {

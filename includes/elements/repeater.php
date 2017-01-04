@@ -3,15 +3,23 @@ namespace Elementor;
 
 class Repeater extends Element_Base {
 
-	function get_name() {
-		return 'repeater';
+	private static $counter = 0;
+
+	public function __construct() {
+		self::$counter++;
+
+		parent::__construct();
+	}
+
+	public function get_name() {
+		return 'repeater-' . self::$counter;
 	}
 
 	public static function get_type() {
 		return 'repeater';
 	}
 
-	public function add_control( $id, $args ) {
+	public function add_control( $id, array $args ) {
 		if ( null !== $this->_current_tab ) {
 			$args = array_merge( $args, $this->_current_tab );
 		}
@@ -23,4 +31,3 @@ class Repeater extends Element_Base {
 		return false;
 	}
 }
-

@@ -52,6 +52,10 @@ class Upgrades {
 
 		foreach ( $post_ids as $post_id ) {
 			$data = Plugin::instance()->db->get_plain_editor( $post_id );
+			if ( empty( $data ) ) {
+				continue;
+			}
+
 			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) || 'image' !== $element['widgetType'] ) {
 					return $element;
@@ -87,6 +91,10 @@ class Upgrades {
 
 		foreach ( $post_ids as $post_id ) {
 			$data = Plugin::instance()->db->get_plain_editor( $post_id );
+			if ( empty( $data ) ) {
+				continue;
+			}
+
 			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
@@ -130,6 +138,10 @@ class Upgrades {
 
 		foreach ( $post_ids as $post_id ) {
 			$data = Plugin::instance()->db->get_plain_editor( $post_id );
+			if ( empty( $data ) ) {
+				continue;
+			}
+
 			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;

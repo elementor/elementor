@@ -15,6 +15,8 @@ abstract class Element_Base {
 
 	private $_data;
 
+	private $_config;
+
 	/**
 	 * @var Element_Base[]
 	 */
@@ -116,7 +118,7 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
-	public function add_control( $id, $args ) {
+	public function add_control( $id, array $args ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
@@ -135,12 +137,18 @@ abstract class Element_Base {
 		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
 	}
 
-	public function remove_control( $id ) {
-		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $id );
+	public function remove_control( $control_id ) {
+		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
 	}
 
-	public final function add_group_control( $group_name, $args = [] ) {
-		do_action_ref_array( 'elementor/elements/add_group_control/' . $group_name, [ $this, $args ] );
+	public final function add_group_control( $group_name, array $args = [] ) {
+		$group = Plugin::instance()->controls_manager->get_control_groups( $group_name );
+
+		if ( ! $group ) {
+			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
+		}
+
+		$group->add_controls( $this, $args );
 	}
 
 	public final function get_tabs_controls() {
@@ -263,14 +271,6 @@ abstract class Element_Base {
 		return '';
 	}
 
-	public function get_keywords() {
-		return [];
-	}
-
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
 	public function get_icon() {
 		return 'eicon-columns';
 	}
@@ -279,20 +279,12 @@ abstract class Element_Base {
 		return false;
 	}
 
-	public function get_config( $item = null ) {
-		$config = [
-			'name' => $this->get_name(),
-			'elType' => $this->get_type(),
-			'title' => $this->get_title(),
-			'controls' => array_values( $this->get_controls() ),
-			'tabs_controls' => $this->get_tabs_controls(),
-			'categories' => $this->get_categories(),
-			'keywords' => $this->get_keywords(),
-			'icon' => $this->get_icon(),
-			'reload_preview' => $this->is_reload_preview_required(),
-		];
+	public final function get_config() {
+		if ( null === $this->_config ) {
+			$this->_config = $this->_get_initial_config();
+		}
 
-		return self::_get_items( $config, $item );
+		return $this->_config;
 	}
 
 	public function print_template() {
@@ -300,7 +292,11 @@ abstract class Element_Base {
 
 		$this->_content_template();
 
-		$content_template = apply_filters( 'elementor/elements/print_template', ob_get_clean(),  $this );
+		$content_template = ob_get_clean();
+
+		$content_template = Utils::apply_filters_deprecated( 'elementor/elements/print_template', [ $content_template, $this ], '1.0.10', 'elementor/element/print_template' );
+
+		$content_template = apply_filters( 'elementor/element/print_template', $content_template, $this );
 
 		if ( empty( $content_template ) ) {
 			return;
@@ -407,7 +403,9 @@ abstract class Element_Base {
 				$instance_value = $instance_value[ $condition_sub_key ];
 			}
 
-			$is_contains = is_array( $condition_value ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
+			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			$is_contains = ( is_array( $condition_value ) && ! empty( $condition_value ) ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
 
 			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
 				return false;
@@ -503,7 +501,7 @@ abstract class Element_Base {
 		return '.elementor-element-' . $this->get_id();
 	}
 
-	public function start_controls_section( $section_id, $args ) {
+	public function start_controls_section( $section_id, array $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
 
@@ -662,8 +660,25 @@ abstract class Element_Base {
 		}
 	}
 
+	protected function _get_initial_config() {
+		return [
+			'name' => $this->get_name(),
+			'elType' => $this->get_type(),
+			'title' => $this->get_title(),
+			'controls' => $this->get_controls(),
+			'tabs_controls' => $this->get_tabs_controls(),
+			'icon' => $this->get_icon(),
+			'reload_preview' => $this->is_reload_preview_required(),
+		];
+	}
+
 	private function _get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
+
+		// If it's not a valid widget ( like a deactivated plugin )
+		if ( ! $child_type ) {
+			return false;
+		}
 
 		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 	}
@@ -684,6 +699,10 @@ abstract class Element_Base {
 		}
 
 		foreach ( $children_data as $child_data ) {
+			if ( ! $child_data ) {
+				continue;
+			}
+
 			$this->add_child( $child_data );
 		}
 	}

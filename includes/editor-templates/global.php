@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-preview">
-	<div id="elementor-section-wrap"></div>
+	<div class="elementor-section-wrap"></div>
 	<div id="elementor-add-section" class="elementor-visible-desktop">
 		<div id="elementor-add-section-inner">
 			<div id="elementor-add-new-section">

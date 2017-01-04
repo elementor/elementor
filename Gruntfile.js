@@ -39,6 +39,7 @@ module.exports = function( grunt ) {
 				files: [ {
 					src: [
 						'**/*.php',
+						'!docs/**',
 						'!node_modules/**',
 						'!build/**',
 						'!tests/**',
@@ -190,6 +191,9 @@ module.exports = function( grunt ) {
 		},
 
 		sass: {
+			options: {
+				sourceMap: true
+			},
 			dist: {
 				files: [ {
 					expand: true,
@@ -329,6 +333,7 @@ module.exports = function( grunt ) {
 				src: [
 					'**',
 					'!node_modules/**',
+					'!docs/**',
 					'!build/**',
 					'!bin/**',
 					'!.git/**',

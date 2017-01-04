@@ -10,20 +10,21 @@ class DB {
 	 */
 	const DB_VERSION = '0.4';
 
-	const REVISION_PUBLISH = 'publish';
-	const REVISION_DRAFT = 'draft';
+	const STATUS_PUBLISH = 'publish';
+	const STATUS_DRAFT = 'draft';
 
 	/**
 	 * Save builder method.
 	 *
 	 * @since 1.0.0
-	 * @param int    $post_id
+	 *
+*@param int          $post_id
 	 * @param array  $posted
-	 * @param string $revision
+	 * @param string $status
 	 *
 	 * @return void
 	 */
-	public function save_editor( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
+	public function save_editor( $post_id, $posted, $status = self::STATUS_PUBLISH ) {
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
 		if ( isset( $GLOBALS['post'] ) ) {
 			$global_post = $GLOBALS['post'];
@@ -35,7 +36,7 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		if ( self::REVISION_PUBLISH === $revision ) {
+		if ( self::STATUS_PUBLISH === $status ) {
 			$this->remove_draft( $post_id );
 			update_post_meta( $post_id, '_elementor_data', $json_value );
 			$this->_save_plain_text( $post_id );
@@ -62,13 +63,13 @@ class DB {
 	 * Get & Parse the builder from DB.
 	 *
 	 * @since 1.0.0
-	 * @param int    $post_id
-	 * @param string $revision
+	 * @param int $post_id
+	 * @param string $status
 	 *
 	 * @return array
 	 */
-	public function get_builder( $post_id, $revision = self::REVISION_PUBLISH ) {
-		$data = $this->get_plain_editor( $post_id, $revision );
+	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
+		$data = $this->get_plain_editor( $post_id, $status );
 
 		return $this->_get_editor_data( $data, true );
 	}
@@ -83,10 +84,10 @@ class DB {
 		return $meta;
 	}
 
-	public function get_plain_editor( $post_id, $revision = self::REVISION_PUBLISH ) {
+	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
-		if ( self::REVISION_DRAFT === $revision ) {
+		if ( self::STATUS_DRAFT === $status ) {
 			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
 
 			if ( ! empty( $draft_data ) ) {
@@ -260,4 +261,12 @@ class DB {
 
 		return $data_container;
 	}
+
+	public function has_elementor_in_post( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
+	}
+
 }

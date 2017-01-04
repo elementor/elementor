@@ -53,7 +53,7 @@ class Source_Remote extends Source_Base {
 			'author' => $template_data['author'],
 			'categories' => [],
 			'keywords' => [],
-			'isPro' => $template_data['is_pro'],
+			'isPro' => ( '1' === $template_data['is_pro'] ),
 			'url' => $template_data['url'],
 		];
 	}

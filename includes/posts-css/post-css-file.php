@@ -37,6 +37,66 @@ class Post_CSS_File {
 	protected $stylesheet_obj;
 	protected $_columns_width;
 
+	public static function add_control_rules( Stylesheet $stylesheet, array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
+		$value = call_user_func( $value_callback, $control );
+
+		if ( null === $value ) {
+			return;
+		}
+
+		foreach ( $control['selectors'] as $selector => $css_property ) {
+			try {
+				$output_css_property = preg_replace_callback( '/\{\{(?:([^.}]+)\.)?([^}]*)}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+					$parser_control = $control;
+
+					$value_to_insert = $value;
+
+					if ( ! empty( $matches[1] ) ) {
+						$parser_control = $controls_stack[ $matches[1] ];
+
+						$value_to_insert = call_user_func( $value_callback, $parser_control );
+					}
+
+					$control_obj = Plugin::instance()->controls_manager->get_control( $parser_control['type'] );
+
+					$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );
+
+					if ( '' === $parsed_value ) {
+						throw new \Exception();
+					}
+
+					return $parsed_value;
+				}, $css_property );
+			} catch ( \Exception $e ) {
+				return;
+			}
+
+			if ( ! $output_css_property ) {
+				continue;
+			}
+
+			$device_pattern = '/^\(([^\)]+)\)/';
+
+			preg_match( $device_pattern, $selector, $device_rule );
+
+			if ( $device_rule ) {
+				$selector = preg_replace( $device_pattern, '', $selector );
+
+				$device_rule = $device_rule[1];
+			}
+
+			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
+
+			$device = $device_rule;
+
+			if ( ! $device ) {
+				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
+			}
+
+			$stylesheet->add_rules( $parsed_selector, $output_css_property, $device );
+		}
+	}
+
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
 
@@ -118,7 +178,7 @@ class Post_CSS_File {
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			wp_add_inline_style( 'elementor-frontend', $meta['css'] );
 		} else {
-			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['time'] );
+			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [ 'elementor-frontend' ], $meta['time'] );
 		}
 
 		// Handle fonts
@@ -166,7 +226,7 @@ class Post_CSS_File {
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, self::FILE_PREFIX, $this->post_id );
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
-		$this->url = $wp_upload_dir['baseurl'] . $relative_path;
+		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
 	}
 
 	protected function get_meta() {
@@ -219,10 +279,8 @@ class Post_CSS_File {
 
 	private function add_element_style_rules( Element_Base $element, $controls, $values, $placeholders, $replacements ) {
 		foreach ( $controls as $control ) {
-			$control_value = $values[ $control['name'] ];
-
 			if ( ! empty( $control['style_fields'] ) ) {
-				foreach ( $control_value as $field_value ) {
+				foreach ( $values[ $control['name'] ] as $field_value ) {
 					$this->add_element_style_rules(
 						$element,
 						$control['style_fields'],
@@ -237,7 +295,7 @@ class Post_CSS_File {
 				continue;
 			}
 
-			$this->add_control_style_rules( $control, $control_value, $placeholders, $replacements );
+			$this->add_control_style_rules( $control, $values, $element->get_controls(), $placeholders, $replacements );
 		}
 
 		foreach ( $element->get_children() as $child_element ) {
@@ -245,34 +303,30 @@ class Post_CSS_File {
 		}
 	}
 
-	private function add_control_style_rules( $control, $value, $placeholders, $replacements ) {
+	private function add_control_style_rules( $control, $values, $controls_stack, $placeholders, $replacements ) {
+		self::add_control_rules( $this->stylesheet_obj, $control, $controls_stack, function( $control ) use ( $values ) {
+			$value = $this->get_style_control_value( $control, $values );
+
+			if ( Controls_Manager::FONT === $control['type'] ) {
+				$this->fonts[] = $value;
+			}
+
+			return $value;
+		}, $placeholders, $replacements );
+	}
+
+	private function get_style_control_value( $control, $values ) {
+		$value = $values[ $control['name'] ];
+
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
 		}
 
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
-			return;
+			return null;
 		}
 
-		if ( Controls_Manager::FONT === $control['type'] ) {
-			$this->fonts[] = $value;
-		}
-
-		$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-
-		foreach ( $control['selectors'] as $selector => $css_property ) {
-			$parsed_css_property = $control_obj->get_replaced_style_values( $css_property, $value );
-
-			if ( ! $parsed_css_property ) {
-				continue;
-			}
-
-			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
-
-			$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
-
-			$this->stylesheet_obj->add_rules( $parsed_selector, $parsed_css_property, $device );
-		}
+		return $value;
 	}
 
 	private function render_styles( Element_Base $element ) {
@@ -286,6 +340,11 @@ class Post_CSS_File {
 			}
 		}
 
-		do_action( 'elementor/element_css/parse_css', $this, $element );
+		/**
+		 * @deprecated, use `elementor/element/parse_css`
+		 */
+		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
+
+		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }
