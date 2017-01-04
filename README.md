@@ -163,6 +163,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.0.10 - 04.01.2017 ###
 * New! - Added API docs for developers
 * Tweak! - Enqueue assets only if has elementor in the page
 * Tweak! - Changed 'Prevent Scroll' control type to switcher in Map widget
