@@ -264,7 +264,7 @@ App = Marionette.Application.extend( {
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
+			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -318,10 +318,10 @@ App = Marionette.Application.extend( {
 	onEditModeSwitched: function() {
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' === activeMode ) {
-			this.enterPreviewMode();
-		} else {
+		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
+		} else {
+			this.enterPreviewMode( 'preview' === activeMode );
 		}
 	},
 

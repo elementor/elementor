@@ -357,7 +357,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' === activeMode ) {
+		if ( 'edit' !== activeMode ) {
 			return;
 		}
 
