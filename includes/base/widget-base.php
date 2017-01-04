@@ -51,6 +51,8 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( $is_type_instance ) {
 			$this->_register_skins();
+
+			do_action( 'elementor/widget/' . $this->get_name() . '/skins_init', $this );
 		}
 	}
 

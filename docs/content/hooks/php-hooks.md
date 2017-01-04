@@ -112,6 +112,25 @@ add_action( 'elementor/init', function() {
 } );
 ```
 
+###`elementor/widget/{name}/skins_init`
+Runs after widget construction. 
+Here is th place to register custom skins. 
+
+####Arguments
+
+Argument          | Type              | Description
+------------      | :------:          | ----------------------
+`widget`          | *`Widget_Base`*   | The widget instance
+ 
+####Example
+
+ ```php
+// Add a custom skin for the Google Maps widget
+add_action( 'elementor/widget/google_maps/skins_init', function( $widget ) {
+	$widget->add_skin( new MySkins\Skin_Dark_Map( $widget ) );
+} );
+```
+
 ##Frontend Actions
 
 ###`elementor/frontend/before_enqueue_scripts`

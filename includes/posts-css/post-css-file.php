@@ -124,7 +124,6 @@ class Post_CSS_File {
 		$this->parse_elements_css();
 
 		$meta = [
-			'version' => ELEMENTOR_VERSION,
 			'time' => time(),
 			'fonts' => array_unique( $this->fonts ),
 		];
@@ -169,9 +168,9 @@ class Post_CSS_File {
 			return;
 		}
 
-		if ( apply_filters( 'elementor/css_file/update', version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ), $this ) ) {
+		// First time after clear cache and etc.
+		if ( '' === $meta['status'] ) {
 			$this->update();
-			// Refresh new meta
 			$meta = $this->get_meta();
 		}
 
@@ -233,7 +232,6 @@ class Post_CSS_File {
 		$meta = get_post_meta( $this->post_id, self::META_KEY_CSS, true );
 
 		$defaults = [
-			'version' => '',
 			'status'  => '',
 		];
 
