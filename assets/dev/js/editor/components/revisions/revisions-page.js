@@ -42,6 +42,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	setEditorData: function( data ) {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
+
 		collection.reset();
 		collection.set( data );
 	},
@@ -120,7 +121,7 @@ module.exports = Marionette.CompositeView.extend( {
 		removeDialog.show();
 	},
 
-	onChildviewItemClick: function( childView ) {
+	onChildviewClick: function( childView ) {
 		var self = this,
 			id = childView.model.get( 'id' );
 
@@ -134,10 +135,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		if ( elementor.isEditorChanged() && self.isFirstChange && null === self.currentPreviewId ) {
 			this.saveAutoDraft();
+
 			self.isFirstChange = false;
 		}
 
-		childView.ui.item.addClass( 'elementor-state-show' );
+		childView.$el.addClass( 'elementor-state-show' );
 
 		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
 			data: {
@@ -151,18 +153,20 @@ module.exports = Marionette.CompositeView.extend( {
 				self.jqueryXhr = null;
 
 				Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
-				childView.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
 
 				self.enterPreviewMode();
 
 			},
 			error: function( data ) {
-				childView.ui.item.removeClass( 'elementor-state-show elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-state-show elementor-revision-current-preview' );
+
 				if ( 'abort' === self.jqueryXhr.statusText ) {
 					return;
 				}
 
 				this.currentPreviewId = null;
+
 				alert( 'An error occurs' );
 			}
 		} );
@@ -180,6 +184,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.setDiscardButtonDisabled( true );
 
 		this.currentPreviewId = null;
+
 		this.isFirstChange = true;
 
 		this.exitPreviewMode();
