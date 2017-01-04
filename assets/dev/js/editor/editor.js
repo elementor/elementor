@@ -519,7 +519,7 @@ App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("https://tinyurl.com/zddf3ct"); color: transparent; background-repeat: no-repeat; background-size: cover';
+			style = 'line-height: 1.6; font-size: 20px; background-image: url("https://go.elementor.com/favicon/"); color: transparent; background-repeat: no-repeat; background-size: cover';
 		}
 
 		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
