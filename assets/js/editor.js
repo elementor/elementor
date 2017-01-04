@@ -1681,21 +1681,23 @@ App = Marionette.Application.extend( {
 		NProgress.start();
 
 		return this.ajax.send( 'save_builder', {
-	        data: {
-		        post_id: this.config.post_id,
+			data: {
+				post_id: this.config.post_id,
 				status: options.status,
-		        data: JSON.stringify( elementor.elements.toJSON() )
-	        },
+				data: JSON.stringify( elementor.elements.toJSON() )
+			},
 			success: function( data ) {
 				NProgress.done();
 
 				elementor.setFlagEditorChange( false );
 
+				elementor.channels.editor.trigger( 'saved', data );
+
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
 				}
 			}
-        } );
+		} );
 	},
 
 	reloadPreview: function() {
@@ -1755,34 +1757,23 @@ App = Marionette.Application.extend( {
 	},
 
 	logSite: function() {
-		var text = '',
-			style = '';
+		var asciiText = [
+			' ;;;;;;;;;;;;;;; ',
+			';;;  ;;       ;;;',
+			';;;  ;;;;;;;;;;;;',
+			';;;  ;;;;;;;;;;;;',
+			';;;  ;;       ;;;',
+			';;;  ;;;;;;;;;;;;',
+			';;;  ;;;;;;;;;;;;',
+			';;;  ;;       ;;;',
+			' ;;;;;;;;;;;;;;; '
+		];
 
-		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
-			var asciiText = [
-				' ;;;;;;;;;;;;;;; ',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				' ;;;;;;;;;;;;;;; '
-			];
-
-			text += '%c' + asciiText.join( '\n' ) + '\n';
-
-			style = 'color: #C42961';
-		} else {
-			text += '%c00';
-
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("https://tinyurl.com/zddf3ct"); color: transparent; background-repeat: no-repeat; background-size: cover';
-		}
+		var text = '%c' + asciiText.join( '\n' ) + '\n';
 
 		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
 
-		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
+		setTimeout( console.log.bind( console, text, 'color: #C42961', 'color: #9B0A46', '' ) );
 	}
 } );
 
