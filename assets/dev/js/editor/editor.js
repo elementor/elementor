@@ -395,10 +395,10 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function( previewAreaOnly ) {
+	enterPreviewMode: function( hidePanel ) {
 		var $elements = this.$previewContents.find( 'body' );
 
-		if ( ! previewAreaOnly ) {
+		if ( hidePanel ) {
 			$elements = $elements.add( 'body' );
 		}
 
@@ -406,7 +406,7 @@ App = Marionette.Application.extend( {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		if ( ! previewAreaOnly ) {
+		if ( hidePanel ) {
 			// Handle panel resize
 			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
 
@@ -414,16 +414,23 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	exitPreviewMode: function( previewAreaOnly ) {
-		var $elements = this.$previewContents.find( 'body' );
-
-		if ( ! previewAreaOnly ) {
-			$elements = $elements.add( 'body' );
-		}
-
-		$elements
+	exitPreviewMode: function() {
+		this.$previewContents
+			.find( 'body' )
+			.add( 'body' )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
+	},
+
+	changeEditMode: function( newMode ) {
+		var dataEditMode = elementor.channels.dataEditMode,
+			oldEditMode = dataEditMode.request( 'activeMode' );
+
+		dataEditMode.reply( 'activeMode', newMode );
+
+		if ( newMode !== oldEditMode ) {
+			dataEditMode.trigger( 'switch' );
+		}
 	},
 
 	saveEditor: function( options ) {
