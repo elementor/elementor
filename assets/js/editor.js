@@ -171,7 +171,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	onEditModeSwitched: function() {
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' !== activeMode ) {
+		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {
 			this.deactivate();
@@ -237,7 +237,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onEditModeSwitched: function() {
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' !== activeMode ) {
+		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {
 			this.deactivate();
@@ -440,10 +440,7 @@ RevisionsManager = function() {
 
 	self.addPanelPage = function() {
 		elementor.getPanelView().addPage( 'revisionsPage', {
-			view: require( './revisions-page' ),
-			options: {
-				collection: new Backbone.Collection( elementor.config.revisions )
-			}
+			view: require( './revisions-page' )
 		} );
 	};
 
@@ -453,7 +450,7 @@ RevisionsManager = function() {
 
 	self.onEditorSaved = function( data ) {
 		if ( data.last_revision ) {
-			elementor.getPanelView().getPages( 'revisionsPage' ).options.collection.add( data.last_revision, { at: 0 } );
+			elementor.getPanelView().getPages( 'revisionsPage' ).addRevisionToList( data.last_revision );
 		}
 	};
 
@@ -480,14 +477,15 @@ module.exports = Marionette.ItemView.extend( {
 module.exports =  Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-revisions-revision-item',
 
+	className: 'elementor-revision-item',
+
 	ui: {
-		item: '.elementor-revision-item',
 		deleteButton: '.elementor-revision-delete',
 		spinner: '.elementor-state-icon'
 	},
 
 	triggers: {
-		'click @ui.item': 'item:click',
+		'click': 'click',
 		'click @ui.deleteButton': 'delete:click'
 	}
 } );
@@ -523,8 +521,10 @@ module.exports = Marionette.CompositeView.extend( {
 	isFirstChange: true,
 
 	initialize: function() {
-		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState );
-		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+		this.collection = new Backbone.Collection( elementor.config.revisions );
+
+		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState )
+			.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
 	setApplyButtonState: function( editorChanged ) {
@@ -537,16 +537,18 @@ module.exports = Marionette.CompositeView.extend( {
 
 	setEditorData: function( data ) {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
+
 		collection.reset();
 		collection.set( data );
 	},
 
 	addRevisionToList: function( revision ) {
-		elementor.getPanelView().getPages( 'revisionsPage' ).options.collection.add( revision, { at: 0 } );
+		this.collection.add( revision, { at: 0 } );
 	},
 
 	saveAutoDraft: function() {
 		var self = this;
+
 		return elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
@@ -561,61 +563,73 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 	},
 
+	deleteRevision: function( revisionView ) {
+		var self = this,
+			revisionID = revisionView.model.get( 'id' );
+
+		revisionView.$el.addClass( 'elementor-state-show' );
+
+		elementor.ajax.send( 'delete_revision', {
+			data: {
+				id: revisionID
+			},
+			success: function() {
+				if ( revisionID === self.currentPreviewId ) {
+					self.onDiscardClick();
+				}
+
+				self.collection.remove( revisionView.model );
+			},
+			error: function( data ) {
+				revisionView.$el.removeClass( 'elementor-state-show' );
+
+				alert( 'An error occurs' );
+			}
+		} );
+	},
+
 	enterPreviewMode: function() {
-		elementor.enterPreviewMode( true );
-		elementor.channels.dataEditMode.reply( 'activeMode', 'preview' );
+		elementor.changeEditMode( 'review' );
 	},
 
 	exitPreviewMode: function() {
-		elementor.exitPreviewMode( true );
-		elementor.channels.dataEditMode.reply( 'activeMode', 'edit' );
+		elementor.changeEditMode( 'edit' );
 	},
 
-	onEditorSaved: function( data ) {
+	onEditorSaved: function() {
 		this.exitPreviewMode();
 	},
 
 	onApplyClick: function() {
 		elementor.getPanelView().getChildView( 'footer' )._publishBuilder();
+
 		this.isRevisionApplied = true;
+
 		this.setDiscardButtonDisabled( false );
 	},
 
 	onChildviewDeleteClick: function( childView ) {
 		var self = this,
-			removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-			message: elementor.translate( 'dialog_confirm_delete', [ childView.model.get( 'type' ) ] ),
-			headerMessage: elementor.translate( 'delete_element', [ childView.model.get( 'type' ) ] ),
+			type = childView.model.get( 'type' ),
+			id = childView.model.get( 'id' );
+
+		var removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),
+			headerMessage: elementor.translate( 'delete_element', [ type ] ),
 			strings: {
 				confirm: elementor.translate( 'delete' ),
 				cancel: elementor.translate( 'cancel' )
 			},
 			defaultOption: 'confirm',
-			onConfirm: _.bind( function() {
-				childView.ui.item.addClass( 'elementor-state-show' );
-
-				elementor.ajax.send( 'delete_revision', {
-					data: {
-						id: childView.model.get( 'id' )
-					},
-					success: function() {
-						if ( childView.model.get( 'id' ) === self.currentPreviewId ) {
-							self.onDiscardClick();
-						}
-						self.collection.remove( childView.model );
-					},
-					error: function( data ) {
-						childView.ui.item.removeClass( 'elementor-state-show' );
-						alert( 'An error occurs' );
-					}
-				} );
-			}, this )
+			onConfirm: function() {
+				self.deleteRevision( childView );
+			}
 		} );
 
 		removeDialog.show();
 	},
 
-	onChildviewItemClick: function( childView ) {
+	onChildviewClick: function( childView ) {
 		var self = this,
 			id = childView.model.get( 'id' );
 
@@ -629,10 +643,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		if ( elementor.isEditorChanged() && self.isFirstChange && null === self.currentPreviewId ) {
 			this.saveAutoDraft();
+
 			self.isFirstChange = false;
 		}
 
-		childView.ui.item.addClass( 'elementor-state-show' );
+		childView.$el.addClass( 'elementor-state-show' );
 
 		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
 			data: {
@@ -646,18 +661,20 @@ module.exports = Marionette.CompositeView.extend( {
 				self.jqueryXhr = null;
 
 				Backbone.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
-				childView.ui.item.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-state-show' ).addClass( 'elementor-revision-current-preview' );
 
 				self.enterPreviewMode();
 
 			},
 			error: function( data ) {
-				childView.ui.item.removeClass( 'elementor-state-show elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-state-show elementor-revision-current-preview' );
+
 				if ( 'abort' === self.jqueryXhr.statusText ) {
 					return;
 				}
 
 				this.currentPreviewId = null;
+
 				alert( 'An error occurs' );
 			}
 		} );
@@ -675,6 +692,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.setDiscardButtonDisabled( true );
 
 		this.currentPreviewId = null;
+
 		this.isFirstChange = true;
 
 		this.exitPreviewMode();
@@ -1773,7 +1791,7 @@ App = Marionette.Application.extend( {
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
+			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -1827,10 +1845,10 @@ App = Marionette.Application.extend( {
 	onEditModeSwitched: function() {
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' === activeMode ) {
-			this.enterPreviewMode();
-		} else {
+		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
+		} else {
+			this.enterPreviewMode( 'preview' === activeMode );
 		}
 	},
 
@@ -1904,10 +1922,10 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function( previewAreaOnly ) {
+	enterPreviewMode: function( hidePanel ) {
 		var $elements = this.$previewContents.find( 'body' );
 
-		if ( ! previewAreaOnly ) {
+		if ( hidePanel ) {
 			$elements = $elements.add( 'body' );
 		}
 
@@ -1915,7 +1933,7 @@ App = Marionette.Application.extend( {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		if ( ! previewAreaOnly ) {
+		if ( hidePanel ) {
 			// Handle panel resize
 			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
 
@@ -1923,16 +1941,23 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	exitPreviewMode: function( previewAreaOnly ) {
-		var $elements = this.$previewContents.find( 'body' );
-
-		if ( ! previewAreaOnly ) {
-			$elements = $elements.add( 'body' );
-		}
-
-		$elements
+	exitPreviewMode: function() {
+		this.$previewContents
+			.find( 'body' )
+			.add( 'body' )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
+	},
+
+	changeEditMode: function( newMode ) {
+		var dataEditMode = elementor.channels.dataEditMode,
+			oldEditMode = dataEditMode.request( 'activeMode' );
+
+		dataEditMode.reply( 'activeMode', newMode );
+
+		if ( newMode !== oldEditMode ) {
+			dataEditMode.trigger( 'switch' );
+		}
 	},
 
 	saveEditor: function( options ) {
@@ -2045,7 +2070,11 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'change @ui.previewButton': 'onEditModeChange'
+		'change @ui.previewButton': 'onPreviewButtonChange'
+	},
+
+	initialize: function() {
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeChanged );
 	},
 
 	getCurrentMode: function() {
@@ -2057,24 +2086,18 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		this.onEditModeChange();
+		this.onPreviewButtonChange();
 	},
 
-	onEditModeChange: function() {
-		var dataEditMode = elementor.channels.dataEditMode,
-			oldEditMode = dataEditMode.request( 'activeMode' ),
-			currentMode = this.getCurrentMode();
+	onPreviewButtonChange: function() {
+		elementor.changeEditMode( this.getCurrentMode() );
+	},
 
-		dataEditMode.reply( 'activeMode', currentMode );
+	onEditModeChanged: function( newMode ) {
+		var title = 'preview' === newMode ? 'Back to Editor' : 'Preview';
 
-		if ( currentMode !== oldEditMode ) {
-			dataEditMode.trigger( 'switch' );
-
-			var title = 'preview' === currentMode ? 'Back to Editor' : 'Preview';
-
-			this.ui.previewLabel.attr( 'title', title );
-			this.ui.previewLabelA11y.text( title );
-		}
+		this.ui.previewLabel.attr( 'title', title );
+		this.ui.previewLabelA11y.text( title );
 	}
 } );
 
@@ -5944,7 +5967,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' === activeMode ) {
+		if ( 'edit' !== activeMode ) {
 			return;
 		}
 
