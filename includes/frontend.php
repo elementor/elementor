@@ -154,13 +154,12 @@ class Frontend {
 		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
-			[
-				'elementor-icons',
-				'font-awesome',
-			],
+			[],
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'elementor-icons' );
+		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
