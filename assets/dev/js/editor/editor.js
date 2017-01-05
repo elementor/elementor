@@ -441,14 +441,18 @@ App = Marionette.Application.extend( {
 
 		NProgress.start();
 
+		var newData = elementor.elements.toJSON();
+
 		return this.ajax.send( 'save_builder', {
 	        data: {
 		        post_id: this.config.post_id,
 				status: options.status,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
 				NProgress.done();
+
+				elementor.config.data = newData;
 
 				elementor.setFlagEditorChange( false );
 
