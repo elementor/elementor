@@ -6,7 +6,6 @@
 		border: 1px solid $editor-lightest;
 		padding: 10px 15px;
 		margin-bottom: 10px;
-		cursor: pointer;
 
 		&:hover:not(.elementor-revision-current-preview) {
 			background-color: fade_out($editor-background, 0.7) ;
@@ -39,18 +38,23 @@
 		}
 
 		&__details {
-			padding: 0 10px;
+			@include padding-start(15px);
 			flex-grow: 1;
+			cursor: pointer;
+		}
+
+		&__tools-delete {
+			cursor: pointer;
 		}
 	}
 
 	&date {
-		font-size: 10px;
+		font-size: 11px;
 	}
 
 	&meta {
 		padding-top: 5px;
-		font-size: 9px;
+		font-size: 10px;
 		font-weight: bold;
 	}
 

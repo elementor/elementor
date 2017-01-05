@@ -4,11 +4,12 @@ module.exports =  Marionette.ItemView.extend( {
 	className: 'elementor-revision-item',
 
 	ui: {
+		detailsArea: '.elementor-revision-item__details',
 		deleteButton: '.elementor-revision-item__tools-delete'
 	},
 
 	triggers: {
-		'click': 'click',
+		'click @ui.detailsArea': 'detailsArea:click',
 		'click @ui.deleteButton': 'delete:click'
 	}
 } );

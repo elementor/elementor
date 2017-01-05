@@ -238,7 +238,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
 			<button class="elementor-button elementor-button-success" disabled>
-				<i class="fa fa-check"></i><?php _e( 'Restore', 'elementor' ); ?>
+				<?php _e( 'Apply', 'elementor' ); ?>
 			</button>
 		</div>
 	</div>
@@ -251,28 +251,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
-	<div class="elementor-revisions-header">
-		<?php _e( 'No Revisions Saved Yet', 'elementor' ); ?>
-	</div>
-
-	<#
-		var message;
-		if ( elementor.config.revisions_enabled ) {
-			message = elementor.translate( 'no_revisions' );
-		} else {
-			message = elementor.translate( 'revisions_disabled' );
-		}
-	#>
-	<div class="elementor-revisions-message">
-		{{{ message }}}
-	</div>
+	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
+	<div class="elementor-panel-nerd-box-title"><?php _e( 'No Revisions Saved Yet', 'elementor' ); ?></div>
+	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_to_keep ? 'no_revisions_1' : 'revisions_disabled_1' ) }}}</div>
+	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_to_keep ? 'no_revisions_2' : 'revisions_disabled_2' ) }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
 	<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
 	<div class="elementor-revision-item__details">
 		<div class="elementor-revision-date">{{ date }}</div>
-		<div class="elementor-revision-meta">{{{ type }}} <?php _e( 'By', 'elementor' ); ?> {{ author }}</div>
+		<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php _e( 'By', 'elementor' ); ?> {{ author }}</div>
 	</div>
 	<div class="elementor-revision-item__tools">
 		<i class="elementor-revision-item__tools-delete fa fa-times"></i>

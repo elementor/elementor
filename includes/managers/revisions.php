@@ -14,7 +14,7 @@ class Revisions_Manager {
 		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
 	}
 
-	public static function get_revisions( $post_id = 0, $query_args = [] ) {
+	public static function get_revisions( $post_id = 0, $query_args = [], $parse_result = true ) {
 		$post = get_post( $post_id );
 
 		if ( ! $post || empty( $post->ID ) ) {
@@ -27,6 +27,10 @@ class Revisions_Manager {
 
 		$posts = wp_get_post_revisions( $post->ID, $query_args );
 
+		if ( ! $parse_result ) {
+			return $posts;
+		}
+
 		/** @var \WP_Post $revision */
 		foreach ( $posts as $revision ) {
 			$date = date_i18n( _x( 'M j @ H:i', 'revision date format' ), strtotime( $revision->post_modified ) );
@@ -34,9 +38,9 @@ class Revisions_Manager {
 			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
 
 			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
-				$type = __( 'Autosave', 'elementor' );
+				$type = 'autosave';
 			} else {
-				$type = __( 'Revision', 'elementor' );
+				$type = 'revision';
 			}
 
 			$revisions[] = [
@@ -44,7 +48,7 @@ class Revisions_Manager {
 				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
 				'date' => sprintf( __( '%1$s ago (%2$s)' ), $human_time, $date ),
 				'type' => $type,
-				'gravatar' => get_avatar( $revision->post_author, 18 ),
+				'gravatar' => get_avatar( $revision->post_author, 22 ),
 			];
 		}
 

@@ -135,12 +135,18 @@ class Elements_Manager {
 
 		$return_data = [];
 
-		$latest_revisions = Revisions_Manager::get_revisions( $_POST['post_id'], [
+		$latest_revision = Revisions_Manager::get_revisions( $_POST['post_id'], [
 			'posts_per_page' => 1,
 		] );
 
-		if ( ! empty( $latest_revisions ) ) {
-			$return_data['last_revision'] = $latest_revisions[0];
+		$all_revision_ids = Revisions_Manager::get_revisions( $_POST['post_id'], [
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		], false );
+
+		if ( ! empty( $latest_revision ) ) {
+			$return_data['last_revision'] = $latest_revision[0];
+			$return_data['revisions_ids'] = $all_revision_ids;
 		}
 
 		wp_send_json_success( $return_data );
