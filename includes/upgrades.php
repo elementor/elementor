@@ -12,25 +12,38 @@ class Upgrades {
 	public static function init() {
 		$elementor_version = get_option( 'elementor_version' );
 
+		// Normal init
+		if ( ELEMENTOR_VERSION === $elementor_version ) {
+			return;
+		}
+
+		self::check_upgrades( $elementor_version );
+
+		Plugin::instance()->posts_css_manager->clear_cache();
+
+		update_option( 'elementor_version', ELEMENTOR_VERSION );
+	}
+
+	private static function check_upgrades( $elementor_version ) {
+		// It's a new install
 		if ( ! $elementor_version ) {
-			// 0.3.1 is the first version to use this option so we must add it
-			$elementor_version = '0.3.1';
-			update_option( 'elementor_version', $elementor_version );
+			return;
 		}
 
-		if ( version_compare( $elementor_version, '0.3.2', '<' ) ) {
-			self::_upgrade_v032();
-			update_option( 'elementor_version', '0.3.2' );
-		}
+		$elementor_upgrades = get_option( 'elementor_upgrades', [] );
 
-		if ( version_compare( $elementor_version, '0.9.2', '<' ) ) {
-			self::_upgrade_v092();
-			update_option( 'elementor_version', '0.9.2' );
-		}
+		$upgrades = [
+			'0.3.2'  => '_upgrade_v032',
+			'0.9.2'  => '_upgrade_v092',
+			'0.11.0' => '_upgrade_v0110',
+		];
 
-		if ( version_compare( $elementor_version, '0.11.0', '<' ) ) {
-			self::_upgrade_v0110();
-			update_option( 'elementor_version', '0.11.0' );
+		foreach ( $upgrades as $version => $function ) {
+			if ( version_compare( $elementor_version, $version, '<' ) && ! isset( $elementor_upgrades[ $version ] ) ) {
+				self::$function();
+				$elementor_upgrades[ $version ] = true;
+				update_option( 'elementor_upgrades', $elementor_upgrades );
+			}
 		}
 	}
 
