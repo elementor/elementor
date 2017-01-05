@@ -163,7 +163,6 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 = 1.0.12 - 05.01.2017 =
 * Fix! - Library modal 'Insert' button
-* Fix! - Ninja Forms widget conflict
 
 = 1.0.11 - 04.01.2017 =
 * Fix! - Some breaks from previous release
@@ -174,6 +173,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Updated Dialog Manager v3.0.2
 * Fix! - Library modal 'Go Pro' button in FireFox
 * Fix! - Bug load elementor in front page in some server configuration
+* Fix! - Ninja Forms widget conflict
 * Deprecated! - `elementor/frontend/enqueue_scripts/after` is no longer available
 * Deprecated! - `elementor/elements/print_template` is replaced by `elementor/element/print_template`
 * Deprecated! - `elementor/element_css/parse_css` is replaced by `elementor/element/parse_css`
