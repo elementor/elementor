@@ -3,7 +3,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	template: '#tmpl-elementor-panel-revisions',
 
-	childView: require( './revision-view' ),
+	childView: require( './view' ),
 
 	childViewContainer: '#elementor-revisions-list',
 

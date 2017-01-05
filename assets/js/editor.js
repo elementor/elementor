@@ -439,10 +439,19 @@ module.exports = Backbone.Collection.extend( {
 	model: RevisionModel
 } );
 
-},{"./model":8}],7:[function(require,module,exports){
+},{"./model":9}],7:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-panel-revisions-no-revisions',
+
+	id: 'elementor-panel-revisions-no-revisions',
+
+	className: 'elementor-panel-nerd-box'
+} );
+
+},{}],8:[function(require,module,exports){
 var RevisionsCollection = require( './collection' ),
-	RevisionsPageView = require( './revisions-page' ),
-	RevisionsEmptyView = require( './no-revisions-view' ),
+	RevisionsPageView = require( './panel-page' ),
+	RevisionsEmptyView = require( './empty-view' ),
 	RevisionsManager;
 
 RevisionsManager = function() {
@@ -528,7 +537,7 @@ RevisionsManager = function() {
 
 module.exports = new RevisionsManager();
 
-},{"./collection":6,"./no-revisions-view":9,"./revisions-page":11}],8:[function(require,module,exports){
+},{"./collection":6,"./empty-view":7,"./panel-page":10}],9:[function(require,module,exports){
 var RevisionModel;
 
 RevisionModel = Backbone.Model.extend();
@@ -539,39 +548,13 @@ RevisionModel.prototype.sync = function() {
 
 module.exports = RevisionModel;
 
-},{}],9:[function(require,module,exports){
-module.exports = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-panel-revisions-no-revisions',
-
-	id: 'elementor-panel-revisions-no-revisions',
-
-	className: 'elementor-panel-nerd-box'
-} );
-
 },{}],10:[function(require,module,exports){
-module.exports =  Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-panel-revisions-revision-item',
-
-	className: 'elementor-revision-item',
-
-	ui: {
-		detailsArea: '.elementor-revision-item__details',
-		deleteButton: '.elementor-revision-item__tools-delete'
-	},
-
-	triggers: {
-		'click @ui.detailsArea': 'detailsArea:click',
-		'click @ui.deleteButton': 'delete:click'
-	}
-} );
-
-},{}],11:[function(require,module,exports){
 module.exports = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-revisions',
 
 	template: '#tmpl-elementor-panel-revisions',
 
-	childView: require( './revision-view' ),
+	childView: require( './view' ),
 
 	childViewContainer: '#elementor-revisions-list',
 
@@ -811,7 +794,24 @@ module.exports = Marionette.CompositeView.extend( {
 	}
 } );
 
-},{"./revision-view":10}],12:[function(require,module,exports){
+},{"./view":11}],11:[function(require,module,exports){
+module.exports =  Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-panel-revisions-revision-item',
+
+	className: 'elementor-revision-item',
+
+	ui: {
+		detailsArea: '.elementor-revision-item__details',
+		deleteButton: '.elementor-revision-item__tools-delete'
+	},
+
+	triggers: {
+		'click @ui.detailsArea': 'detailsArea:click',
+		'click @ui.deleteButton': 'delete:click'
+	}
+} );
+
+},{}],12:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
 	ui: {
 		insertButton: '.elementor-template-library-template-insert'
@@ -2181,7 +2181,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"../utils/hooks":108,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":7,"elementor-templates/manager":14,"elementor-utils/ajax":63,"elementor-utils/conditions":64,"elementor-utils/heartbeat":65,"elementor-utils/helpers":66,"elementor-utils/images-manager":67,"elementor-utils/introduction":68,"elementor-utils/modals":71,"elementor-utils/presets-factory":72,"elementor-utils/schemes":73,"elementor-views/controls/animation":78,"elementor-views/controls/base":81,"elementor-views/controls/box-shadow":82,"elementor-views/controls/choose":83,"elementor-views/controls/code":84,"elementor-views/controls/color":85,"elementor-views/controls/date-time":86,"elementor-views/controls/dimensions":87,"elementor-views/controls/font":88,"elementor-views/controls/gallery":89,"elementor-views/controls/icon":90,"elementor-views/controls/image-dimensions":91,"elementor-views/controls/media":92,"elementor-views/controls/order":93,"elementor-views/controls/repeater":95,"elementor-views/controls/section":96,"elementor-views/controls/select2":97,"elementor-views/controls/slider":98,"elementor-views/controls/structure":99,"elementor-views/controls/tab":100,"elementor-views/controls/url":101,"elementor-views/controls/wp_widget":102,"elementor-views/controls/wysiwyg":103,"elementor-views/preview":105,"elementor-views/widget":107}],33:[function(require,module,exports){
+},{"../utils/hooks":108,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/ajax":63,"elementor-utils/conditions":64,"elementor-utils/heartbeat":65,"elementor-utils/helpers":66,"elementor-utils/images-manager":67,"elementor-utils/introduction":68,"elementor-utils/modals":71,"elementor-utils/presets-factory":72,"elementor-utils/schemes":73,"elementor-views/controls/animation":78,"elementor-views/controls/base":81,"elementor-views/controls/box-shadow":82,"elementor-views/controls/choose":83,"elementor-views/controls/code":84,"elementor-views/controls/color":85,"elementor-views/controls/date-time":86,"elementor-views/controls/dimensions":87,"elementor-views/controls/font":88,"elementor-views/controls/gallery":89,"elementor-views/controls/icon":90,"elementor-views/controls/image-dimensions":91,"elementor-views/controls/media":92,"elementor-views/controls/order":93,"elementor-views/controls/repeater":95,"elementor-views/controls/section":96,"elementor-views/controls/select2":97,"elementor-views/controls/slider":98,"elementor-views/controls/structure":99,"elementor-views/controls/tab":100,"elementor-views/controls/url":101,"elementor-views/controls/wp_widget":102,"elementor-views/controls/wysiwyg":103,"elementor-views/preview":105,"elementor-views/widget":107}],33:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {

@@ -1,6 +1,6 @@
 var RevisionsCollection = require( './collection' ),
-	RevisionsPageView = require( './revisions-page' ),
-	RevisionsEmptyView = require( './no-revisions-view' ),
+	RevisionsPageView = require( './panel-page' ),
+	RevisionsEmptyView = require( './empty-view' ),
 	RevisionsManager;
 
 RevisionsManager = function() {
