@@ -33,7 +33,7 @@ class Revisions_Manager {
 
 		/** @var \WP_Post $revision */
 		foreach ( $posts as $revision ) {
-			$date = date_i18n( _x( 'M j @ H:i', 'revision date format' ), strtotime( $revision->post_modified ) );
+			$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $revision->post_modified ) );
 
 			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
 
@@ -46,7 +46,7 @@ class Revisions_Manager {
 			$revisions[] = [
 				'id' => $revision->ID,
 				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
-				'date' => sprintf( __( '%1$s ago (%2$s)' ), $human_time, $date ),
+				'date' => sprintf( __( '%1$s ago (%2$s)', 'elementor' ), $human_time, $date ),
 				'type' => $type,
 				'gravatar' => get_avatar( $revision->post_author, 22 ),
 			];

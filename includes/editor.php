@@ -382,7 +382,7 @@ class Editor {
 				'desc' => __( 'Descending order', 'elementor' ),
 				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
 				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.' ),
+				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
 				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),
