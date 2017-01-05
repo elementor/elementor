@@ -113,7 +113,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			viewOptions = _.extend( pageData.options, viewOptions );
 		}
 
-		this.showChildView( 'content', new pageData.view( viewOptions ) );
+		var View = pageData.view;
+
+		if ( pageData.getView ) {
+			View = pageData.getView();
+		}
+
+		this.showChildView( 'content', new View( viewOptions ) );
 
 		this.getHeaderView().setTitle( title || pageData.title );
 
