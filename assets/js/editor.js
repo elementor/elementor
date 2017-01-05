@@ -441,48 +441,102 @@ module.exports = Backbone.Collection.extend( {
 
 },{"./model":8}],7:[function(require,module,exports){
 var RevisionsCollection = require( './collection' ),
+	RevisionsPageView = require( './revisions-page' ),
+	RevisionsEmptyView = require( './no-revisions-view' ),
 	RevisionsManager;
 
 RevisionsManager = function() {
 	var self = this,
 		revisions;
 
-	this.addRevision = function( revision ) {
-		revisions.add( revision, { at: 0 } );
-	};
-
-	this.addPanelPage = function() {
+	var addPanelPage = function() {
 		elementor.getPanelView().addPage( 'revisionsPage', {
-			view: require( './revisions-page' ),
+			getView: function() {
+				if ( revisions.length ) {
+					return RevisionsPageView;
+				}
+
+				return RevisionsEmptyView;
+			},
 			options: {
 				collection: revisions
 			}
 		} );
 	};
 
-	this.attachEvents = function() {
-		elementor.channels.editor.on( 'saved', self.onEditorSaved );
-	};
-
-	this.onEditorSaved = function( data ) {
+	var onEditorSaved = function( data ) {
 		if ( data.last_revision ) {
 			self.addRevision( data.last_revision );
 		}
+	};
+
+	var attachEvents = function() {
+		elementor.channels.editor.on( 'saved', onEditorSaved );
+	};
+
+	this.addRevision = function( revisionData ) {
+		revisions.add( revisionData, { at: 0 } );
+
+		var revisionsToKeepNum = elementor.config.revisions_to_keep;
+
+		if ( -1 !== revisionsToKeepNum && revisions.length > revisionsToKeepNum ) {
+			var revisionsToKeep = revisions.slice( 0, revisionsToKeepNum ),
+				autoSaveRevision = revisions.findWhere( { type: 'autosave' } ),
+				autoSaveRevisionIndex = revisions.indexOf( autoSaveRevision );
+
+			if ( autoSaveRevisionIndex >= revisionsToKeepNum  ) {
+				revisionsToKeep.push( autoSaveRevision );
+			}
+
+			revisions.reset( revisionsToKeep );
+		}
+
+		var panel = elementor.getPanelView();
+
+		if ( panel.getCurrentPageView() instanceof RevisionsEmptyView ) {
+			panel.setPage( 'revisionsPage' );
+		}
+	};
+
+	this.deleteRevision = function( revisionModel, options ) {
+		var params = {
+			data: {
+				id: revisionModel.get( 'id' )
+			},
+			success: function() {
+				if ( options.success ) {
+					options.success();
+				}
+
+				revisionModel.destroy();
+
+				if ( ! revisions.length ) {
+					elementor.getPanelView().setPage( 'revisionsPage' );
+				}
+			}
+		};
+
+		if ( options.error ) {
+			params.error = options.error;
+		}
+
+		elementor.ajax.send( 'delete_revision', params );
 	};
 
 	this.init = function() {
 		revisions = new RevisionsCollection( elementor.config.revisions );
 
 		elementor.on( 'preview:loaded', function() {
-			self.addPanelPage();
-			self.attachEvents();
+			addPanelPage();
+
+			attachEvents();
 		} );
 	};
 };
 
 module.exports = new RevisionsManager();
 
-},{"./collection":6,"./revisions-page":11}],8:[function(require,module,exports){
+},{"./collection":6,"./no-revisions-view":9,"./revisions-page":11}],8:[function(require,module,exports){
 var RevisionModel;
 
 RevisionModel = Backbone.Model.extend();
@@ -509,11 +563,12 @@ module.exports =  Marionette.ItemView.extend( {
 	className: 'elementor-revision-item',
 
 	ui: {
+		detailsArea: '.elementor-revision-item__details',
 		deleteButton: '.elementor-revision-item__tools-delete'
 	},
 
 	triggers: {
-		'click': 'click',
+		'click @ui.detailsArea': 'detailsArea:click',
 		'click @ui.deleteButton': 'delete:click'
 	}
 } );
@@ -527,8 +582,6 @@ module.exports = Marionette.CompositeView.extend( {
 	childView: require( './revision-view' ),
 
 	childViewContainer: '#elementor-revisions-list',
-
-	emptyView: require( './no-revisions-view' ),
 
 	ui: {
 		discard: '.elementor-panel-scheme-discard .elementor-button',
@@ -546,19 +599,12 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentPreviewId: null,
 
-	isFirstChange: true,
-
 	initialize: function() {
-		this.listenTo( elementor.channels.editor, 'change', this.setApplyButtonState )
-			.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
-	setApplyButtonState: function( active ) {
-		this.ui.apply.prop( 'disabled', ! active );
-	},
-
-	setDiscardButtonState: function( active ) {
-		this.ui.discard.prop( 'disabled', active );
+	setRevisionsButtonsActive: function( active ) {
+		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 	},
 
 	setEditorData: function( data ) {
@@ -569,8 +615,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	saveAutoDraft: function() {
-		var self = this;
-
 		return elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
@@ -586,26 +630,22 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	deleteRevision: function( revisionView ) {
-		var self = this,
-			revisionID = revisionView.model.get( 'id' );
+		var self = this;
 
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		elementor.ajax.send( 'delete_revision', {
-			data: {
-				id: revisionID
-			},
+		elementor.revisions.deleteRevision( revisionView.model, {
 			success: function() {
-				if ( revisionID === self.currentPreviewId ) {
+				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
 					self.onDiscardClick();
 				}
 
-				revisionView.model.destroy();
+				self.currentPreviewId = null;
 			},
 			error: function( data ) {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				alert( 'An error occurs' );
+				alert( 'An error occurred' );
 			}
 		} );
 	},
@@ -627,7 +667,82 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.isRevisionApplied = true;
 
-		this.setDiscardButtonState( true );
+		this.currentPreviewId = null;
+
+		this.setRevisionsButtonsActive( false );
+	},
+
+	onDiscardClick: function() {
+		this.setEditorData( elementor.config.data );
+
+		elementor.setFlagEditorChange( this.isRevisionApplied );
+
+		this.isRevisionApplied = false;
+
+		this.setRevisionsButtonsActive( false );
+
+		this.currentPreviewId = null;
+
+		this.exitPreviewMode();
+
+		this.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+	},
+
+	onDestroy: function() {
+		if ( this.currentPreviewId ) {
+			this.onDiscardClick();
+		}
+	},
+
+	onChildviewDetailsAreaClick: function( childView ) {
+		var self = this,
+			id = childView.model.get( 'id' );
+
+		if ( id === self.currentPreviewId ) {
+			return;
+		}
+
+		if ( this.jqueryXhr ) {
+			this.jqueryXhr.abort();
+		}
+
+		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
+			this.saveAutoDraft();
+		}
+
+		childView.$el.addClass( 'elementor-revision-item-loading' );
+
+		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
+			data: {
+				id: id
+			},
+			success: function( data ) {
+				self.setEditorData( data );
+
+				self.setRevisionsButtonsActive( true );
+
+				self.currentPreviewId = id;
+
+				self.jqueryXhr = null;
+
+				self.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+
+				childView.$el.removeClass( 'elementor-revision-item-loading' ).addClass( 'elementor-revision-current-preview' );
+
+				self.enterPreviewMode();
+			},
+			error: function( data ) {
+				childView.$el.removeClass( 'elementor-revision-item-loading elementor-revision-current-preview' );
+
+				if ( 'abort' === self.jqueryXhr.statusText ) {
+					return;
+				}
+
+				this.currentPreviewId = null;
+
+				alert( 'An error occurred' );
+			}
+		} );
 	},
 
 	onChildviewDeleteClick: function( childView ) {
@@ -649,83 +764,10 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 
 		removeDialog.show();
-	},
-
-	onChildviewClick: function( childView ) {
-		var self = this,
-			id = childView.model.get( 'id' );
-
-		if ( id === self.currentPreviewId ) {
-			return;
-		}
-
-		if ( this.jqueryXhr ) {
-			this.jqueryXhr.abort();
-		}
-
-		if ( elementor.isEditorChanged() && self.isFirstChange && null === self.currentPreviewId ) {
-			this.saveAutoDraft();
-
-			self.isFirstChange = false;
-		}
-
-		childView.$el.addClass( 'elementor-revision-item-loading' );
-
-		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
-			data: {
-				id: id
-			},
-			success: function( data ) {
-				self.setEditorData( data );
-
-				self.setDiscardButtonState( true );
-
-				self.currentPreviewId = id;
-
-				self.jqueryXhr = null;
-
-				self.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
-
-				childView.$el.removeClass( 'elementor-revision-item-loading' ).addClass( 'elementor-revision-current-preview' );
-
-				self.enterPreviewMode();
-			},
-			error: function( data ) {
-				childView.$el.removeClass( 'elementor-revision-item-loading elementor-revision-current-preview' );
-
-				if ( 'abort' === self.jqueryXhr.statusText ) {
-					return;
-				}
-
-				this.currentPreviewId = null;
-
-				alert( 'An error occurs' );
-			}
-		} );
-	},
-
-	onDiscardClick: function() {
-		this.setEditorData( elementor.config.data );
-
-		elementor.setFlagEditorChange( this.isRevisionApplied );
-
-		if ( this.isRevisionApplied ) {
-			this.isRevisionApplied = false;
-		}
-
-		this.setDiscardButtonState( false );
-
-		this.currentPreviewId = null;
-
-		this.isFirstChange = true;
-
-		this.exitPreviewMode();
-
-		this.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
 	}
 } );
 
-},{"./no-revisions-view":9,"./revision-view":10}],12:[function(require,module,exports){
+},{"./revision-view":10}],12:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
 	ui: {
 		insertButton: '.elementor-template-library-template-insert'
@@ -1992,14 +2034,18 @@ App = Marionette.Application.extend( {
 
 		NProgress.start();
 
+		var newData = elementor.elements.toJSON();
+
 		return this.ajax.send( 'save_builder', {
 	        data: {
 		        post_id: this.config.post_id,
 				status: options.status,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
 				NProgress.done();
+
+				elementor.config.data = newData;
 
 				elementor.setFlagEditorChange( false );
 
@@ -2994,7 +3040,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 			},
 			{
 				icon: 'history',
-				title: elementor.translate( 'revisions_history' ),
+				title: elementor.translate( 'revision_history' ),
 				type: 'page',
 				pageName: 'revisionsPage'
 			},
@@ -3537,7 +3583,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			viewOptions = _.extend( pageData.options, viewOptions );
 		}
 
-		this.showChildView( 'content', new pageData.view( viewOptions ) );
+		var View = pageData.view;
+
+		if ( pageData.getView ) {
+			View = pageData.getView();
+		}
+
+		this.showChildView( 'content', new View( viewOptions ) );
 
 		this.getHeaderView().setTitle( title || pageData.title );
 
