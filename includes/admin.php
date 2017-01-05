@@ -30,6 +30,10 @@ class Admin {
 
 			$this->enqueue_feedback_dialog_scripts();
 		}
+
+		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
+			$this->enqueue_tools_dialog_scripts();
+		}
 	}
 
 	/**
@@ -301,6 +305,20 @@ class Admin {
 					'skip_n_deactivate' => __( 'Skip & Deactivate', 'elementor' ),
 				],
 			]
+		);
+	}
+
+	public function enqueue_tools_dialog_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.0.0',
+			true
 		);
 	}
 

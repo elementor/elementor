@@ -61,6 +61,32 @@ class Tools {
 				'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
 			]
 		);
+
+		$replace_url_section = 'elementor_replace_url_section';
+
+		add_settings_section(
+			$replace_url_section,
+			__( 'Replace URL', 'elementor' ),
+			function () {
+				echo __( '<p><strong>Important:</strong> before updating, please <a target="_blank" href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.</p>', 'elementor' );
+			},
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_replace_url';
+		add_settings_field(
+			$field_id,
+			__( 'Update Site Address (URL)', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$replace_url_section,
+			[
+				'id' => $field_id,
+				'type' => 'raw_html',
+				'html' => sprintf( '<input name="from" placeholder="http://old-url" /><input name="to" placeholder="http://new-url" /><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), __( 'Replace URL', 'elementor' ) ),
+				'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
+			]
+		);
 	}
 
 	public function display_settings_page() {
@@ -76,7 +102,6 @@ class Tools {
 		</div><!-- /.wrap -->
 
 		<?php
-
 	}
 
 	public function ajax_elementor_clear_cache() {
@@ -87,12 +112,43 @@ class Tools {
 		wp_send_json_success();
 	}
 
+	public function ajax_elementor_replace_url() {
+		check_ajax_referer( 'elementor_replace_url', '_nonce' );
+
+		$from = $_POST['from'];
+		$to = $_POST['to'];
+
+		if ( ! filter_var( $from, FILTER_VALIDATE_URL ) || ! filter_var( $to, FILTER_VALIDATE_URL ) ) {
+			wp_send_json_error( __( 'The `from` and `to` URL\'s must be a valid URL', 'elementor' ) );
+		}
+
+		if ( $from === $to ) {
+			wp_send_json_error( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+		}
+
+		global $wpdb;
+
+		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
+		$rows_affected = $wpdb->query(
+			"UPDATE {$wpdb->postmeta} " .
+			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\/', $from ) . "', '" . str_replace( '/', '\/', $to ) . "') " .
+			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
+		// @codingStandardsIgnoreEnd
+
+		if ( false === $rows_affected ) {
+			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
+		} else {
+			wp_send_json_success( sprintf( __( '%d Rows Affected', 'elementor' ), $rows_affected ) );
+		}
+	}
+
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
 
 		if ( ! empty( $_POST ) ) {
 			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ], 10 );
+			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ], 10 );
 		}
 	}
 }
