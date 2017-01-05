@@ -602,7 +602,7 @@ Utils = function( $ ) {
 			return callback.apply( element, arguments );
 		};
 
-		$element.waypoint( correctCallback, options );
+		$element.waypoint4( correctCallback, options );
 	};
 };
 

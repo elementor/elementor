@@ -1,5 +1,5 @@
 (function( $ ) {
-	$.fn.waypoint = function(callback) {
+	$.fn.waypoint4 = function(callback) {
 		if ( typeof callback === 'function' ) {
 			callback.call( this );
 		}
