@@ -5,10 +5,13 @@
 .elementor-button {
 	outline: none;
 	border: none;
-	cursor: pointer;
 	border-radius: 3px;
 	transition-property: background, color, box-shadow, opacity;
 	transition-duration: .5s;
+
+	&:not([disabled]) {
+		cursor: pointer;
+	}
 
 	&:not(.elementor-button-state) {
 
