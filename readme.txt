@@ -161,6 +161,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.0.12 - 05.01.2017 =
+* Fix! - Library modal 'Insert' button
+* Fix! - Ninja Forms widget conflict
+
 = 1.0.11 - 04.01.2017 =
 * Fix! - Some breaks from previous release
 
