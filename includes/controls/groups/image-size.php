@@ -119,7 +119,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		}
 
 		$controls['size'] = [
-			'label' => !empty($args['label']) ? $args['label'] : _x( 'Image Size', 'Image Size Control', 'elementor' ),
+			'label' => ! empty( $args['label'] ) ? $args['label'] : _x( 'Image Size', 'Image Size Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => $image_sizes,
 			'default' => $default_value,
