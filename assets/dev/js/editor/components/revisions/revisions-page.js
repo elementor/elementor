@@ -23,6 +23,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentPreviewId: null,
 
+	currentPreviewItem: null,
+
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 
@@ -149,7 +151,9 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.exitPreviewMode();
 
-		this.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
+		if ( this.currentPreviewItem ) {
+			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
+		}
 	},
 
 	onDestroy: function() {
@@ -176,7 +180,15 @@ module.exports = Marionette.CompositeView.extend( {
 			this.saveAutoDraft();
 		}
 
-		childView.$el.addClass( 'elementor-revision-item-loading' );
+		if ( self.currentPreviewItem ) {
+			self.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
+		}
+
+		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
+
+		self.currentPreviewItem = childView;
+
+		self.currentPreviewId = id;
 
 		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
 			data: {
@@ -187,24 +199,22 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.setRevisionsButtonsActive( true );
 
-				self.currentPreviewId = id;
-
 				self.jqueryXhr = null;
 
-				self.$( '.elementor-revision-current-preview' ).removeClass( 'elementor-revision-current-preview' );
-
-				childView.$el.removeClass( 'elementor-revision-item-loading' ).addClass( 'elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				self.enterPreviewMode();
 			},
 			error: function( data ) {
-				childView.$el.removeClass( 'elementor-revision-item-loading elementor-revision-current-preview' );
+				childView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
 					return;
 				}
 
-				this.currentPreviewId = null;
+				self.currentPreviewItem = null;
+
+				self.currentPreviewId = null;
 
 				alert( 'An error occurred' );
 			}
