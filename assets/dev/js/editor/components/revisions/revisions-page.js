@@ -84,6 +84,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onEditorSaved: function() {
 		this.exitPreviewMode();
+
+		this.setRevisionsButtonsActive( false );
 	},
 
 	onApplyClick: function() {
@@ -92,8 +94,6 @@ module.exports = Marionette.CompositeView.extend( {
 		this.isRevisionApplied = true;
 
 		this.currentPreviewId = null;
-
-		this.setRevisionsButtonsActive( false );
 	},
 
 	onDiscardClick: function() {
