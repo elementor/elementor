@@ -89,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
 	<div class="elementor-template-library-template-type">{{{ elementor.translate( type ) }}}</div>
 	<div class="elementor-template-library-template-controls">
-		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success" data-action="insert">
 			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-template-library-template-export">
