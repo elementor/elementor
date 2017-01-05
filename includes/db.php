@@ -38,6 +38,7 @@ class DB {
 
 		if ( self::STATUS_PUBLISH === $status ) {
 			$this->remove_draft( $post_id );
+
 			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
 
 			if ( $is_meta_updated ) {
