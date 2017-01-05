@@ -26,6 +26,12 @@ RevisionsManager = function() {
 		if ( data.last_revision ) {
 			self.addRevision( data.last_revision );
 		}
+
+		var revisionsToKeep = revisions.filter( function( revision ) {
+			return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
+		} );
+
+		revisions.reset( revisionsToKeep );
 	};
 
 	var attachEvents = function() {
@@ -34,20 +40,6 @@ RevisionsManager = function() {
 
 	this.addRevision = function( revisionData ) {
 		revisions.add( revisionData, { at: 0 } );
-
-		var revisionsToKeepNum = elementor.config.revisions_to_keep;
-
-		if ( -1 !== revisionsToKeepNum && revisions.length > revisionsToKeepNum ) {
-			var revisionsToKeep = revisions.slice( 0, revisionsToKeepNum ),
-				autoSaveRevision = revisions.findWhere( { type: 'autosave' } ),
-				autoSaveRevisionIndex = revisions.indexOf( autoSaveRevision );
-
-			if ( autoSaveRevisionIndex >= revisionsToKeepNum  ) {
-				revisionsToKeep.push( autoSaveRevision );
-			}
-
-			revisions.reset( revisionsToKeep );
-		}
 
 		var panel = elementor.getPanelView();
 
