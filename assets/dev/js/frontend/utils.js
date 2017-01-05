@@ -25,7 +25,7 @@ Utils = function( $ ) {
 			return callback.apply( element, arguments );
 		};
 
-		$element.waypoint4( correctCallback, options );
+		$element.elementorWaypoint( correctCallback, options );
 	};
 };
 
