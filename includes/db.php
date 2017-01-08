@@ -49,6 +49,12 @@ class DB {
 		} elseif ( self::STATUS_AUTOSAVE === $status ) {
 			Revisions_Manager::handle_revision();
 
+			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+
+			if ( $old_autosave ) {
+				wp_delete_post_revision( $old_autosave->ID );
+			}
+
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
