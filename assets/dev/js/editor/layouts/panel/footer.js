@@ -76,11 +76,17 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			onSuccess: function() {
 				self.getDialog().show();
 
+				elementor.setFlagEditorChange( false );
+
 				self.ui.buttonSaveButton.removeClass( 'elementor-button-state' );
+
+				NProgress.done();
 			}
 		};
 
 		self.ui.buttonSaveButton.addClass( 'elementor-button-state' );
+
+		NProgress.start();
 
 		elementor.saveEditor( options );
 	},
