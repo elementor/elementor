@@ -173,9 +173,9 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onChildviewDetailsAreaClick: function( childView ) {
 		var self = this,
-			id = childView.model.get( 'id' );
+			revisionID = childView.model.get( 'id' );
 
-		if ( id === self.currentPreviewId ) {
+		if ( revisionID === self.currentPreviewId ) {
 			return;
 		}
 
@@ -195,11 +195,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		self.currentPreviewItem = childView;
 
-		self.currentPreviewId = id;
+		self.currentPreviewId = revisionID;
 
 		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
 			data: {
-				id: id
+				id: revisionID
 			},
 			success: function( data ) {
 				self.setEditorData( data );
