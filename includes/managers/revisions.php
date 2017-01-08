@@ -66,7 +66,7 @@ class Revisions_Manager {
 	}
 
 	public static function restore_revision( $parent_id, $revision_id ) {
-		Plugin::instance()->db->copy_elementor_meta( $revision_id, $parent_id, true );
+		Plugin::instance()->db->copy_elementor_meta( $revision_id, $parent_id );
 
 		$post_css = new Post_CSS_File( $parent_id );
 

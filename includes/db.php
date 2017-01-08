@@ -284,7 +284,7 @@ class DB {
 		return $data_container;
 	}
 
-	public function copy_elementor_meta( $from_post_id, $to_post_id, $update = false ) {
+	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
 		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
 			return;
 		}
@@ -301,11 +301,7 @@ class DB {
 					$value = wp_slash( $value );
 				}
 
-				if ( $update ) {
-					update_metadata( 'post', $to_post_id, $meta_key, $value );
-				} else {
-					add_metadata( 'post', $to_post_id, $meta_key, $value );
-				}
+				update_metadata( 'post', $to_post_id, $meta_key, $value );
 			}
 		}
 	}
