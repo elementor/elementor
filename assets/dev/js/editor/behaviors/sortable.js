@@ -19,9 +19,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
+	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {

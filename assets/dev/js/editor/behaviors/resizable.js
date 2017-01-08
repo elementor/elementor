@@ -39,9 +39,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
+	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {

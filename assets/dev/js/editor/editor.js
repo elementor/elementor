@@ -315,9 +315,7 @@ App = Marionette.Application.extend( {
 		this.trigger( 'preview:loaded' );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
+	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
 		} else {
@@ -429,7 +427,7 @@ App = Marionette.Application.extend( {
 		dataEditMode.reply( 'activeMode', newMode );
 
 		if ( newMode !== oldEditMode ) {
-			dataEditMode.trigger( 'switch' );
+			dataEditMode.trigger( 'switch', newMode );
 		}
 	},
 
