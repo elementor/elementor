@@ -439,8 +439,6 @@ App = Marionette.Application.extend( {
 			onSuccess: null
 		}, options );
 
-		NProgress.start();
-
 		var newData = elementor.elements.toJSON();
 
 		return this.ajax.send( 'save_builder', {
@@ -450,11 +448,7 @@ App = Marionette.Application.extend( {
 		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
-				NProgress.done();
-
 				elementor.config.data = newData;
-
-				elementor.setFlagEditorChange( false );
 
 				elementor.channels.editor.trigger( 'saved', data );
 
