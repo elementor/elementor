@@ -497,23 +497,34 @@ App = Marionette.Application.extend( {
 	},
 
 	logSite: function() {
-		var asciiText = [
-			' ;;;;;;;;;;;;;;; ',
-			';;;  ;;       ;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;       ;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;       ;;;',
-			' ;;;;;;;;;;;;;;; '
-		];
+		var text = '',
+			style = '';
 
-		var text = '%c' + asciiText.join( '\n' ) + '\n';
+		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+			var asciiText = [
+				' ;;;;;;;;;;;;;;; ',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				' ;;;;;;;;;;;;;;; '
+			];
+
+			text += '%c' + asciiText.join( '\n' ) + '\n';
+
+			style = 'color: #C42961';
+		} else {
+			text += '%c00';
+
+			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/icon-logo-26x26.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+		}
 
 		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
 
-		setTimeout( console.log.bind( console, text, 'color: #C42961', 'color: #9B0A46', '' ) );
+		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
 	}
 } );
 
