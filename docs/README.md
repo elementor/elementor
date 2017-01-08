@@ -96,3 +96,9 @@ You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as
 ###Menus
 
 You can add admin menu under the Elementor menu. As long as it involves simple settings - use the Elementor settings page.
+
+###Elementor Pro
+
+[Elementor Pro](https://elementor.com/pro/) adds new features to the Elementor Page Builder plugin. Control your conversions, your user engagement, your entire website, from one page builder.
+
+* [Forms](content/pro/forms.md) - Submission, Validation, Webhooks, Filters & Actions
