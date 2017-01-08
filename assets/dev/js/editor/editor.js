@@ -519,7 +519,7 @@ App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/icon-logo-26x26.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
 		}
 
 		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
