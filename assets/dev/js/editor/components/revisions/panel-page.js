@@ -197,7 +197,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		self.currentPreviewId = revisionID;
 
-		this.jqueryXhr = elementor.ajax.send( 'get_revision_preview', {
+		this.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
 			data: {
 				id: revisionID
 			},

@@ -74,7 +74,7 @@ class Revisions_Manager {
 
 	}
 
-	public static function on_revision_preview_request() {
+	public static function on_revision_data_request() {
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( __( 'You must set the id', 'elementor' ) );
 		}
@@ -112,7 +112,7 @@ class Revisions_Manager {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_get_revision_preview', [ __CLASS__, 'on_revision_preview_request' ] );
+			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );
 			add_action( 'wp_ajax_elementor_delete_revision', [ __CLASS__, 'on_delete_revision_request' ] );
 		}
 	}
