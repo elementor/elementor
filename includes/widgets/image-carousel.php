@@ -232,7 +232,6 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$this->end_controls_section();
 
-
 		$this->start_controls_section(
 			'section_style_navigation',
 			[
@@ -540,19 +539,19 @@ class Widget_Image_Carousel extends Widget_Base {
 		foreach ( $settings['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
-
+	
 			$imgcaption = $this->get_item_caption( $attachment, $instance );
 			if ( $imgcaption ) {
 				$image_caption = sprintf('%s', $imgcaption['caption'] );
-			}
-
+			} 
+			
 			$link = $this->get_link_url( $attachment, $settings );
 			if ( $link ) {
 				$target = '';
 				if ( ! empty( $link['is_external'] ) ) {
 					$target = ' target="_blank"';
 				}
-
+				
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
