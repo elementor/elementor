@@ -542,16 +542,16 @@ class Widget_Image_Carousel extends Widget_Base {
 	
 			$imgcaption = $this->get_item_caption( $attachment, $instance );
 			if ( $imgcaption ) {
-				$image_caption = sprintf('%s', $imgcaption['caption'] );
-			} 
-			
+				$image_caption = sprintf( '%s', $imgcaption['caption'] );
+			}
+
 			$link = $this->get_link_url( $attachment, $settings );
 			if ( $link ) {
 				$target = '';
 				if ( ! empty( $link['is_external'] ) ) {
 					$target = ' target="_blank"';
 				}
-				
+
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
