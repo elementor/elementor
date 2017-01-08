@@ -75,11 +75,11 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	enterPreviewMode: function() {
+	enterReviewMode: function() {
 		elementor.changeEditMode( 'review' );
 	},
 
-	exitPreviewMode: function() {
+	exitReviewMode: function() {
 		elementor.changeEditMode( 'edit' );
 	},
 
@@ -120,7 +120,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onEditorSaved: function() {
-		this.exitPreviewMode();
+		this.exitReviewMode();
 
 		this.setRevisionsButtonsActive( false );
 	},
@@ -144,7 +144,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.currentPreviewId = null;
 
-		this.exitPreviewMode();
+		this.exitReviewMode();
 
 		if ( this.currentPreviewItem ) {
 			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
@@ -210,7 +210,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				childView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				self.enterPreviewMode();
+				self.enterReviewMode();
 			},
 			error: function( data ) {
 				childView.$el.removeClass( 'elementor-revision-item-loading' );
