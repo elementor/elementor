@@ -40,8 +40,7 @@ module.exports = Marionette.CompositeView.extend( {
 	setEditorData: function( data ) {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 
-		collection.reset();
-		collection.set( data );
+		collection.reset( data );
 	},
 
 	saveAutoDraft: function() {
