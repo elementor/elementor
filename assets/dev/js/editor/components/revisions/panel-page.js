@@ -159,6 +159,18 @@ module.exports = Marionette.CompositeView.extend( {
 		this.unbindHotKeys();
 	},
 
+	onRenderCollection: function() {
+		if ( ! this.currentPreviewId ) {
+			return;
+		}
+
+		var currentPreviewModel = this.collection.findWhere({ id: this.currentPreviewId });
+
+		this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
+
+		this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+	},
+
 	onChildviewDetailsAreaClick: function( childView ) {
 		var self = this,
 			id = childView.model.get( 'id' );
