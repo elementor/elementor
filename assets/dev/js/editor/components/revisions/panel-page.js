@@ -44,13 +44,9 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	saveAutoDraft: function() {
-		return elementor.ajax.send( 'save_builder', {
-			data: {
-				post_id: elementor.config.post_id,
-				status: 'autosave',
-				data: JSON.stringify( elementor.elements.toJSON() )
-			},
-			success: function( data ) {
+		return elementor.saveEditor( {
+			status: 'autosave',
+			onSuccess: function( data ) {
 				if ( data.last_revision ) {
 					elementor.revisions.addRevision( data.last_revision );
 				}
