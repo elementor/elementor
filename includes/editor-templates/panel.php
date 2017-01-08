@@ -260,8 +260,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
 	<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
 	<div class="elementor-revision-item__details">
-		<div class="elementor-revision-date">{{ date }}</div>
-		<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php _e( 'By', 'elementor' ); ?> {{ author }}</div>
+		<div class="elementor-revision-date">{{{ date }}}</div>
+		<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php _e( 'By', 'elementor' ); ?> {{{ author }}}</div>
 	</div>
 	<div class="elementor-revision-item__tools">
 		<i class="elementor-revision-item__tools-delete fa fa-times"></i>
