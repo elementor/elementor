@@ -386,6 +386,8 @@ class Editor {
 				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),
+				'preview' => __( 'Preview', 'elementor' ),
+				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
 		];
 
