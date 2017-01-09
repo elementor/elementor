@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-panel-nerd-box">
 		<i class="elementor-panel-nerd-box-icon eicon-hypster"></i>
-		<div class="elementor-panel-nerd-box-message panel-elements-category-title panel-elements-category-title-{{ name }}"><?php _e( 'Get more with Elementor Pro', 'elementor' ); ?></div>
+		<div class="elementor-panel-nerd-box-message"><?php _e( 'Get more with Elementor Pro', 'elementor' ); ?></div>
 		<a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" target="_blank" href="https://go.elementor.com/pro-widgets/"><?php _e( 'Go Pro', 'elementor' ); ?></a>
 	</div>
 </script>

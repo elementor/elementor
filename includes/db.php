@@ -12,13 +12,13 @@ class DB {
 
 	const STATUS_PUBLISH = 'publish';
 	const STATUS_DRAFT = 'draft';
+	const STATUS_AUTOSAVE = 'autosave';
 
 	/**
 	 * Save builder method.
 	 *
 	 * @since 1.0.0
-	 *
-*@param int          $post_id
+	 * @param int    $post_id
 	 * @param array  $posted
 	 * @param string $status
 	 *
@@ -38,10 +38,32 @@ class DB {
 
 		if ( self::STATUS_PUBLISH === $status ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', $json_value );
+
+			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
+
+			if ( $is_meta_updated ) {
+				Revisions_Manager::handle_revision();
+			}
+
 			$this->_save_plain_text( $post_id );
-		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', $json_value );
+		} elseif ( self::STATUS_AUTOSAVE === $status ) {
+			Revisions_Manager::handle_revision();
+
+			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+
+			if ( $old_autosave ) {
+				wp_delete_post_revision( $old_autosave->ID );
+			}
+
+			$autosave_id = wp_create_post_autosave( [
+				'post_ID' => $post_id,
+				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
+				'post_modified' => current_time( 'mysql' ),
+			] );
+
+			if ( $autosave_id ) {
+				update_metadata( 'post',  $autosave_id, '_elementor_data', $json_value );
+			}
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
@@ -262,11 +284,39 @@ class DB {
 		return $data_container;
 	}
 
-	public function has_elementor_in_post( $post_id ) {
+	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
+		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
+			return;
+		}
+
+		$from_post_meta = get_post_meta( $from_post_id );
+
+		foreach ( $from_post_meta as $meta_key => $values ) {
+			// Copy only meta with the `_elementor` prefix
+			if ( 0 === strpos( $meta_key, '_elementor' ) ) {
+				$value = $values[0];
+
+				// The elementor JSON needs slashes before saving
+				if ( '_elementor_data' === $meta_key ) {
+					$value = wp_slash( $value );
+				}
+
+				update_metadata( 'post', $to_post_id, $meta_key, $value );
+			}
+		}
+	}
+
+	public function is_built_with_elementor( $post_id ) {
 		$data = $this->get_plain_editor( $post_id );
 		$edit_mode = $this->get_edit_mode( $post_id );
 
 		return ( ! empty( $data ) && 'builder' === $edit_mode );
 	}
 
+	public function has_elementor_in_post( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
+	}
 }

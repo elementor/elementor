@@ -196,7 +196,10 @@ class Admin {
 
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
+
 		array_unshift( $links, $settings_link );
+
+		$links['go_pro'] = sprintf( '<a href="%s" target="_blank">%s</a>', 'https://elementor.com/', __( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -367,7 +370,9 @@ class Admin {
 			wp_send_json_error();
 		}
 
-		$reason_text = $reason_key = '';
+		$reason_text = '';
+
+		$reason_key = '';
 
 		if ( ! empty( $_POST['reason_key'] ) )
 			$reason_key = $_POST['reason_key'];
