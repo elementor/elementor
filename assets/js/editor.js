@@ -8461,11 +8461,12 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlContent = this.getHTMLContent( html );
+		var htmlContent = this.getHTMLContent( html ),
+			el = this.$el[0];
 
-		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( this.$el[0] ).html( htmlContent );
-		}, this ) );
+		_.defer( function() {
+			elementorFrontend.getScopeWindow().jQuery( el ).html( htmlContent );
+		} );
 
 		return this;
 	},
