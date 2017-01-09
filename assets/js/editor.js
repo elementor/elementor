@@ -46,7 +46,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
-		this.view.addChildModel( newModel, { at: currentIndex } );
+		this.view.addChildModel( newModel, { at: currentIndex + 1 } );
 	}
 } );
 
@@ -3210,6 +3210,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.getChildView( 'header' );
 	},
 
+	getFooterView: function() {
+		return this.getChildView( 'footer' );
+	},
+
 	getCurrentPageName: function() {
 		return this.currentPageName;
 	},
@@ -5695,6 +5699,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.trigger( 'request:duplicate' );
 	},
 
+	confirmRemove: function() {
+		this.getRemoveDialog().show();
+	},
+
 	onClickEdit: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -5758,7 +5766,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.getRemoveDialog().show();
+		this.confirmRemove();
 	},
 
 	onClickSave: function( event ) {
