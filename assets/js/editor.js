@@ -4649,7 +4649,7 @@ var HotKeys = function() {
 		};
 
 		hotKeysHandlers[ keysDictionary.del ] = {
-			saveEditor: {
+			deleteElement: {
 				isWorthHandling: function() {
 					return 'editor' === elementor.getPanelView().getCurrentPageName();
 				},
