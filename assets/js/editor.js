@@ -177,8 +177,11 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
-		// Call this method from other thread (non-block UI)
-		_.defer( _.bind( this.onEditModeSwitched, this ) );
+		var self = this;
+
+		_.defer( function() {
+			self.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
+		} );
 	},
 
 	onDestroy: function() {
@@ -251,7 +254,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
-		_.defer( _.bind( this.onEditModeSwitched, this ) );
+		var self = this;
+
+		_.defer( function() {
+			self.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
+		} );
 	},
 
 	onDestroy: function() {
