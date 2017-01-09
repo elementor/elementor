@@ -350,6 +350,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.trigger( 'request:duplicate' );
 	},
 
+	confirmRemove: function() {
+		this.getRemoveDialog().show();
+	},
+
 	onClickEdit: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -413,7 +417,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.getRemoveDialog().show();
+		this.confirmRemove();
 	},
 
 	onClickSave: function( event ) {
