@@ -124,7 +124,6 @@ class Post_CSS_File {
 		$this->parse_elements_css();
 
 		$meta = [
-			'version' => ELEMENTOR_VERSION,
 			'time' => time(),
 			'fonts' => array_unique( $this->fonts ),
 		];
@@ -169,16 +168,16 @@ class Post_CSS_File {
 			return;
 		}
 
-		if ( apply_filters( 'elementor/css_file/update', version_compare( ELEMENTOR_VERSION, $meta['version'], '>' ), $this ) ) {
+		// First time after clear cache and etc.
+		if ( '' === $meta['status'] ) {
 			$this->update();
-			// Refresh new meta
 			$meta = $this->get_meta();
 		}
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			wp_add_inline_style( 'elementor-frontend', $meta['css'] );
 		} else {
-			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [], $meta['time'] );
+			wp_enqueue_style( 'elementor-post-' . $this->post_id, $this->url, [ 'elementor-frontend' ], $meta['time'] );
 		}
 
 		// Handle fonts
@@ -233,7 +232,6 @@ class Post_CSS_File {
 		$meta = get_post_meta( $this->post_id, self::META_KEY_CSS, true );
 
 		$defaults = [
-			'version' => '',
 			'status'  => '',
 		];
 
@@ -340,6 +338,11 @@ class Post_CSS_File {
 			}
 		}
 
-		do_action( 'elementor/element_css/parse_css', $this, $element );
+		/**
+		 * @deprecated, use `elementor/element/parse_css`
+		 */
+		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
+
+		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }

@@ -9,6 +9,7 @@ class Frontend {
 	private $_enqueue_google_early_access_fonts = [];
 
 	private $_is_frontend_mode = false;
+	private $_has_elementor_in_page = false;
 
 	/**
 	 * @var Stylesheet
@@ -21,13 +22,16 @@ class Frontend {
 		}
 
 		$this->_is_frontend_mode = true;
+		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
 
 		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar
@@ -60,7 +64,9 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
-		do_action( 'elementor/frontend/enqueue_scripts/before' );
+		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
+
+		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -115,8 +121,6 @@ class Frontend {
 				'is_rtl' => is_rtl(),
 			]
 		);
-
-		do_action( 'elementor/frontend/enqueue_scripts/after' );
 	}
 
 	public function enqueue_styles() {
@@ -149,13 +153,12 @@ class Frontend {
 		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
-			[
-				'elementor-icons',
-				'font-awesome',
-			],
+			[],
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'elementor-icons' );
+		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
@@ -187,7 +190,7 @@ class Frontend {
 	/**
 	 * Handle style that do not printed in header
 	 */
-	function wp_footer() {
+	public function wp_footer() {
 		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
@@ -297,11 +300,17 @@ class Frontend {
 			return '';
 		}
 
-		$data = Plugin::instance()->db->get_plain_editor( $post_id );
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
-
-		if ( empty( $data ) || 'builder' !== $edit_mode )
+		if ( 'builder' !== $edit_mode ) {
 			return '';
+		}
+
+		$data = Plugin::instance()->db->get_plain_editor( $post_id );
+		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
+
+		if ( empty( $data ) ) {
+			return '';
+		}
 
 		$css_file = new Post_CSS_File( $post_id );
 		$css_file->enqueue();
@@ -371,6 +380,10 @@ class Frontend {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
+
+		if ( ! empty( $content ) ) {
+			$this->_has_elementor_in_page = true;
+		}
 
 		// Restore global post
 		if ( isset( $global_post ) ) {

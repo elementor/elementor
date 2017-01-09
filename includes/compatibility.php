@@ -23,7 +23,7 @@ class Compatibility {
 		}
 
 		// Hack for Ninja Forms
-		if ( class_exists( '\Ninja_Forms' ) ) {
+		if ( class_exists( '\Ninja_Forms' ) && class_exists( '\NF_Display_Render' ) ) {
 			add_action( 'elementor/preview/enqueue_styles', function() {
 				ob_start();
 

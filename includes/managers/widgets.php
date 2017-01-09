@@ -55,7 +55,7 @@ class Widgets_Manager {
 
 		$this->_register_wp_widgets();
 
-		do_action( 'elementor/widgets/widgets_registered' );
+		do_action( 'elementor/widgets/widgets_registered', $this );
 	}
 
 	private function _register_wp_widgets() {

@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
-**Stable tag:** 1.0.9  
+**Stable tag:** 1.0.12  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -162,6 +162,23 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 1.0.12 - 05.01.2017 ###
+* Fix! - Library modal 'Insert' button
+
+### 1.0.11 - 04.01.2017 ###
+* Fix! - Some breaks from previous release
+
+### 1.0.10 - 04.01.2017 ###
+* New! - Added API docs for developers
+* Tweak! - Changed 'Prevent Scroll' control type to switcher in Map widget
+* Tweak! - Updated Dialog Manager v3.0.2
+* Fix! - Library modal 'Go Pro' button in FireFox
+* Fix! - Bug load elementor in front page in some server configuration
+* Fix! - Ninja Forms widget conflict
+* Deprecated! - `elementor/frontend/enqueue_scripts/after` is no longer available
+* Deprecated! - `elementor/elements/print_template` is replaced by `elementor/element/print_template`
+* Deprecated! - `elementor/element_css/parse_css` is replaced by `elementor/element/parse_css`
 
 ### 1.0.9 - 27.12.2016 ###
 * Fix! - Elementor library import remote template
