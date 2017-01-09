@@ -15,7 +15,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return 'elementor-widget';
+		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
 	events: function() {
@@ -79,9 +79,8 @@ WidgetView = BaseElementView.extend( {
 	attachElContent: function( html ) {
 		var htmlContent = this.getHTMLContent( html );
 
-		//this.$el.html( html );
 		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
+			elementorFrontend.getScopeWindow().jQuery( this.$el[0] ).html( htmlContent );
 		}, this ) );
 
 		return this;
