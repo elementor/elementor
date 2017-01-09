@@ -323,7 +323,7 @@ class Editor {
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
-			'revisions_enabled' => wp_revisions_enabled( get_post() ),
+			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post() ) ),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
