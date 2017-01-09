@@ -137,6 +137,10 @@ body.elementor-editor-inactive #elementor-editor {
 #adminmenu #toplevel_page_elementor .dashicons.dashicons-star-filled {
   height: auto; }
 
+.elementor-plugins-gopro {
+  color: #39b54a;
+  font-weight: bold; }
+
 #elementor-switch-mode {
   margin: 15px 0; }
 
