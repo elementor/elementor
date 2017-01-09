@@ -5778,7 +5778,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	stylesheet: null,
 
-	id: function() {
+	className: function() {
 		return this.getElementUniqueID();
 	},
 
@@ -6067,13 +6067,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueID() ] );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '.' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.stylesheet.addRules( '.' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
@@ -6376,12 +6376,10 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		var classes = 'elementor-column',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-column';
-
-		return classes;
+		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
 	ui: function() {
@@ -8558,12 +8556,10 @@ SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
 
 	className: function() {
-		var classes = 'elementor-section',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-section';
-
-		return classes;
+		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
 	tagName: 'section',
@@ -8825,7 +8821,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return 'elementor-widget';
+		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
 	events: function() {
@@ -8887,12 +8883,12 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlContent = this.getHTMLContent( html );
+		var htmlContent = this.getHTMLContent( html ),
+			el = this.$el[0];
 
-		//this.$el.html( html );
-		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
-		}, this ) );
+		_.defer( function() {
+			elementorFrontend.getScopeWindow().jQuery( el ).html( htmlContent );
+		} );
 
 		return this;
 	},

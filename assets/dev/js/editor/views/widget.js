@@ -15,7 +15,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return 'elementor-widget';
+		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
 	events: function() {
@@ -77,12 +77,12 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlContent = this.getHTMLContent( html );
+		var htmlContent = this.getHTMLContent( html ),
+			el = this.$el[0];
 
-		//this.$el.html( html );
-		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
-		}, this ) );
+		_.defer( function() {
+			elementorFrontend.getScopeWindow().jQuery( el ).html( htmlContent );
+		} );
 
 		return this;
 	},
