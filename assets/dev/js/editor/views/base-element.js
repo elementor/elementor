@@ -33,13 +33,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave'
-		};
-	},
-
-	triggers: function() {
-		return {
-			'click @ui.duplicateButton': 'click:duplicate'
+			'click @ui.saveButton': 'onClickSave',
+			'click @ui.duplicateButton': 'duplicate'
 		};
 	},
 
@@ -349,6 +344,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	getElementUniqueID: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
+	},
+
+	duplicate: function() {
+		this.trigger( 'request:duplicate' );
 	},
 
 	onClickEdit: function( event ) {

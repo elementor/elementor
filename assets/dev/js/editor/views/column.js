@@ -49,12 +49,8 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
-
-		triggers[ 'click @ui.addButton' ] = 'click:new';
-
-		return triggers;
+	triggers: {
+		'click @ui.addButton': 'click:new'
 	},
 
 	events: function() {

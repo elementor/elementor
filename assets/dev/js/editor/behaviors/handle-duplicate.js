@@ -2,7 +2,7 @@ var HandleDuplicateBehavior;
 
 HandleDuplicateBehavior = Marionette.Behavior.extend( {
 
-	onChildviewClickDuplicate: function( childView ) {
+	onChildviewRequestDuplicate: function( childView ) {
 		if ( this.view.isCollectionFilled() ) {
 			return;
 		}

@@ -38,7 +38,7 @@ var HandleDuplicateBehavior;
 
 HandleDuplicateBehavior = Marionette.Behavior.extend( {
 
-	onChildviewClickDuplicate: function( childView ) {
+	onChildviewRequestDuplicate: function( childView ) {
 		if ( this.view.isCollectionFilled() ) {
 			return;
 		}
@@ -5378,13 +5378,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave'
-		};
-	},
-
-	triggers: function() {
-		return {
-			'click @ui.duplicateButton': 'click:duplicate'
+			'click @ui.saveButton': 'onClickSave',
+			'click @ui.duplicateButton': 'duplicate'
 		};
 	},
 
@@ -5696,6 +5691,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
+	duplicate: function() {
+		this.trigger( 'request:duplicate' );
+	},
+
 	onClickEdit: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -5970,12 +5969,8 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
-
-		triggers[ 'click @ui.addButton' ] = 'click:new';
-
-		return triggers;
+	triggers: {
+		'click @ui.addButton': 'click:new'
 	},
 
 	events: function() {
