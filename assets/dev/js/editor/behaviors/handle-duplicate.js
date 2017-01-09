@@ -10,7 +10,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
-		this.view.addChildModel( newModel, { at: currentIndex } );
+		this.view.addChildModel( newModel, { at: currentIndex + 1 } );
 	}
 } );
 
