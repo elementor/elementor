@@ -23,6 +23,7 @@ App = Marionette.Application.extend( {
 	ajax: require( 'elementor-utils/ajax' ),
 	conditions: require( 'elementor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
+	hotKeys: require( 'elementor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -310,6 +311,7 @@ App = Marionette.Application.extend( {
 
 		this.enqueueTypographyFonts();
 
+		this.hotKeys.init();
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
