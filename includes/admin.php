@@ -362,7 +362,9 @@ class Admin {
 			wp_send_json_error();
 		}
 
-		$reason_text = $reason_key = '';
+		$reason_text = '';
+
+		$reason_key = '';
 
 		if ( ! empty( $_POST['reason_key'] ) )
 			$reason_key = $_POST['reason_key'];

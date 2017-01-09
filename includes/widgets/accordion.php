@@ -227,7 +227,8 @@ class Widget_Accordion extends Widget_Base {
 		$settings = $this->get_settings();
 		?>
 		<div class="elementor-accordion">
-			<?php $counter = 1; ?>
+			<?php
+			$counter = 1; ?>
 			<?php foreach ( $settings['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
 					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">

@@ -259,7 +259,9 @@ class Controls_Manager {
 	 * @return Group_Control_Base[]
 	 */
 	public function add_group_control( $id, $instance ) {
-		return $this->_control_groups[ $id ] = $instance;
+		$this->_control_groups[ $id ] = $instance;
+
+		return $instance;
 	}
 
 	/**
