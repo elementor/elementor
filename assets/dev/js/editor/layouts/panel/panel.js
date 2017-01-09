@@ -94,6 +94,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.getChildView( 'header' );
 	},
 
+	getFooterView: function() {
+		return this.getChildView( 'footer' );
+	},
+
 	getCurrentPageName: function() {
 		return this.currentPageName;
 	},

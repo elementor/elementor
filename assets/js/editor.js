@@ -38,7 +38,7 @@ var HandleDuplicateBehavior;
 
 HandleDuplicateBehavior = Marionette.Behavior.extend( {
 
-	onChildviewClickDuplicate: function( childView ) {
+	onChildviewRequestDuplicate: function( childView ) {
 		if ( this.view.isCollectionFilled() ) {
 			return;
 		}
@@ -46,7 +46,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
-		this.view.addChildModel( newModel, { at: currentIndex } );
+		this.view.addChildModel( newModel, { at: currentIndex + 1 } );
 	}
 } );
 
@@ -1576,7 +1576,13 @@ var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behavi
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: function() {
-		return 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
+		var classes = 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
+
+		if ( this.model.get( 'isPro' ) ) {
+			classes += ' elementor-template-library-pro-template';
+		}
+
+		return classes;
 	},
 
 	ui: function() {
@@ -3614,6 +3620,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	getHeaderView: function() {
 		return this.getChildView( 'header' );
+	},
+
+	getFooterView: function() {
+		return this.getChildView( 'footer' );
 	},
 
 	getCurrentPageName: function() {
@@ -5794,13 +5804,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave'
-		};
-	},
-
-	triggers: function() {
-		return {
-			'click @ui.duplicateButton': 'click:duplicate'
+			'click @ui.saveButton': 'onClickSave',
+			'click @ui.duplicateButton': 'duplicate'
 		};
 	},
 
@@ -6112,6 +6117,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
+	duplicate: function() {
+		this.trigger( 'request:duplicate' );
+	},
+
+	confirmRemove: function() {
+		this.getRemoveDialog().show();
+	},
+
 	onClickEdit: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -6175,7 +6188,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.getRemoveDialog().show();
+		this.confirmRemove();
 	},
 
 	onClickSave: function( event ) {
@@ -6386,12 +6399,8 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
-
-		triggers[ 'click @ui.addButton' ] = 'click:new';
-
-		return triggers;
+	triggers: {
+		'click @ui.addButton': 'click:new'
 	},
 
 	events: function() {

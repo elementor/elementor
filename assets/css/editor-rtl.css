@@ -2304,13 +2304,26 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 25%;
   padding: 0 15px;
   margin-top: 15px; }
-  .elementor-template-library-template-remote:not(:hover) .elementor-template-library-template-controls {
-    opacity: 0; }
+  .elementor-template-library-template-remote.elementor-template-library-pro-template .elementor-template-library-template-body {
+    position: relative; }
+    .elementor-template-library-template-remote.elementor-template-library-pro-template .elementor-template-library-template-body:before {
+      position: absolute;
+      content: 'pro';
+      text-transform: uppercase;
+      top: 5px;
+      right: 5px;
+      background-color: #9b0a46;
+      color: #d5dadf;
+      padding: 1px 4px;
+      font-size: 9px;
+      border-radius: 2px; }
   .elementor-template-library-template-remote .elementor-template-library-template-body {
     height: 250px;
     border: 3px solid #fff;
     position: relative;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2); }
+    .elementor-template-library-template-remote .elementor-template-library-template-body:not(:hover) .elementor-template-library-template-controls {
+      opacity: 0; }
   .elementor-template-library-template-remote .elementor-template-library-template-screenshot {
     height: 100%;
     background-size: cover;
