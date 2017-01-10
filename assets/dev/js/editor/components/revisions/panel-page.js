@@ -39,17 +39,6 @@ module.exports = Marionette.CompositeView.extend( {
 		collection.reset( data );
 	},
 
-	saveAutoDraft: function() {
-		return elementor.saveEditor( {
-			status: 'autosave',
-			onSuccess: function( data ) {
-				if ( data.last_revision ) {
-					elementor.revisions.addRevision( data.last_revision );
-				}
-			}
-		} );
-	},
-
 	deleteRevision: function( revisionView ) {
 		var self = this;
 
@@ -157,7 +146,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
-			this.saveAutoDraft();
+			elementor.saveEditor( { status: 'autosave' } );
 		}
 
 		if ( self.currentPreviewItem ) {
