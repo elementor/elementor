@@ -45,6 +45,7 @@ var HotKeys = function() {
 		};
 
 		hotKeysHandlers[ keysDictionary.del ] = {
+			/* Waiting for CTRL+Z / CTRL+Y
 			deleteElement: {
 				isWorthHandling: function() {
 					return 'editor' === elementor.getPanelView().getCurrentPageName();
@@ -52,7 +53,7 @@ var HotKeys = function() {
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
 				}
-			}
+			}*/
 		};
 	};
 
