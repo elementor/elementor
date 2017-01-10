@@ -64,7 +64,7 @@ var HotKeys = function( $ ) {
 			changeDeviceMode: {
 				devices: [ 'desktop', 'tablet', 'mobile' ],
 				isWorthHandling: function( event ) {
-					return self.isControlEvent( event );
+					return self.isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
 					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
