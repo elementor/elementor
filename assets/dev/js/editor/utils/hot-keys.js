@@ -5,6 +5,7 @@ var HotKeys = function( $ ) {
 		del: 46,
 		d: 68,
 		l: 76,
+		m: 77,
 		p: 80,
 		s: 83
 	};
@@ -20,21 +21,21 @@ var HotKeys = function( $ ) {
 	var initHotKeysHandlers = function() {
 
 		hotKeysHandlers[ keysDictionary.del ] = {
-			/* Waiting for CTRL+Z / CTRL+Y
-			 deleteElement: {
-			 isWorthHandling: function( event ) {
-			 var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-			 isInputTarget = $( event.target ).is( ':input' );
+			deleteElement: {
+				isWorthHandling: function( event ) {
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
+						isInputTarget = $( event.target ).is( ':input' );
 
-			 return isEditorOpen && ! isInputTarget;
-			 },
-			 handle: function() {
-			 elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
-			 }
-			 }*/
+					return isEditorOpen && ! isInputTarget;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
+				}
+			}
 		};
 
 		hotKeysHandlers[ keysDictionary.d ] = {
+			/* Waiting for CTRL+Z / CTRL+Y
 			duplicateElement: {
 				isWorthHandling: function( event ) {
 					return isControlEvent( event );
@@ -48,7 +49,7 @@ var HotKeys = function( $ ) {
 
 					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
 				}
-			}
+			}*/
 		};
 
 		hotKeysHandlers[ keysDictionary.l ] = {
@@ -58,6 +59,27 @@ var HotKeys = function( $ ) {
 				},
 				handle: function() {
 					elementor.templates.showTemplatesModal();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.m ] = {
+			changeDeviceMode: {
+				devices: [ 'desktop', 'tablet', 'mobile' ],
+				isWorthHandling: function( event ) {
+					return isControlEvent( event );
+				},
+				handle: function() {
+					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+						modeIndex = this.devices.indexOf( currentDeviceMode );
+
+					modeIndex++;
+
+					if ( modeIndex >= this.devices.length ) {
+						modeIndex = 0;
+					}
+
+					elementor.changeDeviceMode( this.devices[ modeIndex ] );
 				}
 			}
 		};
