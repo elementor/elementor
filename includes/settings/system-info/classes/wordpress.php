@@ -39,14 +39,10 @@ class WordPress_Reporter extends Base_Reporter {
 		$min_recommended_bytes = wp_convert_hr_to_bytes( $min_recommended_memory );
 
 		if ( $memory_limit_bytes < $min_recommended_bytes ) {
-			$result['recommendation'] = _x(
-				sprintf(
-					'We recommend setting memory to at least %s. For more information, read about <a href="%s">how to Increase memory allocated to PHP</a>.',
-					$min_recommended_memory,
-					'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP'
-				),
-				'System Info',
-				'elementor'
+			$result['recommendation'] = sprintf(
+				_x( 'We recommend setting memory to at least %s. For more information, read about <a href="%s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				$min_recommended_memory,
+				'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP'
 			);
 		}
 
