@@ -47,3 +47,6 @@ Argument       | Required   | Type         | Default                      | Desc
 `label_on`     | no         | *`string`*   |                              | The label for the "checked" state
 `label_off`    | no         | *`string`*   |                              | The label for the "unchecked" state
 `return_value` | yes        | *`string`*   |                              | The value returned when checked.
+`label_block`  | no         | *`bool`*     | `false`                      | Display the label above the control by setting to true
+`description`  | no         | *`string`*   |                              | A description text to display below the control
+`separator`    | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator

@@ -43,6 +43,8 @@ echo '<h2 style="color:' . $title_color . '"> ... </h2>'
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------
 `label`            | yes        | *`string`*   |                              | The label of the control - displayed next to it
-`type`             | yes        | *`string`*   | `Controls_Manager::CHOOSE`   | The type of the control
-`default`          | no         | *`array`*    |                              | The default value can be set as an array of single image arrays
+`type`             | yes        | *`string`*   | `Controls_Manager::COLOR`    | The type of the control
+`default`          | no         | *`array`*    |                              | The default value can be set as a HEX, rgb or rgba color value
 `scheme`           | no         | *`array`*    |                              | Set a value from the active color scheme as the default value returned by the control.
+`description`      | no         | *`string`*   |                              | A description text to display below the control
+`separator`        | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator
