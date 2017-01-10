@@ -93,9 +93,7 @@ RevisionsManager = function() {
 
 		addHotKeys();
 
-		elementor.on( 'preview:loaded', function() {
-			addPanelPage();
-		} );
+		elementor.on( 'preview:loaded', addPanelPage );
 	};
 };
 
