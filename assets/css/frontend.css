@@ -781,16 +781,28 @@
   .elementor-button .elementor-button-text {
     display: inline-block; }
 
-.elementor-widget-button .elementor-button.elementor-button-info {
+.elementor-element.elementor-button-info a {
   background-color: #5bc0de; }
 
-.elementor-widget-button .elementor-button.elementor-button-success {
+.elementor-element.elementor-button-success a {
   background-color: #5cb85c; }
 
-.elementor-widget-button .elementor-button.elementor-button-warning {
+.elementor-element.elementor-button-warning a {
   background-color: #f0ad4e; }
 
-.elementor-widget-button .elementor-button.elementor-button-danger {
+.elementor-element.elementor-button-danger a {
+  background-color: #d9534f; }
+
+.elementor-widget-button .elementor-button .elementor-button-info {
+  background-color: #5bc0de; }
+
+.elementor-widget-button .elementor-button .elementor-button-success {
+  background-color: #5cb85c; }
+
+.elementor-widget-button .elementor-button .elementor-button-warning {
+  background-color: #f0ad4e; }
+
+.elementor-widget-button .elementor-button .elementor-button-danger {
   background-color: #d9534f; }
 
 .elementor-widget-divider .elementor-divider {
