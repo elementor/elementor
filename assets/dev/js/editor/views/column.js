@@ -26,12 +26,10 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		var classes = 'elementor-column',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-column';
-
-		return classes;
+		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
 	ui: function() {

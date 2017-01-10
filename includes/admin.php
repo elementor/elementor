@@ -199,7 +199,7 @@ class Admin {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%s" target="_blank">%s</a>', 'https://elementor.com/', __( 'Go Pro', 'elementor' ) );
+		$links['go_pro'] = sprintf( '<a href="%s" target="_blank" class="elementor-plugins-gopro">%s</a>', 'https://go.elementor.com/pro-admin-plugins/', __( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
