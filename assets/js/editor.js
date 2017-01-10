@@ -619,6 +619,41 @@ module.exports = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
+	getRevisionViewData: function( revisionView ) {
+		var self = this,
+			revisionID = revisionView.model.get( 'id' );
+
+		self.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
+			data: {
+				id: revisionID
+			},
+			success: function( data ) {
+				self.setEditorData( data );
+
+				self.setRevisionsButtonsActive( true );
+
+				self.jqueryXhr = null;
+
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				self.enterReviewMode();
+			},
+			error: function( data ) {
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				if ( 'abort' === self.jqueryXhr.statusText ) {
+					return;
+				}
+
+				self.currentPreviewItem = null;
+
+				self.currentPreviewId = null;
+
+				alert( 'An error occurred' );
+			}
+		} );
+	},
+
 	setRevisionsButtonsActive: function( active ) {
 		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 	},
@@ -627,17 +662,6 @@ module.exports = Marionette.CompositeView.extend( {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 
 		collection.reset( data );
-	},
-
-	saveAutoDraft: function() {
-		return elementor.saveEditor( {
-			status: 'autosave',
-			onSuccess: function( data ) {
-				if ( data.last_revision ) {
-					elementor.revisions.addRevision( data.last_revision );
-				}
-			}
-		} );
 	},
 
 	deleteRevision: function( revisionView ) {
@@ -746,49 +770,26 @@ module.exports = Marionette.CompositeView.extend( {
 			this.jqueryXhr.abort();
 		}
 
-		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
-			this.saveAutoDraft();
-		}
-
 		if ( self.currentPreviewItem ) {
 			self.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
 		}
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
+		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
+			elementor.saveEditor( {
+				status: 'autosave',
+				onSuccess: function() {
+					self.getRevisionViewData( childView );
+				}
+			} );
+		} else {
+			self.getRevisionViewData( childView );
+		}
+
 		self.currentPreviewItem = childView;
 
 		self.currentPreviewId = revisionID;
-
-		this.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
-			data: {
-				id: revisionID
-			},
-			success: function( data ) {
-				self.setEditorData( data );
-
-				self.setRevisionsButtonsActive( true );
-
-				self.jqueryXhr = null;
-
-				childView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				self.enterReviewMode();
-			},
-			error: function( data ) {
-				childView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				if ( 'abort' === self.jqueryXhr.statusText ) {
-					return;
-				}
-
-				self.currentPreviewItem = null;
-
-				self.currentPreviewId = null;
-
-				alert( 'An error occurred' );
-			}
-		} );
 	},
 
 	onChildviewDeleteClick: function( childView ) {
@@ -2107,7 +2108,8 @@ App = Marionette.Application.extend( {
 			onSuccess: null
 		}, options );
 
-		var newData = elementor.elements.toJSON();
+		var self = this,
+			newData = elementor.elements.toJSON();
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
@@ -2116,9 +2118,11 @@ App = Marionette.Application.extend( {
 		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
-				elementor.config.data = newData;
+				self.setFlagEditorChange( false );
 
-				elementor.channels.editor.trigger( 'saved', data );
+				self.config.data = newData;
+
+				self.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
@@ -2349,8 +2353,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			status: 'publish',
 			onSuccess: function() {
 				self.getDialog().show();
-
-				elementor.setFlagEditorChange( false );
 
 				self.ui.buttonSaveButton.removeClass( 'elementor-button-state' );
 
@@ -4358,6 +4360,10 @@ heartbeat = {
 			},
 			'heartbeat-tick': function( event, response ) {
 				if ( response.locked_user ) {
+					if ( elementor.isEditorChanged() ) {
+						elementor.saveEditor( { status: 'autosave' } );
+					}
+
 					heartbeat.showLockMessage( response.locked_user );
 				} else {
 					heartbeat.getModal().hide();
