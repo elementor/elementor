@@ -71,8 +71,11 @@ var HotKeys = function( $ ) {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			/* Waiting for CTRL+Z / CTRL+Y
 			deleteElement: {
-				isWorthHandling: function() {
-					return 'editor' === elementor.getPanelView().getCurrentPageName();
+				isWorthHandling: function( event ) {
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
+						isInputTarget = $( event.target ).is( ':input' );
+
+					return isEditorOpen && ! isInputTarget;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
