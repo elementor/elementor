@@ -428,6 +428,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView( model );
 		} );
+	},
+
+	onDestroy: function() {
+		if ( this.$stylesheetElement ) {
+			this.$stylesheetElement.remove();
+		}
 	}
 }, {
 	addControlStyleRules: function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
