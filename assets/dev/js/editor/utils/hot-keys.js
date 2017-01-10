@@ -3,6 +3,7 @@ var HotKeys = function() {
 
 	var keysDictionary = {
 		d: 68,
+		l: 76,
 		s: 83,
 		p: 80,
 		del: 46
@@ -13,7 +14,7 @@ var HotKeys = function() {
 	};
 
 	var isControlEvent = function( event ) {
-		return !! event[ isMac() ? 'metaKey' : 'ctrlKey' ];
+		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
 	};
 
 	var initHotKeysHandlers = function() {
@@ -52,6 +53,17 @@ var HotKeys = function() {
 				},
 				handle: function() {
 					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.l ] = {
+			showTemplateLibrary: {
+				isWorthHandling: function( event ) {
+					return isControlEvent( event ) && event.shiftKey;
+				},
+				handle: function() {
+					elementor.templates.showTemplatesModal();
 				}
 			}
 		};
