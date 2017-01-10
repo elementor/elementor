@@ -441,7 +441,8 @@ App = Marionette.Application.extend( {
 			onSuccess: null
 		}, options );
 
-		var newData = elementor.elements.toJSON();
+		var self = this,
+			newData = elementor.elements.toJSON();
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
@@ -450,9 +451,10 @@ App = Marionette.Application.extend( {
 		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
-				elementor.config.data = newData;
 
-				elementor.channels.editor.trigger( 'saved', data );
+				self.config.data = newData;
+
+				self.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
