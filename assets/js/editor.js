@@ -1793,6 +1793,7 @@ App = Marionette.Application.extend( {
 		this.modals.init();
 		this.ajax.init();
 		this.revisions.init();
+		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -1896,6 +1897,8 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
+		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+
 		this.$previewContents = this.$preview.contents();
 
 		var Preview = require( 'elementor-views/preview' ),
@@ -1914,6 +1917,7 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
@@ -1967,8 +1971,6 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-
-		this.hotKeys.init();
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
@@ -4611,7 +4613,8 @@ module.exports = helpers;
 
 },{}],67:[function(require,module,exports){
 var HotKeys = function( $ ) {
-	var hotKeysHandlers = {};
+	var self = this,
+		hotKeysHandlers = {};
 
 	var keysDictionary = {
 		del: 46,
@@ -4738,7 +4741,11 @@ var HotKeys = function( $ ) {
 	};
 
 	var bindEvents = function() {
-		elementor.$window.add( elementorFrontend.getScopeWindow() ).on( 'keydown', applyHotKey );
+		self.bindListener( elementor.$window );
+	};
+
+	this.bindListener = function( $listener ) {
+		$listener.on( 'keydown', applyHotKey );
 	};
 
 	this.init = function() {
