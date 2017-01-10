@@ -29,6 +29,41 @@ module.exports = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
+	getRevisionViewData: function( revisionView ) {
+		var self = this,
+			revisionID = revisionView.model.get( 'id' );
+
+		self.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
+			data: {
+				id: revisionID
+			},
+			success: function( data ) {
+				self.setEditorData( data );
+
+				self.setRevisionsButtonsActive( true );
+
+				self.jqueryXhr = null;
+
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				self.enterReviewMode();
+			},
+			error: function( data ) {
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				if ( 'abort' === self.jqueryXhr.statusText ) {
+					return;
+				}
+
+				self.currentPreviewItem = null;
+
+				self.currentPreviewId = null;
+
+				alert( 'An error occurred' );
+			}
+		} );
+	},
+
 	setRevisionsButtonsActive: function( active ) {
 		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 	},
@@ -145,49 +180,26 @@ module.exports = Marionette.CompositeView.extend( {
 			this.jqueryXhr.abort();
 		}
 
-		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
-			elementor.saveEditor( { status: 'autosave' } );
-		}
-
 		if ( self.currentPreviewItem ) {
 			self.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
 		}
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
+		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
+			elementor.saveEditor( {
+				status: 'autosave',
+				onSuccess: function() {
+					self.getRevisionViewData( childView );
+				}
+			} );
+		} else {
+			self.getRevisionViewData( childView );
+		}
+
 		self.currentPreviewItem = childView;
 
 		self.currentPreviewId = revisionID;
-
-		this.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
-			data: {
-				id: revisionID
-			},
-			success: function( data ) {
-				self.setEditorData( data );
-
-				self.setRevisionsButtonsActive( true );
-
-				self.jqueryXhr = null;
-
-				childView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				self.enterReviewMode();
-			},
-			error: function( data ) {
-				childView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				if ( 'abort' === self.jqueryXhr.statusText ) {
-					return;
-				}
-
-				self.currentPreviewItem = null;
-
-				self.currentPreviewId = null;
-
-				alert( 'An error occurred' );
-			}
-		} );
 	},
 
 	onChildviewDeleteClick: function( childView ) {
