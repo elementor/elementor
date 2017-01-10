@@ -136,6 +136,7 @@ App = Marionette.Application.extend( {
 		this.modals.init();
 		this.ajax.init();
 		this.revisions.init();
+		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -239,6 +240,8 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
+		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+
 		this.$previewContents = this.$preview.contents();
 
 		var Preview = require( 'elementor-views/preview' ),
@@ -257,6 +260,7 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
@@ -310,8 +314,6 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-
-		this.hotKeys.init();
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );

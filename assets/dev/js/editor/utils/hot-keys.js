@@ -1,5 +1,6 @@
 var HotKeys = function( $ ) {
-	var hotKeysHandlers = {};
+	var self = this,
+		hotKeysHandlers = {};
 
 	var keysDictionary = {
 		del: 46,
@@ -126,7 +127,11 @@ var HotKeys = function( $ ) {
 	};
 
 	var bindEvents = function() {
-		elementor.$window.add( elementorFrontend.getScopeWindow() ).on( 'keydown', applyHotKey );
+		self.bindListener( elementor.$window );
+	};
+
+	this.bindListener = function( $listener ) {
+		$listener.on( 'keydown', applyHotKey );
 	};
 
 	this.init = function() {
