@@ -95,6 +95,10 @@ var StretchedSection = function( $section, $ ) {
 
 		$section.css( resetCss );
 
+		if ( ! $section.hasClass( 'elementor-section-stretched' ) ) {
+			return;
+		}
+
 		var containerWidth = elements.$scopeWindow.outerWidth(),
 			sectionWidth = $section.outerWidth(),
 			sectionOffset = $section.offset().left,
@@ -149,9 +153,7 @@ var StretchedSection = function( $section, $ ) {
 };
 
 module.exports = function( $scope, $ ) {
-	if ( $scope.hasClass( 'elementor-section-stretched' ) ) {
-		new StretchedSection( $scope, $ );
-	}
+	new StretchedSection( $scope, $ );
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
