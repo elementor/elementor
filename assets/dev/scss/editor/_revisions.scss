@@ -35,6 +35,10 @@
 		&__gravatar {
 			border-radius: 50%;
 			overflow: hidden;
+
+			img {
+				display: block;
+			}
 		}
 
 		&__details {
