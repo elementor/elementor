@@ -38,7 +38,7 @@ var HandleDuplicateBehavior;
 
 HandleDuplicateBehavior = Marionette.Behavior.extend( {
 
-	onChildviewClickDuplicate: function( childView ) {
+	onChildviewRequestDuplicate: function( childView ) {
 		if ( this.view.isCollectionFilled() ) {
 			return;
 		}
@@ -46,7 +46,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
-		this.view.addChildModel( newModel, { at: currentIndex } );
+		this.view.addChildModel( newModel, { at: currentIndex + 1 } );
 	}
 } );
 
@@ -3210,6 +3210,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.getChildView( 'header' );
 	},
 
+	getFooterView: function() {
+		return this.getChildView( 'footer' );
+	},
+
 	getCurrentPageName: function() {
 		return this.currentPageName;
 	},
@@ -5352,7 +5356,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	stylesheet: null,
 
-	id: function() {
+	className: function() {
 		return this.getElementUniqueID();
 	},
 
@@ -5378,13 +5382,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave'
-		};
-	},
-
-	triggers: function() {
-		return {
-			'click @ui.duplicateButton': 'click:duplicate'
+			'click @ui.saveButton': 'onClickSave',
+			'click @ui.duplicateButton': 'duplicate'
 		};
 	},
 
@@ -5646,13 +5645,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueID() ] );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '.' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.stylesheet.addRules( '.' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
@@ -5694,6 +5693,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	getElementUniqueID: function() {
 		return 'elementor-element-' + this.model.get( 'id' );
+	},
+
+	duplicate: function() {
+		this.trigger( 'request:duplicate' );
+	},
+
+	confirmRemove: function() {
+		this.getRemoveDialog().show();
 	},
 
 	onClickEdit: function( event ) {
@@ -5759,7 +5766,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.getRemoveDialog().show();
+		this.confirmRemove();
 	},
 
 	onClickSave: function( event ) {
@@ -5947,12 +5954,10 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		var classes = 'elementor-column',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-column';
-
-		return classes;
+		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
 	ui: function() {
@@ -5970,12 +5975,8 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
-
-		triggers[ 'click @ui.addButton' ] = 'click:new';
-
-		return triggers;
+	triggers: {
+		'click @ui.addButton': 'click:new'
 	},
 
 	events: function() {
@@ -8133,12 +8134,10 @@ SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
 
 	className: function() {
-		var classes = 'elementor-section',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-section';
-
-		return classes;
+		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
 	tagName: 'section',
@@ -8400,7 +8399,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return 'elementor-widget';
+		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
 	events: function() {
@@ -8462,12 +8461,12 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlContent = this.getHTMLContent( html );
+		var htmlContent = this.getHTMLContent( html ),
+			el = this.$el[0];
 
-		//this.$el.html( html );
-		_.defer( _.bind( function() {
-			elementorFrontend.getScopeWindow().jQuery( '#' + this.getElementUniqueID() ).html( htmlContent );
-		}, this ) );
+		_.defer( function() {
+			elementorFrontend.getScopeWindow().jQuery( el ).html( htmlContent );
+		} );
 
 		return this;
 	},
