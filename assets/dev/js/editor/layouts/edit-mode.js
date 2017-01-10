@@ -24,7 +24,9 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	setMode: function( mode ) {
-		this.ui.previewButton.prop( 'checked', 'preview' === mode );
+		this.ui.previewButton
+			.prop( 'checked', 'preview' === mode )
+			.trigger( 'change' );
 	},
 
 	onRender: function() {
