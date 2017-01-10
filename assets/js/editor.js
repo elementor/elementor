@@ -492,6 +492,42 @@ RevisionsManager = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
+	var addHotKeys = function() {
+		var H_KEY = 72,
+			UP_ARROW = 38,
+			DOWN_ARROW = 40;
+
+		var navigationHandler = {
+			isWorthHandling: function() {
+				var panel = elementor.getPanelView();
+
+				if ( 'revisionsPage' !== panel.getCurrentPageName() ) {
+					return false;
+				}
+
+				var revisionsPage = panel.getCurrentPageView();
+
+				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
+			},
+			handle: function( event ) {
+				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW === event.which );
+			}
+		};
+
+		elementor.hotKeys.addHotKeyHandler( UP_ARROW, 'revisionNavigation', navigationHandler );
+
+		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW, 'revisionNavigation', navigationHandler );
+
+		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
+			isWorthHandling: function( event ) {
+				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
+			},
+			handle: function() {
+				elementor.getPanelView().setPage( 'revisionsPage' );
+			}
+		} );
+	};
+
 	this.addRevision = function( revisionData ) {
 		revisions.add( revisionData, { at: 0 } );
 
@@ -530,11 +566,11 @@ RevisionsManager = function() {
 	this.init = function() {
 		revisions = new RevisionsCollection( elementor.config.revisions );
 
-		elementor.on( 'preview:loaded', function() {
-			addPanelPage();
+		attachEvents();
 
-			attachEvents();
-		} );
+		addHotKeys();
+
+		elementor.on( 'preview:loaded', addPanelPage );
 	};
 };
 
@@ -581,10 +617,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
-
-		this.navigate = _.bind( this.navigate, this );
-
-		this.bindHotKeys();
 	},
 
 	setRevisionsButtonsActive: function( active ) {
@@ -637,22 +669,9 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.changeEditMode( 'edit' );
 	},
 
-	navigate: function( event ) {
-		if ( ! this.currentPreviewId || ! this.currentPreviewItem || this.children.length < 2 ) {
-			return;
-		}
-
-		var UP_ARROW = 38,
-			DOWN_ARROW = 40;
-
-		if ( event.which !== UP_ARROW && event.which !== DOWN_ARROW ) {
-			return;
-		}
-
-		event.preventDefault();
-
+	navigate: function( reverse ) {
 		var currentPreviewItemIndex = this.collection.indexOf( this.currentPreviewItem.model ),
-			requiredIndex = event.which === UP_ARROW ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
+			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
 
 		if ( requiredIndex < 0 ) {
 			requiredIndex = this.collection.length - 1;
@@ -663,14 +682,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
-	},
-
-	bindHotKeys: function() {
-		Backbone.$( window ).on( 'keydown', this.navigate );
-	},
-
-	unbindHotKeys: function() {
-		Backbone.$( window ).off( 'keydown', this.navigate );
 	},
 
 	onEditorSaved: function() {
@@ -709,8 +720,6 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( this.currentPreviewId ) {
 			this.onDiscardClick();
 		}
-
-		this.unbindHotKeys();
 	},
 
 	onRenderCollection: function() {
@@ -4629,10 +4638,6 @@ var HotKeys = function( $ ) {
 		return -1 !== navigator.userAgent.indexOf( 'Mac OS X' );
 	};
 
-	var isControlEvent = function( event ) {
-		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
-	};
-
 	var initHotKeysHandlers = function() {
 
 		hotKeysHandlers[ keysDictionary.del ] = {
@@ -4653,7 +4658,7 @@ var HotKeys = function( $ ) {
 			/* Waiting for CTRL+Z / CTRL+Y
 			duplicateElement: {
 				isWorthHandling: function( event ) {
-					return isControlEvent( event );
+					return self.isControlEvent( event );
 				},
 				handle: function() {
 					var panel = elementor.getPanelView();
@@ -4670,7 +4675,7 @@ var HotKeys = function( $ ) {
 		hotKeysHandlers[ keysDictionary.l ] = {
 			showTemplateLibrary: {
 				isWorthHandling: function( event ) {
-					return isControlEvent( event ) && event.shiftKey;
+					return self.isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
 					elementor.templates.showTemplatesModal();
@@ -4682,7 +4687,7 @@ var HotKeys = function( $ ) {
 			changeDeviceMode: {
 				devices: [ 'desktop', 'tablet', 'mobile' ],
 				isWorthHandling: function( event ) {
-					return isControlEvent( event );
+					return self.isControlEvent( event );
 				},
 				handle: function() {
 					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
@@ -4702,7 +4707,7 @@ var HotKeys = function( $ ) {
 		hotKeysHandlers[ keysDictionary.p ] = {
 			changeEditMode: {
 				isWorthHandling: function( event ) {
-					return isControlEvent( event );
+					return self.isControlEvent( event );
 				},
 				handle: function() {
 					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
@@ -4713,7 +4718,7 @@ var HotKeys = function( $ ) {
 		hotKeysHandlers[ keysDictionary.s ] = {
 			saveEditor: {
 				isWorthHandling: function( event ) {
-					return isControlEvent( event );
+					return self.isControlEvent( event );
 				},
 				handle: function() {
 					elementor.getPanelView().getFooterView()._publishBuilder();
@@ -4742,6 +4747,18 @@ var HotKeys = function( $ ) {
 
 	var bindEvents = function() {
 		self.bindListener( elementor.$window );
+	};
+
+	this.isControlEvent = function( event ) {
+		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
+	};
+
+	this.addHotKeyHandler = function( keyCode, handlerName, handler ) {
+		if ( ! hotKeysHandlers[ keyCode ] ) {
+			hotKeysHandlers[ keyCode ] = {};
+		}
+
+		hotKeysHandlers[ keyCode ][ handlerName ] = handler;
 	};
 
 	this.bindListener = function( $listener ) {
