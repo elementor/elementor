@@ -1883,6 +1883,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-revision-item__gravatar {
     border-radius: 50%;
     overflow: hidden; }
+    .elementor-revision-item__gravatar img {
+      display: block; }
   .elementor-revision-item__details {
     padding-right: 15px;
     -webkit-box-flex: 1;

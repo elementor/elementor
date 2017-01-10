@@ -27,10 +27,41 @@ module.exports = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+	},
 
-		this.navigate = _.bind( this.navigate, this );
+	getRevisionViewData: function( revisionView ) {
+		var self = this,
+			revisionID = revisionView.model.get( 'id' );
 
-		this.bindHotKeys();
+		self.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
+			data: {
+				id: revisionID
+			},
+			success: function( data ) {
+				self.setEditorData( data );
+
+				self.setRevisionsButtonsActive( true );
+
+				self.jqueryXhr = null;
+
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				self.enterReviewMode();
+			},
+			error: function( data ) {
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				if ( 'abort' === self.jqueryXhr.statusText ) {
+					return;
+				}
+
+				self.currentPreviewItem = null;
+
+				self.currentPreviewId = null;
+
+				alert( 'An error occurred' );
+			}
+		} );
 	},
 
 	setRevisionsButtonsActive: function( active ) {
@@ -41,17 +72,6 @@ module.exports = Marionette.CompositeView.extend( {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 
 		collection.reset( data );
-	},
-
-	saveAutoDraft: function() {
-		return elementor.saveEditor( {
-			status: 'autosave',
-			onSuccess: function( data ) {
-				if ( data.last_revision ) {
-					elementor.revisions.addRevision( data.last_revision );
-				}
-			}
-		} );
 	},
 
 	deleteRevision: function( revisionView ) {
@@ -83,22 +103,9 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.changeEditMode( 'edit' );
 	},
 
-	navigate: function( event ) {
-		if ( ! this.currentPreviewId || ! this.currentPreviewItem || this.children.length < 2 ) {
-			return;
-		}
-
-		var UP_ARROW = 38,
-			DOWN_ARROW = 40;
-
-		if ( event.which !== UP_ARROW && event.which !== DOWN_ARROW ) {
-			return;
-		}
-
-		event.preventDefault();
-
+	navigate: function( reverse ) {
 		var currentPreviewItemIndex = this.collection.indexOf( this.currentPreviewItem.model ),
-			requiredIndex = event.which === UP_ARROW ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
+			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
 
 		if ( requiredIndex < 0 ) {
 			requiredIndex = this.collection.length - 1;
@@ -109,14 +116,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
-	},
-
-	bindHotKeys: function() {
-		Backbone.$( window ).on( 'keydown', this.navigate );
-	},
-
-	unbindHotKeys: function() {
-		Backbone.$( window ).off( 'keydown', this.navigate );
 	},
 
 	onEditorSaved: function() {
@@ -155,8 +154,6 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( this.currentPreviewId ) {
 			this.onDiscardClick();
 		}
-
-		this.unbindHotKeys();
 	},
 
 	onRenderCollection: function() {
@@ -183,49 +180,26 @@ module.exports = Marionette.CompositeView.extend( {
 			this.jqueryXhr.abort();
 		}
 
-		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
-			this.saveAutoDraft();
-		}
-
 		if ( self.currentPreviewItem ) {
 			self.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
 		}
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
+		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
+			elementor.saveEditor( {
+				status: 'autosave',
+				onSuccess: function() {
+					self.getRevisionViewData( childView );
+				}
+			} );
+		} else {
+			self.getRevisionViewData( childView );
+		}
+
 		self.currentPreviewItem = childView;
 
 		self.currentPreviewId = revisionID;
-
-		this.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
-			data: {
-				id: revisionID
-			},
-			success: function( data ) {
-				self.setEditorData( data );
-
-				self.setRevisionsButtonsActive( true );
-
-				self.jqueryXhr = null;
-
-				childView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				self.enterReviewMode();
-			},
-			error: function( data ) {
-				childView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				if ( 'abort' === self.jqueryXhr.statusText ) {
-					return;
-				}
-
-				self.currentPreviewItem = null;
-
-				self.currentPreviewId = null;
-
-				alert( 'An error occurred' );
-			}
-		} );
 	},
 
 	onChildviewDeleteClick: function( childView ) {

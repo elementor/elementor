@@ -76,8 +76,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			onSuccess: function() {
 				self.getDialog().show();
 
-				elementor.setFlagEditorChange( false );
-
 				self.ui.buttonSaveButton.removeClass( 'elementor-button-state' );
 
 				NProgress.done();
@@ -157,9 +155,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickShowTemplates: function() {
-		elementor.templates.startModal( function() {
-			elementor.templates.showTemplates();
-		} );
+		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {

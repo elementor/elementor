@@ -23,6 +23,7 @@ App = Marionette.Application.extend( {
 	ajax: require( 'elementor-utils/ajax' ),
 	conditions: require( 'elementor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
+	hotKeys: require( 'elementor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -135,6 +136,7 @@ App = Marionette.Application.extend( {
 		this.modals.init();
 		this.ajax.init();
 		this.revisions.init();
+		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -238,6 +240,8 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
+		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+
 		this.$previewContents = this.$preview.contents();
 
 		var Preview = require( 'elementor-views/preview' ),
@@ -256,6 +260,7 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
@@ -309,7 +314,6 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
@@ -437,7 +441,8 @@ App = Marionette.Application.extend( {
 			onSuccess: null
 		}, options );
 
-		var newData = elementor.elements.toJSON();
+		var self = this,
+			newData = elementor.elements.toJSON();
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
@@ -446,9 +451,11 @@ App = Marionette.Application.extend( {
 		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
-				elementor.config.data = newData;
+				self.setFlagEditorChange( false );
 
-				elementor.channels.editor.trigger( 'saved', data );
+				self.config.data = newData;
+
+				self.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
