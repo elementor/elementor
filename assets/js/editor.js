@@ -1091,6 +1091,10 @@ TemplateLibraryManager = function() {
 		layout.showTemplatesView( templatesCollection );
 	};
 
+	this.showTemplatesModal = function() {
+		self.startModal( self.showTemplates );
+	};
+
 	this.showErrorDialog = function( errorMessage ) {
 		self.getErrorDialog()
 		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
@@ -2229,7 +2233,13 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	setMode: function( mode ) {
-		this.ui.previewButton.prop( 'checked', 'preview' === mode );
+		this.ui.previewButton
+			.prop( 'checked', 'preview' === mode )
+			.trigger( 'change' );
+	},
+
+	toggleMode: function() {
+		this.setMode( this.ui.previewButton.prop( 'checked' ) ? 'edit' : 'preview' );
 	},
 
 	onRender: function() {
@@ -2410,9 +2420,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickShowTemplates: function() {
-		elementor.templates.startModal( function() {
-			elementor.templates.showTemplates();
-		} );
+		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {
@@ -3092,17 +3100,17 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
+				icon: 'history',
+				title: elementor.translate( 'revision_history' ),
+				type: 'page',
+				pageName: 'revisionsPage'
+			},
+			{
 				icon: 'cog',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
 				link: elementor.config.settings_page_link,
 				newTab: true
-			},
-			{
-				icon: 'history',
-				title: elementor.translate( 'revision_history' ),
-				type: 'page',
-				pageName: 'revisionsPage'
 			},
             {
                 icon: 'eraser',
@@ -4602,13 +4610,16 @@ helpers = {
 module.exports = helpers;
 
 },{}],67:[function(require,module,exports){
-var HotKeys = function() {
+var HotKeys = function( $ ) {
 	var hotKeysHandlers = {};
 
 	var keysDictionary = {
+		del: 46,
 		d: 68,
-		s: 83,
-		del: 46
+		l: 76,
+		m: 77,
+		p: 80,
+		s: 83
 	};
 
 	var isMac = function() {
@@ -4616,11 +4627,27 @@ var HotKeys = function() {
 	};
 
 	var isControlEvent = function( event ) {
-		return !! event[ isMac() ? 'metaKey' : 'ctrlKey' ];
+		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
 	};
 
 	var initHotKeysHandlers = function() {
+
+		hotKeysHandlers[ keysDictionary.del ] = {
+			deleteElement: {
+				isWorthHandling: function( event ) {
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
+						isInputTarget = $( event.target ).is( ':input' );
+
+					return isEditorOpen && ! isInputTarget;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
+				}
+			}
+		};
+
 		hotKeysHandlers[ keysDictionary.d ] = {
+			/* Waiting for CTRL+Z / CTRL+Y
 			duplicateElement: {
 				isWorthHandling: function( event ) {
 					return isControlEvent( event );
@@ -4634,6 +4661,49 @@ var HotKeys = function() {
 
 					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
 				}
+			}*/
+		};
+
+		hotKeysHandlers[ keysDictionary.l ] = {
+			showTemplateLibrary: {
+				isWorthHandling: function( event ) {
+					return isControlEvent( event ) && event.shiftKey;
+				},
+				handle: function() {
+					elementor.templates.showTemplatesModal();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.m ] = {
+			changeDeviceMode: {
+				devices: [ 'desktop', 'tablet', 'mobile' ],
+				isWorthHandling: function( event ) {
+					return isControlEvent( event );
+				},
+				handle: function() {
+					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+						modeIndex = this.devices.indexOf( currentDeviceMode );
+
+					modeIndex++;
+
+					if ( modeIndex >= this.devices.length ) {
+						modeIndex = 0;
+					}
+
+					elementor.changeDeviceMode( this.devices[ modeIndex ] );
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.p ] = {
+			changeEditMode: {
+				isWorthHandling: function( event ) {
+					return isControlEvent( event );
+				},
+				handle: function() {
+					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+				}
 			}
 		};
 
@@ -4644,17 +4714,6 @@ var HotKeys = function() {
 				},
 				handle: function() {
 					elementor.getPanelView().getFooterView()._publishBuilder();
-				}
-			}
-		};
-
-		hotKeysHandlers[ keysDictionary.del ] = {
-			deleteElement: {
-				isWorthHandling: function() {
-					return 'editor' === elementor.getPanelView().getCurrentPageName();
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
 				}
 			}
 		};
@@ -4689,7 +4748,7 @@ var HotKeys = function() {
 	};
 };
 
-module.exports = new HotKeys();
+module.exports = new HotKeys( jQuery );
 
 },{}],68:[function(require,module,exports){
 var ImagesManager;
