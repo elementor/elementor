@@ -38,6 +38,19 @@ RevisionsManager = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
+	var addHotKeys = function() {
+		var H_KEY = 72;
+
+		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
+			isWorthHandling: function( event ) {
+				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
+			},
+			handle: function() {
+				elementor.getPanelView().setPage( 'revisionsPage' );
+			}
+		} );
+	};
+
 	this.addRevision = function( revisionData ) {
 		revisions.add( revisionData, { at: 0 } );
 
@@ -77,6 +90,8 @@ RevisionsManager = function() {
 		revisions = new RevisionsCollection( elementor.config.revisions );
 
 		attachEvents();
+
+		addHotKeys();
 
 		elementor.on( 'preview:loaded', function() {
 			addPanelPage();
