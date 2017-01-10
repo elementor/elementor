@@ -494,8 +494,8 @@ RevisionsManager = function() {
 
 	var addHotKeys = function() {
 		var H_KEY = 72,
-			UP_ARROW = 38,
-			DOWN_ARROW = 40;
+			UP_ARROW_KEY = 38,
+			DOWN_ARROW_KEY = 40;
 
 		var navigationHandler = {
 			isWorthHandling: function() {
@@ -510,13 +510,13 @@ RevisionsManager = function() {
 				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
 			},
 			handle: function( event ) {
-				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW === event.which );
+				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW_KEY === event.which );
 			}
 		};
 
-		elementor.hotKeys.addHotKeyHandler( UP_ARROW, 'revisionNavigation', navigationHandler );
+		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
-		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW, 'revisionNavigation', navigationHandler );
+		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
 		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
 			isWorthHandling: function( event ) {
