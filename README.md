@@ -114,6 +114,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 * PHP version 5.6 or greater
 * MySQL version 5.6 or greater
+* WP Memory Limit of 64 MB or greater (128 MB or higher is preferred)
 
 https://www.youtube.com/watch?v=Ypn6fltn_7s
 
