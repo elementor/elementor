@@ -4,6 +4,7 @@ var HotKeys = function() {
 	var keysDictionary = {
 		d: 68,
 		s: 83,
+		p: 80,
 		del: 46
 	};
 
@@ -40,6 +41,17 @@ var HotKeys = function() {
 				},
 				handle: function() {
 					elementor.getPanelView().getFooterView()._publishBuilder();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.p ] = {
+			changeEditMode: {
+				isWorthHandling: function( event ) {
+					return isControlEvent( event );
+				},
+				handle: function() {
+					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
 				}
 			}
 		};
