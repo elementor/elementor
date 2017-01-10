@@ -2,11 +2,11 @@ var HotKeys = function( $ ) {
 	var hotKeysHandlers = {};
 
 	var keysDictionary = {
+		del: 46,
 		d: 68,
 		l: 76,
-		s: 83,
 		p: 80,
-		del: 46
+		s: 83
 	};
 
 	var isMac = function() {
@@ -18,6 +18,22 @@ var HotKeys = function( $ ) {
 	};
 
 	var initHotKeysHandlers = function() {
+
+		hotKeysHandlers[ keysDictionary.del ] = {
+			/* Waiting for CTRL+Z / CTRL+Y
+			 deleteElement: {
+			 isWorthHandling: function( event ) {
+			 var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
+			 isInputTarget = $( event.target ).is( ':input' );
+
+			 return isEditorOpen && ! isInputTarget;
+			 },
+			 handle: function() {
+			 elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
+			 }
+			 }*/
+		};
+
 		hotKeysHandlers[ keysDictionary.d ] = {
 			duplicateElement: {
 				isWorthHandling: function( event ) {
@@ -35,13 +51,13 @@ var HotKeys = function( $ ) {
 			}
 		};
 
-		hotKeysHandlers[ keysDictionary.s ] = {
-			saveEditor: {
+		hotKeysHandlers[ keysDictionary.l ] = {
+			showTemplateLibrary: {
 				isWorthHandling: function( event ) {
-					return isControlEvent( event );
+					return isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
-					elementor.getPanelView().getFooterView()._publishBuilder();
+					elementor.templates.showTemplatesModal();
 				}
 			}
 		};
@@ -57,30 +73,15 @@ var HotKeys = function( $ ) {
 			}
 		};
 
-		hotKeysHandlers[ keysDictionary.l ] = {
-			showTemplateLibrary: {
+		hotKeysHandlers[ keysDictionary.s ] = {
+			saveEditor: {
 				isWorthHandling: function( event ) {
-					return isControlEvent( event ) && event.shiftKey;
+					return isControlEvent( event );
 				},
 				handle: function() {
-					elementor.templates.showTemplatesModal();
+					elementor.getPanelView().getFooterView()._publishBuilder();
 				}
 			}
-		};
-
-		hotKeysHandlers[ keysDictionary.del ] = {
-			/* Waiting for CTRL+Z / CTRL+Y
-			deleteElement: {
-				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input' );
-
-					return isEditorOpen && ! isInputTarget;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
-				}
-			}*/
 		};
 	};
 
