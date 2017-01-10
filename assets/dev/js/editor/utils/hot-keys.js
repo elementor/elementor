@@ -1,4 +1,4 @@
-var HotKeys = function() {
+var HotKeys = function( $ ) {
 	var hotKeysHandlers = {};
 
 	var keysDictionary = {
@@ -110,4 +110,4 @@ var HotKeys = function() {
 	};
 };
 
-module.exports = new HotKeys();
+module.exports = new HotKeys( jQuery );
