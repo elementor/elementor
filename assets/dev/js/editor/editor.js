@@ -451,6 +451,7 @@ App = Marionette.Application.extend( {
 		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
+				self.setFlagEditorChange( false );
 
 				self.config.data = newData;
 
