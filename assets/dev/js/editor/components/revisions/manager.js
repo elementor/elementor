@@ -76,10 +76,10 @@ RevisionsManager = function() {
 	this.init = function() {
 		revisions = new RevisionsCollection( elementor.config.revisions );
 
+		attachEvents();
+
 		elementor.on( 'preview:loaded', function() {
 			addPanelPage();
-
-			attachEvents();
 		} );
 	};
 };
