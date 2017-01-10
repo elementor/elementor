@@ -27,10 +27,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
-
-		this.navigate = _.bind( this.navigate, this );
-
-		this.bindHotKeys();
 	},
 
 	setRevisionsButtonsActive: function( active ) {
@@ -83,22 +79,9 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.changeEditMode( 'edit' );
 	},
 
-	navigate: function( event ) {
-		if ( ! this.currentPreviewId || ! this.currentPreviewItem || this.children.length < 2 ) {
-			return;
-		}
-
-		var UP_ARROW = 38,
-			DOWN_ARROW = 40;
-
-		if ( event.which !== UP_ARROW && event.which !== DOWN_ARROW ) {
-			return;
-		}
-
-		event.preventDefault();
-
+	navigate: function( reverse ) {
 		var currentPreviewItemIndex = this.collection.indexOf( this.currentPreviewItem.model ),
-			requiredIndex = event.which === UP_ARROW ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
+			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
 
 		if ( requiredIndex < 0 ) {
 			requiredIndex = this.collection.length - 1;
@@ -109,14 +92,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
-	},
-
-	bindHotKeys: function() {
-		Backbone.$( window ).on( 'keydown', this.navigate );
-	},
-
-	unbindHotKeys: function() {
-		Backbone.$( window ).off( 'keydown', this.navigate );
 	},
 
 	onEditorSaved: function() {
@@ -155,8 +130,6 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( this.currentPreviewId ) {
 			this.onDiscardClick();
 		}
-
-		this.unbindHotKeys();
 	},
 
 	onRenderCollection: function() {

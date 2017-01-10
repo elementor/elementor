@@ -39,7 +39,30 @@ RevisionsManager = function() {
 	};
 
 	var addHotKeys = function() {
-		var H_KEY = 72;
+		var H_KEY = 72,
+			UP_ARROW = 38,
+			DOWN_ARROW = 40;
+
+		var navigationHandler = {
+			isWorthHandling: function() {
+				var panel = elementor.getPanelView();
+
+				if ( 'revisionsPage' !== panel.getCurrentPageName() ) {
+					return false;
+				}
+
+				var revisionsPage = panel.getCurrentPageView();
+
+				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
+			},
+			handle: function( event ) {
+				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW === event.which );
+			}
+		};
+
+		elementor.hotKeys.addHotKeyHandler( UP_ARROW, 'revisionNavigation', navigationHandler );
+
+		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW, 'revisionNavigation', navigationHandler );
 
 		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
 			isWorthHandling: function( event ) {
