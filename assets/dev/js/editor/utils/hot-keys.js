@@ -130,6 +130,14 @@ var HotKeys = function( $ ) {
 		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
 	};
 
+	this.addHotKeyHandler = function( keyCode, handlerName, handler ) {
+		if ( ! hotKeysHandlers[ keyCode ] ) {
+			hotKeysHandlers[ keyCode ] = {};
+		}
+
+		hotKeysHandlers[ keyCode ][ handlerName ] = handler;
+	};
+
 	this.bindListener = function( $listener ) {
 		$listener.on( 'keydown', applyHotKey );
 	};
