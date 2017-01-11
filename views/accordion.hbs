@@ -1,0 +1,17 @@
+{{!--  is-new-template --}}
+
+<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex }}">
+  {{#each tabs}}
+    <div class="elementor-accordion-item">
+
+      <div class="elementor-accordion-title" data-section="{{ @index }}">
+        <span class="elementor-accordion-icon elementor-accordion-icon-{{ icon_align }}">
+          <i class="fa"></i>
+        </span>
+        {{{ tab_title }}}
+      </div>
+
+      <div class="elementor-accordion-content elementor-clearfix" data-section="{{ @index }}">{{{ tab_content }}}</div>
+    </div>
+  {{/each}}
+</div>

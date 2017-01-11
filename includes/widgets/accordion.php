@@ -225,48 +225,17 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_settings();
-		?>
-		<div class="elementor-accordion">
-			<?php
-			$counter = 1; ?>
-			<?php foreach ( $settings['tabs'] as $item ) : ?>
-				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">
-						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
-							<i class="fa"></i>
-						</span>
-						<?php echo $item['tab_title']; ?>
-					</div>
-					<div class="elementor-accordion-content elementor-clearfix" data-section="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
-				</div>
-			<?php
-				$counter++;
-			endforeach; ?>
-		</div>
-		<?php
+
+		$settings['tabs'] = array_map(function($item) {
+			$item['tab_content'] =  $this->parse_text_editor($item['tab_content']);
+
+			return $item;
+		}, $settings['tabs']);
+
+		echo tpl::get('accordion', $settings);
 	}
 
 	protected function _content_template() {
-		?>
-		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
-			<#
-			if ( settings.tabs ) {
-				var counter = 1;
-				_.each( settings.tabs, function( item ) { #>
-					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-section="{{ counter }}">
-							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
-								<i class="fa"></i>
-							</span>
-							{{{ item.tab_title }}}
-						</div>
-						<div class="elementor-accordion-content elementor-clearfix" data-section="{{ counter }}">{{{ item.tab_content }}}</div>
-					</div>
-				<#
-					counter++;
-				} );
-			} #>
-		</div>
-		<?php
+		echo tpl::get('accordion-js', [], [], new HandlebarsCustomTokenizer);
 	}
 }
