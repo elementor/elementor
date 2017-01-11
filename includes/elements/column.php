@@ -42,6 +42,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Background & Border', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -88,7 +89,7 @@ class Element_Column extends Element_Base {
 			'section_background_overlay',
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
-				'tab' => Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'background_background' => [ 'classic', 'video' ],
 				],
@@ -137,6 +138,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
