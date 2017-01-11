@@ -232,10 +232,12 @@ class Widget_Accordion extends Widget_Base {
 			return $item;
 		}, $settings['tabs']);
 
-		echo tpl::get('accordion', $settings);
+		echo tpl::get('widgets/accordion', [
+			'settings' => $settings
+		]);
 	}
 
 	protected function _content_template() {
-		echo tpl::get('accordion-js', [], [], new HandlebarsCustomTokenizer);
+		echo tpl::get('widgets/accordion', [], [], new HandlebarsCustomTokenizer);
 	}
 }
