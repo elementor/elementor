@@ -162,16 +162,17 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 == Changelog ==
 
 = 1.1.0 - 11.01.2017 =
-* New! - Revision History (Based on WP Revisions)
-* New! - Added Tool for Replace Site URL in Elementor data
-* New! - Hotkey: CTRL / CMD + S = Save
-* New! - Hotkey: CTRL / CMD + P = Preview Mode
-* New! - Hotkey: CTRL / CMD + SHIFT + L = Open Library Modal
-* New! - Hotkey: CTRL / CMD + SHIFT + H = Go to Revision History
-* New! - Hotkey: CTRL / CMD + SHIFT + M = Mobile Editing Preview
-* Tweak! - Enqueue assets only if elementor exists on the page
-* Fix! - Added missing translation strings for media modal
-* Fix! - Wrong preview styles in Editor mode
+New! - Revision History (Based on WP Revisions)
+New! - Added Tool for Replace Site URL in Elementor data
+New! - Hotkey: CTRL / CMD + S = Save
+New! - Hotkey: CTRL / CMD + P = Preview Mode
+New! - Hotkey: CTRL / CMD + SHIFT + L = Open Library Modal
+New! - Hotkey: CTRL / CMD + SHIFT + H = Go to Revision History
+New! - Hotkey: CTRL / CMD + SHIFT + M = Mobile Editing Preview
+Tweak! - Enqueue assets only if elementor exists on the page
+Tweak! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
+Tweak! - Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
+Fix! - Added missing translation strings for media modal
 
 = 1.0.12 - 05.01.2017 =
 * Fix! - Library modal 'Insert' button
