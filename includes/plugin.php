@@ -175,6 +175,9 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
+		include( ELEMENTOR_PATH . 'includes/tpl.php' );
+		include( ELEMENTOR_PATH . 'includes/tpl-custom-tokenizer.php' );
+
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
 
