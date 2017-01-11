@@ -1,5 +1,5 @@
 === Elementor Page Builder ===
-Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, yehudah, mati1000, pojosh
+Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
@@ -161,6 +161,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.1.1 - 11.01.2017 =
+* Fix! - Revision history panel title
+* Fix! - Renamed content tab in Column to style
+* Fix! - Regenerate new Waypoints JS lib
+
 = 1.1.0 - 11.01.2017 =
 * New! - Revision History (Based on WP Revisions)
 * New! - Added Tool for Replace Site URL in Elementor data
@@ -169,8 +174,8 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Hotkey: Ctrl / Cmd + SHIFT + L = Open Library Modal
 * New! - Hotkey: Ctrl / Cmd + SHIFT + H = Go to Revision History
 * New! - Hotkey: Ctrl / Cmd + SHIFT + M = Mobile Editing Preview
+* New! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
 * Tweak! - Enqueue assets only if elementor exists on the page
-* Tweak! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
 * Tweak! - Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
 * Fix! - Added missing translation strings for media modal
 

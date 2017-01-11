@@ -1,7 +1,7 @@
 # Elementor Page Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
 
 
-**Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [yehudah](https://profiles.wordpress.org/yehudah), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh)  
+**Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [yehudah](https://profiles.wordpress.org/yehudah)  
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
@@ -163,6 +163,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.1.1 - 11.01.2017 ###
+* Fix! - Revision history panel title
+* Fix! - Renamed content tab in Column to style
+* Fix! - Regenerate new Waypoints JS lib
+
 ### 1.1.0 - 11.01.2017 ###
 * New! - Revision History (Based on WP Revisions)
 * New! - Added Tool for Replace Site URL in Elementor data
@@ -171,8 +176,8 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Hotkey: Ctrl / Cmd + SHIFT + L = Open Library Modal
 * New! - Hotkey: Ctrl / Cmd + SHIFT + H = Go to Revision History
 * New! - Hotkey: Ctrl / Cmd + SHIFT + M = Mobile Editing Preview
+* New! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
 * Tweak! - Enqueue assets only if elementor exists on the page
-* Tweak! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
 * Tweak! - Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
 * Fix! - Added missing translation strings for media modal
 
