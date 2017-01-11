@@ -68,7 +68,7 @@ class Tools {
 			$replace_url_section,
 			__( 'Replace URL', 'elementor' ),
 			function() {
-				$intro_text = sprintf( __( '<strong>Important:</strong> before updating, please <a target="_blank" href="%s">back up your database</a>.', 'elementor' ), 'https://codex.wordpress.org/WordPress_Backups' );
+				$intro_text = sprintf( __( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ), 'https://codex.wordpress.org/WordPress_Backups' );
 				$intro_text = '<p>' . $intro_text . '</p>';
 
 				echo $intro_text;
@@ -86,7 +86,7 @@ class Tools {
 			[
 				'id' => $field_id,
 				'type' => 'raw_html',
-				'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url" class="medium-text"><input type="text" name="to" placeholder="http://new-url" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), __( 'Replace URL', 'elementor' ) ),
+				'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), __( 'Replace URL', 'elementor' ) ),
 				'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 			]
 		);
