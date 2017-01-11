@@ -226,7 +226,7 @@
 				content: 'pro';
 				text-transform: uppercase;
 				top: 5px;
-				right: 5px;
+				@include end(5px);
 				background-color: $editor-accent;
 				color: $editor-lightest;
 				padding: 1px 4px;

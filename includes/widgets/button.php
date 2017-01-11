@@ -48,6 +48,7 @@ class Widget_Button extends Widget_Base {
 					'warning' => __( 'Warning', 'elementor' ),
 					'danger' => __( 'Danger', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-button-',
 			]
 		);
 
@@ -326,10 +327,6 @@ class Widget_Button extends Widget_Base {
 			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( ! empty( $settings['button_type'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $settings['button_type'] );
-		}
-
 		if ( $settings['hover_animation'] ) {
 			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
@@ -356,7 +353,7 @@ class Widget_Button extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
+			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">

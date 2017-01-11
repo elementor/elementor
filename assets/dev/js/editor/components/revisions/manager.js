@@ -38,6 +38,42 @@ RevisionsManager = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
+	var addHotKeys = function() {
+		var H_KEY = 72,
+			UP_ARROW_KEY = 38,
+			DOWN_ARROW_KEY = 40;
+
+		var navigationHandler = {
+			isWorthHandling: function() {
+				var panel = elementor.getPanelView();
+
+				if ( 'revisionsPage' !== panel.getCurrentPageName() ) {
+					return false;
+				}
+
+				var revisionsPage = panel.getCurrentPageView();
+
+				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
+			},
+			handle: function( event ) {
+				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW_KEY === event.which );
+			}
+		};
+
+		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
+
+		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
+
+		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
+			isWorthHandling: function( event ) {
+				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
+			},
+			handle: function() {
+				elementor.getPanelView().setPage( 'revisionsPage' );
+			}
+		} );
+	};
+
 	this.addRevision = function( revisionData ) {
 		revisions.add( revisionData, { at: 0 } );
 
@@ -76,11 +112,11 @@ RevisionsManager = function() {
 	this.init = function() {
 		revisions = new RevisionsCollection( elementor.config.revisions );
 
-		elementor.on( 'preview:loaded', function() {
-			addPanelPage();
+		attachEvents();
 
-			attachEvents();
-		} );
+		addHotKeys();
+
+		elementor.on( 'preview:loaded', addPanelPage );
 	};
 };
 

@@ -1883,6 +1883,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-revision-item__gravatar {
     border-radius: 50%;
     overflow: hidden; }
+    .elementor-revision-item__gravatar img {
+      display: block; }
   .elementor-revision-item__details {
     padding-right: 15px;
     -webkit-box-flex: 1;
@@ -2311,7 +2313,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
       content: 'pro';
       text-transform: uppercase;
       top: 5px;
-      right: 5px;
+      left: 5px;
       background-color: #9b0a46;
       color: #d5dadf;
       padding: 1px 4px;
