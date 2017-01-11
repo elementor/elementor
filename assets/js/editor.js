@@ -1661,6 +1661,9 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 		escape: /\{\{([^\}]+?)\}\}(?!\})/g
 	};
 
+	if (rawTemplate.indexOf('{{!--  is-new-template --}}') !== -1) {
+		return Handlebars.compile(rawTemplate);
+	}
 	return _.template( rawTemplate, options );
 };
 
