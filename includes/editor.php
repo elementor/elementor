@@ -154,7 +154,7 @@ class Editor {
 
 		// Hack for waypoint with editor mode.
 		wp_register_script(
-			'waypoints',
+			'elementor-waypoints',
 			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints-for-editor.js',
 			[
 				'jquery',

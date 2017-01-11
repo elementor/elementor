@@ -72,7 +72,7 @@ class Frontend {
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
-			'waypoints',
+			'elementor-waypoints',
 			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints' . $suffix . '.js',
 			[
 				'jquery',
@@ -105,7 +105,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
-				'waypoints',
+				'elementor-waypoints',
 				'jquery-numerator',
 				'jquery-slick',
 			],
