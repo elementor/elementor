@@ -272,6 +272,16 @@ class Editor {
 			true
 		);
 
+
+		wp_register_script(
+			'handlebars-js',
+			ELEMENTOR_ASSETS_URL . 'lib/handlebars/handlebars' . $suffix . '.js',
+			[],
+			'2.4.5',
+			true
+		);
+
+
 		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
@@ -290,6 +300,7 @@ class Editor {
 				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
+				'handlebars-js',
 				'ace',
 			],
 			$plugin->get_version(),
