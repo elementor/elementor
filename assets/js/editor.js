@@ -470,6 +470,7 @@ RevisionsManager = function() {
 
 				return RevisionsEmptyView;
 			},
+			title: elementor.translate( 'revision_history' ),
 			options: {
 				collection: revisions
 			}
