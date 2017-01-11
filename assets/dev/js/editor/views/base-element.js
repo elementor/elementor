@@ -7,7 +7,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	stylesheet: null,
 
-	id: function() {
+	className: function() {
 		return this.getElementUniqueID();
 	},
 
@@ -33,13 +33,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave'
-		};
-	},
-
-	triggers: function() {
-		return {
-			'click @ui.duplicateButton': 'click:duplicate'
+			'click @ui.saveButton': 'onClickSave',
+			'click @ui.duplicateButton': 'duplicate'
 		};
 	},
 
@@ -301,13 +296,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueID() ] );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#elementor .' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
@@ -351,13 +346,21 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
+	duplicate: function() {
+		this.trigger( 'request:duplicate' );
+	},
+
+	confirmRemove: function() {
+		this.getRemoveDialog().show();
+	},
+
 	onClickEdit: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( 'preview' === activeMode ) {
+		if ( 'edit' !== activeMode ) {
 			return;
 		}
 
@@ -414,7 +417,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.getRemoveDialog().show();
+		this.confirmRemove();
 	},
 
 	onClickSave: function( event ) {
@@ -425,6 +428,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView( model );
 		} );
+	},
+
+	onDestroy: function() {
+		if ( this.$stylesheetElement ) {
+			this.$stylesheetElement.remove();
+		}
 	}
 }, {
 	addControlStyleRules: function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {

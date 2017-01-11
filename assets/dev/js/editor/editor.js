@@ -22,6 +22,8 @@ App = Marionette.Application.extend( {
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-utils/ajax' ),
 	conditions: require( 'elementor-utils/conditions' ),
+	revisions:  require( 'elementor-revisions/manager' ),
+	hotKeys: require( 'elementor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -113,7 +115,7 @@ App = Marionette.Application.extend( {
 				order: require( 'elementor-views/controls/order' )
 			};
 
-			this.channels.editor.trigger( 'editor:controls:initialize' );
+			this.channels.editor.trigger( 'controls:initialize' );
 		}
 
 		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
@@ -133,6 +135,8 @@ App = Marionette.Application.extend( {
 		this.heartbeat.init();
 		this.modals.init();
 		this.ajax.init();
+		this.revisions.init();
+		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -236,6 +240,8 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
+		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+
 		this.$previewContents = this.$preview.contents();
 
 		var Preview = require( 'elementor-views/preview' ),
@@ -254,6 +260,7 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
@@ -262,7 +269,7 @@ App = Marionette.Application.extend( {
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
+			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -307,19 +314,16 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'preview' === activeMode ) {
-			this.enterPreviewMode();
-		} else {
+	onEditModeSwitched: function( activeMode ) {
+		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
+		} else {
+			this.enterPreviewMode( 'preview' === activeMode );
 		}
 	},
 
@@ -350,12 +354,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'editor:changed', status )
-			.trigger( 'editor:changed', status );
+			.reply( 'change', status )
+			.trigger( 'change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'editor:changed' ) );
+		return ( true === elementor.channels.editor.request( 'change' ) );
 	},
 
 	setWorkSaver: function() {
@@ -393,25 +397,42 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function() {
-		this.$previewContents
-		    .find( 'body' )
-		    .add( 'body' )
-		    .removeClass( 'elementor-editor-active' )
-		    .addClass( 'elementor-editor-preview' );
+	enterPreviewMode: function( hidePanel ) {
+		var $elements = this.$previewContents.find( 'body' );
 
-		// Handle panel resize
-		this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+		if ( hidePanel ) {
+			$elements = $elements.add( 'body' );
+		}
 
-		this.panel.$el.css( 'width', '' );
+		$elements
+			.removeClass( 'elementor-editor-active' )
+			.addClass( 'elementor-editor-preview' );
+
+		if ( hidePanel ) {
+			// Handle panel resize
+			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+
+			this.panel.$el.css( 'width', '' );
+		}
 	},
 
 	exitPreviewMode: function() {
 		this.$previewContents
-		    .find( 'body' )
-		    .add( 'body' )
-		    .removeClass( 'elementor-editor-preview' )
-		    .addClass( 'elementor-editor-active' );
+			.find( 'body' )
+			.add( 'body' )
+			.removeClass( 'elementor-editor-preview' )
+			.addClass( 'elementor-editor-active' );
+	},
+
+	changeEditMode: function( newMode ) {
+		var dataEditMode = elementor.channels.dataEditMode,
+			oldEditMode = dataEditMode.request( 'activeMode' );
+
+		dataEditMode.reply( 'activeMode', newMode );
+
+		if ( newMode !== oldEditMode ) {
+			dataEditMode.trigger( 'switch', newMode );
+		}
 	},
 
 	saveEditor: function( options ) {
@@ -420,24 +441,27 @@ App = Marionette.Application.extend( {
 			onSuccess: null
 		}, options );
 
-		NProgress.start();
+		var self = this,
+			newData = elementor.elements.toJSON();
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
 		        post_id: this.config.post_id,
 				status: options.status,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
-				NProgress.done();
+				self.setFlagEditorChange( false );
 
-				elementor.setFlagEditorChange( false );
+				self.config.data = newData;
+
+				self.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
 				}
 			}
-        } );
+		} );
 	},
 
 	reloadPreview: function() {
@@ -519,7 +543,7 @@ App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/icon-logo-26x26.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
 		}
 
 		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';

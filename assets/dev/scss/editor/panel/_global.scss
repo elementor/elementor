@@ -206,7 +206,7 @@
 }
 
 .elementor-panel-nerd-box {
-	padding: 10px 0 30px;
+	padding: 30px 20px;
 	text-align: center;
 
 	.elementor-panel-nerd-box-icon {
@@ -240,29 +240,9 @@
 	}
 }
 
-#elementor-panel-global,
-#elementor-global-templates {
-
-	.elementor-panel-nerd-box {
-		padding: 30px 25px;
-	}
-}
-
 #elementor-panel-get-pro-elements {
 
-	&.elementor-panel-nerd-box {
-		padding: 40px 0;
-
-		.elementor-panel-nerd-box-title {
-			margin-top: 0;
-		}
-
-		.elementor-panel-nerd-box-message {
-			margin-top: 0;
-		}
-
-		.elementor-button.elementor-panel-nerd-box-link {
-			margin-top: 0;
-		}
+	.elementor-panel-nerd-box-message {
+		text-transform: uppercase;
 	}
 }

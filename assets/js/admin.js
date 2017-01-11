@@ -98,6 +98,35 @@
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
 					} );
 			} );
+
+			$( '#elementor-replace-url-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $this = $( this ),
+					$tr = $this.parents( 'tr' ),
+					$from = $tr.find( '[name="from"]' ),
+					$to = $tr.find( '[name="to"]' );
+
+				$this.removeClass( 'success' ).addClass( 'loading' );
+
+				$.post( ajaxurl, {
+					action: 'elementor_replace_url',
+					from: $from.val(),
+					to: $to.val(),
+					_nonce: $this.data( 'nonce' )
+				} )
+					.done( function( response ) {
+						$this.removeClass( 'loading' );
+
+						if ( response.success ) {
+							$this.addClass( 'success' );
+						}
+
+						var dialogsManager = new DialogsManager.Instance();
+							dialogsManager.createWidget( 'alert', {
+								message: response.data
+							} ).show();
+					} );
+			} );
 		},
 
 		init: function() {

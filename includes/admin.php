@@ -15,6 +15,16 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.0.2',
+			true
+		);
+
+		wp_register_script(
 			'elementor-admin-app',
 			ELEMENTOR_ASSETS_URL . 'js/admin' . $suffix . '.js',
 			[
@@ -29,6 +39,10 @@ class Admin {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
+		}
+
+		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
+			wp_enqueue_script( 'elementor-dialog' );
 		}
 	}
 
@@ -182,7 +196,10 @@ class Admin {
 
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
+
 		array_unshift( $links, $settings_link );
+
+		$links['go_pro'] = sprintf( '<a href="%s" target="_blank" class="elementor-plugins-gopro">%s</a>', 'https://go.elementor.com/pro-admin-plugins/', __( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -269,19 +286,10 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-admin-feedback',
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
+				'jquery',
 				'underscore',
 				'elementor-dialog',
 			],
@@ -362,7 +370,9 @@ class Admin {
 			wp_send_json_error();
 		}
 
-		$reason_text = $reason_key = '';
+		$reason_text = '';
+
+		$reason_key = '';
 
 		if ( ! empty( $_POST['reason_key'] ) )
 			$reason_key = $_POST['reason_key'];

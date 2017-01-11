@@ -29,8 +29,9 @@ class Frontend {
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		if ( $this->_has_elementor_in_page ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		}
 
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
@@ -191,6 +192,13 @@ class Frontend {
 	 * Handle style that do not printed in header
 	 */
 	public function wp_footer() {
+		if ( ! $this->_has_elementor_in_page ) {
+			return;
+		}
+
+		$this->enqueue_styles();
+		$this->enqueue_scripts();
+
 		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}

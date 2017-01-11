@@ -19,10 +19,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'preview' !== activeMode ) {
+	onEditModeSwitched: function( activeMode ) {
+		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {
 			this.deactivate();
@@ -40,7 +38,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
-		_.defer( _.bind( this.onEditModeSwitched, this ) );
+		var self = this;
+
+		_.defer( function() {
+			self.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
+		} );
 	},
 
 	onDestroy: function() {

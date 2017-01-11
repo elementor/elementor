@@ -5,20 +5,19 @@
 .elementor-button {
 	outline: none;
 	border: none;
-	cursor: pointer;
 	border-radius: 3px;
 	transition-property: background, color, box-shadow, opacity;
 	transition-duration: .5s;
+
+	&:not([disabled]) {
+		cursor: pointer;
+	}
 
 	&:not(.elementor-button-state) {
 
 		.elementor-state-icon {
 			display: none;
 		}
-	}
-
-	.elementor-state-icon {
-		@include padding-end(10px);
 	}
 
 	&.elementor-button-success {
@@ -73,5 +72,9 @@
 		&:visited {
 			color: #fff;
 		}
+	}
+
+	i {
+		@include margin-end(10px);
 	}
 }

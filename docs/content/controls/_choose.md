@@ -49,7 +49,9 @@ Argument           | Required   | Type         | Default                      | 
 ------------       | :--------: | :------:     | ---------------------------  | ---------------------------------------------
 `label`            | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `type`             | yes        | *`string`*   | `Controls_Manager::CHOOSE`   | The type of the control
-`default`          | no         | *`string`*   |                              | The default value can be set as an array of single image arrays
+`default`          | no         | *`string`*   |                              | The default value - An option selected by default
 `options`          | yes        | *`array`*    |                              | An associative array of arrays: each option is described as an array with `icon` (a font icon class name) and `title` (a string of text that will be shown as a tooltip on hover)
 `toggle`           | no         | *`bool`*     | `true`                       | Whether to allow toggle the selected option (unset the selection)
 `label_block`      | no         | *`bool`*     | `true`                       | Display the label above the control by setting to true
+`description`      | no         | *`string`*   |                              | A description text to display below the control
+`separator`        | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator

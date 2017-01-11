@@ -48,4 +48,7 @@ Argument           | Required   | Type         | Default                      | 
 `label`            | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `type`             | yes        | *`string`*   | `Controls_Manager::DATE_TIME`| The type of the control
 `default`          | no         | *`array`*    |                              | The default value can be set as a string in mysql format `YYYY-mm-dd HH:ii`
-`picker_options`   | no         | *`array`*    | onHide: saveValue()          | The jQuery plugin option, see [details here](http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.html#section_available_options). But you cannot use the `onHide` callback that already in use by Elementor
+`picker_options`   | no         | *`array`*    | `onHide: saveValue()`        | The jQuery plugin option, see [details here](http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.html#section_available_options). But you cannot use the `onHide` callback that already in use by Elementor
+`label_block`      | no         | *`bool`*     | `false`                      | Display the label above the control by setting to true
+`description`      | no         | *`string`*   |                              | A description text to display below the control
+`separator`        | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator
