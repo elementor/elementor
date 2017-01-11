@@ -2190,8 +2190,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-template-library-modal .elementor-button {
   text-transform: uppercase; }
-  #elementor-template-library-modal .elementor-button .elementor-button-title {
-    padding-right: 8px; }
 
 #elementor-template-library-header {
   display: table;
