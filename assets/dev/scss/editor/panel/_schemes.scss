@@ -11,7 +11,7 @@
 }
 
 .elementor-panel-scheme-buttons {
-	@include padding-start(20px);
+	padding: 0 20px;
 	display: table;
 	table-layout: fixed;
 	width: 100%;
@@ -23,10 +23,18 @@
 .elementor-panel-scheme-button-wrapper {
 	display: table-cell;
 	vertical-align: middle;
+	text-align: center;
+
+	&:first-child {
+		text-align: $start;
+	}
+
+	&:last-child {
+		text-align: $end;
+	}
 }
 
 .elementor-panel-scheme-save {
-	text-align: center;
 
 	.elementor-button {
 		padding: 6px 18px;
@@ -43,10 +51,6 @@
 		&:hover {
 
 		}
-	}
-
-	.fa {
-		margin-right: 3px;
 	}
 }
 

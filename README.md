@@ -163,9 +163,21 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.1.0 - 11.01.2017 ###
+New! - Revision History (Based on WP Revisions)
+New! - Added Tool for Replace Site URL in Elementor data
+New! - Hotkey: CTRL / CMD + S = Save
+New! - Hotkey: CTRL / CMD + P = Preview Mode
+New! - Hotkey: CTRL / CMD + SHIFT + L = Open Library Modal
+New! - Hotkey: CTRL / CMD + SHIFT + H = Go to Revision History
+New! - Hotkey: CTRL / CMD + SHIFT + M = Mobile Editing Preview
+Tweak! - Enqueue assets only if elementor exists on the page
+Tweak! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
+Tweak! - Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
+Fix! - Added missing translation strings for media modal
+
 ### 1.0.12 - 05.01.2017 ###
 * Fix! - Library modal 'Insert' button
-* Fix! - Ninja Forms widget conflict
 
 ### 1.0.11 - 04.01.2017 ###
 * Fix! - Some breaks from previous release
@@ -176,6 +188,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Tweak! - Updated Dialog Manager v3.0.2
 * Fix! - Library modal 'Go Pro' button in FireFox
 * Fix! - Bug load elementor in front page in some server configuration
+* Fix! - Ninja Forms widget conflict
 * Deprecated! - `elementor/frontend/enqueue_scripts/after` is no longer available
 * Deprecated! - `elementor/elements/print_template` is replaced by `elementor/element/print_template`
 * Deprecated! - `elementor/element_css/parse_css` is replaced by `elementor/element/parse_css`

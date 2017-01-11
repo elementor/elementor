@@ -26,12 +26,10 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		var classes = 'elementor-column',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-column';
-
-		return classes;
+		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
 	ui: function() {
@@ -49,12 +47,8 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: function() {
-		var triggers = BaseElementView.prototype.triggers.apply( this, arguments );
-
-		triggers[ 'click @ui.addButton' ] = 'click:new';
-
-		return triggers;
+	triggers: {
+		'click @ui.addButton': 'click:new'
 	},
 
 	events: function() {

@@ -39,6 +39,11 @@ class Plugin {
 	public $widgets_manager;
 
 	/**
+	 * @var Revisions_Manager
+	 */
+	public $revisions_manager;
+
+	/**
 	 * @var Settings
 	 */
 	public $settings;
@@ -166,6 +171,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
 		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
 		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
@@ -187,6 +193,7 @@ class Plugin {
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
+		$this->revisions_manager = new Revisions_Manager();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();
@@ -218,7 +225,6 @@ class Plugin {
 	private function __construct() {
 		add_action( 'init', [ $this, 'init' ], 0 );
 
-		// TODO: Declare this fields
 		$this->_includes();
 	}
 }
