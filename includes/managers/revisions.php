@@ -76,13 +76,13 @@ class Revisions_Manager {
 
 	public static function on_revision_data_request() {
 		if ( empty( $_POST['id'] ) ) {
-			wp_send_json_error( __( 'You must set the id', 'elementor' ) );
+			wp_send_json_error( 'You must set the revision ID' );
 		}
 
 		$revision = Plugin::instance()->db->get_plain_editor( $_POST['id'] );
 
 		if ( empty( $revision ) ) {
-			wp_send_json_error( __( 'Invalid Revision', 'elementor' ) );
+			wp_send_json_error( 'Invalid Revision' );
 		}
 
 		wp_send_json_success( $revision );
