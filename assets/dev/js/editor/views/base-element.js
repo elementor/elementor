@@ -34,7 +34,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
 			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'duplicate'
+			'click @ui.duplicateButton': 'onClickDuplicate'
 		};
 	},
 
@@ -354,19 +354,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.getRemoveDialog().show();
 	},
 
-	onClickEdit: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
-			return;
-		}
-
-		this.edit();
-	},
-
 	onCollectionChanged: function() {
 		elementor.setFlagEditorChange( true );
 	},
@@ -411,6 +398,26 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} else {
 			editModel.renderRemoteServer();
 		}
+	},
+
+	onClickEdit: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
+		this.edit();
+	},
+
+	onClickDuplicate: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.duplicate();
 	},
 
 	onClickRemove: function( event ) {
