@@ -354,19 +354,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.getRemoveDialog().show();
 	},
 
-	onClickEdit: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
-			return;
-		}
-
-		this.edit();
-	},
-
 	onCollectionChanged: function() {
 		elementor.setFlagEditorChange( true );
 	},
@@ -411,6 +398,19 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} else {
 			editModel.renderRemoteServer();
 		}
+	},
+
+	onClickEdit: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
+		this.edit();
 	},
 
 	onClickRemove: function( event ) {
