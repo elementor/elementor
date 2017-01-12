@@ -10,17 +10,20 @@ class Settings_Controls {
 			return;
 
 		$defaults = [
-			'type' => 'text',
+			'type' => '',
 			'placeholder' => '',
 			'classes' => [],
 			'std' => '',
 			'desc' => '',
 		];
-		$field = wp_parse_args( $field, $defaults );
+
+		$field = array_merge( $defaults, $field );
 
 		$method_name = '_' . $field['type'];
-		if ( ! method_exists( __CLASS__, $method_name ) )
-			return;
+
+		if ( ! method_exists( __CLASS__, $method_name ) ) {
+			$method_name = '_text';
+		}
 
 		self::$method_name( $field );
 	}
