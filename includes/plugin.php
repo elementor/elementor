@@ -174,6 +174,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
 		if ( is_admin() ) {
