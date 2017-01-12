@@ -215,7 +215,7 @@ class Plugin {
 		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
 
 		foreach ( $cpt_support as $cpt_slug ) {
-			add_post_type_support( $cpt_slug, 'elementor' );
+			add_post_type_support( $cpt_slug, [ 'elementor', 'revisions' ] );
 		}
 	}
 
