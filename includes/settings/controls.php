@@ -25,7 +25,7 @@ class Settings_Controls {
 		self::$method_name( $field );
 	}
 
-	private static function _text( $field = [] ) {
+	private static function _text( array $field ) {
 		if ( empty( $field['classes'] ) ) {
 			$field['classes'] = [ 'regular-text' ];
 		}
@@ -37,7 +37,7 @@ class Settings_Controls {
 		<?php endif;
 	}
 
-	private static function _checkbox( $field = [] ) {
+	private static function _checkbox( array $field ) {
 		?>
 		<label>
 			<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo $field['value']; ?>"<?php checked( $field['value'], get_option( $field['id'], $field['std'] ) ); ?> />
@@ -48,7 +48,7 @@ class Settings_Controls {
 		<?php endif;
 	}
 
-	private static function _checkbox_list( $field = [] ) {
+	private static function _checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) )
 			$old_value = [];
@@ -64,7 +64,7 @@ class Settings_Controls {
 		<?php endif;
 	}
 
-	private static function _checkbox_list_cpt( $field = [] ) {
+	private static function _checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
@@ -82,7 +82,7 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
-	private static function _checkbox_list_roles( $field = [] ) {
+	private static function _checkbox_list_roles( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
@@ -99,7 +99,7 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
-	private static function _raw_html( $field = [] ) {
+	private static function _raw_html( array $field ) {
 		if ( empty( $field['html'] ) )
 			return;
 		?>
