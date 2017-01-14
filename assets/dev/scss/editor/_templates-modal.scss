@@ -40,12 +40,8 @@
 		}
 	}
 
-	.elementor-button-success {
+	.elementor-button {
 		text-transform: uppercase;
-
-		.elementor-button-title {
-			@include padding-start(8px);
-		}
 	}
 }
 
@@ -156,11 +152,11 @@
 #elementor-template-library-header-preview-insert-wrapper {
 	width: 100px;
 	cursor: default;
-}
 
-#elementor-template-library-header-preview-insert {
-	width: 80%;
-	padding: 8px 0;
+	.elementor-button {
+		width: 80%;
+		padding: 8px 0;
+	}
 }
 
 #elementor-template-library-header-preview-back {
@@ -216,10 +212,23 @@
 	padding: 0 15px;
 	margin-top: 15px;
 
-	&:not(:hover) {
+	&.elementor-template-library-pro-template {
 
-		.elementor-template-library-template-controls {
-			opacity: 0;
+		.elementor-template-library-template-body {
+			position: relative;
+
+			&:before {
+				position: absolute;
+				content: 'pro';
+				text-transform: uppercase;
+				top: 5px;
+				@include end(5px);
+				background-color: $editor-accent;
+				color: $editor-lightest;
+				padding: 1px 4px;
+				font-size: 9px;
+				border-radius: 2px;
+			}
 		}
 	}
 
@@ -228,6 +237,13 @@
 		border: 3px solid #fff;
 		position: relative;
 		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+
+		&:not(:hover) {
+
+			.elementor-template-library-template-controls {
+				opacity: 0;
+			}
+		}
 	}
 
 	.elementor-template-library-template-screenshot {
@@ -249,6 +265,7 @@
 	.elementor-template-library-template-insert {
 		font-size: 11px;
 		width: 150px;
+		padding: 11px;
 	}
 
 	.elementor-template-library-template-preview {
@@ -263,14 +280,6 @@
 			top: 50%;
 			left: 50%;
 			transform: translateX(-50%) translateY(-50%);
-		}
-	}
-
-	.elementor-template-library-template-insert {
-		padding: 11px;
-
-		i {
-			@include padding-end(5px);
 		}
 	}
 

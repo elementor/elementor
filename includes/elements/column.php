@@ -5,7 +5,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Element_Column extends Element_Base {
 
-	public function get_id() {
+	protected static $_edit_tools;
+
+	protected static function get_default_edit_tools() {
+		return [
+			'duplicate' => [
+				'title' => __( 'Duplicate', 'elementor' ),
+				'icon' => 'files-o',
+			],
+			'add' => [
+				'title' => __( 'Add', 'elementor' ),
+				'icon' => 'plus',
+			],
+			'remove' => [
+				'title' => __( 'Remove', 'elementor' ),
+				'icon' => 'times',
+			],
+		];
+	}
+
+	public function get_name() {
 		return 'column';
 	}
 
@@ -14,16 +33,16 @@ class Element_Column extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'columns';
+		return 'eicon-columns';
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_style',
 			[
 				'label' => __( 'Background & Border', 'elementor' ),
-				'tab' => self::TAB_STYLE,
 				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -31,8 +50,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -41,8 +58,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -53,8 +68,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -65,33 +78,67 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
-				'section' => 'section_style',
-				'tab' => self::TAB_STYLE,
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
 
-		// Section Typography
-		$this->add_control(
-			'section_typo',
+		$this->end_controls_section();
+
+		// Section Column Background Overlay
+		$this->start_controls_section(
+			'section_background_overlay',
 			[
-				'label' => __( 'Typography', 'elementor' ),
-				'tab' => self::TAB_STYLE,
-				'type' => Controls_Manager::SECTION,
+				'label' => __( 'Background Overlay', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
 			]
 		);
 
 		$this->add_control(
-			'color_text',
+			'background_overlay_opacity',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
 				],
-				'tab' => self::TAB_STYLE,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_background' => [ 'classic' ],
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		// Section Typography
+		$this->start_controls_section(
+			'section_typo',
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -104,8 +151,18 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_typo',
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
+				],
 			]
 		);
 
@@ -114,12 +171,10 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Link Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
 			]
 		);
 
@@ -128,12 +183,10 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Link Hover Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_typo',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
 				],
-				'tab' => self::TAB_STYLE,
 			]
 		);
 
@@ -142,20 +195,18 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_typo',
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
+						'icon' => 'fa fa-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
+						'icon' => 'fa fa-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
+						'icon' => 'fa fa-align-right',
 					],
 				],
 				'selectors' => [
@@ -164,13 +215,15 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Section Advanced
-		$this->add_control(
+		$this->start_controls_section(
 			'section_advanced',
 			[
 				'label' => __( 'Advanced', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
@@ -180,8 +233,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'section' => 'section_advanced',
-				'tab' => self::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -194,8 +245,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'section' => 'section_advanced',
-				'tab' => self::TAB_ADVANCED,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -209,10 +258,8 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'tab' => self::TAB_ADVANCED,
 				'label_block' => true,
-				'section' => 'section_advanced',
-			]
+				]
 		);
 
 		$this->add_control(
@@ -227,8 +274,6 @@ class Element_Column extends Element_Base {
 					'fast' => __( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
-				'tab' => self::TAB_ADVANCED,
-				'section' => 'section_advanced',
 				'condition' => [
 					'animation!' => '',
 				],
@@ -240,8 +285,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'section' => 'section_advanced',
-				'tab' => self::TAB_ADVANCED,
 				'default' => '',
 				'prefix_class' => '',
 				'label_block' => true,
@@ -249,13 +292,14 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
 		// Section Responsive
-		$this->add_control(
+		$this->start_controls_section(
 			'section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
@@ -280,13 +324,11 @@ class Element_Column extends Element_Base {
 				[
 					'label' => $point_data['title'],
 					'type' => Controls_Manager::SELECT,
-					'section' => 'section_responsive',
 					'default' => 'default',
 					'options' => [
 						'default' => __( 'Default', 'elementor' ),
 						'custom' => __( 'Custom', 'elementor' ),
 					],
-					'tab' => self::TAB_ADVANCED,
 					'description' => $point_data['description'],
 					'classes' => $point_data['classes'],
 				]
@@ -297,7 +339,6 @@ class Element_Column extends Element_Base {
 				[
 					'label' => __( 'Column Width', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'section' => 'section_responsive',
 					'options' => [
 						'10' => '10%',
 						'11' => '11%',
@@ -320,7 +361,6 @@ class Element_Column extends Element_Base {
 						'100' => '100%',
 					],
 					'default' => '100',
-					'tab' => self::TAB_ADVANCED,
 					'condition' => [
 						$point_name => [ 'custom' ],
 					],
@@ -328,9 +368,13 @@ class Element_Column extends Element_Base {
 				]
 			);
 		}
+
+		$this->end_controls_section();
+
+		Plugin::instance()->controls_manager->add_custom_css_controls( $this );
 	}
 
-	protected function render_settings() {
+	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
 			<div class="column-title"></div>
@@ -339,115 +383,95 @@ class Element_Column extends Element_Base {
 					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
 						<a href="#" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><?php _e( 'Column', 'elementor' ); ?></a>
 					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-add">
-						<a href="#" title="<?php _e( 'Add New Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Add', 'elementor' ); ?></span>
-							<i class="fa fa-plus"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove Column', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-times"></i>
-						</a>
-					</li>
+					<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+						<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
+							<a href="#" title="<?php echo $edit_tool['title']; ?>">
+								<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+								<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+							</a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 				<ul class="elementor-editor-element-settings-list  elementor-editor-section-settings-list">
 					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
 						<a href="#" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><?php _e( 'Section', 'elementor' ); ?></a>
 					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit Section', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate Section', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-save">
-						<a href="#" title="<?php _e( 'Save', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Save to Library', 'elementor' ); ?></span>
-							<i class="fa fa-floppy-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove Section', 'elementor' ); ?></span>
-							<i class="fa fa-times"></i>
-						</a>
-					</li>
+					<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+						<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
+							<a href="#" title="<?php echo $edit_tool['title']; ?>">
+								<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+								<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+							</a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 			</div>
 		</div>
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-column-wrap">
+            <div class="elementor-background-overlay"></div>
 			<div class="elementor-widget-wrap"></div>
 		</div>
 		<?php
 	}
 
-	public function before_render( $instance, $element_id, $element_data = [] ) {
-		$column_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
+	public function before_render() {
+		$is_inner = $this->get_data( 'isInner' );
+
+		$column_type = ! empty( $is_inner ) ? 'inner' : 'top';
+
+		$settings = $this->get_settings();
 
 		$this->add_render_attribute( 'wrapper', 'class', [
 			'elementor-column',
 			'elementor-element',
-			'elementor-element-' . $element_id,
-			'elementor-col-' . $instance['_column_size'],
+			'elementor-element-' . $this->get_id(),
+			'elementor-col-' . $settings['_column_size'],
 			'elementor-' . $column_type . '-column',
 		] );
 
-		foreach ( $this->get_class_controls() as $control ) {
-			if ( empty( $instance[ $control['name'] ] ) )
+		foreach ( self::get_class_controls() as $control ) {
+			if ( empty( $settings[ $control['name'] ] ) )
 				continue;
 
-			if ( ! $this->is_control_visible( $instance, $control ) )
+			if ( ! $this->is_control_visible( $control ) )
 				continue;
 
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $instance[ $control['name'] ] );
+			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
-		if ( ! empty( $instance['animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $instance['animation'] );
+		if ( ! empty( $settings['animation'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
 		}
 
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_id() );
+		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<div class="elementor-column-wrap<?php if ( ! empty( $element_data['elements'] ) ) echo ' elementor-element-populated'; ?>">
-				<div class="elementor-widget-wrap">
+			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
+            <?php if ( 'classic' === $settings['background_overlay_background'] ) : ?>
+                <div class="elementor-background-overlay"></div>
+            <?php endif; ?>
+            <div class="elementor-widget-wrap">
 		<?php
 	}
 
-	public function after_render( $instance, $element_id, $element_data = [] ) {
+	public function after_render() {
 		?>
 				</div>
 			</div>
 		</div>
 		<?php
+	}
+
+	protected function _get_default_child_type( array $element_data ) {
+		if ( 'section' === $element_data['elType'] ) {
+			return Plugin::instance()->elements_manager->get_element_types( 'section' );
+		}
+
+		return Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 }

@@ -7,10 +7,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private $_args = [];
 
-	public function __construct() {
-		$this->_init();
-	}
-
 	public function get_controls_prefix() {
 		return $this->get_args()['name'] . '_';
 	}
@@ -19,11 +15,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	/**
-	 * @param Element_Base $element
-	 * @param $user_args
-	 */
-	final public function add_controls( $element, $user_args ) {
+	final public function add_controls( Element_Base $element, array $user_args ) {
 		$this->_init_args( $user_args );
 
 		// Filter witch controls to display
@@ -53,10 +45,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $this->_args;
 	}
 
-	protected function _init() {
-		add_action( 'elementor/elements/add_group_control/' . static::get_type(), [ $this, 'add_controls' ], 10, 2 );
-	}
-
 	protected function _get_child_default_args() {
 		return [];
 	}
@@ -65,10 +53,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private function _get_default_args() {
 		return [
-			'section' => '',
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'tab' => Element_Base::TAB_CONTENT,
 			'fields' => 'all',
 		];
 	}
@@ -127,8 +113,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	protected function _add_group_args_to_control( $control_id, $control_args ) {
 		$args = $this->get_args();
 
-		$control_args['tab'] = $args['tab'];
-		$control_args['section'] = $args['section'];
+		if ( ! empty( $args['tab'] ) ) {
+			$control_args['tab'] = $args['tab'];
+		}
+
+		if ( ! empty( $args['section'] ) ) {
+			$control_args['section'] = $args['section'];
+		}
+
 		$control_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
 		if ( ! empty( $args['condition'] ) ) {

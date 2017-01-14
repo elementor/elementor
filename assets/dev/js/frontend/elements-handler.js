@@ -1,23 +1,6 @@
 var ElementsHandler;
 
 ElementsHandler = function( $ ) {
-	var registeredHandlers = {},
-		registeredGlobalHandlers = [];
-
-	var runGlobalHandlers = function( $scope ) {
-		$.each( registeredGlobalHandlers, function() {
-			this.call( $scope, $ );
-		} );
-	};
-
-	this.addHandler = function( widgetType, callback ) {
-		registeredHandlers[ widgetType ] = callback;
-	};
-
-	this.addGlobalHandler = function( callback ) {
-		registeredGlobalHandlers.push( callback );
-	};
-
 	this.runReadyTrigger = function( $scope ) {
 		var elementType = $scope.data( 'element_type' );
 
@@ -25,13 +8,31 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		runGlobalHandlers( $scope );
+		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		if ( ! registeredHandlers[ elementType ] ) {
+		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
+
+		if ( isWidgetType ) {
+			elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $scope, $ );
+		}
+
+		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
+	};
+
+	this.addExternalListener = function( $scope, event, callback, externalElement ) {
+		var $externalElement = $( externalElement || elementorFrontend.getScopeWindow() );
+
+		if ( ! elementorFrontend.isEditMode() ) {
+			$externalElement.on( event, callback );
+
 			return;
 		}
 
-		registeredHandlers[ elementType ].call( $scope, $ );
+		var eventNS = event + '.' + $scope.attr( 'id' );
+
+		$externalElement
+			.off( eventNS )
+			.on( eventNS, callback );
 	};
 };
 

@@ -66,24 +66,47 @@
 	font-size: 12px;
 }
 
+.elementor-button {
+	display: inline-block;
+}
+
 // select2
 .select2-container {
 	width: 100% !important;
 
 	&:not(.select2-container--open):not(.select2-container--focus) {
 
-		.select2-selection--single {
+		.select2-selection--single,
+		.select2-selection--multiple {
 			border-color: $editor-lightest;
 		}
 	}
 
-	&.select2-container--open, &.select2-container--focus {
+	&.select2-container--open,
+	&.select2-container--focus {
 
-		.select2-selection--single {
+		.select2-selection--single,
+		.select2-selection--multiple {
 			border-color: $editor-light;
 		}
 	}
 
+	&.select2-container--default {
+
+		.select2-selection--multiple {
+
+			.select2-selection__clear {
+				display: none;
+			}
+
+			.select2-selection__choice {
+				line-height: 1.5;
+				font-size: 0.9em;
+				border: none;
+				border-radius: 0;
+			}
+		}
+	}
 }
 
 .select2-selection--single {
@@ -100,13 +123,10 @@
 }
 
 // Pojo Theme Support
-#elementor-panel {
-	#elementor-panel-page-editor {
-		.elementor-controls {
-			.pojo-widget-button-collapse {
-				display: none;
-			}
-		}
+
+#elementor-controls {
+	.pojo-widget-button-collapse {
+		display: none;
 	}
 }
 
@@ -144,30 +164,85 @@
 	}
 }
 
-//
-// Variables
-//
+.elementor-label {
+	display: inline;
+	padding: .2em .6em .3em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+	text-transform: capitalize;
 
-// Info
-$info:			#5bc0de;
-$info-text:		#31708f;
-$info-bg:		#d9edf7;
-$info-border:	darken($info-bg, 7%);
+	&.elementor-label-default {
+		background-color: $editor-light;
+	}
 
-// Success
-$success:		#5cb85c;
-$success-text:	#3c763d;
-$success-bg:	#dff0d8;
-$success-border:darken($success-bg, 7%);
+	&.elementor-label-info {
+		background-color: $info;
+	}
 
-// Warning
-$warning:		#f0ad4e;
-$warning-text:	#8a6d3b;
-$warning-bg:	#fcf8e3;
-$warning-border:darken($warning-bg, 7%);
+	&.elementor-label-success {
+		background-color: $success;
+	}
 
-// Danger
-$danger:		#d9534f;
-$danger-text:	#a94442;
-$danger-bg:		#f2dede;
-$danger-border:	darken($danger-bg, 7%);
+	&.elementor-label-warning {
+		background-color: $warning;
+	}
+
+	&.elementor-label-danger {
+		background-color: $danger;
+	}
+}
+
+.elementor-descriptor {
+	font-size: 11px;
+	font-style: italic;
+	line-height: 1.4;
+	color: $editor-light;
+}
+
+.elementor-panel-nerd-box {
+	padding: 30px 20px;
+	text-align: center;
+
+	.elementor-panel-nerd-box-icon {
+		font-size: 52px;
+		color: #a4afb7;
+	}
+
+	.elementor-panel-nerd-box-title {
+		margin-top: 20px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.elementor-panel-nerd-box-message {
+		margin-top: 20px;
+		line-height: 1.4;
+		font-size: 11px;
+	}
+
+	.elementor-button.elementor-panel-nerd-box-link {
+		background-color: $editor-orange;
+		color: #ffffff;
+		padding: 7px 25px;
+		margin-top: 20px;
+		box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
+		transition: .5s;
+
+		&:hover {
+			background-color: lighten($editor-orange, 10%);
+		}
+	}
+}
+
+#elementor-panel-get-pro-elements {
+
+	.elementor-panel-nerd-box-message {
+		text-transform: uppercase;
+	}
+}

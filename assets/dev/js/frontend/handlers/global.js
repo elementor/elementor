@@ -1,19 +1,17 @@
-module.exports = function() {
+module.exports = function( $scope, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var $element = this,
-		animation = $element.data( 'animation' );
+	var animation = $scope.data( 'animation' );
 
 	if ( ! animation ) {
 		return;
 	}
 
-	$element.addClass( 'elementor-invisible' ).removeClass( animation );
+	$scope.addClass( 'elementor-invisible' ).removeClass( animation );
 
-	$element.waypoint( function() {
-		$element.removeClass( 'elementor-invisible' ).addClass( animation );
+	elementorFrontend.utils.waypoint( $scope, function() {
+		$scope.removeClass( 'elementor-invisible' ).addClass( animation );
 	}, { offset: '90%' } );
-
 };

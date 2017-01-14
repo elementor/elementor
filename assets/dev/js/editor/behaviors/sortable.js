@@ -19,10 +19,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'preview' !== activeMode ) {
+	onEditModeSwitched: function( activeMode ) {
+		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {
 			this.deactivate();
@@ -40,7 +38,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
-		_.defer( _.bind( this.onEditModeSwitched, this ) );
+		var self = this;
+
+		_.defer( function() {
+			self.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
+		} );
 	},
 
 	onDestroy: function() {
@@ -73,7 +75,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			cid: $item.data( 'model-cid' )
 		} );
 
-		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="eicon-' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
+		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
 	},
 
 	deactivate: function() {
@@ -189,8 +191,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 				var oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
-					collection.remove( model, { silent: true } );
-					collection.add( model, { silent: true, at: newIndex } );
+					collection.remove( model );
+					this.view.addChildModel( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
 				}

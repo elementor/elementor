@@ -19,18 +19,18 @@ class Group_Control_Background extends Group_Control_Base {
 		$available_types = [
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
-				'icon' => 'paint-brush',
+				'icon' => 'fa fa-paint-brush',
 			],
 			'video' => [
 				'title' => _x( 'Background Video', 'Background Control', 'elementor' ),
-				'icon' => 'video-camera',
+				'icon' => 'fa fa-video-camera',
 			],
 		];
 
 		$choose_types = [
 			'none' => [
 				'title' => _x( 'None', 'Background Control', 'elementor' ),
-				'icon' => 'ban',
+				'icon' => 'fa fa-ban',
 			],
 		];
 
@@ -56,7 +56,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'label' => _x( 'Color', 'Background Control', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'tab' => $args['tab'],
 				'title' => _x( 'Background Color', 'Background Control', 'elementor' ),
 				'selectors' => [
 					$args['selector'] => 'background-color: {{VALUE}};',
@@ -87,7 +86,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
 					'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
 					'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
@@ -112,7 +111,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'scroll' => _x( 'Scroll', 'Background Control', 'elementor' ),
 					'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 				],
@@ -130,7 +129,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'no-repeat' => _x( 'No-repeat', 'Background Control', 'elementor' ),
 					'repeat' => _x( 'Repeat', 'Background Control', 'elementor' ),
 					'repeat-x' => _x( 'Repeat-x', 'Background Control', 'elementor' ),
@@ -150,7 +149,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => _x( 'None', 'Background Control', 'elementor' ),
+					'' => _x( 'Default', 'Background Control', 'elementor' ),
 					'auto' => _x( 'Auto', 'Background Control', 'elementor' ),
 					'cover' => _x( 'Cover', 'Background Control', 'elementor' ),
 					'contain' => _x( 'Contain', 'Background Control', 'elementor' ),
@@ -181,6 +180,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 		$controls['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
+			'description' => __( 'This cover image will replace the background video on mobile or tablet.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'label_block' => true,
 			'condition' => [

@@ -18,11 +18,25 @@ helpers = {
 		}
 
 		var fontType = elementor.config.controls.font.fonts[ font ],
-			fontUrl;
+			fontUrl,
+
+			subsets = {
+				'ru_RU': 'cyrillic',
+				'uk': 'cyrillic',
+				'bg_BG': 'cyrillic',
+				'vi': 'vietnamese',
+				'el': 'greek',
+				'he_IL': 'hebrew'
+			};
 
 		switch ( fontType ) {
 			case 'googlefonts' :
 				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
+
+				if ( subsets[ elementor.config.locale ] ) {
+					fontUrl += '&subset=' + subsets[ elementor.config.locale ];
+				}
+
 				break;
 
 			case 'earlyaccess' :
@@ -91,7 +105,7 @@ helpers = {
 		} );
 	},
 
-	isControlVisible: function( controlModel, elementSettingsModel ) {
+	isControlVisible: function( controlModel, values ) {
 		var condition;
 
 		// TODO: Better way to get this?
@@ -99,6 +113,11 @@ helpers = {
 			condition = controlModel.get( 'condition' );
 		} else {
 			condition = controlModel.condition;
+		}
+
+		// Repeater items conditions
+		if ( controlModel.conditions ) {
+			return elementor.conditions.check( controlModel.conditions, values );
 		}
 
 		if ( _.isEmpty( condition ) ) {
@@ -110,13 +129,15 @@ helpers = {
 				conditionRealName = conditionNameParts[1],
 				conditionSubKey = conditionNameParts[2],
 				isNegativeCondition = !! conditionNameParts[3],
-				controlValue = elementSettingsModel.get( conditionRealName );
+				controlValue = values[ conditionRealName ];
 
 			if ( conditionSubKey ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
-			var isContains = ( _.isArray( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : conditionValue === controlValue;
+			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			var isContains = ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : _.isEqual( conditionValue, controlValue );
 
 			return isNegativeCondition ? isContains : ! isContains;
 		} );
@@ -161,6 +182,28 @@ helpers = {
 				.removeData( 'backup-pointer-events' )
 				.css( 'pointer-events', backupPointerEvents );
 		} );
+	},
+
+	getColorPickerPaletteIndex: function( paletteKey ) {
+		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
+	},
+
+	wpColorPicker: function( $element, options ) {
+		var self = this,
+			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			items = _.sortBy( colorPickerScheme.items, function( item ) {
+				return self.getColorPickerPaletteIndex( item.key );
+			} ),
+			defaultOptions = {
+				width: window.innerWidth >= 1440 ? 271 : 251,
+				palettes: _.pluck( items, 'value' )
+			};
+
+		if ( options ) {
+			_.extend( defaultOptions, options );
+		}
+
+		return $element.wpColorPicker( defaultOptions );
 	}
 };
 

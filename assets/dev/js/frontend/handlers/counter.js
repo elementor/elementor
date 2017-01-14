@@ -1,9 +1,14 @@
-module.exports = function( $ ) {
-	this.find( '.elementor-counter-number' ).waypoint( function() {
-		var $number = $( this );
+module.exports = function( $scope, $ ) {
+	elementorFrontend.utils.waypoint( $scope.find( '.elementor-counter-number' ), function() {
+		var $number = $( this ),
+			data = $number.data();
 
-		$number.numerator( {
-			duration: $number.data( 'duration' )
-		} );
+		var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+
+		if ( decimalDigits ) {
+			data.rounding = decimalDigits[1].length;
+		}
+
+		$number.numerator( data );
 	}, { offset: '90%' } );
 };

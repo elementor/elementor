@@ -14,45 +14,28 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit'
 	},
 
+	getSaveType: function() {
+		return this.model ? this.model.get( 'elType' ) : 'page';
+	},
+
 	templateHelpers: function() {
-		return {
-			sectionID: this.getOption( 'sectionID' )
-		};
+		var saveType = this.getSaveType(),
+			templateType = elementor.templates.getTemplateTypes( saveType );
+
+		return templateType.saveDialog;
 	},
 
 	onFormSubmit: function( event ) {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			elementsData = elementor.helpers.cloneObject( elementor.elements.toJSON() ),
-			sectionID = this.getOption( 'sectionID' ),
-			saveType = sectionID ? 'section' : 'page';
+			saveType = this.model ? this.model.get( 'elType' ) : 'page';
 
-		if ( 'section' === saveType ) {
-			elementsData = [ _.findWhere( elementsData, { id: sectionID } ) ];
-		}
-
-		_.extend( formData, {
-			data: JSON.stringify( elementsData ),
-			source: 'local',
-			type: saveType
-		} );
+		formData.data = this.model ? [ this.model.toJSON() ] : elementor.elements.toJSON();
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
-		elementor.ajax.send( 'save_template', {
-			data: formData,
-			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data );
-
-				elementor.templates.setTemplatesSource( 'local' );
-
-				elementor.templates.showTemplates();
-			},
-			error: function( data ) {
-				elementor.templates.showErrorDialog( data.message );
-			}
-		} );
+		elementor.templates.saveTemplate( saveType, formData );
 	}
 } );
 

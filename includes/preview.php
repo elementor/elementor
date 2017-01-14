@@ -20,6 +20,7 @@ class Preview {
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'wp_head', [ $this, 'print_custom_css' ] );
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
@@ -69,7 +70,16 @@ class Preview {
 	 * @return string
 	 */
 	public function builder_wrapper( $content ) {
-		return '<div id="elementor" class="elementor"></div>';
+		return '<div id="elementor" class="elementor elementor-edit-mode"></div>';
+	}
+
+	public function print_custom_css() {
+		$container_width = absint( get_option( 'elementor_container_width' ) );
+		if ( empty( $container_width ) ) {
+			return;
+		}
+
+		?><style>.elementor-section.elementor-section-boxed > .elementor-container{max-width: <?php echo esc_html( $container_width ); ?>px</style><?php
 	}
 
 	/**
@@ -79,6 +89,12 @@ class Preview {
 	 * @return void
 	 */
 	public function enqueue_styles() {
+		// Hold-on all jQuery plugins after all HTML markup render
+		wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
+
+		// Make sure jQuery embed in preview window
+		wp_enqueue_script( 'jquery' );
+
 		Plugin::instance()->frontend->enqueue_styles();
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -93,6 +109,8 @@ class Preview {
 		);
 
 		wp_enqueue_style( 'editor-preview' );
+
+		do_action( 'elementor/preview/enqueue_styles' );
 	}
 
 	/**

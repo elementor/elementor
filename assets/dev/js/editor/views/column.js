@@ -1,49 +1,13 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
 	ElementEmptyView = require( 'elementor-views/element-empty' ),
-	WidgetView = require( 'elementor-views/widget' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-column-content' ),
 
-	elementEvents: {
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove': 'onClickRemove',
-		'click @ui.listTriggers': 'onClickTrigger'
-	},
-
-	getChildView: function( model ) {
-		if ( 'section' === model.get( 'elType' ) ) {
-			return require( 'elementor-views/section' ); // We need to require the section dynamically
-		}
-
-		return WidgetView;
-	},
-
 	emptyView: ElementEmptyView,
 
-	className: function() {
-		var classes = 'elementor-column',
-			type = this.isInner() ? 'inner' : 'top';
-
-		classes += ' elementor-' + type + '-column';
-
-		return classes;
-	},
-
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
-
-	triggers: {
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add': 'click:new',
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-edit': 'click:edit',
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger': 'click:edit',
-		'click > .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	ui: {
-		columnTitle: '.column-title',
-		columnInner: '> .elementor-column-wrap',
-		listTriggers: '> .elementor-element-overlay .elementor-editor-element-trigger'
-	},
 
 	behaviors: {
 		Sortable: {
@@ -56,18 +20,44 @@ ColumnView = BaseElementView.extend( {
 		HandleDuplicate: {
 			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
 		},
-		HandleEditor: {
-			behaviorClass: require( 'elementor-behaviors/handle-editor' )
-		},
-		HandleEditMode: {
-			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
-		},
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		},
-		HandleElementsRelation: {
-			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
+	},
+
+	className: function() {
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
+			type = this.isInner() ? 'inner' : 'top';
+
+		return classes + ' elementor-column elementor-' + type + '-column';
+	},
+
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.duplicateButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate';
+		ui.removeButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove';
+		ui.saveButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-save';
+		ui.triggerButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger';
+		ui.addButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add';
+		ui.columnTitle = '.column-title';
+		ui.columnInner = '> .elementor-column-wrap';
+		ui.listTriggers = '> .elementor-element-overlay .elementor-editor-element-trigger';
+
+		return ui;
+	},
+
+	triggers: {
+		'click @ui.addButton': 'click:new'
+	},
+
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
+
+		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
+		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
+
+		return events;
 	},
 
 	initialize: function() {
@@ -77,7 +67,7 @@ ColumnView = BaseElementView.extend( {
 		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
 
-	isDroppingAllowed: function( side, event ) {
+	isDroppingAllowed: function() {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			elType = elementView.model.get( 'elType' );
 
@@ -152,28 +142,13 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
-				var elementView = elementor.channels.panelElements.request( 'element:selected' ),
-					newIndex = Backbone.$( this ).index();
+				var newIndex = Backbone.$( this ).index();
 
 				if ( 'bottom' === side ) {
 					newIndex++;
 				}
 
-				var itemData = {
-					id: elementor.helpers.getUniqueID(),
-					elType: elementView.model.get( 'elType' )
-				};
-
-				if ( 'widget' === itemData.elType ) {
-					itemData.widgetType = elementView.model.get( 'widgetType' );
-				} else if ( 'section' === itemData.elType ) {
-					itemData.elements = [];
-					itemData.isInner = true;
-				} else {
-					return;
-				}
-
-				self.triggerMethod( 'request:add', itemData, { at: newIndex } );
+				self.addElementFromPanel( { at: newIndex } );
 			}
 		} );
 	},

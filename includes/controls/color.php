@@ -3,6 +3,15 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Color Picker control.
+ *
+ * @param string $default    A color, in rgb|rgba|hex format.
+ *                           Default empty
+ * @param bool   $alpha      Whether to allow set the alpha channel
+ *                           Default true
+ * @since 1.0.0
+ */
 class Control_Color extends Control_Base {
 
 	public function get_type() {
@@ -52,7 +61,7 @@ class Control_Color extends Control_Base {
 				defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
 			}
 			if ( data.alpha ) {
-				dataAlpha = ' data-alpha="true"';
+				dataAlpha = ' data-alpha=true';
 			} #>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">

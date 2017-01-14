@@ -10,13 +10,17 @@
 	}
 }
 
+.panel-elements-category-title-basic {
+	display: none;
+}
+
 .panel-elements-category-title {
-	padding: 7px 15px;
+	padding: 12px 15px;
 	text-transform: uppercase;
 	font-size: 11px;
 }
 
 .panel-elements-category-items {
 	overflow: hidden;
-	padding: 5px;
+	padding: 0 5px;
 }

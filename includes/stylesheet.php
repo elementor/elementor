@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Stylesheet {
 
 	private $rules = [];
-
 	private $devices = [];
+	private $raw = [];
 
 	/**
 	 * @param array $rules
@@ -37,7 +37,7 @@ class Stylesheet {
 		$parsed_properties = '';
 
 		foreach ( $properties as $property_key => $property_value ) {
-			if ( $property_value ) {
+			if ( '' !== $property_value ) {
 				$parsed_properties .= $property_key . ':' . $property_value . ';';
 			}
 		}
@@ -54,6 +54,8 @@ class Stylesheet {
 	public function add_device( $device_name, $device_max_point ) {
 		$this->devices[ $device_name ] = $device_max_point;
 
+		asort( $this->devices );
+
 		return $this;
 	}
 
@@ -64,13 +66,23 @@ class Stylesheet {
 	 *
 	 * @return $this
 	 */
-	public function add_rules( $selector, $rules, $device = 'desktop' ) {
+	public function add_rules( $selector, $rules = null, $device = 'desktop' ) {
+		if ( null === $rules ) {
+			preg_match_all( '/([^\s].+?(?=\{))\{((?s:.)+?(?=}))}/', $selector, $parsed_rules );
+
+			foreach ( $parsed_rules[1] as $index => $selector ) {
+				$this->add_rules( $selector, $parsed_rules[2][ $index ], $device );
+			}
+
+			return $this;
+		}
+
 		if ( ! isset( $this->rules[ $device ][ $selector ] ) ) {
 			$this->rules[ $device ][ $selector ] = [];
 		}
 
 		if ( is_string( $rules ) ) {
-			$rules = array_filter( explode( ';', $rules ) );
+			$rules = array_filter( explode( ';', trim( $rules ) ) );
 
 			$ordered_rules = [];
 
@@ -88,10 +100,48 @@ class Stylesheet {
 		return $this;
 	}
 
+	public function add_raw_css( $css, $device = '' ) {
+		if ( ! isset( $this->raw[ $device ] ) ) {
+			$this->raw[ $device ] = [];
+		}
+
+		$this->raw[ $device ][] = trim( $css );
+
+		return $this;
+	}
+
+	public function get_rules( $device = null, $selector = null, $property = null ) {
+		if ( ! $device ) {
+			return $this->rules;
+		}
+
+		if ( $property ) {
+			return isset( $this->rules[ $device ][ $selector ][ $property ] ) ? $this->rules[ $device ][ $selector ][ $property ] : null;
+		}
+
+		if ( $selector ) {
+			return isset( $this->rules[ $device ][ $selector ] ) ? $this->rules[ $device ][ $selector ] : null;
+		}
+
+		return isset( $this->rules[ $device ] ) ? $this->rules[ $device ] : null;
+	}
+
 	public function __toString() {
 		$style_text = '';
 
-		foreach ( $this->rules as $device_name => $rules ) {
+		$devices = array_reverse( $this->devices );
+
+		$devices_names = array_keys( $devices );
+
+		array_unshift( $devices_names, 'desktop' );
+
+		foreach ( $devices_names as $device_name ) {
+			if ( empty( $this->rules[ $device_name ] ) ) {
+				continue;
+			}
+
+			$rules = $this->rules[ $device_name ];
+
 			$device_text = self::parse_rules( $rules );
 
 			if ( $device_text && isset( $this->devices[ $device_name ] ) ) {
@@ -99,6 +149,16 @@ class Stylesheet {
 			}
 
 			$style_text .= $device_text;
+		}
+
+		foreach ( $this->raw as $device_name => $raw ) {
+			$raw = implode( "\n", $raw );
+
+			if ( $raw && isset( $this->devices[ $device_name ] ) ) {
+				$raw = '@media(max-width: ' . $this->devices[ $device_name ] . 'px){' . $raw . '}';
+			}
+
+			$style_text .= $raw;
 		}
 
 		return $style_text;

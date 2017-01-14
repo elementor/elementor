@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\TemplateLibrary\Classes\Import_Images;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Manager {
@@ -10,23 +13,23 @@ class Manager {
 	 */
 	protected $_registered_sources = [];
 
-	public function init() {
-		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
+	private $_import_images = null;
 
-		$sources = [
-			'local',
-			'remote',
-		];
+	public function __construct() {
+		$this->register_default_sources();
 
-		foreach ( $sources as $source_filename ) {
-			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
+		$this->init_ajax_calls();
+	}
 
-			$class_name = ucwords( $source_filename );
-			$class_name = str_replace( '-', '_', $class_name );
-
-			$this->register_source( __NAMESPACE__ . '\Source_' . $class_name );
+	/**
+	 * @return Import_Images
+	 */
+	public function get_import_images_instance() {
+		if ( null === $this->_import_images ) {
+			$this->_import_images = new Import_Images();
 		}
+
+		return $this->_import_images;
 	}
 
 	public function register_source( $source_class, $args = [] ) {
@@ -48,7 +51,9 @@ class Manager {
 		if ( ! isset( $this->_registered_sources[ $id ] ) ) {
 			return false;
 		}
+
 		unset( $this->_registered_sources[ $id ] );
+
 		return true;
 	}
 
@@ -62,31 +67,36 @@ class Manager {
 		if ( ! isset( $sources[ $id ] ) ) {
 			return false;
 		}
+
 		return $sources[ $id ];
 	}
 
 	public function get_templates() {
 		$templates = [];
+
 		foreach ( $this->get_registered_sources() as $source ) {
 			$templates = array_merge( $templates, $source->get_items() );
 		}
+
 		return $templates;
 	}
 
-	public function save_template() {
-		if ( empty( $_POST['source'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
+	public function save_template( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'data' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
 		}
 
-		$source = $this->get_source( $_POST['source'] );
+		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$_POST['data'] = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$args['data'] = json_decode( stripslashes( html_entity_decode( $args['data'] ) ), true );
 
-		$template_id = $source->save_item( $_POST );
+		$template_id = $source->save_item( $args );
 
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;
@@ -95,64 +105,96 @@ class Manager {
 		return $source->get_item( $template_id );
 	}
 
-	public function get_template_content() {
-		if ( empty( $_POST['source'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
+	public function update_template( array $template_data ) {
+		$validate_args = $this->ensure_args( [ 'source', 'data', 'type' ], $template_data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
 		}
 
-		if ( empty( $_POST['template_id'] ) || empty( $_POST['post_id'] ) ) {
-			return new \WP_Error( 'template_error', '`template_id` was not specified.' );
-		}
-
-		// Override the global $post for the render
-		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
-
-		$source = $this->get_source( $_POST['source'] );
+		$source = $this->get_source( $template_data['source'] );
 
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->get_content( $_POST['template_id'] );
+		$template_data['data'] = json_decode( stripslashes( html_entity_decode( $template_data['data'] ) ), true );
+
+		$update = $source->update_item( $template_data );
+
+		if ( is_wp_error( $update ) ) {
+			return $update;
+		}
+
+		return $source->get_item( $template_data['id'] );
 	}
 
-	public function delete_template() {
-		if ( empty( $_POST['source'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
+	public function update_templates( array $args ) {
+		foreach ( $args['templates'] as $template_data ) {
+			$result = $this->update_template( $template_data );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
 		}
-
-		if ( empty( $_POST['template_id'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source_id` was not specified.' );
-		}
-
-		$source = $this->get_source( $_POST['source'] );
-
-		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
-		}
-
-		$source->delete_template( $_POST['template_id'] );
 
 		return true;
 	}
 
-	public function export_template() {
-		// TODO: Add nonce for security
-		if ( empty( $_REQUEST['source'] ) ) {
-			return new \WP_Error( 'template_error', 'Template `source` was not specified.' );
+	public function get_template_content( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
 		}
 
-		if ( empty( $_REQUEST['template_id'] ) ) {
-			return new \WP_Error( 'template_error', '`template_id` was not specified.' );
+		if ( isset( $args['edit_mode'] ) ) {
+			Plugin::instance()->editor->set_edit_mode( $args['edit_mode'] );
 		}
 
-		$source = $this->get_source( $_REQUEST['source'] );
+		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->export_template( $_REQUEST['template_id'] );
+		return $source->get_content( $args['template_id'] );
+	}
+
+	public function delete_template( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$source->delete_template( $args['template_id'] );
+
+		return true;
+	}
+
+	public function export_template( array $args ) {
+		// TODO: Add nonce for security
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		// If you reach this line, the export was not successful
+		return $source->export_template( $args['template_id'] );
 	}
 
 	public function import_template() {
@@ -174,8 +216,27 @@ class Manager {
 		_default_wp_die_handler( $error->get_error_message(), 'Elementor Library' );
 	}
 
-	private function handle_ajax_request( $ajax_request, $args ) {
-		$result = call_user_func_array( [ $this, $ajax_request ], $args );
+	private function register_default_sources() {
+		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
+		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
+
+		$sources = [
+			'local',
+			'remote',
+		];
+
+		foreach ( $sources as $source_filename ) {
+			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
+
+			$class_name = ucwords( $source_filename );
+			$class_name = str_replace( '-', '_', $class_name );
+
+			$this->register_source( __NAMESPACE__ . '\Source_' . $class_name );
+		}
+	}
+
+	private function handle_ajax_request( $ajax_request ) {
+		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
 
 		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
 
@@ -189,7 +250,7 @@ class Manager {
 
 		if ( is_wp_error( $result ) ) {
 			if ( 'ajax' === $request_type ) {
-				wp_send_json_error( $result );
+				wp_send_json_error( $result->get_error_message() );
 			}
 
 			$callback = "on_{$ajax_request}_error";
@@ -219,6 +280,7 @@ class Manager {
 			'get_templates',
 			'get_template_content',
 			'save_template',
+			'update_templates',
 			'delete_template',
 			'export_template',
 			'import_template',
@@ -226,14 +288,18 @@ class Manager {
 
 		foreach ( $allowed_ajax_requests as $ajax_request ) {
 			add_action( 'wp_ajax_elementor_' . $ajax_request, function() use ( $ajax_request ) {
-				$this->handle_ajax_request( $ajax_request, func_get_args() );
+				$this->handle_ajax_request( $ajax_request );
 			} );
 		}
 	}
 
-	public function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
+	private function ensure_args( array $required_args, array $specified_args ) {
+		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
 
-		$this->init_ajax_calls();
+		if ( $not_specified_args ) {
+			return new \WP_Error( 'arguments_not_specified', 'The required argument(s) `' . implode( ', ', $not_specified_args ) . '` not specified' );
+		}
+
+		return true;
 	}
 }

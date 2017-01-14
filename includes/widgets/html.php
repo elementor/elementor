@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Html extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'html';
 	}
 
@@ -14,15 +14,18 @@ class Widget_Html extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'coding';
+		return 'eicon-coding';
+	}
+
+	public function get_categories() {
+		return [ 'general-elements' ];
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_title',
 			[
 				'label' => __( 'HTML Code', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -30,20 +33,21 @@ class Widget_Html extends Widget_Base {
 			'html',
 			[
 				'label' => '',
-				'type' => Controls_Manager::TEXTAREA,
+				'type' => Controls_Manager::CODE,
 				'default' => '',
 				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
-				'section' => 'section_title',
 				'show_label' => false,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
-		 echo $instance['html'];
+	protected function render() {
+		 echo $this->get_settings( 'html' );
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		{{{ settings.html }}}
 		<?php

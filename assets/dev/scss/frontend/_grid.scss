@@ -5,6 +5,7 @@
 // Section
 .elementor-section {
 	position: relative;
+
 	// Container
 	.elementor-container {
 		display: flex;
@@ -18,6 +19,12 @@
 		& > .elementor-container {
 			max-width: 1140px;
 		}
+	}
+
+	// Stretched section settings
+	&.elementor-section-stretched {
+		position: relative;
+		width: 100%;
 	}
 
 	// In section min-height / fit to screen mode
@@ -45,34 +52,9 @@
 		}
 	}
 
-	// In columns stretch mode
-	&.elementor-section-content- {
-
-		&top {
-
-			.elementor-column-wrap {
-				align-items: flex-start;
-			}
-		}
-
-		&middle {
-
-			.elementor-column-wrap {
-				align-items: center;
-			}
-		}
-
-		&bottom {
-
-			.elementor-column-wrap {
-				align-items: flex-end;
-			}
-		}
-	}
-
 	@media (min-width: $screen-md-min) {
 
-		// Section Full Height
+		// Section Full Height (note: don't be smart - min-height does not work well with the content position)
 		&.elementor-section-height-full {
 			height: 100vh;
 
@@ -82,6 +64,34 @@
 		}
 	}
 }
+
+
+// In columns stretch mode
+
+.elementor-container {
+
+	> .elementor-row {
+
+		> .elementor-column {
+
+			> .elementor-column-wrap {
+
+				.elementor-section-content-top > & {
+					align-items: flex-start;
+				}
+
+				.elementor-section-content-middle > & {
+					align-items: center;
+				}
+
+				.elementor-section-content-bottom > & {
+					align-items: flex-end;
+				}
+			}
+		}
+	}
+}
+
 
 // Row
 .elementor-row {
@@ -143,7 +153,34 @@
 
 }
 
-// Columns Gap (Inner section supported)
+// Columns Gap
+.elementor-row {
+	> .elementor-column {
+		> .elementor-element-populated {
+			.elementor-column-gap-narrow  > & {
+				padding: 5px;
+			}
+
+			.elementor-column-gap-default > & {
+				padding: 10px;
+			}
+
+			.elementor-column-gap-extended > & {
+				padding: 15px;
+			}
+
+			.elementor-column-gap-wide > & {
+				padding: 20px;
+			}
+
+			.elementor-column-gap-wider > & {
+				padding: 30px;
+			}
+		}
+	}
+}
+
+// Columns Gap for Inner section
 .elementor-inner-section {
 
 	.elementor-column-gap-no {
@@ -155,6 +192,14 @@
 }
 
 // Responsive Grid
+
+@media (min-width: $screen-md-min) {
+
+	.elementor-column {
+		@include elementor-grid-classes;
+	}
+}
+
 .elementor-column {
 
 	@media (max-width: $screen-xs-max) {
@@ -170,49 +215,8 @@
 	}
 }
 
-@media (min-width: $screen-md-min) {
-	.elementor-column {
-		@include elementor-grid-classes;
-	}
-
-	// Columns Gap
-	.elementor-column-gap-default {
-
-		.elementor-element-populated {
-			padding: 10px;
-		}
-	}
-
-	.elementor-column-gap-narrow {
-
-		.elementor-element-populated {
-			padding: 5px;
-		}
-	}
-
-	.elementor-column-gap-extended {
-
-		.elementor-element-populated {
-			padding: 15px;
-		}
-	}
-
-	.elementor-column-gap-wide {
-
-		.elementor-element-populated {
-			padding: 20px;
-		}
-	}
-
-	.elementor-column-gap-wider {
-
-		.elementor-element-populated {
-			padding: 30px;
-		}
-	}
-}
-
 @media (max-width: $screen-sm-max) {
+
 	.elementor-column {
 		width: 100%;
 	}

@@ -2,6 +2,10 @@ var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
 	PanelSchemeTypographyView;
 
 PanelSchemeTypographyView = PanelSchemeItemView.extend( {
+	getUIType: function() {
+		return 'typography';
+	},
+
 	className: function() {
 		var classes = PanelSchemeItemView.prototype.className.apply( this, arguments );
 
@@ -54,7 +58,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 
 	onFieldChange: function( event ) {
 		var $select = this.$( event.currentTarget ),
-			currentValue = elementor.helpers.cloneObject( this.model.get( 'value' ) ),
+			currentValue = elementor.schemes.getSchemeValue( 'typography', this.model.get( 'key' ) ).value,
 			fieldKey = $select.attr( 'name' );
 
 		currentValue[ fieldKey ] = $select.val();

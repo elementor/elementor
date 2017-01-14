@@ -1,26 +1,33 @@
-var TemplateLibraryTemplateView;
+var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
+	TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: function() {
-		return 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
+		var classes = 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
+
+		if ( this.model.get( 'isPro' ) ) {
+			classes += ' elementor-template-library-pro-template';
+		}
+
+		return classes;
 	},
 
 	ui: function() {
 		return {
-			insertButton: '.elementor-template-library-template-insert',
 			previewButton: '.elementor-template-library-template-preview'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.insertButton': 'onInsertButtonClick',
 			'click @ui.previewButton': 'onPreviewButtonClick'
 		};
 	},
 
-	onInsertButtonClick: function() {
-		elementor.templates.importTemplate( this.model );
+	behaviors: {
+		insertTemplate: {
+			behaviorClass: TemplateLibraryInsertTemplateBehavior
+		}
 	}
 } );
 

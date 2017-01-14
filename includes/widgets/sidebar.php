@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Sidebar extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'sidebar';
 	}
 
@@ -14,7 +14,11 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'sidebar';
+		return 'eicon-sidebar';
+	}
+
+	public function get_categories() {
+		return [ 'general-elements' ];
 	}
 
 	protected function _register_controls() {
@@ -35,11 +39,10 @@ class Widget_Sidebar extends Widget_Base {
 		$default_key = array_keys( $options );
 		$default_key = array_shift( $default_key );
 
-		$this->add_control(
+		$this->start_controls_section(
 			'section_sidebar',
 			[
 				'label' => __( 'Sidebar', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -48,19 +51,22 @@ class Widget_Sidebar extends Widget_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => $default_key,
 			'options' => $options,
-			'section' => 'section_sidebar',
 		] );
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['sidebar'] ) ) {
+	protected function render() {
+		$sidebar = $this->get_settings( 'sidebar' );
+
+		if ( empty( $sidebar ) ) {
 			return;
 		}
 
-		dynamic_sidebar( $instance['sidebar'] );
+		dynamic_sidebar( $sidebar );
 	}
 
-	protected function content_template() {}
+	protected function _content_template() {}
 
-	public function render_plain_content( $instance = [] ) {}
+	public function render_plain_content() {}
 }

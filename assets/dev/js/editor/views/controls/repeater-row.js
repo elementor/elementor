@@ -12,6 +12,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		itemTitle: '.elementor-repeater-row-item-title'
 	},
 
+	behaviors: {
+		HandleInnerTabs: {
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
+		}
+	},
+
 	triggers: {
 		'click @ui.removeButton': 'click:remove',
 		'click @ui.duplicateButton': 'click:duplicate',
@@ -28,6 +34,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
+
 		return elementor.getControlItemView( controlType );
 	},
 
@@ -37,44 +44,76 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	checkConditions: function() {
+		var self = this;
+
+		self.collection.each( function( model ) {
+			var conditions = model.get( 'conditions' ),
+				parentConditions = model.get( 'parent_conditions' ),
+				isVisible = true;
+
+			if ( conditions ) {
+				isVisible = elementor.conditions.check( conditions, self.model.attributes );
+			}
+
+			if ( parentConditions ) {
+				isVisible = elementor.conditions.check( parentConditions, self.getOption( 'parentModel' ).attributes );
+			}
+
+			var child = self.children.findByModelCid( model.cid );
+
+			child.$el.toggleClass( 'elementor-panel-hide', ! isVisible );
+		} );
+	},
+
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
 		this.setTitle();
 	},
 
 	setTitle: function() {
-		var titleField = this.getOption( 'titleField' ),
-			title;
+		var self = this,
+			titleField = self.getOption( 'titleField' ),
+			title = '';
 
 		if ( titleField ) {
-			var changerControlModel = this.collection.find( { name: titleField } ),
-				changerControlView = this.children.findByModelCid( changerControlModel.cid );
+			var values = {};
 
-			title = changerControlView.getFieldTitleValue();
+			self.children.each( function( child ) {
+				values[ child.model.get( 'name' ) ] = child.getControlValue();
+			} );
+
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( values );
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+			title = elementor.translate( 'Item #{0}', [ self.getOption( 'itemIndex' ) ] );
 		}
 
-		this.ui.itemTitle.text( title );
+		self.ui.itemTitle.html( title );
 	},
 
 	initialize: function( options ) {
-		this.elementSettingsModel = options.elementSettingsModel;
+		var self = this;
 
-		this.itemIndex = 0;
+		self.elementSettingsModel = options.elementSettingsModel;
+
+		self.itemIndex = 0;
 
 		// Collection for Controls list
-		this.collection = new Backbone.Collection( options.controlFields );
+		self.collection = new Backbone.Collection( options.controlFields );
+
+		self.listenTo( self.model, 'change', self.checkConditions );
+		self.listenTo( self.getOption( 'parentModel' ), 'change', self.checkConditions );
 
 		if ( options.titleField ) {
-			this.listenTo( this.model, 'change:' + options.titleField, this.setTitle );
+			self.listenTo( self.model, 'change', self.setTitle );
 		}
 	},
 
 	onRender: function() {
 		this.setTitle();
+		this.checkConditions();
 	}
 } );
 

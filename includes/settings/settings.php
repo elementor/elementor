@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Settings {
 
 	const PAGE_ID = 'elementor';
+	const MENU_PRIORITY_GO_PRO = 502;
 
 	public static function get_url() {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID );
@@ -68,23 +69,6 @@ class Settings {
 			self::PAGE_ID
 		);
 
-		$field_id = 'elementor_default_generic_fonts';
-		add_settings_field(
-			$field_id,
-			__( 'Default Generic Fonts', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'std' => 'Sans-serif',
-				'sub_desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
 		$field_id = 'elementor_disable_color_schemes';
 		add_settings_field(
 			$field_id,
@@ -119,28 +103,71 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
-		// Tools section
-		$tools_section = 'elementor_tools_section';
-		add_settings_section(
-			$tools_section,
-			__( 'Tools', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
-			self::PAGE_ID
-		);
-
-		$field_id = 'elementor_raw_reset_api_data';
+		$field_id = 'elementor_default_generic_fonts';
 		add_settings_field(
 			$field_id,
-			__( 'Sync Library', 'elementor' ),
+			__( 'Default Generic Fonts', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$tools_section,
+			$style_section,
 			[
 				'id' => $field_id,
-				'type' => 'raw_html',
-				'html' => sprintf( '<button data-nonce="%s" class="button" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
-				'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
+				'type' => 'text',
+				'std' => 'Sans-serif',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_container_width';
+		add_settings_field(
+			$field_id,
+			__( 'Content Width', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => '1140',
+				'sub_desc' => 'px',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_stretched_section_container';
+		add_settings_field(
+			$field_id,
+			__( 'Stretched Section Fit To', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => 'body',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+	}
+
+	public function register_improve_elementor_settings() {
+		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
+		$usage_section = 'elementor_usage_section';
+
+		add_settings_section(
+			$usage_section,
+			__( 'Improve Elementor', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
 		);
 
 		$field_id = 'elementor_allow_tracking';
@@ -149,7 +176,7 @@ class Settings {
 			__( 'Usage Data Tracking', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$tools_section,
+			$usage_section,
 			[
 				'id' => $field_id,
 				'type' => 'checkbox',
@@ -173,6 +200,29 @@ class Settings {
 			99
 		);
 	}
+	public function register_pro_menu() {
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
+			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . __( 'Go Pro', 'elementor' ),
+			'manage_options',
+			'go_elementor_pro',
+			[ $this, 'go_elementor_pro' ]
+		);
+	}
+
+	public function go_elementor_pro() {
+		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
+			wp_redirect( 'https://go.elementor.com/pro-admin-menu/' );
+		}
+	}
+
+	public function admin_menu_change_name() {
+		global $submenu;
+
+		if ( isset( $submenu['elementor'] ) )
+			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
+	}
 
 	public function display_settings_page() {
 		?>
@@ -195,6 +245,10 @@ class Settings {
 		include( ELEMENTOR_PATH . 'includes/settings/validations.php' );
 
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
+		add_action( 'admin_init', [ $this, 'register_improve_elementor_settings' ], 999 ); // Keep it the last settings in page
+		add_action( 'admin_init', [ $this, 'go_elementor_pro' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
 	}
 }

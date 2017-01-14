@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Widget_Button extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'button';
 	}
 
@@ -14,25 +14,24 @@ class Widget_Button extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'button';
+		return 'eicon-button';
 	}
 
 	public static function get_button_sizes() {
 		return [
-			'small' => __( 'Small', 'elementor' ),
-			'medium' => __( 'Medium', 'elementor' ),
-			'large' => __( 'Large', 'elementor' ),
-			'xl' => __( 'XL', 'elementor' ),
-			'xxl' => __( 'XXL', 'elementor' ),
+			'xs' => __( 'Extra Small', 'elementor' ),
+			'sm' => __( 'Small', 'elementor' ),
+			'md' => __( 'Medium', 'elementor' ),
+			'lg' => __( 'Large', 'elementor' ),
+			'xl' => __( 'Extra Large', 'elementor' ),
 		];
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_button',
 			[
 				'label' => __( 'Button', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -42,7 +41,6 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'section' => 'section_button',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'info' => __( 'Info', 'elementor' ),
@@ -50,6 +48,7 @@ class Widget_Button extends Widget_Base {
 					'warning' => __( 'Warning', 'elementor' ),
 					'danger' => __( 'Danger', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-button-',
 			]
 		);
 
@@ -60,7 +59,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Click me', 'elementor' ),
 				'placeholder' => __( 'Click me', 'elementor' ),
-				'section' => 'section_button',
 			]
 		);
 
@@ -73,7 +71,6 @@ class Widget_Button extends Widget_Base {
 				'default' => [
 					'url' => '#',
 				],
-				'section' => 'section_button',
 			]
 		);
 
@@ -82,23 +79,22 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'section' => 'section_button',
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
+						'icon' => 'fa fa-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
+						'icon' => 'fa fa-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
+						'icon' => 'fa fa-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
+						'icon' => 'fa fa-align-justify',
 					],
 				],
 				'prefix_class' => 'elementor%s-align-',
@@ -111,9 +107,8 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'medium',
+				'default' => 'sm',
 				'options' => self::get_button_sizes(),
-				'section' => 'section_button',
 			]
 		);
 
@@ -124,7 +119,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::ICON,
 				'label_block' => true,
 				'default' => '',
-				'section' => 'section_button',
 			]
 		);
 
@@ -170,16 +164,16 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'section' => 'section_button',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style',
 			[
 				'label' => __( 'Button', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -188,8 +182,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'color: {{VALUE}};',
@@ -203,8 +195,6 @@ class Widget_Button extends Widget_Base {
 				'name' => 'typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
@@ -214,8 +204,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_4,
@@ -231,10 +219,8 @@ class Widget_Button extends Widget_Base {
 			[
 				'name' => 'border',
 				'label' => __( 'Border', 'elementor' ),
-				'tab' => self::TAB_STYLE,
 				'placeholder' => '1px',
 				'default' => '1px',
-				'section' => 'section_style',
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
@@ -245,8 +231,6 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -259,20 +243,20 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Text Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_hover',
 			[
 				'label' => __( 'Button Hover', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -281,8 +265,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'color: {{VALUE}};',
 				],
@@ -294,8 +276,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
 				],
@@ -307,8 +287,9 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
+				'condition' => [
+					'border_border!' => '',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
@@ -320,65 +301,59 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
+	protected function render() {
+		$settings = $this->get_settings();
+
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
-		//if ( ! empty( $instance['align'] ) ) {
-		//	$this->add_render_attribute( 'wrapper', 'class', 'elementor-align-' . $instance['align'] );
-		//}
-
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $instance['link']['url'] );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'button', 'target', '_blank' );
 			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
 
-		if ( ! empty( $instance['size'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $instance['size'] );
+		if ( ! empty( $settings['size'] ) ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( ! empty( $instance['button_type'] ) ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-button-' . $instance['button_type'] );
-		}
-
-		if ( $instance['hover_animation'] ) {
-			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $instance['hover_animation'] );
+		if ( $settings['hover_animation'] ) {
+			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $instance['icon_align'] );
+		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
 				<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
-					<?php if ( ! empty( $instance['icon'] ) ) : ?>
+					<?php if ( ! empty( $settings['icon'] ) ) : ?>
 						<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-							<i class="<?php echo esc_attr( $instance['icon'] ); ?>"></i>
+							<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>
-					<span class="elementor-button-text"><?php echo $instance['text']; ?></span>
+					<span class="elementor-button-text"><?php echo $settings['text']; ?></span>
 				</span>
 			</a>
 		</div>
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-button-{{ settings.button_type }} elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
+			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">

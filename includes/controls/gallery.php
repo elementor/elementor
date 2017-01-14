@@ -3,10 +3,32 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Gallery creation control. Based on the WordPress media gallery creator
+ *
+ * @param array $default   The selected images array [ [ 'id' => ??, 'url' => ?? ], [ 'id' => ??, 'url' => ?? ], ... ]
+ *                         Default empty array
+ *
+ * @since 1.0.0
+ */
 class Control_Gallery extends Control_Base {
 
 	public function get_type() {
 		return 'gallery';
+	}
+
+	public function on_import( $settings ) {
+		foreach ( $settings as &$attachment ) {
+			if ( empty( $attachment['url'] ) )
+				continue;
+
+			$attachment = Plugin::instance()->templates_manager->get_import_images_instance()->import( $attachment );
+		}
+
+		// Filter out attachments that don't exist
+		$settings = array_filter( $settings );
+
+		return $settings;
 	}
 
 	public function content_template() {

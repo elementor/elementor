@@ -11,6 +11,7 @@
 
 	<rule ref="WordPress-Core">
 		<exclude name="Generic.ControlStructures.InlineControlStructure" />
+		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
 	</rule>
 
 	<!-- Extras -->

@@ -142,12 +142,11 @@ class Group_Control_Typography extends Group_Control_Base {
 		$typography_control = [
 			'typography' => [
 				'label' => _x( 'Typography', 'Typography Control', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
-				],
+				'label_on' => __( 'On', 'elementor' ),
+				'label_off' => __( 'Off', 'elementor' ),
+				'return_value' => 'custom',
 			],
 		];
 

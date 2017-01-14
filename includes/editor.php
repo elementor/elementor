@@ -5,6 +5,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Editor {
 
+	private $_is_edit_mode;
+
+	private $_editor_templates = [
+		'editor-templates/global.php',
+		'editor-templates/panel.php',
+		'editor-templates/panel-elements.php',
+		'editor-templates/repeater.php',
+		'editor-templates/templates.php',
+	];
+
 	public function init() {
 		if ( is_admin() || ! $this->is_edit_mode() ) {
 			return;
@@ -58,11 +68,20 @@ class Editor {
 	}
 
 	public function is_edit_mode() {
+		if ( null !== $this->_is_edit_mode ) {
+			return $this->_is_edit_mode;
+		}
+
 		if ( ! User::is_current_user_can_edit() ) {
 			return false;
 		}
 
 		if ( isset( $_GET['elementor'] ) ) {
+			return true;
+		}
+
+		// In some Apache configurations, in the Home page, the $_GET['elementor'] is not set
+		if ( '/?elementor' === $_SERVER['REQUEST_URI'] ) {
 			return true;
 		}
 
@@ -122,6 +141,11 @@ class Editor {
 	public function enqueue_scripts() {
 		global $wp_styles, $wp_scripts;
 
+		$post_id = get_the_ID();
+		$plugin = Plugin::instance();
+
+		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
+
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
@@ -130,17 +154,17 @@ class Editor {
 
 		// Hack for waypoint with editor mode.
 		wp_register_script(
-			'waypoints',
+			'elementor-waypoints',
 			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints-for-editor.js',
 			[
 				'jquery',
 			],
-			'2.0.2',
+			'4.0.2',
 			true
 		);
 
 		// Enqueue frontend scripts too
-		Plugin::instance()->frontend->enqueue_scripts();
+		$plugin->frontend->enqueue_scripts();
 
 		wp_register_script(
 			'backbone-marionette',
@@ -216,7 +240,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'3.0.0',
+			'3.0.2',
 			true
 		);
 
@@ -227,6 +251,24 @@ class Editor {
 				'jquery',
 			],
 			'4.0.2',
+			true
+		);
+
+		wp_register_script(
+			'jquery-simple-dtpicker',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'1.12.0',
+			true
+		);
+
+		wp_register_script(
+			'ace',
+			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
+			[],
+			'1.2.5',
 			true
 		);
 
@@ -247,13 +289,16 @@ class Editor {
 				'heartbeat',
 				'elementor-dialog',
 				'jquery-select2',
+				'jquery-simple-dtpicker',
+				'ace',
 			],
-			Plugin::instance()->get_version(),
+			$plugin->get_version(),
 			true
 		);
-		wp_enqueue_script( 'elementor-editor' );
 
-		$post_id = get_the_ID();
+		do_action( 'elementor/editor/before_enqueue_scripts' );
+
+		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
@@ -263,75 +308,96 @@ class Editor {
 			$locked_user = $locked_user->display_name;
 		}
 
-		wp_localize_script(
-			'elementor-editor',
-			'ElementorConfig',
-			[
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce' => wp_create_nonce( 'elementor-editing' ),
-				'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
-				'elements_categories' => Plugin::instance()->elements_manager->get_categories(),
-				'controls' => Plugin::instance()->controls_manager->get_controls_data(),
-				'elements' => Plugin::instance()->elements_manager->get_register_elements_data(),
-				'widgets' => Plugin::instance()->widgets_manager->get_registered_widgets_data(),
-				'schemes' => [
-					'items' => Plugin::instance()->schemes_manager->get_registered_schemes_data(),
-					'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
-				],
-				'default_schemes' => Plugin::instance()->schemes_manager->get_schemes_defaults(),
-				'system_schemes' => Plugin::instance()->schemes_manager->get_system_schemes(),
-				'wp_editor' => $this->_get_wp_editor_config(),
-				'post_id' => $post_id,
-				'post_permalink' => get_the_permalink(),
-				'edit_post_link' => get_edit_post_link(),
-				'settings_page_link' => Settings::get_url(),
-				'elementor_site' => 'https://go.elementor.com/about-elementor/',
-				'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-				'assets_url' => ELEMENTOR_ASSETS_URL,
-				'data' => Plugin::instance()->db->get_builder( $post_id, DB::REVISION_DRAFT ),
-				'locked_user' => $locked_user,
-				'is_rtl' => is_rtl(),
-				'introduction' => User::get_introduction(),
-				'viewportBreakpoints' => Responsive::get_breakpoints(),
-				'i18n' => [
-					'elementor' => __( 'Elementor', 'elementor' ),
-					'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
-					'dialog_user_taken_over' => __( '{0} has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
-					'delete' => __( 'Delete', 'elementor' ),
-					'cancel' => __( 'Cancel', 'elementor' ),
-					'delete_element' => __( 'Delete {0}', 'elementor' ),
-					'take_over' => __( 'Take Over', 'elementor' ),
-					'go_back' => __( 'Go Back', 'elementor' ),
-					'saved' => __( 'Saved', 'elementor' ),
-					'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
-					'edit_element' => __( 'Edit {0}', 'elementor' ),
-					'global_colors' => __( 'Global Colors', 'elementor' ),
-					'global_fonts' => __( 'Global Fonts', 'elementor' ),
-					'page_settings' => __( 'Page Settings', 'elementor' ),
-					'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
-					'soon' => __( 'Soon', 'elementor' ),
-					'revisions_history' => __( 'Revisions History', 'elementor' ),
-					'about_elementor' => __( 'About Elementor', 'elementor' ),
-					'inner_section' => __( 'Columns', 'elementor' ),
-					'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
-					'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
-					'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
-					'insert_media' => __( 'Insert Media', 'elementor' ),
-					'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
-					'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
-					'learn_more' => __( 'Learn More', 'elementor' ),
-					'an_error_occurred' => __( 'An error occurred', 'elementor' ),
-					'templates_request_error' => __( 'The following error occurred when processing the request:', 'elementor' ),
-					'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
-					'page' => __( 'Page', 'elementor' ),
-					'section' => __( 'Section', 'elementor' ),
-					'delete_template' => __( 'Delete Template', 'elementor' ),
-					'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
-				],
-			]
-		);
+		$config = [
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'home_url' => home_url(),
+			'nonce' => wp_create_nonce( 'elementor-editing' ),
+			'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
+			'elements_categories' => $plugin->elements_manager->get_categories(),
+			'controls' => $plugin->controls_manager->get_controls_data(),
+			'elements' => $plugin->elements_manager->get_element_types_config(),
+			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
+			'schemes' => [
+				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
+				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
+			],
+			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
+			'revisions' => Revisions_Manager::get_revisions(),
+			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post() ) ),
+			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
+			'wp_editor' => $this->_get_wp_editor_config(),
+			'post_id' => $post_id,
+			'post_permalink' => get_the_permalink(),
+			'edit_post_link' => get_edit_post_link(),
+			'settings_page_link' => Settings::get_url(),
+			'elementor_site' => 'https://go.elementor.com/about-elementor/',
+			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
+			'pro_library_url' => 'https://go.elementor.com/pro-library/',
+			'assets_url' => ELEMENTOR_ASSETS_URL,
+			'data' => $editor_data,
+			'locked_user' => $locked_user,
+			'is_rtl' => is_rtl(),
+			'locale' => get_locale(),
+			'introduction' => User::get_introduction(),
+			'viewportBreakpoints' => Responsive::get_breakpoints(),
+			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
+			'i18n' => [
+				'elementor' => __( 'Elementor', 'elementor' ),
+				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
+				'dialog_user_taken_over' => __( '{0} has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
+				'delete' => __( 'Delete', 'elementor' ),
+				'cancel' => __( 'Cancel', 'elementor' ),
+				'delete_element' => __( 'Delete {0}', 'elementor' ),
+				'take_over' => __( 'Take Over', 'elementor' ),
+				'go_back' => __( 'Go Back', 'elementor' ),
+				'saved' => __( 'Saved', 'elementor' ),
+				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
+				'edit_element' => __( 'Edit {0}', 'elementor' ),
+				'global_colors' => __( 'Global Colors', 'elementor' ),
+				'global_fonts' => __( 'Global Fonts', 'elementor' ),
+				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
+				'soon' => __( 'Soon', 'elementor' ),
+				'revision_history' => __( 'Revision History', 'elementor' ),
+				'about_elementor' => __( 'About Elementor', 'elementor' ),
+				'inner_section' => __( 'Columns', 'elementor' ),
+				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
+				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
+				'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
+				'insert_media' => __( 'Insert Media', 'elementor' ),
+				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
+				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
+				'learn_more' => __( 'Learn More', 'elementor' ),
+				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
+				'templates_request_error' => __( 'The following error occurred when processing the request:', 'elementor' ),
+				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
+				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
+				'page' => __( 'Page', 'elementor' ),
+				'section' => __( 'Section', 'elementor' ),
+				'delete_template' => __( 'Delete Template', 'elementor' ),
+				'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
+				'clear_page' => __( 'Delete All Content', 'elementor' ),
+				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
+				'asc' => __( 'Ascending order', 'elementor' ),
+				'desc' => __( 'Descending order', 'elementor' ),
+				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
+				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
+				'revision' => __( 'Revision', 'elementor' ),
+				'autosave' => __( 'Autosave', 'elementor' ),
+				'preview' => __( 'Preview', 'elementor' ),
+				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
+			],
+		];
 
-		Plugin::instance()->controls_manager->enqueue_control_scripts();
+		echo '<script type="text/javascript">' . PHP_EOL;
+		echo '/* <![CDATA[ */' . PHP_EOL;
+		echo 'var ElementorConfig = ' . wp_json_encode( $config ) . ';' . PHP_EOL;
+		echo '/* ]]> */' . PHP_EOL;
+		echo '</script>';
+
+		$plugin->controls_manager->enqueue_control_scripts();
 	}
 
 	public function enqueue_styles() {
@@ -343,7 +409,7 @@ class Editor {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.6.3'
+			'4.7.0'
 		);
 
 		wp_register_style(
@@ -368,7 +434,14 @@ class Editor {
 		);
 
 		wp_register_style(
-			'elementor-admin',
+			'jquery-simple-dtpicker',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.css',
+			[],
+			'1.12.0'
+		);
+
+		wp_register_style(
+			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'font-awesome',
@@ -376,11 +449,12 @@ class Editor {
 				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
+				'jquery-simple-dtpicker',
 			],
 			Plugin::instance()->get_version()
 		);
 
-		wp_enqueue_style( 'elementor-admin' );
+		wp_enqueue_style( 'elementor-editor' );
 	}
 
 	protected function _get_wp_editor_config() {
@@ -390,7 +464,7 @@ class Editor {
 			'elementorwpeditor',
 			[
 				'editor_class' => 'elementor-wp-editor',
-				'textarea_rows' => 15,
+				'editor_height' => 250,
 				'drag_drop_upload' => true,
 			]
 		);
@@ -401,16 +475,29 @@ class Editor {
 		do_action( 'elementor/editor/wp_head' );
 	}
 
-	public function wp_footer() {
-		Plugin::instance()->controls_manager->render_controls();
-		Plugin::instance()->widgets_manager->render_widgets_content();
-		Plugin::instance()->elements_manager->render_elements_content();
+	public function add_editor_template( $template_path ) {
+		$this->_editor_templates[] = $template_path;
+	}
 
-		include( 'editor-templates/global.php' );
-		include( 'editor-templates/panel.php' );
-		include( 'editor-templates/panel-elements.php' );
-		include( 'editor-templates/repeater.php' );
-		include( 'editor-templates/templates.php' );
+	public function wp_footer() {
+		$plugin = Plugin::instance();
+
+		$plugin->controls_manager->render_controls();
+		$plugin->widgets_manager->render_widgets_content();
+		$plugin->elements_manager->render_elements_content();
+
+		$plugin->schemes_manager->print_schemes_templates();
+
+		foreach ( $this->_editor_templates as $editor_template ) {
+			include $editor_template;
+		}
+	}
+
+	/**
+	 * @param bool $edit_mode
+	 */
+	public function set_edit_mode( $edit_mode ) {
+		$this->_is_edit_mode = $edit_mode;
 	}
 
 	public function __construct() {

@@ -99,6 +99,19 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel.set( this.model.get( 'name' ), value );
 
 		this.triggerMethod( 'settings:change' );
+
+		var elementType = this.elementSettingsModel.get( 'elType' );
+		if ( 'widget' === elementType ) {
+			elementType = this.elementSettingsModel.get( 'widgetType' );
+		}
+
+		if ( undefined === elementType ) {
+			return;
+		}
+
+		// Do not use with this action
+		// It's here for tests and maybe later will be publish
+		elementor.hooks.doAction( 'panel/editor/element/' + elementType + '/' + this.model.get( 'name' ) + '/changed' );
 	},
 
 	applySavedValue: function() {
@@ -126,18 +139,16 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			inputValue = $input.val(),
 			inputType = $input.attr( 'type' );
 
-		if ( 'checkbox' === inputType ) {
-			return $input.prop( 'checked' );
-		} else if ( 'radio' === inputType ) {
+		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
 			return $input.prop( 'checked' ) ? inputValue : '';
 		}
 
-		return inputValue;
-	},
+		// Temp fix for jQuery (< 3.0) that return null instead of empty array
+		if ( 'SELECT' === input.tagName && $input.prop( 'multiple' ) && null === inputValue ) {
+			inputValue = [];
+		}
 
-	// This method used inside of repeater
-	getFieldTitleValue: function() {
-		return this.getControlValue();
+		return inputValue;
 	},
 
 	setInputValue: function( input, value ) {
@@ -148,6 +159,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( 'select2' === inputType ) {
+			// don't touch
 		} else {
 			$input.val( value );
 		}
@@ -208,7 +221,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	toggleControlVisibility: function() {
-		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel );
+		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
@@ -228,10 +241,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	}
 }, {
 	// Static methods
-	replaceStyleValues: function( cssProperty, controlValue ) {
-		var replaceArray = { '\{\{VALUE\}\}': controlValue };
-
-		return elementor.helpers.stringReplaceAll( cssProperty, replaceArray );
+	getStyleValue: function( placeholder, controlValue ) {
+		return controlValue;
 	}
 } );
 

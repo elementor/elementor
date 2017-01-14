@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Widget_Audio extends Widget_Base {
 	protected $_current_instance = [];
 
-	public function get_id() {
+	public function get_name() {
 		return 'audio';
 	}
 
@@ -15,15 +15,18 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'headphones';
+		return 'eicon-headphones';
+	}
+
+	public function get_categories() {
+		return [ 'general-elements' ];
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_audio',
 			[
 				'label' => __( 'SoundCloud', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -36,7 +39,6 @@ class Widget_Audio extends Widget_Base {
 					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
 				],
 				'show_external' => false,
-				'section' => 'section_audio',
 			]
 		);
 
@@ -50,16 +52,14 @@ class Widget_Audio extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
 		$this->add_control(
-			'section_sc_options',
+			'sc_options',
 			[
 				'label' => __( 'Additional Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'section' => 'section_audio',
 				'separator' => 'before',
 			]
 		);
@@ -74,7 +74,6 @@ class Widget_Audio extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -88,7 +87,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -102,7 +100,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -116,7 +113,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -130,7 +126,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -144,7 +139,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -158,7 +152,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -172,7 +165,6 @@ class Widget_Audio extends Widget_Base {
 					'show' => __( 'Show', 'elementor' ),
 					'hide' => __( 'Hide', 'elementor' ),
 				],
-				'section' => 'section_audio',
 			]
 		);
 
@@ -181,7 +173,6 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'section' => 'section_audio',
 			]
 		);
 
@@ -191,19 +182,23 @@ class Widget_Audio extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'soundcloud',
-				'section' => 'section_audio',
 			]
 		);
+
+		$this->end_controls_section();
+
 	}
 
-	protected function render( $instance = [] ) {
-		if ( empty( $instance['link'] ) )
+	protected function render() {
+		$settings = $this->get_settings();
+
+		if ( empty( $settings['link'] ) )
 			return;
 
-		$this->_current_instance = $instance;
+		$this->_current_instance = $settings;
 
 		add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
-		$video_html = wp_oembed_get( $instance['link']['url'], wp_embed_defaults() );
+		$video_html = wp_oembed_get( $settings['link']['url'], wp_embed_defaults() );
 		remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );
 
 		if ( $video_html ) : ?>
@@ -241,5 +236,5 @@ class Widget_Audio extends Widget_Base {
 		return $html;
 	}
 
-	protected function content_template() {}
+	protected function _content_template() {}
 }

@@ -1,5 +1,5 @@
-module.exports = function( $ ) {
-	var $carousel = $( this ).find( '.elementor-image-carousel' );
+module.exports = function( $scope, $ ) {
+	var $carousel = $scope.find( '.elementor-image-carousel' );
 	if ( ! $carousel.length ) {
 		return;
 	}

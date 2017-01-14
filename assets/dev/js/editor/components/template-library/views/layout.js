@@ -27,12 +27,22 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		return this.getRegion( 'modalHeader' ).currentView;
 	},
 
+	getTemplateActionButton: function( isPro ) {
+		var templateId = '#tmpl-elementor-template-library-' + ( isPro ? 'get-pro-button' : 'insert-button' );
+
+		templateId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', templateId );
+
+		var template = Marionette.TemplateCache.get( templateId );
+
+		return Marionette.Renderer.render( template );
+	},
+
 	showLoadingView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryLoadingView() );
+		this.modalContent.show( new TemplateLibraryLoadingView() );
 	},
 
 	showTemplatesView: function( templatesCollection ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryCollectionView( {
+		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection
 		} ) );
 
@@ -44,11 +54,11 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showImportView: function() {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryImportView() );
+		this.modalContent.show( new TemplateLibraryImportView() );
 	},
 
-	showSaveTemplateView: function( sectionID ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibrarySaveTemplateView( { sectionID: sectionID } ) );
+	showSaveTemplateView: function( elementModel ) {
+		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 
 		var headerView = this.getHeaderView();
 
@@ -58,7 +68,7 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showPreviewView: function( templateModel ) {
-		this.getRegion( 'modalContent' ).show( new TemplateLibraryPreviewView( {
+		this.modalContent.show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' )
 		} ) );
 

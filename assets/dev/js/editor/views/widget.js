@@ -5,64 +5,51 @@ WidgetView = BaseElementView.extend( {
 	_templateType: null,
 
 	getTemplate: function() {
+		var editModel = this.getEditModel();
+
 		if ( 'remote' !== this.getTemplateType() ) {
-			return Marionette.TemplateCache.get( '#tmpl-elementor-widget-' + this.model.get( 'widgetType' ) + '-content' );
+			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 		} else {
 			return _.template( '' );
 		}
 	},
 
 	className: function() {
-		return 'elementor-widget elementor-widget-' + this.model.get( 'widgetType' );
+		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
-	modelEvents: {
-		'before:remote:render': 'onModelBeforeRemoteRender',
-		'remote:render': 'onModelRemoteRender'
-	},
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
 
-	triggers: {
-		'click': {
-			event: 'click:edit',
-			stopPropagation: false
-		},
-		'click > .elementor-editor-element-settings .elementor-editor-add-element': 'click:add',
-		'click > .elementor-editor-element-settings .elementor-editor-element-duplicate': 'click:duplicate'
-	},
+		events.click = 'onClickEdit';
 
-	elementEvents: {
-		'click > .elementor-editor-element-settings .elementor-editor-element-remove': 'onClickRemove'
-	},
-
-	behaviors: {
-		HandleEditor: {
-			behaviorClass: require( 'elementor-behaviors/handle-editor' )
-		},
-		HandleEditMode: {
-			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
-		}
+		return events;
 	},
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		if ( ! this.model.getHtmlCache() ) {
-			this.model.renderRemoteServer();
+		var editModel = this.getEditModel();
+
+		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
+			editModel.renderRemoteServer();
 		}
+
+		editModel.on( {
+			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
+			'remote:render': _.bind( this.onModelRemoteRender, this )
+		} );
 	},
 
 	getTemplateType: function() {
-		if ( null === this.getOption( '_templateType' ) ) {
-			var $template = Backbone.$( '#tmpl-elementor-widget-' + this.model.get( 'widgetType' ) + '-content' );
+		if ( null === this._templateType ) {
+			var editModel = this.getEditModel(),
+				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
-			if ( 0 === $template.length ) {
-				this._templateType = 'remote';
-			} else {
-				this._templateType = 'js';
-			}
+			this._templateType = $template.length ? 'js' : 'remote';
 		}
 
-		return this.getOption( '_templateType' );
+		return this._templateType;
 	},
 
 	onModelBeforeRemoteRender: function() {
@@ -83,34 +70,48 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
+	getHTMLContent: function( html ) {
+		var htmlCache = this.getEditModel().getHtmlCache();
+
+		return htmlCache || html;
+	},
+
 	attachElContent: function( html ) {
-		var htmlCache = this.model.getHtmlCache();
+		var htmlContent = this.getHTMLContent( html ),
+			el = this.$el[0];
 
-		if ( htmlCache ) {
-			html = htmlCache;
-		}
-
-		this.$el.html( html );
+		_.defer( function() {
+			elementorFrontend.getScopeWindow().jQuery( el ).html( htmlContent );
+		} );
 
 		return this;
 	},
 
 	onRender: function() {
-		this.$el
-			.removeClass( 'elementor-widget-empty' )
-			.children( '.elementor-widget-empty-icon' )
-			.remove();
+        var self = this,
+	        editModel = self.getEditModel(),
+	        skinType = editModel.getSetting( '_skin' ) || 'default';
 
-		this.$el.imagesLoaded().always( _.bind( function() {
-			// Is element empty?
-			if ( 1 > this.$el.height() ) {
-				this.$el.addClass( 'elementor-widget-empty' );
+        self.$el
+	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
+            .removeClass( 'elementor-widget-empty' )
+	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) + ' elementor-widget-can-edit' )
+            .children( '.elementor-widget-empty-icon' )
+            .remove();
 
-				// TODO: REMOVE THIS !!
-				// TEMP CODING !!
-				this.$el.append( '<i class="elementor-widget-empty-icon eicon-' + this.model.getIcon() + '"></i>' );
-			}
-		}, this ) );
+        self.$el.imagesLoaded().always( function() {
+
+            setTimeout( function() {
+                if ( 1 > self.$el.height() ) {
+                    self.$el.addClass( 'elementor-widget-empty' );
+
+                    // TODO: REMOVE THIS !!
+                    // TEMP CODING !!
+                    self.$el.append( '<i class="elementor-widget-empty-icon ' + editModel.getIcon() + '"></i>' );
+                }
+            }, 200 );
+            // Is element empty?
+        } );
 	}
 } );
 

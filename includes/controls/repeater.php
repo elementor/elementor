@@ -3,6 +3,17 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * NOTE! THIS CONTROL IS UNDER DEVELOPMENT, USE AT YOUR OWN RISK.
+ *
+ * Repeater control allows you to build repeatable blocks of fields. You can create for example a set of fields that
+ * will contain a checkbox and a textfield. The user will then be able to add “rows”, and each row will contain a
+ * checkbox and a textfield.
+ *
+ *
+ *
+ * @since 1.0.0
+ */
 class Control_Repeater extends Control_Base {
 
 	public function get_type() {
@@ -15,8 +26,8 @@ class Control_Repeater extends Control_Base {
 		];
 	}
 
-	public function get_value( $control, $instance ) {
-		$value = parent::get_value( $control, $instance );
+	public function get_value( $control, $widget ) {
+		$value = parent::get_value( $control, $widget );
 
 		if ( ! empty( $value ) ) {
 			foreach ( $value as &$item ) {
@@ -39,7 +50,7 @@ class Control_Repeater extends Control_Base {
 		</label>
 		<div class="elementor-repeater-fields"></div>
 		<div class="elementor-button-wrapper">
-			<button class="elementor-button elementor-repeater-add"><span class="eicon-plus"></span><?php _e( 'Add Item', 'elementor' ); ?></button>
+			<button class="elementor-button elementor-button-default elementor-repeater-add"><span class="eicon-plus"></span><?php _e( 'Add Item', 'elementor' ); ?></button>
 		</div>
 		<?php
 	}

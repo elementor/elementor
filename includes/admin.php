@@ -15,6 +15,16 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.0.2',
+			true
+		);
+
+		wp_register_script(
 			'elementor-admin-app',
 			ELEMENTOR_ASSETS_URL . 'js/admin' . $suffix . '.js',
 			[
@@ -29,6 +39,10 @@ class Admin {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
+		}
+
+		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
+			wp_enqueue_script( 'elementor-dialog' );
 		}
 	}
 
@@ -88,7 +102,7 @@ class Admin {
 		?>
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
-			<button id="elementor-switch-mode-button" class="elementor-button">
+			<button id="elementor-switch-mode-button" class="elementor-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor"></i>
@@ -98,7 +112,7 @@ class Admin {
 		</div>
 		<div id="elementor-editor">
 	        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
-		        <div id="elementor-editor-button" class="elementor-button">
+		        <div id="elementor-editor-button" class="elementor-button button button-primary button-hero">
 			        <i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 		        </div>
@@ -154,7 +168,7 @@ class Admin {
 	 * @return array
 	 */
 	public function add_edit_in_dashboard( $actions, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && 'builder' === Plugin::instance()->db->get_edit_mode( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
 				Utils::get_edit_link( $post->ID ),
@@ -182,7 +196,10 @@ class Admin {
 
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
+
 		array_unshift( $links, $settings_link );
+
+		$links['go_pro'] = sprintf( '<a href="%s" target="_blank" class="elementor-plugins-gopro">%s</a>', 'https://go.elementor.com/pro-admin-plugins/', __( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -269,19 +286,10 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-admin-feedback',
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
+				'jquery',
 				'underscore',
 				'elementor-dialog',
 			],
@@ -362,7 +370,9 @@ class Admin {
 			wp_send_json_error();
 		}
 
-		$reason_text = $reason_key = '';
+		$reason_text = '';
+
+		$reason_key = '';
 
 		if ( ! empty( $_POST['reason_key'] ) )
 			$reason_key = $_POST['reason_key'];

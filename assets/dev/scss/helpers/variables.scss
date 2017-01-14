@@ -3,7 +3,6 @@
 //
 
 // Primary Colors
-$primary:		#0275d8;
 $white:         #ffffff;
 $black:         #000000;
 
@@ -53,24 +52,6 @@ $danger-border:	darken($danger-bg, 7%);
 $progress-bg:	#eeeeee;
 $progress-text:	#ffffff;
 
-// Editor colors
-$editor-darkest:#495157;
-$editor-darker: #556068;
-$editor-dark: 	#6d7882;
-
-$editor-light: #a4afb7;
-$editor-lighter: #c2cbd2;
-$editor-lightest: #d5dadf;
-
-$editor-accent: #9b0a46;
-$editor-background: #e6e9ec;
-$editor-background-light: #f1f3f5;
-
-$editor-danger: #f00;
-$editor-warning: #b01b1b;
-$editor-success: #39b54a;
-$editor-info: #71d7f7;
-
 //Official Social Colors
 $behance:		#1769ff;
 $bitbucket: 	#205081;
@@ -94,10 +75,31 @@ $snapchat:		#fffc00;
 $soundcloud:	#ff8800;
 $stack-overflow:#fe7a15;
 $tumblr:		#35465c;
+$twitch:		#6441A5;
 $twitter:		#55acee;
 $vimeo:			#1ab7ea;
 $wordpress:		#21759b;
 $youtube:		#cd201f;
+
+// Editor colors
+$editor-darkest:#495157;
+$editor-darker: #556068;
+$editor-dark: 	#6d7882;
+
+$editor-light: #a4afb7;
+$editor-lighter: #c2cbd2;
+$editor-lightest: #d5dadf;
+
+$editor-accent: #9b0a46;
+$editor-background: #e6e9ec;
+$editor-background-light: #f1f3f5;
+
+$editor-orange: #fcb92c;
+
+$editor-danger: #f00;
+$editor-warning: #b01b1b;
+$editor-success: #39b54a;
+$editor-info: #71d7f7;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -114,7 +116,7 @@ $second-layer: 2;
 $third-layer: 3;
 $fourth-layer: 4;
 
-$element-overlay: 1;
+$element-overlay: 2;
 $editor-layer: 9999;
 $elementor-modal: 10001;
 
@@ -141,11 +143,16 @@ $column-sizes: (
   	100: 100%
 );
 
+// Panel
+$panel-width: 280px;
+$panel-xl-width: 300px;
+
 // Grid Breakpoints
 $breakpoints: (
 	sm: 480px, // Mobile landscape
 	md: 768px, // Tablet
-	lg: 1024px, // Desktop
+	lg: 1025px, // Desktop
+	xl: 1440px // Largest devices
 );
 
 // Media Queries
@@ -155,3 +162,5 @@ $screen-sm-max: map_get($breakpoints, md) - 1;
 $screen-md-min: map_get($breakpoints, md);
 $screen-md-max: map_get($breakpoints, lg) - 1;
 $screen-lg-min: map_get($breakpoints, lg);
+$screen-lg-max: map_get($breakpoints, xl) - 1;
+$screen-xl-min: map_get($breakpoints, xl);

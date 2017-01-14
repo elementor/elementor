@@ -14,6 +14,81 @@ class Plugin {
 	private static $_instance = null;
 
 	/**
+	 * @var DB
+	 */
+	public $db;
+
+	/**
+	 * @var Controls_Manager
+	 */
+	public $controls_manager;
+
+	/**
+	 * @var Schemes_Manager
+	 */
+	public $schemes_manager;
+
+	/**
+	 * @var Elements_Manager
+	 */
+	public $elements_manager;
+
+	/**
+	 * @var Widgets_Manager
+	 */
+	public $widgets_manager;
+
+	/**
+	 * @var Revisions_Manager
+	 */
+	public $revisions_manager;
+
+	/**
+	 * @var Settings
+	 */
+	public $settings;
+
+	/**
+	 * @var Preview
+	 */
+	public $preview;
+
+	/**
+	 * @var Editor
+	 */
+	public $editor;
+
+	/**
+	 * @var Frontend
+	 */
+	public $frontend;
+
+	/**
+	 * @var Heartbeat
+	 */
+	public $heartbeat;
+
+	/**
+	 * @var System_Info\Main
+	 */
+	public $system_info;
+
+	/**
+	 * @var TemplateLibrary\Manager
+	 */
+	public $templates_manager;
+
+	/**
+	 * @var Skins_Manager
+	 */
+	public $skins_manager;
+
+	/**
+	 * @var Posts_CSS_Manager
+	 */
+	public $posts_css_manager;
+
+	/**
 	 * @return string
 	 */
 	public function get_version() {
@@ -51,6 +126,7 @@ class Plugin {
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+			do_action( 'elementor/loaded' );
 		}
 		return self::$_instance;
 	}
@@ -59,11 +135,11 @@ class Plugin {
 	 * Register the CPTs with our Editor support.
 	 */
 	public function init() {
-		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
+		$this->add_cpt_support();
 
-		foreach ( $cpt_support as $cpt_slug ) {
-			add_post_type_support( $cpt_slug, 'elementor' );
-		}
+		$this->init_components();
+
+		do_action( 'elementor/init' );
 	}
 
 	private function _includes() {
@@ -76,11 +152,13 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
-		include( ELEMENTOR_PATH . 'includes/controls-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/schemes-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/elements-manager.php' );
-		include( ELEMENTOR_PATH . 'includes/widgets-manager.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
+		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
 		include( ELEMENTOR_PATH . 'includes/frontend.php' );
@@ -92,8 +170,52 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
+		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
+		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/conditions.php' );
+
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
+
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
+			}
+		}
+	}
+
+	private function init_components() {
+		$this->db = new DB();
+
+		$this->controls_manager = new Controls_Manager();
+		$this->schemes_manager = new Schemes_Manager();
+		$this->elements_manager = new Elements_Manager();
+		$this->widgets_manager = new Widgets_Manager();
+		$this->skins_manager = new Skins_Manager();
+		$this->posts_css_manager = new Posts_CSS_Manager();
+		$this->revisions_manager = new Revisions_Manager();
+
+		$this->settings = new Settings();
+		$this->editor = new Editor();
+		$this->preview = new Preview();
+		$this->frontend = new Frontend();
+
+		$this->heartbeat = new Heartbeat();
+		$this->system_info = new System_Info\Main();
+
+		$this->templates_manager = new TemplateLibrary\Manager();
+
+		if ( is_admin() ) {
+			new Admin();
+			new Tools();
+		}
+	}
+
+	private function add_cpt_support() {
+		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
+
+		foreach ( $cpt_support as $cpt_slug ) {
+			add_post_type_support( $cpt_slug, 'elementor' );
 		}
 	}
 
@@ -101,33 +223,9 @@ class Plugin {
 	 * Plugin constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'init', [ $this, 'init' ], 0 );
 
-		// TODO: Declare this fields
 		$this->_includes();
-
-		$this->db = new DB();
-		$this->controls_manager = new Controls_Manager();
-		$this->schemes_manager = new Schemes_Manager();
-		$this->elements_manager = new Elements_Manager();
-		$this->widgets_manager = new Widgets_Manager();
-
-		$settings = new Settings();
-
-		$this->editor = new Editor();
-		$this->preview = new Preview();
-
-		$this->frontend = new Frontend();
-		$heartbeat = new Heartbeat();
-
-		$this->system_info = new System_Info\Main();
-		$this->templates_manager = new TemplateLibrary\Manager();
-
-		if ( is_admin() ) {
-			new Admin();
-		}
-
-		do_action( 'elementor/loaded' );
 	}
 }
 

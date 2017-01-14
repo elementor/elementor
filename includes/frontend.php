@@ -8,7 +8,8 @@ class Frontend {
 	private $_enqueue_google_fonts = [];
 	private $_enqueue_google_early_access_fonts = [];
 
-	private $_column_widths = [];
+	private $_is_frontend_mode = false;
+	private $_has_elementor_in_page = false;
 
 	/**
 	 * @var Stylesheet
@@ -16,17 +17,23 @@ class Frontend {
 	private $stylesheet;
 
 	public function init() {
-		if ( is_admin() || Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
+		if ( Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
 			return;
 		}
+
+		$this->_is_frontend_mode = true;
+		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
 
 		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+
+		if ( $this->_has_elementor_in_page ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		}
+
+		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
@@ -42,49 +49,12 @@ class Frontend {
 			->add_device( 'tablet', $breakpoints['lg'] - 1 );
 	}
 
-	protected function _print_section( $section_data ) {
-		$section_obj = Plugin::instance()->elements_manager->get_element( 'section' );
-		$instance = $section_obj->get_parse_values( $section_data['settings'] );
+	protected function _print_elements( $elements_data ) {
+		foreach ( $elements_data as $element_data ) {
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
-		$section_obj->before_render( $instance, $section_data['id'], $section_data );
-
-		foreach ( $section_data['elements'] as $column_data ) {
-			$this->_print_column( $column_data );
+			$element->print_element();
 		}
-
-		$section_obj->after_render( $instance, $section_data['id'], $section_data );
-	}
-
-	protected function _print_column( $column_data ) {
-		$column_obj = Plugin::instance()->elements_manager->get_element( 'column' );
-		$instance = $column_obj->get_parse_values( $column_data['settings'] );
-
-		$column_obj->before_render( $instance, $column_data['id'], $column_data );
-
-		foreach ( $column_data['elements'] as $widget_data ) {
-			if ( 'section' === $widget_data['elType'] ) {
-				$this->_print_section( $widget_data );
-			} else {
-				$this->_print_widget( $widget_data );
-			}
-		}
-
-		$column_obj->after_render( $instance, $column_data['id'], $column_data );
-	}
-
-	protected function _print_widget( $widget_data ) {
-		$widget_obj = Plugin::instance()->widgets_manager->get_widget( $widget_data['widgetType'] );
-		if ( false === $widget_obj )
-			return;
-
-		if ( empty( $widget_data['settings'] ) )
-			$widget_data['settings'] = [];
-
-		$instance = $widget_obj->get_parse_values( $widget_data['settings'] );
-
-		$widget_obj->before_render( $instance, $widget_data['id'], $widget_data );
-		$widget_obj->render_content( $instance );
-		$widget_obj->after_render( $instance, $widget_data['id'], $widget_data );
 	}
 
 	public function body_class( $classes = [] ) {
@@ -95,15 +65,19 @@ class Frontend {
 	}
 
 	public function enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
+
+		do_action( 'elementor/frontend/before_enqueue_scripts' );
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
-			'waypoints',
+			'elementor-waypoints',
 			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints' . $suffix . '.js',
 			[
 				'jquery',
 			],
-			'2.0.2',
+			'4.0.2',
 			true
 		);
 
@@ -113,7 +87,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'0.2.0',
+			'0.2.1',
 			true
 		);
 
@@ -131,7 +105,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
-				'waypoints',
+				'elementor-waypoints',
 				'jquery-numerator',
 				'jquery-slick',
 			],
@@ -144,6 +118,8 @@ class Frontend {
 			'elementor-frontend',
 			'elementorFrontendConfig', [
 				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
+				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+				'is_rtl' => is_rtl(),
 			]
 		);
 	}
@@ -164,7 +140,7 @@ class Frontend {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.6.3'
+			'4.7.0'
 		);
 
 		// Elementor Animations
@@ -178,40 +154,29 @@ class Frontend {
 		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
-			[
-				'elementor-icons',
-				'font-awesome',
-			],
+			[],
 			Plugin::instance()->get_version()
 		);
 
+		wp_enqueue_style( 'elementor-icons' );
+		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
+
+		$css_file = new Post_CSS_File( get_the_ID() );
+		$css_file->enqueue();
 	}
 
 	public function print_css() {
-		$post_id = get_the_ID();
-		$data = Plugin::instance()->db->get_plain_builder( $post_id );
-		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
+		$container_width = absint( get_option( 'elementor_container_width' ) );
 
-		if ( empty( $data ) || 'builder' !== $edit_mode )
-			return;
+		if ( ! empty( $container_width ) ) {
+			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
+		}
 
 		$this->_parse_schemes_css_code();
 
-		foreach ( $data as $section ) {
-			$this->_parse_style_item( $section );
-		}
-
 		$css_code = $this->stylesheet;
-
-		if ( ! empty( $this->_column_widths ) ) {
-			$css_code .= '@media (min-width: 768px) {';
-			foreach ( $this->_column_widths as $column_width ) {
-				$css_code .= $column_width;
-			}
-			$css_code .= '}';
-		}
 
 		if ( empty( $css_code ) )
 			return;
@@ -220,24 +185,59 @@ class Frontend {
 		<style id="elementor-frontend-stylesheet"><?php echo $css_code; ?></style>
 		<?php
 
+		$this->print_google_fonts();
+	}
+
+	/**
+	 * Handle style that do not printed in header
+	 */
+	public function wp_footer() {
+		if ( ! $this->_has_elementor_in_page ) {
+			return;
+		}
+
+		$this->enqueue_styles();
+		$this->enqueue_scripts();
+
+		// TODO: add JS to append the css to the `head` tag
+		$this->print_google_fonts();
+	}
+
+	public function print_google_fonts() {
 		// Enqueue used fonts
 		if ( ! empty( $this->_enqueue_google_fonts ) ) {
 			foreach ( $this->_enqueue_google_fonts as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
-			printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=%s">', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->_enqueue_google_fonts ) );
+
+			$subsets = [
+				'ru_RU' => 'cyrillic',
+				'bg_BG' => 'cyrillic',
+				'he_IL' => 'hebrew',
+				'el' => 'greek',
+				'vi' => 'vietnamese',
+				'uk' => 'cyrillic',
+			];
+			$locale = get_locale();
+
+			if ( isset( $subsets[ $locale ] ) ) {
+				$fonts_url .= '&subset=' . $subsets[ $locale ];
+			}
+
+			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
 			$this->_enqueue_google_fonts = [];
 		}
 
 		if ( ! empty( $this->_enqueue_google_early_access_fonts ) ) {
 			foreach ( $this->_enqueue_google_early_access_fonts as $current_font ) {
-				printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
+				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 			}
 			$this->_enqueue_google_early_access_fonts = [];
 		}
 	}
-
-	protected function _add_enqueue_font( $font ) {
+	public function add_enqueue_font( $font ) {
 		switch ( Fonts::get_font_type( $font ) ) {
 			case Fonts::GOOGLE :
 				if ( ! in_array( $font, $this->_enqueue_google_fonts ) )
@@ -251,116 +251,94 @@ class Frontend {
 		}
 	}
 
-	protected function _parse_style_item( $element ) {
-		if ( 'widget' === $element['elType'] ) {
-			$element_obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
-		} else {
-			$element_obj = Plugin::instance()->elements_manager->get_element( $element['elType'] );
-		}
-
-		if ( ! $element_obj )
-			return;
-
-		$element_instance = $element_obj->get_parse_values( $element['settings'] );
-		$element_unique_class = '.elementor-element.elementor-element-' . $element['id'];
-		if ( 'column' === $element_obj->get_id() ) {
-			if ( ! empty( $element_instance['_inline_size'] ) ) {
-				$this->_column_widths[] = $element_unique_class . '{width:' . $element_instance['_inline_size'] . '%;}';
-			}
-		}
-
-		foreach ( $element_obj->get_style_controls() as $control ) {
-			if ( ! isset( $element_instance[ $control['name'] ] ) )
-				continue;
-
-			$control_value = $element_instance[ $control['name'] ];
-			if ( ! is_numeric( $control_value ) && ! is_float( $control_value ) && empty( $control_value ) ) {
-				continue;
-			}
-
-			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-			if ( ! $control_obj ) {
-				continue;
-			}
-
-			if ( ! $element_obj->is_control_visible( $element_instance, $control ) ) {
-				continue;
-			}
-
-			if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-				$this->_add_enqueue_font( $control_value );
-			}
-
-			foreach ( $control['selectors'] as $selector => $css_property ) {
-				$output_selector = str_replace( '{{WRAPPER}}', $element_unique_class, $selector );
-				$output_css_property = $control_obj->get_replace_style_values( $css_property, $control_value );
-
-				if ( ! $output_css_property ) {
-					continue;
-				}
-
-				$device = ! empty( $control['responsive'] ) ? $control['responsive'] : Element_Base::RESPONSIVE_DESKTOP;
-
-				$this->stylesheet->add_rules( $output_selector, $output_css_property, $device );
-			}
-		}
-
-		if ( ! empty( $element['elements'] ) ) {
-			foreach ( $element['elements'] as $child_element ) {
-				$this->_parse_style_item( $child_element );
-			}
-		}
-	}
-
 	protected function _parse_schemes_css_code() {
-		foreach ( Plugin::instance()->widgets_manager->get_registered_widgets() as $widget_obj ) {
-			foreach ( $widget_obj->get_scheme_controls() as $control ) {
-				$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
-				if ( empty( $scheme_value ) )
-					continue;
+		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
+			$scheme_controls = $widget->get_scheme_controls();
 
-				if ( ! empty( $control['scheme']['key'] ) ) {
-					$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-				}
+			foreach ( $scheme_controls as $control ) {
+				Post_CSS_File::add_control_rules( $this->stylesheet, $control, $widget->get_controls(), function ( $control ) {
+					$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
-				if ( empty( $scheme_value ) )
-					continue;
+					if ( empty( $scheme_value ) ) {
+						return null;
+					}
 
-				$element_unique_class = 'elementor-widget-' . $widget_obj->get_id();
-				$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+					if ( ! empty( $control['scheme']['key'] ) ) {
+						$scheme_value = $scheme_value[ $control['scheme']['key'] ];
+					}
 
-				if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-					$this->_add_enqueue_font( $scheme_value );
-				}
+					if ( empty( $scheme_value ) ) {
+						return null;
+					}
 
-				foreach ( $control['selectors'] as $selector => $css_property ) {
-					$output_selector = str_replace( '{{WRAPPER}}', '.' . $element_unique_class, $selector );
-					$output_css_property = $control_obj->get_replace_style_values( $css_property, $scheme_value );
+					$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
 
-					$this->stylesheet->add_rules( $output_selector, $output_css_property );
-				}
+					if ( Controls_Manager::FONT === $control_obj->get_type() ) {
+						$this->add_enqueue_font( $scheme_value );
+					}
+
+					return $scheme_value;
+				}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ] );
 			}
 		}
 	}
 
 	public function apply_builder_in_content( $content ) {
+		// Remove the filter itself in order to allow other `the_content` in the elements
+		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
+		if ( ! $this->_is_frontend_mode )
+			return $content;
+
 		$post_id = get_the_ID();
-		if ( post_password_required( $post_id ) )
-			return $content;
+		$builder_content = $this->get_builder_content( $post_id );
 
-		$data = Plugin::instance()->db->get_plain_builder( $post_id );
+		if ( ! empty( $builder_content ) ) {
+			$content = $builder_content;
+		}
+
+		// Add the filter again for other `the_content` calls
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
+		return $content;
+	}
+
+	public function get_builder_content( $post_id, $with_css = false ) {
+		if ( post_password_required( $post_id ) ) {
+			return '';
+		}
+
 		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
+		if ( 'builder' !== $edit_mode ) {
+			return '';
+		}
 
-		if ( empty( $data ) || 'builder' !== $edit_mode )
-			return $content;
+		$data = Plugin::instance()->db->get_plain_editor( $post_id );
+		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
-		ob_start(); ?>
-		<div id="elementor" class="elementor">
-			<div id="elementor-inner">
-				<div id="elementor-section-wrap">
-					<?php foreach ( $data as $section ) : ?>
-						<?php $this->_print_section( $section ); ?>
-					<?php endforeach; ?>
+		if ( empty( $data ) ) {
+			return '';
+		}
+
+		$css_file = new Post_CSS_File( $post_id );
+		$css_file->enqueue();
+
+		ob_start();
+
+		// Handle JS and Customizer requests, with css inline
+		if ( is_customize_preview() || Utils::is_ajax() ) {
+			$with_css = true;
+		}
+
+		if ( $with_css ) {
+			echo '<style>' . $css_file->get_css() . '</style>';
+		}
+
+		?>
+		<div class="elementor elementor-<?php echo $post_id; ?>">
+			<div class="elementor-inner">
+				<div class="elementor-section-wrap">
+					<?php $this->_print_elements( $data ); ?>
 				</div>
 			</div>
 		</div>
@@ -370,18 +348,71 @@ class Frontend {
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
-		if ( ! is_singular() || ! User::is_current_user_can_edit( $post_id ) ) {
+		$is_not_builder_mode = ! is_singular() || ! User::is_current_user_can_edit( $post_id ) || 'builder' !== Plugin::instance()->db->get_edit_mode( $post_id );
+
+		if ( $is_not_builder_mode ) {
 			return;
 		}
 
 		$wp_admin_bar->add_node( [
-			'id'    => 'elementor_edit_page',
+			'id' => 'elementor_edit_page',
 			'title' => __( 'Edit with Elementor', 'elementor' ),
-			'href'  => Utils::get_edit_link( $post_id ),
+			'href' => Utils::get_edit_link( $post_id ),
 		] );
 	}
 
+	public function get_builder_content_for_display( $post_id ) {
+		if ( ! get_post( $post_id ) ) {
+			return '';
+		}
+
+		// Avoid recursion
+		if ( get_the_ID() === (int) $post_id ) {
+			$content = '';
+			if ( Plugin::instance()->editor->is_edit_mode() ) {
+				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
+			}
+
+			return $content;
+		}
+
+		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
+		$is_edit_mode = Plugin::instance()->editor->is_edit_mode();
+		Plugin::instance()->editor->set_edit_mode( false );
+
+		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
+		if ( isset( $GLOBALS['post'] ) ) {
+			$global_post = $GLOBALS['post'];
+		}
+
+		$GLOBALS['post'] = get_post( $post_id );
+
+		$content = $this->get_builder_content( $post_id, $is_edit_mode );
+
+		if ( ! empty( $content ) ) {
+			$this->_has_elementor_in_page = true;
+		}
+
+		// Restore global post
+		if ( isset( $global_post ) ) {
+			$GLOBALS['post'] = $global_post;
+		} else {
+			unset( $GLOBALS['post'] );
+		}
+
+		// Restore edit mode state
+		Plugin::instance()->editor->set_edit_mode( $is_edit_mode );
+
+		return $content;
+	}
+
 	public function __construct() {
+		// We don't need this class in admin side, but in AJAX requests
+		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			return;
+		}
+
 		add_action( 'template_redirect', [ $this, 'init' ] );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 	}
 }

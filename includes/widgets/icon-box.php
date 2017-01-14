@@ -3,9 +3,9 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Widget_Icon_box extends Widget_Base {
+class Widget_Icon_Box extends Widget_Base {
 
-	public function get_id() {
+	public function get_name() {
 		return 'icon-box';
 	}
 
@@ -14,15 +14,18 @@ class Widget_Icon_box extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'icon-box';
+		return 'eicon-icon-box';
+	}
+
+	public function get_categories() {
+		return [ 'general-elements' ];
 	}
 
 	protected function _register_controls() {
-		$this->add_control(
+		$this->start_controls_section(
 			'section_icon',
 			[
 				'label' => __( 'Icon Box', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
 			]
 		);
 
@@ -31,7 +34,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_icon',
 				'options' => [
 					'default' => __( 'Default', 'elementor' ),
 					'stacked' => __( 'Stacked', 'elementor' ),
@@ -48,7 +50,6 @@ class Widget_Icon_box extends Widget_Base {
 				'label' => __( 'Choose Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'default' => 'fa fa-star',
-				'section' => 'section_icon',
 			]
 		);
 
@@ -57,7 +58,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'section' => 'section_icon',
 				'options' => [
 					'circle' => __( 'Circle', 'elementor' ),
 					'square' => __( 'Square', 'elementor' ),
@@ -77,7 +77,6 @@ class Widget_Icon_box extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'This is the heading', 'elementor' ),
 				'placeholder' => __( 'Your Title', 'elementor' ),
-				'section' => 'section_icon',
 				'label_block' => true,
 			]
 		);
@@ -90,7 +89,6 @@ class Widget_Icon_box extends Widget_Base {
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'title' => __( 'Input icon text here', 'elementor' ),
-				'section' => 'section_icon',
 				'rows' => 10,
 				'separator' => 'none',
 				'show_label' => false,
@@ -103,7 +101,6 @@ class Widget_Icon_box extends Widget_Base {
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'http://your-link.com', 'elementor' ),
-				'section' => 'section_icon',
 				'separator' => 'before',
 			]
 		);
@@ -117,19 +114,18 @@ class Widget_Icon_box extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
+						'icon' => 'fa fa-align-left',
 					],
 					'top' => [
 						'title' => __( 'Top', 'elementor' ),
-						'icon' => 'align-center',
+						'icon' => 'fa fa-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
+						'icon' => 'fa fa-align-right',
 					],
 				],
 				'prefix_class' => 'elementor-position-',
-				'section' => 'section_icon',
 				'toggle' => false,
 			]
 		);
@@ -151,16 +147,16 @@ class Widget_Icon_box extends Widget_Base {
 					'p' => __( 'p', 'elementor' ),
 				],
 				'default' => 'h3',
-				'section' => 'section_icon',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style_icon',
 			[
-				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Icon', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -173,8 +169,6 @@ class Widget_Icon_box extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
@@ -188,8 +182,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
 				'default' => '',
 				'condition' => [
 					'view!' => 'default',
@@ -215,8 +207,6 @@ class Widget_Icon_box extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'section' => 'section_style_icon',
-				'tab' => self::TAB_STYLE,
 				'selectors' => [
 					'{{WRAPPER}}.elementor-position-right .elementor-icon-box-icon' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-left .elementor-icon-box-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
@@ -236,10 +226,8 @@ class Widget_Icon_box extends Widget_Base {
 						'max' => 300,
 					],
 				],
-				'section' => 'section_style_icon',
-				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -249,18 +237,13 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Icon Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
-				],
-				'default' => [
-					'size' => 1.5,
-					'unit' => 'em',
 				],
 				'range' => [
 					'em' => [
 						'min' => 0,
+						'max' => 5,
 					],
 				],
 				'condition' => [
@@ -278,8 +261,6 @@ class Widget_Icon_box extends Widget_Base {
 					'size' => 0,
 					'unit' => 'deg',
 				],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
@@ -291,8 +272,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -308,8 +287,6 @@ class Widget_Icon_box extends Widget_Base {
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_icon',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -319,12 +296,13 @@ class Widget_Icon_box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_hover',
 			[
 				'label' => __( 'Icon Hover', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => self::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -333,8 +311,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
@@ -348,8 +324,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
 				'default' => '',
 				'condition' => [
 					'view!' => 'default',
@@ -366,21 +340,20 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_hover',
 			]
 		);
 
-		$this->add_control(
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_style_content',
 			[
-				'type'  => Controls_Manager::SECTION,
 				'label' => __( 'Content', 'elementor' ),
-				'tab'   => self::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -388,25 +361,23 @@ class Widget_Icon_box extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'align-left',
+						'icon' => 'fa fa-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'align-center',
+						'icon' => 'fa fa-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'align-right',
+						'icon' => 'fa fa-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'align-justify',
+						'icon' => 'fa fa-align-justify',
 					],
 				],
-				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-wrapper .elementor-icon-box-content' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -422,8 +393,6 @@ class Widget_Icon_box extends Widget_Base {
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
 				'default' => 'top',
-				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
 				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
@@ -433,8 +402,24 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_bottom_space',
+			[
+				'label' => __( 'Title Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -443,12 +428,10 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Title Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title' => 'color: {{VALUE}};',
 				],
-				'section' => 'section_style_content',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
@@ -461,8 +444,6 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
@@ -472,8 +453,7 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'section' => 'section_style_content',
-				'tab' => self::TAB_STYLE,
+				'separator' => 'before',
 			]
 		);
 
@@ -482,12 +462,10 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'label' => __( 'Description Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'tab' => self::TAB_STYLE,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description' => 'color: {{VALUE}};',
 				],
-				'section' => 'section_style_content',
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
@@ -500,28 +478,30 @@ class Widget_Icon_box extends Widget_Base {
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
-				'tab' => self::TAB_STYLE,
-				'section' => 'section_style_content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
-	protected function render( $instance = [] ) {
-		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $instance['hover_animation'] ] );
+	protected function render() {
+		$settings = $this->get_settings();
+
+		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
 		$icon_tag = 'span';
 
-		if ( ! empty( $instance['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $instance['link']['url'] );
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
 
-			if ( ! empty( $instance['link']['is_external'] ) ) {
+			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
 		}
 
-		$this->add_render_attribute( 'i', 'class', $instance['icon'] );
+		$this->add_render_attribute( 'i', 'class', $settings['icon'] );
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		$link_attributes = $this->get_render_attribute_string( 'link' );
@@ -533,16 +513,16 @@ class Widget_Icon_box extends Widget_Base {
 				</<?php echo $icon_tag; ?>>
 			</div>
 			<div class="elementor-icon-box-content">
-				<<?php echo $instance['title_size']; ?> class="elementor-icon-box-title">
-					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $instance['title_text']; ?></<?php echo $icon_tag; ?>>
-				</<?php echo $instance['title_size']; ?>>
-				<p class="elementor-icon-box-description"><?php echo $instance['description_text']; ?></p>
+				<<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
+					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+				</<?php echo $settings['title_size']; ?>>
+				<p class="elementor-icon-box-description"><?php echo $settings['description_text']; ?></p>
 			</div>
 		</div>
 		<?php
 	}
 
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconTag = link ? 'a' : 'span'; #>

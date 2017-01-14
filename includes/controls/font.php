@@ -2,7 +2,16 @@
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
+/**
+ * A font select box control. The list is based on Google Fonts project (@see https://fonts.google.com/)
+ *
+ * @param string $default   The selected font name
+ *                          Default empty
+ * @param array $fonts      All available fonts
+ *                          Default @see Fonts::get_fonts()
+ *
+ * @since 1.0.0
+ */
 class Control_Font extends Control_Base {
 
 	public function get_type() {

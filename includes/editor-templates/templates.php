@@ -29,9 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
-		<button id="elementor-template-library-header-preview-insert" class="elementor-template-library-template-insert elementor-button elementor-button-success">
-			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
-		</button>
+		{{{ elementor.templates.getLayout().getTemplateActionButton( isPro ) }}}
 	</div>
 </script>
 
@@ -66,13 +64,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-template-library-template-preview">
 				<i class="fa fa-search-plus"></i>
 			</div>
-			<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
-				<i class="eicon-file-download"></i>
-				<?php _e( 'Insert', 'elementor' ); ?>
-			</button>
+			{{{ elementor.templates.getLayout().getTemplateActionButton( isPro ) }}}
 		</div>
 	</div>
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-insert-button">
+	<button class="elementor-template-library-template-insert elementor-button elementor-button-success" data-action="insert">
+		<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
+	</button>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
+	<button class="elementor-template-library-template-insert elementor-button elementor-button-go-pro" data-action="get-pro">
+		<i class="fa fa-external-link-square"></i><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
@@ -82,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
 	<div class="elementor-template-library-template-type">{{{ elementor.translate( type ) }}}</div>
 	<div class="elementor-template-library-template-controls">
-		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success" data-action="insert">
 			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-template-library-template-export">
@@ -100,8 +107,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
-	<div class="elementor-template-library-blank-title">{{{ elementor.translate( 'save_your_template', [ elementor.translate( sectionID ? 'section' : 'page' ) ] ) }}}</div>
-	<div class="elementor-template-library-blank-excerpt"><?php _e( 'Your designs will be available for export and reuse on any page or website', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
+	<div class="elementor-template-library-blank-excerpt">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">

@@ -33,12 +33,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
+			<div id="elementor-preview-loading">
+				<i class="fa fa-spin fa-circle-o-notch"></i>
+			</div>
 			<?php
 			// IFrame will be create here by the Javascript later.
 			?>
 		</div>
 	</div>
-	<div id="elementor-panel"></div>
+	<div id="elementor-panel" class="elementor-panel"></div>
 </div>
 <?php wp_footer(); ?>
 </body>

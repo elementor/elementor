@@ -1,5 +1,5 @@
-module.exports = function( $ ) {
-	var $toggleTitles = $( this ).find( '.elementor-toggle-title' );
+module.exports = function( $scope, $ ) {
+	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
 	$toggleTitles.on( 'click', function() {
 		var $active = $( this ),

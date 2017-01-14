@@ -33,7 +33,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	initColors: function() {
 		var self = this;
 
-		this.ui.colors.wpColorPicker( {
+		elementor.helpers.wpColorPicker( this.ui.colors, {
 			change: function() {
 				var $this = Backbone.$( this ),
 					type = $this.data( 'setting' );
@@ -43,9 +43,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 			clear: function() {
 				self.setValue( this.dataset.setting, '' );
-			},
-
-			width: 251
+			}
 		} );
 	},
 

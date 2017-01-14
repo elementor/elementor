@@ -1,0 +1,291 @@
+//
+// Forms (Input, Textarea, Select Etc..)
+//
+
+.elementor-form-fields-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+
+	&.elementor-labels-above {
+
+		> .elementor-field-group {
+
+			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
+				flex-basis: 100%;
+			}
+		}
+	}
+
+	&.elementor-labels-inline {
+
+		> .elementor-field-group {
+
+			> input, .elementor-select-wrapper {
+				flex-grow: 1;
+			}
+		}
+	}
+}
+
+.elementor-field-group {
+	flex-wrap: wrap;
+	align-items: center;
+
+	&.elementor-field-type-submit {
+		align-items: flex-end;
+	}
+
+	.elementor-field-textual {
+		width: 100%;
+		border: 1px solid $gray;
+		background-color: transparent;
+		color: $gray-darker;
+		vertical-align: middle;
+		flex-grow: 1;
+
+		&:focus {
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+			outline: 0;
+		}
+
+		// Keep the following rules each alone!
+		&::-webkit-input-placeholder {
+			color: inherit;
+			opacity: 0.5;
+		}
+
+		&::-moz-placeholder {
+			color: inherit;
+			opacity: 0.5;
+		}
+
+		&:-ms-input-placeholder {
+			color: inherit;
+			opacity: 0.5;
+		}
+	}
+
+	.elementor-select-wrapper {
+		display: flex;
+		position: relative;
+		width: 100%;
+
+		select {
+			appearance: none;
+			color: inherit;
+			flex-basis: 100%;
+			@include padding-end(20px);
+		}
+
+		&:before {
+			content: '\f0d7';
+			font-family: 'FontAwesome';
+			font-size: 15px;
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			@include end(10px);
+		}
+	}
+}
+
+.elementor-field-subgroup {
+	display: flex;
+	flex-wrap: wrap;
+
+	.elementor-field-option {
+
+		label {
+			display: inline-block;
+		}
+	}
+
+	&.elementor-subgroup-inline {
+
+		.elementor-field-option {
+			@include padding-end(10px);
+		}
+	}
+
+	&:not(.elementor-subgroup-inline) {
+
+		.elementor-field-option {
+			flex-basis: 100%;
+		}
+	}
+}
+
+.elementor-field-label {
+	cursor: pointer;
+}
+
+// Keep the following out from another parent selector!
+.elementor-field-textual {
+	line-height: 1.4;
+
+	&.elementor-size- {
+
+		&xs {
+			font-size: 13px;
+			min-height: 33px;
+			padding: 4px 12px;
+			border-radius: 2px;
+		}
+
+		&sm {
+			font-size: 15px;
+			min-height: 40px;
+			padding: 5px 14px;
+			border-radius: 3px;
+		}
+
+		&md {
+			font-size: 16px;
+			min-height: 47px;
+			padding: 6px 16px;
+			border-radius: 4px;
+		}
+
+		&lg {
+			font-size: 18px;
+			min-height: 59px;
+			padding: 7px 20px;
+			border-radius: 5px;
+		}
+
+		&xl {
+			font-size: 20px;
+			min-height: 72px;
+			padding: 8px 24px;
+			border-radius: 6px;
+		}
+	}
+}
+
+@mixin btn-align() {
+
+	&center .elementor-field-type-submit{
+		justify-content: center;
+	}
+
+	&stretch .elementor-field-type-submit{
+
+		button {
+			flex-basis: 100%;
+		}
+	}
+
+	&start .elementor-field-type-submit{
+		justify-content: getValueByDirection(flex-start, flex-end);
+	}
+
+	&end .elementor-field-type-submit{
+		justify-content: getValueByDirection(flex-end, flex-start);
+	}
+}
+
+.elementor-button-align- {
+	@include btn-align();
+}
+
+@media screen and ( max-width: $screen-md-max ){
+
+	.elementor-tablet-button-align- {
+		@include btn-align();
+	}
+}
+
+@media screen and ( max-width: $screen-sm-max ){
+
+	.elementor-mobile-button-align- {
+		@include btn-align();
+	}
+}
+
+// Form Messages
+.elementor-error {
+
+	.elementor-field {
+		border-color: $danger;
+	}
+
+	.help-inline {
+		color: $danger;
+		font-size: 0.9em;
+	}
+}
+
+.elementor-message {
+	margin: 10px 0;
+	font-size: 1em;
+	line-height: 1;
+
+	&:before {
+		content: "\f00c";
+		display: inline-block;
+		font-family: fontawesome;
+		font-weight: normal;
+		font-style: normal;
+		vertical-align: middle;
+		margin-right: 5px;
+	}
+
+	&.elementor-message-danger {
+		color: $danger;
+
+		&:before {
+			content: "\f00d";
+		}
+	}
+
+	&.form-message-success {
+		color: $success;
+	}
+}
+
+// Form Submit Button
+.elementor-form {
+
+	.elementor-button {
+		padding-top: 0;
+		padding-bottom: 0;
+		border: 0 none;
+
+		& > span {
+			display: flex;
+			justify-content: center;
+		}
+
+		.elementor-align-icon-right {
+			order: getValueByDirection( 2 ,0 );
+		}
+
+		.elementor-align-icon-left {
+			order: getValueByDirection( 0 ,2 );
+		}
+
+		&.elementor-size- {
+
+			&xs {
+				min-height: 33px;
+			}
+
+			&sm {
+				min-height: 40px;
+			}
+
+			&md {
+				min-height: 47px;
+			}
+
+			&lg {
+				min-height: 59px;
+			}
+
+			&xl {
+				min-height: 72px;
+			}
+		}
+	}
+}
+

@@ -47,7 +47,15 @@ body {
 	&.elementor-editor-active {
 
 		#elementor-preview {
-			@include start(280px);
+
+			@media (max-width: $screen-lg-max) {
+				@include start($panel-width);
+			}
+
+			@media (min-width: $screen-xl-min) {
+				@include start($panel-xl-width);
+			}
+
 			@include end(0);
 		}
 
@@ -72,7 +80,14 @@ body {
 		}
 
 		#elementor-panel {
-			@include start(-280px);
+
+			@media (max-width: $screen-lg-max) {
+				@include start(-$panel-width);
+			}
+
+			@media (min-width: $screen-xl-min) {
+				@include start(-$panel-xl-width);
+			}
 
 			> .ui-resizable-e, > .ui-resizable-w {
 				display: none;
@@ -90,7 +105,8 @@ body {
 	}
 }
 
-#elementor-preview, #elementor-panel {
+#elementor-preview,
+#elementor-panel {
 
 	&:not(.ui-resizable-resizing) {
 		transition: $start .5s, width 0.5s;

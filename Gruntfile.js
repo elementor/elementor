@@ -39,25 +39,15 @@ module.exports = function( grunt ) {
 				files: [ {
 					src: [
 						'**/*.php',
+						'!docs/**',
 						'!node_modules/**',
 						'!build/**',
 						'!tests/**',
+						'!.github/**',
 						'!vendor/**',
 						'!*~'
 					],
 					expand: true
-				} ]
-			}
-		},
-
-		sass: {
-			dist: {
-				files: [ {
-					expand: true,
-					cwd: 'assets/dev/scss/direction',
-					src: '*.scss',
-					dest: 'assets/css',
-					ext: '.css'
 				} ]
 			}
 		},
@@ -118,6 +108,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/frontend',
 							src: '**/*.js',
 							expose: 'elementor-frontend'
+						},
+						{
+							cwd: 'assets/dev/js/editor/components/revisions',
+							src: '**/*.js',
+							expose: 'elementor-revisions'
 						}
 					] );
 				}
@@ -198,6 +193,21 @@ module.exports = function( grunt ) {
 				'Gruntfile.js',
 				'assets/js/dev/**/*.js'
 			]
+		},
+
+		sass: {
+			options: {
+				sourceMap: true
+			},
+			dist: {
+				files: [ {
+					expand: true,
+					cwd: 'assets/dev/scss/direction',
+					src: '*.scss',
+					dest: 'assets/css',
+					ext: '.css'
+				} ]
+			}
 		},
 
 		postcss: {
@@ -328,10 +338,12 @@ module.exports = function( grunt ) {
 				src: [
 					'**',
 					'!node_modules/**',
+					'!docs/**',
 					'!build/**',
 					'!bin/**',
 					'!.git/**',
 					'!tests/**',
+					'!.github/**',
 					'!.travis.yml',
 					'!.jscsrc',
 					'!.jshintignore',

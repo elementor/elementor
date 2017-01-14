@@ -1,35 +1,19 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
-	ColumnView = require( 'elementor-views/column' ),
 	SectionView;
 
 SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
 
-	childView: ColumnView,
-
 	className: function() {
-		var classes = 'elementor-section',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-section';
-
-		return classes;
+		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
 	tagName: 'section',
 
 	childViewContainer: '> .elementor-container > .elementor-row',
-
-	triggers: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-edit': 'click:edit',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-trigger': 'click:edit',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-duplicate': 'click:duplicate'
-	},
-
-	elementEvents: {
-		'click .elementor-editor-section-settings-list .elementor-editor-element-remove': 'onClickRemove',
-		'click .elementor-editor-section-settings-list .elementor-editor-element-save': 'onClickSave'
-	},
 
 	behaviors: {
 		Sortable: {
@@ -39,26 +23,36 @@ SectionView = BaseElementView.extend( {
 		HandleDuplicate: {
 			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
 		},
-		HandleEditor: {
-			behaviorClass: require( 'elementor-behaviors/handle-editor' )
-		},
-		HandleEditMode: {
-			behaviorClass: require( 'elementor-behaviors/handle-edit-mode' )
-		},
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		},
-		HandleElementsRelation: {
-			behaviorClass: require( 'elementor-behaviors/elements-relation' )
 		}
+	},
+
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.duplicateButton = '.elementor-editor-section-settings-list .elementor-editor-element-duplicate';
+		ui.removeButton = '.elementor-editor-section-settings-list .elementor-editor-element-remove';
+		ui.saveButton = '.elementor-editor-section-settings-list .elementor-editor-element-save';
+		ui.triggerButton = '.elementor-editor-section-settings-list .elementor-editor-element-trigger';
+
+		return ui;
+	},
+
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
+
+		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
+
+		return events;
 	},
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-		this.listenTo( this.collection, 'remove', this.onCollectionRemove );
-		this.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
+		this.listenTo( this.collection, 'add remove reset', this._checkIsFull )
+			.listenTo( this.collection, 'remove', this.onCollectionRemove )
+			.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
 	},
 
 	addEmptyColumn: function() {
@@ -253,14 +247,6 @@ SectionView = BaseElementView.extend( {
 
 	onStructureChanged: function() {
 		this.redefineLayout();
-	},
-
-	onClickSave: function() {
-		var sectionID = this.model.get( 'id' );
-
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView( sectionID );
-		} );
 	}
 } );
 

@@ -11,7 +11,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	events: {
 		'click @ui.btnAddRow': 'onButtonAddRowClick',
 		'sortstart @ui.fieldContainer': 'onSortStart',
-		'sortupdate @ui.fieldContainer': 'onSortUpdate'
+		'sortupdate @ui.fieldContainer': 'onSortUpdate',
+		'sortstop @ui.fieldContainer': 'onSortStop'
 	},
 
 	childView: RepeaterRowView,
@@ -27,7 +28,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	childViewOptions: function() {
 		return {
 			controlFields: this.model.get( 'fields' ),
-			titleField: this.model.get( 'title_field' )
+			titleField: this.model.get( 'title_field' ),
+			parentModel: this.elementSettingsModel // For parentConditions in repeaterRow
 		};
 	},
 
@@ -36,12 +38,36 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
+		this.collection.each( function( model ) {
+			if ( ! model.get( '_id' ) ) {
+				model.set( '_id', elementor.helpers.getUniqueID() );
+			}
+		} );
+
 		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
+	},
+
+	addRow: function( data, options ) {
+		var id = elementor.helpers.getUniqueID();
+
+		if ( data instanceof Backbone.Model ) {
+			data.set( '_id', id );
+		} else {
+			data._id = id;
+		}
+
+		return this.collection.add( data, options );
 	},
 
 	editRow: function( rowView ) {
 		if ( this.currentEditableChild ) {
-			this.currentEditableChild.getChildViewContainer( this.currentEditableChild ).removeClass( 'editable' );
+			var currentEditable = this.currentEditableChild.getChildViewContainer( this.currentEditableChild );
+			currentEditable.removeClass( 'editable' );
+
+			// If the repeater contains TinyMCE editors, fire the `hide` trigger to hide floated toolbars
+			currentEditable.find( '.elementor-wp-editor' ).each( function() {
+				tinymce.get( this.id ).fire( 'hide' );
+			} );
 		}
 
 		if ( this.currentEditableChild === rowView ) {
@@ -81,7 +107,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRender: function() {
-		this.ui.fieldContainer.sortable( { axis: 'y' } );
+		ControlBaseItemView.prototype.onRender.apply( this, arguments );
+
+		this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
 
 		this.toggleMinRowsClass();
 	},
@@ -90,13 +118,26 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		ui.item.data( 'oldIndex', ui.item.index() );
 	},
 
+	onSortStop: function( event, ui ) {
+		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
+		ui.item.find( '.elementor-wp-editor' ).each( function() {
+			var editor = tinymce.get( this.id ),
+				settings = editor.settings;
+
+			settings.height = Backbone.$( editor.getContainer() ).height();
+			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
+			tinymce.init( settings );
+		} );
+	},
+
 	onSortUpdate: function( event, ui ) {
 		var oldIndex = ui.item.data( 'oldIndex' ),
 			model = this.collection.at( oldIndex ),
 			newIndex = ui.item.index();
 
 		this.collection.remove( model );
-		this.collection.add( model, { at: newIndex } );
+
+		this.addRow( model, { at: newIndex } );
 	},
 
 	onAddChild: function() {
@@ -125,7 +166,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			defaults[ field.name ] = field['default'];
 		} );
 
-		var newModel = this.collection.add( defaults ),
+		var newModel = this.addRow( defaults ),
 			newChildView = this.children.findByModel( newModel );
 
 		this.editRow( newChildView );
@@ -136,7 +177,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		this.collection.add( childView.model.clone(), { at: childView.itemIndex } );
+		this.addRow( childView.model.clone(), { at: childView.itemIndex } );
 	},
 
 	onChildviewClickEdit: function( childView ) {

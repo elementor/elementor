@@ -4,7 +4,7 @@
 
 #elementor-panel-page-editor {
 
-	.elementor-controls {
+	#elementor-controls {
 
 		> .elementor-control {
 
@@ -52,6 +52,23 @@
 					top: 0;
 					left: 0;
 					background-color: $editor-lightest;
+				}
+			}
+
+			&after {
+
+				&:after {
+					content: '';
+					position: absolute;
+					height: 3px;
+					width: 100%;
+					bottom: 0;
+					left: 0;
+					background-color: $editor-lightest;
+				}
+
+				+ .elementor-control-type-tabs {
+					padding-top: 15px;
 				}
 			}
 		}
@@ -126,52 +143,58 @@
 
 	.elementor-label-block {
 
-		&:not(.elementor-control-hidden-label):not(.elementor-control-type-heading) {
+		> .elementor-control-content {
 
-			.elementor-control-title {
+			> .elementor-control-field {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
 
+				> .elementor-control-input-wrapper {
+					flex-basis: 100%;
+					margin-top: 10px;
+				}
 			}
 		}
 
-		.elementor-control-field {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-		}
+		&.elementor-control-hidden-label {
 
-		.elementor-control-input-wrapper {
-			flex-basis: 100%;
-			margin-top: 10px;
+			> .elementor-control-content {
+
+				> .elementor-control-field {
+
+					> .elementor-control-input-wrapper {
+						margin-top: 0;
+					}
+				}
+			}
 		}
 	}
 
 	.elementor-label-inline {
 
-		.elementor-control-field {
-			display: table;
-			width: 100%;
+		> .elementor-control-content {
 
-			> * {
-				display: table-cell;
-				vertical-align: middle;
+			> .elementor-control-field {
+				display: table;
+				width: 100%;
+
+				> * {
+					display: table-cell;
+					vertical-align: middle;
+				}
+
+				> .elementor-control-title {
+					width: 45%;
+				}
 			}
-		}
-
-		.elementor-control-title {
-			width: 45%;
 		}
 	}
 
 	.elementor-control-description {
-		margin-top: 10px;
-	}
+		@extend .elementor-descriptor;
 
-	.elementor-control-description,
-	.elementor-control-descriptor {
-		font-size: 11px;
-		font-style: italic;
-		line-height: 1.2;
-		color: $editor-light;
+		margin-top: 10px;
 	}
 
 	.elementor-choices {
@@ -312,6 +335,23 @@
 		.elementor-device-tablet & {
 			background-color: $editor-info;
 		}
+	}
+
+	#elementor-update-preview {
+		margin: 15px 15px 0;
+		background-color: $editor-background;
+		display: flex;
+		align-items: center;
+	}
+
+	#elementor-update-preview-button-wrapper {
+		flex-grow: 1;
+		text-align: $end;
+	}
+
+	#elementor-update-preview-button {
+		padding: 8px 15px;
+		text-transform: uppercase;
 	}
 
 	// Media Control
@@ -600,7 +640,7 @@
 		}
 
 		&.wp-picker-active {
-			transform: translateY(-18px);
+			transform: translateY(6px);
 
 			.wp-color-result {
 				margin-right: 3px;
@@ -610,6 +650,13 @@
 
 	// Wysiwyg control
 	.elementor-control-type-wysiwyg {
+
+		&.elementor-rich-editing-disabled {
+
+			.wp-editor-container {
+				margin-top: 10px;
+			}
+		}
 
 		* {
 			box-sizing: content-box;
@@ -624,8 +671,8 @@
 			margin-top: 7px;
 			height: initial;
 			line-height: 1;
-			font-size: 11px;
-			padding: 3px 9px;
+			font-size: 10px;
+			padding: 3px 7px;
 			background-color: $editor-background;
 		}
 
@@ -646,8 +693,8 @@
 		.wp-switch-editor {
 			border: none;
 			color: $editor-dark;
-			font-size: 11px;
-			padding: 3px 12px 4px;
+			font-size: 10px;
+			padding: 3px 9px 4px;
 			border-radius: 3px 3px 0 0;
 		}
 
@@ -694,6 +741,8 @@
 		}
 
 		.mce-btn {
+			margin-right: 0;
+			margin-left: 0;
 
 			&:hover, &:active, &.mce-active {
 				border-color: $editor-lightest;
@@ -732,7 +781,7 @@
 		}
 
 		.elementor-control-media {
-			padding-top: 20px;
+		//	padding-top: 20px; //temp remove for some space in gallery widget
 		}
 
 		.elementor-control-gallery-thumbnails {
@@ -936,10 +985,13 @@
 		}
 	}
 
-	// Hidden control
-	.elementor-control-type-hidden {
-		display: none !important;
+	// Code Editor
+	.elementor-control-type-code {
+		padding: 0 10px 15px;
 	}
+
+	// Tabs Control
+	@import "controls/tabs";
 
 	// Repeater control
 	@import "controls/repeater";
@@ -949,4 +1001,15 @@
 
 	// Box-shadow control
 	@import "controls/box-shadow";
+
+	// Switcher control
+	@import "controls/switcher";
+
+	// Order control
+	@import "controls/order";
+
+	// Hidden control
+	.elementor-control-type-hidden {
+		display: none !important;
+	}
 }

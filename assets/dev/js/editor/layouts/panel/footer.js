@@ -33,9 +33,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-		Backbone.$( document ).on( 'click', _.bind( this.onDocumentClick, this ) );
-
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
+		this.listenTo( elementor.channels.editor, 'change', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
@@ -74,28 +72,32 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var self = this;
 
 		var options = {
-			revision: 'publish',
+			status: 'publish',
 			onSuccess: function() {
 				self.getDialog().show();
 
 				self.ui.buttonSaveButton.removeClass( 'elementor-button-state' );
+
+				NProgress.done();
 			}
 		};
 
 		self.ui.buttonSaveButton.addClass( 'elementor-button-state' );
 
-		elementor.saveBuilder( options );
+		NProgress.start();
+
+		elementor.saveEditor( options );
 	},
 
 	_saveBuilderDraft: function() {
-		elementor.saveBuilder();
+		elementor.saveEditor();
 	},
 
 	getDeviceModeButton: function( deviceMode ) {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
-	onDocumentClick: function( event ) {
+	onPanelClick: function( event ) {
 		var $target = Backbone.$( event.target ),
 			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
 
@@ -153,14 +155,20 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickShowTemplates: function() {
-		elementor.templates.startModal( function() {
-			elementor.templates.showTemplates();
-		} );
+		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView();
+		} );
+	},
+
+	onRender: function() {
+		var self = this;
+
+		_.defer( function() {
+			elementor.getPanelView().$el.on( 'click', _.bind( self.onPanelClick, self ) );
 		} );
 	}
 } );

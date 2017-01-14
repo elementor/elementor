@@ -3,10 +3,54 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Group_Control_Image_size extends Group_Control_Base {
+class Group_Control_Image_Size extends Group_Control_Base {
 
 	public static function get_type() {
 		return 'image-size';
+	}
+
+	/**
+	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]
+	 *
+	 * @param string $setting_key
+	 *
+	 * @return string
+	 */
+	public static function get_attachment_image_html( $settings, $setting_key = 'image' ) {
+		$id  = $settings[ $setting_key ]['id'];
+
+		// Old version of image settings
+		if ( ! isset( $settings[ $setting_key . '_size' ] ) ) {
+			$settings[ $setting_key . '_size' ] = '';
+		}
+
+		$size = $settings[ $setting_key . '_size' ];
+
+		$image_class = ! empty( $settings['hover_animation'] ) ? 'elementor-animation-' . $settings['hover_animation'] : '';
+
+		$html = '';
+
+		// If is the new version - with image size
+		$image_sizes   = get_intermediate_image_sizes();
+		$image_sizes[] = 'full';
+
+		if ( ! empty( $id ) && in_array( $size, $image_sizes ) ) {
+			$image_class .= " attachment-$size size-$size";
+
+			$html .= wp_get_attachment_image( $id, $size, false, [ 'class' => trim( $image_class ) ] );
+		} else {
+			$image_src = self::get_attachment_image_src( $id, $setting_key, $settings );
+
+			if ( ! $image_src && isset( $settings[ $setting_key ]['url'] ) ) {
+				$image_src = $settings[ $setting_key ]['url'] ;
+			}
+
+			$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
+
+			$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings[ $setting_key ] ), Control_Media::get_image_alt( $settings[ $setting_key ] ), $image_class_html );
+		}
+
+		return $html;
 	}
 
 	public static function get_all_image_sizes() {
@@ -67,15 +111,20 @@ class Group_Control_Image_size extends Group_Control_Base {
 
 		$image_sizes = $this->_get_image_sizes();
 
-		// Get the first item for default value
-		$default_value = array_keys( $image_sizes );
-		$default_value = array_shift( $default_value );
+		if ( ! empty( $args['default'] ) && isset( $image_sizes[ $args['default'] ] ) ) {
+			$default_value = $args['default'];
+		} else {
+			// Get the first item for default value
+			$default_value = array_keys( $image_sizes );
+			$default_value = array_shift( $default_value );
+		}
 
 		$controls['size'] = [
 			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => $image_sizes,
 			'default' => $default_value,
+			'label_block' => false,
 		];
 
 		if ( isset( $image_sizes['custom'] ) ) {
@@ -94,6 +143,9 @@ class Group_Control_Image_size extends Group_Control_Base {
 	}
 
 	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
+		if ( empty( $attachment_id ) )
+			return false;
+
 		$size = $instance[ $group_name . '_size' ];
 
 		if ( 'custom' !== $size ) {
@@ -101,9 +153,7 @@ class Group_Control_Image_size extends Group_Control_Base {
 		} else {
 			// Use BFI_Thumb script
 			// TODO: Please rewrite this code
-			if ( ! function_exists( 'bfi_thumb' ) ) {
-				require( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
-			}
+			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 
 			$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
 

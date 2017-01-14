@@ -2,8 +2,9 @@ var BaseSettingsModel;
 
 BaseSettingsModel = Backbone.Model.extend( {
 
-	initialize: function( data ) {
-		this.controls = elementor.getElementControls( this );
+	initialize: function( data, options ) {
+		this.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( this );
+
 		if ( ! this.controls ) {
 			return;
 		}
@@ -26,46 +27,61 @@ BaseSettingsModel = Backbone.Model.extend( {
 		// TODO: Change method to recursive
 		attrs = _.defaults( {}, attrs, defaults );
 
-		_.each( this.controls, function( field ) {
-			if ( 'repeater' === field.type ) {
-				attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
-					model: BaseSettingsModel
-				} );
-			}
-		} );
+		this.handleRepeaterData( attrs );
 
 		this.set( attrs );
 	},
 
+	handleRepeaterData: function( attrs ) {
+		_.each( this.controls, function( field ) {
+			if ( 'repeater' === field.type ) {
+				// TODO: Apply defaults on each field in repeater fields
+				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
+					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
+						model: function( attrs, options ) {
+							options = options || {};
+
+							options.controls = field.fields;
+
+							return new BaseSettingsModel( attrs, options );
+						}
+					} );
+				}
+			}
+		} );
+	},
+
 	getFontControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
+		return _.filter( this.controls, function( control ) {
 			return 'font' === control.type;
-		}, this ) );
+		} );
 	},
 
-	getStyleControls: function() {
-		return _.filter( this.controls, _.bind( function( control ) {
-			return this.isStyleControl( control.name );
-		}, this ) );
+	getStyleControls: function( controls ) {
+		var self = this;
+
+		controls = controls || self.controls;
+
+		return _.filter( controls, function( control ) {
+			if ( control.fields ) {
+				control.styleFields = self.getStyleControls( control.fields );
+
+				return true;
+			}
+
+			return self.isStyleControl( control.name, controls );
+		} );
 	},
 
-	isStyleControl: function( attribute ) {
-		var currentControl = _.find( this.controls, function( control ) {
+	isStyleControl: function( attribute, controls ) {
+		controls = controls || this.controls;
+
+		var currentControl = _.find( controls, function( control ) {
 			return attribute === control.name;
 		} );
 
-		if ( _.isUndefined( currentControl ) ) {
-			return false;
-		}
-
-		return ! _.isEmpty( currentControl.selectors );
+		return currentControl && ! _.isEmpty( currentControl.selectors );
 	},
-
-    getClassControls: function() {
-        return _.filter( this.controls, _.bind( function( control ) {
-            return this.isClassControl( control.name );
-        }, this ) );
-    },
 
 	isClassControl: function( attribute ) {
 		var currentControl = _.find( this.controls, function( control ) {

@@ -1,9 +1,9 @@
-module.exports = function( $ ) {
+module.exports = function( $scope, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var $anchor = this.find( '.elementor-menu-anchor' ),
+	var $anchor = $scope.find( '.elementor-menu-anchor' ),
 		anchorID = $anchor.attr( 'id' ),
 		$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
 		$scrollable = $( 'html, body' ),

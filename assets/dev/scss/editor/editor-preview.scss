@@ -11,9 +11,12 @@ html.elementor-html {
 	margin-top: 0 !important;
 }
 
+#elementor{
+	position: relative;
+}
+
 .elementor-editor-active {
-	#elementor {
-		position: relative;
+	.elementor.elementor-edit-mode {
 
 		.elementor-element-empty {
 
@@ -53,6 +56,7 @@ html.elementor-html {
 				bottom: 0;
 				letter-spacing: 0; // Hack for front-end style themes
 				z-index: $element-overlay;
+				pointer-events: none;
 			}
 
 			&.elementor-widget-empty {
@@ -248,6 +252,7 @@ html.elementor-html {
 			margin-bottom: 1px;
 			transform: translateY(1px);
 			border-radius: 3px 3px 0 0;
+			pointer-events: all;
 
 			.elementor-editor-element-settings-list {
 				float: $start;
@@ -467,7 +472,7 @@ html.elementor-html {
 		}
 	}
 
-	#elementor-inner {
+	.elementor-inner {
 
 		// Force keeping in top for blank page detection
 		&:before {
@@ -500,7 +505,7 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable, &:hover {
+		&.elementor-element-editable, &.elementor-widget-can-edit:hover {
 			outline: 1px solid $editor-info;
 		}
 
@@ -519,7 +524,7 @@ html.elementor-html {
 		}
 	}
 
-	div.handle {
+	.handle {
 		display: none; //TEMP
 	}
 
@@ -583,8 +588,11 @@ html.elementor-html {
 
 	.elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] {
 
-		.elementor-sortable-placeholder {
-			display: none;
+		.elementor-inner-column {
+
+			.elementor-sortable-placeholder {
+				display: none;
+			}
 		}
 	}
 
@@ -650,7 +658,7 @@ html.elementor-html {
 
 	#elementor-add-template-button {
 		background-color: $editor-dark;
-		margin-left: 25px;
+		@include margin-start(25px);
 	}
 
 	#elementor-add-section-drag-title {

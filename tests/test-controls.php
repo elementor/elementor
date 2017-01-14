@@ -53,45 +53,78 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_groupControlsGetTypes() {
-		foreach ( Elementor\Plugin::instance()->controls_manager->get_group_controls() as $group_control ) {
-			$this->assertNotEmpty( $group_control->get_type() );
+		foreach ( Elementor\Plugin::instance()->controls_manager->get_control_groups() as $control_group ) {
+			$this->assertNotEmpty( $control_group->get_type() );
 		}
 	}
 
 	public function test_replaceStyleValues() {
-		$text_control = Elementor\Plugin::instance()->controls_manager->get_control( 'text' );
+		$stylesheet = new \Elementor\Stylesheet();
+
+		$controls_stack = [
+			'margin' => [
+				'name' => 'margin',
+				'type' => \Elementor\Controls_Manager::DIMENSIONS,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element' => 'margin: {{TOP}}px {{RIGHT}}px {{BOTTOM}}px {{LEFT}}px;',
+				]
+			],
+			'color' => [
+				'name' => 'color',
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element' => 'color: {{VALUE}};',
+				]
+			]
+		];
+
+		$values = [
+			'color' => '#fff',
+			'margin' => [
+				'top' => '1',
+				'right' => '2',
+				'bottom' => '3',
+				'left' => '4',
+			]
+		];
+
+		$value_callback = function ( $control ) use ( $values ) {
+			return $values[ $control['name'] ];
+		};
+
+		$placeholders = [ '{{WRAPPER}}' ];
+
+		$replacements = [ '.elementor-test-element' ];
+
+		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['color'], $controls_stack, $value_callback, $placeholders, $replacements );
 
 		$this->assertEquals(
-			'10px;',
-			$text_control->get_replace_style_values(
-				'{{VALUE}};',
-				'10px'
-			)
+			'#fff',
+			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'color' )
 		);
 
-		$dimensions_control = Elementor\Plugin::instance()->controls_manager->get_control( 'dimensions' );
+		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['margin'], $controls_stack, $value_callback, $placeholders, $replacements );
+
 		$this->assertEquals(
-			'1px 2px 3px 4px;',
-			$dimensions_control->get_replace_style_values(
-				'{{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
-				[
-					'top' => '1px',
-					'right' => '2px',
-					'bottom' => '3px',
-					'left' => '4px',
-				]
-			)
+			'1px 2px 3px 4px',
+			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'margin' )
 		);
 	}
 
 	public function test_checkCondition() {
-		$element_obj = Elementor\Plugin::instance()->widgets_manager->get_widget( 'text-editor' );
+		Elementor\Plugin::instance()->widgets_manager->get_widget_types(); // Ensure the widgets initialized
 
-		$this->assertTrue( $element_obj->is_control_visible( [], [] ) );
-		
-		$instance = [
-			'control_1' => 'value',
-		];
+		$element_obj = \Elementor\Plugin::instance()->elements_manager->create_element_instance( [
+			'elType' => 'widget',
+			'widgetType' => 'text-editor',
+			'id' => 'test_id',
+			'settings' => [
+				'control_1' => 'value',
+			]
+		] );
+
+		$this->assertTrue( $element_obj->is_control_visible( [] ) );
+
 		$control_option = [
 			'name' => 'control_2',
 			'condition' => [
@@ -99,7 +132,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			],
 		];
 
-		$this->assertFalse( $element_obj->is_control_visible( $instance, $control_option) );
+		$this->assertFalse( $element_obj->is_control_visible( $control_option) );
 
 		$control_option = [
 			'name' => 'control_2',
@@ -108,7 +141,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			],
 		];
 
-		$this->assertTrue( $element_obj->is_control_visible( $instance, $control_option) );
+		$this->assertTrue( $element_obj->is_control_visible( $control_option) );
 
 		$control_option = [
 			'name' => 'control_2',
@@ -116,7 +149,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'control_1!' => 'value',
 			],
 		];
-		$this->assertFalse( $element_obj->is_control_visible( $instance, $control_option) );
+		$this->assertFalse( $element_obj->is_control_visible( $control_option) );
 	}
 
 	public function test_getDefaultValue() {

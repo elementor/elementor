@@ -28,9 +28,25 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	public function get_memory_limit() {
-		return [
+		$result = [
 			'value' => WP_MEMORY_LIMIT,
 		];
+
+		$min_recommended_memory = '64M';
+
+		$memory_limit_bytes = wp_convert_hr_to_bytes( WP_MEMORY_LIMIT );
+
+		$min_recommended_bytes = wp_convert_hr_to_bytes( $min_recommended_memory );
+
+		if ( $memory_limit_bytes < $min_recommended_bytes ) {
+			$result['recommendation'] = sprintf(
+				_x( 'We recommend setting memory to at least %s. For more information, read about <a href="%s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				$min_recommended_memory,
+				'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP'
+			);
+		}
+
+		return $result;
 	}
 
 	public function get_version() {
@@ -60,8 +76,14 @@ class WordPress_Reporter extends Base_Reporter {
 	public function get_permalink_structure() {
 		global $wp_rewrite;
 
+		$structure = $wp_rewrite->permalink_structure;
+
+		if ( ! $structure ) {
+			$structure = 'Plain';
+		}
+
 		return [
-			'value' => $wp_rewrite->permalink_structure,
+			'value' => $structure,
 		];
 	}
 

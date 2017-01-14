@@ -1,56 +1,61 @@
 //
 // Schemes
 //
+.elementor-panel-scheme-title {
+	padding: 10px 20px;
+	margin-top: 10px;
+}
 
-.elementor-panel-scheme {
+.elementor-panel-scheme-description {
+	padding: 20px 20px 0;
+}
 
-	.elementor-panel-scheme-title {
-		padding: 10px 20px;
-		margin-top: 10px;
+.elementor-panel-scheme-buttons {
+	padding: 0 20px;
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+	height: 40px;
+	background-color: #fff;
+	box-shadow: $panel-bottom-shadow;
+}
+
+.elementor-panel-scheme-button-wrapper {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+
+	&:first-child {
+		text-align: $start;
 	}
 
-	.elementor-panel-scheme-buttons {
-		@include padding-start(20px);
-		display: table;
-		table-layout: fixed;
-		width: 100%;
-		height: 40px;
-		background-color: #fff;
-		box-shadow: $panel-bottom-shadow;
+	&:last-child {
+		text-align: $end;
 	}
+}
 
-	.elementor-panel-scheme-button-wrapper {
-		display: table-cell;
-		vertical-align: middle;
+.elementor-panel-scheme-save {
+
+	.elementor-button {
+		padding: 6px 18px;
+		text-transform: uppercase;
 	}
+}
 
-	.elementor-panel-scheme-save {
-		text-align: center;
+.elementor-panel-scheme-reset, .elementor-panel-scheme-discard {
 
-		.elementor-button {
-			padding: 6px 18px;
-			text-transform: uppercase;
-		}
-	}
+	.elementor-button {
+		color: $editor-light;
+		background: none;
 
-	.elementor-panel-scheme-reset, .elementor-panel-scheme-discard {
+		&:hover {
 
-		.elementor-button {
-			color: $editor-light;
-			background: none;
-
-			&:hover {
-
-			}
-		}
-
-		.fa {
-			margin-right: 3px;
 		}
 	}
 }
 
-#elementor-panel-scheme-color {
+
+.elementor-panel-scheme-color {
 
 	.elementor-panel-scheme-items {
 		position: relative;
@@ -58,20 +63,33 @@
 
 	.elementor-panel-scheme-item {
 		display: inline-block;
-		margin-bottom: 10px;
 
 		&:not(:nth-child(4n)) {
-			@include margin-end(13px);
+
+			@media(max-width: $screen-lg-max) {
+				@include margin-end(13px);
+			}
+
+			@media(min-width: $screen-xl-min) {
+				@include margin-end(19px);
+			}
 		}
 	}
 
 	.wp-picker-container {
 
 		&.wp-picker-active {
-			transform: translateY(-37px);
+			transform: translateY(10px);
 
 			.wp-color-result {
-				margin-right: 7px;
+
+				@media(max-width: $screen-lg-max) {
+					margin-right: 4px;
+				}
+
+				@media(min-width: $screen-xl-min) {
+					margin-right: 6px;
+				}
 			}
 		}
 	}
@@ -80,7 +98,7 @@
 .elementor-panel-scheme-color-title {
 	text-align: center;
 	text-transform: uppercase;
-	margin-top: 10px;
+	margin: 10px 0;
 	color: $editor-lighter;
 	font-size: 8px;
 }
@@ -129,6 +147,7 @@
 }
 
 .elementor-panel-scheme-color-system-items {
+	display: flex;
 	transition: border .5s;
 	overflow: hidden;
 	padding: 3px;
@@ -142,17 +161,13 @@
 }
 
 .elementor-panel-scheme-color-system-item {
-	float: left;
 	height: 20px;
-	width: 25%;
+	flex-grow: 1;
 }
 
 #elementor-panel-schemes-disabled {
-	padding: 20px;
 
 	a {
-		color: $editor-accent;
-		cursor: pointer;
 		
 		&:hover {
 			text-decoration: underline;

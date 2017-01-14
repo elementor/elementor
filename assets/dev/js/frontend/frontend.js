@@ -1,39 +1,54 @@
 /* global elementorFrontendConfig */
 ( function( $ ) {
-	var ElementsHandler = require( 'elementor-frontend/elements-handler' ),
+	var EventManager = require( '../utils/hooks' ),
+		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
 	var ElementorFrontend = function() {
 		var self = this,
 			scopeWindow = window;
 
-		var elementsDefaultHandlers = {
-			accordion: require( 'elementor-frontend/handlers/accordion' ),
-			alert: require( 'elementor-frontend/handlers/alert' ),
-			counter: require( 'elementor-frontend/handlers/counter' ),
-			'image-carousel': require( 'elementor-frontend/handlers/image-carousel' ),
-			'menu-anchor': require( 'elementor-frontend/handlers/menu-anchor' ),
-			progress: require( 'elementor-frontend/handlers/progress' ),
-			section: require( 'elementor-frontend/handlers/section' ),
-			tabs: require( 'elementor-frontend/handlers/tabs' ),
-			toggle: require( 'elementor-frontend/handlers/toggle' ),
-			video: require( 'elementor-frontend/handlers/video' )
-		};
-
 		var addGlobalHandlers = function() {
-			self.elementsHandler.addGlobalHandler( require( 'elementor-frontend/handlers/global' ) );
+			self.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
+			self.hooks.addAction( 'frontend/element_ready/widget', require( 'elementor-frontend/handlers/widget' ) );
 		};
 
 		var addElementsHandlers = function() {
-			$.each( elementsDefaultHandlers, function( elementName ) {
-				self.elementsHandler.addHandler( elementName, this );
+			$.each( self.handlers, function( elementName, funcCallback ) {
+				self.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
 			} );
 		};
 
 		var runElementsHandlers = function() {
-			$( '.elementor-element' ).each( function() {
+			var $elements;
+
+			if ( self.isEditMode() ) {
+				// Elements outside from the Preview
+				$elements = self.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			} else {
+				$elements = $( '.elementor-element' );
+			}
+
+			$elements.each( function() {
 				self.elementsHandler.runReadyTrigger( $( this ) );
 			} );
+		};
+
+		// element-type.skin-type
+		this.handlers = {
+			// Elements
+			'section': require( 'elementor-frontend/handlers/section' ),
+
+			// Widgets
+			'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
+			'alert.default': require( 'elementor-frontend/handlers/alert' ),
+			'counter.default': require( 'elementor-frontend/handlers/counter' ),
+			'progress.default': require( 'elementor-frontend/handlers/progress' ),
+			'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
+			'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
+			'video.default': require( 'elementor-frontend/handlers/video' ),
+			'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
+			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
 		};
 
 		this.config = elementorFrontendConfig;
@@ -50,8 +65,8 @@
 			return self.config.isEditMode;
 		};
 
+		this.hooks = new EventManager();
 		this.elementsHandler = new ElementsHandler( $ );
-
 		this.utils = new Utils( $ );
 
 		this.init = function() {

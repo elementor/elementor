@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Controls_Manager;
+use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -20,7 +21,7 @@ class Source_Remote extends Source_Base {
 
 	public function register_data() {}
 
-	public function get_items() {
+	public function get_items( $args = [] ) {
 		$templates_data = Api::get_templates_data();
 
 		$templates = [];
@@ -29,6 +30,11 @@ class Source_Remote extends Source_Base {
 				$templates[] = $this->get_item( $template_data );
 			}
 		}
+
+		if ( ! empty( $args ) ) {
+			$templates = wp_list_filter( $templates, $args );
+		}
+
 		return $templates;
 	}
 
@@ -47,6 +53,7 @@ class Source_Remote extends Source_Base {
 			'author' => $template_data['author'],
 			'categories' => [],
 			'keywords' => [],
+			'isPro' => ( '1' === $template_data['is_pro'] ),
 			'url' => $template_data['url'],
 		];
 	}
@@ -55,7 +62,15 @@ class Source_Remote extends Source_Base {
 		return false;
 	}
 
+	public function update_item( $new_data ) {
+		return false;
+	}
+
 	public function delete_template( $item_id ) {
+		return false;
+	}
+
+	public function export_template( $item_id ) {
 		return false;
 	}
 
@@ -65,42 +80,9 @@ class Source_Remote extends Source_Base {
 			return false;
 		}
 
-		// Fetch all images and replace to new
-		$import_images = new Classes\Import_Images();
+		$data = $this->replace_elements_ids( $data );
+		$data = $this->process_export_import_data( $data, 'on_import' );
 
-		$content_data = Plugin::instance()->db->iterate_data( $data, function( $element ) use ( $import_images ) {
-			$element['id'] = Utils::generate_random_string();
-
-			if ( 'widget' === $element['elType'] ) {
-				$obj = Plugin::instance()->widgets_manager->get_widget( $element['widgetType'] );
-			} else {
-				$obj = Plugin::instance()->elements_manager->get_element( $element['elType'] );
-			}
-
-			if ( ! $obj )
-				return $element;
-
-			foreach ( $obj->get_controls() as $control ) {
-				if ( Controls_Manager::MEDIA === $control['type'] ) {
-					if ( empty( $element['settings'][ $control['name'] ]['url'] ) )
-						continue;
-
-					$element['settings'][ $control['name'] ] = $import_images->import( $element['settings'][ $control['name'] ] );
-				}
-
-				if ( Controls_Manager::GALLERY === $control['type'] ) {
-					foreach ( $element['settings'][ $control['name'] ] as &$attachment ) {
-						if ( empty( $attachment['url'] ) )
-							continue;
-
-						$attachment = $import_images->import( $attachment );
-					}
-				}
-			}
-
-			return $element;
-		} );
-
-		return $content_data;
+		return $data;
 	}
 }

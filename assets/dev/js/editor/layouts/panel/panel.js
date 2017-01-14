@@ -32,7 +32,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.initPages();
 	},
 
-	initPages: function() {
+	buildPages: function() {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
@@ -50,6 +50,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			},
 			typographyScheme: {
 				view: require( 'elementor-panel/pages/schemes/typography' )
+			},
+			colorPickerScheme: {
+				view: require( 'elementor-panel/pages/schemes/color-picker' )
 			}
 		};
 
@@ -64,11 +67,35 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		this.pages = pages;
+		return pages;
+	},
+
+	initPages: function() {
+		var pages;
+
+		this.getPages = function( page ) {
+			if ( ! pages ) {
+				pages = this.buildPages();
+			}
+
+			return page ? pages[ page ] : pages;
+		};
+
+		this.addPage = function( pageName, pageData ) {
+			if ( ! pages ) {
+				pages = this.buildPages();
+			}
+
+			pages[ pageName ] = pageData;
+		};
 	},
 
 	getHeaderView: function() {
 		return this.getChildView( 'header' );
+	},
+
+	getFooterView: function() {
+		return this.getChildView( 'footer' );
 	},
 
 	getCurrentPageName: function() {
@@ -80,17 +107,55 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	setPage: function( page, title, viewOptions ) {
-		var pageData = this.pages[ page ];
+		var pageData = this.getPages( page );
 
 		if ( ! pageData ) {
 			throw new ReferenceError( 'Elementor panel doesn\'t have page named \'' + page + '\'' );
 		}
 
-		this.showChildView( 'content', new pageData.view( viewOptions ) );
+		if ( pageData.options ) {
+			viewOptions = _.extend( pageData.options, viewOptions );
+		}
+
+		var View = pageData.view;
+
+		if ( pageData.getView ) {
+			View = pageData.getView();
+		}
+
+		this.showChildView( 'content', new View( viewOptions ) );
 
 		this.getHeaderView().setTitle( title || pageData.title );
 
 		this.currentPageName = page;
+	},
+
+	openEditor: function( model, view ) {
+		var currentPageName = this.getCurrentPageName();
+
+		if ( 'editor' === currentPageName ) {
+			var currentPageView = this.getCurrentPageView(),
+				currentEditableModel = currentPageView.model;
+
+			if ( currentEditableModel === model ) {
+				return;
+			}
+		}
+
+		var elementData = elementor.getElementData( model );
+
+		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
+			model: model,
+			editedElementView: view
+		} );
+
+		var action = 'panel/open_editor/' + model.get( 'elType' );
+
+		// Example: panel/open_editor/widget
+		elementor.hooks.doAction( action, this, model, view );
+
+		// Example: panel/open_editor/widget/heading
+		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this, model, view );
 	},
 
 	onBeforeShow: function() {

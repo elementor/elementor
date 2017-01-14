@@ -3,6 +3,20 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A Box Shadow set of controls
+ *
+ * @param array  $default    {
+ * 		@type integer $horizontal Default 0
+ * 		@type integer $vertical   Default 0
+ * 		@type integer $blur       Default 10
+ * 		@type integer $spread     Default 0
+ * 		@type bool    $inset      Unused //TODO: allow set an inset shadow
+ * 		@type string  $color      Shadow color, in rgb|rgba|hex format.
+ * }
+ *
+ * @since 1.0.0
+ */
 class Control_Box_Shadow extends Control_Base_Multiple {
 
 	public function get_type() {
@@ -56,7 +70,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 				<div class="elementor-control-input-wrapper">
 					<div class="elementor-slider" data-input="<?php echo $slider['type']; ?>"></div>
 					<div class="elementor-slider-input">
-						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" step="{{ data.step }}" data-setting="<?php echo $slider['type']; ?>"/>
+						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" data-setting="<?php echo $slider['type']; ?>"/>
 					</div>
 				</div>
 			</div>

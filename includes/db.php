@@ -8,12 +8,11 @@ class DB {
 	/**
 	 * Current DB version of the editor.
 	 */
-	const DB_VERSION = '0.2';
+	const DB_VERSION = '0.4';
 
-	const REVISION_PUBLISH = 'publish';
-	const REVISION_DRAFT = 'draft';
-
-	private $_fetch_html_cache = false;
+	const STATUS_PUBLISH = 'publish';
+	const STATUS_DRAFT = 'draft';
+	const STATUS_AUTOSAVE = 'autosave';
 
 	/**
 	 * Save builder method.
@@ -21,66 +20,118 @@ class DB {
 	 * @since 1.0.0
 	 * @param int    $post_id
 	 * @param array  $posted
-	 * @param string $revision
+	 * @param string $status
 	 *
 	 * @return void
 	 */
-	public function save_builder( $post_id, $posted, $revision = self::REVISION_PUBLISH ) {
-		$builder_data = $this->_sanitize_saved_data( $posted );
+	public function save_editor( $post_id, $posted, $status = self::STATUS_PUBLISH ) {
+		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
+		if ( isset( $GLOBALS['post'] ) ) {
+			$global_post = $GLOBALS['post'];
+		}
+		$GLOBALS['post'] = get_post( $post_id );
 
-		if ( self::REVISION_PUBLISH === $revision ) {
+		$editor_data = $this->_get_editor_data( $posted );
+
+		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+		$json_value = wp_slash( wp_json_encode( $editor_data ) );
+
+		if ( self::STATUS_PUBLISH === $status ) {
 			$this->remove_draft( $post_id );
-			update_post_meta( $post_id, '_elementor_data', $builder_data );
+
+			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
+
+			if ( $is_meta_updated ) {
+				Revisions_Manager::handle_revision();
+			}
+
 			$this->_save_plain_text( $post_id );
-		} else {
-			update_post_meta( $post_id, '_elementor_draft_data', $builder_data );
+		} elseif ( self::STATUS_AUTOSAVE === $status ) {
+			Revisions_Manager::handle_revision();
+
+			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+
+			if ( $old_autosave ) {
+				wp_delete_post_revision( $old_autosave->ID );
+			}
+
+			$autosave_id = wp_create_post_autosave( [
+				'post_ID' => $post_id,
+				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
+				'post_modified' => current_time( 'mysql' ),
+			] );
+
+			if ( $autosave_id ) {
+				update_metadata( 'post',  $autosave_id, '_elementor_data', $json_value );
+			}
 		}
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
+
+		// Restore global post
+		if ( isset( $global_post ) ) {
+			$GLOBALS['post'] = $global_post;
+		} else {
+			unset( $GLOBALS['post'] );
+		}
+
+		$css_file = new Post_CSS_File( $post_id );
+		$css_file->update();
+
+		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 
 	/**
 	 * Get & Parse the builder from DB.
 	 *
 	 * @since 1.0.0
-	 * @param int    $post_id
-	 * @param string $revision
+	 * @param int $post_id
+	 * @param string $status
 	 *
 	 * @return array
 	 */
-	public function get_builder( $post_id, $revision = self::REVISION_PUBLISH ) {
-		$data = $this->get_plain_builder( $post_id, $revision );
+	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
+		$data = $this->get_plain_editor( $post_id, $status );
 
-		$this->_fetch_html_cache = true;
-		$data = $this->_sanitize_saved_data( $data );
-		$this->_fetch_html_cache = false;
-
-		return $data;
+		return $this->_get_editor_data( $data, true );
 	}
 
-	public function get_plain_builder( $post_id, $revision = self::REVISION_PUBLISH ) {
-		$data = get_post_meta( $post_id, '_elementor_data', true );
-		if ( self::REVISION_DRAFT === $revision ) {
-			$draft_data = get_post_meta( $post_id, '_elementor_draft_data', true );
+	protected function _get_json_meta( $post_id, $key ) {
+		$meta = get_post_meta( $post_id, $key, true );
+
+		if ( is_string( $meta ) && ! empty( $meta ) ) {
+			$meta = json_decode( $meta, true );
+		}
+
+		return $meta;
+	}
+
+	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
+		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
+
+		if ( self::STATUS_DRAFT === $status ) {
+			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
 
 			if ( ! empty( $draft_data ) ) {
 				$data = $draft_data;
 			}
 
 			if ( empty( $data ) ) {
-				$data = $this->_get_new_builder_from_wp_editor( $post_id );
+				$data = $this->_get_new_editor_from_wp_editor( $post_id );
 			}
 		}
+
 		return $data;
 	}
 
-	protected function _get_new_builder_from_wp_editor( $post_id ) {
+	protected function _get_new_editor_from_wp_editor( $post_id ) {
 		$post = get_post( $post_id );
+
 		if ( empty( $post ) || empty( $post->post_content ) ) {
 			return [];
 		}
 
-		$text_editor_widget_obj = Plugin::instance()->widgets_manager->get_widget( 'text-editor' );
+		$text_editor_widget_type = Plugin::instance()->widgets_manager->get_widget_types( 'text-editor' );
 
 		// TODO: Better coding to start template for editor
 		return [
@@ -94,8 +145,8 @@ class DB {
 						'elements' => [
 							[
 								'id' => Utils::generate_random_string(),
-								'elType' => $text_editor_widget_obj->get_type(),
-								'widgetType' => $text_editor_widget_obj->get_id(),
+								'elType' => $text_editor_widget_type::get_type(),
+								'widgetType' => $text_editor_widget_type->get_name(),
 								'settings' => [
 									'editor' => $post->post_content,
 								],
@@ -148,28 +199,29 @@ class DB {
 		}
 	}
 
+	private function _render_element_plain_content( $element_data ) {
+		if ( 'widget' === $element_data['elType'] ) {
+			/** @var Widget_Base $widget */
+			$widget = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+
+			$widget->render_plain_content();
+		}
+
+		if ( ! empty( $element_data['elements'] ) ) {
+			foreach ( $element_data['elements'] as $element ) {
+				$this->_render_element_plain_content( $element );
+			}
+		}
+	}
+
 	private function _save_plain_text( $post_id ) {
 		ob_start();
 
-		$data = $this->get_plain_builder( $post_id );
-		if ( ! empty( $data ) ) {
-			foreach ( $data as $section ) {
-				foreach ( $section['elements'] as $column ) {
-					foreach ( $column['elements'] as $widget ) {
-						if ( empty( $widget['widgetType'] ) )
-							continue;
+		$data = $this->get_plain_editor( $post_id );
 
-						$widget_obj = Plugin::instance()->widgets_manager->get_widget( $widget['widgetType'] );
-						if ( false === $widget_obj )
-							continue;
-
-						if ( empty( $widget['settings'] ) ) {
-							$widget['settings'] = [];
-						}
-						$widget['settings'] = $widget_obj->get_parse_values( $widget['settings'] );
-						$widget_obj->render_plain_content( $widget['settings'] );
-					}
-				}
+		if ( $data ) {
+			foreach ( $data as $element_data ) {
+				$this->_render_element_plain_content( $element_data );
 			}
 		}
 
@@ -194,151 +246,77 @@ class DB {
 	}
 
 	/**
-	 * Sanitize posted data for Section.
-	 *
-	 * @since 1.0.0
-	 * @param array $posted_section
-	 *
-	 * @return array|bool
-	 */
-	private function _sanitize_saved_section( $posted_section ) {
-		if ( ! isset( $posted_section['elType'] ) || 'section' !== $posted_section['elType'] ) {
-			return false;
-		}
-
-		if ( empty( $posted_section['elements'] ) ) {
-			return false;
-		}
-
-		$section_data = [
-			'id' => $posted_section['id'],
-			'elType' => $posted_section['elType'],
-			'settings' => $posted_section['settings'],
-			'elements' => [],
-			'isInner' => $posted_section['isInner'],
-		];
-
-		foreach ( $posted_section['elements'] as $posted_column ) {
-			$column_data = $this->_sanitize_saved_column( $posted_column );
-			if ( ! $column_data ) {
-				continue;
-			}
-
-			$section_data['elements'][] = $column_data;
-		} // End Column
-
-		return $section_data;
-	}
-
-	/**
-	 * Sanitize posted data for Column.
-	 *
-	 * @since 1.0.0
-	 * @param array $posted_column
-	 *
-	 * @return array|bool
-	 */
-	private function _sanitize_saved_column( $posted_column ) {
-		if ( ! isset( $posted_column['elType'] ) || 'column' !== $posted_column['elType'] ) {
-			return false;
-		}
-
-		$column_data = [
-			'id' => $posted_column['id'],
-			'elType' => $posted_column['elType'],
-			'settings' => $posted_column['settings'],
-			'elements' => [],
-			'isInner' => $posted_column['isInner'],
-		];
-		foreach ( $posted_column['elements'] as $posted_widget ) {
-			$widget_data = $this->_sanitize_saved_widget( $posted_widget );
-
-			if ( ! $widget_data ) {
-				continue;
-			}
-			$column_data['elements'][] = $widget_data;
-		} // End Widget
-
-		return $column_data;
-	}
-
-	/**
-	 * Sanitize posted data for Widget.
-	 *
-	 * @since 1.0.0
-	 * @param array $posted_widget
-	 *
-	 * @return array|bool
-	 */
-	private function _sanitize_saved_widget( $posted_widget ) {
-		if ( ! isset( $posted_widget['elType'] ) ) {
-			return false;
-		}
-
-		if ( 'section' === $posted_widget['elType'] ) {
-			return $this->_sanitize_saved_section( $posted_widget );
-		}
-
-		if ( empty( $posted_widget['widgetType'] ) ) {
-			return false;
-		}
-
-		$widget_obj = Plugin::instance()->widgets_manager->get_widget( $posted_widget['widgetType'] );
-		if ( false === $widget_obj )
-			return false;
-
-		$widget_data = [
-			'id' => $posted_widget['id'],
-			'elType' => $posted_widget['elType'],
-			'settings' => $widget_obj->get_parse_values( $posted_widget['settings'] ),
-			'widgetType' => $posted_widget['widgetType'],
-		];
-
-		if ( $this->_fetch_html_cache ) {
-			ob_start();
-			$widget_obj->render_content( $widget_data['settings'] );
-			$widget_data['htmlCache'] = ob_get_clean();
-		}
-
-		// TODO: Validate widget here..
-		return $widget_data;
-	}
-
-	/**
 	 * Sanitize posted data.
 	 *
 	 * @since 1.0.0
-	 * @param array $posted
+	 *
+	 * @param array $data
+	 *
+	 * @param bool $with_html_content
 	 *
 	 * @return array
 	 */
-	private function _sanitize_saved_data( $posted ) {
-		$builder_data = [];
+	private function _get_editor_data( $data, $with_html_content = false ) {
+		$editor_data = [];
 
-		if ( ! empty( $posted ) ) {
-			foreach ( $posted as $posted_section ) {
-				$section_data = $this->_sanitize_saved_section( $posted_section );
+		foreach ( $data as $element_data ) {
+			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
-				if ( ! $section_data ) {
-					continue;
-				}
+			$editor_data[] = $element->get_raw_data( $with_html_content );
+		} // End Section
 
-				$builder_data[] = $section_data;
-			} // End Section
-		}
-
-		return $builder_data;
+		return $editor_data;
 	}
 
 	public function iterate_data( $data_container, $callback ) {
-		foreach ( $data_container as $element_key => $element_value ) {
-			$data_container[ $element_key ] = $callback( $data_container[ $element_key ] );
-
-			if ( ! empty( $data_container[ $element_key ]['elements'] ) ) {
-				$data_container[ $element_key ]['elements'] = $this->iterate_data( $data_container[ $element_key ]['elements'], $callback );
+		if ( isset( $data_container['elType'] ) ) {
+			if ( ! empty( $data_container['elements'] ) ) {
+				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback );
 			}
+
+			return $callback( $data_container );
+		}
+
+		foreach ( $data_container as $element_key => $element_value ) {
+			$data_container[ $element_key ] = $this->iterate_data( $data_container[ $element_key ], $callback );
 		}
 
 		return $data_container;
+	}
+
+	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
+		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
+			return;
+		}
+
+		$from_post_meta = get_post_meta( $from_post_id );
+
+		foreach ( $from_post_meta as $meta_key => $values ) {
+			// Copy only meta with the `_elementor` prefix
+			if ( 0 === strpos( $meta_key, '_elementor' ) ) {
+				$value = $values[0];
+
+				// The elementor JSON needs slashes before saving
+				if ( '_elementor_data' === $meta_key ) {
+					$value = wp_slash( $value );
+				}
+
+				update_metadata( 'post', $to_post_id, $meta_key, $value );
+			}
+		}
+	}
+
+	public function is_built_with_elementor( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
+	}
+
+	public function has_elementor_in_post( $post_id ) {
+		$data = $this->get_plain_editor( $post_id );
+		$edit_mode = $this->get_edit_mode( $post_id );
+
+		return ( ! empty( $data ) && 'builder' === $edit_mode );
 	}
 }

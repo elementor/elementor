@@ -11,16 +11,14 @@ ControlColorItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		this.ui.picker.wpColorPicker( {
+		elementor.helpers.wpColorPicker( this.ui.picker, {
 			change: _.bind( function() {
 				this.setValue( this.ui.picker.wpColorPicker( 'color' ) );
 			}, this ),
 
 			clear: _.bind( function() {
 				this.setValue( '' );
-			}, this ),
-
-			width: 251
+			}, this )
 		} ).wpColorPicker( 'instance' )
 			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );

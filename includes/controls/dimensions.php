@@ -3,6 +3,25 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * A group of Dimensions settings (Top, Right, Bottom, Left) With the option to link them together
+ *
+ * @param array  $default {
+ * 		@type integer       $top                     Default empty
+ * 		@type integer       $right                   Default empty
+ * 		@type integer       $bottom                  Default empty
+ * 		@type integer       $left                    Default empty
+ * 		@type string        $unit                    The selected CSS Unit. 'px', '%', 'em'
+ * 		                               				 Default 'px'
+ * 		@type bool          $isLinked                Whether to link them together ( prevent set different values )
+ * 		                               				 Default true
+ * }
+ *
+ * @param array|string $allowed_dimensions      Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
+ *                                              Default 'all'
+ *
+ * @since                         1.0.0
+ */
 class Control_Dimensions extends Control_Base_Units {
 
 	public function get_type() {
