@@ -240,9 +240,9 @@ TemplateLibraryManager = function() {
 		self.startModal( self.showTemplates );
 	};
 
-	this.showErrorDialog = function( errorMessage ) {
+	this.showErrorDialog = function() {
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
+		    .setMessage( elementor.translate( 'templates_request_error' ) )
 		    .show();
 	};
 };
