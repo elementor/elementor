@@ -161,6 +161,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.1.3 - 15.01.2017 =
+* Tweak! - Embed YouTube API just when is needed
+* Tweak! - Added post revisions support as default to any CPT Elementor is active on
+* Fix! - E-Icons font library correct files
+* Fix! - Preventing event on click duplicate
+* Fix! - Error message for import template
+
 = 1.1.2 - 12.01.2017 =
 * Fix! - Clear browser caching from last new JS files
 

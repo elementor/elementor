@@ -163,6 +163,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.1.3 - 15.01.2017 ###
+* Tweak! - Embed YouTube API just when is needed
+* Tweak! - Added post revisions support as default to any CPT Elementor is active on
+* Fix! - E-Icons font library correct files
+* Fix! - Preventing event on click duplicate
+* Fix! - Error message for import template
+
 ### 1.1.2 - 12.01.2017 ###
 * Fix! - Clear browser caching from last new JS files
 
@@ -176,13 +183,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * New! - Added Tool for Replace Site URL in Elementor data
 * New! - Hotkey: Ctrl / Cmd + S = Save
 * New! - Hotkey: Ctrl / Cmd + P = Preview Mode
-* New! - Hotkey: Ctrl / Cmd + SHIFT + L = Open Library Modal
-* New! - Hotkey: Ctrl / Cmd + SHIFT + H = Go to Revision History
-* New! - Hotkey: Ctrl / Cmd + SHIFT + M = Mobile Editing Preview
+* New! - Hotkey: Ctrl / Cmd + Shift + L = Open Library Modal
+* New! - Hotkey: Ctrl / Cmd + Shift + H = Go to Revision History
+* New! - Hotkey: Ctrl / Cmd + Shift + M = Mobile Editing Preview
 * New! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
 * Tweak! - Enqueue assets only if elementor exists on the page
 * Tweak! - Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
-* Fix! - Added missing translation strings for media modal
+* Fix! - Added missing translation strings for media modal ([#1126](https://github.com/pojome/elementor/issues/1126))
 
 ### 1.0.12 - 05.01.2017 ###
 * Fix! - Library modal 'Insert' button
