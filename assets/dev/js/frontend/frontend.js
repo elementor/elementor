@@ -74,8 +74,6 @@
 
 			addElementsHandlers();
 
-			self.utils.insertYTApi();
-
 			runElementsHandlers();
 		};
 
