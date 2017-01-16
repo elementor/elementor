@@ -2524,12 +2524,26 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	events: {
-		'click @ui.tabs a': 'onClickTabControl',
+		'click @ui.tabs': 'onClickTabControl',
 		'click @ui.reloadButton': 'onReloadButtonClick'
 	},
 
+	activeTab: null,
+
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	filter: function( model ) {
+		return model.get( 'tab' ) === this.activeTab;
+	},
+
+	activateTab: function( $tab ) {
+		this.activeTab = $tab.data( 'tab' );
+
+		this.ui.tabs.removeClass( 'active' );
+
+		$tab.addClass( 'active' );
 	},
 
 	getChildView: function( item ) {
@@ -2566,14 +2580,17 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this.collection = new Backbone.Collection( _.values( controls ) );
 	},
 
+	onRenderTemplate: function() {
+		this.activateTab( this.ui.tabs.eq( 0 ) );
+	},
+
 	onRender: function() {
 		if ( this.editedElementView ) {
 			this.editedElementView.$el.addClass( 'elementor-element-editable' );
 		}
+	},
 
-		// Set the first tab as active
-		this.ui.tabs.eq( 0 ).find( 'a' ).trigger( 'click' );
-
+	onRenderCollection: function() {
 		// Create tooltip on controls
 		this.$( '.tooltip-target' ).tipsy( {
 			gravity: function() {
@@ -2590,6 +2607,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 				return this.getAttribute( 'data-tooltip' );
 			}
 		} );
+
+		this.openFirstSectionInCurrentTab();
 	},
 
 	onModelDestroy: function() {
@@ -2599,15 +2618,15 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	onClickTabControl: function( event ) {
 		event.preventDefault();
 
-		var $thisTab = this.$( event.target );
+		var $tab = this.$( event.currentTarget );
 
-		this.ui.tabs.removeClass( 'active' );
+		if ( this.activeTab === $tab.data( 'tab' ) ) {
+			return;
+		}
 
-		$thisTab.closest( '.elementor-panel-navigation-tab' ).addClass( 'active' );
+		this.activateTab( $tab );
 
-		this.model.get( 'settings' ).trigger( 'control:switch:tab', $thisTab.data( 'tab' ) );
-
-		this.openFirstSectionInCurrentTab( $thisTab.data( 'tab' ) );
+		this._renderChildren();
 	},
 
 	onDeviceModeChange: function() {
@@ -2628,15 +2647,16 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	 *
 	 * TODO: Rewrite this method later.
 	 */
-	openFirstSectionInCurrentTab: function( currentTab ) {
-		var openedClass = 'elementor-open',
+	openFirstSectionInCurrentTab: function() {
+		var self = this,
+			openedClass = 'elementor-open',
 
 			childrenUnderSection = this.children.filter( function( view ) {
 				return ( ! _.isEmpty( view.model.get( 'section' ) ) );
 			} ),
 
 			firstSectionControlView = this.children.filter( function( view ) {
-				return ( 'section' === view.model.get( 'type' ) ) && ( currentTab === view.model.get( 'tab' ) );
+				return ( 'section' === view.model.get( 'type' ) ) && ( self.activeTab === view.model.get( 'tab' ) );
 			} );
 
 		// Check if found any section controls
@@ -6903,7 +6923,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.model.set( controlSettings );
 
 		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility );
-		this.listenTo( this.elementSettingsModel, 'control:switch:tab', this.onControlSwitchTab );
 	},
 
 	getControlValue: function() {
@@ -7052,12 +7071,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
-
-		elementor.channels.data.trigger( 'scrollbar:update' );
-	},
-
-	onControlSwitchTab: function( activeTab ) {
-		this.$el.toggleClass( 'elementor-active-tab', ( activeTab === this.model.get( 'tab' ) ) );
 
 		elementor.channels.data.trigger( 'scrollbar:update' );
 	},

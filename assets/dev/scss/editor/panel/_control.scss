@@ -4,16 +4,6 @@
 
 #elementor-panel-page-editor {
 
-	#elementor-controls {
-
-		> .elementor-control {
-
-			&:not(.elementor-active-tab) {
-				display: none;
-			}
-		}
-	}
-
 	.elementor-control {
 		background-color: #fff;
 		position: relative;
