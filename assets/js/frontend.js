@@ -107,9 +107,9 @@ module.exports = ElementsHandler;
 		};
 
 		var initOnReadyComponents = function() {
-			self.elementsHandler = new ElementsHandler( $ );
-
 			self.utils = new Utils( $ );
+
+			self.elementsHandler = new ElementsHandler( $ );
 		};
 
 		this.init = function() {
