@@ -176,7 +176,7 @@ App = Marionette.Application.extend( {
 	initFrontend: function() {
 		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
-		elementorFrontend.init();
+		elementorFrontend.elementsHandler.initHandlers();
 	},
 
 	initClearPageDialog: function() {
