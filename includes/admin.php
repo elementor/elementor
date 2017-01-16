@@ -204,6 +204,19 @@ class Admin {
 		return $links;
 	}
 
+	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
+		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
+			$row_meta = [
+				'docs'    => '<a href="https://docs.elementor.com/" title="' . esc_attr( __( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . __( 'Docs', 'elementor' ) . '</a>',
+				'apidocs' => '<a href="https://github.com/pojome/elementor/tree/master/docs" title="' . esc_attr( __( 'View Elementor API Docs', 'elementor' ) ) . '" target="_blank">' . __( 'API Docs', 'elementor' ) . '</a>',
+			];
+
+			$plugin_meta = array_merge( $plugin_meta, $row_meta );
+		}
+
+		return $plugin_meta;
+	}
+
 	public function admin_notices() {
 		$upgrade_notice = Api::get_upgrade_notice();
 		if ( empty( $upgrade_notice ) )
@@ -399,6 +412,7 @@ class Admin {
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
 		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
