@@ -1,6 +1,7 @@
 /* global elementorFrontendConfig */
 ( function( $ ) {
-	var EventManager = require( '../utils/hooks' ),
+	var elements = {},
+		EventManager = require( '../utils/hooks' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
@@ -12,10 +13,22 @@
 
 		this.hooks = new EventManager();
 
+		var initElements = function() {
+			elements.$document = $( self.getScopeWindow().document );
+
+			elements.$elementor = elements.$document.find( '.elementor' );
+		};
+
 		var initOnReadyComponents = function() {
 			self.elementsHandler = new ElementsHandler( $ );
 
 			self.utils = new Utils( $ );
+		};
+
+		this.init = function() {
+			initElements();
+
+			initOnReadyComponents();
 		};
 
 		this.getScopeWindow = function() {
@@ -93,8 +106,14 @@
 				.on( eventNS, callback );
 		};
 
-		jQuery( initOnReadyComponents );
+		this.getCurrentDeviceMode = function() {
+			return getComputedStyle( elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
+		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
 } )( jQuery );
+
+if ( ! elementorFrontend.isEditMode() ) {
+	jQuery( elementorFrontend.init );
+}
