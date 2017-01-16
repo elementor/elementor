@@ -947,8 +947,6 @@ select {
           font-size: 16px;
           display: block;
           margin-bottom: 6px; }
-  .elementor-panel #elementor-panel-page-editor #elementor-controls > .elementor-control:not(.elementor-active-tab) {
-    display: none; }
   .elementor-panel #elementor-panel-page-editor .elementor-control {
     background-color: #fff;
     position: relative;
