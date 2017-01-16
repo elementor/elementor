@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -160,6 +160,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 1.1.3 - 15.01.2017 =
+* Tweak! - Embed YouTube API just when is needed
+* Tweak! - Added post revisions support as default to any CPT Elementor is active on
+* Fix! - E-Icons font library correct files
+* Fix! - Prevent click event on parent elements when clicking inner element handle buttons
+* Fix! - Error message for import template
 
 = 1.1.2 - 12.01.2017 =
 * Fix! - Clear browser caching from last new JS files
