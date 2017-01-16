@@ -28,7 +28,7 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		var eventNS = event + '.' + $scope.attr( 'id' );
+		var eventNS = event + '.' + $scope.attr( 'class' ).replace( / /gi, '' );
 
 		$externalElement
 			.off( eventNS )
