@@ -168,11 +168,15 @@ ElementModel = Backbone.Model.extend( {
 
 		this.trigger( 'before:remote:render' );
 
-		if ( this._jqueryXhr && 4 !== this._jqueryXhr ) {
+		if ( this.isRemoteRequestActive() ) {
 			this._jqueryXhr.abort();
 		}
 
 		this._jqueryXhr = this.getRemoteRenderRequest();
+	},
+
+	isRemoteRequestActive: function() {
+		return this._jqueryXhr && 4 !== this._jqueryXhr.readyState;
 	},
 
 	onRemoteGetHtml: function( data ) {
