@@ -146,7 +146,7 @@ ElementModel = Backbone.Model.extend( {
 		return ( elementData ) ? elementData.icon : 'unknown';
 	},
 
-	getRemoteRenderRequest: function() {
+	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
 		return elementor.ajax.send( 'render_widget', {
@@ -172,7 +172,7 @@ ElementModel = Backbone.Model.extend( {
 			this._jqueryXhr.abort();
 		}
 
-		this._jqueryXhr = this.getRemoteRenderRequest();
+		this._jqueryXhr = this.createRemoteRenderRequest();
 	},
 
 	isRemoteRequestActive: function() {
