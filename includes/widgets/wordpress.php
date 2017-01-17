@@ -85,7 +85,7 @@ class Widget_WordPress extends Widget_Base {
 		$this->start_controls_section(
 			'wordpress_form',
 			[
-				'label' => __( 'Form', '' ),
+				'label' => __( 'Form', 'elementor' ),
 			]
 		);
 
