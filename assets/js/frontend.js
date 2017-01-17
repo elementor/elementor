@@ -29,7 +29,7 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		var eventNS = event + '.' + $scope.attr( 'class' ).replace( / /gi, '' );
+		var eventNS = event + '.' + $scope.data( 'model-cid' );
 
 		$externalElement
 			.off( eventNS )
