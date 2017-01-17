@@ -4048,7 +4048,7 @@ ElementModel = Backbone.Model.extend( {
 		return ( elementData ) ? elementData.icon : 'unknown';
 	},
 
-	getRemoteRenderRequest: function() {
+	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
 		return elementor.ajax.send( 'render_widget', {
@@ -4070,11 +4070,15 @@ ElementModel = Backbone.Model.extend( {
 
 		this.trigger( 'before:remote:render' );
 
-		if ( this._jqueryXhr && 4 !== this._jqueryXhr ) {
+		if ( this.isRemoteRequestActive() ) {
 			this._jqueryXhr.abort();
 		}
 
-		this._jqueryXhr = this.getRemoteRenderRequest();
+		this._jqueryXhr = this.createRemoteRenderRequest();
+	},
+
+	isRemoteRequestActive: function() {
+		return this._jqueryXhr && 4 !== this._jqueryXhr.readyState;
 	},
 
 	onRemoteGetHtml: function( data ) {
@@ -6243,6 +6247,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return value;
+	},
+
+	render: function() {
+		if ( this.model.isRemoteRequestActive() ) {
+			return;
+		}
+
+		Marionette.CompositeView.prototype.render.apply( this, arguments );
 	},
 
 	renderStyles: function() {
