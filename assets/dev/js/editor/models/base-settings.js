@@ -43,13 +43,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							options.controls = field.fields;
 
-							return new BaseSettingsModel( attrs, options );
-						}
-					} );
+							if ( ! attrs._id ) {
+								attrs._id = elementor.helpers.getUniqueID();
+							}
 
-					attrs[ field.name ].each( function( model ) {
-						if ( ! model.get( '_id' ) ) {
-							model.set( '_id', elementor.helpers.getUniqueID() );
+							return new BaseSettingsModel( attrs, options );
 						}
 					} );
 				}
