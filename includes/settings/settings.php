@@ -80,7 +80,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'checkbox',
 				'value' => 'yes',
-				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
+				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
 			]
 		);
 
@@ -97,7 +97,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'checkbox',
 				'value' => 'yes',
-				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
+				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 			]
 		);
 
