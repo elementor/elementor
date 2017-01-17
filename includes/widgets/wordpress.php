@@ -82,15 +82,25 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	protected function _register_controls() {
+		$this->start_controls_section(
+			'wordpress_form',
+			[
+				'label' => __( 'Form', '' ),
+			]
+		);
+
 		$this->add_control(
 			'wp',
 			[
 				'label' => __( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
 				'widget' => $this->get_name(),
+				'section' => 'wordpress_form',
 				'id_base' => $this->get_widget_instance()->id_base,
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {
