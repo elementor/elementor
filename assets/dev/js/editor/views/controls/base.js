@@ -75,7 +75,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.model.set( controlSettings );
 
 		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility );
-		this.listenTo( this.elementSettingsModel, 'control:switch:tab', this.onControlSwitchTab );
 	},
 
 	getControlValue: function() {
@@ -224,12 +223,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
-
-		elementor.channels.data.trigger( 'scrollbar:update' );
-	},
-
-	onControlSwitchTab: function( activeTab ) {
-		this.$el.toggleClass( 'elementor-active-tab', ( activeTab === this.model.get( 'tab' ) ) );
 
 		elementor.channels.data.trigger( 'scrollbar:update' );
 	},

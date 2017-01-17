@@ -535,6 +535,10 @@
 
 .elementor-field-label {
   cursor: pointer; }
+  .elementor-mark-required .elementor-field-label:after {
+    content: '*';
+    color: red;
+    padding-right: 0.2em; }
 
 .elementor-field-textual {
   line-height: 1.4; }

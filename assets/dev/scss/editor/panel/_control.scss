@@ -4,16 +4,6 @@
 
 #elementor-panel-page-editor {
 
-	#elementor-controls {
-
-		> .elementor-control {
-
-			&:not(.elementor-active-tab) {
-				display: none;
-			}
-		}
-	}
-
 	.elementor-control {
 		background-color: #fff;
 		position: relative;
@@ -90,13 +80,6 @@
 
 		&.elementor-hidden-control {
 			display: none;
-		}
-
-		&.elementor-control-under-section {
-
-			&:not(.elementor-open) {
-				display: none;
-			}
 		}
 
 		&.elementor-control-type-heading {
