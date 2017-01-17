@@ -58,6 +58,22 @@ class Compatibility {
 
 			return $retval;
 		} );
+
+		// Add the description (content) tab for a new product, so it can be edited with Elementor
+		add_filter( 'woocommerce_product_tabs', function( $tabs ) {
+			if ( ! isset( $tabs['description'] ) && Plugin::instance()->preview->is_preview_mode() ) {
+				$post = get_post();
+				if ( ! $post->post_content ) {
+					$tabs['description'] = [
+						'title'    => __( 'Description', 'elementor-pro' ),
+						'priority' => 10,
+						'callback' => 'woocommerce_product_description_tab',
+					];
+				}
+			}
+
+			return $tabs;
+		} );
 	}
 
 	/**
