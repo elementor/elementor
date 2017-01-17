@@ -65,7 +65,7 @@ class Compatibility {
 				$post = get_post();
 				if ( empty( $post->post_content ) ) {
 					$tabs['description'] = [
-						'title' => __( 'Description', 'elementor-pro' ),
+						'title' => __( 'Description', 'elementor' ),
 						'priority' => 10,
 						'callback' => 'woocommerce_product_description_tab',
 					];

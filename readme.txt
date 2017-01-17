@@ -171,6 +171,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.1.4 - 17.01.2017 =
+* Tweak! - Added compatibility for edit description tab with Elementor in WC product page
+* Tweak! - Performance improvement in the editor. Faster response time when interacting with elements.
+* Fix! - Broken responsive in Editor mode ([#1169](https://github.com/pojome/elementor/issues/1169))
+* Fix! - Animation happens twice above the fold ([#281](https://github.com/pojome/elementor/issues/281))
+
 = 1.1.3 - 15.01.2017 =
 * Tweak! - Embed YouTube API just when is needed
 * Tweak! - Added post revisions support as default to any CPT Elementor is active on
