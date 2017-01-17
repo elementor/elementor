@@ -43,6 +43,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							options.controls = field.fields;
 
+							if ( ! attrs._id ) {
+								attrs._id = elementor.helpers.getUniqueID();
+							}
+
 							return new BaseSettingsModel( attrs, options );
 						}
 					} );

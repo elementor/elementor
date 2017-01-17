@@ -3803,6 +3803,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							options.controls = field.fields;
 
+							if ( ! attrs._id ) {
+								attrs._id = elementor.helpers.getUniqueID();
+							}
+
 							return new BaseSettingsModel( attrs, options );
 						}
 					} );
@@ -8075,12 +8079,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		ControlBaseItemView.prototype.initialize.apply( this, arguments );
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
-
-		this.collection.each( function( model ) {
-			if ( ! model.get( '_id' ) ) {
-				model.set( '_id', elementor.helpers.getUniqueID() );
-			}
-		} );
 
 		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
 	},
