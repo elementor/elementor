@@ -63,9 +63,9 @@ class Compatibility {
 		add_filter( 'woocommerce_product_tabs', function( $tabs ) {
 			if ( ! isset( $tabs['description'] ) && Plugin::instance()->preview->is_preview_mode() ) {
 				$post = get_post();
-				if ( ! $post->post_content ) {
+				if ( empty( $post->post_content ) ) {
 					$tabs['description'] = [
-						'title'    => __( 'Description', 'elementor-pro' ),
+						'title' => __( 'Description', 'elementor-pro' ),
 						'priority' => 10,
 						'callback' => 'woocommerce_product_description_tab',
 					];
