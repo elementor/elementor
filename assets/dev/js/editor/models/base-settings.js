@@ -46,6 +46,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 							return new BaseSettingsModel( attrs, options );
 						}
 					} );
+
+					attrs[ field.name ].each( function( model ) {
+						if ( ! model.get( '_id' ) ) {
+							model.set( '_id', elementor.helpers.getUniqueID() );
+						}
+					} );
 				}
 			}
 		} );

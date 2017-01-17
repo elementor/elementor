@@ -38,12 +38,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		this.collection.each( function( model ) {
-			if ( ! model.get( '_id' ) ) {
-				model.set( '_id', elementor.helpers.getUniqueID() );
-			}
-		} );
-
 		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
 	},
 
