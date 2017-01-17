@@ -171,6 +171,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.1.5 - 17.01.2017 =
+* Fix! - Cannot open editor panel on WP widgets
+
 = 1.1.4 - 17.01.2017 =
 * Tweak! - Added compatibility for edit description tab with Elementor in WC product page
 * Tweak! - Performance improvement in the editor. Faster response time when interacting with elements.
