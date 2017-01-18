@@ -99,11 +99,13 @@
 				return;
 			}
 
-			var eventNS = event + '.' + listenerID;
+			if ( to instanceof jQuery ) {
+				var eventNS = event + '.' + listenerID;
 
-			to
-				.off( eventNS )
-				.on( eventNS, callback );
+				to.off( eventNS ).on( eventNS, callback );
+			} else {
+				to.off( event, null, listenerID ).on( event, callback, listenerID );
+			}
 		};
 
 		this.getCurrentDeviceMode = function() {
