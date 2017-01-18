@@ -50,7 +50,9 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			return true;
 		}
 
-		return model.get( 'section' ) === this.activeSection;
+		var section = model.get( 'section' );
+
+		return ! section || section === this.activeSection;
 	},
 
 	activateTab: function( $tab ) {
