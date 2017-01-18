@@ -343,7 +343,13 @@ class Frontend {
 			</div>
 		</div>
 		<?php
-		return apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
+		$content = apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
+
+		if ( ! empty( $content ) ) {
+			$this->_has_elementor_in_page = true;
+		}
+
+		return $content;
 	}
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
@@ -388,10 +394,6 @@ class Frontend {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
-
-		if ( ! empty( $content ) ) {
-			$this->_has_elementor_in_page = true;
-		}
 
 		// Restore global post
 		if ( isset( $global_post ) ) {
