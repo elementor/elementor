@@ -186,11 +186,13 @@ module.exports = ElementsHandler;
 				return;
 			}
 
-			var eventNS = event + '.' + listenerID;
+			if ( to instanceof jQuery ) {
+				var eventNS = event + '.' + listenerID;
 
-			to
-				.off( eventNS )
-				.on( eventNS, callback );
+				to.off( eventNS ).on( eventNS, callback );
+			} else {
+				to.off( event, null, listenerID ).on( event, callback, listenerID );
+			}
 		};
 
 		this.getCurrentDeviceMode = function() {
@@ -493,7 +495,7 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var bindEvents = function() {
-		elementorFrontend.addListenerOnce( $section.attr( 'class' ), 'resize', stretchSection );
+		elementorFrontend.addListenerOnce( $section.data( 'model-cid' ), 'resize', stretchSection );
 	};
 
 	var init = function() {

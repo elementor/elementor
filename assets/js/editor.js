@@ -2024,12 +2024,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'change', status )
-			.trigger( 'change', status );
+			.reply( 'status', status )
+			.trigger( 'status:change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'change' ) );
+		return ( true === elementor.channels.editor.request( 'status' ) );
 	},
 
 	setWorkSaver: function() {
@@ -2314,7 +2314,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-		this.listenTo( elementor.channels.editor, 'change', this.onEditorChanged )
+		this.listenTo( elementor.channels.editor, 'status:change', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
@@ -2581,6 +2581,17 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	openActiveSection: function() {
+		var activeSection = this.activeSection,
+			activeSectionView = this.children.filter( function( view ) {
+				return activeSection === view.model.get( 'name' );
+			} );
+
+		if ( activeSectionView[0] ) {
+			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+		}
+	},
+
 	onDestroy: function() {
 		if ( this.editedElementView ) {
 			this.editedElementView.$el.removeClass( 'elementor-element-editable' );
@@ -2666,15 +2677,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		}, 500 );
 	},
 
-	openActiveSection: function() {
-		var activeSection = this.activeSection,
-			activeSectionView = this.children.filter( function( view ) {
-			return activeSection === view.model.get( 'name' );
-		} );
-
-		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
-		}
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
@@ -2685,8 +2689,18 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this._renderChildren();
 	},
 
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
+	onChildviewSettingsChange: function( childView ) {
+		var editedElementView = this.getOption( 'editedElementView' ),
+			editedElementType = editedElementView.model.get( 'elType' );
+
+		if ( 'widget' === editedElementType ) {
+			editedElementType = editedElementView.model.get( 'widgetType' );
+		}
+
+		elementor.channels.editor
+			.trigger( 'change', childView, editedElementView )
+			.trigger( 'change:' + editedElementType, childView, editedElementView )
+			.trigger( 'change:' + editedElementType + ':' + childView.model.get( 'name' ), childView, editedElementView );
 	}
 } );
 
@@ -6936,19 +6950,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel.set( this.model.get( 'name' ), value );
 
 		this.triggerMethod( 'settings:change' );
-
-		var elementType = this.elementSettingsModel.get( 'elType' );
-		if ( 'widget' === elementType ) {
-			elementType = this.elementSettingsModel.get( 'widgetType' );
-		}
-
-		if ( undefined === elementType ) {
-			return;
-		}
-
-		// Do not use with this action
-		// It's here for tests and maybe later will be publish
-		elementor.hooks.doAction( 'panel/editor/element/' + elementType + '/' + this.model.get( 'name' ) + '/changed' );
 	},
 
 	applySavedValue: function() {
