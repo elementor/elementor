@@ -139,7 +139,7 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var bindEvents = function() {
-		elementorFrontend.addListenerOnce( $section.attr( 'class' ), 'resize', stretchSection );
+		elementorFrontend.addListenerOnce( $section.data( 'model-cid' ), 'resize', stretchSection );
 	};
 
 	var init = function() {
