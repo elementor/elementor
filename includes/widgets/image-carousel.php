@@ -459,7 +459,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'none' => __( 'Hide', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}} .carousel-caption' => 'display: {{VALUE}};',
+					'{{WRAPPER}} .image-carousel-caption' => 'display: {{VALUE}};',
 				],
 			]
 		);
@@ -489,7 +489,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 				'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}} .carousel-caption' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .image-carousel-caption' => 'text-align: {{VALUE}};',
 				],
 				'condition' => [
 					'gallery_display_caption' => '',
@@ -504,7 +504,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .carousel-caption' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .image-carousel-caption' => 'color: {{VALUE}};',
 				],
 				'condition' => [
 					'gallery_display_caption' => '',
@@ -518,7 +518,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'name' => 'typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'selector' => '{{WRAPPER}} .carousel-caption',
+				'selector' => '{{WRAPPER}} .image-carousel-caption',
 				'condition' => [
 					'gallery_display_caption' => '',
 				],
@@ -554,7 +554,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
-			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '<figcaption class="carousel-caption">' . $image_caption . '</figcaption></div></div>';
+			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '<figcaption class="image-carousel-caption">' . $image_caption . '</figcaption></div></div>';
 		}
 
 		if ( empty( $slides ) ) {
