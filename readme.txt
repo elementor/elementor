@@ -171,6 +171,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.1.6 - 18.01.2017 =
+* Fix! - Improving enqueue assets if elementor exists on the page
+* Fix! - Inner Tabs in the section panel is broken
+
 = 1.1.5 - 17.01.2017 =
 * Fix! - Cannot open editor panel on WP widgets
 
