@@ -69,9 +69,7 @@ class Revisions_Manager {
 		Plugin::instance()->db->copy_elementor_meta( $revision_id, $parent_id );
 
 		$post_css = new Post_CSS_File( $parent_id );
-
 		$post_css->update();
-
 	}
 
 	public static function on_revision_data_request() {
