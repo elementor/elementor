@@ -2545,7 +2545,9 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			return true;
 		}
 
-		return model.get( 'section' ) === this.activeSection;
+		var section = model.get( 'section' );
+
+		return ! section || section === this.activeSection;
 	},
 
 	activateTab: function( $tab ) {
@@ -2559,7 +2561,9 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			return 'section' === model.get( 'type' ) && activeTab === model.get( 'tab' );
 		} );
 
-		this.activateSection( sectionControls[0].get( 'name' ) );
+		if ( sectionControls[0] ) {
+			this.activateSection( sectionControls[0].get( 'name' ) );
+		}
 	},
 
 	activateSection: function( sectionName ) {
