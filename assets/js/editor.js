@@ -2547,7 +2547,9 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			return true;
 		}
 
-		return model.get( 'section' ) === this.activeSection;
+		var section = model.get( 'section' );
+
+		return ! section || section === this.activeSection;
 	},
 
 	activateTab: function( $tab ) {
@@ -2561,7 +2563,9 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 			return 'section' === model.get( 'type' ) && activeTab === model.get( 'tab' );
 		} );
 
-		this.activateSection( sectionControls[0].get( 'name' ) );
+		if ( sectionControls[0] ) {
+			this.activateSection( sectionControls[0].get( 'name' ) );
+		}
 	},
 
 	activateSection: function( sectionName ) {
@@ -3818,6 +3822,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 							options = options || {};
 
 							options.controls = field.fields;
+
+							if ( ! attrs._id ) {
+								attrs._id = elementor.helpers.getUniqueID();
+							}
 
 							return new BaseSettingsModel( attrs, options );
 						}
@@ -8091,12 +8099,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		this.collection.each( function( model ) {
-			if ( ! model.get( '_id' ) ) {
-				model.set( '_id', elementor.helpers.getUniqueID() );
-			}
-		} );
-
 		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
 	},
 
@@ -8207,8 +8209,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onCollectionChanged: function() {
-		this.elementSettingsModel.trigger( 'change' );
+	onCollectionChanged: function( model ) {
+		this.elementSettingsModel.trigger( 'change', model, model._pending );
 
 		this.toggleMinRowsClass();
 	},
