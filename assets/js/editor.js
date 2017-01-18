@@ -8194,8 +8194,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onCollectionChanged: function() {
-		this.elementSettingsModel.trigger( 'change' );
+	onCollectionChanged: function( model ) {
+		this.elementSettingsModel.trigger( 'change', model, model._pending );
 
 		this.toggleMinRowsClass();
 	},
