@@ -6048,7 +6048,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var editModel = this.getEditModel();
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
-		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
 		this.on( 'render', function() {
 			this.renderUI();
@@ -6311,18 +6311,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.getRemoveDialog().show();
 	},
 
-	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
-	},
-
-	onSettingsChanged: function( settings ) {
-		var editModel = this.getEditModel();
-
-		if ( editModel.get( 'editSettings' ) !== settings ) {
-			// Change flag only if server settings was changed
-			elementor.setFlagEditorChange( true );
-		}
-
+	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
@@ -6346,7 +6335,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		// Re-render the template
-		var templateType = this.getTemplateType();
+		var templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
 
 		if ( 'js' === templateType ) {
 			this.getEditModel().setHtmlCache();
@@ -6355,6 +6345,20 @@ BaseElementView = Marionette.CompositeView.extend( {
 		} else {
 			editModel.renderRemoteServer();
 		}
+	},
+
+	onCollectionChanged: function() {
+		elementor.setFlagEditorChange( true );
+	},
+
+	onEditSettingsChanged: function() {
+		this.renderOnChange( this.getEditModel().get( 'editSettings' ) );
+	},
+
+	onSettingsChanged: function() {
+		elementor.setFlagEditorChange( true );
+
+		this.renderOnChange( this.getEditModel().get( 'settings' ) );
 	},
 
 	onClickEdit: function( event ) {
