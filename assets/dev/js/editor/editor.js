@@ -71,6 +71,10 @@ App = Marionette.Application.extend( {
 
 	_defaultDeviceMode: 'desktop',
 
+	addControlView: function( controlID, ControlView ) {
+		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+	},
+
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
 
