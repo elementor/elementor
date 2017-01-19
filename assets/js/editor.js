@@ -1707,17 +1707,41 @@ App = Marionette.Application.extend( {
 		WidgetView: require( 'elementor-views/widget' ),
 		controls: {
 			Base: require( 'elementor-views/controls/base' ),
-			MultipleBase: require( 'elementor-views/controls/base-multiple' )
+			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
+			Color: require( 'elementor-views/controls/color' ),
+			Dimensions: require( 'elementor-views/controls/dimensions' ),
+			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
+			Media: require( 'elementor-views/controls/media' ),
+			Slider: require( 'elementor-views/controls/slider' ),
+			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
+			Choose: require( 'elementor-views/controls/choose' ),
+			Url: require( 'elementor-views/controls/url' ),
+			Font: require( 'elementor-views/controls/font' ),
+			Section: require( 'elementor-views/controls/section' ),
+			Tab: require( 'elementor-views/controls/tab' ),
+			Repeater: require( 'elementor-views/controls/repeater' ),
+			Wp_widget: require( 'elementor-views/controls/wp_widget' ),
+			Icon: require( 'elementor-views/controls/icon' ),
+			Gallery: require( 'elementor-views/controls/gallery' ),
+			Select2: require( 'elementor-views/controls/select2' ),
+			Date_time: require( 'elementor-views/controls/date-time' ),
+			Code: require( 'elementor-views/controls/code' ),
+			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Structure: require( 'elementor-views/controls/structure' ),
+			Animation: require( 'elementor-views/controls/animation' ),
+			Hover_animation: require( 'elementor-views/controls/animation' ),
+			Order: require( 'elementor-views/controls/order' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
 	},
 
-	// Private Members
-	_controlsItemView: null,
-
 	_defaultDeviceMode: 'desktop',
+
+	addControlView: function( controlID, ControlView ) {
+		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+	},
 
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
@@ -1759,38 +1783,8 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	getControlItemView: function( controlType ) {
-		if ( null === this._controlsItemView ) {
-			this._controlsItemView = {
-				color: require( 'elementor-views/controls/color' ),
-				dimensions: require( 'elementor-views/controls/dimensions' ),
-				image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
-				media: require( 'elementor-views/controls/media' ),
-				slider: require( 'elementor-views/controls/slider' ),
-				wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
-				choose: require( 'elementor-views/controls/choose' ),
-				url: require( 'elementor-views/controls/url' ),
-				font: require( 'elementor-views/controls/font' ),
-				section: require( 'elementor-views/controls/section' ),
-				tab: require( 'elementor-views/controls/tab' ),
-				repeater: require( 'elementor-views/controls/repeater' ),
-				wp_widget: require( 'elementor-views/controls/wp_widget' ),
-				icon: require( 'elementor-views/controls/icon' ),
-				gallery: require( 'elementor-views/controls/gallery' ),
-				select2: require( 'elementor-views/controls/select2' ),
-				date_time: require( 'elementor-views/controls/date-time' ),
-				code: require( 'elementor-views/controls/code' ),
-				box_shadow: require( 'elementor-views/controls/box-shadow' ),
-				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' ),
-				order: require( 'elementor-views/controls/order' )
-			};
-
-			this.channels.editor.trigger( 'controls:initialize' );
-		}
-
-		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
+	getControlView: function( controlID ) {
+		return this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] || this.modules.controls.Base;
 	},
 
 	getPanelView: function() {
@@ -2577,7 +2571,7 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
 
-		return elementor.getControlItemView( controlType );
+		return elementor.getControlView( controlType );
 	},
 
 	childViewOptions: function() {
@@ -6429,7 +6423,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 						valueToInsert = valueCallback( parserControl );
 					}
 
-					var parsedValue = elementor.getControlItemView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+					var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
 
 					if ( '' === parsedValue ) {
 						throw '';
@@ -6735,7 +6729,7 @@ ColumnView = BaseElementView.extend( {
 module.exports = ColumnView;
 
 },{"elementor-behaviors/duplicate":1,"elementor-behaviors/handle-duplicate":2,"elementor-behaviors/resizable":4,"elementor-behaviors/sortable":5,"elementor-views/base-element":76,"elementor-views/element-empty":105}],79:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlAnimationItemView;
 
 ControlAnimationItemView = ControlBaseItemView.extend( {
@@ -6747,8 +6741,8 @@ ControlAnimationItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlAnimationItemView;
 
-},{}],80:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],80:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlBaseMultipleItemView;
 
 ControlBaseMultipleItemView = ControlBaseItemView.extend( {
@@ -6814,8 +6808,8 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlBaseMultipleItemView;
 
-},{}],81:[function(require,module,exports){
-var ControlBaseMultipleItemView = elementor.modules.controls.MultipleBase,
+},{"elementor-views/controls/base":82}],81:[function(require,module,exports){
+var ControlBaseMultipleItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlBaseUnitsItemView;
 
 ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
@@ -6837,7 +6831,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 module.exports = ControlBaseUnitsItemView;
 
-},{}],82:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":80}],82:[function(require,module,exports){
 var ControlBaseItemView;
 
 ControlBaseItemView = Marionette.CompositeView.extend( {
@@ -7082,7 +7076,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 module.exports = ControlBaseItemView;
 
 },{}],83:[function(require,module,exports){
-var ControlMultipleBaseItemView = elementor.modules.controls.MultipleBase,
+var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlBoxShadowItemView;
 
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
@@ -7166,8 +7160,8 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlBoxShadowItemView;
 
-},{}],84:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base-multiple":80}],84:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlChooseItemView;
 
 ControlChooseItemView = ControlBaseItemView.extend( {
@@ -7219,8 +7213,8 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlChooseItemView;
 
-},{}],85:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],85:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlCodeEditorItemView;
 
 ControlCodeEditorItemView = ControlBaseItemView.extend( {
@@ -7283,8 +7277,8 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlCodeEditorItemView;
 
-},{}],86:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],86:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlColorItemView;
 
 ControlColorItemView = ControlBaseItemView.extend( {
@@ -7320,8 +7314,8 @@ ControlColorItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlColorItemView;
 
-},{}],87:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],87:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlDateTimePickerItemView;
 
 ControlDateTimePickerItemView = ControlBaseItemView.extend( {
@@ -7357,7 +7351,7 @@ ControlDateTimePickerItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlDateTimePickerItemView;
 
-},{}],88:[function(require,module,exports){
+},{"elementor-views/controls/base":82}],88:[function(require,module,exports){
 var ControlBaseUnitsItemView = require( 'elementor-views/controls/base-units' ),
 	ControlDimensionsItemView;
 
@@ -7522,7 +7516,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 module.exports = ControlDimensionsItemView;
 
 },{"elementor-views/controls/base-units":81}],89:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlFontItemView;
 
 ControlFontItemView = ControlBaseItemView.extend( {
@@ -7554,8 +7548,8 @@ ControlFontItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlFontItemView;
 
-},{}],90:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],90:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlMediaItemView;
 
 ControlMediaItemView = ControlBaseItemView.extend( {
@@ -7720,8 +7714,8 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlMediaItemView;
 
-},{}],91:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],91:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlIconItemView;
 
 ControlIconItemView = ControlBaseItemView.extend( {
@@ -7776,8 +7770,8 @@ ControlIconItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlIconItemView;
 
-},{}],92:[function(require,module,exports){
-var ControlMultipleBaseItemView = elementor.modules.controls.MultipleBase,
+},{"elementor-views/controls/base":82}],92:[function(require,module,exports){
+var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlImageDimensionsItemView;
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
@@ -7807,8 +7801,8 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlImageDimensionsItemView;
 
-},{}],93:[function(require,module,exports){
-var ControlMultipleBaseItemView = elementor.modules.controls.MultipleBase,
+},{"elementor-views/controls/base-multiple":80}],93:[function(require,module,exports){
+var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlMediaItemView;
 
 ControlMediaItemView = ControlMultipleBaseItemView.extend( {
@@ -7897,8 +7891,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlMediaItemView;
 
-},{}],94:[function(require,module,exports){
-var ControlMultipleBaseItemView = elementor.modules.controls.MultipleBase,
+},{"elementor-views/controls/base-multiple":80}],94:[function(require,module,exports){
+var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlOrderItemView;
 
 ControlOrderItemView = ControlMultipleBaseItemView.extend( {
@@ -7929,7 +7923,7 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlOrderItemView;
 
-},{}],95:[function(require,module,exports){
+},{"elementor-views/controls/base-multiple":80}],95:[function(require,module,exports){
 var RepeaterRowView;
 
 RepeaterRowView = Marionette.CompositeView.extend( {
@@ -7967,7 +7961,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
 
-		return elementor.getControlItemView( controlType );
+		return elementor.getControlView( controlType );
 	},
 
 	childViewOptions: function() {
@@ -8052,7 +8046,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 module.exports = RepeaterRowView;
 
 },{"elementor-behaviors/inner-tabs":3}],96:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
 	ControlRepeaterItemView;
 
@@ -8235,8 +8229,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlRepeaterItemView;
 
-},{"elementor-views/controls/repeater-row":95}],97:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82,"elementor-views/controls/repeater-row":95}],97:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSectionItemView;
 
 ControlSectionItemView = ControlBaseItemView.extend( {
@@ -8255,10 +8249,8 @@ ControlSectionItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlSectionItemView;
 
-},{}],98:[function(require,module,exports){
-// Attention: DO NOT use this control since it has bugs
-// TODO: This control is unused
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],98:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
 ControlSelect2ItemView = ControlBaseItemView.extend( {
@@ -8270,13 +8262,17 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	onReady: function() {
-		var options = {
+	getOptions: function() {
+		return {
 			allowClear: true,
 			placeholder: { // The `allowClear` must be used with the `placeholder` option
 				id: ''
 			}
 		};
+	},
+
+	onReady: function() {
+		var options = this.getOptions();
 
 		this.ui.select.select2( options );
 	},
@@ -8285,13 +8281,14 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		if ( this.ui.select.data( 'select2' ) ) {
 			this.ui.select.select2( 'destroy' );
 		}
+
 		this.$el.remove();
 	}
 } );
 
 module.exports = ControlSelect2ItemView;
 
-},{}],99:[function(require,module,exports){
+},{"elementor-views/controls/base":82}],99:[function(require,module,exports){
 var ControlBaseUnitsItemView = require( 'elementor-views/controls/base-units' ),
 	ControlSliderItemView;
 
@@ -8352,7 +8349,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 module.exports = ControlSliderItemView;
 
 },{"elementor-views/controls/base-units":81}],100:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlStructureItemView;
 
 ControlStructureItemView = ControlBaseItemView.extend( {
@@ -8401,8 +8398,8 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlStructureItemView;
 
-},{}],101:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],101:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlTabItemView;
 
 ControlTabItemView = ControlBaseItemView.extend( {
@@ -8413,8 +8410,8 @@ ControlTabItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlTabItemView;
 
-},{}],102:[function(require,module,exports){
-var ControlMultipleBaseItemView = elementor.modules.controls.MultipleBase,
+},{"elementor-views/controls/base":82}],102:[function(require,module,exports){
+var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
 	ControlUrlItemView;
 
 ControlUrlItemView = ControlMultipleBaseItemView.extend( {
@@ -8451,8 +8448,8 @@ ControlUrlItemView = ControlMultipleBaseItemView.extend( {
 
 module.exports = ControlUrlItemView;
 
-},{}],103:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base-multiple":80}],103:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlWPWidgetItemView;
 
 ControlWPWidgetItemView = ControlBaseItemView.extend( {
@@ -8492,8 +8489,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlWPWidgetItemView;
 
-},{}],104:[function(require,module,exports){
-var ControlBaseItemView = elementor.modules.controls.Base,
+},{"elementor-views/controls/base":82}],104:[function(require,module,exports){
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseItemView.extend( {
@@ -8621,7 +8618,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 module.exports = ControlWysiwygItemView;
 
-},{}],105:[function(require,module,exports){
+},{"elementor-views/controls/base":82}],105:[function(require,module,exports){
 var ElementEmptyView;
 
 ElementEmptyView = Marionette.ItemView.extend( {
