@@ -439,6 +439,94 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_caption',
+			[
+				'label' => __( 'Caption', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'gallery_display_caption',
+			[
+				'label' => __( 'Display', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'options' => [
+					'' => __( 'Show', 'elementor' ),
+					'none' => __( 'Hide', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'display: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'fa fa-align-justify',
+					],
+				],
+				'default' => 'center',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'typography',
+				'label' => __( 'Typography', 'elementor' ),
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 	}
 
 	protected function render() {
@@ -451,6 +539,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		foreach ( $settings['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			$imgcaption = $this->get_item_caption( $attachment, $instance );
+			if ( $imgcaption ) {
+				$image_caption = sprintf( '%s', $imgcaption['caption'] );
+			}
 
 			$link = $this->get_link_url( $attachment, $settings );
 			if ( $link ) {
@@ -462,7 +554,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
-			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '</div></div>';
+			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></div></div>';
 		}
 
 		if ( empty( $slides ) ) {
@@ -509,7 +601,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		?>
 		<div class="elementor-image-carousel-wrapper elementor-slick-slider" dir="<?php echo $direction; ?>">
-			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo esc_attr( wp_json_encode( $slick_options ) ); ?>'>
+			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo wp_json_encode( $slick_options ); ?>'>
 				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>
@@ -532,6 +624,23 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		return [
 			'url' => wp_get_attachment_url( $attachment['id'] ),
+		];
+	}
+
+	private function get_item_caption( $attachment, $instance ) {
+		if ( 'none' === $instance['gallery_display_caption'] ) {
+			return false;
+		}
+
+		if ( '' === $instance['gallery_display_caption'] ) {
+			if ( empty( $instance['caption'] ) ) {
+				return false;
+			}
+			return $instance['caption'];
+		}
+
+		return [
+			'caption' => wp_get_attachment_caption( $attachment['id'] ),
 		];
 	}
 }
