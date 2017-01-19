@@ -1,6 +1,4 @@
-// Attention: DO NOT use this control since it has bugs
-// TODO: This control is unused
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
 ControlSelect2ItemView = ControlBaseItemView.extend( {

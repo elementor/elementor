@@ -1,4 +1,4 @@
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
 	ControlRepeaterItemView;
 

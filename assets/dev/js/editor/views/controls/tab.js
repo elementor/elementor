@@ -1,4 +1,4 @@
-var ControlBaseItemView = elementor.modules.controls.Base,
+var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlTabItemView;
 
 ControlTabItemView = ControlBaseItemView.extend( {
