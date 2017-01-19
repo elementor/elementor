@@ -1,4 +1,4 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseItemView = elementor.modules.controls.Base,
 	ControlChooseItemView;
 
 ControlChooseItemView = ControlBaseItemView.extend( {

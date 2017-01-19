@@ -1,4 +1,4 @@
-var ControlMultipleBaseItemView = require( 'elementor-views/controls/base-multiple' ),
+var ControlMultipleBaseItemView = elementor.modules.controls.MultipleBase,
 	ControlImageDimensionsItemView;
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {

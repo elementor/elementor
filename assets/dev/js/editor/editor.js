@@ -37,6 +37,10 @@ App = Marionette.Application.extend( {
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
+		controls: {
+			Base: require( 'elementor-views/controls/base' ),
+			MultipleBase: require( 'elementor-views/controls/base-multiple' )
+		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
