@@ -131,11 +131,14 @@ class Controls_Manager {
 
 		foreach ( $available_controls as $control_id ) {
 			$control_filename = str_replace( '_', '-', $control_id );
+
 			$control_filename = ELEMENTOR_PATH . "includes/controls/{$control_filename}.php";
+
 			require( $control_filename );
 
 			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id );
-			$this->register_control( $control_id, $class_name );
+
+			$this->register_control( $control_id, new $class_name() );
 		}
 
 		// Group Controls
@@ -157,23 +160,12 @@ class Controls_Manager {
 
 	/**
 	 * @since 1.0.0
-	 * @param $control_id
-	 * @param $class_name
 	 *
-	 * @return bool|\WP_Error
+	 * @param $control_id
+	 * @param Control_Base $control_instance
 	 */
-	public function register_control( $control_id, $class_name ) {
-		if ( ! class_exists( $class_name ) ) {
-			return new \WP_Error( 'element_class_name_not_exists' );
-		}
-		$instance_control = new $class_name();
-
-		if ( ! $instance_control instanceof Control_Base ) {
-			return new \WP_Error( 'wrong_instance_control' );
-		}
-		$this->_controls[ $control_id ] = $instance_control;
-
-		return true;
+	public function register_control( $control_id, Control_Base $control_instance ) {
+		$this->_controls[ $control_id ] = $control_instance;
 	}
 
 	/**
@@ -186,7 +178,9 @@ class Controls_Manager {
 		if ( ! isset( $this->_controls[ $control_id ] ) ) {
 			return false;
 		}
+
 		unset( $this->_controls[ $control_id ] );
+
 		return true;
 	}
 
