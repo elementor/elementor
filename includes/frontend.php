@@ -116,7 +116,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -138,7 +138,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style( 'elementor-icons' );
