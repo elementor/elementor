@@ -8277,7 +8277,7 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	getOptions: function() {
+	getSettings: function() {
 		return {
 			allowClear: true,
 			placeholder: { // The `allowClear` must be used with the `placeholder` option
@@ -8287,9 +8287,7 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		var options = this.getOptions();
-
-		this.ui.select.select2( options );
+		this.ui.select.select2( this.getSettings() );
 	},
 
 	onBeforeDestroy: function() {
