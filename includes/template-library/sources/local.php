@@ -205,7 +205,7 @@ class Source_Local extends Source_Base {
 	public function get_content( $item_id, $context = 'display' ) {
 		$db = Plugin::instance()->db;
 
-		// TODO: Valid the data (in JS too!)
+		// TODO: Validate the data (in JS too!)
 		if ( 'display' === $context ) {
 			$data = $db->get_builder( $item_id );
 		} else {
