@@ -14,11 +14,6 @@ class Post_CSS_File extends CSS_File {
 	 */
 	private $post_id;
 
-	/*
-	 * @var bool
-	 */
-	private $is_built_with_elementor;
-
 	/**
 	 * Post_CSS_File constructor.
 	 *
@@ -27,21 +22,7 @@ class Post_CSS_File extends CSS_File {
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
 
-		// Check if it's an Elementor post
-		$this->is_built_with_elementor = Plugin::instance()->db->is_built_with_elementor( $post_id );
-
-		if ( ! $this->is_built_with_elementor ) {
-			return;
-		}
-
 		parent::__construct();
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function is_built_with_elementor() {
-		return $this->is_built_with_elementor;
 	}
 
 	/**
@@ -75,10 +56,6 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	protected function render_css() {
-		if ( ! $this->is_built_with_elementor() ) {
-			return;
-		}
-
 		$data = Plugin::instance()->db->get_plain_editor( $this->post_id );
 
 		foreach ( $data as $element_data ) {
