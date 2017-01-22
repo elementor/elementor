@@ -146,9 +146,11 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-		$css_file = new Post_CSS_File( get_the_ID() );
+		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
+			$css_file = new Post_CSS_File( get_the_ID() );
 
-		$css_file->enqueue();
+			$css_file->enqueue();
+		}
 	}
 
 	public function print_css() {
