@@ -22,7 +22,12 @@ class Posts_CSS_Manager {
 	}
 
 	public function on_delete_post( $post_id ) {
+		if ( ! Plugin::instance()->db->is_built_with_elementor( $post_id ) ) {
+			return;
+		}
+
 		$css_file = new Post_CSS_File( $post_id );
+
 		$css_file->delete();
 	}
 
