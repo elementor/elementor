@@ -516,8 +516,6 @@ class Widget_Image_Carousel extends Widget_Base {
 	<?php
 	}
 
-	protected function _content_template() {}
-
 	private function get_link_url( $attachment, $instance ) {
 		if ( 'none' === $instance['link_to'] ) {
 			return false;
