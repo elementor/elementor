@@ -254,7 +254,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Deprecated! - Removed `#elementor-inner` ID from frontend output
 
 = 1.0.5 - 18.12.2016 =
-* Tweak! - Added VH unit in min-height control for section ([#764](https://github.com/pojome/elementor/issues/764)
+* Tweak! - Added VH unit in min-height control for section ([#764](https://github.com/pojome/elementor/issues/764))
 * Fix! - Bug with section-content-position in Columns widget
 * Fix! - Bug with stretched section
 * Fix! - Avoid fatal error for invalid widgets
