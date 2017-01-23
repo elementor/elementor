@@ -462,7 +462,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
-			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '</div></div>';
+			$slides[] = '<div class="slick-slide"><div class="slick-slide-inner">' . $image_html . '</div></div>';
 		}
 
 		if ( empty( $slides ) ) {
