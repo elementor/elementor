@@ -6285,9 +6285,16 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	renderCustomElementID: function() {
+		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
+
+		this.$el.attr( 'id', customElementID );
+	},
+
 	renderUI: function() {
 		this.renderStyles();
 		this.renderCustomClasses();
+		this.renderCustomElementID();
 		this.enqueueFonts();
 	},
 
@@ -6321,7 +6328,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 					return;
 				}
 
-				if ( control.force_render || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
+				if ( control.force_render || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) {
 					isContentChanged = true;
 				}
 			} );
