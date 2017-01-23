@@ -53,7 +53,7 @@ class Controls_Manager {
 	/**
 	 * @var Control_Base[]
 	 */
-	private $_controls = [];
+	private $_controls = null;
 
 	/**
 	 * @var Group_Control_Base[]
@@ -84,9 +84,7 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 */
 	public function register_controls() {
-		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
+		$this->_controls = [];
 
 		$available_controls = [
 			self::TEXT,
@@ -142,9 +140,6 @@ class Controls_Manager {
 		}
 
 		// Group Controls
-		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
-
 		require( ELEMENTOR_PATH . 'includes/controls/groups/background.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/groups/border.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/groups/typography.php' );
@@ -156,6 +151,8 @@ class Controls_Manager {
 		$this->_control_groups['typography'] = new Group_Control_Typography();
 		$this->_control_groups['image-size'] = new Group_Control_Image_Size();
 		$this->_control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+
+		do_action( 'elementor/controls/controls_registered', $this );
 	}
 
 	/**
@@ -189,6 +186,10 @@ class Controls_Manager {
 	 * @return Control_Base[]
 	 */
 	public function get_controls() {
+		if ( null === $this->_controls ) {
+			$this->register_controls();
+		}
+
 		return $this->_controls;
 	}
 
@@ -416,12 +417,18 @@ class Controls_Manager {
 		$element->end_controls_section();
 	}
 
-	/**
-	 * Controls_Manager constructor.
-	 *
-	 * @since 1.0.0
-	 */
+	private function require_files() {
+		// TODO: Move includes in later version (v1.2.x)
+		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
+
+		// Group Controls
+		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
+	}
+
 	public function __construct() {
-		$this->register_controls();
+		$this->require_files();
 	}
 }

@@ -108,10 +108,22 @@ Argument   | Type        | Description
 `settings` | *`array`*  | The form settings
 `record`   | *`array`*  | See [`elementor_pro/forms/record`](###`elementor_pro/forms/record`)
 
-##Webhooks Request - Filter 
+
+####Example
+
+```php
+add_filter( 'elementor_pro/forms/webhooks/request_args', function( $args, $form_id, $settings, $record ) {
+	// Add additional data to the request body
+	$args['body']['user_id'] = get_current_user_id();
+
+	return $args;
+}, 10, 4 );
+```
+
+##Webhooks Response - Action 
 
 ###`elementor_pro/forms/webhooks/response`
-If the form has a webhook, it's fires here.
+Handle the webhook response.
 
 ####Arguments
 
