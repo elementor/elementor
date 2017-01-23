@@ -581,6 +581,17 @@ class Element_Section extends Element_Base {
 				],
 			]
 		);
+		
+		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom id WITHOUT the hashtag. e.g: my-id', 'elementor' ),
+			]
+		);
 
 		$this->add_control(
 			'css_classes',
@@ -738,6 +749,10 @@ class Element_Section extends Element_Base {
 				continue;
 
 			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+		}
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
 		if ( ! empty( $settings['animation'] ) ) {
