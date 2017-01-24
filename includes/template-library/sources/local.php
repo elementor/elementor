@@ -144,27 +144,27 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', 'Invalid template type `' . $template_data['type'] . '`' );
 		}
 
-		$post_id = wp_insert_post( [
+		$template_id = wp_insert_post( [
 			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 			'post_status' => 'publish',
 			'post_type' => self::CPT,
 		] );
 
-		if ( is_wp_error( $post_id ) ) {
-			return $post_id;
+		if ( is_wp_error( $template_id ) ) {
+			return $template_id;
 		}
 
-		Plugin::instance()->db->set_edit_mode( $post_id );
+		Plugin::instance()->db->set_edit_mode( $template_id );
 
-		Plugin::instance()->db->save_editor( $post_id, $template_data['data'] );
+		Plugin::instance()->db->save_editor( $template_id, $template_data['data'] );
 
-		$this->save_item_type( $post_id, $template_data['type'] );
+		$this->save_item_type( $template_id, $template_data['type'] );
 
-		do_action( 'elementor/template-library/after_save_template', $post_id, $template_data );
+		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
 
-		do_action( 'elementor/template-library/after_update_template', $post_id, $template_data );
+		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
-		return $post_id;
+		return $template_id;
 	}
 
 	public function update_item( $new_data ) {
