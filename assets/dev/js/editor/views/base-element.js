@@ -549,6 +549,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 			if ( ! Object.keys( query ).length && control.responsive ) {
 				query = control.responsive;
+
+				if ( 'desktop' === query.max ) {
+					delete query.max;
+				}
 			}
 
 			stylesheet.addRules( selector, outputCssProperty, query );

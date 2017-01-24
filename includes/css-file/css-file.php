@@ -193,6 +193,10 @@ abstract class CSS_File {
 
 			if ( ! $query && ! empty( $control['responsive'] ) ) {
 				$query = $control['responsive'];
+
+				if ( ! empty( $query['max'] ) && Element_Base::RESPONSIVE_DESKTOP === $query['max'] ) {
+					unset( $query['max'] );
+				}
 			}
 
 			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );

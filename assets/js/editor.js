@@ -6524,6 +6524,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 			if ( ! Object.keys( query ).length && control.responsive ) {
 				query = control.responsive;
+
+				if ( 'desktop' === query.max ) {
+					delete query.max;
+				}
 			}
 
 			stylesheet.addRules( selector, outputCssProperty, query );
@@ -6915,7 +6919,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
 			modelClasses = this.model.get( 'classes' ),
-			responsiveControl = this.model.get( 'responsive' );
+			responsive = this.model.get( 'responsive' );
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
@@ -6925,8 +6929,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			classes += ' elementor-control-under-section';
 		}
 
-		if ( ! _.isEmpty( responsiveControl ) ) {
-			classes += ' elementor-control-responsive-' + responsiveControl;
+		if ( ! _.isEmpty( responsive ) ) {
+			_.each( responsive, function( device ) {
+				classes += ' elementor-control-responsive-' + device;
+			} );
 		}
 
 		return classes;
