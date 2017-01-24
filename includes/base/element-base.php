@@ -211,7 +211,9 @@ abstract class Element_Base {
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
 
-			$control_args['responsive'] = [ 'max' => $device_name ];
+			if ( self::RESPONSIVE_DESKTOP !== $device_name ) {
+				$control_args['responsive'] = [ 'max' => $device_name ];
+			}
 
 			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
