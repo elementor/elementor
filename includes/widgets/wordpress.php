@@ -47,9 +47,9 @@ class Widget_WordPress extends Widget_Base {
 		return true;
 	}
 
-	public function get_form( $instance = [] ) {
+	public function get_form() {
 		ob_start();
-		$this->get_widget_instance()->form( $instance['wp'] );
+		$this->get_widget_instance()->form( $this->get_settings( 'wp' ) );
 		return ob_get_clean();
 	}
 

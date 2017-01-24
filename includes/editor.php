@@ -292,7 +292,7 @@ class Editor {
 				'jquery-simple-dtpicker',
 				'ace',
 			],
-			$plugin->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 
@@ -423,14 +423,14 @@ class Editor {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
 			'google-font-roboto',
 			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -451,7 +451,7 @@ class Editor {
 				'google-font-roboto',
 				'jquery-simple-dtpicker',
 			],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style( 'elementor-editor' );

@@ -785,16 +785,16 @@
   .elementor-button .elementor-button-text {
     display: inline-block; }
 
-.elementor-element.elementor-button-info a {
+.elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
 
-.elementor-element.elementor-button-success a {
+.elementor-element.elementor-button-success .elementor-button {
   background-color: #5cb85c; }
 
-.elementor-element.elementor-button-warning a {
+.elementor-element.elementor-button-warning .elementor-button {
   background-color: #f0ad4e; }
 
-.elementor-element.elementor-button-danger a {
+.elementor-element.elementor-button-danger .elementor-button {
   background-color: #d9534f; }
 
 .elementor-widget-button .elementor-button .elementor-button-info {
@@ -1620,6 +1620,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 	animation-duration: .75s;
 }
 */
+@media (max-width: 767px) {
+  .elementor-section {
+    background-attachment: scroll !important; } }
+
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }

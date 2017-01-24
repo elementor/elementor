@@ -17,7 +17,7 @@ class Api {
 	 * @return array|bool
 	 */
 	private static function _get_info_data( $force = false ) {
-		$cache_key = 'elementor_remote_info_api_data_' . Plugin::instance()->get_version();
+		$cache_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
 		$info_data = get_transient( $cache_key );
 
 		if ( $force || false === $info_data ) {
