@@ -6489,28 +6489,41 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			var devicePattern = /^\(([^)]+)\)/,
-				deviceRule = selector.match( devicePattern );
+			var devicePattern = /^(?:\([^)]+\)){1,2}/,
+				deviceRules = selector.match( devicePattern ),
+				query = {};
 
-			if ( deviceRule ) {
+			if ( deviceRules ) {
+				deviceRules = deviceRules[0];
+
 				selector = selector.replace( devicePattern, '' );
 
-				deviceRule = deviceRule[1];
+				var pureDevicePattern = /\(([^)]+)\)/g,
+					pureDeviceRules = [],
+					matches;
+
+				while ( matches = pureDevicePattern.exec( deviceRules ) ) {
+					pureDeviceRules.push( matches[1] );
+				}
+
+				_.each( pureDeviceRules, function( deviceRule ) {
+					if ( 'desktop' === deviceRule ) {
+						return;
+					}
+
+					var device = deviceRule.replace( /\+$/, '' ),
+						endPoint = device === deviceRule ? 'max' : 'min';
+
+					query[ endPoint ] = device;
+				} );
 			}
 
 			_.each( placeholders, function( placeholder, index ) {
 				selector = selector.replace( placeholder, replacements[ index ] );
 			} );
 
-			var device = deviceRule,
-				query;
-
-			if ( ! device && control.responsive ) {
-				device = control.responsive;
-			}
-
-			if ( device && 'desktop' !== device ) {
-				query = { max: device };
+			if ( ! Object.keys( query ).length && control.responsive ) {
+				query = control.responsive;
 			}
 
 			stylesheet.addRules( selector, outputCssProperty, query );
