@@ -116,7 +116,7 @@ class Group_Control_Background extends Group_Control_Base {
 					'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 				],
 				'selectors' => [
-					$args['selector'] => 'background-attachment: {{VALUE}};',
+					'(tablet+)' . $args['selector'] => 'background-attachment: {{VALUE}};',
 				],
 				'condition' => [
 					'background' => [ 'classic' ],
