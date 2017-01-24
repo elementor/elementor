@@ -1621,6 +1621,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 }
 */
 @media (max-width: 767px) {
+  .elementor-section {
+    background-attachment: scroll !important; } }
+
+@media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
 
