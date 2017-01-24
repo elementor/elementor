@@ -163,28 +163,36 @@ abstract class CSS_File {
 				continue;
 			}
 
-			$device_pattern = '/^\(([^\)]+)\)/';
+			$device_pattern = '/^(?:\([^\)]+\)){1,2}/';
 
-			preg_match( $device_pattern, $selector, $device_rule );
+			preg_match( $device_pattern, $selector, $device_rules );
 
-			if ( $device_rule ) {
+			$query = [];
+
+			if ( $device_rules ) {
 				$selector = preg_replace( $device_pattern, '', $selector );
 
-				$device_rule = $device_rule[1];
+				preg_match_all( '/\(([^\)]+)\)/', $device_rules[0], $pure_device_rules );
+
+				$pure_device_rules = $pure_device_rules[1];
+
+				foreach ( $pure_device_rules as $device_rule ) {
+					if ( Element_Base::RESPONSIVE_DESKTOP === $device_rule ) {
+						continue;
+					}
+
+					$device = preg_replace( '/\+$/', '', $device_rule );
+
+					$endpoint = $device === $device_rule ? 'max' : 'min';
+
+					$query[ $endpoint ] = $device;
+				}
 			}
 
 			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
 
-			$device = $device_rule;
-
-			$query = null;
-
-			if ( ! $device && ! empty( $control['responsive'] ) ) {
-				$device = $control['responsive'];
-			}
-
-			if ( $device && Element_Base::RESPONSIVE_DESKTOP !== $device  ) {
-				$query = [ 'max' => $device ];
+			if ( ! $query && ! empty( $control['responsive'] ) ) {
+				$query = $control['responsive'];
 			}
 
 			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
