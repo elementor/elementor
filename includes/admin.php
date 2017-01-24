@@ -30,7 +30,7 @@ class Admin {
 			[
 				'jquery',
 			],
-			Plugin::instance()->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 		wp_enqueue_script( 'elementor-admin-app' );
@@ -61,7 +61,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -70,7 +70,7 @@ class Admin {
 			[
 				'elementor-icons',
 			],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style( 'elementor-admin-app' );
@@ -237,7 +237,7 @@ class Admin {
 		$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
 
 		// Check if have upgrade notices to show
-		if ( version_compare( Plugin::instance()->get_version(), $upgrade_notice['version'], '>=' ) )
+		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) )
 			return;
 
 		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
@@ -306,7 +306,7 @@ class Admin {
 				'underscore',
 				'elementor-dialog',
 			],
-			Plugin::instance()->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 

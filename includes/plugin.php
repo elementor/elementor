@@ -89,6 +89,8 @@ class Plugin {
 	public $posts_css_manager;
 
 	/**
+	 * @deprecated
+	 *
 	 * @return string
 	 */
 	public function get_version() {

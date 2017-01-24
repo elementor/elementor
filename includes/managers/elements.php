@@ -35,6 +35,10 @@ class Elements_Manager {
 			$args = $element_type->get_default_args();
 		} else {
 			$element_type = $this->get_element_types( $element_data['elType'] );
+
+			if ( ! $element_type ) {
+				return null;
+			}
 		}
 
 		$element_class = $element_type->get_class_name();
