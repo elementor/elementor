@@ -1765,7 +1765,8 @@ select {
     background-color: #556068;
     padding: 10px;
     box-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
-    cursor: default; }
+    cursor: default;
+    z-index: 2; }
   .elementor-panel .elementor-panel-footer-sub-menu {
     border-radius: 5px;
     overflow: hidden; }
