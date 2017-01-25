@@ -1275,7 +1275,9 @@ select {
       border-color: #a4afb7; }
       .elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:focus + .elementor-control-url-target.active {
         background-color: #a4afb7; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-choices, .elementor-panel #elementor-panel-page-editor .elementor-control-align .elementor-choices, .elementor-panel #elementor-panel-page-editor .elementor-control-position .elementor-choices {
+  .elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-choices,
+  .elementor-panel #elementor-panel-page-editor .elementor-control-align .elementor-choices,
+  .elementor-panel #elementor-panel-page-editor .elementor-control-position .elementor-choices {
     direction: ltr; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-section {
     margin-top: 10px;
@@ -1284,6 +1286,8 @@ select {
       padding-top: 15px; }
       .elementor-panel #elementor-panel-page-editor .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section):before {
         display: none; }
+  .elementor-panel #elementor-panel-page-editor .elementor-control-type-color .elementor-control-input-wrapper {
+    height: 27px; }
   .elementor-panel #elementor-panel-page-editor .wp-picker-container:not(.wp-picker-active) {
     float: left; }
   .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active {
@@ -1525,8 +1529,7 @@ select {
     .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls .wp-picker-container.wp-picker-active {
       -webkit-transform: translateY(0);
               transform: translateY(0);
-      border-width: 0;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4); }
+      border-width: 0; }
   .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
     table-layout: fixed;
@@ -1681,7 +1684,8 @@ select {
     background-color: #fff;
     border: solid #fff;
     border-width: 0 17px 0 12px;
-    padding-top: 10px; }
+    padding-top: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4); }
     .elementor-panel .wp-picker-container.wp-picker-active .wp-color-result {
       float: right; }
     .elementor-panel .wp-picker-container.wp-picker-active .wp-picker-input-wrap {
