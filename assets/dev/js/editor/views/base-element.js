@@ -501,7 +501,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 
 			_.each( placeholders, function( placeholder, index ) {
-				selector = selector.replace( placeholder, replacements[ index ] );
+				var placeholderPattern = new RegExp( placeholder, 'g' );
+
+				selector = selector.replace( placeholderPattern, replacements[ index ] );
 			} );
 
 			var device = deviceRule,
