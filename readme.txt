@@ -174,7 +174,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 = 1.1.7 - 25.01.2017 =
 * Tweak! - Change `box-shadow` type control from select to switcher
 * Fix! - On-loading glitch for Image Carousel widget
-* Fix! - Background attachment for Section on mobile devices 
+* Fix! - Background attachment for Section on mobile devices ([#890](https://github.com/pojome/elementor/issues/890))
 * Fix! - Default WordPress widget checkboxes not holding values ([#1210](https://github.com/pojome/elementor/issues/1210))
 * Fix! - Heading with link custom color gone ([#1216](https://github.com/pojome/elementor/issues/1216))
 * Fix! - Jumping of panel when the `wp-color-picker` is active
