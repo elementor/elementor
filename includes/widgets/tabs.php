@@ -100,10 +100,8 @@ class Widget_Tabs extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before' => 'border-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:after' => 'border-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span' => 'border-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tab-desktop-title.active:before, {{WRAPPER}} .elementor-tab-desktop-title.active:after, {{WRAPPER}} .elementor-tab-desktop-title.active, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tab-mobile-title' => 'border-width: {{SIZE}}{{UNIT}};',
+					'(mobile){{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -114,10 +112,8 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before' => 'border-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:after' => 'border-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span' => 'border-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tab-content' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-desktop-title.active:before, {{WRAPPER}} .elementor-tab-desktop-title.active:after, {{WRAPPER}} .elementor-tab-title.active, {{WRAPPER}} .elementor-tab-mobile-title, {{WRAPPER}} .elementor-tab-content' => 'border-color: {{VALUE}};',
+					'(mobile){{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -128,8 +124,8 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title.active' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tabs .elementor-tab-content' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-desktop-title.active' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -156,7 +152,7 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.active' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -169,7 +165,7 @@ class Widget_Tabs extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'tab_typography',
-				'selector' => '{{WRAPPER}} .elementor-tab-title > span',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
@@ -219,7 +215,7 @@ class Widget_Tabs extends Widget_Base {
 			$counter = 1; ?>
 			<div class="elementor-tabs-wrapper">
 				<?php foreach ( $tabs as $item ) : ?>
-					<div class="elementor-tab-title" data-tab="<?php echo $counter; ?>"><span><?php echo $item['tab_title']; ?></span></div>
+					<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 				<?php
 					$counter++;
 				endforeach; ?>
@@ -229,6 +225,7 @@ class Widget_Tabs extends Widget_Base {
 			$counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper">
 				<?php foreach ( $tabs as $item ) : ?>
+					<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 					<div class="elementor-tab-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				<?php
 					$counter++;
@@ -247,7 +244,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-wrapper">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title" data-tab="{{ counter }}"><span>{{{ item.tab_title }}}</span></div>
+						<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
 					<#
 						counter++;
 					} ); #>
@@ -257,6 +254,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-content-wrapper">
 					<#
 					_.each( settings.tabs, function( item ) { #>
+						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
 						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }}" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
 					<#
 					counter++;

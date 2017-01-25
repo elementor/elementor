@@ -7,53 +7,64 @@
 
 	.elementor-tabs-wrapper {
 		overflow: hidden;
+	}
 
-		.elementor-tab-title {
-			display: table-cell;
+	.elementor-tab-title {
+		cursor: pointer;
+	}
 
-			> span {
-				position: relative;
+	.elementor-tab-desktop-title {
+		position: relative;
+		display: table-cell;
+		padding: 20px 25px;
+		font-weight: bold;
+		line-height: 1;
+		border: 1px solid transparent;
+		border-bottom: none;
+
+		&.active {
+			border-color: $gray-light;
+
+			&:before,
+			&:after {
 				display: block;
-				padding: 20px 25px;
-				line-height: 1;
-				font-weight: bold;
-				cursor: pointer;
+				content: '';
+				position: absolute;
+				bottom: 0;
+				height: 0;
+				width: 999em;
+				border-bottom: 1px solid $gray-light;
 			}
 
-			&.active {
+			&:before {
+				right: 100%;
+			}
 
-				> span {
-					border: 1px solid $gray-light;
-					border-bottom: none;
-
-					&:before,
-					&:after {
-						display: block;
-						content: '';
-						position: absolute;
-						bottom: 0;
-						height: 0;
-						width: 999em;
-						border-bottom: 1px solid $gray-light;
-					}
-
-					&:before {
-						right: 100%;
-					}
-
-					&:after {
-						left: 100%;
-					}
-				}
+			&:after {
+				left: 100%;
 			}
 		}
 	}
 
+	.elementor-tab-mobile-title {
+		border: 1px solid $gray-light;
+		padding: 10px 10px;
+		cursor: pointer;
+
+		&.active {
+			background-color: $gray-lightest;
+		}
+
+		&:not(.active) {
+			border-bottom-style: none;
+		}
+	}
+
 	.elementor-tab-content {
-	    padding: 20px;
-	    display: none;
 		border: 1px solid $gray-light;
 		border-top: none;
+	    padding: 20px;
+	    display: none;
 	}
 }
 
@@ -63,17 +74,26 @@
 	.elementor-tabs {
 
 		.elementor-tabs-wrapper {
+			display: none;
+		}
 
-			.elementor-tab-title {
-
-				> span {
-					padding: 12px 15px;
-				}
-			}
+		.elementor-tabs-content-wrapper {
+			border-bottom: 1px solid $gray-light;
 		}
 
 		.elementor-tab-content {
 			padding: 10px;
+			border-bottom-style: none;
+		}
+	}
+}
+
+@media (min-width: $screen-md-min) {
+
+	.elementor-tabs {
+
+		.elementor-tab-mobile-title {
+			display: none;
 		}
 	}
 }
