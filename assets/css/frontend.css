@@ -684,6 +684,8 @@
   padding: 0;
   margin: 0;
   line-height: 1; }
+  .elementor-widget-heading .elementor-heading-title > a {
+    color: inherit; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-small {
     font-size: 15px; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-medium {
