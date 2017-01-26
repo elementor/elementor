@@ -58,6 +58,7 @@ class Frontend {
 	}
 
 	public function body_class( $classes = [] ) {
+		$classes[] = 'elementor-default';
 		if ( is_singular() && 'builder' === Plugin::instance()->db->get_edit_mode( get_the_ID() ) ) {
 			$classes[] = 'elementor-page';
 		}
