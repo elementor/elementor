@@ -127,6 +127,21 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'caption_type',
+			[
+				'label' => __( 'Caption Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'None', 'elementor' ),
+					'title' => __( 'Title', 'elementor' ),
+					'caption' => __( 'Caption', 'elementor' ),
+					'description' => __( 'Description', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -445,20 +460,8 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Caption', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'caption_type',
-			[
-				'label' => __( 'Caption Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => __( 'None', 'elementor' ),
-					'title' => __( 'Title', 'elementor' ),
-					'caption' => __( 'Caption', 'elementor' ),
-					'description' => __( 'Description', 'elementor' ),
+				'condition' => [
+					'caption_type!' => '',
 				],
 			]
 		);
@@ -490,9 +493,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-caption' => 'text-align: {{VALUE}};',
 				],
-				'condition' => [
-					'caption_type!' => '',
-				],
 			]
 		);
 
@@ -505,9 +505,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-caption' => 'color: {{VALUE}};',
 				],
-				'condition' => [
-					'caption_type!' => '',
-				],
 			]
 		);
 
@@ -518,9 +515,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
-				'condition' => [
-					'caption_type!' => '',
-				],
 			]
 		);
 
