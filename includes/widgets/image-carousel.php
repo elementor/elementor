@@ -449,23 +449,22 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'gallery_display_caption',
+			'caption_type',
 			[
-				'label' => __( 'Display', 'elementor' ),
+				'label' => __( 'Caption Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'none',
+				'default' => '',
 				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'none' => __( 'Hide', 'elementor' ),
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-caption' => 'display: {{VALUE}};',
+					'' => __( 'None', 'elementor' ),
+					'title' => __( 'Title', 'elementor' ),
+					'caption' => __( 'Caption', 'elementor' ),
+					'description' => __( 'Description', 'elementor' ),
 				],
 			]
 		);
 
 		$this->add_control(
-			'align',
+			'caption_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -492,13 +491,13 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-caption' => 'text-align: {{VALUE}};',
 				],
 				'condition' => [
-					'gallery_display_caption' => '',
+					'caption_type!' => '',
 				],
 			]
 		);
 
 		$this->add_control(
-			'text_color',
+			'caption_text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
@@ -507,7 +506,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-carousel-caption' => 'color: {{VALUE}};',
 				],
 				'condition' => [
-					'gallery_display_caption' => '',
+					'caption_type!' => '',
 				],
 			]
 		);
@@ -515,12 +514,12 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => 'typography',
+				'name' => 'caption_typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 				'condition' => [
-					'gallery_display_caption' => '',
+					'caption_type!' => '',
 				],
 			]
 		);
@@ -536,17 +535,17 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 
 		$slides = [];
+
 		foreach ( $settings['carousel'] as $attachment ) {
 			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
+
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
-			$imgcaption = $this->get_item_caption( $attachment, $instance );
-			if ( $imgcaption ) {
-				$image_caption = sprintf( '%s', $imgcaption['caption'] );
-			}
 
 			$link = $this->get_link_url( $attachment, $settings );
+
 			if ( $link ) {
 				$target = '';
+
 				if ( ! empty( $link['is_external'] ) ) {
 					$target = ' target="_blank"';
 				}
@@ -554,7 +553,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
 			}
 
-			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></div></div>';
+			$image_caption = $this->get_image_caption( $attachment );
+
+			$slides[] = '<div><figure class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></figure></div>';
 
 		}
 
@@ -626,20 +627,23 @@ class Widget_Image_Carousel extends Widget_Base {
 		];
 	}
 
-	private function get_item_caption( $attachment, $instance ) {
-		if ( 'none' === $instance['gallery_display_caption'] ) {
-			return false;
+	private function get_image_caption( $attachment ) {
+		$caption_type = $this->get_settings( 'caption_type' );
+
+		if ( '' === $caption_type ) {
+			return '';
 		}
 
-		if ( '' === $instance['gallery_display_caption'] ) {
-			if ( empty( $instance['caption'] ) ) {
-				return false;
-			}
-			return $instance['caption'];
+		$attachment_post = get_post( $attachment['id'] );
+
+		if ( 'caption' === $caption_type ) {
+			return $attachment_post->post_excerpt;
 		}
 
-		return [
-			'caption' => wp_get_attachment_caption( $attachment['id'] ),
-		];
+		if ( 'title' === $caption_type ) {
+			return $attachment_post->post_title;
+		}
+
+		return $attachment_post->post_content;
 	}
 }
