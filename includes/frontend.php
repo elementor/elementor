@@ -29,8 +29,9 @@ class Frontend {
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		if ( $this->_has_elementor_in_page ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		}
 
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
@@ -71,12 +72,12 @@ class Frontend {
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
-			'waypoints',
+			'elementor-waypoints',
 			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints' . $suffix . '.js',
 			[
 				'jquery',
 			],
-			'4.0.1',
+			'4.0.2',
 			true
 		);
 
@@ -104,11 +105,11 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
-				'waypoints',
+				'elementor-waypoints',
 				'jquery-numerator',
 				'jquery-slick',
 			],
-			Plugin::instance()->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 		wp_enqueue_script( 'elementor-frontend' );
@@ -132,7 +133,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -154,7 +155,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style( 'elementor-icons' );
@@ -191,6 +192,13 @@ class Frontend {
 	 * Handle style that do not printed in header
 	 */
 	public function wp_footer() {
+		if ( ! $this->_has_elementor_in_page ) {
+			return;
+		}
+
+		$this->enqueue_styles();
+		$this->enqueue_scripts();
+
 		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
@@ -335,7 +343,13 @@ class Frontend {
 			</div>
 		</div>
 		<?php
-		return apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
+		$content = apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
+
+		if ( ! empty( $content ) ) {
+			$this->_has_elementor_in_page = true;
+		}
+
+		return $content;
 	}
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
@@ -380,10 +394,6 @@ class Frontend {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
-
-		if ( ! empty( $content ) ) {
-			$this->_has_elementor_in_page = true;
-		}
 
 		// Restore global post
 		if ( isset( $global_post ) ) {

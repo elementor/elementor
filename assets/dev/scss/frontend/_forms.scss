@@ -117,6 +117,12 @@
 
 .elementor-field-label {
 	cursor: pointer;
+
+	.elementor-mark-required &:after {
+		content: '*';
+		color: red;
+		@include padding-start(0.2em);
+	}
 }
 
 // Keep the following out from another parent selector!

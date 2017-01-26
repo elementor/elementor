@@ -68,27 +68,19 @@
 	}
 }
 
+.elementor-element.elementor-button- {
+
+	@include button-types( '.elementor-button' );
+
+}
+
 .elementor-widget-button {
 
 	.elementor-button {
 
-		&.elementor-button- {
+		.elementor-button- {
 
-			&info {
-				background-color: $info;
-			}
-
-			&success {
-				background-color: $success;
-			}
-
-			&warning {
-				background-color: $warning;
-			}
-
-			&danger {
-				background-color: $danger;
-			}
+			@include button-types( '' );
 		}
 	}
 }

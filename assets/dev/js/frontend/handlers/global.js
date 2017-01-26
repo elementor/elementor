@@ -12,6 +12,6 @@ module.exports = function( $scope, $ ) {
 	$scope.addClass( 'elementor-invisible' ).removeClass( animation );
 
 	elementorFrontend.utils.waypoint( $scope, function() {
-		$scope.removeClass( 'elementor-invisible' ).addClass( animation );
+		$scope.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
 	}, { offset: '90%' } );
 };

@@ -555,6 +555,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			}
 
 			$slides[] = '<div><div class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></div></div>';
+
 		}
 
 		if ( empty( $slides ) ) {
@@ -607,8 +608,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		</div>
 	<?php
 	}
-
-	protected function _content_template() {}
 
 	private function get_link_url( $attachment, $instance ) {
 		if ( 'none' === $instance['link_to'] ) {

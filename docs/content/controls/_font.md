@@ -42,3 +42,5 @@ Argument           | Required   | Type         | Default                      | 
 `type`             | yes        | *`string`*   | `Controls_Manager::ICON`     | The type of the control
 `default`          | no         | *`string`*   |                              | The default value - CSS classes for a default icon.
 `fonts`            | no         | *`array`*    | A list of **Google Fonts**   | An associative array of fonts. `[ 'Font Name' => 'family-name', ... ]`
+`description`      | no         | *`string`*   |                              | A description text to display below the control
+`separator`        | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator

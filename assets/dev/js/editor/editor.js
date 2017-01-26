@@ -22,6 +22,8 @@ App = Marionette.Application.extend( {
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-utils/ajax' ),
 	conditions: require( 'elementor-utils/conditions' ),
+	revisions:  require( 'elementor-revisions/manager' ),
+	hotKeys: require( 'elementor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -35,15 +37,43 @@ App = Marionette.Application.extend( {
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
+		controls: {
+			Base: require( 'elementor-views/controls/base' ),
+			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
+			Color: require( 'elementor-views/controls/color' ),
+			Dimensions: require( 'elementor-views/controls/dimensions' ),
+			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
+			Media: require( 'elementor-views/controls/media' ),
+			Slider: require( 'elementor-views/controls/slider' ),
+			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
+			Choose: require( 'elementor-views/controls/choose' ),
+			Url: require( 'elementor-views/controls/url' ),
+			Font: require( 'elementor-views/controls/font' ),
+			Section: require( 'elementor-views/controls/section' ),
+			Tab: require( 'elementor-views/controls/tab' ),
+			Repeater: require( 'elementor-views/controls/repeater' ),
+			Wp_widget: require( 'elementor-views/controls/wp_widget' ),
+			Icon: require( 'elementor-views/controls/icon' ),
+			Gallery: require( 'elementor-views/controls/gallery' ),
+			Select2: require( 'elementor-views/controls/select2' ),
+			Date_time: require( 'elementor-views/controls/date-time' ),
+			Code: require( 'elementor-views/controls/code' ),
+			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Structure: require( 'elementor-views/controls/structure' ),
+			Animation: require( 'elementor-views/controls/animation' ),
+			Hover_animation: require( 'elementor-views/controls/animation' ),
+			Order: require( 'elementor-views/controls/order' )
+		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
 	},
 
-	// Private Members
-	_controlsItemView: null,
-
 	_defaultDeviceMode: 'desktop',
+
+	addControlView: function( controlID, ControlView ) {
+		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+	},
 
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
@@ -85,38 +115,8 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	getControlItemView: function( controlType ) {
-		if ( null === this._controlsItemView ) {
-			this._controlsItemView = {
-				color: require( 'elementor-views/controls/color' ),
-				dimensions: require( 'elementor-views/controls/dimensions' ),
-				image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
-				media: require( 'elementor-views/controls/media' ),
-				slider: require( 'elementor-views/controls/slider' ),
-				wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
-				choose: require( 'elementor-views/controls/choose' ),
-				url: require( 'elementor-views/controls/url' ),
-				font: require( 'elementor-views/controls/font' ),
-				section: require( 'elementor-views/controls/section' ),
-				tab: require( 'elementor-views/controls/tab' ),
-				repeater: require( 'elementor-views/controls/repeater' ),
-				wp_widget: require( 'elementor-views/controls/wp_widget' ),
-				icon: require( 'elementor-views/controls/icon' ),
-				gallery: require( 'elementor-views/controls/gallery' ),
-				select2: require( 'elementor-views/controls/select2' ),
-				date_time: require( 'elementor-views/controls/date-time' ),
-				code: require( 'elementor-views/controls/code' ),
-				box_shadow: require( 'elementor-views/controls/box-shadow' ),
-				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' ),
-				order: require( 'elementor-views/controls/order' )
-			};
-
-			this.channels.editor.trigger( 'editor:controls:initialize' );
-		}
-
-		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
+	getControlView: function( controlID ) {
+		return this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] || this.modules.controls.Base;
 	},
 
 	getPanelView: function() {
@@ -133,6 +133,8 @@ App = Marionette.Application.extend( {
 		this.heartbeat.init();
 		this.modals.init();
 		this.ajax.init();
+		this.revisions.init();
+		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -236,6 +238,8 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
+		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+
 		this.$previewContents = this.$preview.contents();
 
 		var Preview = require( 'elementor-views/preview' ),
@@ -254,6 +258,7 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.$previewContents.on( 'click', function( event ) {
@@ -262,7 +267,7 @@ App = Marionette.Application.extend( {
 				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'preview' !== editMode || ! isTargetInsideDocument ) {
+			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -307,19 +312,16 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.trigger( 'preview:loaded' );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'preview' === activeMode ) {
-			this.enterPreviewMode();
-		} else {
+	onEditModeSwitched: function( activeMode ) {
+		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
+		} else {
+			this.enterPreviewMode( 'preview' === activeMode );
 		}
 	},
 
@@ -350,12 +352,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'editor:changed', status )
-			.trigger( 'editor:changed', status );
+			.reply( 'change', status )
+			.trigger( 'change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'editor:changed' ) );
+		return ( true === elementor.channels.editor.request( 'change' ) );
 	},
 
 	setWorkSaver: function() {
@@ -393,25 +395,42 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	enterPreviewMode: function() {
-		this.$previewContents
-		    .find( 'body' )
-		    .add( 'body' )
-		    .removeClass( 'elementor-editor-active' )
-		    .addClass( 'elementor-editor-preview' );
+	enterPreviewMode: function( hidePanel ) {
+		var $elements = this.$previewContents.find( 'body' );
 
-		// Handle panel resize
-		this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+		if ( hidePanel ) {
+			$elements = $elements.add( 'body' );
+		}
 
-		this.panel.$el.css( 'width', '' );
+		$elements
+			.removeClass( 'elementor-editor-active' )
+			.addClass( 'elementor-editor-preview' );
+
+		if ( hidePanel ) {
+			// Handle panel resize
+			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+
+			this.panel.$el.css( 'width', '' );
+		}
 	},
 
 	exitPreviewMode: function() {
 		this.$previewContents
-		    .find( 'body' )
-		    .add( 'body' )
-		    .removeClass( 'elementor-editor-preview' )
-		    .addClass( 'elementor-editor-active' );
+			.find( 'body' )
+			.add( 'body' )
+			.removeClass( 'elementor-editor-preview' )
+			.addClass( 'elementor-editor-active' );
+	},
+
+	changeEditMode: function( newMode ) {
+		var dataEditMode = elementor.channels.dataEditMode,
+			oldEditMode = dataEditMode.request( 'activeMode' );
+
+		dataEditMode.reply( 'activeMode', newMode );
+
+		if ( newMode !== oldEditMode ) {
+			dataEditMode.trigger( 'switch', newMode );
+		}
 	},
 
 	saveEditor: function( options ) {
@@ -420,24 +439,27 @@ App = Marionette.Application.extend( {
 			onSuccess: null
 		}, options );
 
-		NProgress.start();
+		var self = this,
+			newData = elementor.elements.toJSON();
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
 		        post_id: this.config.post_id,
 				status: options.status,
-		        data: JSON.stringify( elementor.elements.toJSON() )
+		        data: JSON.stringify( newData )
 	        },
 			success: function( data ) {
-				NProgress.done();
+				self.setFlagEditorChange( false );
 
-				elementor.setFlagEditorChange( false );
+				self.config.data = newData;
+
+				self.channels.editor.trigger( 'saved', data );
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
 				}
 			}
-        } );
+		} );
 	},
 
 	reloadPreview: function() {
@@ -497,23 +519,34 @@ App = Marionette.Application.extend( {
 	},
 
 	logSite: function() {
-		var asciiText = [
-			' ;;;;;;;;;;;;;;; ',
-			';;;  ;;       ;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;       ;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;;;;;;;;;;;',
-			';;;  ;;       ;;;',
-			' ;;;;;;;;;;;;;;; '
-		];
+		var text = '',
+			style = '';
 
-		var text = '%c' + asciiText.join( '\n' ) + '\n';
+		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+			var asciiText = [
+				' ;;;;;;;;;;;;;;; ',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				' ;;;;;;;;;;;;;;; '
+			];
+
+			text += '%c' + asciiText.join( '\n' ) + '\n';
+
+			style = 'color: #C42961';
+		} else {
+			text += '%c00';
+
+			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+		}
 
 		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
 
-		setTimeout( console.log.bind( console, text, 'color: #C42961', 'color: #9B0A46', '' ) );
+		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
 	}
 } );
 

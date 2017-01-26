@@ -72,7 +72,7 @@ class Settings {
 		$field_id = 'elementor_disable_color_schemes';
 		add_settings_field(
 			$field_id,
-			__( 'Disable Color Palettes', 'elementor' ),
+			__( 'Disable Global Colors', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
 			$style_section,
@@ -80,7 +80,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'checkbox',
 				'value' => 'yes',
-				'sub_desc' => __( 'Color Palettes let you change the default colors that appear under the various widgets. If you prefer to inherit the colors from your theme, you can disable this feature.', 'elementor' ),
+				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
 			]
 		);
 
@@ -89,7 +89,7 @@ class Settings {
 		$field_id = 'elementor_disable_typography_schemes';
 		add_settings_field(
 			$field_id,
-			__( 'Disable Default Fonts', 'elementor' ),
+			__( 'Disable Global Fonts', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
 			$style_section,
@@ -97,7 +97,7 @@ class Settings {
 				'id' => $field_id,
 				'type' => 'checkbox',
 				'value' => 'yes',
-				'sub_desc' => __( 'Default Fonts let you change the fonts that appear on Elementor from one place. If you prefer to inherit the fonts from your theme, you can disable this feature here.', 'elementor' ),
+				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 			]
 		);
 

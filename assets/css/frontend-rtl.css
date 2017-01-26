@@ -522,6 +522,10 @@
 
 .elementor-field-label {
   cursor: pointer; }
+  .elementor-mark-required .elementor-field-label:after {
+    content: '*';
+    color: red;
+    padding-right: 0.2em; }
 
 .elementor-field-textual {
   line-height: 1.4; }
@@ -680,6 +684,8 @@
   padding: 0;
   margin: 0;
   line-height: 1; }
+  .elementor-widget-heading .elementor-heading-title > a {
+    color: inherit; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-small {
     font-size: 15px; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-medium {
@@ -781,16 +787,28 @@
   .elementor-button .elementor-button-text {
     display: inline-block; }
 
-.elementor-widget-button .elementor-button.elementor-button-info {
+.elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
 
-.elementor-widget-button .elementor-button.elementor-button-success {
+.elementor-element.elementor-button-success .elementor-button {
   background-color: #5cb85c; }
 
-.elementor-widget-button .elementor-button.elementor-button-warning {
+.elementor-element.elementor-button-warning .elementor-button {
   background-color: #f0ad4e; }
 
-.elementor-widget-button .elementor-button.elementor-button-danger {
+.elementor-element.elementor-button-danger .elementor-button {
+  background-color: #d9534f; }
+
+.elementor-widget-button .elementor-button .elementor-button-info {
+  background-color: #5bc0de; }
+
+.elementor-widget-button .elementor-button .elementor-button-success {
+  background-color: #5cb85c; }
+
+.elementor-widget-button .elementor-button .elementor-button-warning {
+  background-color: #f0ad4e; }
+
+.elementor-widget-button .elementor-button .elementor-button-danger {
   background-color: #d9534f; }
 
 .elementor-widget-divider .elementor-divider {
@@ -1604,6 +1622,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 	animation-duration: .75s;
 }
 */
+@media (max-width: 767px) {
+  .elementor-section {
+    background-attachment: scroll !important; } }
+
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }

@@ -74,11 +74,13 @@ class Utils {
 
 		// Create a UTC+- zone if no timezone string exists
 		if ( empty( $timezone_string ) ) {
-			if ( 0 === $current_offset )
+			if ( 0 === $current_offset ) {
 				$timezone_string = 'UTC+0';
-			elseif ( $current_offset < 0 )
+			} elseif ( $current_offset < 0 ) {
 				$timezone_string = 'UTC' . $current_offset;
-			else $timezone_string = 'UTC+' . $current_offset;
+			} else {
+				$timezone_string = 'UTC+' . $current_offset;
+			}
 		}
 
 		return $timezone_string;
