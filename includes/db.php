@@ -18,8 +18,9 @@ class DB {
 	 * Save builder method.
 	 *
 	 * @since 1.0.0
-	 * @param int    $post_id
-	 * @param array  $posted
+	 *
+	 * @param int $post_id
+	 * @param array $posted
 	 * @param string $status
 	 *
 	 * @return void
@@ -85,6 +86,7 @@ class DB {
 	 * Get & Parse the builder from DB.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param int $post_id
 	 * @param string $status
 	 *
@@ -162,6 +164,7 @@ class DB {
 	 * Remove draft data from DB.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param $post_id
 	 *
 	 * @return void
@@ -174,6 +177,7 @@ class DB {
 	 * Get edit mode by Page ID
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param $post_id
 	 *
 	 * @return mixed
@@ -186,6 +190,7 @@ class DB {
 	 * Setup the edit mode per Page ID
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param int $post_id
 	 * @param string $mode
 	 *

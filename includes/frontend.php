@@ -5,16 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Frontend {
 
-	private $_enqueue_google_fonts = [];
-	private $_enqueue_google_early_access_fonts = [];
+	private $google_fonts = [];
+	private $google_early_access_fonts = [];
 
 	private $_is_frontend_mode = false;
 	private $_has_elementor_in_page = false;
-
-	/**
-	 * @var Stylesheet
-	 */
-	private $stylesheet;
 
 	public function init() {
 		if ( Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
@@ -23,8 +18,6 @@ class Frontend {
 
 		$this->_is_frontend_mode = true;
 		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
-
-		$this->_init_stylesheet();
 
 		add_action( 'wp_head', [ $this, 'print_css' ] );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
@@ -37,16 +30,6 @@ class Frontend {
 
 		// Add Edit with the Elementor in Admin Bar
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
-	}
-
-	private function _init_stylesheet() {
-		$this->stylesheet = new Stylesheet();
-
-		$breakpoints = Responsive::get_breakpoints();
-
-		$this->stylesheet
-			->add_device( 'mobile', $breakpoints['md'] - 1 )
-			->add_device( 'tablet', $breakpoints['lg'] - 1 );
 	}
 
 	protected function _print_elements( $elements_data ) {
@@ -163,27 +146,15 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-		$css_file = new Post_CSS_File( get_the_ID() );
-		$css_file->enqueue();
+		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
+			$css_file = new Post_CSS_File( get_the_ID() );
+
+			$css_file->enqueue();
+		}
 	}
 
 	public function print_css() {
-		$container_width = absint( get_option( 'elementor_container_width' ) );
-
-		if ( ! empty( $container_width ) ) {
-			$this->stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
-		}
-
-		$this->_parse_schemes_css_code();
-
-		$css_code = $this->stylesheet;
-
-		if ( empty( $css_code ) )
-			return;
-
-		?>
-		<style id="elementor-frontend-stylesheet"><?php echo $css_code; ?></style>
-		<?php
+		$this->parse_global_css_code();
 
 		$this->print_google_fonts();
 	}
@@ -204,13 +175,13 @@ class Frontend {
 	}
 
 	public function print_google_fonts() {
-		// Enqueue used fonts
-		if ( ! empty( $this->_enqueue_google_fonts ) ) {
-			foreach ( $this->_enqueue_google_fonts as &$font ) {
+		// Print used fonts
+		if ( ! empty( $this->google_fonts ) ) {
+			foreach ( $this->google_fonts as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->_enqueue_google_fonts ) );
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->google_fonts ) );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -227,60 +198,35 @@ class Frontend {
 			}
 
 			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
-			$this->_enqueue_google_fonts = [];
+			$this->google_fonts = [];
 		}
 
-		if ( ! empty( $this->_enqueue_google_early_access_fonts ) ) {
-			foreach ( $this->_enqueue_google_early_access_fonts as $current_font ) {
+		if ( ! empty( $this->google_early_access_fonts ) ) {
+			foreach ( $this->google_early_access_fonts as $current_font ) {
 				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 			}
-			$this->_enqueue_google_early_access_fonts = [];
+			$this->google_early_access_fonts = [];
 		}
 	}
-	public function add_enqueue_font( $font ) {
+
+	public function enqueue_font( $font ) {
 		switch ( Fonts::get_font_type( $font ) ) {
 			case Fonts::GOOGLE :
-				if ( ! in_array( $font, $this->_enqueue_google_fonts ) )
-					$this->_enqueue_google_fonts[] = $font;
+				if ( ! in_array( $font, $this->google_fonts ) )
+					$this->google_fonts[] = $font;
 				break;
 
 			case Fonts::EARLYACCESS :
-				if ( ! in_array( $font, $this->_enqueue_google_early_access_fonts ) )
-					$this->_enqueue_google_early_access_fonts[] = $font;
+				if ( ! in_array( $font, $this->google_early_access_fonts ) )
+					$this->google_early_access_fonts[] = $font;
 				break;
 		}
 	}
 
-	protected function _parse_schemes_css_code() {
-		foreach ( Plugin::instance()->widgets_manager->get_widget_types() as $widget ) {
-			$scheme_controls = $widget->get_scheme_controls();
+	protected function parse_global_css_code() {
+		$scheme_css_file = new Global_CSS_File();
 
-			foreach ( $scheme_controls as $control ) {
-				Post_CSS_File::add_control_rules( $this->stylesheet, $control, $widget->get_controls(), function ( $control ) {
-					$scheme_value = Plugin::instance()->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
-
-					if ( empty( $scheme_value ) ) {
-						return null;
-					}
-
-					if ( ! empty( $control['scheme']['key'] ) ) {
-						$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-					}
-
-					if ( empty( $scheme_value ) ) {
-						return null;
-					}
-
-					$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
-
-					if ( Controls_Manager::FONT === $control_obj->get_type() ) {
-						$this->add_enqueue_font( $scheme_value );
-					}
-
-					return $scheme_value;
-				}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ] );
-			}
-		}
+		$scheme_css_file->enqueue();
 	}
 
 	public function apply_builder_in_content( $content ) {

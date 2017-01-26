@@ -172,9 +172,11 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
-		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
-		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
 		if ( is_admin() ) {

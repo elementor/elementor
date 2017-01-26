@@ -1843,6 +1843,8 @@ App = Marionette.Application.extend( {
 		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
 		elementorFrontend.init();
+
+		elementorFrontend.elementsHandler.initHandlers();
 	},
 
 	initClearPageDialog: function() {
@@ -2020,12 +2022,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'change', status )
-			.trigger( 'change', status );
+			.reply( 'status', status )
+			.trigger( 'status:change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'change' ) );
+		return ( true === elementor.channels.editor.request( 'status' ) );
 	},
 
 	setWorkSaver: function() {
@@ -2310,7 +2312,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-		this.listenTo( elementor.channels.editor, 'change', this.onEditorChanged )
+		this.listenTo( elementor.channels.editor, 'status:change', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
@@ -2581,6 +2583,17 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	openActiveSection: function() {
+		var activeSection = this.activeSection,
+			activeSectionView = this.children.filter( function( view ) {
+				return activeSection === view.model.get( 'name' );
+			} );
+
+		if ( activeSectionView[0] ) {
+			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+		}
+	},
+
 	onDestroy: function() {
 		if ( this.editedElementView ) {
 			this.editedElementView.$el.removeClass( 'elementor-element-editable' );
@@ -2666,15 +2679,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		}, 500 );
 	},
 
-	openActiveSection: function() {
-		var activeSection = this.activeSection,
-			activeSectionView = this.children.filter( function( view ) {
-			return activeSection === view.model.get( 'name' );
-		} );
-
-		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
-		}
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
@@ -2685,8 +2691,18 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this._renderChildren();
 	},
 
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
+	onChildviewSettingsChange: function( childView ) {
+		var editedElementView = this.getOption( 'editedElementView' ),
+			editedElementType = editedElementView.model.get( 'elType' );
+
+		if ( 'widget' === editedElementType ) {
+			editedElementType = editedElementView.model.get( 'widgetType' );
+		}
+
+		elementor.channels.editor
+			.trigger( 'change', childView, editedElementView )
+			.trigger( 'change:' + editedElementType, childView, editedElementView )
+			.trigger( 'change:' + editedElementType + ':' + childView.model.get( 'name' ), childView, editedElementView );
 	}
 } );
 
@@ -4048,7 +4064,7 @@ ElementModel = Backbone.Model.extend( {
 		return ( elementData ) ? elementData.icon : 'unknown';
 	},
 
-	getRemoteRenderRequest: function() {
+	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
 		return elementor.ajax.send( 'render_widget', {
@@ -4070,11 +4086,15 @@ ElementModel = Backbone.Model.extend( {
 
 		this.trigger( 'before:remote:render' );
 
-		if ( this._jqueryXhr && 4 !== this._jqueryXhr ) {
+		if ( this.isRemoteRequestActive() ) {
 			this._jqueryXhr.abort();
 		}
 
-		this._jqueryXhr = this.getRemoteRenderRequest();
+		this._jqueryXhr = this.createRemoteRenderRequest();
+	},
+
+	isRemoteRequestActive: function() {
+		return this._jqueryXhr && 4 !== this._jqueryXhr.readyState;
 	},
 
 	onRemoteGetHtml: function( data ) {
@@ -6243,7 +6263,15 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return value;
-	},
+	},/*
+
+	render: function() {
+		if ( this.model.isRemoteRequestActive() ) {
+			return;
+		}
+
+		Marionette.CompositeView.prototype.render.apply( this, arguments );
+	},*/
 
 	renderStyles: function() {
 		var self = this,
@@ -6265,24 +6293,39 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	renderCustomClasses: function() {
-		this.$el.addClass( 'elementor-element' );
+		var self = this;
 
-		var settings = this.getEditModel().get( 'settings' );
+		self.$el.addClass( 'elementor-element' );
 
-		_.each( settings.attributes, _.bind( function( value, attribute ) {
+		var settings = self.getEditModel().get( 'settings' );
+
+		_.each( settings.attributes, function( value, attribute ) {
 			if ( settings.isClassControl( attribute ) ) {
-				var currentControl = settings.getControl( attribute );
+				var currentControl = settings.getControl( attribute ),
+					previousClassValue = settings.previous( attribute ),
+					classValue = value;
 
-				this.$el.removeClass( currentControl.prefix_class + settings.previous( attribute ) );
+				if ( currentControl.classes_dictionary ) {
+					if ( undefined !== currentControl.classes_dictionary[ previousClassValue ] ) {
+						previousClassValue = currentControl.classes_dictionary[ previousClassValue ];
+					}
+
+					if ( undefined !== currentControl.classes_dictionary[ value ] ) {
+						classValue = currentControl.classes_dictionary[ value ];
+					}
+				}
+
+				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
 
 				var isVisible = elementor.helpers.isControlVisible( currentControl, settings.attributes );
 
-				if ( isVisible && ! _.isEmpty( settings.get( attribute ) ) ) {
-					this.$el.addClass( currentControl.prefix_class + settings.get( attribute ) );
-					this.$el.addClass( _.result( this, 'className' ) );
+				if ( isVisible && ! _.isEmpty( classValue ) ) {
+					self.$el
+						.addClass( currentControl.prefix_class + classValue )
+						.addClass( _.result( self, 'className' ) );
 				}
 			}
-		}, this ) );
+		} );
 	},
 
 	renderCustomElementID: function() {
@@ -6446,13 +6489,33 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			var devicePattern = /^\(([^)]+)\)/,
-				deviceRule = selector.match( devicePattern );
+			var devicePattern = /^(?:\([^)]+\)){1,2}/,
+				deviceRules = selector.match( devicePattern ),
+				query = {};
 
-			if ( deviceRule ) {
+			if ( deviceRules ) {
+				deviceRules = deviceRules[0];
+
 				selector = selector.replace( devicePattern, '' );
 
-				deviceRule = deviceRule[1];
+				var pureDevicePattern = /\(([^)]+)\)/g,
+					pureDeviceRules = [],
+					matches;
+
+				while ( matches = pureDevicePattern.exec( deviceRules ) ) {
+					pureDeviceRules.push( matches[1] );
+				}
+
+				_.each( pureDeviceRules, function( deviceRule ) {
+					if ( 'desktop' === deviceRule ) {
+						return;
+					}
+
+					var device = deviceRule.replace( /\+$/, '' ),
+						endPoint = device === deviceRule ? 'max' : 'min';
+
+					query[ endPoint ] = device;
+				} );
 			}
 
 			_.each( placeholders, function( placeholder, index ) {
@@ -6461,15 +6524,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 				selector = selector.replace( placeholderPattern, replacements[ index ] );
 			} );
 
-			var device = deviceRule,
-				query;
+			if ( ! Object.keys( query ).length && control.responsive ) {
+				query = control.responsive;
 
-			if ( ! device && control.responsive ) {
-				device = control.responsive;
-			}
-
-			if ( device && 'desktop' !== device ) {
-				query = { max: device };
+				if ( 'desktop' === query.max ) {
+					delete query.max;
+				}
 			}
 
 			stylesheet.addRules( selector, outputCssProperty, query );
@@ -6861,7 +6921,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
 			modelClasses = this.model.get( 'classes' ),
-			responsiveControl = this.model.get( 'responsive' );
+			responsive = this.model.get( 'responsive' );
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
@@ -6871,8 +6931,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			classes += ' elementor-control-under-section';
 		}
 
-		if ( ! _.isEmpty( responsiveControl ) ) {
-			classes += ' elementor-control-responsive-' + responsiveControl;
+		if ( ! _.isEmpty( responsive ) ) {
+			_.each( responsive, function( device ) {
+				classes += ' elementor-control-responsive-' + device;
+			} );
 		}
 
 		return classes;
@@ -6943,6 +7005,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'settings:change' );
 
 		var elementType = this.elementSettingsModel.get( 'elType' );
+
+		// TODO: The following is a temp fallback from 1.2.0
 		if ( 'widget' === elementType ) {
 			elementType = this.elementSettingsModel.get( 'widgetType' );
 		}

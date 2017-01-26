@@ -124,6 +124,19 @@
 #elementor-select-preset {
   display: none; }
 
+.elementor:after {
+  position: absolute;
+  opacity: 0; }
+  @media (min-width: 1025px) {
+    .elementor:after {
+      content: 'desktop'; } }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .elementor:after {
+      content: 'tablet'; } }
+  @media (max-width: 767px) {
+    .elementor:after {
+      content: 'mobile'; } }
+
 .elementor-section {
   position: relative; }
   .elementor-section .elementor-container {
@@ -1686,10 +1699,6 @@ body.elementor-page .elementor-widget-menu-anchor {
 	animation-duration: .75s;
 }
 */
-@media (max-width: 767px) {
-  .elementor-section {
-    background-attachment: scroll !important; } }
-
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
