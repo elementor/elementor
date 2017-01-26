@@ -100,6 +100,29 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
+			'navigation_width',
+			[
+				'label' => __( 'Navigation Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
+				'range' => [
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-tabs-wrapper' => 'width: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'tabs_view' => 'vertical',
+				],
+			]
+		);
+
+		$this->add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
