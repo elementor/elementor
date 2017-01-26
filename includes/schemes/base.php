@@ -9,7 +9,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 
 	private $_system_schemes;
 
-	protected abstract function _init_system_schemes();
+	abstract protected function _init_system_schemes();
 
 	public static function get_description() {
 		return '';

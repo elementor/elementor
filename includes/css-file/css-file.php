@@ -239,24 +239,24 @@ abstract class CSS_File {
 	/**
 	 * @return array
 	 */
-	protected abstract function load_meta();
+	abstract protected function load_meta();
 
 	/**
 	 * @param string $meta
 	 */
-	protected abstract function update_meta( $meta );
+	abstract protected function update_meta( $meta );
 
 	/**
 	 * @return string
 	 */
-	protected abstract function get_file_handle_id();
+	abstract protected function get_file_handle_id();
 
-	protected abstract function render_css();
+	abstract protected function render_css();
 
 	/**
 	 * @return string
 	 */
-	protected abstract function get_file_name();
+	abstract protected function get_file_name();
 
 	/**
 	 * @return array

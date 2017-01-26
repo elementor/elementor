@@ -9,9 +9,9 @@ abstract class Base_Reporter {
 
 	private $_properties;
 
-	public abstract function get_title();
+	abstract public function get_title();
 
-	public abstract function get_fields();
+	abstract public function get_fields();
 
 	public function is_enabled() {
 		return true;
