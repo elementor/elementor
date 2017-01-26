@@ -141,6 +141,7 @@ class Tools {
 		if ( false === $rows_affected ) {
 			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
 		} else {
+			Plugin::instance()->posts_css_manager->clear_cache();
 			wp_send_json_success( sprintf( __( '%d Rows Affected', 'elementor' ), $rows_affected ) );
 		}
 	}
