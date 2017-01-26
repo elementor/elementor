@@ -591,7 +591,9 @@
 	}
 
 	// = Choices control for alignment
-	.elementor-control-text_align, .elementor-control-align, .elementor-control-position {
+	.elementor-control-text_align,
+	.elementor-control-align,
+	.elementor-control-position {
 
 		.elementor-choices {
 			direction: ltr; // Force ltr also in RTL languages
@@ -616,6 +618,13 @@
 	}
 
 	// Color Picker control
+	.elementor-control-type-color {
+
+		.elementor-control-input-wrapper {
+			height: 27px; //Fix jumping of panel when the wp-picker is active
+		}
+	}
+
 	.wp-picker-container {
 
 		&:not(.wp-picker-active) {

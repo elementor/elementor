@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -170,6 +170,15 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 1.1.7 - 25.01.2017 =
+* Tweak! - Change `box-shadow` type control from select to switcher
+* Fix! - On-loading glitch for Image Carousel widget
+* Fix! - Background attachment for Section on mobile devices ([#890](https://github.com/pojome/elementor/issues/890))
+* Fix! - Default WordPress widget checkboxes not holding values ([#1210](https://github.com/pojome/elementor/issues/1210))
+* Fix! - Heading with link custom color gone ([#1216](https://github.com/pojome/elementor/issues/1216))
+* Fix! - Jumping of panel when the `wp-color-picker` is active
+* Deprecated! - `Plugin::get_version()` method removed
 
 = 1.1.6 - 18.01.2017 =
 * Fix! - Improving enqueue assets if elementor exists on the page
