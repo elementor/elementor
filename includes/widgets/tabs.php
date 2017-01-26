@@ -109,8 +109,8 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'range' => [
 					'%' => [
-						'min' => 0,
-						'max' => 100,
+						'min' => 10,
+						'max' => 50,
 					],
 				],
 				'selectors' => [
