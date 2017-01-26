@@ -60,6 +60,14 @@ ElementsHandler = function( $ ) {
 		runElementsHandlers();
 	};
 
+	this.getHandlers = function( handlerName ) {
+		if ( handlerName ) {
+			return handlers[ handlerName ];
+		}
+
+		return handlers;
+	};
+
 	this.runReadyTrigger = function( $scope ) {
 		var elementType = $scope.data( 'element_type' );
 
