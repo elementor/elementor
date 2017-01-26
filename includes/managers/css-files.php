@@ -22,7 +22,7 @@ class Posts_CSS_Manager {
 	}
 
 	public function on_delete_post( $post_id ) {
-		if ( ! Plugin::instance()->db->is_built_with_elementor( $post_id ) ) {
+		if ( ! Utils::is_post_type_support( $post_id ) ) {
 			return;
 		}
 
