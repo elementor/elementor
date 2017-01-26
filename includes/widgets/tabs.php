@@ -30,6 +30,20 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
+			'tabs_view',
+			[
+				'label' => __( 'Tabs View', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'horizontal',
+				'options' => [
+					'horizontal' => __( 'Horizontal', 'elementor' ),
+					'vertical' => __( 'Vertical', 'elementor' ),
+				],
+				'prefix_class' => 'elementor-tabs-view-',
+			]
+		);
+
+		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Tabs Items', 'elementor' ),
@@ -100,8 +114,7 @@ class Widget_Tabs extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-desktop-title.active:before, {{WRAPPER}} .elementor-tab-desktop-title.active:after, {{WRAPPER}} .elementor-tab-desktop-title.active, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tab-mobile-title' => 'border-width: {{SIZE}}{{UNIT}};',
-					'(mobile){{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title:before, {{WRAPPER}} .elementor-tab-title:after, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -112,8 +125,7 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-desktop-title.active:before, {{WRAPPER}} .elementor-tab-desktop-title.active:after, {{WRAPPER}} .elementor-tab-title.active, {{WRAPPER}} .elementor-tab-mobile-title, {{WRAPPER}} .elementor-tab-content' => 'border-color: {{VALUE}};',
-					'(mobile){{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-mobile-title, {{WRAPPER}} .elementor-tab-desktop-title.active, {{WRAPPER}} .elementor-tab-title:before, {{WRAPPER}} .elementor-tab-title:after, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
