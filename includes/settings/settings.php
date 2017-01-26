@@ -9,7 +9,7 @@ class Settings {
 
 	const MENU_PRIORITY_GO_PRO = 502;
 
-	const UPDATE_TIME_FIELD = 'elementor_settings_update_time';
+	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
 
 	public static function get_url() {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID );

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Scheme_Base implements Scheme_Interface {
 
-	const LAST_UPDATED_META = 'elementor_scheme_last_updated';
+	const LAST_UPDATED_META = '_elementor_scheme_last_updated';
 
 	private $_system_schemes;
 
