@@ -3,6 +3,13 @@
 
 *Returns* `string`
 
+##Namespace
+
+```
+use Elementor\Group_Control_Typography;
+use Elementor\Scheme_Typography;
+```
+
 ##Example
 
 ```php
@@ -35,10 +42,3 @@ Argument       | Required   | Type         | Default                      | Desc
 `name`         | yes        | *`string`*   |                              | The unique name of control
 `label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `selector`     | yes        | *`string`*   |                              | The css class name of element that will receive the typography settings.
-
-##Namespace
-
-```
-use Elementor\Group_Control_Typography;
-use Elementor\Scheme_Typography;
-```
