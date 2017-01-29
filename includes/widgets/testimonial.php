@@ -295,49 +295,63 @@ class Widget_Testimonial extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		if ( empty( $settings['testimonial_name'] ) || empty( $settings['testimonial_content'] ) )
-			return;
+		$this->add_render_attribute( 'wrapper', 'class', 'elementor-testimonial-wrapper' );
 
-		$has_image = false;
-		if ( '' !== $settings['testimonial_image']['url'] ) {
-			$image_url = $settings['testimonial_image']['url'];
-			$has_image = ' elementor-has-image';
+		if ( $settings['testimonial_alignment'] ) {
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-testimonial-text-align-' . $settings['testimonial_alignment'] );
 		}
 
-		$testimonial_alignment = $settings['testimonial_alignment'] ? ' elementor-testimonial-text-align-' . $settings['testimonial_alignment'] : '';
-		$testimonial_image_position = $settings['testimonial_image_position'] ? ' elementor-testimonial-image-position-' . $settings['testimonial_image_position'] : '';
-		?>
-		<div class="elementor-testimonial-wrapper<?php echo $testimonial_alignment; ?>">
+		$this->add_render_attribute( 'meta', 'class', 'elementor-testimonial-meta' );
 
-			<?php if ( ! empty( $settings['testimonial_content'] ) ) : ?>
-				<div class="elementor-testimonial-content">
-						<?php echo $settings['testimonial_content']; ?>
-				</div>
+		if ( $settings['testimonial_image']['url'] ) {
+			$this->add_render_attribute( 'meta', 'class', 'elementor-has-image' );
+		}
+
+		if ( $settings['testimonial_image_position'] ) {
+			$this->add_render_attribute( 'meta', 'class', 'elementor-testimonial-image-position-' . $settings['testimonial_image_position'] );
+		}
+
+		$has_content = ! ! $settings['testimonial_content'];
+
+		$has_image = ! ! $settings['testimonial_image']['url'];
+
+		$has_name = ! ! $settings['testimonial_name'];
+
+		$has_job = ! ! $settings['testimonial_job'];
+
+		if ( ! $has_content && ! $has_image && ! $has_name && ! $has_job ) {
+			return;
+		}
+		?>
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+
+			<?php if ( $has_content ) : ?>
+				<div class="elementor-testimonial-content"><?php echo $settings['testimonial_content']; ?></div>
 			<?php endif; ?>
 
-			<div class="elementor-testimonial-meta<?php if ( $has_image ) echo $has_image; ?><?php echo $testimonial_image_position; ?>">
+			<?php if ( $has_image || $has_name || $has_job ) : ?>
+			<div <?php echo $this->get_render_attribute_string( 'meta' ); ?>>
 				<div class="elementor-testimonial-meta-inner">
-					<?php if ( isset( $image_url ) ) : ?>
+					<?php if ( $has_image ) : ?>
 						<div class="elementor-testimonial-image">
-							<img src="<?php echo esc_attr( $image_url ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $settings['testimonial_image'] ) ); ?>" />
+							<img src="<?php echo esc_attr( $settings['testimonial_image']['url'] ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $settings['testimonial_image'] ) ); ?>" />
 						</div>
 					<?php endif; ?>
 
+					<?php if ( $has_name || $has_job ) : ?>
 					<div class="elementor-testimonial-details">
-						<?php if ( ! empty( $settings['testimonial_name'] ) ) : ?>
-							<div class="elementor-testimonial-name">
-								<?php echo $settings['testimonial_name']; ?>
-							</div>
+						<?php if ( $has_name ) : ?>
+							<div class="elementor-testimonial-name"><?php echo $settings['testimonial_name']; ?></div>
 						<?php endif; ?>
 
-						<?php if ( ! empty( $settings['testimonial_job'] ) ) : ?>
-							<div class="elementor-testimonial-job">
-								<?php echo $settings['testimonial_job']; ?>
-							</div>
+						<?php if ( $has_job ) : ?>
+							<div class="elementor-testimonial-job"><?php echo $settings['testimonial_job']; ?></div>
 						<?php endif; ?>
 					</div>
+					<?php endif; ?>
 				</div>
 			</div>
+			<?php endif; ?>
 		</div>
 	<?php
 	}
