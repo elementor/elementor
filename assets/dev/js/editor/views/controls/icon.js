@@ -1,10 +1,10 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
-	ControlIconItemView;
+var ControlSelect2View = require( 'elementor-views/controls/select2' ),
+	ControlIconView;
 
-ControlIconItemView = ControlBaseItemView.extend( {
+ControlIconView = ControlSelect2View.extend( {
 
 	initialize: function() {
-		ControlBaseItemView.prototype.initialize.apply( this, arguments );
+		ControlSelect2View.prototype.initialize.apply( this, arguments );
 
 		this.filterIcons();
 	},
@@ -42,21 +42,13 @@ ControlIconItemView = ControlBaseItemView.extend( {
 		);
 	},
 
-	onReady: function() {
-		this.ui.select.select2( {
+	getSelect2Options: function() {
+		return {
 			allowClear: true,
 			templateResult: _.bind( this.iconsList, this ),
 			templateSelection: _.bind( this.iconsList, this )
-		} );
-	},
-
-	onBeforeDestroy: function() {
-		if ( this.ui.select.data( 'select2' ) ) {
-			this.ui.select.select2( 'destroy' );
-		}
-
-		this.$el.remove();
+		};
 	}
 } );
 
-module.exports = ControlIconItemView;
+module.exports = ControlIconView;
