@@ -11,7 +11,7 @@ $this->add_group_control(
     [
         'name' => 'my_element',
         'label' => __( 'Typography', 'elementor-modal-button' ),
-        'selector' => '{{WRAPPER}} .my_element_class',
+        'selector' => '{{WRAPPER}} .my_element',
     ]
 );
 ```
@@ -20,7 +20,7 @@ $this->add_group_control(
 
 **PHP:** *(Under `render()` method)*
 ```php
-echo '<h2 class="my_element_class"> This is a Title </h2>'
+echo '<h2 class="my_element"> This is a Title </h2>'
 ```
 
 **JS:** *(Under `_content_template()` method)*
