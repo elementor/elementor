@@ -2,14 +2,6 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
 ControlSelect2ItemView = ControlBaseItemView.extend( {
-	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
-
-		ui.select = '.elementor-select2';
-
-		return ui;
-	},
-
 	getSelect2Options: function() {
 		return {
 			allowClear: true,
