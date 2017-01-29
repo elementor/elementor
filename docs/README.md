@@ -58,7 +58,7 @@ Elementor includes a wide array of controls:
 
 #####Settings controls
 
-* [Select](content/controls/_select.md) - A classic select input 
+* [Select](content/controls/_select.md) - A classic select input
 * [Checkbox](content/controls/_checkbox.md) - Choose for Yes/No options
 * [Switcher](content/controls/_switcher.md) - A Switcher control (on/off) - basically a fancy UI representation of a checkbox.
 * [Choose](content/controls/_choose.md) - A component that represents radio buttons as a stylized group of buttons with icons
@@ -82,6 +82,10 @@ Elementor includes a wide array of controls:
 * [Raw HTML](content/controls/_raw-html.md) - Display HTML content in the panel
 * [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
+
+#####Group Controls
+
+* [Group Control Typography](content/controls/_group_control_typography.md) - A Group of Controls to apply Font Styles
 
 ##Additional components
 
