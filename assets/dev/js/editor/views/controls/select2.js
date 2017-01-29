@@ -3,11 +3,11 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 
 ControlSelect2ItemView = ControlBaseItemView.extend( {
 	getSelect2Options: function() {
+		var placeholder = this.ui.select.children( 'option:first[value=""]' ).text();
+
 		return {
 			allowClear: true,
-			placeholder: { // The `allowClear` must be used with the `placeholder` option
-				id: ''
-			}
+			placeholder: placeholder
 		};
 	},
 
