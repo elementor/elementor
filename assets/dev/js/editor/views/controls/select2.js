@@ -10,7 +10,7 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	getSettings: function() {
+	getSelect2Options: function() {
 		return {
 			allowClear: true,
 			placeholder: { // The `allowClear` must be used with the `placeholder` option
@@ -20,7 +20,7 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
-		this.ui.select.select2( this.getSettings() );
+		this.ui.select.select2( this.getSelect2Options() );
 	},
 
 	onBeforeDestroy: function() {
