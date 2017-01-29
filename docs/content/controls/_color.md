@@ -1,7 +1,7 @@
 #Color
 A Color-Picker control with an alpha slider. Includes a customizable color palette that can be preset by the user.
 Accepts a`scheme` argument that allows you to set a value from the active color scheme as the default value returned by the control.
- 
+
 *Returns:* `string`
 
 ##Example
@@ -16,6 +16,7 @@ $this->add_control(
             'type' => Scheme_Color::get_type(),
             'value' => Scheme_Color::COLOR_1,
         ],
+        'default' => '#dd6000',
         'selectors' => [
             '{{WRAPPER}} .title' => 'color: {{VALUE}}',
         ],

@@ -1,6 +1,6 @@
 #Choose
 A component that represents radio buttons as a stylized group of buttons with icons. Accepts `options` as an associative array of arrays (array for each option).
- 
+
 *Returns:* `string` - The key of the selected option.
 
 ##Example
@@ -25,6 +25,7 @@ $this->add_control(
                 'icon' => 'fa fa-align-right',
             ],
         ],
+        'default' => 'left',
     ]
 );
 ```

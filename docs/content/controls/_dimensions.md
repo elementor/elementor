@@ -1,15 +1,15 @@
 #Dimensions
 A control that allows the user to set the "Box Model" dimensions: top / right / bottom / left - for margin / padding /   
 
-*Returns:* `array( 
-		'top' => (int), 
-		'right' => (int), 
-		'bottom' => (int), 
-		'left' => (int), 
-		'unit' => (string) // The selected CSS Unit. 'px', '%', 'em', 
-		'isLinked' => (bool) 
+*Returns:* `array(
+		'top' => (int),
+		'right' => (int),
+		'bottom' => (int),
+		'left' => (int),
+		'unit' => (string) // The selected CSS Unit. 'px', '%', 'em',
+		'isLinked' => (bool)
 		)`
-		
+
 ##Example
 
 ```php
@@ -18,10 +18,16 @@ $this->add_control(
   [
      'label' => __( 'Margin', 'your-plugin' ),
      'type' => Controls_Manager::DIMENSIONS,
-	 'size_units' => [ 'px', '%', 'em' ],
-	 'selectors' => [
+	 	 'size_units' => [ 'px', '%', 'em' ],
+		 'default' => [
+				 'top' => 6,
+				 'right' => 6,
+				 'left' => 6,
+				 'bottom' => 6,
+		 ],		 
+	   'selectors' => [
 	 		'{{WRAPPER}} .your-class' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-	 ],
+	   ],
   ]
 );
 ```
