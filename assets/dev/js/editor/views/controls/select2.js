@@ -11,6 +11,8 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		};
 	},
 
+	setInputValue: function() {},
+
 	onReady: function() {
 		this.ui.select.select2( this.getSelect2Options() );
 	},
