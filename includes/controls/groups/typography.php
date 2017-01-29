@@ -73,6 +73,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'' => __( 'Default', 'elementor' ),
+				'none' => _x( 'Normal', 'Typography Control', 'elementor' ),
 				'uppercase' => _x( 'Uppercase', 'Typography Control', 'elementor' ),
 				'lowercase' => _x( 'Lowercase', 'Typography Control', 'elementor' ),
 				'capitalize' => _x( 'Capitalize', 'Typography Control', 'elementor' ),
