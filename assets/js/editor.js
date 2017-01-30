@@ -6370,6 +6370,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 				var control = settings.getControl( settingKey );
 
 				if ( ! control ) {
+					isRenderRequired = true;
+
 					return;
 				}
 
