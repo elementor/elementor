@@ -426,7 +426,7 @@ class Element_Column extends Element_Base {
 	protected function _content_template() {
 		?>
 		<div class="elementor-column-wrap">
-            <div class="elementor-background-overlay"></div>
+			<div class="elementor-background-overlay"></div>
 			<div class="elementor-widget-wrap"></div>
 		</div>
 		<?php
@@ -469,10 +469,10 @@ class Element_Column extends Element_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
-            <?php if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
-                <div class="elementor-background-overlay"></div>
-            <?php endif; ?>
-            <div class="elementor-widget-wrap">
+			<?php if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
+				<div class="elementor-background-overlay"></div>
+			<?php endif; ?>
+		<div class="elementor-widget-wrap">
 		<?php
 	}
 

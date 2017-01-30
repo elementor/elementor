@@ -580,7 +580,7 @@ class Element_Section extends Element_Base {
 				],
 			]
 		);
-		
+
 		$this->add_control(
 			'_element_id',
 			[
