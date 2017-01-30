@@ -22,7 +22,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$filtered_controls = $this->_filter_controls();
 
 		// Add prefixes to all control conditions
-		$filtered_controls = $this->_add_conditions_prefix( $filtered_controls );
+		$filtered_controls = $this->add_prefixes( $filtered_controls );
 
 		foreach ( $filtered_controls as $control_id => $control_args ) {
 			// Add the global group args to the control
@@ -88,23 +88,41 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $filtered_controls;
 	}
 
-	private function _add_conditions_prefix( $controls ) {
+	private function add_conditions_prefix( $control ) {
+		$prefixed_condition_keys = array_map(
+			function ( $key ) {
+				return $this->get_controls_prefix() . $key;
+			},
+			array_keys( $control['condition'] )
+		);
+
+		$control['condition'] = array_combine(
+			$prefixed_condition_keys,
+			$control['condition']
+		);
+
+		return $control;
+	}
+
+	private function add_selectors_prefix( $control ) {
+		foreach ( $control['selectors'] as &$selector ) {
+			$selector = preg_replace_callback( '/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function ( $matches ) {
+				return $this->get_controls_prefix() . $matches[0];
+			}, $selector );
+		}
+
+		return $control;
+	}
+
+	private function add_prefixes( $controls ) {
 		foreach ( $controls as &$control ) {
-			if ( empty( $control['condition'] ) ) {
-				continue;
+			if ( ! empty( $control['condition'] ) ) {
+				$control = $this->add_conditions_prefix( $control );
 			}
 
-			$prefixed_condition_keys = array_map(
-				function( $key ) {
-					return $this->get_controls_prefix() . $key;
-				},
-				array_keys( $control['condition'] )
-			);
-
-			$control['condition'] = array_combine(
-				$prefixed_condition_keys,
-				$control['condition']
-			);
+			if ( ! empty( $control['selectors'] ) ) {
+				$control = $this->add_selectors_prefix( $control );
+			}
 		}
 
 		return $controls;

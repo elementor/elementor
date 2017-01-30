@@ -40,7 +40,7 @@ class WordPress_Reporter extends Base_Reporter {
 
 		if ( $memory_limit_bytes < $min_recommended_bytes ) {
 			$result['recommendation'] = sprintf(
-				_x( 'We recommend setting memory to at least %s. For more information, read about <a href="%s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				_x( 'We recommend setting memory to at least %1$s. For more information, read about <a href="%2$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
 				$min_recommended_memory,
 				'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP'
 			);
