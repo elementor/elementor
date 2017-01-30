@@ -192,7 +192,7 @@ class Widget_Button extends Widget_Base {
 		$this->start_controls_tab(
 			'tab_button_normal',
 			[
-				'label' => __( 'Normal', 'elementor-pro' ),
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -228,7 +228,7 @@ class Widget_Button extends Widget_Base {
 		$this->start_controls_tab(
 			'tab_button_hover',
 			[
-				'label' => __( 'Hover', 'elementor-pro' ),
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 
