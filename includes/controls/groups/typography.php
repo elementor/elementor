@@ -148,6 +148,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'label_on' => __( 'On', 'elementor' ),
 				'label_off' => __( 'Off', 'elementor' ),
 				'return_value' => 'custom',
+				'render_type' => 'ui',
 			],
 		];
 
