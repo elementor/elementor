@@ -387,7 +387,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false;
+			var isContentChanged = false,
+				isRenderRequired = false;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
@@ -396,10 +397,22 @@ BaseElementView = Marionette.CompositeView.extend( {
 					return;
 				}
 
-				if ( control.force_render || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) {
+				if ( 'none' !== control.render_type ) {
+					isRenderRequired = true;
+				}
+
+				if ( -1 !== [ 'none', 'ui' ].indexOf( control.render_type ) ) {
+					return;
+				}
+
+				if ( 'template' === control.render_type || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) {
 					isContentChanged = true;
 				}
 			} );
+
+			if ( ! isRenderRequired ) {
+				return;
+			}
 
 			if ( ! isContentChanged ) {
 				this.renderUI();
