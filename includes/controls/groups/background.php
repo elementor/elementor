@@ -21,6 +21,10 @@ class Group_Control_Background extends Group_Control_Base {
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
 				'icon' => 'fa fa-paint-brush',
 			],
+			'gradient' => [
+				'title' => _x( 'Gradient', 'Background Control', 'elementor' ),
+				'icon' => 'fa fa-barcode',
+			],
 			'video' => [
 				'title' => _x( 'Background Video', 'Background Control', 'elementor' ),
 				'icon' => 'fa fa-video-camera',
@@ -61,9 +65,114 @@ class Group_Control_Background extends Group_Control_Base {
 					$args['selector'] => 'background-color: {{VALUE}};',
 				],
 				'condition' => [
-					'background' => [ 'classic' ],
+					'background' => [ 'classic', 'gradient' ],
 				],
 			];
+
+			if ( in_array( 'gradient', $args['types'] ) ) {
+				$controls['color_stop'] = [
+					'label' => _x( 'Location', 'Background Control', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%' ],
+					'default' => [
+						'unit' => '%',
+						'size' => 0,
+					],
+					'selectors' => [
+						'' => '',
+					],
+					'condition' => [
+						'background' => [ 'gradient' ],
+					],
+				];
+
+				$controls['color_b'] = [
+					'label' => _x( 'Second Color', 'Background Control', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'default' => '',
+					'condition' => [
+						'background' => [ 'gradient' ],
+					],
+				];
+
+				$controls['color_b_stop'] = [
+					'label' => _x( 'Location', 'Background Control', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%' ],
+					'default' => [
+						'unit' => '%',
+						'size' => 100,
+					],
+					'selectors' => [
+						'' => '',
+					],
+					'condition' => [
+						'background' => [ 'gradient' ],
+					],
+				];
+
+				$controls['gradient_type'] = [
+					'label' => _x( 'Type', 'Background Control', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'options' => [
+						'linear' => _x( 'Linear', 'Background Control', 'elementor' ),
+						'radial' => _x( 'Radial', 'Background Control', 'elementor' ),
+					],
+					'default' => 'linear',
+					'selectors' => [
+						'' => '',
+					],
+					'condition' => [
+						'background' => [ 'gradient' ],
+					],
+				];
+
+				$controls['gradient_angle'] = [
+					'label' => _x( 'Angle', 'Background Control', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg' ],
+					'default' => [
+						'unit' => 'deg',
+						'size' => 180,
+					],
+					'range' => [
+						'deg' => [
+							'step' => 10,
+						],
+					],
+					'selectors' => [
+						$args['selector'] => 'background-image: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
+					],
+					'condition' => [
+						'background' => [ 'gradient' ],
+						'gradient_type' => 'linear',
+					],
+				];
+
+				$controls['gradient_position'] = [
+					'label' => _x( 'Position', 'Background Control', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'options' => [
+						'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
+						'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
+						'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
+						'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
+						'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
+						'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
+						'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
+						'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
+						'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
+					],
+					'default' => 'center center',
+					'selectors' => [
+						$args['selector'] => 'background-image: radial-gradient(at {{VALUE}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
+					],
+					'condition' => [
+						'background' => [ 'gradient' ],
+						'gradient_type' => 'radial',
+					],
+				];
+			}
 		}
 		// End Background:color
 
