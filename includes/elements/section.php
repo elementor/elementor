@@ -133,7 +133,7 @@ class Element_Section extends Element_Base {
 				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
-				'force_render' => true,
+				'render_type' => 'template',
 				'hide_in_inner' => true,
 				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
 			]
