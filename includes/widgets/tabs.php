@@ -30,9 +30,9 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'tabs_view',
+			'tabs_position',
 			[
-				'label' => __( 'Tabs View', 'elementor' ),
+				'label' => __( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'horizontal',
 				'options' => [
@@ -46,7 +46,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'tabs',
 			[
-				'label' => __( 'Tabs Items', 'elementor' ),
+				'label' => __( 'Tab Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'default' => [
 					[

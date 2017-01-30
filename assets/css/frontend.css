@@ -1037,8 +1037,6 @@
 .elementor-widget-tabs .elementor-tab-mobile-title {
   padding: 10px 10px;
   cursor: pointer; }
-  .elementor-widget-tabs .elementor-tab-mobile-title.active {
-    background-color: #f7f7f7; }
 
 .elementor-widget-tabs .elementor-tab-content {
   padding: 20px;
