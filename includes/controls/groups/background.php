@@ -78,9 +78,7 @@ class Group_Control_Background extends Group_Control_Base {
 						'unit' => '%',
 						'size' => 0,
 					],
-					'selectors' => [
-						'' => '',
-					],
+					'render_type' => 'ui',
 					'condition' => [
 						'background' => [ 'gradient' ],
 					],
@@ -103,9 +101,7 @@ class Group_Control_Background extends Group_Control_Base {
 						'unit' => '%',
 						'size' => 100,
 					],
-					'selectors' => [
-						'' => '',
-					],
+					'render_type' => 'ui',
 					'condition' => [
 						'background' => [ 'gradient' ],
 					],
@@ -119,9 +115,7 @@ class Group_Control_Background extends Group_Control_Base {
 						'radial' => _x( 'Radial', 'Background Control', 'elementor' ),
 					],
 					'default' => 'linear',
-					'selectors' => [
-						'' => '',
-					],
+					'render_type' => 'ui',
 					'condition' => [
 						'background' => [ 'gradient' ],
 					],

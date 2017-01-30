@@ -317,9 +317,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Structure', 'elementor' ),
 				'type' => Controls_Manager::STRUCTURE,
 				'default' => '10',
-				'selectors' => [
-					'' => '',
-				], // Hack to define it as a styleControl. @FIXME
+				'render_type' => 'ui',
 			]
 		);
 
