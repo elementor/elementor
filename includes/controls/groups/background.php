@@ -88,6 +88,7 @@ class Group_Control_Background extends Group_Control_Base {
 					'label' => _x( 'Second Color', 'Background Control', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'default' => '',
+					'render_type' => 'ui',
 					'condition' => [
 						'background' => [ 'gradient' ],
 					],
