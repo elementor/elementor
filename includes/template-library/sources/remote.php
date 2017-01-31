@@ -76,11 +76,13 @@ class Source_Remote extends Source_Base {
 
 	public function get_content( $item_id, $context = 'display' ) {
 		$data = Api::get_template_content( $item_id );
-		if ( ! $data ) {
-			return false;
+
+		if ( is_wp_error( $data ) ) {
+			return $data;
 		}
 
 		$data = $this->replace_elements_ids( $data );
+
 		$data = $this->process_export_import_data( $data, 'on_import' );
 
 		return $data;
