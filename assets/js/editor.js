@@ -1107,14 +1107,19 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
+		errorMessage = '';
 		if ( 'object' === typeof errorMessage ) {
 			var message = '';
 
 			_.each( errorMessage, function( error ) {
-				message += '<div>' + error.message + '</div>';
+				message += '<div>' + error.message + '.</div>';
 			} );
 
 			errorMessage = message;
+		} else if ( errorMessage ) {
+			errorMessage += '.';
+		} else {
+			errorMessage = '<i>&#60;The error message is empty&#62;</i>';
 		}
 
 		self.getErrorDialog()

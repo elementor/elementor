@@ -66,7 +66,7 @@
   -moz-user-select: none; }
   .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
     margin: auto;
-    width: 350px; }
+    width: 375px; }
   .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
     padding: 0 20px;
     min-height: 50px; }
