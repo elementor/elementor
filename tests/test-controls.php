@@ -56,7 +56,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_replaceStyleValues() {
-		$stylesheet = new \Elementor\Stylesheet();
+		$post_css_file = new \Elementor\Post_CSS_File( 0 );
 
 		$controls_stack = [
 			'margin' => [
@@ -93,18 +93,18 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 
 		$replacements = [ '.elementor-test-element' ];
 
-		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['color'], $controls_stack, $value_callback, $placeholders, $replacements );
+		$post_css_file->add_control_rules( $controls_stack['color'], $controls_stack, $value_callback, $placeholders, $replacements );
 
 		$this->assertEquals(
 			'#fff',
-			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'color' )
+			$post_css_file->get_stylesheet()->get_rules( 'all', '.elementor-test-element .elementor-element', 'color' )
 		);
 
-		\Elementor\Post_CSS_File::add_control_rules( $stylesheet, $controls_stack['margin'], $controls_stack, $value_callback, $placeholders, $replacements );
+		$post_css_file->add_control_rules( $controls_stack['margin'], $controls_stack, $value_callback, $placeholders, $replacements );
 
 		$this->assertEquals(
 			'1px 2px 3px 4px',
-			$stylesheet->get_rules( 'desktop', '.elementor-test-element .elementor-element', 'margin' )
+			$post_css_file->get_stylesheet()->get_rules( 'all', '.elementor-test-element .elementor-element', 'margin' )
 		);
 	}
 

@@ -129,7 +129,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'caption_type',
 			[
-				'label' => __( 'Caption Type', 'elementor' ),
+				'label' => __( 'Caption', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
