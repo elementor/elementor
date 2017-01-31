@@ -5895,7 +5895,7 @@ module.exports = new Schemes();
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
 
-			if ( query ) {
+			if ( ! _.isEmpty( query ) ) {
 				queryHash = queryToHash( query );
 			}
 
