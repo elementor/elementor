@@ -81,7 +81,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'label_block' => true,
-				'title' => __( 'Add your custom id WITHOUT the hashtag. e.g: my-id', 'elementor' ),
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 			]
 		);
 

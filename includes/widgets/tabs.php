@@ -46,7 +46,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'tabs',
 			[
-				'label' => __( 'Tab Items', 'elementor' ),
+				'label' => __( 'Tabs Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'default' => [
 					[
