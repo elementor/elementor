@@ -134,6 +134,39 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Layout
+		$this->start_controls_section(
+			'layout',
+			[
+				'label' => __( 'Layout', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'content_position',
+			[
+				'label' => __( 'Content Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'top' => __( 'Top', 'elementor' ),
+					'middle' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'selectors_dictionary' => [
+					'top' => 'flex-start',
+					'bottom' => 'flex-end',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 		// Section Typography
 		$this->start_controls_section(
 			'section_typo',
