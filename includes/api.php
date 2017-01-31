@@ -89,24 +89,31 @@ class Api {
 			'body' => $body_args,
 		] );
 
-		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
-			return false;
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$response_code = (int) wp_remote_retrieve_response_code( $response );
+
+		if ( 200 !== $response_code ) {
+			return new \WP_Error( 'response_code_error', 'The request returned with a status code of ' . $response_code );
 		}
 
 		$template_content = json_decode( wp_remote_retrieve_body( $response ), true );
-		if ( empty( $template_content ) || ! is_array( $template_content ) ) {
-			return false;
+
+		if ( isset( $template_content['error'] ) ) {
+			return new \WP_Error( 'response_error', $template_content['error'] );
 		}
 
 		if ( empty( $template_content['data'] ) ) {
-			return false;
+			return new \WP_Error( 'template_data_error', 'An invalid data was returned' );
 		}
 
 		return $template_content['data'];
 	}
 
 	public static function send_feedback( $feedback_key, $feedback_text ) {
-		$response = wp_remote_post( self::$api_feedback_url, [
+		return wp_remote_post( self::$api_feedback_url, [
 			'timeout' => 30,
 			'body' => [
 				'api_version' => ELEMENTOR_VERSION,
@@ -115,8 +122,6 @@ class Api {
 				'feedback' => $feedback_text,
 			],
 		] );
-
-		return true;
 	}
 
 	public function ajax_reset_api_data() {
