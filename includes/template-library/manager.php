@@ -250,7 +250,7 @@ class Manager {
 
 		if ( is_wp_error( $result ) ) {
 			if ( 'ajax' === $request_type ) {
-				wp_send_json_error( $result->get_error_message() );
+				wp_send_json_error( $result );
 			}
 
 			$callback = "on_{$ajax_request}_error";
