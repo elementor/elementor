@@ -1106,9 +1106,19 @@ TemplateLibraryManager = function() {
 		self.startModal( self.showTemplates );
 	};
 
-	this.showErrorDialog = function() {
+	this.showErrorDialog = function( errorMessage ) {
+		if ( 'object' === typeof errorMessage ) {
+			var message = '';
+
+			_.each( errorMessage, function( error ) {
+				message += '<div>' + error.message + '</div>';
+			} );
+
+			errorMessage = message;
+		}
+
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) )
+		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
 		    .show();
 	};
 };
