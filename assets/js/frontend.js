@@ -129,6 +129,8 @@ module.exports = ElementsHandler;
 			initElements();
 
 			initOnReadyComponents();
+
+			self.hooks.doAction( 'init' );
 		};
 
 		this.getScopeWindow = function() {
