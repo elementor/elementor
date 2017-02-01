@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress.Pojo">
+<ruleset name="WordPress.Elementor">
 	<description>
 		Elementor Coding Standard
 	</description>
@@ -12,6 +12,8 @@
 	<rule ref="WordPress-Core">
 		<exclude name="Generic.ControlStructures.InlineControlStructure" />
 		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeKeyFound" />
 	</rule>
 
 	<!-- Extras -->
