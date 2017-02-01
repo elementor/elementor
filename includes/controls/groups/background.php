@@ -87,7 +87,7 @@ class Group_Control_Background extends Group_Control_Base {
 				$controls['color_b'] = [
 					'label' => _x( 'Second Color', 'Background Control', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
-					'default' => 'transparent',
+					'default' => '#f2295b',
 					'render_type' => 'ui',
 					'condition' => [
 						'background' => [ 'gradient' ],
