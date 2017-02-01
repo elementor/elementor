@@ -13,6 +13,7 @@
 		<exclude name="Generic.ControlStructures.InlineControlStructure" />
 		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeKeyFound" />
 	</rule>
 
 	<!-- Extras -->
