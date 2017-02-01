@@ -19,7 +19,7 @@ class Frontend {
 		$this->_is_frontend_mode = true;
 		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
 
-		add_action( 'wp_head', [ $this, 'print_css' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 
 		if ( $this->_has_elementor_in_page ) {
@@ -108,12 +108,12 @@ class Frontend {
 		);
 	}
 
-	public function enqueue_styles() {
+	public function register_styles() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_enqueue_style(
+		wp_register_style(
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
@@ -127,7 +127,6 @@ class Frontend {
 			'4.7.0'
 		);
 
-		// Elementor Animations
 		wp_register_style(
 			'elementor-animations',
 			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
@@ -141,6 +140,10 @@ class Frontend {
 			[],
 			ELEMENTOR_VERSION
 		);
+	}
+
+	public function enqueue_styles() {
+		$this->print_google_fonts();
 
 		wp_enqueue_style( 'elementor-icons' );
 		wp_enqueue_style( 'font-awesome' );
@@ -154,10 +157,6 @@ class Frontend {
 			$css_file = new Post_CSS_File( get_the_ID() );
 			$css_file->enqueue();
 		}
-	}
-
-	public function print_css() {
-		$this->print_google_fonts();
 	}
 
 	/**

@@ -152,7 +152,7 @@ class Element_Column extends Element_Base {
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'top' => __( 'Top', 'elementor' ),
-					'middle' => __( 'Middle', 'elementor' ),
+					'center' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
 				'selectors_dictionary' => [

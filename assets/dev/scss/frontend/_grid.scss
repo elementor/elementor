@@ -112,7 +112,6 @@
 	}
 }
 
-
 // Row
 .elementor-row {
 	width: 100%;
@@ -127,6 +126,7 @@
 // Widget
 .elementor-column-wrap {
 	width: 100%;
+	position: relative;
 	display: flex;
 }
 
