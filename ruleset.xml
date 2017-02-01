@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress.Pojo">
+<ruleset name="WordPress.Elementor">
 	<description>
 		Elementor Coding Standard
 	</description>
