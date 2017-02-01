@@ -19,7 +19,7 @@ class Frontend {
 		$this->_is_frontend_mode = true;
 		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 
 		if ( $this->_has_elementor_in_page ) {
