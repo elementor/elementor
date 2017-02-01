@@ -160,7 +160,7 @@ class Widget_Tabs extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-desktop-title.active' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tab-content' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tabs-content-wrapper' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
