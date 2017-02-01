@@ -206,6 +206,7 @@
 
 .elementor-column-wrap {
   width: 100%;
+  position: relative;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
