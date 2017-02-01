@@ -117,7 +117,7 @@ class Widget_Tabs extends Widget_Base {
 					'{{WRAPPER}} .elementor-tabs-wrapper' => 'width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
-					'tabs_view' => 'vertical',
+					'tabs_position' => 'vertical',
 				],
 			]
 		);
