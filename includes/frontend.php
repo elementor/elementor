@@ -148,15 +148,15 @@ class Frontend {
 		wp_enqueue_style( 'elementor-frontend' );
 
 		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
-			$css_file = new Post_CSS_File( get_the_ID() );
 
+			$this->parse_global_css_code();
+
+			$css_file = new Post_CSS_File( get_the_ID() );
 			$css_file->enqueue();
 		}
 	}
 
 	public function print_css() {
-		$this->parse_global_css_code();
-
 		$this->print_google_fonts();
 	}
 

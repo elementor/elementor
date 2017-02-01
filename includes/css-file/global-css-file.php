@@ -43,6 +43,10 @@ class Global_CSS_File extends CSS_File {
 		return 'global';
 	}
 
+	protected function get_inline_dependency() {
+		return 'elementor-frontend';
+	}
+
 	/**
 	 * @return bool
 	 */
