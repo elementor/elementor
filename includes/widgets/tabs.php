@@ -30,9 +30,9 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'tabs_position',
+			'type',
 			[
-				'label' => __( 'Position', 'elementor' ),
+				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'horizontal',
 				'options' => [
@@ -117,7 +117,7 @@ class Widget_Tabs extends Widget_Base {
 					'{{WRAPPER}} .elementor-tabs-wrapper' => 'width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
-					'tabs_view' => 'vertical',
+					'type' => 'vertical',
 				],
 			]
 		);
@@ -160,7 +160,7 @@ class Widget_Tabs extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-desktop-title.active' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-tab-content' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tabs-content-wrapper' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
