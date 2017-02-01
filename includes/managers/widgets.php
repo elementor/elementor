@@ -100,7 +100,6 @@ class Widgets_Manager {
 	private function _require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
-		// require ELEMENTOR_PATH . 'includes/widgets/multi-section-base.php';
 	}
 
 	public function register_widget_type( Widget_Base $widget ) {
