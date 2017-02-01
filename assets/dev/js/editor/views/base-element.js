@@ -439,14 +439,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.setFlagEditorChange( true );
 	},
 
-	onEditSettingsChanged: function() {
-		this.renderOnChange( this.getEditModel().get( 'editSettings' ) );
+	onEditSettingsChanged: function( changedModel ) {
+		this.renderOnChange( changedModel );
 	},
 
-	onSettingsChanged: function() {
+	onSettingsChanged: function( changedModel ) {
 		elementor.setFlagEditorChange( true );
 
-		this.renderOnChange( this.getEditModel().get( 'settings' ) );
+		this.renderOnChange( changedModel );
 	},
 
 	onClickEdit: function( event ) {
