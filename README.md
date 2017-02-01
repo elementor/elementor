@@ -175,6 +175,19 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.2.0 - 01.02.2017 ###
+* New! - Added Gradient Background for Section and Column ([#71](https://github.com/pojome/elementor/issues/71))
+* New! - Added full caption functionality to Image Carousel widget ([#1212](https://github.com/pojome/elementor/issues/1212), [#1124](https://github.com/pojome/elementor/issues/1124), [#1197](https://github.com/pojome/elementor/issues/1197))
+* New! - Added Custom Element ID control for all elements ([#939](https://github.com/pojome/elementor/issues/939))
+* New! - Added Vertical layout option for Tabs widget ([#449](https://github.com/pojome/elementor/issues/449))
+* Tweak! - Elementor now generates an external CSS file instead of inline CSS for global fonts, colors and settings (Part 2 of [#325](https://github.com/pojome/elementor/issues/325))
+* Tweak! - Added Content Position option for each column
+* Tweak! - Regenerate CSS after running Replace URL
+* Fix! - Tabs on mobile now work like an Accordion widget to improve responsive design ([#443](https://github.com/pojome/elementor/issues/443))
+* Fix! - Improve query in Replace URL for some configurations ([#1191](https://github.com/pojome/elementor/issues/1191))
+* Fix! - Added `none` option for Text Transform typography control
+* Fix! - Bug when some controls left empty in Testimonial widget
+
 ### 1.1.7 - 25.01.2017 ###
 * Tweak! - Change `box-shadow` type control from select to switcher
 * Fix! - On-loading glitch for Image Carousel widget
