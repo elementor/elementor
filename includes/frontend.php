@@ -150,7 +150,6 @@ class Frontend {
 		wp_enqueue_style( 'elementor-frontend' );
 
 		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
-
 			$this->parse_global_css_code();
 
 			$css_file = new Post_CSS_File( get_the_ID() );
