@@ -387,8 +387,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false,
-				isRenderRequired = false;
+			var hasChanged = settings.hasChanged(),
+				isContentChanged = ! hasChanged,
+				isRenderRequired = ! hasChanged;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
