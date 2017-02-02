@@ -1,8 +1,14 @@
 var BaseSettingsModel;
 
 BaseSettingsModel = Backbone.Model.extend( {
+	options: {},
 
 	initialize: function( data, options ) {
+		if ( options ) {
+			// Keep the options for cloning
+			this.options = options;
+		}
+
 		this.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( this );
 
 		if ( ! this.controls ) {
@@ -102,7 +108,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ) );
+		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
 
 	toJSON: function() {
