@@ -333,8 +333,9 @@ abstract class Element_Base {
 		$child_class = $child_type->get_class_name();
 
 		$child = new $child_class( $child_data, $child_args );
-
-		$this->_children[] = $child;
+		if ( $child ) {
+			$this->_children[] = $child;
+		}
 
 		return $child;
 	}

@@ -60,6 +60,11 @@ class Post_CSS_File extends CSS_File {
 
 		foreach ( $data as $element_data ) {
 			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
+
 			$this->render_styles( $element );
 		}
 	}
