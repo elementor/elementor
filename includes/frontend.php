@@ -69,6 +69,16 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'imagesloaded',
+			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'4.1.0',
+			true
+		);
+
+		wp_register_script(
 			'jquery-numerator',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-numerator/jquery-numerator' . $suffix . '.js',
 			[
@@ -94,6 +104,7 @@ class Frontend {
 			[
 				'elementor-waypoints',
 				'jquery-numerator',
+				'imagesloaded',
 				'jquery-slick',
 			],
 			ELEMENTOR_VERSION,
