@@ -73,6 +73,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 
 	activateSection: function( sectionName ) {
 		this.activeSection = sectionName;
+
+		elementor.channels.editor.trigger( 'section:activated', sectionName );
 	},
 
 	getChildView: function( item ) {
