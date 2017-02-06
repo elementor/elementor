@@ -35,6 +35,10 @@ class Frontend {
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
+			if ( ! $element ) {
+				continue;
+			}
+
 			$element->print_element();
 		}
 	}
