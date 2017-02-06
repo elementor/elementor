@@ -225,16 +225,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'imagesloaded',
-			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'4.1.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
