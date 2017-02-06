@@ -83,7 +83,7 @@ class Controls_Manager {
 	/**
 	 * @since 1.0.0
 	 */
-	private function register_controls() {
+	public function register_controls() {
 		$this->_controls = [];
 
 		$available_controls = [
@@ -126,8 +126,6 @@ class Controls_Manager {
 			self::HOVER_ANIMATION,
 			self::ORDER,
 		];
-
-		$this->require_files();
 
 		foreach ( $available_controls as $control_id ) {
 			$control_filename = str_replace( '_', '-', $control_id );
@@ -420,6 +418,7 @@ class Controls_Manager {
 	}
 
 	private function require_files() {
+		// TODO: Move includes in later version (v1.2.x)
 		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
@@ -427,5 +426,9 @@ class Controls_Manager {
 		// Group Controls
 		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
+	}
+
+	public function __construct() {
+		$this->require_files();
 	}
 }
