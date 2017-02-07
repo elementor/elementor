@@ -41,6 +41,18 @@ WidgetView = BaseElementView.extend( {
 		}
 	},
 
+	render: function() {
+		if ( this.model.isRemoteRequestActive() ) {
+			this.handleEmptyWidget();
+
+			this.$el.addClass( 'elementor-element' );
+
+			return;
+		}
+
+		Marionette.CompositeView.prototype.render.apply( this, arguments );
+	},
+
 	handleEmptyWidget: function() {
 		// TODO: REMOVE THIS !!
 		// TEMP CODING !!
