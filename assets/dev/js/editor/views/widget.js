@@ -41,6 +41,14 @@ WidgetView = BaseElementView.extend( {
 		} );
 	},
 
+	handleEmptyWidget: function() {
+		// TODO: REMOVE THIS !!
+		// TEMP CODING !!
+		this.$el
+			.addClass( 'elementor-widget-empty' )
+			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
+	},
+
 	getTemplateType: function() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
@@ -111,11 +119,7 @@ WidgetView = BaseElementView.extend( {
 
             setTimeout( function() {
                 if ( 1 > self.$el.height() ) {
-                    self.$el.addClass( 'elementor-widget-empty' );
-
-                    // TODO: REMOVE THIS !!
-                    // TEMP CODING !!
-                    self.$el.append( '<i class="elementor-widget-empty-icon ' + editModel.getIcon() + '"></i>' );
+                    self.handleEmptyWidget();
                 }
             }, 200 );
             // Is element empty?
