@@ -164,6 +164,7 @@ class Editor {
 		);
 
 		// Enqueue frontend scripts too
+		$plugin->frontend->register_scripts();
 		$plugin->frontend->enqueue_scripts();
 
 		wp_register_script(
