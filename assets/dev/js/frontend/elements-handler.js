@@ -17,6 +17,7 @@ ElementsHandler = function( $ ) {
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
 		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
+		'image-swiper.default': require( 'elementor-frontend/handlers/image-swiper' ),
 		'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
 	};
 
