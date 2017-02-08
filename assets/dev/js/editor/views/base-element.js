@@ -288,15 +288,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return value;
-	},/*
-
-	render: function() {
-		if ( this.model.isRemoteRequestActive() ) {
-			return;
-		}
-
-		Marionette.CompositeView.prototype.render.apply( this, arguments );
-	},*/
+	},
 
 	renderStyles: function() {
 		var self = this,
