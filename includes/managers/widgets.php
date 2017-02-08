@@ -25,6 +25,7 @@ class Widgets_Manager {
 			'icon-box',
 			'image-gallery',
 			'image-carousel',
+			'image-swiper',
 			'icon-list',
 			'counter',
 			'progress',
