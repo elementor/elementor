@@ -328,13 +328,11 @@ abstract class Element_Base {
 			return false;
 		}
 
-		$child_args = array_merge( $child_type->get_default_args(), $child_args );
+		$child = Plugin::instance()->elements_manager->create_element_instance( $child_data, $child_args, $child_type );
 
-		$child_class = $child_type->get_class_name();
-
-		$child = new $child_class( $child_data, $child_args );
-
-		$this->_children[] = $child;
+		if ( $child ) {
+			$this->_children[] = $child;
+		}
 
 		return $child;
 	}

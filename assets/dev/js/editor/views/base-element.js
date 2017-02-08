@@ -288,15 +288,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return value;
-	},/*
-
-	render: function() {
-		if ( this.model.isRemoteRequestActive() ) {
-			return;
-		}
-
-		Marionette.CompositeView.prototype.render.apply( this, arguments );
-	},*/
+	},
 
 	renderStyles: function() {
 		var self = this,
@@ -387,8 +379,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false,
-				isRenderRequired = false;
+			var hasChanged = settings.hasChanged(),
+				isContentChanged = ! hasChanged,
+				isRenderRequired = ! hasChanged;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
@@ -439,14 +432,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.setFlagEditorChange( true );
 	},
 
-	onEditSettingsChanged: function() {
-		this.renderOnChange( this.getEditModel().get( 'editSettings' ) );
+	onEditSettingsChanged: function( changedModel ) {
+		this.renderOnChange( changedModel );
 	},
 
-	onSettingsChanged: function() {
+	onSettingsChanged: function( changedModel ) {
 		elementor.setFlagEditorChange( true );
 
-		this.renderOnChange( this.getEditModel().get( 'settings' ) );
+		this.renderOnChange( changedModel );
 	},
 
 	onClickEdit: function( event ) {
