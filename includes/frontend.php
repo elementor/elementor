@@ -35,6 +35,10 @@ class Frontend {
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
+			if ( ! $element ) {
+				continue;
+			}
+
 			$element->print_element();
 		}
 	}
@@ -47,11 +51,7 @@ class Frontend {
 		return $classes;
 	}
 
-	public function enqueue_scripts() {
-		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
-
-		do_action( 'elementor/frontend/before_enqueue_scripts' );
-
+	public function register_scripts() {
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
@@ -61,6 +61,16 @@ class Frontend {
 				'jquery',
 			],
 			'4.0.2',
+			true
+		);
+
+		wp_register_script(
+			'imagesloaded',
+			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'4.1.0',
 			true
 		);
 
@@ -90,20 +100,11 @@ class Frontend {
 			[
 				'elementor-waypoints',
 				'jquery-numerator',
+				'imagesloaded',
 				'jquery-slick',
 			],
 			ELEMENTOR_VERSION,
 			true
-		);
-		wp_enqueue_script( 'elementor-frontend' );
-
-		wp_localize_script(
-			'elementor-frontend',
-			'elementorFrontendConfig', [
-				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
-				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
-				'is_rtl' => is_rtl(),
-			]
 		);
 	}
 
@@ -138,6 +139,23 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[],
 			ELEMENTOR_VERSION
+		);
+	}
+
+	public function enqueue_scripts() {
+		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
+
+		do_action( 'elementor/frontend/before_enqueue_scripts' );
+
+		wp_enqueue_script( 'elementor-frontend' );
+
+		wp_localize_script(
+			'elementor-frontend',
+			'elementorFrontendConfig', [
+				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
+				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+				'is_rtl' => is_rtl(),
+			]
 		);
 	}
 
@@ -359,6 +377,7 @@ class Frontend {
 		}
 
 		add_action( 'template_redirect', [ $this, 'init' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
 	}

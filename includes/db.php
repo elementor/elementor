@@ -209,7 +209,9 @@ class DB {
 			/** @var Widget_Base $widget */
 			$widget = Plugin::instance()->elements_manager->create_element_instance( $element_data );
 
-			$widget->render_plain_content();
+			if ( $widget ) {
+				$widget->render_plain_content();
+			}
 		}
 
 		if ( ! empty( $element_data['elements'] ) ) {
@@ -266,6 +268,10 @@ class DB {
 
 		foreach ( $data as $element_data ) {
 			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
 
 			$editor_data[] = $element->get_raw_data( $with_html_content );
 		} // End Section
