@@ -57,7 +57,7 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 - **Icon List**. A bullet list with any chosen icon and text.
 - **Counter**. Show stats and numbers in an escalating manner.
 - **Progress Bar**. Include an escalating progress bar.
-- **Tabs**. Multiple tabs that display different pieces of content.
+- **Tabs**. Vertical or horizontal tabs that display different pieces of content.
 - **Accordion**. A collapsable display of content.
 - **Toggle**. Like Accordion, for FAQ pages.
 - **Alert**. A colored alert box to draw the attention of the visitor.
