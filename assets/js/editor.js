@@ -2584,6 +2584,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 
 	activateSection: function( sectionName ) {
 		this.activeSection = sectionName;
+
+		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
 	},
 
 	getChildView: function( item ) {
@@ -3799,8 +3801,14 @@ module.exports = PanelLayoutView;
 var BaseSettingsModel;
 
 BaseSettingsModel = Backbone.Model.extend( {
+	options: {},
 
 	initialize: function( data, options ) {
+		if ( options ) {
+			// Keep the options for cloning
+			this.options = options;
+		}
+
 		this.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( this );
 
 		if ( ! this.controls ) {
@@ -3900,7 +3908,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ) );
+		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
 
 	toJSON: function() {
@@ -6283,15 +6291,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return value;
-	},/*
-
-	render: function() {
-		if ( this.model.isRemoteRequestActive() ) {
-			return;
-		}
-
-		Marionette.CompositeView.prototype.render.apply( this, arguments );
-	},*/
+	},
 
 	renderStyles: function() {
 		var self = this,
@@ -6382,8 +6382,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false,
-				isRenderRequired = false;
+			var hasChanged = settings.hasChanged(),
+				isContentChanged = ! hasChanged,
+				isRenderRequired = ! hasChanged;
 
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
@@ -6434,14 +6435,14 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.setFlagEditorChange( true );
 	},
 
-	onEditSettingsChanged: function() {
-		this.renderOnChange( this.getEditModel().get( 'editSettings' ) );
+	onEditSettingsChanged: function( changedModel ) {
+		this.renderOnChange( changedModel );
 	},
 
-	onSettingsChanged: function() {
+	onSettingsChanged: function( changedModel ) {
 		elementor.setFlagEditorChange( true );
 
-		this.renderOnChange( this.getEditModel().get( 'settings' ) );
+		this.renderOnChange( changedModel );
 	},
 
 	onClickEdit: function( event ) {
@@ -8176,7 +8177,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
+		this.listenTo( this.collection, 'change', this.onRowControlChange );
+		this.listenTo( this.collection, 'add remove reset', this.onRowChange, this );
 	},
 
 	addRow: function( data, options ) {
@@ -8286,10 +8288,18 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onCollectionChanged: function( model ) {
-		this.elementSettingsModel.trigger( 'change', model, model._pending );
+	onRowChange: function() {
+		var model = this.elementSettingsModel;
+
+		model.changed = {};
+
+		model.trigger( 'change', model, model._pending );
 
 		this.toggleMinRowsClass();
+	},
+
+	onRowControlChange: function( model ) {
+		this.elementSettingsModel.trigger( 'change', model, model._pending );
 	},
 
 	onButtonAddRowClick: function() {
@@ -9117,14 +9127,34 @@ WidgetView = BaseElementView.extend( {
 
 		var editModel = this.getEditModel();
 
-		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
-			editModel.renderRemoteServer();
-		}
-
 		editModel.on( {
 			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
 			'remote:render': _.bind( this.onModelRemoteRender, this )
 		} );
+
+		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
+			editModel.renderRemoteServer();
+		}
+	},
+
+	render: function() {
+		if ( this.model.isRemoteRequestActive() ) {
+			this.handleEmptyWidget();
+
+			this.$el.addClass( 'elementor-element' );
+
+			return;
+		}
+
+		Marionette.CompositeView.prototype.render.apply( this, arguments );
+	},
+
+	handleEmptyWidget: function() {
+		// TODO: REMOVE THIS !!
+		// TEMP CODING !!
+		this.$el
+			.addClass( 'elementor-widget-empty' )
+			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
 	},
 
 	getTemplateType: function() {
@@ -9197,11 +9227,7 @@ WidgetView = BaseElementView.extend( {
 
             setTimeout( function() {
                 if ( 1 > self.$el.height() ) {
-                    self.$el.addClass( 'elementor-widget-empty' );
-
-                    // TODO: REMOVE THIS !!
-                    // TEMP CODING !!
-                    self.$el.append( '<i class="elementor-widget-empty-icon ' + editModel.getIcon() + '"></i>' );
+                    self.handleEmptyWidget();
                 }
             }, 200 );
             // Is element empty?

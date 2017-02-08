@@ -137,7 +137,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php self::_render_settings(); ?>
+			<?php $this->_render_settings(); ?>
 			<div class="elementor-widget-container">
 				<?php echo $content_template; ?>
 			</div>

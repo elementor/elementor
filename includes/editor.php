@@ -164,6 +164,7 @@ class Editor {
 		);
 
 		// Enqueue frontend scripts too
+		$plugin->frontend->register_scripts();
 		$plugin->frontend->enqueue_scripts();
 
 		wp_register_script(
@@ -221,16 +222,6 @@ class Editor {
 				'jquery',
 			],
 			'1.0.0',
-			true
-		);
-
-		wp_register_script(
-			'imagesloaded',
-			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'4.1.0',
 			true
 		);
 
