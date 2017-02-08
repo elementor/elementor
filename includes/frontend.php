@@ -85,6 +85,16 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'jquery-swiper',
+			ELEMENTOR_ASSETS_URL . 'lib/swiper/swiper.jquery' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'3.4.1',
+			true
+		);
+
+		wp_register_script(
 			'jquery-slick',
 			ELEMENTOR_ASSETS_URL . 'lib/slick/slick' . $suffix . '.js',
 			[
@@ -101,6 +111,7 @@ class Frontend {
 				'elementor-waypoints',
 				'jquery-numerator',
 				'imagesloaded',
+				'jquery-swiper',
 				'jquery-slick',
 			],
 			ELEMENTOR_VERSION,
