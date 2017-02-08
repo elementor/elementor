@@ -173,6 +173,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.2.1 - 08.02.2017 =
+* Fix! - Change on Repeater control is not effect in the preview
+* Fix! - When you add a widget base on remote only is render twice
+
 = 1.2.0 - 01.02.2017 =
 * New! - Added Gradient Background for Section and Column ([#71](https://github.com/pojome/elementor/issues/71))
 * New! - Added full caption functionality to Image Carousel widget ([#1212](https://github.com/pojome/elementor/issues/1212), [#1124](https://github.com/pojome/elementor/issues/1124), [#1197](https://github.com/pojome/elementor/issues/1197))
