@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,7 +57,7 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 - **Icon List**. A bullet list with any chosen icon and text.
 - **Counter**. Show stats and numbers in an escalating manner.
 - **Progress Bar**. Include an escalating progress bar.
-- **Tabs**. Multiple tabs that display different pieces of content.
+- **Tabs**. Vertical or horizontal tabs that display different pieces of content.
 - **Accordion**. A collapsable display of content.
 - **Toggle**. Like Accordion, for FAQ pages.
 - **Alert**. A colored alert box to draw the attention of the visitor.
@@ -172,6 +172,10 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 1.2.1 - 08.02.2017 =
+* Fix! - Change on Repeater control is not effect in the preview
+* Fix! - When you add a widget base on remote only is render twice
 
 = 1.2.0 - 01.02.2017 =
 * New! - Added Gradient Background for Section and Column ([#71](https://github.com/pojome/elementor/issues/71))
