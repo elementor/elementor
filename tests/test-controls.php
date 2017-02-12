@@ -3,27 +3,27 @@
 class Elementor_Test_Controls extends WP_UnitTestCase {
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Controls_Manager', Elementor\Plugin::instance()->controls_manager );
+		$this->assertInstanceOf( '\Elementor\Controls_Manager', Elementor\Plugin::$instance->controls_manager );
 	}
 
 	public function test_getControls() {
-		$this->assertNotEmpty( Elementor\Plugin::instance()->controls_manager->get_controls() );
+		$this->assertNotEmpty( Elementor\Plugin::$instance->controls_manager->get_controls() );
 	}
 
 	public function test_renderControls() {
 		ob_start();
-		Elementor\Plugin::instance()->controls_manager->render_controls();
+		Elementor\Plugin::$instance->controls_manager->render_controls();
 		$this->assertNotEmpty( ob_get_clean() );
 	}
 
 	public function test_enqueueControlScripts() {
 		ob_start();
-		Elementor\Plugin::instance()->controls_manager->enqueue_control_scripts();
+		Elementor\Plugin::$instance->controls_manager->enqueue_control_scripts();
 		$this->assertEmpty( ob_get_clean() );
 	}
 
 	public function test_getTypes() {
-		foreach ( Elementor\Plugin::instance()->controls_manager->get_controls() as $control ) {
+		foreach ( Elementor\Plugin::$instance->controls_manager->get_controls() as $control ) {
 			$this->assertNotEmpty( $control->get_type() );
 		}
 	}
@@ -35,22 +35,22 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 
 		$control_instance = new $control_class();
 
-		Elementor\Plugin::instance()->controls_manager->register_control( $control_id, new $control_instance );
+		Elementor\Plugin::$instance->controls_manager->register_control( $control_id, new $control_instance );
 
-		$control = Elementor\Plugin::instance()->controls_manager->get_control( $control_id );
+		$control = Elementor\Plugin::$instance->controls_manager->get_control( $control_id );
 
 		$this->assertInstanceOf( $control_class, $control );
 
-		$this->assertTrue( Elementor\Plugin::instance()->controls_manager->unregister_control( $control_id ) );
+		$this->assertTrue( Elementor\Plugin::$instance->controls_manager->unregister_control( $control_id ) );
 
-		$this->assertFalse( Elementor\Plugin::instance()->controls_manager->unregister_control( $control_id ) );
+		$this->assertFalse( Elementor\Plugin::$instance->controls_manager->unregister_control( $control_id ) );
 
 		// Return the control for next tests..
-		Elementor\Plugin::instance()->controls_manager->register_control( $control_id, $control_instance );
+		Elementor\Plugin::$instance->controls_manager->register_control( $control_id, $control_instance );
 	}
 
 	public function test_groupControlsGetTypes() {
-		foreach ( Elementor\Plugin::instance()->controls_manager->get_control_groups() as $control_group ) {
+		foreach ( Elementor\Plugin::$instance->controls_manager->get_control_groups() as $control_group ) {
 			$this->assertNotEmpty( $control_group->get_type() );
 		}
 	}
@@ -109,9 +109,9 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_checkCondition() {
-		Elementor\Plugin::instance()->widgets_manager->get_widget_types(); // Ensure the widgets initialized
+		Elementor\Plugin::$instance->widgets_manager->get_widget_types(); // Ensure the widgets initialized
 
-		$element_obj = \Elementor\Plugin::instance()->elements_manager->create_element_instance( [
+		$element_obj = \Elementor\Plugin::$instance->elements_manager->create_element_instance( [
 			'elType' => 'widget',
 			'widgetType' => 'text-editor',
 			'id' => 'test_id',
@@ -151,7 +151,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 
 	public function test_getDefaultValue() {
 		// Text Control
-		$text_control = Elementor\Plugin::instance()->controls_manager->get_control( \Elementor\Controls_Manager::TEXT );
+		$text_control = Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::TEXT );
 		
 		$control_option = [
 			'name' => 'key',
@@ -160,7 +160,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$this->assertEquals( 'value', $text_control->get_value( $control_option, [] ) );
 		
 		// URL Control
-		$url_control = Elementor\Plugin::instance()->controls_manager->get_control( \Elementor\Controls_Manager::URL );
+		$url_control = Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::URL );
 		$control_option = [
 			'name' => 'key',
 			'default' => [
@@ -170,7 +170,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$this->assertEquals( [ 'url' => 'THE_LINK', 'is_external' => '' ], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] ) );
 		
 		// Repeater Control
-		$repeater_control = \Elementor\Plugin::instance()->controls_manager->get_control( \Elementor\Controls_Manager::REPEATER );
+		$repeater_control = \Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::REPEATER );
 		$control_option = [
 			'name' => 'key',
 			'default' => [ [] ],
