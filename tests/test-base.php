@@ -25,20 +25,20 @@ class Elementor_Test_Base extends WP_UnitTestCase {
 	}
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Plugin', \Elementor\Plugin::instance() );
+		$this->assertInstanceOf( '\Elementor\Plugin', \Elementor\Plugin::$instance );
 	}
 
 	/**
 	 * @expectedIncorrectUsage __clone
 	 */
 	public function test_Clone() {
-		$obj_cloned = clone \Elementor\Plugin::instance();
+		$obj_cloned = clone \Elementor\Plugin::$instance;
 	}
 
 	/**
 	 * @expectedIncorrectUsage __wakeup
 	 */
 	public function test_Wakeup() {
-		unserialize( serialize( \Elementor\Plugin::instance() ) );
+		unserialize( serialize( \Elementor\Plugin::$instance ) );
 	}
 }

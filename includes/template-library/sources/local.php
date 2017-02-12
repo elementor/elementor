@@ -154,9 +154,9 @@ class Source_Local extends Source_Base {
 			return $template_id;
 		}
 
-		Plugin::instance()->db->set_edit_mode( $template_id );
+		Plugin::$instance->db->set_edit_mode( $template_id );
 
-		Plugin::instance()->db->save_editor( $template_id, $template_data['data'] );
+		Plugin::$instance->db->save_editor( $template_id, $template_data['data'] );
 
 		$this->save_item_type( $template_id, $template_data['type'] );
 
@@ -168,7 +168,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function update_item( $new_data ) {
-		Plugin::instance()->db->save_editor( $new_data['id'], $new_data['data'] );
+		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['data'] );
 
 		do_action( 'elementor/template-library/after_update_template', $new_data['id'], $new_data );
 
@@ -203,7 +203,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_content( $item_id, $context = 'display' ) {
-		$db = Plugin::instance()->db;
+		$db = Plugin::$instance->db;
 
 		// TODO: Validate the data (in JS too!)
 		if ( 'display' === $context ) {
