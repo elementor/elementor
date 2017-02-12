@@ -688,7 +688,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		Plugin::instance()->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
 	protected function _render_settings() {
@@ -793,6 +793,6 @@ class Element_Section extends Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		return Plugin::instance()->elements_manager->get_element_types( 'column' );
+		return Plugin::$instance->elements_manager->get_element_types( 'column' );
 	}
 }

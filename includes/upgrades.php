@@ -19,7 +19,7 @@ class Upgrades {
 
 		self::check_upgrades( $elementor_version );
 
-		Plugin::instance()->posts_css_manager->clear_cache();
+		Plugin::$instance->posts_css_manager->clear_cache();
 
 		update_option( 'elementor_version', ELEMENTOR_VERSION );
 	}
@@ -64,12 +64,12 @@ class Upgrades {
 			return;
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::instance()->db->get_plain_editor( $post_id );
+			$data = Plugin::$instance->db->get_plain_editor( $post_id );
 			if ( empty( $data ) ) {
 				continue;
 			}
 
-			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) || 'image' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -81,7 +81,7 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::instance()->db->save_editor( $post_id, $data );
+			Plugin::$instance->db->save_editor( $post_id, $data );
 		}
 	}
 
@@ -103,12 +103,12 @@ class Upgrades {
 			return;
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::instance()->db->get_plain_editor( $post_id );
+			$data = Plugin::$instance->db->get_plain_editor( $post_id );
 			if ( empty( $data ) ) {
 				continue;
 			}
 
-			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -128,7 +128,7 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::instance()->db->save_editor( $post_id, $data );
+			Plugin::$instance->db->save_editor( $post_id, $data );
 		}
 	}
 
@@ -150,12 +150,12 @@ class Upgrades {
 			return;
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::instance()->db->get_plain_editor( $post_id );
+			$data = Plugin::$instance->db->get_plain_editor( $post_id );
 			if ( empty( $data ) ) {
 				continue;
 			}
 
-			$data = Plugin::instance()->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -181,7 +181,7 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::instance()->db->save_editor( $post_id, $data );
+			Plugin::$instance->db->save_editor( $post_id, $data );
 		}
 	}
 }

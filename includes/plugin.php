@@ -11,7 +11,7 @@ class Plugin {
 	/**
 	 * @var Plugin
 	 */
-	private static $_instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var DB
@@ -126,11 +126,12 @@ class Plugin {
 	 * @return Plugin
 	 */
 	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 			do_action( 'elementor/loaded' );
 		}
-		return self::$_instance;
+
+		return self::$instance;
 	}
 
 	/**
