@@ -171,6 +171,12 @@ class Widgets_Manager {
 
 		$widget = Plugin::instance()->elements_manager->create_element_instance( $data );
 
+		if ( ! $widget ) {
+			wp_send_json_error();
+
+			return;
+		}
+
 		$widget->render_content();
 
 		$render_html = ob_get_clean();
@@ -207,6 +213,7 @@ class Widgets_Manager {
 		 * @var $widget_obj Widget_WordPress
 		 */
 		$widget_obj = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+
 		if ( ! $widget_obj ) {
 			wp_send_json_error();
 		}
