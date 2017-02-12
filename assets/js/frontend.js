@@ -353,8 +353,12 @@ module.exports = function( $scope, $ ) {
 
 		event.preventDefault();
 
+		var scrollTop = $anchor.offset().top - adminBarHeight;
+
+		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
+
 		$scrollable.animate( {
-			scrollTop: $anchor.offset().top - adminBarHeight
+			scrollTop: scrollTop
 		}, 1000 );
 	} );
 };
