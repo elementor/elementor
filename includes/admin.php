@@ -93,7 +93,7 @@ class Admin {
 			return;
 		}
 
-		$current_mode = Plugin::instance()->db->get_edit_mode( $post->ID );
+		$current_mode = Plugin::$instance->db->get_edit_mode( $post->ID );
 		if ( 'builder' !== $current_mode ) {
 			$current_mode = 'editor';
 		}
@@ -155,7 +155,7 @@ class Admin {
 		if ( ! isset( $_POST['_elementor_post_mode'] ) )
 			$_POST['_elementor_post_mode'] = '';
 
-		Plugin::instance()->db->set_edit_mode( $post_id, $_POST['_elementor_post_mode'] );
+		Plugin::$instance->db->set_edit_mode( $post_id, $_POST['_elementor_post_mode'] );
 	}
 
 	/**
@@ -168,7 +168,7 @@ class Admin {
 	 * @return array
 	 */
 	public function add_edit_in_dashboard( $actions, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && 'builder' === Plugin::instance()->db->get_edit_mode( $post->ID ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && 'builder' === Plugin::$instance->db->get_edit_mode( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
 				Utils::get_edit_link( $post->ID ),
@@ -184,7 +184,7 @@ class Admin {
 
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
 			$post = get_post();
-			$current_mode = Plugin::instance()->db->get_edit_mode( $post->ID );
+			$current_mode = Plugin::$instance->db->get_edit_mode( $post->ID );
 
 			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';
 

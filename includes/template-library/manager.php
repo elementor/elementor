@@ -149,7 +149,7 @@ class Manager {
 		}
 
 		if ( isset( $args['edit_mode'] ) ) {
-			Plugin::instance()->editor->set_edit_mode( $args['edit_mode'] );
+			Plugin::$instance->editor->set_edit_mode( $args['edit_mode'] );
 		}
 
 		$source = $this->get_source( $args['source'] );

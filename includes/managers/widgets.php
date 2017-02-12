@@ -169,7 +169,7 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
-		$widget = Plugin::instance()->elements_manager->create_element_instance( $data );
+		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
 			wp_send_json_error();
@@ -212,7 +212,7 @@ class Widgets_Manager {
 		/**
 		 * @var $widget_obj Widget_WordPress
 		 */
-		$widget_obj = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+		$widget_obj = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 		if ( ! $widget_obj ) {
 			wp_send_json_error();
