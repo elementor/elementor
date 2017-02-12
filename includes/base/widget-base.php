@@ -233,6 +233,13 @@ abstract class Widget_Base extends Element_Base {
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
+
+		// TODO: Change to $instance variable
+		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
+			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
+
+			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
+		}
 	}
 
 	public function before_render() {
@@ -280,6 +287,10 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::instance()->elements_manager->get_element_types( 'section' );
+	}
+
+	public function get_frontend_settings_keys() {
+		return [];
 	}
 
 	public function add_skin( Skin_Base $skin ) {
