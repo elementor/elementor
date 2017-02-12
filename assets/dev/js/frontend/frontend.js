@@ -2,7 +2,7 @@
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
-		Module = require( '../utils/module' ),
+		Module = require( './frontend-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
