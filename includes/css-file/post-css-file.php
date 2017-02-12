@@ -56,10 +56,10 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	protected function render_css() {
-		$data = Plugin::instance()->db->get_plain_editor( $this->post_id );
+		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
 
 		foreach ( $data as $element_data ) {
-			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( ! $element ) {
 				continue;

@@ -62,11 +62,11 @@ class Revisions_Manager {
 			return;
 		}
 
-		Plugin::instance()->db->copy_elementor_meta( $parent_id, $revision_id );
+		Plugin::$instance->db->copy_elementor_meta( $parent_id, $revision_id );
 	}
 
 	public static function restore_revision( $parent_id, $revision_id ) {
-		Plugin::instance()->db->copy_elementor_meta( $revision_id, $parent_id );
+		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
 		$post_css = new Post_CSS_File( $parent_id );
 		$post_css->update();
@@ -77,7 +77,7 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the revision ID' );
 		}
 
-		$revision = Plugin::instance()->db->get_plain_editor( $_POST['id'] );
+		$revision = Plugin::$instance->db->get_plain_editor( $_POST['id'] );
 
 		if ( empty( $revision ) ) {
 			wp_send_json_error( 'Invalid Revision' );
@@ -91,7 +91,7 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the id' );
 		}
 
-		$revision = Plugin::instance()->db->get_plain_editor( $_POST['id'] );
+		$revision = Plugin::$instance->db->get_plain_editor( $_POST['id'] );
 
 		if ( empty( $revision ) ) {
 			wp_send_json_error( __( 'Invalid Revision', 'elementor' ) );
