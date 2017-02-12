@@ -109,7 +109,7 @@ abstract class CSS_File {
 		// Handle fonts
 		if ( ! empty( $meta['fonts'] ) ) {
 			foreach ( $meta['fonts'] as $font ) {
-				Plugin::instance()->frontend->enqueue_font( $font );
+				Plugin::$instance->frontend->enqueue_font( $font );
 			}
 		}
 	}
@@ -145,7 +145,7 @@ abstract class CSS_File {
 						$this->fonts[] = $value_to_insert;
 					}
 
-					$control_obj = Plugin::instance()->controls_manager->get_control( $parser_control['type'] );
+					$control_obj = Plugin::$instance->controls_manager->get_control( $parser_control['type'] );
 
 					$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );
 

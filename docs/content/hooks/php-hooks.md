@@ -101,7 +101,7 @@ None
  ```php
 // Add a custom category for panel widgets
 add_action( 'elementor/init', function() {
-	\Elementor\Plugin::instance()->elements_manager->add_category( 
+	\Elementor\Plugin::$instance->elements_manager->add_category( 
 		'theme-elements',
 		[
 			'title' => __( 'Theme Elements', 'theme-domain' ),
