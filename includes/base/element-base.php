@@ -107,7 +107,7 @@ abstract class Element_Base {
 	abstract public function get_name();
 
 	public function get_controls( $control_id = null ) {
-		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
 			$this->_init_controls();
@@ -134,19 +134,19 @@ abstract class Element_Base {
 			}
 		}
 
-		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
+		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
 	}
 
 	public function remove_control( $control_id ) {
-		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
+		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
 	}
 
 	public function update_control( $control_id, array $args ) {
-		return Plugin::instance()->controls_manager->update_control_in_stack( $this, $control_id, $args );
+		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
 	}
 
 	public final function add_group_control( $group_name, array $args = [] ) {
-		$group = Plugin::instance()->controls_manager->get_control_groups( $group_name );
+		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
 			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
@@ -156,7 +156,7 @@ abstract class Element_Base {
 	}
 
 	public final function get_tabs_controls() {
-		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		return $stack['tabs'];
 	}
@@ -328,7 +328,7 @@ abstract class Element_Base {
 			return false;
 		}
 
-		$child = Plugin::instance()->elements_manager->create_element_instance( $child_data, $child_args, $child_type );
+		$child = Plugin::$instance->elements_manager->create_element_instance( $child_data, $child_args, $child_type );
 
 		if ( $child ) {
 			$this->_children[] = $child;
@@ -615,7 +615,7 @@ abstract class Element_Base {
 		$settings = $this->_data['settings'];
 
 		foreach ( $this->get_controls() as $control ) {
-			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
@@ -653,7 +653,7 @@ abstract class Element_Base {
 	}
 
 	private function _init_controls() {
-		Plugin::instance()->controls_manager->open_stack( $this );
+		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->_register_controls();
 	}
