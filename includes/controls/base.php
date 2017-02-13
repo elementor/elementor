@@ -42,7 +42,7 @@ abstract class Control_Base {
 	abstract public function get_type();
 
 	public function __construct() {
-		$this->_settings = wp_parse_args( $this->get_default_settings(), $this->_base_settings );
+		$this->_settings = array_merge( $this->_base_settings, $this->get_default_settings() );
 	}
 
 	public function enqueue() {}
