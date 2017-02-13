@@ -11,7 +11,6 @@ class Group_Control_Background extends Group_Control_Base {
 
 	protected function _get_child_default_args() {
 		return [
-			'types' => [ 'classic' ],
 		];
 	}
 
@@ -297,5 +296,6 @@ class Group_Control_Background extends Group_Control_Base {
 		// End Background:video
 
 		return $controls;
+			'types' => [ 'none', 'classic' ],
 	}
 }
