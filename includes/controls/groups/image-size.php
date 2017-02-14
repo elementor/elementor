@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Group_Control_Image_Size extends Group_Control_Base {
 
+	protected static $fields;
+
 	public static function get_type() {
 		return 'image-size';
 	}
@@ -32,6 +34,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		// If is the new version - with image size
 		$image_sizes   = get_intermediate_image_sizes();
+
 		$image_sizes[] = 'full';
 
 		if ( ! empty( $id ) && in_array( $size, $image_sizes ) ) {
@@ -59,6 +62,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$default_image_sizes = [ 'thumbnail', 'medium', 'medium_large', 'large' ];
 
 		$image_sizes = [];
+
 		foreach ( $default_image_sizes as $size ) {
 			$image_sizes[ $size ] = [
 				'width' => (int) get_option( $size . '_size_w' ),
@@ -74,7 +78,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return $image_sizes;
 	}
 
-	protected function _get_child_default_args() {
+	protected function get_child_default_args() {
 		return [
 			'include' => [],
 			'exclude' => [],
@@ -93,6 +97,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		}
 
 		$image_sizes = [];
+
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
 			$image_sizes[ $size_key ] = ucwords( str_replace( '_', ' ', $size_key ) ) . sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
 		}
@@ -106,10 +111,32 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return $image_sizes;
 	}
 
-	protected function _get_controls( $args ) {
-		$controls = [];
+	protected function init_fields() {
+		$fields = [];
 
+		$fields['size'] = [
+			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'label_block' => false,
+		];
+
+		$fields['custom_dimension'] = [
+			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
+			'type' => Controls_Manager::IMAGE_DIMENSIONS,
+			'description' => __( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
+			'condition' => [
+				'size' => [ 'custom' ],
+			],
+			'separator' => 'none',
+		];
+
+		return $fields;
+	}
+
+	protected function prepare_fields( $fields ) {
 		$image_sizes = $this->_get_image_sizes();
+
+		$args = $this->get_args();
 
 		if ( ! empty( $args['default'] ) && isset( $image_sizes[ $args['default'] ] ) ) {
 			$default_value = $args['default'];
@@ -119,27 +146,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$default_value = array_shift( $default_value );
 		}
 
-		$controls['size'] = [
-			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => $image_sizes,
-			'default' => $default_value,
-			'label_block' => false,
-		];
+		$fields['size']['options'] = $image_sizes;
 
-		if ( isset( $image_sizes['custom'] ) ) {
-			$controls['custom_dimension'] = [
-				'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
-				'type' => Controls_Manager::IMAGE_DIMENSIONS,
-				'description' => __( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
-				'condition' => [
-					'size' => [ 'custom' ],
-				],
-				'separator' => 'none',
-			];
+		$fields['size']['default'] = $default_value;
+
+		if ( ! isset( $image_sizes['custom'] ) ) {
+			unset( $fields['custom_dimension'] );
 		}
 
-		return $controls;
+		return parent::prepare_fields( $fields );
 	}
 
 	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
@@ -179,6 +194,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		}
 
 		$image_src = wp_get_attachment_image_src( $attachment_id, $attachment_size );
+
 		return ! empty( $image_src[0] ) ? $image_src[0] : '';
 	}
 }
