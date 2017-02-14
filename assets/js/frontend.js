@@ -462,9 +462,10 @@ var StretchedSection = function( $section, $ ) {
 	var stretchSection = function() {
 		// Clear any previously existing css associated with this script
 		var direction = settings.is_rtl ? 'right' : 'left',
-			resetCss = {};
+			resetCss = {},
+            isStretched = $section.hasClass( 'elementor-section-stretched' );
 
-		if ( elementorFrontend.isEditMode() ) {
+		if ( elementorFrontend.isEditMode() || isStretched ) {
 			resetCss.width = 'auto';
 
 			resetCss[ direction ] = 0;
@@ -472,7 +473,7 @@ var StretchedSection = function( $section, $ ) {
 			$section.css( resetCss );
 		}
 
-		if ( ! $section.hasClass( 'elementor-section-stretched' ) ) {
+		if ( ! isStretched ) {
 			return;
 		}
 
