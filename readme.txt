@@ -173,6 +173,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.2.2 - 14.02.2017 =
+* Tweak! - Added filter to change the menu anchor distance
+* Tweak! - Regenerate CSS run after editor saved
+* Tweak! - Major Improved performance in the editor screen
+* Fix! - Selector elementor:after added spacing after the content
+* Fix! - Removed inline CSS from default section in frontend
+
 = 1.2.1 - 08.02.2017 =
 * Fix! - Change on Repeater control is not effect in the preview
 * Fix! - When you add a widget base on remote only is render twice
