@@ -177,9 +177,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ### 1.2.2 - 14.02.2017 ###
 * Tweak! - Added filter to change the menu anchor distance
-* Tweak! - Regenerate CSS run after editor saved
-* Tweak! - Major Improved performance in the editor screen
-* Fix! - Selector elementor:after added spacing after the content
+* Tweak! - Regenerate CSS run after editor saved for quicker saving
+* Tweak! - Major performance improvement by optimizing backend method calls
+* Fix! - Selector `elementor:after` added spacing after the elementor content
 * Fix! - Removed inline CSS from default section in frontend
 
 ### 1.2.1 - 08.02.2017 ###
