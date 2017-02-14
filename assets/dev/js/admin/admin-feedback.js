@@ -39,6 +39,10 @@
 						headerMessage: self.cache.$dialogHeader,
 						message: self.cache.$dialogForm,
 						hideOnButtonClick: false,
+						position: {
+							my: 'center',
+							at: 'center'
+						},
 						onReady: function() {
 							DialogsManager.getWidgetType( 'options' ).prototype.onReady.apply( this, arguments );
 
