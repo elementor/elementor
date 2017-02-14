@@ -1,11 +1,13 @@
 module.exports = function( $scope, $ ) {
-	var $carousel = $scope.find( '.elementor-image-carousel' );
-	if ( ! $carousel.length ) {
+	var $swiper = $scope.find( '.swiper-container' );
+	if ( ! $swiper.length ) {
 		return;
 	}
 
-	var savedOptions = $carousel.data( 'slider_options' ),
-		tabletSlides = 1 === savedOptions.slidesToShow ? 1 : 2,
+	var savedOptions = $swiper.data( 'slider_options' );
+    var mySwiper = new Swiper( $swiper, savedOptions );
+/*
+	var	tabletSlides = 1 === savedOptions.slidesToShow ? 1 : 2,
 		defaultOptions = {
 			responsive: [
 				{
@@ -25,7 +27,8 @@ module.exports = function( $scope, $ ) {
 			]
 		},
 
-		slickOptions = $.extend( {}, defaultOptions, $carousel.data( 'slider_options' ) );
+		slickOptions = $.extend( {}, defaultOptions, $swiper.data( 'slider_options' ) );
 
-	$carousel.slick( slickOptions );
+	$swiper.slick( slickOptions );
+*/
 };
