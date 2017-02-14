@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Group_Control_Base implements Group_Control_Interface {
 
-	protected static $fields;
-
 	private $args = [];
 
 	final public function add_controls( Element_Base $element, array $user_args ) {
