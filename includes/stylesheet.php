@@ -262,6 +262,14 @@ class Stylesheet {
 
 			$b_query = $this->hash_to_query( $b );
 
+			if ( isset( $a_query['min'] ) xor isset( $b_query['min'] ) ) {
+				return 1;
+			}
+
+			if ( isset( $a_query['min'] ) ) {
+				return $a_query['min'] - $b_query['min'];
+			}
+
 			return $b_query['max'] - $a_query['max'];
 		} );
 	}

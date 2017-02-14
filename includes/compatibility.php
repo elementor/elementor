@@ -52,7 +52,7 @@ class Compatibility {
 
 		// Disable optimize files in Editor from Autoptimize plugin
 		add_filter( 'autoptimize_filter_noptimize', function( $retval ) {
-			if ( Plugin::instance()->editor->is_edit_mode() ) {
+			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$retval = true;
 			}
 
@@ -61,7 +61,7 @@ class Compatibility {
 
 		// Add the description (content) tab for a new product, so it can be edited with Elementor
 		add_filter( 'woocommerce_product_tabs', function( $tabs ) {
-			if ( ! isset( $tabs['description'] ) && Plugin::instance()->preview->is_preview_mode() ) {
+			if ( ! isset( $tabs['description'] ) && Plugin::$instance->preview->is_preview_mode() ) {
 				$post = get_post();
 				if ( empty( $post->post_content ) ) {
 					$tabs['description'] = [

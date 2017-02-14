@@ -18,10 +18,10 @@ class Heartbeat {
 	public function heartbeat_received( $response, $data ) {
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
 			$post_id = $data['elementor_post_lock']['post_ID'];
-			$locked_user = Plugin::instance()->editor->get_locked_user( $post_id );
+			$locked_user = Plugin::$instance->editor->get_locked_user( $post_id );
 
 			if ( ! $locked_user || ! empty( $data['elementor_force_post_lock'] ) ) {
-				Plugin::instance()->editor->lock_post( $post_id );
+				Plugin::$instance->editor->lock_post( $post_id );
 			} else {
 				$response['locked_user'] = $locked_user->display_name;
 			}

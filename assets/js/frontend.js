@@ -390,8 +390,12 @@ module.exports = function( $scope, $ ) {
 
 		event.preventDefault();
 
+		var scrollTop = $anchor.offset().top - adminBarHeight;
+
+		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
+
 		$scrollable.animate( {
-			scrollTop: $anchor.offset().top - adminBarHeight
+			scrollTop: scrollTop
 		}, 1000 );
 	} );
 };
@@ -495,15 +499,18 @@ var StretchedSection = function( $section, $ ) {
 	var stretchSection = function() {
 		// Clear any previously existing css associated with this script
 		var direction = settings.is_rtl ? 'right' : 'left',
-			resetCss = {
-				width: 'auto'
-			};
+			resetCss = {},
+            isStretched = $section.hasClass( 'elementor-section-stretched' );
 
-		resetCss[ direction ] = 0;
+		if ( elementorFrontend.isEditMode() || isStretched ) {
+			resetCss.width = 'auto';
 
-		$section.css( resetCss );
+			resetCss[ direction ] = 0;
 
-		if ( ! $section.hasClass( 'elementor-section-stretched' ) ) {
+			$section.css( resetCss );
+		}
+
+		if ( ! isStretched ) {
 			return;
 		}
 

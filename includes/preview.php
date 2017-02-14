@@ -95,7 +95,7 @@ class Preview {
 		// Make sure jQuery embed in preview window
 		wp_enqueue_script( 'jquery' );
 
-		Plugin::instance()->frontend->enqueue_styles();
+		Plugin::$instance->frontend->enqueue_styles();
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
