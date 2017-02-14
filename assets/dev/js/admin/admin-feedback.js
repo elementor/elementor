@@ -4,8 +4,6 @@
 
 	var ElementorAdminDialogApp = {
 
-		elementorModals: require( 'elementor-utils/modals' ),
-
 		dialogsManager: new DialogsManager.Instance(),
 
 		cacheElements: function() {
@@ -36,13 +34,13 @@
 
 			self.getModal = function() {
 				if ( ! modal ) {
-					modal = self.dialogsManager.createWidget( 'elementor-modal', {
+					modal = self.dialogsManager.createWidget( 'options', {
 						id: 'elementor-deactivate-feedback-modal',
 						headerMessage: self.cache.$dialogHeader,
 						message: self.cache.$dialogForm,
 						hideOnButtonClick: false,
 						onReady: function() {
-							DialogsManager.getWidgetType( 'elementor-modal' ).prototype.onReady.apply( this, arguments );
+							DialogsManager.getWidgetType( 'options' ).prototype.onReady.apply( this, arguments );
 
 							this.addButton( {
 								name: 'submit',
@@ -77,7 +75,6 @@
 		},
 
 		init: function() {
-			this.elementorModals.init();
 			this.initModal();
 			this.cacheElements();
 			this.bindEvents();
