@@ -160,6 +160,22 @@ class Widget_Image_Swiper extends Widget_Base {
 		);
 
 		$this->add_control(
+			'effect',
+			[
+				'label' => __( 'Effect', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'slide',
+				'options' => [
+					'slide' => __( 'Slide', 'elementor' ),
+					'fade' => __( 'Fade', 'elementor' ),
+					'cube' => __( 'Cube', 'elementor' ),
+					'coverflow' => __( 'Coverflow', 'elementor' ),
+					'flip' => __( 'Flip', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'pause_on_hover',
 			[
 				'label' => __( 'Pause on Hover', 'elementor' ),
@@ -203,22 +219,6 @@ class Widget_Image_Swiper extends Widget_Base {
 				'options' => [
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'effect',
-			[
-				'label' => __( 'Effect', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'slide',
-				'options' => [
-					'slide' => __( 'Slide', 'elementor' ),
-					'fade' => __( 'Fade', 'elementor' ),
-				],
-				'condition' => [
-					'slides_to_show' => '1',
 				],
 			]
 		);
@@ -549,7 +549,7 @@ class Widget_Image_Swiper extends Widget_Base {
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slides[] = '<div class="slick-slide"><figure class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></figure></div>';
+			$slides[] = '<div class="swiper-slide"><figure>' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></figure></div>';
 
 		}
 
@@ -563,26 +563,41 @@ class Widget_Image_Swiper extends Widget_Base {
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
 
-		$slick_options = [
-			'slidesToShow' => absint( $settings['slides_to_show'] ),
-			'autoplaySpeed' => absint( $settings['autoplay_speed'] ),
-			'autoplay' => ( 'yes' === $settings['autoplay'] ),
-			'infinite' => ( 'yes' === $settings['infinite'] ),
+		$swiper_options = [
+			'slidesPerView' => absint( $settings['slides_to_show'] ),
+			'autoplay' => absint( $settings['autoplay_speed'] ),
+			'loop' => ( 'yes' === $settings['infinite'] ),
 			'pauseOnHover' => ( 'yes' === $settings['pause_on_hover'] ),
 			'speed' => absint( $settings['speed'] ),
-			'arrows' => $show_arrows,
-			'dots' => $show_dots,
-			'rtl' => $is_rtl,
+			'spaceBetween' => 0,
 		];
 
-		$carousel_classes = [ 'elementor-image-carousel' ];
+		$effect = 'slide';
+
+		if ( ! empty( $settings['effect'] ) ) {
+			$effect = $settings['effect'];
+
+			if ( 'coverflow' === $effect ) {
+				$swiper_options['coverflow'] = [
+					'rotate' => 20,
+					'stretch' => 20,
+					'depth' => 250,
+					'modifier' => 0.7,
+					'slideShadows' => true,
+				];
+			}
+		}
+
+		$swiper_options['effect'] = $effect;
+
+		$carousel_classes = [ 'elementor-image-carousel', 'swiper-wrapper' ];
 
 		if ( $show_arrows ) {
-			$carousel_classes[] = 'slick-arrows-' . $settings['arrows_position'];
+			// $carousel_classes[] = 'slick-arrows-' . $settings['arrows_position'];
 		}
 
 		if ( $show_dots ) {
-			$carousel_classes[] = 'slick-dots-' . $settings['dots_position'];
+			// $carousel_classes[] = 'slick-dots-' . $settings['dots_position'];
 		}
 
 		if ( 'yes' === $settings['image_stretch'] ) {
@@ -590,14 +605,14 @@ class Widget_Image_Swiper extends Widget_Base {
 		}
 
 		if ( ! $is_slideshow ) {
-			$slick_options['slidesToScroll'] = absint( $settings['slides_to_scroll'] );
+			$swiper_options['slidesToScroll'] = absint( $settings['slides_to_scroll'] );
 		} else {
-			$slick_options['fade'] = ( 'fade' === $settings['effect'] );
+			$swiper_options['fade'] = ( 'fade' === $settings['effect'] );
 		}
 
 		?>
-		<div class="elementor-image-carousel-wrapper elementor-slick-slider" dir="<?php echo $direction; ?>">
-			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" data-slider_options='<?php echo esc_attr( wp_json_encode( $slick_options ) ); ?>'>
+		<div class="elementor-image-carousel-wrapper swiper-container" data-slider_options='<?php echo esc_attr( wp_json_encode( $swiper_options ) ); ?>'>
+			<div class="<?php echo implode( ' ', $carousel_classes ); ?>" >
 				<?php echo implode( '', $slides ); ?>
 			</div>
 		</div>

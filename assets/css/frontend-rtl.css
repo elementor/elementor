@@ -1234,6 +1234,11 @@
 .elementor-image-carousel-wrapper .slick-image-stretch .slick-slide .slick-slide-image {
   width: 100%; }
 
+.swiper-container .swiper-slide figure {
+  line-height: 0; }
+  .swiper-container .swiper-slide figure img {
+    width: 100%; }
+
 .elementor-widget-image-box .elementor-image-box-content {
   width: 100%; }
 
