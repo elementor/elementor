@@ -272,6 +272,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'condition' => [
 				'background' => [ 'video' ],
 			],
+			'of_type' => 'video',
 		];
 
 		$fields['video_fallback'] = [
@@ -285,6 +286,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'background: url("{{URL}}") 50% 50%; background-size: cover;',
 			],
+			'of_type' => 'video',
 		];
 
 		return $fields;
