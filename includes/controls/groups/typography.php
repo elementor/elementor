@@ -128,7 +128,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		return $fields;
 	}
 
-	protected function prelpare_fields( $fields ) {
+	protected function prepare_fields( $fields ) {
 		array_walk( $fields, function ( &$field, $field_name ) {
 			if ( 'typography' === $field_name ) {
 				return;
