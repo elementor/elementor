@@ -12,12 +12,12 @@ class Frontend {
 	private $_has_elementor_in_page = false;
 
 	public function init() {
-		if ( Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode() ) {
+		if ( Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode() ) {
 			return;
 		}
 
 		$this->_is_frontend_mode = true;
-		$this->_has_elementor_in_page = Plugin::instance()->db->has_elementor_in_post( get_the_ID() );
+		$this->_has_elementor_in_page = Plugin::$instance->db->has_elementor_in_post( get_the_ID() );
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 
@@ -33,7 +33,7 @@ class Frontend {
 
 	protected function _print_elements( $elements_data ) {
 		foreach ( $elements_data as $element_data ) {
-			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( ! $element ) {
 				continue;
@@ -45,7 +45,7 @@ class Frontend {
 
 	public function body_class( $classes = [] ) {
 		$classes[] = 'elementor-default';
-		if ( is_singular() && 'builder' === Plugin::instance()->db->get_edit_mode( get_the_ID() ) ) {
+		if ( is_singular() && 'builder' === Plugin::$instance->db->get_edit_mode( get_the_ID() ) ) {
 			$classes[] = 'elementor-page';
 		}
 		return $classes;
@@ -163,7 +163,7 @@ class Frontend {
 		wp_localize_script(
 			'elementor-frontend',
 			'elementorFrontendConfig', [
-				'isEditMode' => Plugin::instance()->editor->is_edit_mode(),
+				'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
 				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 				'is_rtl' => is_rtl(),
 			]
@@ -178,7 +178,7 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
+		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
 
 			$css_file = new Post_CSS_File( get_the_ID() );
@@ -281,12 +281,12 @@ class Frontend {
 			return '';
 		}
 
-		$edit_mode = Plugin::instance()->db->get_edit_mode( $post_id );
+		$edit_mode = Plugin::$instance->db->get_edit_mode( $post_id );
 		if ( 'builder' !== $edit_mode ) {
 			return '';
 		}
 
-		$data = Plugin::instance()->db->get_plain_editor( $post_id );
+		$data = Plugin::$instance->db->get_plain_editor( $post_id );
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
 		if ( empty( $data ) ) {
@@ -327,7 +327,7 @@ class Frontend {
 
 	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
-		$is_not_builder_mode = ! is_singular() || ! User::is_current_user_can_edit( $post_id ) || 'builder' !== Plugin::instance()->db->get_edit_mode( $post_id );
+		$is_not_builder_mode = ! is_singular() || ! User::is_current_user_can_edit( $post_id ) || 'builder' !== Plugin::$instance->db->get_edit_mode( $post_id );
 
 		if ( $is_not_builder_mode ) {
 			return;
@@ -348,7 +348,7 @@ class Frontend {
 		// Avoid recursion
 		if ( get_the_ID() === (int) $post_id ) {
 			$content = '';
-			if ( Plugin::instance()->editor->is_edit_mode() ) {
+			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
 			}
 
@@ -356,8 +356,8 @@ class Frontend {
 		}
 
 		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
-		$is_edit_mode = Plugin::instance()->editor->is_edit_mode();
-		Plugin::instance()->editor->set_edit_mode( false );
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		Plugin::$instance->editor->set_edit_mode( false );
 
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
 		if ( isset( $GLOBALS['post'] ) ) {
@@ -376,7 +376,7 @@ class Frontend {
 		}
 
 		// Restore edit mode state
-		Plugin::instance()->editor->set_edit_mode( $is_edit_mode );
+		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );
 
 		return $content;
 	}

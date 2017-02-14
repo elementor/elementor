@@ -56,10 +56,10 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	protected function render_css() {
-		$data = Plugin::instance()->db->get_plain_editor( $this->post_id );
+		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
 
 		foreach ( $data as $element_data ) {
-			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( ! $element ) {
 				continue;
@@ -67,6 +67,14 @@ class Post_CSS_File extends CSS_File {
 
 			$this->render_styles( $element );
 		}
+	}
+
+	public function enqueue() {
+		if ( ! Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
+			return;
+		}
+
+		parent::enqueue();
 	}
 
 	protected function get_enqueue_dependencies() {

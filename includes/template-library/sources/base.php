@@ -24,7 +24,7 @@ abstract class Source_Base {
 	}
 
 	protected function replace_elements_ids( $data ) {
-		return Plugin::instance()->db->iterate_data( $data, function( $element ) {
+		return Plugin::$instance->db->iterate_data( $data, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
 
 			return $element;
@@ -38,8 +38,8 @@ abstract class Source_Base {
 	 * @return mixed
 	 */
 	protected function process_export_import_data( $data, $method ) {
-		return Plugin::instance()->db->iterate_data( $data, function( $element_data ) use ( $method ) {
-			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+		return Plugin::$instance->db->iterate_data( $data, function( $element_data ) use ( $method ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
 			if ( ! $element ) {
@@ -51,7 +51,7 @@ abstract class Source_Base {
 			}
 
 			foreach ( $element->get_controls() as $control ) {
-				$control_class = Plugin::instance()->controls_manager->get_control( $control['type'] );
+				$control_class = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 				// If the control isn't exist, like a plugin that creates the control but deactivated
 				if ( ! $control_class ) {

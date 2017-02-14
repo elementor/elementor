@@ -50,7 +50,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'classic', 'gradient' ],
+				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -101,7 +101,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'types' => [ 'classic', 'gradient' ],
+				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 				'condition' => [
 					'background_background' => [ 'classic', 'gradient', 'video' ],
@@ -417,7 +417,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		Plugin::instance()->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
 	protected function _render_settings() {
@@ -519,9 +519,9 @@ class Element_Column extends Element_Base {
 
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
-			return Plugin::instance()->elements_manager->get_element_types( 'section' );
+			return Plugin::$instance->elements_manager->get_element_types( 'section' );
 		}
 
-		return Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
+		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 }

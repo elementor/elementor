@@ -69,7 +69,7 @@ class Global_CSS_File extends CSS_File {
 	}
 
 	private function render_schemes_css() {
-		$elementor = Plugin::instance();
+		$elementor = Plugin::$instance;
 
 		foreach ( $elementor->widgets_manager->get_widget_types() as $widget ) {
 			$scheme_controls = $widget->get_scheme_controls();
