@@ -444,7 +444,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container .elementor-heading-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -456,7 +456,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container' => 'color: {{VALUE}};',
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -468,7 +468,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -480,7 +480,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container a:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
