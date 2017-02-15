@@ -50,7 +50,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'classic', 'gradient' ],
+				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -101,7 +101,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'types' => [ 'classic', 'gradient' ],
+				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 				'condition' => [
 					'background_background' => [ 'classic', 'gradient', 'video' ],
