@@ -164,12 +164,12 @@ class Widgets_Manager {
 		// Override the global $post for the render
 		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
 
-		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
 		// Start buffering
 		ob_start();
 
-		$widget = Plugin::instance()->elements_manager->create_element_instance( $data );
+		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
 			wp_send_json_error();
@@ -201,7 +201,7 @@ class Widgets_Manager {
 			$_POST['data'] = [];
 		}
 
-		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
 		$element_data = [
 			'elType' => 'widget',
@@ -212,7 +212,7 @@ class Widgets_Manager {
 		/**
 		 * @var $widget_obj Widget_WordPress
 		 */
-		$widget_obj = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+		$widget_obj = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 		if ( ! $widget_obj ) {
 			wp_send_json_error();

@@ -3,12 +3,12 @@
 class Elementor_Test_Editor extends WP_UnitTestCase {
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Editor', Elementor\Plugin::instance()->editor );
+		$this->assertInstanceOf( '\Elementor\Editor', Elementor\Plugin::$instance->editor );
 	}
 
 	public function test_enqueueScripts() {
 		ob_start();
-		Elementor\Plugin::instance()->editor->enqueue_scripts();
+		Elementor\Plugin::$instance->editor->enqueue_scripts();
 		ob_get_clean();
 
 		$scripts = [
@@ -33,7 +33,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	}
 
 	public function test_enqueueStyles() {
-		Elementor\Plugin::instance()->editor->enqueue_styles();
+		Elementor\Plugin::$instance->editor->enqueue_styles();
 
 		$styles = [
 			'font-awesome',
@@ -52,7 +52,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 
 	public function test_renderFooter() {
 		ob_start();
-		Elementor\Plugin::instance()->editor->wp_footer();
+		Elementor\Plugin::$instance->editor->wp_footer();
 		$buffer = ob_get_clean();
 
 		$this->assertNotEmpty( $buffer );

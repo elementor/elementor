@@ -109,7 +109,7 @@ class Tools {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
-		Plugin::instance()->posts_css_manager->clear_cache();
+		Plugin::$instance->posts_css_manager->clear_cache();
 
 		wp_send_json_success();
 	}
@@ -141,7 +141,7 @@ class Tools {
 		if ( false === $rows_affected ) {
 			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
 		} else {
-			Plugin::instance()->posts_css_manager->clear_cache();
+			Plugin::$instance->posts_css_manager->clear_cache();
 			wp_send_json_success( sprintf( __( '%d Rows Affected', 'elementor' ), $rows_affected ) );
 		}
 	}

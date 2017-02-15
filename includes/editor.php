@@ -46,7 +46,7 @@ class Editor {
 		$post_id = get_the_ID();
 
 		// Change mode to Builder
-		Plugin::instance()->db->set_edit_mode( $post_id );
+		Plugin::$instance->db->set_edit_mode( $post_id );
 
 		// Post Lock
 		if ( ! $this->get_locked_user( $post_id ) ) {
@@ -142,7 +142,7 @@ class Editor {
 		global $wp_styles, $wp_scripts;
 
 		$post_id = get_the_ID();
-		$plugin = Plugin::instance();
+		$plugin = Plugin::$instance;
 
 		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
 
@@ -471,7 +471,7 @@ class Editor {
 	}
 
 	public function wp_footer() {
-		$plugin = Plugin::instance();
+		$plugin = Plugin::$instance;
 
 		$plugin->controls_manager->render_controls();
 		$plugin->widgets_manager->render_widgets_content();
