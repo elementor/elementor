@@ -336,7 +336,7 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'classic', 'gradient', 'video' ],
+				'types' => [ 'none', 'classic', 'gradient', 'video' ],
 			]
 		);
 
@@ -361,7 +361,7 @@ class Element_Section extends Element_Base {
 				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
 				'condition' => [
-					'background_background' => [ 'classic', 'gradient', 'video' ],
+					'background_background' => [ 'none', 'classic', 'gradient', 'video' ],
 				],
 			]
 		);
