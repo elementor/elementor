@@ -97,11 +97,45 @@ ElementsHandler = function( $ ) {
 
 module.exports = ElementsHandler;
 
-},{"elementor-frontend/handlers/accordion":3,"elementor-frontend/handlers/alert":4,"elementor-frontend/handlers/counter":5,"elementor-frontend/handlers/global":6,"elementor-frontend/handlers/image-carousel":7,"elementor-frontend/handlers/menu-anchor":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/handlers/widget":14}],2:[function(require,module,exports){
+},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/menu-anchor":9,"elementor-frontend/handlers/progress":10,"elementor-frontend/handlers/section":11,"elementor-frontend/handlers/tabs":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/handlers/widget":15}],2:[function(require,module,exports){
+var Module = require( '../utils/module' ),
+	FrontendModule;
+
+FrontendModule = Module.extend( {
+	__construct: function( $element ) {
+		this.$element  = $element;
+	},
+
+	getModelCID: function() {
+		return this.$element.data( 'model-cid' );
+	},
+
+	getElementSettings: function( setting ) {
+		var elementSettings;
+
+		if ( elementorFrontend.isEditMode() ) {
+			var settings = elementorFrontend.config.elements.data[ this.getModelCID() ],
+				settingsKeys = elementorFrontend.config.elements.keys[ settings.widgetType ];
+
+			elementSettings = _.pick( settings, settingsKeys );
+		} else {
+			elementSettings = this.$element.data( 'settings' );
+		}
+
+		return this.getItems( elementSettings, setting );
+	}
+} );
+
+FrontendModule.prototype.getElementName = function() {};
+
+module.exports = FrontendModule;
+
+},{"../utils/module":18}],3:[function(require,module,exports){
 /* global elementorFrontendConfig */
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
+		Module = require( './frontend-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
@@ -112,6 +146,8 @@ module.exports = ElementsHandler;
 		this.config = elementorFrontendConfig;
 
 		this.hooks = new EventManager();
+
+		this.Module = Module;
 
 		var initElements = function() {
 			elements.$document = $( self.getScopeWindow().document );
@@ -222,7 +258,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":16,"elementor-frontend/elements-handler":1,"elementor-frontend/utils":15}],3:[function(require,module,exports){
+},{"../utils/hooks":17,"./frontend-module":2,"elementor-frontend/elements-handler":1,"elementor-frontend/utils":16}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -256,14 +292,14 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	$scope.find( '.elementor-alert-dismiss' ).on( 'click', function() {
 		$( this ).parent().fadeOut();
 	} );
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	elementorFrontend.utils.waypoint( $scope.find( '.elementor-counter-number' ), function() {
 		var $number = $( this ),
@@ -279,7 +315,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
@@ -298,7 +334,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $carousel = $scope.find( '.elementor-image-carousel' );
 	if ( ! $carousel.length ) {
@@ -331,7 +367,7 @@ module.exports = function( $scope, $ ) {
 	$carousel.slick( slickOptions );
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
@@ -359,7 +395,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	elementorFrontend.utils.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
@@ -368,7 +404,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
@@ -533,7 +569,7 @@ module.exports = function( $scope, $ ) {
 	}
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
 		$tabsTitles = $scope.find( '.elementor-tab-title' ),
@@ -568,7 +604,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
@@ -586,7 +622,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $imageOverlay = $scope.find( '.elementor-custom-embed-image-overlay' ),
 		$videoFrame = $scope.find( 'iframe' );
@@ -605,7 +641,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
@@ -620,7 +656,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Utils;
 
 Utils = function( $ ) {
@@ -663,7 +699,7 @@ Utils = function( $ ) {
 
 module.exports = Utils;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -908,5 +944,191 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}]},{},[2])
+},{}],18:[function(require,module,exports){
+var Module = function() {
+	var $ = jQuery,
+		instanceParams = arguments,
+		self = this,
+		settings,
+		elements,
+		events = {};
+
+	var ensureClosureMethods = function() {
+		var closureMethodsNames = self.getClosureMethodsNames();
+
+		$.each( closureMethodsNames, function() {
+			var oldMethod = self[ this ];
+
+			self[ this ] = function() {
+				oldMethod.apply( self, arguments );
+			};
+		});
+	};
+
+	var initSettings = function() {
+		settings = self.getDefaultSettings();
+	};
+
+	var initElements = function() {
+		elements = self.getDefaultElements();
+	};
+
+	var init = function() {
+		self.__construct.apply( self, instanceParams );
+
+		ensureClosureMethods();
+
+		initSettings();
+
+		initElements();
+
+		self.trigger( 'init' );
+	};
+
+	this.getItems = function( items, itemKey ) {
+		if ( itemKey ) {
+			var keyStack = itemKey.split( '.' ),
+				currentKey = keyStack.splice( 0, 1 );
+
+			if ( ! keyStack.length ) {
+				return items[ currentKey ];
+			}
+
+			if ( ! items[ currentKey ] ) {
+				return;
+			}
+
+			return this.getItems(  items[ currentKey ], keyStack.join( '.' ) );
+		}
+
+		return items;
+	};
+
+	this.getSettings = function( setting ) {
+		return this.getItems( settings, setting );
+	};
+
+	this.getElements = function( element ) {
+		return this.getItems( elements, element );
+	};
+
+	this.setSettings = function( settingKey, value, settingsContainer ) {
+		if ( ! settingsContainer ) {
+			settingsContainer = settings;
+		}
+
+		if ( 'object' === typeof settingKey ) {
+			$.extend( settingsContainer, settingKey );
+
+			return self;
+		}
+
+		var keyStack = settingKey.split( '.' ),
+			currentKey = keyStack.splice( 0, 1 );
+
+		if ( ! keyStack.length ) {
+			settingsContainer[ currentKey ] = value;
+
+			return self;
+		}
+
+		if ( ! settingsContainer[ currentKey ] ) {
+			settingsContainer[ currentKey ] = {};
+		}
+
+		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
+	};
+
+	this.addElement = function( elementName, $element ) {
+		elements[ elementName ] = $element;
+	};
+
+	this.on = function( eventName, callback ) {
+		if ( ! events[ eventName ] ) {
+			events[ eventName ] = [];
+		}
+
+		events[ eventName ].push( callback );
+
+		return self;
+	};
+
+	this.off = function( eventName, callback ) {
+		if ( ! events[ eventName ] ) {
+			return self;
+		}
+
+		if ( ! callback ) {
+			delete events[ eventName ];
+
+			return self;
+		}
+
+		var callbackIndex = events[ eventName ].indexOf( callback );
+
+		if ( -1 !== callbackIndex ) {
+			delete events[ eventName ][ callbackIndex ];
+		}
+
+		return self;
+	};
+
+	this.trigger = function( eventName ) {
+		var methodName = 'on' + eventName[ 0 ].toUpperCase() + eventName.slice( 1 ),
+			params = Array.prototype.slice.call( arguments, 1 );
+
+		if ( self[ methodName ] ) {
+			self[ methodName ].apply( self, params );
+		}
+
+		var callbacks = events[ eventName ];
+
+		if ( ! callbacks ) {
+			return;
+		}
+
+		$.each( callbacks, function( index, callback ) {
+			callback.apply( self, params );
+		} );
+	};
+
+	init();
+};
+
+Module.prototype.__construct = function() {};
+
+Module.prototype.getDefaultSettings = function() {
+	return {};
+};
+
+Module.prototype.getDefaultElements = function() {
+	return {};
+};
+
+Module.prototype.getClosureMethodsNames = function() {
+	return [];
+};
+
+Module.extend = function( properties ) {
+	var $ = jQuery,
+		parent = this;
+
+	var child = function() {
+		return parent.apply( this, arguments );
+	};
+
+	$.extend( child, parent );
+
+	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
+
+	child.prototype.constructor = child;
+
+	child.__super__ = parent.prototype;
+
+	return child;
+};
+
+module.exports = Module;
+
+},{}]},{},[3])
 //# sourceMappingURL=frontend.js.map

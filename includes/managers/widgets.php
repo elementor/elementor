@@ -227,6 +227,20 @@ class Widgets_Manager {
 		}
 	}
 
+	public function get_widgets_frontend_settings_keys() {
+		$keys = [];
+
+		foreach ( $this->get_widget_types() as $widget_type_name => $widget_type ) {
+			$widget_type_keys = $widget_type->get_frontend_settings_keys();
+
+			if ( $widget_type_keys ) {
+				$keys[ $widget_type_name ] = $widget_type_keys;
+			}
+		}
+
+		return $keys;
+	}
+
 	public function __construct() {
 		$this->_require_files();
 
