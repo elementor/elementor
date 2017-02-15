@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Group_Control_Typography extends Group_Control_Base {
 
-	private static $_fields;
+	protected static $fields;
 
 	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
 
@@ -17,16 +17,18 @@ class Group_Control_Typography extends Group_Control_Base {
 		return 'typography';
 	}
 
-	public static function get_fields() {
-		if ( null === self::$_fields ) {
-			self::_init_fields();
-		}
-
-		return self::$_fields;
-	}
-
-	private static function _init_fields() {
+	protected function init_fields() {
 		$fields = [];
+
+		$fields['typography'] = [
+			'label' => _x( 'Typography', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'default' => '',
+			'label_on' => __( 'On', 'elementor' ),
+			'label_off' => __( 'Off', 'elementor' ),
+			'return_value' => 'custom',
+			'render_type' => 'ui',
+		];
 
 		$fields['font_size'] = [
 			'label' => _x( 'Size', 'Typography Control', 'elementor' ),
@@ -56,6 +58,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$typo_weight_options = [ '' => __( 'Default', 'elementor' ) ];
+
 		foreach ( array_merge( [ 'normal', 'bold' ], range( 100, 900, 100 ) ) as $weight ) {
 			$typo_weight_options[ $weight ] = ucfirst( $weight );
 		}
@@ -122,54 +125,42 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
 		];
 
-		self::$_fields = $fields;
+		return $fields;
 	}
 
-	protected function _get_controls( $args ) {
-		$controls = self::get_fields();
+	protected function prepare_fields( $fields ) {
+		array_walk( $fields, function ( &$field, $field_name ) {
+			if ( 'typography' === $field_name ) {
+				return;
+			}
 
-		array_walk( $controls, function ( &$control, $control_name ) use ( $args ) {
-			$selector_value = ! empty( $control['selector_value'] ) ? $control['selector_value'] : str_replace( '_', '-', $control_name ) . ': {{VALUE}};';
+			$selector_value = ! empty( $field['selector_value'] ) ? $field['selector_value'] : str_replace( '_', '-', $field_name ) . ': {{VALUE}};';
 
-			$control['selectors'] = [
-				$args['selector'] => $selector_value,
+			$field['selectors'] = [
+				'{{SELECTOR}}' => $selector_value,
 			];
 
-			$control['condition'] = [
+			$field['condition'] = [
 				'typography' => [ 'custom' ],
 			];
 		} );
 
-		$typography_control = [
-			'typography' => [
-				'label' => _x( 'Typography', 'Typography Control', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'label_on' => __( 'On', 'elementor' ),
-				'label_off' => __( 'Off', 'elementor' ),
-				'return_value' => 'custom',
-				'render_type' => 'ui',
-			],
-		];
-
-		$controls = $typography_control + $controls;
-
-		return $controls;
+		return parent::prepare_fields( $fields );
 	}
 
-	protected function _add_group_args_to_control( $control_id, $control_args ) {
-		$control_args = parent::_add_group_args_to_control( $control_id, $control_args );
+	protected function add_group_args_to_field( $control_id, $field_args ) {
+		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
 
 		$args = $this->get_args();
 
 		if ( in_array( $control_id, self::get_scheme_fields_keys() ) && ! empty( $args['scheme'] ) ) {
-			$control_args['scheme'] = [
+			$field_args['scheme'] = [
 				'type' => self::get_type(),
 				'value' => $args['scheme'],
 				'key' => $control_id,
 			];
 		}
 
-		return $control_args;
+		return $field_args;
 	}
 }
