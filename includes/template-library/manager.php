@@ -94,7 +94,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['data'] = json_decode( stripslashes( html_entity_decode( $args['data'] ) ), true );
+		$args['data'] = json_decode( stripslashes( $args['data'] ), true );
 
 		$template_id = $source->save_item( $args );
 
@@ -118,7 +118,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$template_data['data'] = json_decode( stripslashes( html_entity_decode( $template_data['data'] ) ), true );
+		$template_data['data'] = json_decode( stripslashes( $template_data['data'] ), true );
 
 		$update = $source->update_item( $template_data );
 
@@ -149,7 +149,7 @@ class Manager {
 		}
 
 		if ( isset( $args['edit_mode'] ) ) {
-			Plugin::instance()->editor->set_edit_mode( $args['edit_mode'] );
+			Plugin::$instance->editor->set_edit_mode( $args['edit_mode'] );
 		}
 
 		$source = $this->get_source( $args['source'] );
