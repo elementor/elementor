@@ -78,6 +78,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-soundcloud',
 							'fa fa-spotify',
 							'fa fa-stack-overflow',
+							'fa fa-tripadvisor',
 							'fa fa-tumblr',
 							'fa fa-twitch',
 							'fa fa-twitter',
