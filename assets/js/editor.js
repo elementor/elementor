@@ -2128,6 +2128,8 @@ App = Marionette.Application.extend( {
 		var self = this,
 			newData = elementor.elements.toJSON();
 
+		newData = this.removeDefaults( newData );
+
 		return this.ajax.send( 'save_builder', {
 	        data: {
 		        post_id: this.config.post_id,
@@ -2146,6 +2148,50 @@ App = Marionette.Application.extend( {
 				}
 			}
 		} );
+	},
+
+	removeDefaults: function( data ) {
+		// clone the `elementor.elements` and iterate data
+		var elements = _.extend( {}, elementor.elements );
+		elements.models = this.iterateData( elements.models, function( element ) {
+			var settings = element.attributes.settings;
+			for ( var settingName in settings.attributes ) {
+				// don't touch text elements
+				if ( 'undefined' !== typeof settings.controls[ settingName ] ) {
+					var controlType =  settings.controls[ settingName ].type;
+					if ( 'text' === controlType ||  'textarea' === controlType ) {
+						continue;
+					}
+				}
+
+				if ( settings.attributes[ settingName ] === settings.defaults[ settingName ] ){
+					delete settings.attributes[ settingName ];
+				}
+			}
+
+			return element;
+		} );
+
+		return elements.toJSON();
+	},
+
+	iterateData: function( data, callback ) {
+		var self = this;
+
+		if ( ! _.isArray( data ) ) {
+			if ( data.get( 'elements' ) ) {
+				var elements = data.get( 'elements' );
+				elements.models = self.iterateData( elements.models, callback );
+				data.set( 'elements', elements );
+			}
+			return callback( data );
+		}
+
+		for ( var elementKey in data ) {
+			data[ elementKey ] = self.iterateData( data[ elementKey ], callback );
+		}
+
+		return data;
 	},
 
 	reloadPreview: function() {
