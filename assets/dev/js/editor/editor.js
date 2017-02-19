@@ -109,11 +109,18 @@ App = Marionette.Application.extend( {
 			return elementData.controls;
 		}
 
-		var isInner = modelElement.get( 'isInner' );
+		var isInner = modelElement.get( 'isInner' ),
+			controls = {};
 
-		return _.filter( elementData.controls, function( controlData ) {
-			return ! ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top );
+		_.each( elementData.controls, function( controlData, controlKey ) {
+			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
+				return;
+			}
+
+			controls[ controlKey ] = controlData;
 		} );
+
+		return controls;
 	},
 
 	getControlView: function( controlID ) {
@@ -443,7 +450,7 @@ App = Marionette.Application.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON();
+			newData = elementor.elements.toJSON( { removeDefault: true } );
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
