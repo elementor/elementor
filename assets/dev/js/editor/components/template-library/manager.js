@@ -241,7 +241,6 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
-		errorMessage = '';
 		if ( 'object' === typeof errorMessage ) {
 			var message = '';
 
