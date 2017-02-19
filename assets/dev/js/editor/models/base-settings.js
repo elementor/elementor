@@ -111,8 +111,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
 
-	toJSON: function() {
+	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
+
+		options = options || {};
 
 		delete data.widgetType;
 		delete data.elType;
@@ -123,6 +125,38 @@ BaseSettingsModel = Backbone.Model.extend( {
 				data[ key ] = attribute.toJSON();
 			}
 		} );
+
+		if ( options.removeDefault ) {
+			var controls = this.controls;
+
+			_.each( data, function( value, key ) {
+				var control = controls[ key ];
+
+				if ( control ) {
+					if ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) {
+						return;
+					}
+
+					if ( 'object' === typeof data[ key ] ) {
+						var isEqual = true;
+
+						_.each( data[ key ], function( propertyValue, propertyKey ) {
+							if ( data[ key ][ propertyKey ] !== control[ 'default' ][ propertyKey ] ) {
+								return isEqual = false;
+							}
+						} );
+
+						if ( isEqual ) {
+							delete data[ key ];
+						}
+					} else {
+						if ( data[ key ] === control[ 'default' ] ) {
+							delete data[ key ];
+						}
+					}
+				}
+			} );
+		}
 
 		return data;
 	}

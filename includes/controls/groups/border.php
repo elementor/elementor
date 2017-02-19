@@ -5,14 +5,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Group_Control_Border extends Group_Control_Base {
 
+	protected static $fields;
+
 	public static function get_type() {
 		return 'border';
 	}
 
-	protected function _get_controls( $args ) {
-		$controls = [];
+	protected function init_fields() {
+		$fields = [];
 
-		$controls['border'] = [
+		$fields['border'] = [
 			'label' => _x( 'Border Type', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
@@ -23,34 +25,34 @@ class Group_Control_Border extends Group_Control_Base {
 				'dashed' => _x( 'Dashed', 'Border Control', 'elementor' ),
 			],
 			'selectors' => [
-				$args['selector'] => 'border-style: {{VALUE}};',
+				'{{SELECTOR}}' => 'border-style: {{VALUE}};',
 			],
 			'separator' => 'before',
 		];
 
-		$controls['width'] = [
+		$fields['width'] = [
 			'label' => _x( 'Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
 			'selectors' => [
-				$args['selector'] => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 			],
 			'condition' => [
 				'border!' => '',
 			],
 		];
 
-		$controls['color'] = [
+		$fields['color'] = [
 			'label' => _x( 'Color', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'selectors' => [
-				$args['selector'] => 'border-color: {{VALUE}};',
+				'{{SELECTOR}}' => 'border-color: {{VALUE}};',
 			],
 			'condition' => [
 				'border!' => '',
 			],
 		];
 
-		return $controls;
+		return $fields;
 	}
 }

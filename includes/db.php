@@ -76,6 +76,9 @@ class DB {
 			unset( $GLOBALS['post'] );
 		}
 
+		// Remove Post CSS
+		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
+
 		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 
