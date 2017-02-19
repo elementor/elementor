@@ -1791,11 +1791,18 @@ App = Marionette.Application.extend( {
 			return elementData.controls;
 		}
 
-		var isInner = modelElement.get( 'isInner' );
+		var isInner = modelElement.get( 'isInner' ),
+			controls = {};
 
-		return _.filter( elementData.controls, function( controlData ) {
-			return ! ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top );
+		_.each( elementData.controls, function( controlData, controlKey ) {
+			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
+				return;
+			}
+
+			controls[ controlKey ] = controlData;
 		} );
+
+		return controls;
 	},
 
 	getControlView: function( controlID ) {
@@ -2125,7 +2132,7 @@ App = Marionette.Application.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON();
+			newData = elementor.elements.toJSON( { removeDefault: true } );
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
@@ -3910,8 +3917,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
 
-	toJSON: function() {
+	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
+
+		options = options || {};
 
 		delete data.widgetType;
 		delete data.elType;
@@ -3922,6 +3931,38 @@ BaseSettingsModel = Backbone.Model.extend( {
 				data[ key ] = attribute.toJSON();
 			}
 		} );
+
+		if ( options.removeDefault ) {
+			var controls = this.controls;
+
+			_.each( data, function( value, key ) {
+				var control = controls[ key ];
+
+				if ( control ) {
+					if ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) {
+						return;
+					}
+
+					if ( 'object' === typeof data[ key ] ) {
+						var isEqual = true;
+
+						_.each( data[ key ], function( propertyValue, propertyKey ) {
+							if ( data[ key ][ propertyKey ] !== control[ 'default' ][ propertyKey ] ) {
+								return isEqual = false;
+							}
+						} );
+
+						if ( isEqual ) {
+							delete data[ key ];
+						}
+					} else {
+						if ( data[ key ] === control[ 'default' ] ) {
+							delete data[ key ];
+						}
+					}
+				}
+			} );
+		}
 
 		return data;
 	}
