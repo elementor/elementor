@@ -69,6 +69,14 @@ class Post_CSS_File extends CSS_File {
 		}
 	}
 
+	public function enqueue() {
+		if ( ! Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
+			return;
+		}
+
+		parent::enqueue();
+	}
+
 	protected function get_enqueue_dependencies() {
 		return [ 'elementor-frontend' ];
 	}
