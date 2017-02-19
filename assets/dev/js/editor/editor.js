@@ -450,7 +450,7 @@ App = Marionette.Application.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON();
+			newData = elementor.elements.toJSON( { removeDefault: true } );
 
 		return this.ajax.send( 'save_builder', {
 	        data: {
