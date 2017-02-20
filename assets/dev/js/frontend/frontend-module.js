@@ -6,6 +6,22 @@ FrontendModule = Module.extend( {
 		this.$element  = $element;
 	},
 
+	bindEvents: function() {
+		var self = this;
+
+		if ( self.onWidgetChange && elementorFrontend.isEditMode() ) {
+			var cid = self.getModelCID();
+
+			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
+				if ( elementView.model.cid !== cid ) {
+					return;
+				}
+
+				self.onWidgetChange( controlView.model.get( 'name' ) );
+			}, elementor.channels.editor );
+		}
+	},
+
 	getModelCID: function() {
 		return this.$element.data( 'model-cid' );
 	},
@@ -23,6 +39,14 @@ FrontendModule = Module.extend( {
 		}
 
 		return this.getItems( elementSettings, setting );
+	},
+
+	getClosureMethodsNames: function() {
+		return [ 'onWidgetChange' ];
+	},
+
+	onInit: function() {
+		this.bindEvents();
 	}
 } );
 
