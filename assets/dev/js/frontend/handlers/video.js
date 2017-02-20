@@ -103,7 +103,7 @@ VideoModule = FrontendModule.extend( {
 					self.animateVideo();
 				} );
 		} else {
-			elements.$imageOverlay.hide();
+			elements.$imageOverlay.remove();
 
 			self.playVideo();
 		}
