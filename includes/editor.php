@@ -226,16 +226,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.0.2',
-			true
-		);
-
-		wp_register_script(
 			'jquery-select2',
 			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2' . $suffix . '.js',
 			[
@@ -278,7 +268,6 @@ class Editor {
 				'tipsy',
 				'imagesloaded',
 				'heartbeat',
-				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
 				'ace',
