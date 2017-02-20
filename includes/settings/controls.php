@@ -10,22 +10,25 @@ class Settings_Controls {
 			return;
 
 		$defaults = [
-			'type' => 'text',
+			'type' => '',
 			'placeholder' => '',
 			'classes' => [],
 			'std' => '',
 			'desc' => '',
 		];
-		$field = wp_parse_args( $field, $defaults );
+
+		$field = array_merge( $defaults, $field );
 
 		$method_name = '_' . $field['type'];
-		if ( ! method_exists( __CLASS__, $method_name ) )
-			return;
+
+		if ( ! method_exists( __CLASS__, $method_name ) ) {
+			$method_name = '_text';
+		}
 
 		self::$method_name( $field );
 	}
 
-	private static function _text( $field = [] ) {
+	private static function _text( array $field ) {
 		if ( empty( $field['classes'] ) ) {
 			$field['classes'] = [ 'regular-text' ];
 		}
@@ -37,7 +40,7 @@ class Settings_Controls {
 		<?php endif;
 	}
 
-	private static function _checkbox( $field = [] ) {
+	private static function _checkbox( array $field ) {
 		?>
 		<label>
 			<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo $field['value']; ?>"<?php checked( $field['value'], get_option( $field['id'], $field['std'] ) ); ?> />
@@ -48,7 +51,7 @@ class Settings_Controls {
 		<?php endif;
 	}
 
-	private static function _checkbox_list( $field = [] ) {
+	private static function _checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) )
 			$old_value = [];
@@ -64,11 +67,11 @@ class Settings_Controls {
 		<?php endif;
 	}
 
-	private static function _checkbox_list_cpt( $field = [] ) {
+	private static function _checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
-		$field = wp_parse_args( $field, $defaults );
+		$field = array_merge( $defaults, $field );
 
 		$post_types_objects = get_post_types( [ 'public' => true ], 'objects' );
 		$field['options'] = [];
@@ -82,11 +85,11 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
-	private static function _checkbox_list_roles( $field = [] ) {
+	private static function _checkbox_list_roles( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
-		$field = wp_parse_args( $field, $defaults );
+		$field = array_merge( $defaults, $field );
 
 		$field['options'] = [];
 		foreach ( get_editable_roles() as $role_slug => $role_data ) {
@@ -99,7 +102,7 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
-	private static function _raw_html( $field = [] ) {
+	private static function _raw_html( array $field ) {
 		if ( empty( $field['html'] ) )
 			return;
 		?>

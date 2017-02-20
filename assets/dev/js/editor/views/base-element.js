@@ -34,7 +34,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
 			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'duplicate'
+			'click @ui.duplicateButton': 'onClickDuplicate'
 		};
 	},
 
@@ -91,7 +91,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var editModel = this.getEditModel();
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
-		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
 		this.on( 'render', function() {
 			this.renderUI();
@@ -310,29 +310,51 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	renderCustomClasses: function() {
-		this.$el.addClass( 'elementor-element' );
+		var self = this;
 
-		var settings = this.getEditModel().get( 'settings' );
+		self.$el.addClass( 'elementor-element' );
 
-		_.each( settings.attributes, _.bind( function( value, attribute ) {
+		var settings = self.getEditModel().get( 'settings' );
+
+		_.each( settings.attributes, function( value, attribute ) {
 			if ( settings.isClassControl( attribute ) ) {
-				var currentControl = settings.getControl( attribute );
+				var currentControl = settings.getControl( attribute ),
+					previousClassValue = settings.previous( attribute ),
+					classValue = value;
 
-				this.$el.removeClass( currentControl.prefix_class + settings.previous( attribute ) );
+				if ( currentControl.classes_dictionary ) {
+					if ( undefined !== currentControl.classes_dictionary[ previousClassValue ] ) {
+						previousClassValue = currentControl.classes_dictionary[ previousClassValue ];
+					}
+
+					if ( undefined !== currentControl.classes_dictionary[ value ] ) {
+						classValue = currentControl.classes_dictionary[ value ];
+					}
+				}
+
+				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
 
 				var isVisible = elementor.helpers.isControlVisible( currentControl, settings.attributes );
 
-				if ( isVisible && ! _.isEmpty( settings.get( attribute ) ) ) {
-					this.$el.addClass( currentControl.prefix_class + settings.get( attribute ) );
-					this.$el.addClass( _.result( this, 'className' ) );
+				if ( isVisible && ! _.isEmpty( classValue ) ) {
+					self.$el
+						.addClass( currentControl.prefix_class + classValue )
+						.addClass( _.result( self, 'className' ) );
 				}
 			}
-		}, this ) );
+		} );
+	},
+
+	renderCustomElementID: function() {
+		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
+
+		this.$el.attr( 'id', customElementID );
 	},
 
 	renderUI: function() {
 		this.renderStyles();
 		this.renderCustomClasses();
+		this.renderCustomElementID();
 		this.enqueueFonts();
 	},
 
@@ -354,6 +376,72 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.getRemoveDialog().show();
 	},
 
+	renderOnChange: function( settings ) {
+		// Make sure is correct model
+		if ( settings instanceof BaseSettingsModel ) {
+			var hasChanged = settings.hasChanged(),
+				isContentChanged = ! hasChanged,
+				isRenderRequired = ! hasChanged;
+
+			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
+				var control = settings.getControl( settingKey );
+
+				if ( ! control ) {
+					isRenderRequired = true;
+
+					return;
+				}
+
+				if ( 'none' !== control.render_type ) {
+					isRenderRequired = true;
+				}
+
+				if ( -1 !== [ 'none', 'ui' ].indexOf( control.render_type ) ) {
+					return;
+				}
+
+				if ( 'template' === control.render_type || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) {
+					isContentChanged = true;
+				}
+			} );
+
+			if ( ! isRenderRequired ) {
+				return;
+			}
+
+			if ( ! isContentChanged ) {
+				this.renderUI();
+				return;
+			}
+		}
+
+		// Re-render the template
+		var templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
+
+		if ( 'js' === templateType ) {
+			this.getEditModel().setHtmlCache();
+			this.render();
+			editModel.renderOnLeave = true;
+		} else {
+			editModel.renderRemoteServer();
+		}
+	},
+
+	onCollectionChanged: function() {
+		elementor.setFlagEditorChange( true );
+	},
+
+	onEditSettingsChanged: function( changedModel ) {
+		this.renderOnChange( changedModel );
+	},
+
+	onSettingsChanged: function( changedModel ) {
+		elementor.setFlagEditorChange( true );
+
+		this.renderOnChange( changedModel );
+	},
+
 	onClickEdit: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -367,50 +455,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.edit();
 	},
 
-	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
-	},
+	onClickDuplicate: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
 
-	onSettingsChanged: function( settings ) {
-		var editModel = this.getEditModel();
-
-		if ( editModel.get( 'editSettings' ) !== settings ) {
-			// Change flag only if server settings was changed
-			elementor.setFlagEditorChange( true );
-		}
-
-		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
-			var isContentChanged = false;
-
-			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				var control = settings.getControl( settingKey );
-
-				if ( ! control ) {
-					return;
-				}
-
-				if ( control.force_render || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) ) {
-					isContentChanged = true;
-				}
-			} );
-
-			if ( ! isContentChanged ) {
-				this.renderUI();
-				return;
-			}
-		}
-
-		// Re-render the template
-		var templateType = this.getTemplateType();
-
-		if ( 'js' === templateType ) {
-			this.getEditModel().setHtmlCache();
-			this.render();
-			editModel.renderOnLeave = true;
-		} else {
-			editModel.renderRemoteServer();
-		}
+		this.duplicate();
 	},
 
 	onClickRemove: function( event ) {
@@ -457,7 +506,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 						valueToInsert = valueCallback( parserControl );
 					}
 
-					var parsedValue = elementor.getControlItemView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+					var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
 
 					if ( '' === parsedValue ) {
 						throw '';
@@ -473,28 +522,47 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			var devicePattern = /^\(([^)]+)\)/,
-				deviceRule = selector.match( devicePattern );
+			var devicePattern = /^(?:\([^)]+\)){1,2}/,
+				deviceRules = selector.match( devicePattern ),
+				query = {};
 
-			if ( deviceRule ) {
+			if ( deviceRules ) {
+				deviceRules = deviceRules[0];
+
 				selector = selector.replace( devicePattern, '' );
 
-				deviceRule = deviceRule[1];
+				var pureDevicePattern = /\(([^)]+)\)/g,
+					pureDeviceRules = [],
+					matches;
+
+				while ( matches = pureDevicePattern.exec( deviceRules ) ) {
+					pureDeviceRules.push( matches[1] );
+				}
+
+				_.each( pureDeviceRules, function( deviceRule ) {
+					if ( 'desktop' === deviceRule ) {
+						return;
+					}
+
+					var device = deviceRule.replace( /\+$/, '' ),
+						endPoint = device === deviceRule ? 'max' : 'min';
+
+					query[ endPoint ] = device;
+				} );
 			}
 
 			_.each( placeholders, function( placeholder, index ) {
-				selector = selector.replace( placeholder, replacements[ index ] );
+				var placeholderPattern = new RegExp( placeholder, 'g' );
+
+				selector = selector.replace( placeholderPattern, replacements[ index ] );
 			} );
 
-			var device = deviceRule,
-				query;
+			if ( ! Object.keys( query ).length && control.responsive ) {
+				query = elementor.helpers.cloneObject( control.responsive );
 
-			if ( ! device && control.responsive ) {
-				device = control.responsive;
-			}
-
-			if ( device && 'desktop' !== device ) {
-				query = { max: device };
+				if ( 'desktop' === query.max ) {
+					delete query.max;
+				}
 			}
 
 			stylesheet.addRules( selector, outputCssProperty, query );

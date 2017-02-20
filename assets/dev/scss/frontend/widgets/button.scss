@@ -70,7 +70,7 @@
 
 .elementor-element.elementor-button- {
 
-	@include button-types( 'a' );
+	@include button-types( '.elementor-button' );
 
 }
 

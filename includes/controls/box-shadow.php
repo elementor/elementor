@@ -37,7 +37,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	public function get_sliders() {
 		return [
 			[ 'label' => __( 'Blur', 'elementor' ), 'type' => 'blur', 'min' => 0, 'max' => 100 ],
-			[ 'label' => __( 'Spread', 'elementor' ), 'type' => 'spread', 'min' => 0, 'max' => 100 ],
+			[ 'label' => __( 'Spread', 'elementor' ), 'type' => 'spread', 'min' => -100, 'max' => 100 ],
 			[ 'label' => __( 'Horizontal', 'elementor' ), 'type' => 'horizontal', 'min' => -100, 'max' => 100 ],
 			[ 'label' => __( 'Vertical', 'elementor' ), 'type' => 'vertical', 'min' => -100, 'max' => 100 ],
 		];

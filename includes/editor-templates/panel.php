@@ -134,10 +134,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
 		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}">
-			<a href="#" data-tab="{{ tabSlug }}">
-				{{{ tabTitle }}}
-			</a>
+		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+			<a href="#">{{{ tabTitle }}}</a>
 		</div>
 		<# } ); #>
 	</div>
@@ -176,7 +174,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php
 		$scheme_fields_keys = Group_Control_Typography::get_scheme_fields_keys();
 
-		$typography_fields = Group_Control_Typography::get_fields();
+		// TODO: Temp - Change to `Plugin::$instance`
+		$typography_group = Plugin::instance()->controls_manager->get_control_groups( 'typography' );
+
+		$typography_fields = $typography_group->get_fields();
 
 		$scheme_fields = array_intersect_key( $typography_fields, array_flip( $scheme_fields_keys ) );
 

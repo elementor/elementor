@@ -5,8 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Stylesheet {
 
+	/**
+	 * @var array
+	 */
 	private $rules = [];
+
+	/**
+	 * @var array
+	 */
 	private $devices = [];
+
+	/**
+	 * @var array
+	 */
 	private $raw = [];
 
 	/**
@@ -61,45 +72,61 @@ class Stylesheet {
 
 	/**
 	 * @param string $selector
-	 * @param array|string $rules
-	 * @param string $device
+	 * @param array|string $style_rules
+	 * @param array $query
 	 *
 	 * @return $this
 	 */
-	public function add_rules( $selector, $rules = null, $device = 'desktop' ) {
-		if ( null === $rules ) {
+	public function add_rules( $selector, $style_rules = null, array $query = null ) {
+		$query_hash = 'all';
+
+		if ( $query ) {
+			$query_hash = $this->query_to_hash( $query );
+		}
+
+		if ( ! isset( $this->rules[ $query_hash ] ) ) {
+			$this->add_query_hash( $query_hash );
+		}
+
+		if ( null === $style_rules ) {
 			preg_match_all( '/([^\s].+?(?=\{))\{((?s:.)+?(?=}))}/', $selector, $parsed_rules );
 
 			foreach ( $parsed_rules[1] as $index => $selector ) {
-				$this->add_rules( $selector, $parsed_rules[2][ $index ], $device );
+				$this->add_rules( $selector, $parsed_rules[2][ $index ], $query );
 			}
 
 			return $this;
 		}
 
-		if ( ! isset( $this->rules[ $device ][ $selector ] ) ) {
-			$this->rules[ $device ][ $selector ] = [];
+		if ( ! isset( $this->rules[ $query_hash ][ $selector ] ) ) {
+			$this->rules[ $query_hash ][ $selector ] = [];
 		}
 
-		if ( is_string( $rules ) ) {
-			$rules = array_filter( explode( ';', trim( $rules ) ) );
+		if ( is_string( $style_rules ) ) {
+			$style_rules = array_filter( explode( ';', trim( $style_rules ) ) );
 
 			$ordered_rules = [];
 
-			foreach ( $rules as $rule ) {
+			foreach ( $style_rules as $rule ) {
 				$property = explode( ':', $rule, 2 );
 
 				$ordered_rules[ trim( $property[0] ) ] = trim( $property[1], ' ;' );
 			}
 
-			$rules = $ordered_rules;
+			$style_rules = $ordered_rules;
 		}
 
-		$this->rules[ $device ][ $selector ] = array_merge( $this->rules[ $device ][ $selector ], $rules );
+		$this->rules[ $query_hash ][ $selector ] = array_merge( $this->rules[ $query_hash ][ $selector ], $style_rules );
 
 		return $this;
 	}
 
+	/**
+	 * @param string $css
+	 * @param string $device
+	 *
+	 * @return $this
+	 */
 	public function add_raw_css( $css, $device = '' ) {
 		if ( ! isset( $this->raw[ $device ] ) ) {
 			$this->raw[ $device ] = [];
@@ -110,6 +137,13 @@ class Stylesheet {
 		return $this;
 	}
 
+	/**
+	 * @param string $device
+	 * @param string $selector
+	 * @param string $property
+	 *
+	 * @return mixed
+	 */
 	public function get_rules( $device = null, $selector = null, $property = null ) {
 		if ( ! $device ) {
 			return $this->rules;
@@ -129,23 +163,11 @@ class Stylesheet {
 	public function __toString() {
 		$style_text = '';
 
-		$devices = array_reverse( $this->devices );
+		foreach ( $this->rules as $query_hash => $rule ) {
+			$device_text = self::parse_rules( $rule );
 
-		$devices_names = array_keys( $devices );
-
-		array_unshift( $devices_names, 'desktop' );
-
-		foreach ( $devices_names as $device_name ) {
-			if ( empty( $this->rules[ $device_name ] ) ) {
-				continue;
-			}
-
-			$rules = $this->rules[ $device_name ];
-
-			$device_text = self::parse_rules( $rules );
-
-			if ( $device_text && isset( $this->devices[ $device_name ] ) ) {
-				$device_text = '@media(max-width: ' . $this->devices[ $device_name ] . 'px){' . $device_text . '}';
+			if ( 'all' !== $query_hash ) {
+				$device_text = $this->get_query_hash_style_format( $query_hash ) . '{' . $device_text . '}';
 			}
 
 			$style_text .= $device_text;
@@ -162,5 +184,110 @@ class Stylesheet {
 		}
 
 		return $style_text;
+	}
+
+	/**
+	 * @param string $device_name
+	 *
+	 * @return int
+	 */
+	private function get_device_max_value( $device_name ) {
+		$devices_names = array_keys( $this->devices );
+
+		$device_name_index = array_search( $device_name, $devices_names );
+
+		$next_index = $device_name_index + 1;
+
+		if ( $next_index >= count( $devices_names ) ) {
+			throw new \RangeException( 'Max value for this device is out of range.' );
+		}
+
+		return $this->devices[ $devices_names[ $next_index ] ] - 1;
+	}
+
+	/**
+	 * @param array $query
+	 *
+	 * @return string
+	 */
+	private function query_to_hash( array $query ) {
+		$hash = [];
+
+		foreach ( $query as $endpoint => $value ) {
+			$hash[] = $endpoint . '_' . $value;
+		}
+
+		return implode( '-', $hash );
+	}
+
+	/**
+	 * @param string $hash
+	 *
+	 * @return array
+	 */
+	private function hash_to_query( $hash ) {
+		$query = [];
+
+		$hash = array_filter( explode( '-', $hash ) );
+
+		foreach ( $hash as $single_query ) {
+			$query_parts = explode( '_', $single_query );
+
+			$end_point = $query_parts[0];
+
+			$device_name = $query_parts[1];
+
+			$query[ $end_point ] = 'max' === $end_point ? $this->get_device_max_value( $device_name ) : $this->devices[ $device_name ];
+		}
+
+		return $query;
+	}
+
+	/**
+	 * @param string $query_hash
+	 */
+	private function add_query_hash( $query_hash ) {
+		$this->rules[ $query_hash ] = [];
+
+		uksort( $this->rules, function ( $a, $b ) {
+			if ( 'all' === $a ) {
+				return -1;
+			}
+
+			if ( 'all' === $b ) {
+				return 1;
+			}
+
+			$a_query = $this->hash_to_query( $a );
+
+			$b_query = $this->hash_to_query( $b );
+
+			if ( isset( $a_query['min'] ) xor isset( $b_query['min'] ) ) {
+				return 1;
+			}
+
+			if ( isset( $a_query['min'] ) ) {
+				return $a_query['min'] - $b_query['min'];
+			}
+
+			return $b_query['max'] - $a_query['max'];
+		} );
+	}
+
+	/**
+	 * @param string $query_hash
+	 *
+	 * @return string
+	 */
+	private function get_query_hash_style_format( $query_hash ) {
+		$query = $this->hash_to_query( $query_hash );
+
+		$style_format = [];
+
+		foreach ( $query as $end_point => $value ) {
+			$style_format[] = '(' . $end_point . '-width:' . $value . 'px)';
+		}
+
+		return '@media' . implode( ' and ', $style_format );
 	}
 }
