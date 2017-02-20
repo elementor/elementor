@@ -44,6 +44,16 @@ abstract class Element_Base {
 
 	private $_is_type_instance = true;
 
+	public function get_script_depends() {
+		return [];
+	}
+
+	final public function enqueue_scripts() {
+		foreach ( $this->get_script_depends() as $script ) {
+			wp_enqueue_script( $script );
+		}
+	}
+
 	public final static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
@@ -437,6 +447,8 @@ abstract class Element_Base {
 	}
 
 	public function print_element() {
+		$this->enqueue_scripts();
+
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
 		$this->before_render();
