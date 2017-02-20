@@ -26,6 +26,8 @@
 			self.utils = new Utils( $ );
 
 			self.elementsHandler = new ElementsHandler( $ );
+
+			self.dialogsManager = new DialogsManager.Instance();
 		};
 
 		this.init = function() {
