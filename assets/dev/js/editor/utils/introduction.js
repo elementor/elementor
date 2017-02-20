@@ -5,7 +5,7 @@ Introduction = function() {
 		modal;
 
 	var initModal = function() {
-		modal = elementor.dialogsManager.createWidget( 'light-box', {
+		modal = elementor.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-introduction',
 			closeButton: true
 		} );
