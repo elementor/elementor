@@ -95,6 +95,16 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.1.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
@@ -102,6 +112,7 @@ class Frontend {
 				'jquery-numerator',
 				'imagesloaded',
 				'jquery-slick',
+				'elementor-dialog',
 			],
 			ELEMENTOR_VERSION,
 			true
