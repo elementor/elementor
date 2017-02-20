@@ -29,18 +29,58 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	events: {
-		'click @ui.tabs a': 'onClickTabControl',
+		'click @ui.tabs': 'onClickTabControl',
 		'click @ui.reloadButton': 'onReloadButtonClick'
 	},
+
+	activeTab: null,
+
+	activeSection: null,
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
+	filter: function( model ) {
+		if ( model.get( 'tab' ) !== this.activeTab ) {
+			return false;
+		}
+
+		if ( 'section' === model.get( 'type' ) ) {
+			return true;
+		}
+
+		var section = model.get( 'section' );
+
+		return ! section || section === this.activeSection;
+	},
+
+	activateTab: function( $tab ) {
+		var activeTab = this.activeTab = $tab.data( 'tab' );
+
+		this.ui.tabs.removeClass( 'active' );
+
+		$tab.addClass( 'active' );
+
+		var sectionControls = this.collection.filter( function( model ) {
+			return 'section' === model.get( 'type' ) && activeTab === model.get( 'tab' );
+		} );
+
+		if ( sectionControls[0] ) {
+			this.activateSection( sectionControls[0].get( 'name' ) );
+		}
+	},
+
+	activateSection: function( sectionName ) {
+		this.activeSection = sectionName;
+
+		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
+	},
+
 	getChildView: function( item ) {
 		var controlType = item.get( 'type' );
 
-		return elementor.getControlItemView( controlType );
+		return elementor.getControlView( controlType );
 	},
 
 	childViewOptions: function() {
@@ -50,9 +90,22 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	openActiveSection: function() {
+		var activeSection = this.activeSection,
+			activeSectionView = this.children.filter( function( view ) {
+				return activeSection === view.model.get( 'name' );
+			} );
+
+		if ( activeSectionView[0] ) {
+			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+		}
+	},
+
 	onDestroy: function() {
-		if ( this.editedElementView ) {
-			this.editedElementView.$el.removeClass( 'elementor-element-editable' );
+		var editedElementView = this.getOption( 'editedElementView' );
+
+		if ( editedElementView ) {
+			editedElementView.$el.removeClass( 'elementor-element-editable' );
 		}
 
 		this.model.trigger( 'editor:close' );
@@ -71,14 +124,21 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this.collection = new Backbone.Collection( _.values( controls ) );
 	},
 
+	onRenderTemplate: function() {
+		var self = this;
+
+		self.activateTab( self.ui.tabs.eq( 0 ) );
+	},
+
 	onRender: function() {
-		if ( this.editedElementView ) {
-			this.editedElementView.$el.addClass( 'elementor-element-editable' );
+		var editedElementView = this.getOption( 'editedElementView' );
+
+		if ( editedElementView ) {
+			editedElementView.$el.addClass( 'elementor-element-editable' );
 		}
+	},
 
-		// Set the first tab as active
-		this.ui.tabs.eq( 0 ).find( 'a' ).trigger( 'click' );
-
+	onRenderCollection: function() {
 		// Create tooltip on controls
 		this.$( '.tooltip-target' ).tipsy( {
 			gravity: function() {
@@ -95,6 +155,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 				return this.getAttribute( 'data-tooltip' );
 			}
 		} );
+
+		this.openActiveSection();
 	},
 
 	onModelDestroy: function() {
@@ -104,15 +166,15 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	onClickTabControl: function( event ) {
 		event.preventDefault();
 
-		var $thisTab = this.$( event.target );
+		var $tab = this.$( event.currentTarget );
 
-		this.ui.tabs.removeClass( 'active' );
+		if ( this.activeTab === $tab.data( 'tab' ) ) {
+			return;
+		}
 
-		$thisTab.closest( '.elementor-panel-navigation-tab' ).addClass( 'active' );
+		this.activateTab( $tab );
 
-		this.model.get( 'settings' ).trigger( 'control:switch:tab', $thisTab.data( 'tab' ) );
-
-		this.openFirstSectionInCurrentTab( $thisTab.data( 'tab' ) );
+		this._renderChildren();
 	},
 
 	onDeviceModeChange: function() {
@@ -128,72 +190,30 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		}, 500 );
 	},
 
-	/**
-	 * It's a temp method.
-	 *
-	 * TODO: Rewrite this method later.
-	 */
-	openFirstSectionInCurrentTab: function( currentTab ) {
-		var openedClass = 'elementor-open',
-
-			childrenUnderSection = this.children.filter( function( view ) {
-				return ( ! _.isEmpty( view.model.get( 'section' ) ) );
-			} ),
-
-			firstSectionControlView = this.children.filter( function( view ) {
-				return ( 'section' === view.model.get( 'type' ) ) && ( currentTab === view.model.get( 'tab' ) );
-			} );
-
-		// Check if found any section controls
-		if ( _.isEmpty( firstSectionControlView ) ) {
-			return;
-		}
-
-		firstSectionControlView = firstSectionControlView[0];
-		firstSectionControlView.ui.heading.addClass( openedClass );
-
-		_.each( childrenUnderSection, function( view ) {
-			if ( view.model.get( 'section' ) !== firstSectionControlView.model.get( 'name' ) ) {
-				view.$el.removeClass( openedClass );
-				return;
-			}
-
-			view.$el.addClass( openedClass );
-		} );
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
-		var openedClass = 'elementor-open',
-			sectionClicked = childView.model.get( 'name' ),
-			isSectionOpen = childView.ui.heading.hasClass( openedClass ),
+		var isSectionOpen = childView.ui.heading.hasClass( 'elementor-open' );
 
-			childrenUnderSection = this.children.filter( function( view ) {
-				return ( ! _.isEmpty( view.model.get( 'section' ) ) );
-			} );
+		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
 
-		this.$( '.elementor-control.elementor-control-type-section .elementor-panel-heading' ).removeClass( openedClass );
-
-		if ( isSectionOpen ) {
-			// Close all open sections
-			sectionClicked = '';
-		} else {
-			childView.ui.heading.addClass( openedClass );
-		}
-
-		_.each( childrenUnderSection, function( view ) {
-			if ( view.model.get( 'section' ) !== sectionClicked ) {
-				view.$el.removeClass( openedClass );
-				return;
-			}
-
-			view.$el.addClass( openedClass );
-		} );
-
-		elementor.channels.data.trigger( 'scrollbar:update' );
+		this._renderChildren();
 	},
 
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
+	onChildviewSettingsChange: function( childView ) {
+		var editedElementView = this.getOption( 'editedElementView' ),
+			editedElementType = editedElementView.model.get( 'elType' );
+
+		if ( 'widget' === editedElementType ) {
+			editedElementType = editedElementView.model.get( 'widgetType' );
+		}
+
+		elementor.channels.editor
+			.trigger( 'change', childView, editedElementView )
+			.trigger( 'change:' + editedElementType, childView, editedElementView )
+			.trigger( 'change:' + editedElementType + ':' + childView.model.get( 'name' ), childView, editedElementView );
 	}
 } );
 

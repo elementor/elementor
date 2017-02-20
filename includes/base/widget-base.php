@@ -137,7 +137,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php self::_render_settings(); ?>
+			<?php $this->_render_settings(); ?>
 			<div class="elementor-widget-container">
 				<?php echo $content_template; ?>
 			</div>
@@ -176,7 +176,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function render_content() {
-		if ( Plugin::instance()->editor->is_edit_mode() ) {
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$this->_render_settings();
 		}
 		?>
@@ -224,6 +224,10 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( ! empty( $settings['_animation'] ) ) {
 			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
+		}
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
 		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
@@ -275,11 +279,11 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		return Plugin::instance()->elements_manager->get_element_types( 'section' );
+		return Plugin::$instance->elements_manager->get_element_types( 'section' );
 	}
 
 	public function add_skin( Skin_Base $skin ) {
-		Plugin::instance()->skins_manager->add_skin( $this, $skin );
+		Plugin::$instance->skins_manager->add_skin( $this, $skin );
 	}
 
 	public function get_skin( $skin_id ) {
@@ -299,13 +303,13 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function remove_skin( $skin_id ) {
-		return Plugin::instance()->skins_manager->remove_skin( $this, $skin_id );
+		return Plugin::$instance->skins_manager->remove_skin( $this, $skin_id );
 	}
 
 	/**
 	 * @return Skin_Base[]
 	 */
 	public function get_skins() {
-		return Plugin::instance()->skins_manager->get_skins( $this );
+		return Plugin::$instance->skins_manager->get_skins( $this );
 	}
 }

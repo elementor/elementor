@@ -37,15 +37,44 @@ App = Marionette.Application.extend( {
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
+		controls: {
+			Base: require( 'elementor-views/controls/base' ),
+			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
+			Color: require( 'elementor-views/controls/color' ),
+			Dimensions: require( 'elementor-views/controls/dimensions' ),
+			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
+			Media: require( 'elementor-views/controls/media' ),
+			Slider: require( 'elementor-views/controls/slider' ),
+			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
+			Choose: require( 'elementor-views/controls/choose' ),
+			Url: require( 'elementor-views/controls/url' ),
+			Font: require( 'elementor-views/controls/font' ),
+			Section: require( 'elementor-views/controls/section' ),
+			Tab: require( 'elementor-views/controls/tab' ),
+			Repeater: require( 'elementor-views/controls/repeater' ),
+			Wp_widget: require( 'elementor-views/controls/wp_widget' ),
+			Icon: require( 'elementor-views/controls/icon' ),
+			Gallery: require( 'elementor-views/controls/gallery' ),
+			Select2: require( 'elementor-views/controls/select2' ),
+			Date_time: require( 'elementor-views/controls/date-time' ),
+			Code: require( 'elementor-views/controls/code' ),
+			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Structure: require( 'elementor-views/controls/structure' ),
+			Animation: require( 'elementor-views/controls/select2' ),
+			Hover_animation: require( 'elementor-views/controls/select2' ),
+			Order: require( 'elementor-views/controls/order' ),
+			Switcher: require( 'elementor-views/controls/switcher' )
+		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
 	},
 
-	// Private Members
-	_controlsItemView: null,
-
 	_defaultDeviceMode: 'desktop',
+
+	addControlView: function( controlID, ControlView ) {
+		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+	},
 
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
@@ -87,38 +116,8 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	getControlItemView: function( controlType ) {
-		if ( null === this._controlsItemView ) {
-			this._controlsItemView = {
-				color: require( 'elementor-views/controls/color' ),
-				dimensions: require( 'elementor-views/controls/dimensions' ),
-				image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
-				media: require( 'elementor-views/controls/media' ),
-				slider: require( 'elementor-views/controls/slider' ),
-				wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
-				choose: require( 'elementor-views/controls/choose' ),
-				url: require( 'elementor-views/controls/url' ),
-				font: require( 'elementor-views/controls/font' ),
-				section: require( 'elementor-views/controls/section' ),
-				tab: require( 'elementor-views/controls/tab' ),
-				repeater: require( 'elementor-views/controls/repeater' ),
-				wp_widget: require( 'elementor-views/controls/wp_widget' ),
-				icon: require( 'elementor-views/controls/icon' ),
-				gallery: require( 'elementor-views/controls/gallery' ),
-				select2: require( 'elementor-views/controls/select2' ),
-				date_time: require( 'elementor-views/controls/date-time' ),
-				code: require( 'elementor-views/controls/code' ),
-				box_shadow: require( 'elementor-views/controls/box-shadow' ),
-				structure: require( 'elementor-views/controls/structure' ),
-				animation: require( 'elementor-views/controls/animation' ),
-				hover_animation: require( 'elementor-views/controls/animation' ),
-				order: require( 'elementor-views/controls/order' )
-			};
-
-			this.channels.editor.trigger( 'controls:initialize' );
-		}
-
-		return this._controlsItemView[ controlType ] || require( 'elementor-views/controls/base' );
+	getControlView: function( controlID ) {
+		return this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] || this.modules.controls.Base;
 	},
 
 	getPanelView: function() {
@@ -177,6 +176,8 @@ App = Marionette.Application.extend( {
 		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
 		elementorFrontend.init();
+
+		elementorFrontend.elementsHandler.initHandlers();
 	},
 
 	initClearPageDialog: function() {
@@ -354,12 +355,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'change', status )
-			.trigger( 'change', status );
+			.reply( 'status', status )
+			.trigger( 'status:change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'change' ) );
+		return ( true === elementor.channels.editor.request( 'status' ) );
 	},
 
 	setWorkSaver: function() {

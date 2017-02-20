@@ -124,6 +124,25 @@
 #elementor-select-preset {
   display: none; }
 
+.elementor:after {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0; }
+  @media (min-width: 1025px) {
+    .elementor:after {
+      content: 'desktop'; } }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .elementor:after {
+      content: 'tablet'; } }
+  @media (max-width: 767px) {
+    .elementor:after {
+      content: 'mobile'; } }
+
 .elementor-section {
   position: relative; }
   .elementor-section .elementor-container {
@@ -193,6 +212,7 @@
 
 .elementor-column-wrap {
   width: 100%;
+  position: relative;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -522,6 +542,10 @@
 
 .elementor-field-label {
   cursor: pointer; }
+  .elementor-mark-required .elementor-field-label:after {
+    content: '*';
+    color: red;
+    padding-right: 0.2em; }
 
 .elementor-field-textual {
   line-height: 1.4; }
@@ -680,6 +704,8 @@
   padding: 0;
   margin: 0;
   line-height: 1; }
+  .elementor-widget-heading .elementor-heading-title > a {
+    color: inherit; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-small {
     font-size: 15px; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-medium {
@@ -781,16 +807,16 @@
   .elementor-button .elementor-button-text {
     display: inline-block; }
 
-.elementor-element.elementor-button-info a {
+.elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
 
-.elementor-element.elementor-button-success a {
+.elementor-element.elementor-button-success .elementor-button {
   background-color: #5cb85c; }
 
-.elementor-element.elementor-button-warning a {
+.elementor-element.elementor-button-warning .elementor-button {
   background-color: #f0ad4e; }
 
-.elementor-element.elementor-button-danger a {
+.elementor-element.elementor-button-danger .elementor-button {
   background-color: #d9534f; }
 
 .elementor-widget-button .elementor-button .elementor-button-info {
@@ -952,45 +978,107 @@
     height: 25px;
     line-height: 25px; } }
 
-.elementor-tabs {
+.elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tabs-wrapper {
+  width: 25%;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0; }
+
+.elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tab-desktop-title.active {
+  border-left-style: none; }
+  .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tab-desktop-title.active:before, .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tab-desktop-title.active:after {
+    height: 999em;
+    width: 0;
+    left: 0;
+    border-left-style: solid; }
+  .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tab-desktop-title.active:before {
+    top: 0;
+    -webkit-transform: translateY(-100%);
+            transform: translateY(-100%); }
+  .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tab-desktop-title.active:after {
+    top: 100%; }
+
+.elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-desktop-title {
+  display: table-cell; }
+  .elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-desktop-title.active {
+    border-bottom-style: none; }
+    .elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-desktop-title.active:before, .elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-desktop-title.active:after {
+      bottom: 0;
+      height: 0;
+      width: 999em;
+      border-bottom-style: solid; }
+    .elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-desktop-title.active:before {
+      right: 100%; }
+    .elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-desktop-title.active:after {
+      left: 100%; }
+
+.elementor-widget-tabs .elementor-tab-title,
+.elementor-widget-tabs .elementor-tab-title:before,
+.elementor-widget-tabs .elementor-tab-title:after,
+.elementor-widget-tabs .elementor-tab-content,
+.elementor-widget-tabs .elementor-tabs-content-wrapper {
+  border: 1px none #D4D4D4; }
+
+.elementor-widget-tabs .elementor-tabs {
   text-align: right; }
-  .elementor-tabs .elementor-tabs-wrapper {
-    overflow: hidden; }
-    .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title {
-      display: table-cell; }
-      .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title > span {
-        position: relative;
-        display: block;
-        padding: 20px 25px;
-        line-height: 1;
-        font-weight: bold;
-        cursor: pointer; }
-      .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span {
-        border: 1px solid #D4D4D4;
-        border-bottom: none; }
-        .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before, .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:after {
-          display: block;
-          content: '';
-          position: absolute;
-          bottom: 0;
-          height: 0;
-          width: 999em;
-          border-bottom: 1px solid #D4D4D4; }
-        .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:before {
-          right: 100%; }
-        .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title.active > span:after {
-          left: 100%; }
-  .elementor-tabs .elementor-tab-content {
-    padding: 20px;
-    display: none;
-    border: 1px solid #D4D4D4;
-    border-top: none; }
+
+.elementor-widget-tabs .elementor-tabs-wrapper {
+  overflow: hidden; }
+
+.elementor-widget-tabs .elementor-tab-title {
+  cursor: pointer; }
+
+.elementor-widget-tabs .elementor-tab-desktop-title {
+  position: relative;
+  padding: 20px 25px;
+  font-weight: bold;
+  line-height: 1;
+  border: solid transparent; }
+  .elementor-widget-tabs .elementor-tab-desktop-title.active {
+    border-color: #D4D4D4; }
+    .elementor-widget-tabs .elementor-tab-desktop-title.active:before, .elementor-widget-tabs .elementor-tab-desktop-title.active:after {
+      display: block;
+      content: '';
+      position: absolute; }
+
+.elementor-widget-tabs .elementor-tab-mobile-title {
+  padding: 10px 10px;
+  cursor: pointer; }
+
+.elementor-widget-tabs .elementor-tab-content {
+  padding: 20px;
+  display: none; }
 
 @media (max-width: 767px) {
-  .elementor-tabs .elementor-tabs-wrapper .elementor-tab-title > span {
-    padding: 12px 15px; }
+  .elementor-tabs .elementor-tab-title,
+  .elementor-tabs .elementor-tab-content {
+    border-style: solid;
+    border-bottom-style: none; }
+  .elementor-tabs .elementor-tabs-wrapper {
+    display: none; }
+  .elementor-tabs .elementor-tabs-content-wrapper {
+    border-bottom-style: solid; }
   .elementor-tabs .elementor-tab-content {
     padding: 10px; } }
+
+@media (min-width: 768px) {
+  .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tabs {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex; }
+  .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tabs-content-wrapper {
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
+    border-style: solid;
+    border-right-style: none; }
+  .elementor-widget-tabs.elementor-tabs-view-horizontal .elementor-tab-content {
+    border-style: solid;
+    border-top-style: none; }
+  .elementor-tabs .elementor-tab-mobile-title {
+    display: none; } }
 
 .elementor-accordion {
   text-align: right; }

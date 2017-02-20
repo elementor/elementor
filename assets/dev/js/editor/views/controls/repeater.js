@@ -38,13 +38,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		this.collection.each( function( model ) {
-			if ( ! model.get( '_id' ) ) {
-				model.set( '_id', elementor.helpers.getUniqueID() );
-			}
-		} );
-
-		this.listenTo( this.collection, 'change add remove reset', this.onCollectionChanged, this );
+		this.listenTo( this.collection, 'change', this.onRowControlChange );
+		this.listenTo( this.collection, 'add remove reset', this.onRowChange, this );
 	},
 
 	addRow: function( data, options ) {
@@ -154,10 +149,18 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onCollectionChanged: function() {
-		this.elementSettingsModel.trigger( 'change' );
+	onRowChange: function() {
+		var model = this.elementSettingsModel;
+
+		model.changed = {};
+
+		model.trigger( 'change', model, model._pending );
 
 		this.toggleMinRowsClass();
+	},
+
+	onRowControlChange: function( model ) {
+		this.elementSettingsModel.trigger( 'change', model, model._pending );
 	},
 
 	onButtonAddRowClick: function() {

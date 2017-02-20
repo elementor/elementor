@@ -49,6 +49,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<div class="elementor-panel-nerd-box-title"><?php echo __( 'Meet Our Global Widget', 'elementor' ); ?></div>
 		<div class="elementor-panel-nerd-box-message"><?php echo __( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
 		<div class="elementor-panel-nerd-box-message"><?php echo __( 'This feature is only available on Elementor Pro.', 'elementor' ); ?></div>
-		<a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" href="https://go.elementor.com/pro/" target="_blank"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+		<a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" href="https://go.elementor.com/pro-global/" target="_blank"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 	</div>
 </script>

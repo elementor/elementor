@@ -18,8 +18,9 @@ class DB {
 	 * Save builder method.
 	 *
 	 * @since 1.0.0
-	 * @param int    $post_id
-	 * @param array  $posted
+	 *
+	 * @param int $post_id
+	 * @param array $posted
 	 * @param string $status
 	 *
 	 * @return void
@@ -75,8 +76,8 @@ class DB {
 			unset( $GLOBALS['post'] );
 		}
 
-		$css_file = new Post_CSS_File( $post_id );
-		$css_file->update();
+		// Remove Post CSS
+		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
 
 		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
@@ -85,6 +86,7 @@ class DB {
 	 * Get & Parse the builder from DB.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param int $post_id
 	 * @param string $status
 	 *
@@ -131,7 +133,7 @@ class DB {
 			return [];
 		}
 
-		$text_editor_widget_type = Plugin::instance()->widgets_manager->get_widget_types( 'text-editor' );
+		$text_editor_widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'text-editor' );
 
 		// TODO: Better coding to start template for editor
 		return [
@@ -162,6 +164,7 @@ class DB {
 	 * Remove draft data from DB.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param $post_id
 	 *
 	 * @return void
@@ -174,6 +177,7 @@ class DB {
 	 * Get edit mode by Page ID
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param $post_id
 	 *
 	 * @return mixed
@@ -186,6 +190,7 @@ class DB {
 	 * Setup the edit mode per Page ID
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param int $post_id
 	 * @param string $mode
 	 *
@@ -202,9 +207,11 @@ class DB {
 	private function _render_element_plain_content( $element_data ) {
 		if ( 'widget' === $element_data['elType'] ) {
 			/** @var Widget_Base $widget */
-			$widget = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$widget = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			$widget->render_plain_content();
+			if ( $widget ) {
+				$widget->render_plain_content();
+			}
 		}
 
 		if ( ! empty( $element_data['elements'] ) ) {
@@ -260,7 +267,11 @@ class DB {
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
-			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
 
 			$editor_data[] = $element->get_raw_data( $with_html_content );
 		} // End Section

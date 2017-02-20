@@ -38,7 +38,7 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
-		$settings = Plugin::instance()->templates_manager->get_import_images_instance()->import( $settings );
+		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
 
 		if ( ! $settings ) {
 			$settings = [
@@ -103,15 +103,11 @@ class Control_Media extends Control_Base_Multiple {
 		];
 	}
 
-	public static function get_image_title( $instance ) {
-		if ( empty( $instance['id'] ) )
+	public static function get_image_title( $attachment ) {
+		if ( empty( $attachment['id'] ) )
 			return '';
 
-		$attachment_id = $instance['id'];
-		if ( ! $attachment_id )
-			return '';
-
-		return get_the_title( $attachment_id );
+		return get_the_title( $attachment['id'] );
 	}
 
 	public static function get_image_alt( $instance ) {

@@ -1,32 +1,25 @@
-// Attention: DO NOT use this control since it has bugs
-// TODO: This control is unused
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
 ControlSelect2ItemView = ControlBaseItemView.extend( {
-	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+	getSelect2Options: function() {
+		var placeholder = this.ui.select.children( 'option:first[value=""]' ).text();
 
-		ui.select = '.elementor-select2';
-
-		return ui;
+		return {
+			allowClear: true,
+			placeholder: placeholder
+		};
 	},
 
 	onReady: function() {
-		var options = {
-			allowClear: true,
-			placeholder: { // The `allowClear` must be used with the `placeholder` option
-				id: ''
-			}
-		};
-
-		this.ui.select.select2( options );
+		this.ui.select.select2( this.getSelect2Options() );
 	},
 
 	onBeforeDestroy: function() {
 		if ( this.ui.select.data( 'select2' ) ) {
 			this.ui.select.select2( 'destroy' );
 		}
+
 		this.$el.remove();
 	}
 } );
