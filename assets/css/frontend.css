@@ -1180,20 +1180,31 @@
 
 .elementor-widget-icon-list .elementor-icon-list-item {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  position: relative; }
+  .elementor-widget-icon-list .elementor-icon-list-item:after {
+    position: absolute;
+    bottom: 0;
+    width: 100%; }
+  .elementor-widget-icon-list .elementor-icon-list-item, .elementor-widget-icon-list .elementor-icon-list-item a {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex; }
   .elementor-widget-icon-list .elementor-icon-list-item a {
-    display: inline; }
+    width: 100%; }
 
 .elementor-widget-icon-list .elementor-icon-list-text {
-  display: inline;
-  vertical-align: middle; }
+  -webkit-align-self: center;
+      -ms-flex-item-align: center;
+              -ms-grid-row-align: center;
+          align-self: center;
+  padding-left: 5px; }
 
 .elementor-widget-icon-list .elementor-icon-list-icon {
-  width: 1em;
-  line-height: 1;
-  vertical-align: middle;
-  display: inline-block;
   text-align: center; }
+  .elementor-widget-icon-list .elementor-icon-list-icon i {
+    vertical-align: middle; }
 
 .elementor-widget-video .elementor-open-lightbox iframe {
   display: none; }
