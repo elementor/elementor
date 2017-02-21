@@ -183,7 +183,7 @@ class Widget_Button extends Widget_Base {
 				'name' => 'typography',
 				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'selector' => '{{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} a.elementor-button',
 			]
 		);
 
@@ -203,7 +203,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a.elementor-button' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -218,7 +218,7 @@ class Widget_Button extends Widget_Base {
 					'value' => Scheme_Color::COLOR_4,
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} a.elementor-button' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -238,7 +238,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a.elementor-button:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -249,7 +249,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} a.elementor-button:hover' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -263,7 +263,7 @@ class Widget_Button extends Widget_Base {
 					'border_border!' => '',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} a.elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -298,7 +298,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} a.elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -310,7 +310,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} a.elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
