@@ -151,6 +151,99 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-items' => 'text-align: {{VALUE}};',
+
+		$this->add_control(
+			'divider',
+			[
+				'label' => __( 'Show Divider', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_style',
+			[
+				'label' => __( 'Divider Style', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'solid' => __( 'Solid', 'elementor' ),
+					'double' => __( 'Double', 'elementor' ),
+					'dotted' => __( 'Dotted', 'elementor' ),
+					'dashed' => __( 'Dashed', 'elementor' ),
+				],
+				'default' => 'solid',
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_color',
+			[
+				'label' => __( 'Divider Color', 'elementor-pro' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#ddd',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_weight',
+			[
+				'label' => __( 'Divider Weight', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 2,
+				],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 10,
+					],
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_width',
+			[
+				'label' => __( 'Divider Width', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
 				],
 			]
 		);
