@@ -211,17 +211,17 @@ class Widget_Toggle extends Widget_Base {
 	protected function render() {
 		$tabs = $this->get_settings( 'tabs' );
 		?>
-		<div class="elementor-toggle" role="tablist">
+		<div class="elementor-toggle">
 			<?php
 			$counter = 1; ?>
 			<?php foreach ( $tabs as $item ) : ?>
-				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>" role="tab">
+				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>" role="heading">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
 					<?php echo $item['tab_title']; ?>
 				</div>
-				<div class="elementor-toggle-content elementor-clearfix" data-tab="<?php echo $counter; ?>" role="tabpanel"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+				<div class="elementor-toggle-content elementor-clearfix" data-tab="<?php echo $counter; ?>" role="region"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 			<?php
 				$counter++;
 			endforeach; ?>
@@ -231,18 +231,18 @@ class Widget_Toggle extends Widget_Base {
 
 	protected function _content_template() {
 		?>
-		<div class="elementor-toggle" role="tablist">
+		<div class="elementor-toggle">
 			<#
 			if ( settings.tabs ) {
 				var counter = 1;
 				_.each(settings.tabs, function( item ) { #>
-					<div class="elementor-toggle-title" data-tab="{{ counter }}" role="tab">
+					<div class="elementor-toggle-title" data-tab="{{ counter }}" role="heading">
 						<span class="elementor-toggle-icon">
-						<i class="fa"></i>
-					</span>
+							<i class="fa"></i>
+						</span>
 						{{{ item.tab_title }}}
 					</div>
-					<div class="elementor-toggle-content elementor-clearfix" data-tab="{{ counter }}" role="tabpanel">{{{ item.tab_content }}}</div>
+					<div class="elementor-toggle-content elementor-clearfix" data-tab="{{ counter }}" role="region">{{{ item.tab_content }}}</div>
 				<#
 					counter++;
 				} );
