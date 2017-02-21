@@ -134,10 +134,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
 		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}">
-			<a href="#" data-tab="{{ tabSlug }}">
-				{{{ tabTitle }}}
-			</a>
+		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+			<a href="#">{{{ tabTitle }}}</a>
 		</div>
 		<# } ); #>
 	</div>
@@ -228,3 +226,44 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</a>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-panel-revisions">
+	<div class="elementor-panel-scheme-buttons">
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
+			<button class="elementor-button" disabled>
+				<i class="fa fa-times"></i><?php _e( 'Discard', 'elementor' ); ?>
+			</button>
+		</div>
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
+			<button class="elementor-button elementor-button-success" disabled>
+				<?php _e( 'Apply', 'elementor' ); ?>
+			</button>
+		</div>
+	</div>
+	<div class="elementor-panel-box">
+		<div class="elementor-panel-heading">
+			<div class="elementor-panel-heading-title"><?php _e( 'Revision History', 'elementor' ); ?></div>
+		</div>
+		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
+	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
+	<div class="elementor-panel-nerd-box-title"><?php _e( 'No Revisions Saved Yet', 'elementor' ); ?></div>
+	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_enabled ? 'no_revisions_1' : 'revisions_disabled_1' ) }}}</div>
+	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_enabled ? 'no_revisions_2' : 'revisions_disabled_2' ) }}}</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
+	<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
+	<div class="elementor-revision-item__details">
+		<div class="elementor-revision-date">{{{ date }}}</div>
+		<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php _e( 'By', 'elementor' ); ?> {{{ author }}}</div>
+	</div>
+	<div class="elementor-revision-item__tools">
+		<i class="elementor-revision-item__tools-delete fa fa-times"></i>
+		<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
+	</div>
+</script>
+

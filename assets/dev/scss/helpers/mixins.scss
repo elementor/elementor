@@ -51,4 +51,18 @@
 		@include placeholder-style();
 	}
 }
+
+@mixin button-types( $selector ) {
+
+	@each $type, $color in (
+		info: $info,
+		success: $success,
+		warning: $warning,
+		danger: $danger
+	) {
+		&#{$type} #{$selector} {
+			background-color: $color;
+		}
+	}
+}
 //End

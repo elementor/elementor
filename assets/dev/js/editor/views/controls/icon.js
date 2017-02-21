@@ -48,6 +48,14 @@ ControlIconItemView = ControlBaseItemView.extend( {
 			templateResult: _.bind( this.iconsList, this ),
 			templateSelection: _.bind( this.iconsList, this )
 		} );
+	},
+
+	onBeforeDestroy: function() {
+		if ( this.ui.select.data( 'select2' ) ) {
+			this.ui.select.select2( 'destroy' );
+		}
+
+		this.$el.remove();
 	}
 } );
 

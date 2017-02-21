@@ -88,27 +88,30 @@ class Server_Reporter extends Base_Reporter {
 
 		if ( is_wp_error( $response ) ) {
 			return [
-				'value' => 'not connected (' . $response->get_error_message() . ')',
+				'value' => 'Not connected (' . $response->get_error_message() . ')',
 			];
 		}
 
 		$http_response_code = wp_remote_retrieve_response_code( $response );
+
 		if ( 200 !== (int) $http_response_code ) {
 			$error_msg = 'HTTP Error (' . $http_response_code . ')';
+
 			return [
-				'value' => 'not connected (' . $error_msg . ')',
+				'value' => 'Not connected (' . $error_msg . ')',
 			];
 		}
 
 		$info_data = json_decode( wp_remote_retrieve_body( $response ), true );
+
 		if ( empty( $info_data ) ) {
 			return [
-				'value' => 'not connected (Return invalid JSON)',
+				'value' => 'Not connected (Returns invalid JSON)',
 			];
 		}
 
 		return [
-			'value' => 'connected',
+			'value' => 'Connected',
 		];
 	}
 }

@@ -28,10 +28,6 @@ class Elementor_Test_Base extends WP_UnitTestCase {
 		$this->assertInstanceOf( '\Elementor\Plugin', \Elementor\Plugin::instance() );
 	}
 
-	public function test_getVersion() {
-		$this->assertEquals( ELEMENTOR_VERSION, \Elementor\Plugin::instance()->get_version() );
-	}
-
 	/**
 	 * @expectedIncorrectUsage __clone
 	 */

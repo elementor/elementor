@@ -188,17 +188,31 @@ class Widgets_Manager {
 			die;
 		}
 
-		$widget_type = $_POST['widget_type'];
-
-		$widget_obj = $this->get_widget_types( $widget_type );
-
-		if ( ! $widget_obj instanceof Widget_WordPress ) {
+		if ( empty( $_POST['widget_type'] ) ) {
 			wp_send_json_error();
+		}
+
+		if ( empty( $_POST['data'] ) ) {
+			$_POST['data'] = [];
 		}
 
 		$data = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		wp_send_json_success( $widget_obj->get_form( $data ) );
+		$element_data = [
+			'elType' => 'widget',
+			'widgetType' => $_POST['widget_type'],
+			'settings' => $data,
+		];
+
+		/**
+		 * @var $widget_obj Widget_WordPress
+		 */
+		$widget_obj = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+		if ( ! $widget_obj ) {
+			wp_send_json_error();
+		}
+
+		wp_send_json_success( $widget_obj->get_form() );
 	}
 
 	public function render_widgets_content() {

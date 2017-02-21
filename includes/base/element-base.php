@@ -118,7 +118,7 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
-	public function add_control( $id, array $args ) {
+	public function add_control( $id, array $args, $overwrite = false ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
@@ -134,11 +134,15 @@ abstract class Element_Base {
 			}
 		}
 
-		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args );
+		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
 	}
 
 	public function remove_control( $control_id ) {
 		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
+	}
+
+	public function update_control( $control_id, array $args ) {
+		return Plugin::instance()->controls_manager->update_control_in_stack( $this, $control_id, $args );
 	}
 
 	public final function add_group_control( $group_name, array $args = [] ) {

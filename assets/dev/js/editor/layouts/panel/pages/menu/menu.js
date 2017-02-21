@@ -27,15 +27,17 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
+				icon: 'history',
+				title: elementor.translate( 'revision_history' ),
+				type: 'page',
+				pageName: 'revisionsPage'
+			},
+			{
 				icon: 'cog',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
 				link: elementor.config.settings_page_link,
 				newTab: true
-			},
-			{
-				icon: 'history',
-				title: elementor.translate( 'revisions_history' ) + '  <span>(' + elementor.translate( 'soon' ) + ')</span>'
 			},
             {
                 icon: 'eraser',

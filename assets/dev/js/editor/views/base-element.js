@@ -7,7 +7,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	stylesheet: null,
 
-	id: function() {
+	className: function() {
 		return this.getElementUniqueID();
 	},
 
@@ -33,13 +33,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave'
-		};
-	},
-
-	triggers: function() {
-		return {
-			'click @ui.duplicateButton': 'click:duplicate'
+			'click @ui.saveButton': 'onClickSave',
+			'click @ui.duplicateButton': 'onClickDuplicate'
 		};
 	},
 
@@ -96,7 +91,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var editModel = this.getEditModel();
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
-		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onSettingsChanged, this );
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
 		this.on( 'render', function() {
 			this.renderUI();
@@ -301,13 +296,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#' + self.getElementUniqueID() ] );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#elementor .' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
@@ -351,31 +346,15 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return 'elementor-element-' + this.model.get( 'id' );
 	},
 
-	onClickEdit: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'preview' === activeMode ) {
-			return;
-		}
-
-		this.edit();
+	duplicate: function() {
+		this.trigger( 'request:duplicate' );
 	},
 
-	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
+	confirmRemove: function() {
+		this.getRemoveDialog().show();
 	},
 
-	onSettingsChanged: function( settings ) {
-		var editModel = this.getEditModel();
-
-		if ( editModel.get( 'editSettings' ) !== settings ) {
-			// Change flag only if server settings was changed
-			elementor.setFlagEditorChange( true );
-		}
-
+	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var isContentChanged = false;
@@ -399,7 +378,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		// Re-render the template
-		var templateType = this.getTemplateType();
+		var templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
 
 		if ( 'js' === templateType ) {
 			this.getEditModel().setHtmlCache();
@@ -410,11 +390,45 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 	},
 
+	onCollectionChanged: function() {
+		elementor.setFlagEditorChange( true );
+	},
+
+	onEditSettingsChanged: function() {
+		this.renderOnChange( this.getEditModel().get( 'editSettings' ) );
+	},
+
+	onSettingsChanged: function() {
+		elementor.setFlagEditorChange( true );
+
+		this.renderOnChange( this.getEditModel().get( 'settings' ) );
+	},
+
+	onClickEdit: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
+		this.edit();
+	},
+
+	onClickDuplicate: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.duplicate();
+	},
+
 	onClickRemove: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.getRemoveDialog().show();
+		this.confirmRemove();
 	},
 
 	onClickSave: function( event ) {
@@ -425,6 +439,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		elementor.templates.startModal( function() {
 			elementor.templates.getLayout().showSaveTemplateView( model );
 		} );
+	},
+
+	onDestroy: function() {
+		if ( this.$stylesheetElement ) {
+			this.$stylesheetElement.remove();
+		}
 	}
 }, {
 	addControlStyleRules: function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
@@ -448,7 +468,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 						valueToInsert = valueCallback( parserControl );
 					}
 
-					var parsedValue = elementor.getControlItemView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+					var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
 
 					if ( '' === parsedValue ) {
 						throw '';

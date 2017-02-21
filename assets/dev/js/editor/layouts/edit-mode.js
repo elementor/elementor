@@ -12,7 +12,11 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'change @ui.previewButton': 'onEditModeChange'
+		'change @ui.previewButton': 'onPreviewButtonChange'
+	},
+
+	initialize: function() {
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeChanged );
 	},
 
 	getCurrentMode: function() {
@@ -20,28 +24,28 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	setMode: function( mode ) {
-		this.ui.previewButton.prop( 'checked', 'preview' === mode );
+		this.ui.previewButton
+			.prop( 'checked', 'preview' === mode )
+			.trigger( 'change' );
+	},
+
+	toggleMode: function() {
+		this.setMode( this.ui.previewButton.prop( 'checked' ) ? 'edit' : 'preview' );
 	},
 
 	onRender: function() {
-		this.onEditModeChange();
+		this.onPreviewButtonChange();
 	},
 
-	onEditModeChange: function() {
-		var dataEditMode = elementor.channels.dataEditMode,
-			oldEditMode = dataEditMode.request( 'activeMode' ),
-			currentMode = this.getCurrentMode();
+	onPreviewButtonChange: function() {
+		elementor.changeEditMode( this.getCurrentMode() );
+	},
 
-		dataEditMode.reply( 'activeMode', currentMode );
+	onEditModeChanged: function( activeMode ) {
+		var title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
 
-		if ( currentMode !== oldEditMode ) {
-			dataEditMode.trigger( 'switch' );
-
-			var title = 'preview' === currentMode ? 'Back to Editor' : 'Preview';
-
-			this.ui.previewLabel.attr( 'title', title );
-			this.ui.previewLabelA11y.text( title );
-		}
+		this.ui.previewLabel.attr( 'title', title );
+		this.ui.previewLabelA11y.text( title );
 	}
 } );
 

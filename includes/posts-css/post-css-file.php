@@ -101,12 +101,7 @@ class Post_CSS_File {
 		$this->post_id = $post_id;
 
 		// Check if it's an Elementor post
-		$db = Plugin::instance()->db;
-
-		$data = $db->get_plain_editor( $post_id );
-		$edit_mode = $db->get_edit_mode( $post_id );
-
-		$this->is_built_with_elementor = ( ! empty( $data ) && 'builder' === $edit_mode );
+		$this->is_built_with_elementor = Plugin::instance()->db->is_built_with_elementor( $post_id );
 
 		if ( ! $this->is_built_with_elementor ) {
 			return;

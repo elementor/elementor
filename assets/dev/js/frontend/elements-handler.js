@@ -28,7 +28,7 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
-		var eventNS = event + '.' + $scope.attr( 'id' );
+		var eventNS = event + '.' + $scope.data( 'model-cid' );
 
 		$externalElement
 			.off( eventNS )

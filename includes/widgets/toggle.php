@@ -212,7 +212,8 @@ class Widget_Toggle extends Widget_Base {
 		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-toggle">
-			<?php $counter = 1; ?>
+			<?php
+			$counter = 1; ?>
 			<?php foreach ( $tabs as $item ) : ?>
 				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">

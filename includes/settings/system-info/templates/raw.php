@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 $tabs_count++;
 
+$required_plugins_properties = array_flip( $required_plugins_properties );
+
+unset( $required_plugins_properties['Name'] );
+
 foreach ( $reports as $report_name => $report ) :
 	$indent = str_repeat( "\t", $tabs_count - 1 );
 
@@ -34,7 +38,7 @@ foreach ( $reports as $report_name => $report ) :
 			echo "== {$field['label']} ==" . PHP_EOL;
 
 			foreach ( $field['value'] as $plugin ) :
-				$plugin_properties = array_intersect_key( $plugin, array_flip( $required_plugins_properties ) );
+				$plugin_properties = array_intersect_key( $plugin, $required_plugins_properties );
 
 				echo $sub_indent . $plugin['Name'];
 

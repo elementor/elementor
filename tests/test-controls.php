@@ -29,27 +29,24 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_registerNUnregisterControl() {
-		$return = Elementor\Plugin::instance()->controls_manager->register_control( 'test_control', 'Control_Text_Not_Found' );
-		$this->assertInstanceOf( '\WP_Error', $return );
-		$this->assertEquals( 'element_class_name_not_exists', $return->get_error_code() );
-
-		$return = Elementor\Plugin::instance()->controls_manager->register_control( 'test_control', '\Elementor\DB' );
-		$this->assertInstanceOf( '\WP_Error', $return );
-		$this->assertEquals( 'wrong_instance_control', $return->get_error_code() );
-
 		$control_class = '\Elementor\Control_Text';
+
 		$control_id = 'text';
 
-		$this->assertTrue( Elementor\Plugin::instance()->controls_manager->register_control( $control_id, $control_class ) );
+		$control_instance = new $control_class();
+
+		Elementor\Plugin::instance()->controls_manager->register_control( $control_id, new $control_instance );
 
 		$control = Elementor\Plugin::instance()->controls_manager->get_control( $control_id );
+
 		$this->assertInstanceOf( $control_class, $control );
 
 		$this->assertTrue( Elementor\Plugin::instance()->controls_manager->unregister_control( $control_id ) );
+
 		$this->assertFalse( Elementor\Plugin::instance()->controls_manager->unregister_control( $control_id ) );
 
 		// Return the control for next tests..
-		$this->assertTrue( Elementor\Plugin::instance()->controls_manager->register_control( $control_id, $control_class ) );
+		Elementor\Plugin::instance()->controls_manager->register_control( $control_id, $control_instance );
 	}
 
 	public function test_groupControlsGetTypes() {

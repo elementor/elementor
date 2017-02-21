@@ -15,12 +15,22 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.0.2',
+			true
+		);
+
+		wp_register_script(
 			'elementor-admin-app',
 			ELEMENTOR_ASSETS_URL . 'js/admin' . $suffix . '.js',
 			[
 				'jquery',
 			],
-			Plugin::instance()->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 		wp_enqueue_script( 'elementor-admin-app' );
@@ -29,6 +39,10 @@ class Admin {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
+		}
+
+		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
+			wp_enqueue_script( 'elementor-dialog' );
 		}
 	}
 
@@ -47,7 +61,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -56,7 +70,7 @@ class Admin {
 			[
 				'elementor-icons',
 			],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style( 'elementor-admin-app' );
@@ -182,9 +196,25 @@ class Admin {
 
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
+
 		array_unshift( $links, $settings_link );
 
+		$links['go_pro'] = sprintf( '<a href="%s" target="_blank" class="elementor-plugins-gopro">%s</a>', 'https://go.elementor.com/pro-admin-plugins/', __( 'Go Pro', 'elementor' ) );
+
 		return $links;
+	}
+
+	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
+		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
+			$row_meta = [
+				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" title="' . esc_attr( __( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . __( 'Docs & FAQs', 'elementor' ) . '</a>',
+				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" title="' . esc_attr( __( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank">' . __( 'Video Tutorials', 'elementor' ) . '</a>',
+			];
+
+			$plugin_meta = array_merge( $plugin_meta, $row_meta );
+		}
+
+		return $plugin_meta;
 	}
 
 	public function admin_notices() {
@@ -207,7 +237,7 @@ class Admin {
 		$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
 
 		// Check if have upgrade notices to show
-		if ( version_compare( Plugin::instance()->get_version(), $upgrade_notice['version'], '>=' ) )
+		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) )
 			return;
 
 		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
@@ -269,23 +299,14 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-admin-feedback',
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
+				'jquery',
 				'underscore',
 				'elementor-dialog',
 			],
-			Plugin::instance()->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 
@@ -362,7 +383,9 @@ class Admin {
 			wp_send_json_error();
 		}
 
-		$reason_text = $reason_key = '';
+		$reason_text = '';
+
+		$reason_key = '';
 
 		if ( ! empty( $_POST['reason_key'] ) )
 			$reason_key = $_POST['reason_key'];
@@ -389,6 +412,7 @@ class Admin {
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
 		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );

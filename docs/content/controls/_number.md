@@ -44,3 +44,6 @@ Argument       | Required   | Type         | Default                      | Desc
 `min`          | no         | *`int`*      |                              | The minimum number (Only affects the spinners, the user can still type a lower value)
 `max`          | no         | *`int`*      |                              | The maximum number (Only affects the spinners, the user can still type a higher value)
 `step`         | no         | *`int`*      |                              | The intervals value that will be incremented or decremented when using the controls' spinners
+`label_block`  | no         | *`bool`*     | `false`                      | Display the label above the control by setting to true
+`description`  | no         | *`string`*   |                              | A description text to display below the control
+`separator`    | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator

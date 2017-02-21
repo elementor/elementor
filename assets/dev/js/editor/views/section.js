@@ -5,12 +5,10 @@ SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
 
 	className: function() {
-		var classes = 'elementor-section',
+		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		classes += ' elementor-' + type + '-section';
-
-		return classes;
+		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
 	tagName: 'section',

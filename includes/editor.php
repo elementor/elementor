@@ -154,12 +154,12 @@ class Editor {
 
 		// Hack for waypoint with editor mode.
 		wp_register_script(
-			'waypoints',
+			'elementor-waypoints',
 			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints-for-editor.js',
 			[
 				'jquery',
 			],
-			'4.0.1',
+			'4.0.2',
 			true
 		);
 
@@ -240,7 +240,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'3.0.0',
+			'3.0.2',
 			true
 		);
 
@@ -292,7 +292,7 @@ class Editor {
 				'jquery-simple-dtpicker',
 				'ace',
 			],
-			$plugin->get_version(),
+			ELEMENTOR_VERSION,
 			true
 		);
 
@@ -322,6 +322,8 @@ class Editor {
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
+			'revisions' => Revisions_Manager::get_revisions(),
+			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post() ) ),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
@@ -355,7 +357,7 @@ class Editor {
 				'global_fonts' => __( 'Global Fonts', 'elementor' ),
 				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
 				'soon' => __( 'Soon', 'elementor' ),
-				'revisions_history' => __( 'Revisions History', 'elementor' ),
+				'revision_history' => __( 'Revision History', 'elementor' ),
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'inner_section' => __( 'Columns', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
@@ -378,6 +380,14 @@ class Editor {
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 				'asc' => __( 'Ascending order', 'elementor' ),
 				'desc' => __( 'Descending order', 'elementor' ),
+				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
+				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
+				'revision' => __( 'Revision', 'elementor' ),
+				'autosave' => __( 'Autosave', 'elementor' ),
+				'preview' => __( 'Preview', 'elementor' ),
+				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
 		];
 
@@ -413,14 +423,14 @@ class Editor {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
 			'google-font-roboto',
 			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
 			[],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -441,7 +451,7 @@ class Editor {
 				'google-font-roboto',
 				'jquery-simple-dtpicker',
 			],
-			Plugin::instance()->get_version()
+			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style( 'elementor-editor' );

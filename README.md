@@ -1,11 +1,11 @@
 # Elementor Page Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
 
 
-**Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [yehudah](https://profiles.wordpress.org/yehudah), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh)  
+**Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [yehudah](https://profiles.wordpress.org/yehudah)  
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
-**Stable tag:** 1.0.10  
+**Stable tag:** 1.1.7  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -28,11 +28,17 @@ Never again work on the backend and guess what the frontend will look like. With
 ### Surprises you won't see anywhere else. ###
 Create pages that have "the designer touch", by including unique features like box shadows, background overlays, hover and entrance animations, advanced buttons and more. We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface. You no longer need to use code, HTML, CSS or shortcode.
 
-### NEW! Template Library. ###
+### Template Library ###
 We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
 
-### NEW! Mobile Editing. ###
+### Mobile Editing ###
 Elementor comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
+
+### NEW! Revision History ###
+Never lose your page designs again! Elementor includes a Revision History feature, which means every time you click on the save button, a new revision is saved. You can always trace your steps and switch back and forth between versions. All revisions are seen visually, so you can visually compare between versions and choose the best one!
+
+> <strong>Elementor Pro</strong><br />
+> We've made sure the free Elementor offers the best possible solution for designing WordPress. Elementor Pro is the next step, and extends the basic features even further. Features you won't get anywhere else: Live form design, posts and portfolio widgets, the faster slider ever, WooCommerce widgets, global templates, custom CSS and much more. [Click here to buy the ultimate page builder for WordPress!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 
 ### 28 widgets and counting ###
 We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
@@ -69,6 +75,10 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 
 ### Multilingual & RTL supported. ###
 We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
+
+### Developer API. ###
+Elementor is free and open source, and is the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
+We have created an extensive [API documentation](https://github.com/pojome/elementor/tree/master/docs), to help you get started and learn just how to integrate with Elementor.
 
 ### Translations ###
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
@@ -163,13 +173,69 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.1.7 - 25.01.2017 ###
+* Tweak! - Change `box-shadow` type control from select to switcher
+* Fix! - On-loading glitch for Image Carousel widget
+* Fix! - Background attachment for Section on mobile devices ([#890](https://github.com/pojome/elementor/issues/890))
+* Fix! - Default WordPress widget checkboxes not holding values ([#1210](https://github.com/pojome/elementor/issues/1210))
+* Fix! - Heading with link custom color gone
+* Fix! - Jumping of panel when the `wp-color-picker` is active
+* Deprecated! - `Plugin::get_version()` method removed
+
+### 1.1.6 - 18.01.2017 ###
+* Fix! - Improving enqueue assets if elementor exists on the page
+* Fix! - Inner Tabs in the section panel is broken
+
+### 1.1.5 - 17.01.2017 ###
+* Fix! - Cannot open editor panel on WP widgets
+
+### 1.1.4 - 17.01.2017 ###
+* Tweak! - Added compatibility for edit description tab with Elementor in WC product page
+* Tweak! - Performance improvement in the editor. Faster response time when interacting with elements.
+* Fix! - Broken responsive in Editor mode ([#1169](https://github.com/pojome/elementor/issues/1169))
+* Fix! - Animation happens twice above the fold ([#281](https://github.com/pojome/elementor/issues/281))
+
+### 1.1.3 - 15.01.2017 ###
+* Tweak! - Embed YouTube API just when is needed
+* Tweak! - Added post revisions support as default to any CPT Elementor is active on
+* Fix! - E-Icons font library correct files
+* Fix! - Prevent click event on parent elements when clicking inner element handle buttons
+* Fix! - Error message for import template
+
+### 1.1.2 - 12.01.2017 ###
+* Fix! - Clear browser caching from last new JS files
+
+### 1.1.1 - 11.01.2017 ###
+* Fix! - Revision history panel title
+* Fix! - Renamed content tab in Column to style
+* Fix! - Regenerate new Waypoints JS lib
+
+### 1.1.0 - 11.01.2017 ###
+* New! - Revision History (Based on WP Revisions)
+* New! - Added Tool for Replace Site URL in Elementor data
+* New! - Hotkey: Ctrl / Cmd + S = Save
+* New! - Hotkey: Ctrl / Cmd + P = Preview Mode
+* New! - Hotkey: Ctrl / Cmd + Shift + L = Open Library Modal
+* New! - Hotkey: Ctrl / Cmd + Shift + H = Go to Revision History
+* New! - Hotkey: Ctrl / Cmd + Shift + M = Mobile Editing Preview
+* New! - Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
+* Tweak! - Enqueue assets only if elementor exists on the page
+* Tweak! - Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
+* Fix! - Added missing translation strings for media modal ([#1126](https://github.com/pojome/elementor/issues/1126))
+
+### 1.0.12 - 05.01.2017 ###
+* Fix! - Library modal 'Insert' button
+
+### 1.0.11 - 04.01.2017 ###
+* Fix! - Some breaks from previous release
+
 ### 1.0.10 - 04.01.2017 ###
 * New! - Added API docs for developers
-* Tweak! - Enqueue assets only if has elementor in the page
 * Tweak! - Changed 'Prevent Scroll' control type to switcher in Map widget
 * Tweak! - Updated Dialog Manager v3.0.2
 * Fix! - Library modal 'Go Pro' button in FireFox
 * Fix! - Bug load elementor in front page in some server configuration
+* Fix! - Ninja Forms widget conflict
 * Deprecated! - `elementor/frontend/enqueue_scripts/after` is no longer available
 * Deprecated! - `elementor/elements/print_template` is replaced by `elementor/element/print_template`
 * Deprecated! - `elementor/element_css/parse_css` is replaced by `elementor/element/parse_css`
@@ -199,7 +265,7 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 * Deprecated! - Removed `#elementor-inner` ID from frontend output
 
 ### 1.0.5 - 18.12.2016 ###
-* Tweak! - Added VH unit in min-height control for section
+* Tweak! - Added VH unit in min-height control for section ([#764](https://github.com/pojome/elementor/issues/764))
 * Fix! - Bug with section-content-position in Columns widget
 * Fix! - Bug with stretched section
 * Fix! - Avoid fatal error for invalid widgets

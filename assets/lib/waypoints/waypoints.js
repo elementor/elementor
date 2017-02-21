@@ -653,10 +653,10 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
   }
 
   if (window.jQuery) {
-    window.jQuery.fn.waypoint = createExtension(window.jQuery)
+    window.jQuery.fn.elementorWaypoint = createExtension(window.jQuery)
   }
   if (window.Zepto) {
-    window.Zepto.fn.waypoint = createExtension(window.Zepto)
+    window.Zepto.fn.elementorWaypoint = createExtension(window.Zepto)
   }
 }())
 ;

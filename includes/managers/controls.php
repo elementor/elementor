@@ -53,7 +53,7 @@ class Controls_Manager {
 	/**
 	 * @var Control_Base[]
 	 */
-	private $_controls = [];
+	private $_controls = null;
 
 	/**
 	 * @var Group_Control_Base[]
@@ -84,9 +84,7 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 */
 	public function register_controls() {
-		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
+		$this->_controls = [];
 
 		$available_controls = [
 			self::TEXT,
@@ -131,17 +129,17 @@ class Controls_Manager {
 
 		foreach ( $available_controls as $control_id ) {
 			$control_filename = str_replace( '_', '-', $control_id );
+
 			$control_filename = ELEMENTOR_PATH . "includes/controls/{$control_filename}.php";
+
 			require( $control_filename );
 
 			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id );
-			$this->register_control( $control_id, $class_name );
+
+			$this->register_control( $control_id, new $class_name() );
 		}
 
 		// Group Controls
-		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
-
 		require( ELEMENTOR_PATH . 'includes/controls/groups/background.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/groups/border.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/groups/typography.php' );
@@ -153,27 +151,18 @@ class Controls_Manager {
 		$this->_control_groups['typography'] = new Group_Control_Typography();
 		$this->_control_groups['image-size'] = new Group_Control_Image_Size();
 		$this->_control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+
+		do_action( 'elementor/controls/controls_registered', $this );
 	}
 
 	/**
 	 * @since 1.0.0
-	 * @param $control_id
-	 * @param $class_name
 	 *
-	 * @return bool|\WP_Error
+	 * @param $control_id
+	 * @param Control_Base $control_instance
 	 */
-	public function register_control( $control_id, $class_name ) {
-		if ( ! class_exists( $class_name ) ) {
-			return new \WP_Error( 'element_class_name_not_exists' );
-		}
-		$instance_control = new $class_name();
-
-		if ( ! $instance_control instanceof Control_Base ) {
-			return new \WP_Error( 'wrong_instance_control' );
-		}
-		$this->_controls[ $control_id ] = $instance_control;
-
-		return true;
+	public function register_control( $control_id, Control_Base $control_instance ) {
+		$this->_controls[ $control_id ] = $control_instance;
 	}
 
 	/**
@@ -186,7 +175,9 @@ class Controls_Manager {
 		if ( ! isset( $this->_controls[ $control_id ] ) ) {
 			return false;
 		}
+
 		unset( $this->_controls[ $control_id ] );
+
 		return true;
 	}
 
@@ -195,6 +186,10 @@ class Controls_Manager {
 	 * @return Control_Base[]
 	 */
 	public function get_controls() {
+		if ( null === $this->_controls ) {
+			$this->register_controls();
+		}
+
 		return $this->_controls;
 	}
 
@@ -259,7 +254,9 @@ class Controls_Manager {
 	 * @return Group_Control_Base[]
 	 */
 	public function add_group_control( $id, $instance ) {
-		return $this->_control_groups[ $id ] = $instance;
+		$this->_control_groups[ $id ] = $instance;
+
+		return $instance;
 	}
 
 	/**
@@ -281,7 +278,7 @@ class Controls_Manager {
 		];
 	}
 
-	public function add_control_to_stack( Element_Base $element, $control_id, $control_data ) {
+	public function add_control_to_stack( Element_Base $element, $control_id, $control_data, $overwrite = false ) {
 		$default_args = [
 			'type' => self::TEXT,
 			'tab' => self::TAB_CONTENT,
@@ -308,7 +305,7 @@ class Controls_Manager {
 
 		$stack_id = $element->get_name();
 
-		if ( isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+		if ( ! $overwrite && isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
 			return false;
 		}
@@ -342,6 +339,25 @@ class Controls_Manager {
 		unset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] );
 
 		return true;
+	}
+
+	public function get_control_from_stack( $stack_id, $control_id ) {
+		if ( empty( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+			return new \WP_Error( 'Cannot get a not-exists control.' );
+		}
+
+		return $this->_controls_stack[ $stack_id ]['controls'][ $control_id ];
+	}
+
+	public function update_control_in_stack( Element_Base $element, $control_id, $control_data ) {
+		$old_control_data = $this->get_control_from_stack( $element->get_name(), $control_id );
+		if ( is_wp_error( $old_control_data ) ) {
+			return false;
+		}
+
+		$control_data = array_merge( $old_control_data, $control_data );
+
+		return $this->add_control_to_stack( $element, $control_id, $control_data, true );
 	}
 
 	public function get_element_stack( Element_Base $element ) {
@@ -401,12 +417,18 @@ class Controls_Manager {
 		$element->end_controls_section();
 	}
 
-	/**
-	 * Controls_Manager constructor.
-	 *
-	 * @since 1.0.0
-	 */
+	private function require_files() {
+		// TODO: Move includes in later version (v1.2.x)
+		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
+
+		// Group Controls
+		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
+	}
+
 	public function __construct() {
-		$this->register_controls();
+		$this->require_files();
 	}
 }

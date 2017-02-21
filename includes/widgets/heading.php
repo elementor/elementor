@@ -173,15 +173,19 @@ class Widget_Heading extends Widget_Base {
 			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
+		$title = $settings['title'];
+
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$target = $settings['link']['is_external'] ? ' target="_blank"' : '';
+			$this->add_render_attribute( 'url', 'href', $settings['link']['url'] );
 
-			$url = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $settings['title'] );
+			if ( $settings['link']['is_external'] ) {
+				$this->add_render_attribute( 'url', 'target', '_blank' );
+			}
 
-			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $url );
-		} else {
-			$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $settings['title'] );
+			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
 		}
+
+		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $title );
 
 		echo $title_html;
 	}
@@ -189,15 +193,15 @@ class Widget_Heading extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<#
-		if ( '' !== settings.title ) {
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-size-' + settings.size + '">' + settings.title + '</' + settings.header_size + '>';
-		}
-		
-		if ( '' !== settings.link.url ) {
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-size-' + settings.size + '"><a href="' + settings.link.url + '">' + title_html + '</a></' + settings.header_size + '>';
-		}
+			var title = settings.title;
 
-		print( title_html );
+			if ( '' !== settings.link.url ) {
+				title = '<a href="' + settings.link.url + '">' + title + '</a>';
+			}
+
+			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-size-' + settings.size + '">' + title + '</' + settings.header_size + '>';
+
+			print( title_html );
 		#>
 		<?php
 	}

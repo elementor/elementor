@@ -62,3 +62,5 @@ Argument       | Required   | Type         | Default                      | Desc
 `range`        | no         | *`array`*    |                              | An associative array of arrays - each size unit can have an array with `min`, `max` and `step` settings
 `size_units`   | no         | *`array`*    |                              | An array of all available size units
 `label_block`  | no         | *`bool`*     | `true`                       | Display the label above the control by setting to true
+`description`  | no         | *`string`*   |                              | A description text to display below the control
+`separator`    | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator

@@ -40,3 +40,5 @@ Argument       | Required   | Type         | Default                      | Desc
 `default`      | no         | *`string`*   |                              | The default value of the control
 `rows`         | no         | *`int`*      |                              | Sets the height of the textarea defined by rows of text
 `label_block`  | no         | *`bool`*     | `true`                       | Display the label above the control by setting to true
+`description`  | no         | *`string`*   |                              | A description text to display below the control
+`separator`    | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator

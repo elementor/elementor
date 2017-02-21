@@ -46,11 +46,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	initFrame: function() {
 		this.frame = wp.media( {
 			button: {
-				text: 'Insert Media' // TODO: gettext
+				text: elementor.translate( 'insert_media' )
 			},
 			states: [
 				new wp.media.controller.Library( {
-					title: 'Insert Media', // TODO: gettext
+					title: elementor.translate( 'insert_media' ),
 					library: wp.media.query( { type: 'image' } ),
 					multiple: false,
 					date: false

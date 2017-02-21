@@ -14,11 +14,10 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 
 		$controls['box_shadow_type'] = [
 			'label' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => [
-				'' => __( 'No', 'elementor' ),
-				'outset' => _x( 'Yes', 'Box Shadow Control', 'elementor' ),
-			],
+			'type' => Controls_Manager::SWITCHER,
+			'label_on' => __( 'Yes', 'elementor' ),
+			'label_off' => __( 'No', 'elementor' ),
+			'return_value' => 'yes',
 			'separator' => 'before',
 		];
 

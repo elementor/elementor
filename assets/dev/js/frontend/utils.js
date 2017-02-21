@@ -3,7 +3,20 @@ var Utils;
 Utils = function( $ ) {
 	var self = this;
 
+	// FIXME: Choose other variable name for this flag
+	var isYTInserted = false;
+
+	var insertYTApi = function() {
+		isYTInserted = true;
+
+		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
+	};
+
 	this.onYoutubeApiReady = function( callback ) {
+		if ( ! isYTInserted ) {
+			insertYTApi();
+		}
+
 		if ( window.YT && YT.loaded ) {
 			callback( YT );
 		} else {
@@ -14,10 +27,6 @@ Utils = function( $ ) {
 		}
 	};
 
-	this.insertYTApi = function() {
-		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
-	};
-
 	this.waypoint = function( $element, callback, options ) {
 		var correctCallback = function() {
 			var element = this.element || this;
@@ -25,7 +34,7 @@ Utils = function( $ ) {
 			return callback.apply( element, arguments );
 		};
 
-		$element.waypoint( correctCallback, options );
+		$element.elementorWaypoint( correctCallback, options );
 	};
 };
 

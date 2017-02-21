@@ -1,5 +1,3 @@
-// Attention: DO NOT use this control since it has bugs
-// TODO: This control is unused
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
@@ -12,21 +10,24 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	onReady: function() {
-		var options = {
+	getSettings: function() {
+		return {
 			allowClear: true,
 			placeholder: { // The `allowClear` must be used with the `placeholder` option
 				id: ''
 			}
 		};
+	},
 
-		this.ui.select.select2( options );
+	onReady: function() {
+		this.ui.select.select2( this.getSettings() );
 	},
 
 	onBeforeDestroy: function() {
 		if ( this.ui.select.data( 'select2' ) ) {
 			this.ui.select.select2( 'destroy' );
 		}
+
 		this.$el.remove();
 	}
 } );

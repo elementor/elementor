@@ -33,7 +33,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-		this.listenTo( elementor.channels.editor, 'editor:changed', this.onEditorChanged )
+		this.listenTo( elementor.channels.editor, 'change', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
@@ -77,10 +77,14 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 				self.getDialog().show();
 
 				self.ui.buttonSaveButton.removeClass( 'elementor-button-state' );
+
+				NProgress.done();
 			}
 		};
 
 		self.ui.buttonSaveButton.addClass( 'elementor-button-state' );
+
+		NProgress.start();
 
 		elementor.saveEditor( options );
 	},
@@ -151,9 +155,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickShowTemplates: function() {
-		elementor.templates.startModal( function() {
-			elementor.templates.showTemplates();
-		} );
+		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {

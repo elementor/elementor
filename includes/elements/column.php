@@ -42,6 +42,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Background & Border', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -83,12 +84,61 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Column Background Overlay
+		$this->start_controls_section(
+			'section_background_overlay',
+			[
+				'label' => __( 'Background Overlay', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'condition' => [
+					'background_background' => [ 'classic', 'video' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_background' => [ 'classic' ],
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 		// Section Typography
 		$this->start_controls_section(
 			'section_typo',
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -363,6 +413,7 @@ class Element_Column extends Element_Base {
 	protected function _content_template() {
 		?>
 		<div class="elementor-column-wrap">
+            <div class="elementor-background-overlay"></div>
 			<div class="elementor-widget-wrap"></div>
 		</div>
 		<?php
@@ -401,7 +452,10 @@ class Element_Column extends Element_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
-				<div class="elementor-widget-wrap">
+            <?php if ( 'classic' === $settings['background_overlay_background'] ) : ?>
+                <div class="elementor-background-overlay"></div>
+            <?php endif; ?>
+            <div class="elementor-widget-wrap">
 		<?php
 	}
 

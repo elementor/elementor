@@ -215,7 +215,8 @@ class Widget_Tabs extends Widget_Base {
 		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-tabs">
-			<?php $counter = 1; ?>
+			<?php
+			$counter = 1; ?>
 			<div class="elementor-tabs-wrapper">
 				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-title" data-tab="<?php echo $counter; ?>"><span><?php echo $item['tab_title']; ?></span></div>
@@ -224,7 +225,8 @@ class Widget_Tabs extends Widget_Base {
 				endforeach; ?>
 			</div>
 
-			<?php $counter = 1; ?>
+			<?php
+			$counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper">
 				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>

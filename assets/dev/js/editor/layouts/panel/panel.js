@@ -94,6 +94,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.getChildView( 'header' );
 	},
 
+	getFooterView: function() {
+		return this.getChildView( 'footer' );
+	},
+
 	getCurrentPageName: function() {
 		return this.currentPageName;
 	},
@@ -109,7 +113,17 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			throw new ReferenceError( 'Elementor panel doesn\'t have page named \'' + page + '\'' );
 		}
 
-		this.showChildView( 'content', new pageData.view( viewOptions ) );
+		if ( pageData.options ) {
+			viewOptions = _.extend( pageData.options, viewOptions );
+		}
+
+		var View = pageData.view;
+
+		if ( pageData.getView ) {
+			View = pageData.getView();
+		}
+
+		this.showChildView( 'content', new View( viewOptions ) );
 
 		this.getHeaderView().setTitle( title || pageData.title );
 
