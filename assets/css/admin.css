@@ -260,6 +260,13 @@ body.elementor-editor-inactive #elementor-editor {
   font-family: eicon;
   font-size: 17px; }
 
+tr[class^="elementor_coming_soon"] {
+  display: none; }
+  tr[class^="elementor_coming_soon"].elementor_coming_soon_enabled {
+    display: block; }
+  .elementor-coming-soon-is-enabled tr[class^="elementor_coming_soon"] {
+    display: block; }
+
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {

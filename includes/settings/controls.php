@@ -67,6 +67,24 @@ class Settings_Controls {
 		<?php endif;
 	}
 
+	private static function _select( array $field ) {
+		$old_value = get_option( $field['id'], $field['std'] ); ?>
+		<select name="<?php echo $field['id']; ?>">
+			<?php
+			echo sprintf( '<option value="">— %s —</option>', __( 'Select' ) );
+
+			foreach ( $field['options'] as $value => $label ) :
+				$selected = selected( $value, $old_value, false );
+				echo sprintf( '<option value="%1$s" %2$s >%3$s</option>', $value, $selected, $label );
+			endforeach;
+			?>
+		</select>
+
+		<?php if ( ! empty( $field['desc'] ) ) : ?>
+			<p class="description"><?php echo $field['desc']; ?></p>
+		<?php endif;
+	}
+
 	private static function _checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],

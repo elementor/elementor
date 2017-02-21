@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Tools {
@@ -24,6 +26,8 @@ class Tools {
 
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
+		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(
 			$tools_section,
@@ -99,17 +103,33 @@ class Tools {
 			self::PAGE_ID
 		);
 
+		$field_id = 'elementor_coming_soon_enabled';
+		add_settings_field(
+			$field_id,
+			__( 'Enable', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$coming_soon_section,
+			[
+				'id'  => $field_id,
+				'class' => $field_id,
+				'type' => 'checkbox',
+				'value' => 1,
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
 		$field_id = 'elementor_coming_soon_template_id';
-		$current_template = Coming_Soon::get_page_id();
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$templates = array_filter( $source->get_items(), function( $template ) {
+			return 'local' === $template['source'] && 'page' === $template['type'];
+		} );
 
-		$html = '<select data-nonce="' . wp_create_nonce( 'elementor_coming_soon_template_id' ) . '"><option value="">— ' . __( 'Disabled', 'elementor-pro' ) . ' —</option>';
-
-		foreach ( get_pages() as $page ) {
-			$selected = selected( $page->ID, $current_template, false );
-			$html .= sprintf( '<option value="%1$s" %2$s >%3$s</option>', $page->ID, $selected, $page->post_title );
+		$options = [];
+		foreach ( $templates as $template ) {
+			$options[ $template['template_id'] ] = $template['title'];
 		}
-
-		$html .= '</select> <span class="elementor-button-spinner elementor-hidden"></span>';
 
 		add_settings_field(
 			$field_id,
@@ -118,21 +138,62 @@ class Tools {
 			self::PAGE_ID,
 			$coming_soon_section,
 			[
-				'id'   => $field_id,
-				'type' => 'raw_html',
-				'html' => $html,
+				'id'  => $field_id,
+				'class' => $field_id,
+				'type' => 'select',
+				'options' => $options,
 			]
 		);
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_coming_soon_mode';
+
+		add_settings_field(
+			$field_id,
+			__( 'Choose Mode', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$coming_soon_section,
+			[
+				'id' => $field_id,
+				'class' => $field_id,
+				'type' => 'select',
+				'options' => [
+					'coming_soon' => __( 'Coming Soon', 'elementor' ),
+					'maintenance' => __( 'Maintenance', 'elementor' ),
+				],
+				'desc' => __( 'Coming soon mode sends HTTP 200, Maintenance mode sends HTTP 503', 'elementor' ),
+			]
+		);
+		register_setting( self::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_coming_soon_exclude_roles';
+		add_settings_field(
+			$field_id,
+			__( 'Exclude Roles', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$coming_soon_section,
+			[
+				'id' => $field_id,
+				'class' => $field_id,
+				'type' => 'checkbox_list_roles',
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 	}
 
 	public function display_settings_page() {
 		?>
 		<div class="wrap">
 			<h2><?php _e( 'Elementor Tools', 'elementor' ); ?></h2>
-			<form method="post" action="">
+			<form method="post" action="options.php">
 				<?php
 				settings_fields( self::PAGE_ID );
 				do_settings_sections( self::PAGE_ID );
+
+				submit_button();
 				?>
 			</form>
 		</div><!-- /.wrap -->
@@ -179,18 +240,6 @@ class Tools {
 		}
 	}
 
-	public function elementor_coming_soon_template_id() {
-		check_ajax_referer( 'elementor_coming_soon_template_id', '_nonce' );
-
-		$success = Coming_Soon::update_page_id( $_POST['value'] );
-
-		if ( $success ) {
-			wp_send_json_success();
-		} else {
-			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
-		}
-	}
-
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
@@ -198,7 +247,6 @@ class Tools {
 		if ( ! empty( $_POST ) ) {
 			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
-			add_action( 'wp_ajax_elementor_coming_soon_template_id', [ $this, 'elementor_coming_soon_template_id' ] );
 		}
 	}
 }
