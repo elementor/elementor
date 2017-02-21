@@ -7,28 +7,38 @@
 		list-style-type: none;
 		margin: 0;
 		padding: 0;
-
 	}
 
 	.elementor-icon-list-item {
 		margin: 0;
 		padding: 0;
+		position: relative;
+
+		&:after {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+		}
+
+		&, a {
+			display: flex;
+		}
 
 		a {
-			display: inline;
+			width: 100%;
 		}
 	}
 
 	.elementor-icon-list-text {
-		display: inline;
-		vertical-align: middle;
+		align-self: center;
+		@include padding-start(5px);
 	}
 
 	.elementor-icon-list-icon {
-		width: 1em;
-		line-height: 1;
-		vertical-align: middle;
-		display: inline-block; // fix issue #620
-		text-align: center; // fix issue #620
+		text-align: center;
+
+		i {
+			vertical-align: middle;
+		}
 	}
 }

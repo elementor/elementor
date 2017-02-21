@@ -88,6 +88,154 @@ class Widget_Icon_List extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
+			'section_icon_list',
+			[
+				'label' => __( 'List', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'space_between',
+			[
+				'label' => __( 'Space Between', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item' => 'justify-content: {{VALUE}};',
+				],
+				'selectors_dictionary' => [
+					'left' => 'flex-start',
+					'right' => 'flex-end',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider',
+			[
+				'label' => __( 'Show Divider', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_style',
+			[
+				'label' => __( 'Divider Style', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'solid' => __( 'Solid', 'elementor' ),
+					'double' => __( 'Double', 'elementor' ),
+					'dotted' => __( 'Dotted', 'elementor' ),
+					'dashed' => __( 'Dashed', 'elementor' ),
+				],
+				'default' => 'solid',
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_color',
+			[
+				'label' => __( 'Divider Color', 'elementor-pro' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#ddd',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_weight',
+			[
+				'label' => __( 'Divider Weight', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 2,
+				],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 10,
+					],
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_width',
+			[
+				'label' => __( 'Divider Width', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_icon_style',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -125,32 +273,8 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => 'font-size: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'icon_align',
-			[
-				'label' => __( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-items' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-icon' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -202,7 +326,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'name' => 'icon_typography',
 				'label' => __( 'Typography', 'elementor' ),
-				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
