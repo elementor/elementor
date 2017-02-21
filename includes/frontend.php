@@ -185,9 +185,6 @@ class Frontend {
 
 		$this->enqueue_styles();
 		$this->enqueue_scripts();
-
-		// TODO: add JS to append the css to the `head` tag
-		$this->print_google_fonts();
 	}
 
 	public function print_google_fonts() {
