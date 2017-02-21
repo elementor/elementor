@@ -106,11 +106,14 @@ class Settings_Controls {
 		if ( empty( $field['html'] ) )
 			return;
 		?>
-		<div><?php echo $field['html']; ?></div>
+		<div id="<?php echo $field['id'];?>">
+			<div><?php echo $field['html']; ?></div>
 
-		<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
-		<?php if ( ! empty( $field['desc'] ) ) : ?>
-			<p class="description"><?php echo $field['desc']; ?></p>
-		<?php endif;
+			<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
+			<?php if ( ! empty( $field['desc'] ) ) : ?>
+				<p class="description"><?php echo $field['desc']; ?></p>
+			<?php endif; ?>
+		</div>
+		<?php
 	}
 }
