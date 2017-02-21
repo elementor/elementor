@@ -179,7 +179,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
-		include( ELEMENTOR_PATH . 'includes/coming-soon.php' );
+		include( ELEMENTOR_PATH . 'includes/under-construction.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -215,7 +215,7 @@ class Plugin {
 			new Admin();
 			new Tools();
 		} else {
-			new Coming_Soon();
+			new Under_Construction();
 		}
 	}
 
