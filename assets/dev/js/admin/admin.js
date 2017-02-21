@@ -127,31 +127,13 @@
 					} );
 			} );
 
-			$( '#elementor_coming_soon_template_id' ).on( 'change', 'select', function( event ) {
+			$( '#elementor_coming_soon_enabled' ).change( function( event ) {
 				event.preventDefault();
-				var $this = $( this ),
-					$spinner = $this.next( '.elementor-button-spinner' );
+				var $this = $( this );
 
-				$spinner.removeClass( 'elementor-hidden' ).addClass( 'loading' );
+				$this.parents( 'table' ).toggleClass( 'elementor-coming-soon-is-enabled', $this.is( ':checked' ) );
 
-				$.post( ajaxurl, {
-					action: 'elementor_coming_soon_template_id',
-					value:  $this.val(),
-					_nonce: $this.data( 'nonce' )
-				} )
-					.done( function( response ) {
-						$spinner.removeClass( 'loading' );
-
-						if ( response.success ) {
-							$spinner.addClass( 'success' );
-						}
-					} )
-					.always(function() {
-						window.setTimeout( function() {
-							$spinner.removeClass( 'success' ).addClass( 'elementor-hidden' );
-						}, 4000 );
-					});
-			} );
+			} ).change();
 		},
 
 		init: function() {
