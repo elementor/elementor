@@ -204,7 +204,7 @@ class Widget_Progress extends Widget_Base {
 			<span class="elementor-title"><?php echo $settings['title']; ?></span>
 		<?php } ?>
 
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?> role="timer">
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?> role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo $settings['percent']['size']; ?>">
 			<div <?php echo $this->get_render_attribute_string( 'progress-bar' ); ?>>
 				<span class="elementor-progress-text"><?php echo $settings['inner_text']; ?></span>
 				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
@@ -219,7 +219,7 @@ class Widget_Progress extends Widget_Base {
 		<# if ( settings.title ) { #>
 		<span class="elementor-title">{{{ settings.title }}}</span><#
 		} #>
-		<div class="elementor-progress-wrapper progress-{{ settings.progress_type }}" role="timer">
+		<div class="elementor-progress-wrapper progress-{{ settings.progress_type }}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{{ settings.percent.size }}}">
 			<div class="elementor-progress-bar" data-max="{{ settings.percent.size }}">
 				<span class="elementor-progress-text">{{{ settings.inner_text }}}</span>
 			<# if ( 'hide' !== settings.display_percentage ) { #>
