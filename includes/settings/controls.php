@@ -71,7 +71,7 @@ class Settings_Controls {
 		$defaults = [
 			'exclude' => [],
 		];
-		$field = wp_parse_args( $field, $defaults );
+		$field = array_merge( $defaults, $field );
 
 		$post_types_objects = get_post_types( [ 'public' => true ], 'objects' );
 		$field['options'] = [];
@@ -89,7 +89,7 @@ class Settings_Controls {
 		$defaults = [
 			'exclude' => [],
 		];
-		$field = wp_parse_args( $field, $defaults );
+		$field = array_merge( $defaults, $field );
 
 		$field['options'] = [];
 		foreach ( get_editable_roles() as $role_slug => $role_data ) {

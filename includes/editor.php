@@ -167,6 +167,8 @@ class Editor {
 		$plugin->frontend->register_scripts();
 		$plugin->frontend->enqueue_scripts();
 
+		$plugin->widgets_manager->enqueue_widgets_scripts();
+
 		wp_register_script(
 			'backbone-marionette',
 			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
@@ -273,7 +275,7 @@ class Editor {
 				'backbone-marionette',
 				'backbone-radio',
 				'perfect-scrollbar',
-				'jquery-easing',
+				//'jquery-easing',
 				'nprogress',
 				'tipsy',
 				'imagesloaded',
