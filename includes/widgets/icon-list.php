@@ -88,44 +88,26 @@ class Widget_Icon_List extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_icon_style',
+			'section_icon_list',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => __( 'List', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
-			'icon_color',
+			'space_between',
 			[
-				'label' => __( 'Icon Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
-				],
-			]
-		);
-
-		$this->add_control(
-			'icon_size',
-			[
-				'label' => __( 'Icon Size', 'elementor' ),
+				'label' => __( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 14,
-				],
 				'range' => [
 					'px' => [
-						'min' => 6,
+						'max' => 50,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
 				],
 			]
 		);
@@ -150,7 +132,14 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-items' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-item' => 'justify-content: {{VALUE}};',
+				],
+				'selectors_dictionary' => [
+					'left' => 'flex-start',
+					'right' => 'flex-end',
+				],
+			]
+		);
 
 		$this->add_control(
 			'divider',
@@ -244,6 +233,48 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_icon_style',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'icon_color',
+			[
+				'label' => __( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
+				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_size',
+			[
+				'label' => __( 'Icon Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 14,
+				],
+				'range' => [
+					'px' => [
+						'min' => 6,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -295,7 +326,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'name' => 'icon_typography',
 				'label' => __( 'Typography', 'elementor' ),
-				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
