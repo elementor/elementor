@@ -90,6 +90,39 @@ class Tools {
 				'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 			]
 		);
+
+		$coming_soon_section = 'elementor_coming_soon_section';
+		add_settings_section(
+			$coming_soon_section,
+			__( 'Coming Soon', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_coming_soon_template_id';
+		$current_template = Coming_Soon::get_page_id();
+
+		$html = '<select data-nonce="' . wp_create_nonce( 'elementor_coming_soon_template_id' ) . '"><option value="">— ' . __( 'Disabled', 'elementor-pro' ) . ' —</option>';
+
+		foreach ( get_pages() as $page ) {
+			$selected = selected( $page->ID, $current_template, false );
+			$html .= sprintf( '<option value="%1$s" %2$s >%3$s</option>', $page->ID, $selected, $page->post_title );
+		}
+
+		$html .= '</select> <span class="elementor-button-spinner elementor-hidden"></span>';
+
+		add_settings_field(
+			$field_id,
+			__( 'Choose Template', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$coming_soon_section,
+			[
+				'id'   => $field_id,
+				'type' => 'raw_html',
+				'html' => $html,
+			]
+		);
 	}
 
 	public function display_settings_page() {
@@ -146,6 +179,18 @@ class Tools {
 		}
 	}
 
+	public function elementor_coming_soon_template_id() {
+		check_ajax_referer( 'elementor_coming_soon_template_id', '_nonce' );
+
+		$success = Coming_Soon::update_page_id( $_POST['value'] );
+
+		if ( $success ) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
+		}
+	}
+
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
@@ -153,6 +198,7 @@ class Tools {
 		if ( ! empty( $_POST ) ) {
 			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
+			add_action( 'wp_ajax_elementor_coming_soon_template_id', [ $this, 'elementor_coming_soon_template_id' ] );
 		}
 	}
 }

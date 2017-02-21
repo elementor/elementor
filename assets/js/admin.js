@@ -127,6 +127,32 @@
 							} ).show();
 					} );
 			} );
+
+			$( '#elementor_coming_soon_template_id' ).on( 'change', 'select', function( event ) {
+				event.preventDefault();
+				var $this = $( this ),
+					$spinner = $this.next( '.elementor-button-spinner' );
+
+				$spinner.removeClass( 'elementor-hidden' ).addClass( 'loading' );
+
+				$.post( ajaxurl, {
+					action: 'elementor_coming_soon_template_id',
+					value:  $this.val(),
+					_nonce: $this.data( 'nonce' )
+				} )
+					.done( function( response ) {
+						$spinner.removeClass( 'loading' );
+
+						if ( response.success ) {
+							$spinner.addClass( 'success' );
+						}
+					} )
+					.always(function() {
+						window.setTimeout( function() {
+							$spinner.removeClass( 'success' ).addClass( 'elementor-hidden' );
+						}, 4000 );
+					});
+			} );
 		},
 
 		init: function() {
