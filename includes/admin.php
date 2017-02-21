@@ -288,7 +288,7 @@ class Admin {
 			$footer_text = sprintf(
 				/* translators: %s: link to plugin review */
 				__( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ),
-				'<a href="https://wordpress.org/support/view/plugin-reviews/elementor?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
 		}
 
