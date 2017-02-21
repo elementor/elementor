@@ -4,9 +4,9 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
-class Coming_Soon {
+class Under_Construction {
 
-	const OPTION_PREFIX = 'elementor_coming_soon_';
+	const OPTION_PREFIX = 'elementor_under_construction_';
 
 	public static function get( $option, $default = false ) {
 		return get_option( self::OPTION_PREFIX . $option, $default );

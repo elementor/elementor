@@ -260,11 +260,11 @@ body.elementor-editor-inactive #elementor-editor {
   font-family: eicon;
   font-size: 17px; }
 
-tr[class^="elementor_coming_soon"] {
+tr[class^="elementor_under_construction"] {
   display: none; }
-  tr[class^="elementor_coming_soon"].elementor_coming_soon_enabled {
+  tr[class^="elementor_under_construction"].elementor_under_construction_enabled {
     display: block; }
-  .elementor-coming-soon-is-enabled tr[class^="elementor_coming_soon"] {
+  .elementor---is-enabled tr[class^="elementor_under_construction"] {
     display: block; }
 
 /*= Elementor Message

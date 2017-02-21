@@ -127,11 +127,11 @@
 					} );
 			} );
 
-			$( '#elementor_coming_soon_enabled' ).change( function( event ) {
+			$( '#elementor_under_construction_enabled' ).change( function( event ) {
 				event.preventDefault();
 				var $this = $( this );
 
-				$this.parents( 'table' ).toggleClass( 'elementor-coming-soon-is-enabled', $this.is( ':checked' ) );
+				$this.parents( 'table' ).toggleClass( 'elementor---is-enabled', $this.is( ':checked' ) );
 
 			} ).change();
 		},

@@ -95,21 +95,21 @@ class Tools {
 			]
 		);
 
-		$coming_soon_section = 'elementor_coming_soon_section';
+		$under_construction_section = 'elementor_under_construction_section';
 		add_settings_section(
-			$coming_soon_section,
-			__( 'Coming Soon', 'elementor' ),
+			$under_construction_section,
+			__( 'Under Construction', 'elementor' ),
 			'__return_empty_string', // No need intro text for this section right now
 			self::PAGE_ID
 		);
 
-		$field_id = 'elementor_coming_soon_enabled';
+		$field_id = 'elementor_under_construction_enabled';
 		add_settings_field(
 			$field_id,
 			__( 'Enable', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$coming_soon_section,
+			$under_construction_section,
 			[
 				'id'  => $field_id,
 				'class' => $field_id,
@@ -120,7 +120,7 @@ class Tools {
 
 		register_setting( self::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_coming_soon_template_id';
+		$field_id = 'elementor_under_construction_template_id';
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 		$templates = array_filter( $source->get_items(), function( $template ) {
 			return 'local' === $template['source'] && 'page' === $template['type'];
@@ -136,7 +136,7 @@ class Tools {
 			__( 'Choose Template', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$coming_soon_section,
+			$under_construction_section,
 			[
 				'id'  => $field_id,
 				'class' => $field_id,
@@ -146,34 +146,34 @@ class Tools {
 		);
 		register_setting( self::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_coming_soon_mode';
+		$field_id = 'elementor_under_construction_mode';
 
 		add_settings_field(
 			$field_id,
 			__( 'Choose Mode', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$coming_soon_section,
+			$under_construction_section,
 			[
 				'id' => $field_id,
 				'class' => $field_id,
 				'type' => 'select',
 				'options' => [
-					'coming_soon' => __( 'Coming Soon', 'elementor' ),
+					'under_construction' => __( 'Under Construction', 'elementor' ),
 					'maintenance' => __( 'Maintenance', 'elementor' ),
 				],
-				'desc' => __( 'Coming soon mode sends HTTP 200, Maintenance mode sends HTTP 503', 'elementor' ),
+				'desc' => __( 'Under Construction mode sends HTTP 200, Maintenance mode sends HTTP 503', 'elementor' ),
 			]
 		);
 		register_setting( self::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_coming_soon_exclude_roles';
+		$field_id = 'elementor_under_construction_exclude_roles';
 		add_settings_field(
 			$field_id,
 			__( 'Exclude Roles', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			self::PAGE_ID,
-			$coming_soon_section,
+			$under_construction_section,
 			[
 				'id' => $field_id,
 				'class' => $field_id,
