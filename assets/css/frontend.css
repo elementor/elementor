@@ -13,6 +13,10 @@
   content: "\f160";
   top: 2px; }
 
+#wp-admin-bar-elementor-maintenance-edit .ab-item:before {
+  content: "\f464";
+  top: 2px; }
+
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
   content: "\e800";
   font-family: eicon;

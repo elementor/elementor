@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
@@ -142,17 +141,26 @@ class Under_Construction {
 	}
 
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
+
+		if ( self::MODE_MAINTENANCE === self::get( 'mode' ) ) {
+			$wp_admin_bar->add_node( [
+				'id' => 'elementor-maintenance-on',
+				'title' => __( 'Maintenance is On', 'elementor' ),
+				'href' => Tools::get_url() . '#elementor_under_construction_enabled',
+			] );
+		}
+
 		$wp_admin_bar->add_node( [
-			'id' => 'elementor-maintenance-on',
-			'title' => __( 'Maintenance is On', 'elementor' ),
-			'href' => Tools::get_url() . '#elementor_under_construction_enabled',
+			'id' => 'elementor-maintenance-edit',
+			'title' => __( 'Edit Maintenance Template', 'elementor' ),
+			'href' => Utils::get_edit_link( self::get( 'template_id' ) ),
 		] );
 	}
 
 	public function __construct() {
 		$is_enabled = self::get( 'enabled' );
 
-		if ( $is_enabled  && self::MODE_MAINTENANCE === self::get( 'mode' ) ) {
+		if ( $is_enabled ) {
 			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
 		}
