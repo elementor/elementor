@@ -8,6 +8,9 @@ class Under_Construction {
 
 	const OPTION_PREFIX = 'elementor_under_construction_';
 
+	const MODE_MAINTENANCE = 'maintenance';
+	const MODE_COMING_SOON = 'coming_soon';
+
 	public static function get( $option, $default = false ) {
 		return get_option( self::OPTION_PREFIX . $option, $default );
 	}
@@ -34,7 +37,130 @@ class Under_Construction {
 		return ELEMENTOR_PATH . '/includes/templates/empty.php';
 	}
 
+	public function register_settings_fields() {
+		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
+		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+
+		$under_construction_section = 'elementor_under_construction_section';
+		add_settings_section(
+			$under_construction_section,
+			__( 'Under Construction', 'elementor' ),
+			'__return_empty_string', // No need intro text for this section right now
+			Tools::PAGE_ID
+		);
+
+		$field_id = 'elementor_under_construction_enabled';
+		add_settings_field(
+			$field_id,
+			__( 'Enable', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			Tools::PAGE_ID,
+			$under_construction_section,
+			[
+				'id'  => $field_id,
+				'class' => $field_id,
+				'type' => 'checkbox',
+				'value' => 1,
+			]
+		);
+
+		register_setting( Tools::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_under_construction_template_id';
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$templates = array_filter( $source->get_items(), function( $template ) {
+			return 'local' === $template['source'] && 'page' === $template['type'];
+		} );
+
+		$options = [];
+		foreach ( $templates as $template ) {
+			$options[ $template['template_id'] ] = $template['title'];
+		}
+
+		add_settings_field(
+			$field_id,
+			__( 'Choose Template', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			Tools::PAGE_ID,
+			$under_construction_section,
+			[
+				'id'  => $field_id,
+				'class' => $field_id,
+				'type' => 'select',
+				'options' => $options,
+			]
+		);
+		register_setting( Tools::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_under_construction_mode';
+
+		add_settings_field(
+			$field_id,
+			__( 'Choose Mode', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			Tools::PAGE_ID,
+			$under_construction_section,
+			[
+				'id' => $field_id,
+				'class' => $field_id,
+				'type' => 'select',
+				'options' => [
+					'under_construction' => __( 'Under Construction', 'elementor' ),
+					'maintenance' => __( 'Maintenance', 'elementor' ),
+				],
+				'desc' => __( 'Under Construction mode sends HTTP 200, Maintenance mode sends HTTP 503', 'elementor' ),
+			]
+		);
+		register_setting( Tools::PAGE_ID, $field_id );
+
+		$field_id = 'elementor_under_construction_exclude_roles';
+		add_settings_field(
+			$field_id,
+			__( 'Exclude Roles', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			Tools::PAGE_ID,
+			$under_construction_section,
+			[
+				'id' => $field_id,
+				'class' => $field_id,
+				'type' => 'checkbox_list_roles',
+			]
+		);
+
+		register_setting( Tools::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
+	}
+
+	public function admin_notices() {
+		$tools_url = Tools::get_url() . '#elementor_under_construction_enabled';
+		?>
+		<div class="error">
+			<p>
+				<?php echo sprintf( __( 'The Maintenance Mode is active. Please don\'t forget to <a href="%s">deactivate</a> as soon as you are done.', 'elementor' ), $tools_url ) ?>
+			</p>
+		</div>
+		<?php
+	}
+
+	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
+		$wp_admin_bar->add_node( [
+			'id' => 'elementor-maintenance-on',
+			'title' => __( 'Maintenance is On', 'elementor' ),
+			'href' => Tools::get_url() . '#elementor_under_construction_enabled',
+		] );
+	}
+
 	public function __construct() {
+		$is_enabled = self::get( 'enabled' );
+
+		if ( $is_enabled  && self::MODE_MAINTENANCE === self::get( 'mode' ) ) {
+			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+		}
+
+		if ( is_admin() ) {
+			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
+		}
+
 		if ( self::get( 'enabled' ) ) {
 			$user = wp_get_current_user();
 			$exclude_roles = self::get( 'exclude_roles', [] );

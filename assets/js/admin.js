@@ -132,7 +132,7 @@
 				event.preventDefault();
 				var $this = $( this );
 
-				$this.parents( 'table' ).toggleClass( 'elementor---is-enabled', $this.is( ':checked' ) );
+				$this.parents( 'table' ).toggleClass( 'elementor-under-construction-is-enabled', $this.is( ':checked' ) );
 
 			} ).change();
 		},

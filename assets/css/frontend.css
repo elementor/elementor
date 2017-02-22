@@ -9,6 +9,10 @@
     height: 100%;
     width: 100%; }
 
+#wp-admin-bar-elementor-maintenance-on .ab-item:before {
+  content: "\f160";
+  top: 2px; }
+
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
   content: "\e800";
   font-family: eicon;
