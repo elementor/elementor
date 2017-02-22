@@ -226,18 +226,18 @@ class Widget_Accordion extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 		?>
-		<div class="elementor-accordion">
+		<div class="elementor-accordion" role="tablist">
 			<?php
 			$counter = 1; ?>
 			<?php foreach ( $settings['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">
+					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
-					<div class="elementor-accordion-content elementor-clearfix" data-section="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div class="elementor-accordion-content elementor-clearfix" data-section="<?php echo $counter; ?>" role="tabpanel"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php
 				$counter++;
@@ -248,19 +248,19 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function _content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
+		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
 				var counter = 1;
 				_.each( settings.tabs, function( item ) { #>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-section="{{ counter }}">
+						<div class="elementor-accordion-title" data-section="{{ counter }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
 							{{{ item.tab_title }}}
 						</div>
-						<div class="elementor-accordion-content elementor-clearfix" data-section="{{ counter }}">{{{ item.tab_content }}}</div>
+						<div class="elementor-accordion-content elementor-clearfix" data-section="{{ counter }}" role="tabpanel">{{{ item.tab_content }}}</div>
 					</div>
 				<#
 					counter++;
