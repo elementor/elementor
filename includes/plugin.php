@@ -44,6 +44,11 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
+	 * @var Under_Construction
+	 */
+	public $under_construction;
+
+	/**
 	 * @var Settings
 	 */
 	public $settings;
@@ -211,11 +216,11 @@ class Plugin {
 
 		$this->templates_manager = new TemplateLibrary\Manager();
 
+		$this->under_construction = new Under_Construction();
+
 		if ( is_admin() ) {
 			new Admin();
 			new Tools();
-		} else {
-			new Under_Construction();
 		}
 	}
 

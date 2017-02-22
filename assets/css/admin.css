@@ -260,11 +260,12 @@ body.elementor-editor-inactive #elementor-editor {
   font-family: eicon;
   font-size: 17px; }
 
+/* Under Construction Feature */
 tr[class^="elementor_under_construction"] {
   display: none; }
   tr[class^="elementor_under_construction"].elementor_under_construction_enabled {
     display: block; }
-  .elementor---is-enabled tr[class^="elementor_under_construction"] {
+  .elementor-under-construction-is-enabled tr[class^="elementor_under_construction"] {
     display: block; }
 
 /*= Elementor Message

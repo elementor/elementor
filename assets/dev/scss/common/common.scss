@@ -11,3 +11,10 @@
 		width: 100%;
 	}
 }
+
+#wp-admin-bar-elementor-maintenance-on {
+	.ab-item:before{
+		content: "\f160";
+		top: 2px;
+	}
+}
