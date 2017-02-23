@@ -43,22 +43,6 @@ class Widget_Login extends Widget_Base {
 		);
 
 		$this->add_control(
-			'label_position',
-			[
-				'label' => __( 'Label Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'above' => __( 'Above', 'elementor' ),
-					'inline' => __( 'Inline', 'elementor' ),
-				],
-				'default' => 'above',
-				'condition' => [
-					'show_labels!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
 			'input_size',
 			[
 				'label' => __( 'Input Size', 'elementor' ),
@@ -195,7 +179,7 @@ class Widget_Login extends Widget_Base {
 						'icon' => 'fa fa-align-justify',
 					],
 				],
-				'prefix_class' => 'elementor%s-align-',
+				'prefix_class' => 'elementor%s-button-align-',
 				'default' => '',
 			]
 		);
@@ -630,7 +614,6 @@ class Widget_Login extends Widget_Base {
 				'wrapper' => [
 					'class' => [
 						'elementor-form-fields-wrapper',
-						'elementor-labels-' . $settings['label_position'],
 					],
 				],
 				'field-group' => [
@@ -654,6 +637,9 @@ class Widget_Login extends Widget_Base {
 						'elementor-button',
 					],
 					'name' => 'wp-submit',
+				],
+				'user_label' => [
+					'for' => 'user',
 				],
 				'user_input' => [
 					'type' => 'text',
@@ -703,7 +689,9 @@ class Widget_Login extends Widget_Base {
 		$current_url = remove_query_arg( 'fake_arg' );
 		if ( is_user_logged_in() && ! Plugin::$instance->editor->is_edit_mode() ) {
 			$current_user = wp_get_current_user();
-			echo sprintf( __( 'You are Logged in as %1$s (<a href="%2$s">Logout</a>)', 'elementor' ), $current_user->display_name, wp_logout_url( $current_url ) );
+			echo '<div class="elementor-login">' .
+				sprintf( __( 'You are Logged in as %1$s (<a href="%2$s">Logout</a>)', 'elementor' ), $current_user->display_name, wp_logout_url( $current_url ) ) .
+				'</div>';
 			return;
 		}
 
@@ -726,121 +714,94 @@ class Widget_Login extends Widget_Base {
 				</div>
 				<div <?php echo $this->get_render_attribute_string( 'field-group' ); ?>>
 					<?php
-					if ( $settings['show_labels'] ) {
+					if ( $settings['show_labels'] ) :
 						echo '<label ' . $this->get_render_attribute_string( 'password_label' ) . '>' . $settings['password_label'] . '</label>';
-					}
+					endif;
 
 					echo '<input size="1" ' . $this->get_render_attribute_string( 'password_input' ) . '>';
-
 					?>
 				</div>
 
-				<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
-				<p class="forgetmenot">
-					<label for="rememberme">
-						<input name="rememberme" type="checkbox" id="rememberme" value="forever">
-						Remember Me
-					</label>
-				</p>
-				</div>
-
+				<?php if ( 'yes' === $settings['show_remember_me'] ) : ?>
+					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
+						<p class="forgetmenot">
+							<label for="rememberme">
+								<input name="rememberme" type="checkbox" id="rememberme" value="forever">
+								<?php echo __( 'Remember Me', 'elementor' ); ?>
+							</label>
+						</p>
+					</div>
+				<?php endif; ?>
+				
 				<div <?php echo $this->get_render_attribute_string( 'submit-group' ); ?>>
 					<button type="submit" <?php echo $this->get_render_attribute_string( 'button' ); ?>>
-							<?php
-							if ( ! empty( $settings['button_text'] ) ) : ?>
+							<?php if ( ! empty( $settings['button_text'] ) ) : ?>
 								<span class="elementor-button-text"><?php echo $settings['button_text']; ?></span>
 							<?php endif; ?>
 					</button>
 				</div>
+
+				<?php if ( 'yes' === $settings['show_lost_password'] ) : ?>
+					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
+						<a class="elementor-lost-password" href="<?php echo wp_lostpassword_url( $current_url ); ?>">
+							<?php echo __( 'Lost your password?', 'elementor' ); ?>
+						</a>
+					</div>
+				<?php endif; ?>
 			</div>
 		</form>
 		<?php
 	}
 
-	protected function _content_template2() {
+	protected function _content_template() {
+		$current_url = remove_query_arg( 'fake_arg' );
 		?>
-		<form class="elementor-login">
-			<div class="elementor-form-fields-wrapper elementor-labels-{{settings.label_position}}">
+		<div class="elementor-login">
+			<div class="elementor-form-fields-wrapper">
 				<#
-					labelVisibility = '',
-					placeholder = '',
-					required = '',
-					inputField = '',
-					fieldGroupClasses = 'elementor-field-group elementor-column elementor-field-type-' + item.field_type;
-
-					fieldGroupClasses += ' elementor-col-' + ( ( '' !== item.width ) ? item.width : '100' );
-
-					if (  settings.show_labels ) {
-
-					}
-
-					if ( item.required ) {
-					required = 'required';
-					fieldGroupClasses += ' elementor-field-required';
-
-
-					}
-
-					if ( item.placeholder ) {
-					placeholder = 'placeholder="' + _.escape( item.placeholder ) + '"';
-					}
-
-					switch ( item.field_type ) {
-					case 'textarea':
-					inputField = '
-				<textarea class="elementor-field elementor-field-textual elementor-size-' + settings.input_size + ' ' + itemClasses + '" name="form_field_' + i + '" id="form_field_' + i + '" rows="' + item.rows + '" ' + required + ' ' + placeholder + '></textarea>';
-				break;
-
-				default:
-				inputField = elementor.hooks.applyFilters( 'elementor_pro/forms/content_template/field/' + item.field_type, '', item, i, settings );
-				}
-
-				if ( inputField ) {
+					fieldGroupClasses = 'elementor-field-group elementor-column elementor-col-100 elementor-field-type-text';
 				#>
 				<div class="{{ fieldGroupClasses }}">
-
-					<# if ( item.field_label ) { #>
-						<label class="elementor-field-label" for="form_field_{{ i }}" {{{ labelVisibility }}}>{{{ item.field_label }}}</label>
+					<# if ( settings.show_labels ) { #>
+						<label class="elementor-field-label" for="user" >{{{ settings.user_label }}}</label>
 						<# } #>
-
-							itemClasses = 'elementor-field-textual ' + itemClasses;
-							inputField = '<input size="1" type="' + item.field_type + '" class="elementor-field elementor-size-' + settings.input_size + ' ' + itemClasses + '" name="form_field_' + i + '" id="form_field_' + i + '" ' + required + ' ' + placeholder + ' >';
+							<input size="1" type="text" id="user" placeholder="{{ settings.user_placeholder }}" class="elementor-field elementor-field-textual elementor-size-{{ settings.input_size }}" />
 				</div>
-				<#
-					}
+				<div class="{{ fieldGroupClasses }}">
+					<# if ( settings.show_labels ) { #>
+						<label class="elementor-field-label" for="password" >{{{ settings.password_label }}}</label>
+						<# } #>
+							<input size="1" type="password" id="password" placeholder="{{ settings.password_placeholder }}" class="elementor-field elementor-field-textual elementor-size-{{ settings.input_size }}" />
+				</div>
 
-
-					var buttonClasses = 'elementor-field-group elementor-column elementor-field-type-submit';
-
-					buttonClasses += ' elementor-col-' + ( ( '' !== settings.button_width ) ? settings.button_width : '100' );
-
-					if ( settings.button_width_tablet ) {
-					buttonClasses += ' elementor-md-' + settings.button_width_tablet;
-					}
-
-					if ( settings.button_width_mobile ) {
-					buttonClasses += ' elementor-sm-' + settings.button_width_mobile;
-					}
-
-					#>
-
-					<div class="{{ buttonClasses }}">
-						<button type="submit" class="elementor-button elementor-size-{{ settings.button_size }} elementor-button-{{ settings.button_type }} elementor-animation-{{ settings.button_hover_animation }}">
-							<span>
-								<# if ( settings.button_icon ) { #>
-									<span class="elementor-button-icon elementor-align-icon-{{ settings.button_icon_align }}">
-										<i class="{{ settings.button_icon }}"></i>
-									</span>
-								<# } #>
-
-								<# if ( settings.button_text ) { #>
-									<span class="elementor-button-text">{{{ settings.button_text }}}</span>
-								<# } #>
-							</span>
-						</button>
+				<# if ( settings.show_remember_me ) { #>
+					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
+						<p class="forgetmenot">
+							<label for="rememberme">
+								<input name="rememberme" type="checkbox" id="rememberme" value="forever">
+								Remember Me
+							</label>
+						</p>
 					</div>
+				<# } #>
+
+				<div class="'elementor-field-group elementor-column elementor-field-type-submit elementor-col-100">
+					<button type="submit" class="elementor-button elementor-size-{{ settings.button_size }}">
+						<# if ( settings.button_text ) { #>
+							<span class="elementor-button-text">{{ settings.button_text }}</span>
+						<# } #>
+					</button>
+				</div>
+
+				<# if ( settings.show_lost_password ) { #>
+					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
+						<a class="elementor-lost-password" href="<?php echo wp_lostpassword_url( $current_url ); ?>">
+							<?php echo __( 'Lost your password?', 'elementor' ); ?>
+						</a>
+					</div>
+				<# } #>
 			</div>
-		</form>
+		</div>
 		<?php
 	}
 
