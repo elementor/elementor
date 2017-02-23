@@ -127,6 +127,14 @@
 							} ).show();
 					} );
 			} );
+
+			$( '#elementor_under_construction_enabled' ).change( function( event ) {
+				event.preventDefault();
+				var $this = $( this );
+
+				$this.parents( 'table' ).toggleClass( 'elementor-under-construction-is-enabled', $this.is( ':checked' ) );
+
+			} ).change();
 		},
 
 		init: function() {

@@ -97,6 +97,9 @@
   font-size: 16px;
   color: #a4afb7; }
 
+.elementor-hidden {
+  display: none; }
+
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
 
@@ -233,7 +236,7 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 11px;
   letter-spacing: 5px; }
 
-button.elementor-button-spinner:before {
+.elementor-button-spinner:before {
   font: normal 20px/.5 dashicons;
   speak: none;
   display: inline-block;
@@ -244,11 +247,11 @@ button.elementor-button-spinner:before {
   vertical-align: top;
   content: "\f463"; }
 
-button.elementor-button-spinner.loading:before {
+.elementor-button-spinner.loading:before {
   -webkit-animation: rotation 1s infinite linear;
   animation: rotation 1s infinite linear; }
 
-button.elementor-button-spinner.success:before {
+.elementor-button-spinner.success:before {
   content: "\f147";
   color: #46b450; }
 
@@ -256,6 +259,14 @@ button.elementor-button-spinner.success:before {
   content: "\e801";
   font-family: eicon;
   font-size: 17px; }
+
+/* Under Construction Feature */
+tr[class^="elementor_under_construction"] {
+  display: none; }
+  tr[class^="elementor_under_construction"].elementor_under_construction_enabled {
+    display: block; }
+  .elementor-under-construction-is-enabled tr[class^="elementor_under_construction"] {
+    display: block; }
 
 /*= Elementor Message
 ---------------------------------------*/
