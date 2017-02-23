@@ -4795,6 +4795,11 @@ var HotKeys = function( $ ) {
 				return;
 			}
 
+			// Fix for some keyboard sources that consider alt key as ctrl key
+			if ( ! handler.allowAltKey && event.altKey ) {
+				return;
+			}
+
 			event.preventDefault();
 
 			handler.handle( event );
