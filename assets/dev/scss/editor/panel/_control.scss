@@ -66,7 +66,7 @@
 		&.elementor-control-deprecated {
 			color: $editor-warning;
 
-			.elementor-control-description {
+			.elementor-control-field-description {
 				color: $editor-warning;
 			}
 		}
@@ -174,7 +174,7 @@
 		}
 	}
 
-	.elementor-control-description {
+	.elementor-control-field-description {
 		@extend .elementor-descriptor;
 
 		margin-top: 10px;
@@ -931,7 +931,7 @@
 	// Image dimensions control
 	.elementor-control-type-image_dimensions {
 
-		.elementor-control-description {
+		.elementor-control-field-description {
 			margin: 0 0 15px;
 			line-height: 1.4;
 		}
