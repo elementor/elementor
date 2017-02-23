@@ -112,7 +112,7 @@ class Frontend {
 	public function register_styles() {
 		do_action( 'elementor/frontend/before_register_styles' );
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
