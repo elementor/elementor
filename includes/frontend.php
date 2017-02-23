@@ -54,6 +54,8 @@ class Frontend {
 	}
 
 	public function register_scripts() {
+		do_action( 'elementor/frontend/before_register_scripts' );
+
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
@@ -108,6 +110,8 @@ class Frontend {
 	}
 
 	public function register_styles() {
+		do_action( 'elementor/frontend/before_register_styles' );
+
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
@@ -159,6 +163,8 @@ class Frontend {
 	}
 
 	public function enqueue_styles() {
+		do_action( 'elementor/frontend/before_enqueue_styles' );
+
 		wp_enqueue_style( 'elementor-icons' );
 		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
