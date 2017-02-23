@@ -487,4 +487,12 @@ tr[class^="elementor_under_construction"] {
 #elementor-import-template-title {
   font-size: 18px;
   color: #555d66; }
+
+#wp-admin-bar-elementor-maintenance-on .ab-item:before {
+  content: "\f160";
+  top: 2px; }
+
+#wp-admin-bar-elementor-maintenance-edit .ab-item:before {
+  content: "\f464";
+  top: 2px; }
 /*# sourceMappingURL=admin.css.map */

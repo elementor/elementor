@@ -141,18 +141,16 @@ class Under_Construction {
 	}
 
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-
-		if ( self::MODE_MAINTENANCE === self::get( 'mode' ) ) {
-			$wp_admin_bar->add_node( [
-				'id' => 'elementor-maintenance-on',
-				'title' => __( 'Maintenance is On', 'elementor' ),
-				'href' => Tools::get_url() . '#elementor_under_construction_enabled',
-			] );
-		}
+		$wp_admin_bar->add_node( [
+			'id' => 'elementor-maintenance-on',
+			'title' => __( 'Your site is locked', 'elementor' ),
+			'href' => Tools::get_url() . '#elementor_under_construction_enabled',
+		] );
 
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
-			'title' => __( 'Edit Maintenance Template', 'elementor' ),
+			'parent' => 'elementor-maintenance-on',
+			'title' => __( 'Edit Template', 'elementor' ),
 			'href' => Utils::get_edit_link( self::get( 'template_id' ) ),
 		] );
 	}
