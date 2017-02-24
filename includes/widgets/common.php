@@ -75,11 +75,21 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'label_block' => true,
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'_css_classes',
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-
 				'default' => '',
 				'prefix_class' => '',
 				'label_block' => true,
@@ -193,6 +203,6 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_section();
 
-		Plugin::instance()->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 }

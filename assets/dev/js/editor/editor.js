@@ -60,9 +60,10 @@ App = Marionette.Application.extend( {
 			Code: require( 'elementor-views/controls/code' ),
 			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
 			Structure: require( 'elementor-views/controls/structure' ),
-			Animation: require( 'elementor-views/controls/animation' ),
-			Hover_animation: require( 'elementor-views/controls/animation' ),
-			Order: require( 'elementor-views/controls/order' )
+			Animation: require( 'elementor-views/controls/select2' ),
+			Hover_animation: require( 'elementor-views/controls/select2' ),
+			Order: require( 'elementor-views/controls/order' ),
+			Switcher: require( 'elementor-views/controls/switcher' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
@@ -175,6 +176,8 @@ App = Marionette.Application.extend( {
 		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
 
 		elementorFrontend.init();
+
+		elementorFrontend.elementsHandler.initHandlers();
 	},
 
 	initClearPageDialog: function() {
@@ -352,12 +355,12 @@ App = Marionette.Application.extend( {
 
 	setFlagEditorChange: function( status ) {
 		elementor.channels.editor
-			.reply( 'change', status )
-			.trigger( 'change', status );
+			.reply( 'status', status )
+			.trigger( 'status:change', status );
 	},
 
 	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'change' ) );
+		return ( true === elementor.channels.editor.request( 'status' ) );
 	},
 
 	setWorkSaver: function() {

@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 1.1.7
+Stable tag: 1.2.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -36,7 +36,8 @@ Elementor comes with an exclusive toolset, that lets you create truly a responsi
 Never lose your page designs again! Elementor includes a Revision History feature, which means every time you click on the save button, a new revision is saved. You can always trace your steps and switch back and forth between versions. All revisions are seen visually, so you can visually compare between versions and choose the best one!
 
 > <strong>Elementor Pro</strong><br />
-> We've made sure the free Elementor offers the best possible solution for designing WordPress. Elementor Pro is the next step, and extends the basic features even further. Features you won't get anywhere else: Live form design, posts and portfolio widgets, the faster slider ever, WooCommerce widgets, global templates, custom CSS and much more. [Click here to buy the ultimate page builder for WordPress!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+> We've made sure the free Elementor offers the best possible solution for designing WordPress. Elementor Pro is the next step, and extends the basic features even further.<br />
+> Features you won't get anywhere else: Live form design, posts and portfolio widgets, the faster slider ever, WooCommerce widgets, global templates, custom CSS and much more. [Click here to buy the ultimate page builder for WordPress!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 
 = 28 widgets and counting =
 We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
@@ -56,7 +57,7 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 - **Icon List**. A bullet list with any chosen icon and text.
 - **Counter**. Show stats and numbers in an escalating manner.
 - **Progress Bar**. Include an escalating progress bar.
-- **Tabs**. Multiple tabs that display different pieces of content.
+- **Tabs**. Vertical or horizontal tabs that display different pieces of content.
 - **Accordion**. A collapsable display of content.
 - **Toggle**. Like Accordion, for FAQ pages.
 - **Alert**. A colored alert box to draw the attention of the visitor.
@@ -122,6 +123,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 * PHP version 5.6 or greater
 * MySQL version 5.6 or greater
+* WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
 https://www.youtube.com/watch?v=Ypn6fltn_7s
 
@@ -170,6 +172,33 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 == Changelog ==
+
+= 1.2.3 - 14.02.2017 =
+* Fix! - Typography group data render ([Topic](https://wordpress.org/support/topic/erro-after-upgrading-to-version-1-2-2/))
+
+= 1.2.2 - 14.02.2017 =
+* Tweak! - Added filter to change the menu anchor distance
+* Tweak! - Regenerate CSS run after editor saved for quicker saving
+* Tweak! - Major performance improvement by optimizing backend method calls
+* Fix! - Selector `elementor:after` added spacing after the elementor content
+* Fix! - Removed inline CSS from default section in frontend
+
+= 1.2.1 - 08.02.2017 =
+* Fix! - Change on Repeater control is not effect in the preview
+* Fix! - When you add a widget base on remote only is render twice
+
+= 1.2.0 - 01.02.2017 =
+* New! - Added Gradient Background for Section and Column ([#71](https://github.com/pojome/elementor/issues/71))
+* New! - Added full caption functionality to Image Carousel widget ([#1212](https://github.com/pojome/elementor/issues/1212), [#1124](https://github.com/pojome/elementor/issues/1124), [#1197](https://github.com/pojome/elementor/issues/1197))
+* New! - Added Custom Element ID control for all elements ([#939](https://github.com/pojome/elementor/issues/939))
+* New! - Added Vertical layout option for Tabs widget ([#449](https://github.com/pojome/elementor/issues/449))
+* Tweak! - Elementor now generates an external CSS file instead of inline CSS for global fonts, colors and settings (Part 2 of [#325](https://github.com/pojome/elementor/issues/325))
+* Tweak! - Added Content Position option for each column
+* Tweak! - Regenerate CSS after running Replace URL
+* Fix! - Tabs on mobile now work like an Accordion widget to improve responsive design ([#443](https://github.com/pojome/elementor/issues/443))
+* Fix! - Improve query in Replace URL for some configurations ([#1191](https://github.com/pojome/elementor/issues/1191))
+* Fix! - Added `none` option for Text Transform typography control
+* Fix! - Bug when some controls left empty in Testimonial widget
 
 = 1.1.7 - 25.01.2017 =
 * Tweak! - Change `box-shadow` type control from select to switcher

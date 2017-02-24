@@ -1,6 +1,7 @@
 /* global elementorFrontendConfig */
 ( function( $ ) {
-	var EventManager = require( '../utils/hooks' ),
+	var elements = {},
+		EventManager = require( '../utils/hooks' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
@@ -8,50 +9,29 @@
 		var self = this,
 			scopeWindow = window;
 
-		var addGlobalHandlers = function() {
-			self.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
-			self.hooks.addAction( 'frontend/element_ready/widget', require( 'elementor-frontend/handlers/widget' ) );
-		};
-
-		var addElementsHandlers = function() {
-			$.each( self.handlers, function( elementName, funcCallback ) {
-				self.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
-			} );
-		};
-
-		var runElementsHandlers = function() {
-			var $elements;
-
-			if ( self.isEditMode() ) {
-				// Elements outside from the Preview
-				$elements = self.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
-			} else {
-				$elements = $( '.elementor-element' );
-			}
-
-			$elements.each( function() {
-				self.elementsHandler.runReadyTrigger( $( this ) );
-			} );
-		};
-
-		// element-type.skin-type
-		this.handlers = {
-			// Elements
-			'section': require( 'elementor-frontend/handlers/section' ),
-
-			// Widgets
-			'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
-			'alert.default': require( 'elementor-frontend/handlers/alert' ),
-			'counter.default': require( 'elementor-frontend/handlers/counter' ),
-			'progress.default': require( 'elementor-frontend/handlers/progress' ),
-			'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
-			'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
-			'video.default': require( 'elementor-frontend/handlers/video' ),
-			'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-			'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
-		};
-
 		this.config = elementorFrontendConfig;
+
+		this.hooks = new EventManager();
+
+		var initElements = function() {
+			elements.$document = $( self.getScopeWindow().document );
+
+			elements.$elementor = elements.$document.find( '.elementor' );
+		};
+
+		var initOnReadyComponents = function() {
+			self.utils = new Utils( $ );
+
+			self.elementsHandler = new ElementsHandler( $ );
+		};
+
+		this.init = function() {
+			initElements();
+
+			initOnReadyComponents();
+
+			self.hooks.doAction( 'init' );
+		};
 
 		this.getScopeWindow = function() {
 			return scopeWindow;
@@ -63,18 +43,6 @@
 
 		this.isEditMode = function() {
 			return self.config.isEditMode;
-		};
-
-		this.hooks = new EventManager();
-		this.elementsHandler = new ElementsHandler( $ );
-		this.utils = new Utils( $ );
-
-		this.init = function() {
-			addGlobalHandlers();
-
-			addElementsHandlers();
-
-			runElementsHandlers();
 		};
 
 		// Based on underscore function
@@ -121,13 +89,35 @@
 				return result;
 			};
 		};
+
+		this.addListenerOnce = function( listenerID, event, callback, to ) {
+			if ( ! to ) {
+				to = $( self.getScopeWindow() );
+			}
+
+			if ( ! self.isEditMode() ) {
+				to.on( event, callback );
+
+				return;
+			}
+
+			if ( to instanceof jQuery ) {
+				var eventNS = event + '.' + listenerID;
+
+				to.off( eventNS ).on( eventNS, callback );
+			} else {
+				to.off( event, null, listenerID ).on( event, callback, listenerID );
+			}
+		};
+
+		this.getCurrentDeviceMode = function() {
+			return getComputedStyle( elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
+		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
 } )( jQuery );
 
-jQuery( function() {
-	if ( ! elementorFrontend.isEditMode() ) {
-		elementorFrontend.init();
-	}
-} );
+if ( ! elementorFrontend.isEditMode() ) {
+	jQuery( elementorFrontend.init );
+}

@@ -6,7 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Settings {
 
 	const PAGE_ID = 'elementor';
+
 	const MENU_PRIORITY_GO_PRO = 502;
+
+	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
 
 	public static function get_url() {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID );
@@ -157,6 +160,20 @@ class Settings {
 		);
 
 		register_setting( self::PAGE_ID, $field_id );
+
+		add_settings_field(
+			self::UPDATE_TIME_FIELD,
+			'',
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => self::UPDATE_TIME_FIELD,
+				'type' => 'hidden',
+			]
+		);
+
+		register_setting( self::PAGE_ID, self::UPDATE_TIME_FIELD, [ 'sanitize_callback' => 'time' ] );
 	}
 
 	public function register_improve_elementor_settings() {
@@ -200,6 +217,7 @@ class Settings {
 			99
 		);
 	}
+
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,

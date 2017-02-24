@@ -20,30 +20,36 @@ class Elements_Manager {
 	/**
 	 * @param array $element_data
 	 *
+	 * @param array $element_args
+	 *
+	 * @param Element_Base $element_type
+	 *
 	 * @return Element_Base
 	 */
-	public function create_element_instance( array $element_data ) {
-		$args = [];
-
-		if ( 'widget' === $element_data['elType'] ) {
-			$element_type = Plugin::instance()->widgets_manager->get_widget_types( $element_data['widgetType'] );
-
-			if ( ! $element_type ) {
-				return null;
-			}
-
-			$args = $element_type->get_default_args();
-		} else {
-			$element_type = $this->get_element_types( $element_data['elType'] );
-
-			if ( ! $element_type ) {
-				return null;
+	public function create_element_instance( array $element_data, array $element_args = [], Element_Base $element_type = null ) {
+		if ( null === $element_type ) {
+			if ( 'widget' === $element_data['elType'] ) {
+				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+			} else {
+				$element_type = $this->get_element_types( $element_data['elType'] );
 			}
 		}
 
+		if ( ! $element_type ) {
+			return null;
+		}
+
+		$args = array_merge( $element_type->get_default_args(), $element_args );
+
 		$element_class = $element_type->get_class_name();
 
-		return new $element_class( $element_data, $args );
+		try {
+			$element = new $element_class( $element_data, $args );
+		} catch ( \Exception $e ) {
+			return null;
+		}
+
+		return $element;
 	}
 
 	public function get_categories() {
@@ -135,7 +141,7 @@ class Elements_Manager {
 
 		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
 
-		Plugin::instance()->db->save_editor( $_POST['post_id'], $posted, $status );
+		Plugin::$instance->db->save_editor( $_POST['post_id'], $posted, $status );
 
 		$return_data = [];
 

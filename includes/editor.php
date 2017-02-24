@@ -46,7 +46,7 @@ class Editor {
 		$post_id = get_the_ID();
 
 		// Change mode to Builder
-		Plugin::instance()->db->set_edit_mode( $post_id );
+		Plugin::$instance->db->set_edit_mode( $post_id );
 
 		// Post Lock
 		if ( ! $this->get_locked_user( $post_id ) ) {
@@ -142,7 +142,7 @@ class Editor {
 		global $wp_styles, $wp_scripts;
 
 		$post_id = get_the_ID();
-		$plugin = Plugin::instance();
+		$plugin = Plugin::$instance;
 
 		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
 
@@ -164,6 +164,7 @@ class Editor {
 		);
 
 		// Enqueue frontend scripts too
+		$plugin->frontend->register_scripts();
 		$plugin->frontend->enqueue_scripts();
 
 		wp_register_script(
@@ -221,16 +222,6 @@ class Editor {
 				'jquery',
 			],
 			'1.0.0',
-			true
-		);
-
-		wp_register_script(
-			'imagesloaded',
-			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'4.1.0',
 			true
 		);
 
@@ -368,7 +359,7 @@ class Editor {
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 				'learn_more' => __( 'Learn More', 'elementor' ),
 				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
-				'templates_request_error' => __( 'The following error occurred when processing the request:', 'elementor' ),
+				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
@@ -480,7 +471,7 @@ class Editor {
 	}
 
 	public function wp_footer() {
-		$plugin = Plugin::instance();
+		$plugin = Plugin::$instance;
 
 		$plugin->controls_manager->render_controls();
 		$plugin->widgets_manager->render_widgets_content();

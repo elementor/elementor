@@ -73,6 +73,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 
 	activateSection: function( sectionName ) {
 		this.activeSection = sectionName;
+
+		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
 	},
 
 	getChildView: function( item ) {
@@ -88,9 +90,22 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	openActiveSection: function() {
+		var activeSection = this.activeSection,
+			activeSectionView = this.children.filter( function( view ) {
+				return activeSection === view.model.get( 'name' );
+			} );
+
+		if ( activeSectionView[0] ) {
+			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+		}
+	},
+
 	onDestroy: function() {
-		if ( this.editedElementView ) {
-			this.editedElementView.$el.removeClass( 'elementor-element-editable' );
+		var editedElementView = this.getOption( 'editedElementView' );
+
+		if ( editedElementView ) {
+			editedElementView.$el.removeClass( 'elementor-element-editable' );
 		}
 
 		this.model.trigger( 'editor:close' );
@@ -116,8 +131,10 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 	},
 
 	onRender: function() {
-		if ( this.editedElementView ) {
-			this.editedElementView.$el.addClass( 'elementor-element-editable' );
+		var editedElementView = this.getOption( 'editedElementView' );
+
+		if ( editedElementView ) {
+			editedElementView.$el.addClass( 'elementor-element-editable' );
 		}
 	},
 
@@ -173,15 +190,8 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		}, 500 );
 	},
 
-	openActiveSection: function() {
-		var activeSection = this.activeSection,
-			activeSectionView = this.children.filter( function( view ) {
-			return activeSection === view.model.get( 'name' );
-		} );
-
-		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
-		}
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
@@ -192,8 +202,18 @@ EditorCompositeView = Marionette.CompositeView.extend( {
 		this._renderChildren();
 	},
 
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
+	onChildviewSettingsChange: function( childView ) {
+		var editedElementView = this.getOption( 'editedElementView' ),
+			editedElementType = editedElementView.model.get( 'elType' );
+
+		if ( 'widget' === editedElementType ) {
+			editedElementType = editedElementView.model.get( 'widgetType' );
+		}
+
+		elementor.channels.editor
+			.trigger( 'change', childView, editedElementView )
+			.trigger( 'change:' + editedElementType, childView, editedElementView )
+			.trigger( 'change:' + editedElementType + ':' + childView.model.get( 'name' ), childView, editedElementView );
 	}
 } );
 

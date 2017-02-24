@@ -100,7 +100,6 @@ class Widgets_Manager {
 	private function _require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
-		// require ELEMENTOR_PATH . 'includes/widgets/multi-section-base.php';
 	}
 
 	public function register_widget_type( Widget_Base $widget ) {
@@ -170,7 +169,13 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
-		$widget = Plugin::instance()->elements_manager->create_element_instance( $data );
+		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
+
+		if ( ! $widget ) {
+			wp_send_json_error();
+
+			return;
+		}
 
 		$widget->render_content();
 
@@ -207,7 +212,8 @@ class Widgets_Manager {
 		/**
 		 * @var $widget_obj Widget_WordPress
 		 */
-		$widget_obj = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+		$widget_obj = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
 		if ( ! $widget_obj ) {
 			wp_send_json_error();
 		}

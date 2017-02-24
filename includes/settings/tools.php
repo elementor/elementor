@@ -109,7 +109,7 @@ class Tools {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
-		Plugin::instance()->posts_css_manager->clear_cache();
+		Plugin::$instance->posts_css_manager->clear_cache();
 
 		wp_send_json_success();
 	}
@@ -134,13 +134,14 @@ class Tools {
 		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
 		$rows_affected = $wpdb->query(
 			"UPDATE {$wpdb->postmeta} " .
-			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\/', $from ) . "', '" . str_replace( '/', '\/', $to ) . "') " .
+			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
 			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
 		// @codingStandardsIgnoreEnd
 
 		if ( false === $rows_affected ) {
 			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
 		} else {
+			Plugin::$instance->posts_css_manager->clear_cache();
 			wp_send_json_success( sprintf( __( '%d Rows Affected', 'elementor' ), $rows_affected ) );
 		}
 	}

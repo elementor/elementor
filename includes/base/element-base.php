@@ -107,7 +107,7 @@ abstract class Element_Base {
 	abstract public function get_name();
 
 	public function get_controls( $control_id = null ) {
-		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
 			$this->_init_controls();
@@ -134,19 +134,19 @@ abstract class Element_Base {
 			}
 		}
 
-		return Plugin::instance()->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
+		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
 	}
 
 	public function remove_control( $control_id ) {
-		return Plugin::instance()->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
+		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
 	}
 
 	public function update_control( $control_id, array $args ) {
-		return Plugin::instance()->controls_manager->update_control_in_stack( $this, $control_id, $args );
+		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
 	}
 
 	public final function add_group_control( $group_name, array $args = [] ) {
-		$group = Plugin::instance()->controls_manager->get_control_groups( $group_name );
+		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
 			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
@@ -156,7 +156,7 @@ abstract class Element_Base {
 	}
 
 	public final function get_tabs_controls() {
-		$stack = Plugin::instance()->controls_manager->get_element_stack( $this );
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		return $stack['tabs'];
 	}
@@ -195,72 +195,39 @@ abstract class Element_Base {
 		} );
 	}
 
-	public final function add_responsive_control( $id, $args = [] ) {
-		// Desktop
-		$control_args = $args;
+	public final function add_responsive_control( $id, array $args ) {
+		$devices = [
+			self::RESPONSIVE_DESKTOP,
+			self::RESPONSIVE_TABLET,
+			self::RESPONSIVE_MOBILE,
+		];
 
-		if ( ! empty( $args['prefix_class'] ) ) {
-			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '' );
+		foreach ( $devices as $device_name ) {
+			$control_args = $args;
+
+			if ( ! empty( $args['prefix_class'] ) ) {
+				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
+
+				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
+			}
+
+			$control_args['responsive'] = [ 'max' => $device_name ];
+
+			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
+				$control_args['default'] = $control_args[ $device_name . '_default' ];
+			}
+
+			unset( $control_args['desktop_default'] );
+			unset( $control_args['tablet_default'] );
+			unset( $control_args['mobile_default'] );
+
+			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+
+			$this->add_control(
+				$id . $id_suffix,
+				$control_args
+			);
 		}
-
-		$control_args['responsive'] = self::RESPONSIVE_DESKTOP;
-
-		if ( isset( $control_args['desktop_default'] ) ) {
-			$control_args['default'] = $control_args['desktop_default'];
-		}
-
-		unset( $control_args['desktop_default'] );
-		unset( $control_args['tablet_default'] );
-		unset( $control_args['mobile_default'] );
-
-		$this->add_control(
-			$id,
-			$control_args
-		);
-
-		// Tablet
-		$control_args = $args;
-
-		if ( ! empty( $args['prefix_class'] ) ) {
-			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_TABLET );
-		}
-
-		$control_args['responsive'] = self::RESPONSIVE_TABLET;
-
-		if ( isset( $control_args['tablet_default'] ) ) {
-			$control_args['default'] = $control_args['tablet_default'];
-		}
-
-		unset( $control_args['desktop_default'] );
-		unset( $control_args['tablet_default'] );
-		unset( $control_args['mobile_default'] );
-
-		$this->add_control(
-			$id . '_tablet',
-			$control_args
-		);
-
-		// Mobile
-		$control_args = $args;
-
-		if ( ! empty( $args['prefix_class'] ) ) {
-			$control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_MOBILE );
-		}
-
-		$control_args['responsive'] = self::RESPONSIVE_MOBILE;
-
-		if ( isset( $control_args['mobile_default'] ) ) {
-			$control_args['default'] = $control_args['mobile_default'];
-		}
-
-		unset( $control_args['desktop_default'] );
-		unset( $control_args['tablet_default'] );
-		unset( $control_args['mobile_default'] );
-
-		$this->add_control(
-			$id . '_mobile',
-			$control_args
-		);
 	}
 
 	public final function get_class_name() {
@@ -361,13 +328,11 @@ abstract class Element_Base {
 			return false;
 		}
 
-		$child_args = array_merge( $child_type->get_default_args(), $child_args );
+		$child = Plugin::$instance->elements_manager->create_element_instance( $child_data, $child_args, $child_type );
 
-		$child_class = $child_type->get_class_name();
-
-		$child = new $child_class( $child_data, $child_args );
-
-		$this->_children[] = $child;
+		if ( $child ) {
+			$this->_children[] = $child;
+		}
 
 		return $child;
 	}
@@ -650,7 +615,7 @@ abstract class Element_Base {
 		$settings = $this->_data['settings'];
 
 		foreach ( $this->get_controls() as $control ) {
-			$control_obj = Plugin::instance()->controls_manager->get_control( $control['type'] );
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
@@ -688,7 +653,7 @@ abstract class Element_Base {
 	}
 
 	private function _init_controls() {
-		Plugin::instance()->controls_manager->open_stack( $this );
+		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->_register_controls();
 	}

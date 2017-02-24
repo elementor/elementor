@@ -18,7 +18,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
 			modelClasses = this.model.get( 'classes' ),
-			responsiveControl = this.model.get( 'responsive' );
+			responsive = this.model.get( 'responsive' );
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
@@ -28,8 +28,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			classes += ' elementor-control-under-section';
 		}
 
-		if ( ! _.isEmpty( responsiveControl ) ) {
-			classes += ' elementor-control-responsive-' + responsiveControl;
+		if ( ! _.isEmpty( responsive ) ) {
+			_.each( responsive, function( device ) {
+				classes += ' elementor-control-responsive-' + device;
+			} );
 		}
 
 		return classes;
@@ -100,6 +102,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'settings:change' );
 
 		var elementType = this.elementSettingsModel.get( 'elType' );
+
+		// TODO: The following is a temp fallback from 1.2.0
 		if ( 'widget' === elementType ) {
 			elementType = this.elementSettingsModel.get( 'widgetType' );
 		}
@@ -158,8 +162,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
-		} else if ( 'select2' === inputType ) {
-			// don't touch
 		} else {
 			$input.val( value );
 		}

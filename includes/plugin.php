@@ -11,7 +11,7 @@ class Plugin {
 	/**
 	 * @var Plugin
 	 */
-	private static $_instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var DB
@@ -126,11 +126,12 @@ class Plugin {
 	 * @return Plugin
 	 */
 	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 			do_action( 'elementor/loaded' );
 		}
-		return self::$_instance;
+
+		return self::$instance;
 	}
 
 	/**
@@ -172,9 +173,11 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
 		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
 
-		include( ELEMENTOR_PATH . 'includes/managers/posts-css.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
-		include( ELEMENTOR_PATH . 'includes/posts-css/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
+		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 
 		if ( is_admin() ) {

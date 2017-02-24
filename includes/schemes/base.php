@@ -5,9 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Scheme_Base implements Scheme_Interface {
 
+	const LAST_UPDATED_META = '_elementor_scheme_last_updated';
+
 	private $_system_schemes;
 
-	protected abstract function _init_system_schemes();
+	abstract protected function _init_system_schemes();
 
 	public static function get_description() {
 		return '';
@@ -37,6 +39,8 @@ abstract class Scheme_Base implements Scheme_Interface {
 		$scheme_value = $this->get_scheme_value();
 
 		update_option( 'elementor_scheme_' . static::get_type(), array_replace( $scheme_value, array_intersect_key( $posted, $scheme_value ) ) );
+
+		update_option( self::LAST_UPDATED_META, time() );
 	}
 
 	public function get_scheme() {

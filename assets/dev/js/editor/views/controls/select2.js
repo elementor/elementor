@@ -2,25 +2,17 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
 ControlSelect2ItemView = ControlBaseItemView.extend( {
-	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+	getSelect2Options: function() {
+		var placeholder = this.ui.select.children( 'option:first[value=""]' ).text();
 
-		ui.select = '.elementor-select2';
-
-		return ui;
-	},
-
-	getSettings: function() {
 		return {
 			allowClear: true,
-			placeholder: { // The `allowClear` must be used with the `placeholder` option
-				id: ''
-			}
+			placeholder: placeholder
 		};
 	},
 
 	onReady: function() {
-		this.ui.select.select2( this.getSettings() );
+		this.ui.select.select2( this.getSelect2Options() );
 	},
 
 	onBeforeDestroy: function() {

@@ -110,15 +110,12 @@ class Widget_Video extends Widget_Base {
 			'yt_autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'no' => __( 'No', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'No', 'elementor' ),
+				'label_on' => __( 'Yes', 'elementor' ),
 				'condition' => [
 					'video_type' => 'youtube',
 				],
-				'default' => 'no',
 			]
 		);
 
@@ -126,12 +123,9 @@ class Widget_Video extends Widget_Base {
 			'yt_rel',
 			[
 				'label' => __( 'Suggested Videos', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'no' => __( 'Hide', 'elementor' ),
-					'yes' => __( 'Show', 'elementor' ),
-				],
-				'default' => 'no',
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 				'condition' => [
 					'video_type' => 'youtube',
 				],
@@ -142,11 +136,9 @@ class Widget_Video extends Widget_Base {
 			'yt_controls',
 			[
 				'label' => __( 'Player Control', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'youtube',
@@ -158,11 +150,9 @@ class Widget_Video extends Widget_Base {
 			'yt_showinfo',
 			[
 				'label' => __( 'Player Title & Actions', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'youtube',
@@ -175,12 +165,9 @@ class Widget_Video extends Widget_Base {
 			'vimeo_autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'no' => __( 'No', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-				],
-				'default' => 'no',
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'No', 'elementor' ),
+				'label_on' => __( 'Yes', 'elementor' ),
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
@@ -191,12 +178,9 @@ class Widget_Video extends Widget_Base {
 			'vimeo_loop',
 			[
 				'label' => __( 'Loop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'no' => __( 'No', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-				],
-				'default' => 'no',
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'No', 'elementor' ),
+				'label_on' => __( 'Yes', 'elementor' ),
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
@@ -207,11 +191,9 @@ class Widget_Video extends Widget_Base {
 			'vimeo_title',
 			[
 				'label' => __( 'Intro Title', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
@@ -223,11 +205,9 @@ class Widget_Video extends Widget_Base {
 			'vimeo_portrait',
 			[
 				'label' => __( 'Intro Portrait', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
@@ -239,11 +219,9 @@ class Widget_Video extends Widget_Base {
 			'vimeo_byline',
 			[
 				'label' => __( 'Intro Byline', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'yes' => __( 'Show', 'elementor' ),
-					'no' => __( 'Hide', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
@@ -342,12 +320,9 @@ class Widget_Video extends Widget_Base {
 			'show_image_overlay',
 			[
 				'label' => __( 'Image Overlay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'no',
-				'options' => [
-					'no' => __( 'Hide', 'elementor' ),
-					'yes' => __( 'Show', 'elementor' ),
-				],
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
 			]
 		);
 
