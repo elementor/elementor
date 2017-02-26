@@ -22,7 +22,7 @@ class Control_Color extends Control_Base {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script( 'iris', admin_url( '/js/iris.min.js' ), [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker.min.js' ), [ 'iris' ], false, true );
+		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker' . $suffix . '.js' ), [ 'iris' ], false, true );
 
 		wp_localize_script(
 			'wp-color-picker',
