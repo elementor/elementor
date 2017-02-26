@@ -71,7 +71,9 @@ class Settings_Controls {
 		$old_value = get_option( $field['id'], $field['std'] ); ?>
 		<select name="<?php echo $field['id']; ?>">
 			<?php
-			echo sprintf( '<option value="">— %s —</option>', __( 'Select' ) );
+			if ( ! empty( $field['show_select'] ) ) {
+				echo sprintf( '<option value="">— %s —</option>', __( 'Select' ) );
+			}
 
 			foreach ( $field['options'] as $value => $label ) :
 				$selected = selected( $value, $old_value, false );

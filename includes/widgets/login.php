@@ -137,7 +137,7 @@ class Widget_Login extends Widget_Base {
 		$this->add_responsive_control(
 			'button_width',
 			[
-				'label' => __( 'Button Width', 'elementor' ),
+				'label' => __( 'Column Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
@@ -174,7 +174,7 @@ class Widget_Login extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'fa fa-align-right',
 					],
-					'justify' => [
+					'stretch' => [
 						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'fa fa-align-justify',
 					],
@@ -629,9 +629,9 @@ class Widget_Login extends Widget_Base {
 						'elementor-field-group',
 						'elementor-column',
 						'elementor-field-type-submit',
-						'elementor-col-100',
 					],
 				],
+
 				'button' => [
 					'class' => [
 						'elementor-button',
@@ -783,9 +783,20 @@ class Widget_Login extends Widget_Base {
 							</label>
 						</p>
 					</div>
-				<# } #>
+				<# }
 
-				<div class="'elementor-field-group elementor-column elementor-field-type-submit elementor-col-100">
+				var buttonClasses = 'elementor-field-group elementor-column elementor-field-type-submit ';
+				buttonClasses += ' elementor-col-' + ( ( '' !== settings.button_width ) ? settings.button_width : '100' );
+
+				if ( settings.button_width_tablet ) {
+				buttonClasses += ' elementor-md-' + settings.button_width_tablet;
+				}
+
+				if ( settings.button_width_mobile ) {
+					buttonClasses += ' elementor-sm-' + settings.button_width_mobile;
+				}
+				#>
+				<div class="{{ buttonClasses }}">
 					<button type="submit" class="elementor-button elementor-size-{{ settings.button_size }}">
 						<# if ( settings.button_text ) { #>
 							<span class="elementor-button-text">{{ settings.button_text }}</span>

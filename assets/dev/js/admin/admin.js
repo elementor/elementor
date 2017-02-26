@@ -68,6 +68,8 @@
 				} );
 			} );
 
+			require( 'elementor/includes/under-construction/assets/js/tools.js' )( $ );
+
 			$( '#elementor-clear-cache-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );
@@ -126,14 +128,6 @@
 							} ).show();
 					} );
 			} );
-
-			$( '#elementor_under_construction_enabled' ).change( function( event ) {
-				event.preventDefault();
-				var $this = $( this );
-
-				$this.parents( 'table' ).toggleClass( 'elementor-under-construction-is-enabled', $this.is( ':checked' ) );
-
-			} ).change();
 		},
 
 		init: function() {
