@@ -486,10 +486,6 @@ tr[class^="elementor_under_construction"] {
     display: block; }
   .elementor-under-construction-is-enabled tr[class^="elementor_under_construction"] {
     display: block; }
-    .elementor-under-construction-is-enabled tr[class^="elementor_under_construction"] .elementor_under_construction_exclude_roles {
-      display: none; }
-    .elementor-under-construction-is-enabled tr[class^="elementor_under_construction"].elementor-under-construction-exclude-mode__custom .elementor_under_construction_exclude_roles {
-      display: block; }
 
 #wp-admin-bar-elementor-maintenance-on .ab-item:before {
   content: "\f160";
