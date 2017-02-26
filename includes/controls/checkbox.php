@@ -24,7 +24,7 @@ class Control_Checkbox extends Control_Base {
 			<span>{{{ data.label }}}</span>
 		</label>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-description">{{{ data.description }}}</div>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}

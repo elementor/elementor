@@ -43,7 +43,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 		endif;
 		?>
 		<# if ( data.description ) { #>
-			<div class="elementor-control-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>

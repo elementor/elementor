@@ -69,7 +69,7 @@ class Control_Color extends Control_Base {
 					{{{ data.label }}}
 				<# } #>
 				<# if ( data.description ) { #>
-					<span class="elementor-control-description">{{{ data.description }}}</span>
+					<span class="elementor-control-field-description">{{{ data.description }}}</span>
 				<# } #>
 			</label>
 			<div class="elementor-control-input-wrapper">
