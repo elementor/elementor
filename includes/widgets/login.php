@@ -59,13 +59,28 @@ class Widget_Login extends Widget_Base {
 		);
 
 		$this->add_control(
+			'custom_labels',
+			[
+				'label' => __( 'Custom Labels', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'No', 'elementor' ),
+				'label_on' => __( 'Yes', 'elementor' ),
+				'condition' => [
+					'show_labels' => 'yes',
+				],
+			]
+		);
+
+
+		$this->add_control(
 			'user_label',
 			[
 				'label' => __( 'User Label', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'User', 'elementor' ),
 				'condition' => [
-					'show_labels!' => '',
+					'show_labels' => 'yes',
+					'custom_labels' => 'yes',
 				],
 			]
 		);
@@ -76,6 +91,10 @@ class Widget_Login extends Widget_Base {
 				'label' => __( 'User Placeholder', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'User', 'elementor' ),
+				'condition' => [
+					'show_labels' => 'yes',
+					'custom_labels' => 'yes',
+				],
 			]
 		);
 
@@ -86,7 +105,8 @@ class Widget_Login extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Password', 'elementor' ),
 				'condition' => [
-					'show_labels!' => '',
+					'show_labels' => 'yes',
+					'custom_labels' => 'yes',
 				],
 			]
 		);
@@ -97,6 +117,10 @@ class Widget_Login extends Widget_Base {
 				'label' => __( 'Password Placeholder', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Password', 'elementor' ),
+				'condition' => [
+					'show_labels' => 'yes',
+					'custom_labels' => 'yes',
+				],
 			]
 		);
 
@@ -135,28 +159,6 @@ class Widget_Login extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'button_width',
-			[
-				'label' => __( 'Column Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'100' => '100%',
-					'80' => '80%',
-					'75' => '75%',
-					'66' => '66%',
-					'60' => '60%',
-					'50' => '50%',
-					'40' => '40%',
-					'33' => '33%',
-					'25' => '25%',
-					'20' => '20%',
-				],
-				'desktop_default' => '100',
-			]
-		);
-
-		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -189,14 +191,14 @@ class Widget_Login extends Widget_Base {
 		$this->start_controls_section(
 			'section_login_content',
 			[
-				'label' => __( 'Additional Settings', 'elementor' ),
+				'label' => __( 'Additional Options', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'show_lost_password',
 			[
-				'label' => __( 'Show `Lost your password` Link', 'elementor' ),
+				'label' => __( 'Lost your password Link', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
 				'label_off' => __( 'Hide', 'elementor' ),
@@ -208,7 +210,7 @@ class Widget_Login extends Widget_Base {
 			$this->add_control(
 				'show_register',
 				[
-					'label' => __( 'Show Register Link', 'elementor' ),
+					'label' => __( 'Register Link', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'default' => 'yes',
 					'label_off' => __( 'Hide', 'elementor' ),
@@ -220,7 +222,18 @@ class Widget_Login extends Widget_Base {
 		$this->add_control(
 			'show_remember_me',
 			[
-				'label' => __( 'Show Remember me Checkbox', 'elementor' ),
+				'label' => __( 'Remember me Checkbox', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => 'yes',
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'show_logged_in_message',
+			[
+				'label' => __( 'Logged in Message', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
 				'label_off' => __( 'Hide', 'elementor' ),
@@ -233,7 +246,7 @@ class Widget_Login extends Widget_Base {
 		$this->start_controls_section(
 			'section_style',
 			[
-				'label' => __( 'Login', 'elementor' ),
+				'label' => __( 'Form', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -260,14 +273,63 @@ class Widget_Login extends Widget_Base {
 		);
 
 		$this->add_control(
-			'heading_label',
+			'links_color',
 			[
-				'label' => __( 'Label', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-				'condition' => [
-					'show_labels!' => '',
+				'label' => __( 'Links Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-field-group > a' => 'color: {{VALUE}};',
 				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+			]
+		);
+
+		$this->add_control(
+			'links_hover_color',
+			[
+				'label' => __( 'Links Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-field-group > a:hover' => 'color: {{VALUE}};',
+				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
+				],
+			]
+		);
+
+		$this->add_control(
+			'links_gap',
+			[
+				'label' => __( 'Links Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 5,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 60,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-login-separator' => 'margin: 0 {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_labels',
+			[
+				'label' => __( 'Labels', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -286,11 +348,7 @@ class Widget_Login extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body.rtl {{WRAPPER}} .elementor-labels-inline .elementor-field-group > label' => 'padding-left: {{SIZE}}{{UNIT}};',
-					// for the label position = inline option
-					'body:not(.rtl) {{WRAPPER}} .elementor-labels-inline .elementor-field-group > label' => 'padding-right: {{SIZE}}{{UNIT}};',
-					// for the label position = inline option
-					'body {{WRAPPER}} .elementor-labels-above .elementor-field-group > label' => 'padding-bottom: {{SIZE}}{{UNIT}};',
+					'body {{WRAPPER}} .elementor-field-group > label' => 'padding-bottom: {{SIZE}}{{UNIT}};',
 					// for the label position = above option
 				],
 				'condition' => [
@@ -334,7 +392,7 @@ class Widget_Login extends Widget_Base {
 		$this->start_controls_section(
 			'section_field_style',
 			[
-				'label' => __( 'Field', 'elementor' ),
+				'label' => __( 'Fields', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -547,6 +605,9 @@ class Widget_Login extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
 				],
+				'condition' => [
+					'button_border_border!' => '',
+				],
 			]
 		);
 
@@ -587,20 +648,6 @@ class Widget_Login extends Widget_Base {
 	private function form_fields_render_attributes() {
 		$settings = $this->get_settings();
 
-		if ( empty( $settings['button_width'] ) ) {
-			$settings['button_width'] = '100';
-		}
-
-		$this->add_render_attribute( 'submit-group', 'class', 'elementor-col-' . $settings['button_width'] );
-
-		if ( ! empty( $settings['button_width_tablet'] ) ) {
-			$this->add_render_attribute( 'submit-group', 'class', 'elementor-md-' . $settings['button_width_tablet'] );
-		}
-
-		if ( ! empty( $settings['button_width_mobile'] ) ) {
-			$this->add_render_attribute( 'submit-group', 'class', 'elementor-sm-' . $settings['button_width_mobile'] );
-		}
-
 		if ( ! empty( $settings['button_size'] ) ) {
 			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['button_size'] );
 		}
@@ -629,6 +676,7 @@ class Widget_Login extends Widget_Base {
 						'elementor-field-group',
 						'elementor-column',
 						'elementor-field-type-submit',
+						'elementor-col-100',
 					],
 				],
 
@@ -687,15 +735,19 @@ class Widget_Login extends Widget_Base {
 
 	protected function render() {
 		$current_url = remove_query_arg( 'fake_arg' );
+		$settings = $this->get_settings();
+
 		if ( is_user_logged_in() && ! Plugin::$instance->editor->is_edit_mode() ) {
-			$current_user = wp_get_current_user();
-			echo '<div class="elementor-login">' .
-				sprintf( __( 'You are Logged in as %1$s (<a href="%2$s">Logout</a>)', 'elementor' ), $current_user->display_name, wp_logout_url( $current_url ) ) .
-				'</div>';
+			if ( 'yes' === $settings['show_logged_in_message'] ) {
+				$current_user = wp_get_current_user();
+				echo '<div class="elementor-login">' .
+					sprintf( __( 'You are Logged in as %1$s (<a href="%2$s">Logout</a>)', 'elementor' ), $current_user->display_name, wp_logout_url( $current_url ) ) .
+					'</div>';
+			}
+
 			return;
 		}
 
-		$settings = $this->get_settings();
 		$this->form_fields_render_attributes();
 		$input_size = $settings['input_size'];
 		?>
@@ -724,12 +776,10 @@ class Widget_Login extends Widget_Base {
 
 				<?php if ( 'yes' === $settings['show_remember_me'] ) : ?>
 					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
-						<p class="forgetmenot">
-							<label for="rememberme">
-								<input name="rememberme" type="checkbox" id="rememberme" value="forever">
-								<?php echo __( 'Remember Me', 'elementor' ); ?>
-							</label>
-						</p>
+						<label for="elementor-login-remember-me">
+							<input type="checkbox" id="elementor-login-remember-me" name="rememberme" value="forever">
+							<?php echo __( 'Remember Me', 'elementor' ); ?>
+						</label>
 					</div>
 				<?php endif; ?>
 				
@@ -741,11 +791,26 @@ class Widget_Login extends Widget_Base {
 					</button>
 				</div>
 
-				<?php if ( 'yes' === $settings['show_lost_password'] ) : ?>
-					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
-						<a class="elementor-lost-password" href="<?php echo wp_lostpassword_url( $current_url ); ?>">
-							<?php echo __( 'Lost your password?', 'elementor' ); ?>
-						</a>
+				<?php
+				$show_lost_password = 'yes' === $settings['show_lost_password'];
+				$show_register = get_option( 'users_can_register' ) && 'yes' === $settings['show_register'];
+
+				if ( $show_lost_password || $show_register ) : ?>
+					<div class="elementor-field-group elementor-column elementor-col-100">
+						<?php if ( $show_lost_password ) : ?>
+							<a class="elementor-lost-password" href="<?php echo wp_lostpassword_url( $current_url ); ?>">
+								<?php echo __( 'Lost your password?', 'elementor' ); ?>
+							</a>
+						<?php endif; ?>
+
+						<?php if ( $show_register ) : ?>
+							<?php if ( $show_lost_password ) : ?>
+								<span class="elementor-login-separator"> | </span>
+							<?php endif; ?>
+							<a class="elementor-register" href="<?php echo wp_registration_url(); ?>">
+								<?php echo __( 'Register', 'elementor' ); ?>
+							</a>
+						<?php endif; ?>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -776,27 +841,14 @@ class Widget_Login extends Widget_Base {
 
 				<# if ( settings.show_remember_me ) { #>
 					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
-						<p class="forgetmenot">
-							<label for="rememberme">
-								<input name="rememberme" type="checkbox" id="rememberme" value="forever">
-								Remember Me
-							</label>
-						</p>
+						<label for="elementor-login-remember-me">
+							<input type="checkbox" id="elementor-login-remember-me" name="rememberme" value="forever">
+							<?php echo __( 'Remember Me', 'elementor' ); ?>
+						</label>
 					</div>
-				<# }
+				<# } #>
 
-				var buttonClasses = 'elementor-field-group elementor-column elementor-field-type-submit ';
-				buttonClasses += ' elementor-col-' + ( ( '' !== settings.button_width ) ? settings.button_width : '100' );
-
-				if ( settings.button_width_tablet ) {
-				buttonClasses += ' elementor-md-' + settings.button_width_tablet;
-				}
-
-				if ( settings.button_width_mobile ) {
-					buttonClasses += ' elementor-sm-' + settings.button_width_mobile;
-				}
-				#>
-				<div class="{{ buttonClasses }}">
+				<div class="elementor-field-group elementor-column elementor-field-type-submit elementor-col-100">
 					<button type="submit" class="elementor-button elementor-size-{{ settings.button_size }}">
 						<# if ( settings.button_text ) { #>
 							<span class="elementor-button-text">{{ settings.button_text }}</span>
@@ -804,11 +856,24 @@ class Widget_Login extends Widget_Base {
 					</button>
 				</div>
 
-				<# if ( settings.show_lost_password ) { #>
-					<div class="elementor-field-type-checkbox elementor-field-group elementor-column elementor-col-100">
-						<a class="elementor-lost-password" href="<?php echo wp_lostpassword_url( $current_url ); ?>">
-							<?php echo __( 'Lost your password?', 'elementor' ); ?>
-						</a>
+				<# if ( settings.show_lost_password || settings.show_register ) { #>
+					<div class="elementor-field-group elementor-column elementor-col-100">
+						<# if ( settings.show_lost_password ) { #>
+							<a class="elementor-lost-password" href="<?php echo wp_lostpassword_url( $current_url ); ?>">
+								<?php echo __( 'Lost your password?', 'elementor' ); ?>
+							</a>
+						<# } #>
+
+						<?php if ( get_option( 'users_can_register' ) ) { ?>
+							<# if ( settings.show_register ) { #>
+								<# if ( settings.show_lost_password ) { #>
+									<span class="elementor-login-separator"> | </span>
+								<# } #>
+								<a class="elementor-register" href="<?php echo wp_registration_url(); ?>">
+									<?php echo __( 'Register', 'elementor' ); ?>
+								</a>
+							<# } #>
+						<?php } ?>
 					</div>
 				<# } #>
 			</div>
