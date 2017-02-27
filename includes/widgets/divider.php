@@ -141,6 +141,21 @@ class Widget_Divider extends Widget_Base {
 		);
 
 		$this->add_control(
+			'rotate',
+			[
+				'label' => __( 'Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ 'deg' ],
+				'default' => [
+					'unit' => 'deg',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-divider' => 'transform: rotate({{SIZE}}{{UNIT}});',
+				],
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
