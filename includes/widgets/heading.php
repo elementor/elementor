@@ -116,6 +116,21 @@ class Widget_Heading extends Widget_Base {
 		);
 
 		$this->add_control(
+			'rotate',
+			[
+				'label' => __( 'Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ 'deg' ],
+				'default' => [
+					'unit' => 'deg',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'transform: rotate({{SIZE}}{{UNIT}});',
+				],
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
