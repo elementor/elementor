@@ -144,8 +144,10 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider',
 			[
-				'label' => __( 'Show Divider', 'elementor' ),
+				'label' => __( 'Divider', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Off', 'elementor' ),
+				'label_on' => __( 'On', 'elementor' ),
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
