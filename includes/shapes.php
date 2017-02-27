@@ -48,6 +48,10 @@ class Shapes {
 				'title' => __( 'Triangle Asymmetrical', 'elementor' ),
 				'has_negative' => true,
 			],
+			'single-circle' => [
+				'title' => __( 'Single Circle', 'elementor' ),
+				'has_negative' => true,
+			],
 			'curve' => [
 				'title' => __( 'Curve', 'elementor' ),
 				'has_negative' => true,
