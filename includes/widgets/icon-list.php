@@ -178,7 +178,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_color',
 			[
-				'label' => __( 'Divider Color', 'elementor-pro' ),
+				'label' => __( 'Divider Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
 				'scheme' => [
@@ -197,7 +197,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_weight',
 			[
-				'label' => __( 'Divider Weight', 'elementor-pro' ),
+				'label' => __( 'Divider Weight', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 2,
@@ -220,7 +220,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_width',
 			[
-				'label' => __( 'Divider Width', 'elementor-pro' ),
+				'label' => __( 'Divider Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'units' => [ '%' ],
 				'default' => [
