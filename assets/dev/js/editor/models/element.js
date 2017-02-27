@@ -70,7 +70,7 @@ ElementModel = Backbone.Model.extend( {
 
 		this.set( 'settings', settings );
 
-		elementorFrontend.config.elements.data[ this.cid ] = settings.attributes;
+		elementorFrontend.config.elements.data[ this.cid ] = settings;
 	},
 
 	initEditSettings: function() {
