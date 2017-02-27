@@ -4037,14 +4037,13 @@ ElementModel = Backbone.Model.extend( {
 
 	initSettings: function() {
 		var elType = this.get( 'elType' ),
+			settings = this.get( 'settings' ) || {},
 			settingModels = {
 				widget: WidgetSettingsModel,
 				column: ColumnSettingsModel,
 				section: SectionSettingsModel
-			};
-
-		var SettingsModel = settingModels[ elType ] || BaseSettingsModel,
-			settings = this.get( 'settings' ) || {};
+			},
+			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
@@ -4056,6 +4055,8 @@ ElementModel = Backbone.Model.extend( {
 		settings = new SettingsModel( settings );
 
 		this.set( 'settings', settings );
+
+		elementorFrontend.config.elements.data[ this.cid ] = settings.attributes;
 	},
 
 	initEditSettings: function() {
@@ -4171,20 +4172,16 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		var newModel = Backbone.Model.prototype.clone.apply( this, arguments );
+		var newModel = new this.constructor( elementor.helpers.cloneObject( this.attributes ) );
+
 		newModel.set( 'id', elementor.helpers.getUniqueID() );
 
 		newModel.setHtmlCache( this.getHtmlCache() );
 
-		var elements = this.get( 'elements' ),
-			settings = this.get( 'settings' );
+		var elements = this.get( 'elements' );
 
 		if ( ! _.isEmpty( elements ) ) {
 			newModel.set( 'elements', elements.clone() );
-		}
-
-		if ( settings instanceof BaseSettingsModel ) {
-			newModel.set( 'settings', settings.clone() );
 		}
 
 		return newModel;
@@ -4247,9 +4244,11 @@ ElementCollection = Backbone.Collection.extend( {
 ElementCollection.prototype.sync = function() {
 	return null;
 };
+
 ElementCollection.prototype.fetch = function() {
 	return null;
 };
+
 ElementCollection.prototype.save = function() {
 	return null;
 };
