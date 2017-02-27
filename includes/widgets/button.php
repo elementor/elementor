@@ -320,6 +320,7 @@ class Widget_Button extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} a.elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
