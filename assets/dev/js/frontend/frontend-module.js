@@ -31,9 +31,11 @@ FrontendModule = Module.extend( {
 
 		if ( elementorFrontend.isEditMode() ) {
 			var settings = elementorFrontend.config.elements.data[ this.getModelCID() ],
-				settingsKeys = elementorFrontend.config.elements.keys[ settings.widgetType ];
+				activeControls = settings.getActiveControls(),
+				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
+				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( settings, settingsKeys );
+			elementSettings = _.pick( activeValues, settingsKeys );
 		} else {
 			elementSettings = this.$element.data( 'settings' );
 		}
