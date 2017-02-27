@@ -12,6 +12,10 @@ var Module = function() {
 		$.each( closureMethodsNames, function() {
 			var oldMethod = self[ this ];
 
+			if ( ! oldMethod ) {
+				return;
+			}
+
 			self[ this ] = function() {
 				oldMethod.apply( self, arguments );
 			};
