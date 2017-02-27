@@ -451,6 +451,8 @@ abstract class Element_Base {
 
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
+		$this->_add_render_attributes();
+
 		$this->before_render();
 
 		$this->_print_content();
@@ -610,6 +612,35 @@ abstract class Element_Base {
 	 */
 	public function is_type_instance() {
 		return $this->_is_type_instance;
+	}
+
+	protected function _add_render_attributes() {
+		$this->add_render_attribute( '_wrapper', 'class', [
+			'elementor-element',
+			'elementor-element-' . $this->get_id(),
+		] );
+
+		$settings = $this->get_settings();
+
+		foreach ( self::get_class_controls() as $control ) {
+			if ( empty( $settings[ $control['name'] ] ) )
+				continue;
+
+			if ( ! $this->is_control_visible( $control ) )
+				continue;
+
+			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+		}
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
+		}
+
+		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
+
+			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
+		}
 	}
 
 	protected function render() {}
