@@ -976,7 +976,9 @@
 @media (max-width: 767px) {
   .elementor-progress-wrapper {
     height: 25px;
-    line-height: 25px; } }
+    line-height: 25px; }
+  .elementor-progress-text {
+    padding-left: 10px; } }
 
 .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tabs-wrapper {
   width: 25%;
