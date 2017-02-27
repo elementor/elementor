@@ -44,6 +44,11 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
+	 * @var Page_Settings_Manager
+	 */
+	public $page_settings_manager;
+
+	/**
 	 * @var Settings
 	 */
 	public $settings;

@@ -23,6 +23,7 @@ App = Marionette.Application.extend( {
 	ajax: require( 'elementor-utils/ajax' ),
 	conditions: require( 'elementor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
+	pageSettings:  require( 'elementor-page-settings/manager' ),
 	hotKeys: require( 'elementor-utils/hot-keys' ),
 
 	channels: {
@@ -142,6 +143,7 @@ App = Marionette.Application.extend( {
 		this.modals.init();
 		this.ajax.init();
 		this.revisions.init();
+		this.pageSettings.init();
 		this.hotKeys.init();
 	},
 
