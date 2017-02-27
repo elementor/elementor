@@ -528,16 +528,36 @@ module.exports = Marionette.CompositeView.extend( {
 
 	manager: null,
 
-	initialize: function() {
-	},
-
 	onRender: function() {
 		var self = this;
-		this.ui.input.each( function() {
+		self.ui.input.each( function() {
 			var $this = Backbone.$( this ),
 				thisName = $this.attr( 'name' );
 			$this.val( self.model.get( thisName ) );
 		} );
+
+		self.initSliders();
+	},
+
+	initSliders: function() {
+		var self = this;
+		self.ui.sliders.each( function() {
+			var $slider = Backbone.$( this ),
+				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
+
+			$slider.slider( {
+				value: $input.val(),
+				min: +$input.attr( 'min' ),
+				max: +$input.attr( 'max' )
+			} );
+		} );
+	},
+
+	onSlideChange: function( event, ui ) {
+		var name = event.currentTarget.dataset.input,
+			$input = this.ui.input.filter( '[name="' + name + '"]' );
+
+		$input.val( ui.value ).trigger( 'change' );
 	},
 
 	onInputChanged: function( event ) {
@@ -573,36 +593,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onDestroy: function() {
 		this.onDiscardClick();
-	},
-
-	initSliders: function() {
-		var self = this;
-		this.ui.sliders.each( function() {
-			var $slider = Backbone.$( this ),
-				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
-
-			$slider.slider( {
-				value: self.model.get( $slider.attr( 'name' ) ),
-				min: +$input.attr( 'min' ),
-				max: +$input.attr( 'max' )
-			} );
-		} );
-	},
-
-	onReady: function() {
-		this.initSliders();
-	},
-
-	onSlideChange: function( event, ui ) {
-		var name = event.currentTarget.dataset.input,
-			$input = this.ui.input.filter( '[name="' + name + '"]' );
-
-		$input.val( ui.value );
-		this.model.set( name, ui.value );
-	},
-
-	onBeforeDestroy: function() {
-		this.$el.remove();
 	}
 } );
 

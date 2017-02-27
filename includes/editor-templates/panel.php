@@ -329,14 +329,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 
-		<div class="elementor-control elementor-control-type-text elementor-control-under-section elementor-label-block elementor-control-separator-default">
+		<div class="elementor-control elementor-control-content_width elementor-control-type-slider elementor-control-under-section elementor-label-block  elementor-control-separator-before">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label class="elementor-control-title">
 						<?php _e( 'Content Width', 'elementor' ); ?>
 					</label>
-					<div class="elementor-control-input-wrapper">
-						<input name="content_width" />
+					<div class="elementor-control-input-wrapper elementor-clearfix">
+						<div class="elementor-slider" data-input="content_width"></div>
+						<div class="elementor-slider-input">
+							<input type="number" min="500" max="1600" name="content_width" />
+						</div>
 					</div>
 				</div>
 			</div>
