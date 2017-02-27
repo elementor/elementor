@@ -512,6 +512,139 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Shape Divider
+		$this->start_controls_section(
+			'section_shape_divider',
+			[
+				'label' => __( 'Shape Divider', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_shape_dividers' );
+
+		$shapes_options = [
+			'' => __( 'None', 'elementor' ),
+		];
+
+		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
+		    $shapes_options[ $shape_name ] = $shape_props['title'];
+		}
+
+		foreach ( [ 'top' => __( 'Top', 'elementor' ), 'bottom' => __( 'Bottom', 'elementor' ) ] as $side => $side_label ) {
+			$base_control_key = "shape_divider_$side";
+
+			$this->start_controls_tab(
+				"tab_$base_control_key",
+				[
+					'label' => $side_label,
+				]
+			);
+
+			$this->add_control(
+				$base_control_key,
+				[
+					'label' => __( 'Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'options' => $shapes_options,
+					'render_type' => 'none',
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_color',
+				[
+					'label' => __( 'Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				$base_control_key . '_width',
+				[
+					'label' => __( 'Width', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'units' => [ '%' ],
+					'default' => [
+						'unit' => '%',
+					],
+					'range' => [
+						'%' => [
+							'min' => 100,
+							'max' => 300,
+						],
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: {{SIZE}}{{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				$base_control_key . '_height',
+				[
+					'label' => __( 'Height', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'max' => 150,
+						],
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_flip',
+				[
+					'label' => __( 'Flip', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'No', 'elementor' ),
+					'label_on' => __( 'Yes', 'elementor' ),
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'transform: rotateY(180deg)',
+					],
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_negative',
+				[
+					'label' => __( 'Negative', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'No', 'elementor' ),
+					'label_on' => __( 'Yes', 'elementor' ),
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::get_negative_shapes() ),
+					],
+					'render_type' => 'none',
+				]
+			);
+
+			$this->end_controls_tab();
+		}
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
 		// Section Advanced
 		$this->start_controls_section(
 			'section_advanced',
@@ -722,9 +855,11 @@ class Element_Section extends Element_Base {
 		if ( -1 !== [ 'classic', 'gradient' ].indexOf( settings.background_overlay_background ) ) { #>
 			<div class="elementor-background-overlay"></div>
 		<# } #>
+		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
+		<div class="elementor-shape elementor-shape-bottom"></div>
 		<?php
 	}
 
@@ -749,7 +884,11 @@ class Element_Section extends Element_Base {
 
 			if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
 				<div class="elementor-background-overlay"></div>
-			<?php endif; ?>
+			<?php endif;
+
+			if ( $settings['shape_divider_top'] ) {
+				$this->print_shape_divider( 'top' );
+			} ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
 				<div class="elementor-row">
 		<?php
@@ -759,8 +898,21 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
+			<?php
+			if ( $this->get_settings( 'shape_divider_bottom' ) ) {
+				$this->print_shape_divider( 'bottom' );
+			} ?>
 		</section>
 		<?php
+	}
+
+	public function get_frontend_settings_keys() {
+		return [
+			'shape_divider_top',
+			'shape_divider_bottom',
+			'shape_divider_top_negative',
+			'shape_divider_bottom_negative',
+		];
 	}
 
 	protected function _add_render_attributes() {
@@ -784,5 +936,16 @@ class Element_Section extends Element_Base {
 
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'column' );
+	}
+
+	private function print_shape_divider( $side ) {
+	    $settings = $this->get_settings();
+
+	    $base_setting_key = "shape_divider_$side";
+	    ?>
+		<div class="elementor-shape elementor-shape-<?php echo $side; ?>">
+			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], $settings[ $base_setting_key . '_negative' ] ); ?>
+		</div>
+		<?php
 	}
 }
