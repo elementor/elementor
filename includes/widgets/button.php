@@ -303,6 +303,14 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button',
+			]
+		);
+
 		$this->add_control(
 			'text_padding',
 			[
