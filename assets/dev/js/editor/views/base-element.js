@@ -334,7 +334,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
 
-				var isVisible = elementor.helpers.isControlVisible( currentControl, settings.attributes );
+				var isVisible = elementor.helpers.isActiveControl( currentControl, settings.attributes );
 
 				if ( isVisible && ! _.isEmpty( classValue ) ) {
 					self.$el

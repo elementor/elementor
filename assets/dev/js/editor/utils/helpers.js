@@ -105,7 +105,7 @@ helpers = {
 		} );
 	},
 
-	isControlVisible: function( controlModel, values ) {
+	isActiveControl: function( controlModel, values ) {
 		var condition;
 
 		// TODO: Better way to get this?
