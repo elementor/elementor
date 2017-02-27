@@ -248,7 +248,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_color',
 			[
-				'label' => __( 'Icon Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -264,7 +264,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_size',
 			[
-				'label' => __( 'Icon Size', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 14,
