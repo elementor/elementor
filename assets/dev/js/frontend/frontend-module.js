@@ -9,7 +9,7 @@ FrontendModule = Module.extend( {
 	bindEvents: function() {
 		var self = this;
 
-		if ( self.onWidgetChange && elementorFrontend.isEditMode() ) {
+		if ( self.onElementChange && elementorFrontend.isEditMode() ) {
 			var cid = self.getModelCID();
 
 			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
@@ -17,7 +17,7 @@ FrontendModule = Module.extend( {
 					return;
 				}
 
-				self.onWidgetChange( controlView.model.get( 'name' ) );
+				self.onElementChange( controlView.model.get( 'name' ) );
 			}, elementor.channels.editor );
 		}
 	},
@@ -42,7 +42,7 @@ FrontendModule = Module.extend( {
 	},
 
 	getClosureMethodsNames: function() {
-		return [ 'onWidgetChange' ];
+		return [ 'onElementChange' ];
 	},
 
 	onInit: function() {

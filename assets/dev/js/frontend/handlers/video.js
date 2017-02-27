@@ -152,7 +152,7 @@ VideoModule = FrontendModule.extend( {
 		this.getElements( '$imageOverlay' ).on( 'click', this.handleVideo );
 	},
 
-	onWidgetChange: function( propertyName ) {
+	onElementChange: function( propertyName ) {
 		if ( 'lightbox_content_animation' === propertyName ) {
 			this.animateVideo();
 
