@@ -36,6 +36,10 @@ class Shapes {
 
 	private static function init_shapes() {
 		self::$shapes = [
+			'single-triangle' => [
+				'title' => __( 'Single Triangle', 'elementor' ),
+				'has_negative' => true,
+			],
 			'triangle' => [
 				'title' => __( 'Triangle', 'elementor' ),
 				'has_negative' => true,
