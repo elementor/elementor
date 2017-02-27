@@ -1,0 +1,11 @@
+tr[class^="elementor_under_construction"]{
+	display: none;
+
+	&.elementor_under_construction_mode{
+		display: block;
+	}
+
+	.elementor-under-construction-is-enabled & {
+		display: block;
+	}
+}

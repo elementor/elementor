@@ -27,6 +27,9 @@
 // Compatibility
 @import "compatibility";
 
+// Under Construction Module
+@import "../../../../includes/under-construction/assets/scss/admin-bar";
+
 // Visibility (for preview mode or front-end)
 body:not(.elementor-editor-active) {
 	@import "_visibility";
