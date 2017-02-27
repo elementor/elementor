@@ -90,6 +90,10 @@ class Shapes {
 			'wave-opacity' => [
 				'title' => __( 'Waves Opacity', 'elementor' ),
 			],
+			'book' => [
+				'title' => __( 'Book', 'elementor' ),
+				'has_negative' => true,
+			],
 			'drops' => [
 				'title' => __( 'Drops', 'elementor' ),
 				'has_negative' => true,
