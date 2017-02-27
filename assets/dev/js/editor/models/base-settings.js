@@ -62,7 +62,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getFontControls: function() {
-		return _.filter( this.controls, function( control ) {
+		return _.filter( this.getActiveControls(), function( control ) {
 			return 'font' === control.type;
 		} );
 	},
@@ -70,7 +70,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	getStyleControls: function( controls ) {
 		var self = this;
 
-		controls = controls || self.controls;
+		controls = controls || self.getActiveControls();
 
 		return _.filter( controls, function( control ) {
 			if ( control.fields ) {

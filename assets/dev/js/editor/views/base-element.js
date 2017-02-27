@@ -221,10 +221,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, settings.attributes ) ) {
-				return;
-			}
-
 			elementor.helpers.enqueueFont( fontFamilyName );
 		}, this ) );
 	},
@@ -280,10 +276,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
-			return;
-		}
-
-		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
 			return;
 		}
 
