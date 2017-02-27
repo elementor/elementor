@@ -20,6 +20,13 @@
 		}
 	}
 
+	&[data-negative="true"] {
+
+		&.elementor-shape-top {
+			transform: rotate(180deg);
+		}
+	}
+
 	svg {
 		display: block;
 		width: 100%;

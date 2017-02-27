@@ -1743,6 +1743,9 @@ body.elementor-page .elementor-widget-menu-anchor {
   .elementor-shape[data-negative="false"].elementor-shape-bottom {
     -webkit-transform: rotate(180deg);
             transform: rotate(180deg); }
+  .elementor-shape[data-negative="true"].elementor-shape-top {
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
   .elementor-shape svg {
     display: block;
     width: 100%;
