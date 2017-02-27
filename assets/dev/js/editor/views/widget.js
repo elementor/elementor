@@ -128,7 +128,6 @@ WidgetView = BaseElementView.extend( {
             .remove();
 
         self.$el.imagesLoaded().always( function() {
-
             setTimeout( function() {
                 if ( 1 > self.$el.height() ) {
                     self.handleEmptyWidget();

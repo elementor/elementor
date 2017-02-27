@@ -238,8 +238,8 @@ class Widget_Toggle extends Widget_Base {
 				_.each(settings.tabs, function( item ) { #>
 					<div class="elementor-toggle-title" data-tab="{{ counter }}">
 						<span class="elementor-toggle-icon">
-						<i class="fa"></i>
-					</span>
+							<i class="fa"></i>
+						</span>
 						{{{ item.tab_title }}}
 					</div>
 					<div class="elementor-toggle-content elementor-clearfix" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>

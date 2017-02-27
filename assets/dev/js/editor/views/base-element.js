@@ -17,6 +17,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		if ( 'widget'  === type ) {
 			type = this.model.get( 'widgetType' );
 		}
+
 		return {
 			'data-element_type': type
 		};

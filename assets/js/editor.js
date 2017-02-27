@@ -6010,6 +6010,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		if ( 'widget'  === type ) {
 			type = this.model.get( 'widgetType' );
 		}
+
 		return {
 			'data-element_type': type
 		};
@@ -9206,7 +9207,6 @@ WidgetView = BaseElementView.extend( {
             .remove();
 
         self.$el.imagesLoaded().always( function() {
-
             setTimeout( function() {
                 if ( 1 > self.$el.height() ) {
                     self.handleEmptyWidget();
