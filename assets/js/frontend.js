@@ -109,7 +109,7 @@ FrontendModule = Module.extend( {
 	bindEvents: function() {
 		var self = this;
 
-		if ( self.onWidgetChange && elementorFrontend.isEditMode() ) {
+		if ( self.onElementChange && elementorFrontend.isEditMode() ) {
 			var cid = self.getModelCID();
 
 			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
@@ -117,7 +117,7 @@ FrontendModule = Module.extend( {
 					return;
 				}
 
-				self.onWidgetChange( controlView.model.get( 'name' ) );
+				self.onElementChange( controlView.model.get( 'name' ) );
 			}, elementor.channels.editor );
 		}
 	},
@@ -131,9 +131,11 @@ FrontendModule = Module.extend( {
 
 		if ( elementorFrontend.isEditMode() ) {
 			var settings = elementorFrontend.config.elements.data[ this.getModelCID() ],
-				settingsKeys = elementorFrontend.config.elements.keys[ settings.widgetType ];
+				activeControls = settings.getActiveControls(),
+				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
+				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( settings, settingsKeys );
+			elementSettings = _.pick( activeValues, settingsKeys );
 		} else {
 			elementSettings = this.$element.data( 'settings' );
 		}
@@ -142,7 +144,7 @@ FrontendModule = Module.extend( {
 	},
 
 	getClosureMethodsNames: function() {
-		return [ 'onWidgetChange' ];
+		return [ 'onElementChange' ];
 	},
 
 	onInit: function() {
@@ -342,22 +344,32 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],7:[function(require,module,exports){
-module.exports = function( $scope, $ ) {
+var GlobalHandler = elementorFrontend.Module.extend( {
+	onInit: function() {
+		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+
+		var $element = this.$element;
+
+		var animation = $element.data( 'animation' );
+
+		if ( ! animation ) {
+			return;
+		}
+
+		$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+		elementorFrontend.utils.waypoint( $element, function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
+		}, { offset: '90%' } );
+	}
+} );
+
+module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var animation = $scope.data( 'animation' );
-
-	if ( ! animation ) {
-		return;
-	}
-
-	$scope.addClass( 'elementor-invisible' ).removeClass( animation );
-
-	elementorFrontend.utils.waypoint( $scope, function() {
-		$scope.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
-	}, { offset: '90%' } );
+	new GlobalHandler( $scope );
 };
 
 },{}],8:[function(require,module,exports){
@@ -592,8 +604,97 @@ var StretchedSection = function( $section, $ ) {
 	init();
 };
 
+var Shapes = elementorFrontend.Module.extend( {
+	getElementName: function() {
+		return 'section';
+	},
+
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				container: '.elementor-shape-%s'
+			},
+			svgURL: elementorFrontend.config.urls.assets + 'shapes/'
+		};
+	},
+
+	getDefaultElements: function() {
+		var elements = {},
+			selectors = this.getSettings( 'selectors' );
+
+		elements.$topContainer = this.$element.find( selectors.container.replace( '%s', 'top' ) );
+
+		elements.$bottomContainer = this.$element.find( selectors.container.replace( '%s', 'bottom' ) );
+
+		return elements;
+	},
+
+	buildSVG: function( side ) {
+		var self = this,
+			baseSettingKey = 'shape_divider_' + side,
+			shapeType = self.getElementSettings( baseSettingKey ),
+			$svgContainer = self.getElements( '$' + side + 'Container' );
+
+		$svgContainer.empty().attr( 'data-shape', shapeType );
+
+		if ( ! shapeType ) {
+			return;
+		}
+
+		var fileName = shapeType;
+
+		if ( self.getElementSettings( baseSettingKey + '_negative' ) ) {
+			fileName += '-negative';
+		}
+
+		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
+
+		jQuery.get( svgURL, function( data ) {
+			$svgContainer.append( data.children[0] );
+		} );
+
+		this.setNegative( side );
+	},
+
+	setNegative: function( side ) {
+		this.getElements( '$' + side + 'Container' ).attr( 'data-negative', !! this.getElementSettings( 'shape_divider_' + side + '_negative' ) );
+	},
+
+	onInit: function() {
+		var self = this;
+
+		elementorFrontend.Module.prototype.onInit.apply( self, arguments );
+
+		[ 'top', 'bottom' ].forEach( function( side ) {
+			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
+				self.buildSVG( side );
+			}
+		} );
+	},
+
+	onElementChange: function( propertyName ) {
+		var shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
+
+		if ( shapeChange ) {
+			this.buildSVG( shapeChange[1] );
+
+			return;
+		}
+
+		var negativeChange = propertyName.match( /^shape_divider_(top|bottom)_negative$/ );
+
+		if ( negativeChange ) {
+			this.buildSVG( negativeChange[1] );
+
+			this.setNegative( negativeChange[1] );
+		}
+	}
+} );
+
 module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
+
+	new Shapes( $scope );
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
@@ -810,7 +911,7 @@ VideoModule = FrontendModule.extend( {
 		this.getElements( '$imageOverlay' ).on( 'click', this.handleVideo );
 	},
 
-	onWidgetChange: function( propertyName ) {
+	onElementChange: function( propertyName ) {
 		if ( 'lightbox_content_animation' === propertyName ) {
 			this.animateVideo();
 
