@@ -180,6 +180,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/page-settings.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
@@ -204,6 +205,7 @@ class Plugin {
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
 		$this->revisions_manager = new Revisions_Manager();
+		$this->page_settings_manager = new Page_Settings_Manager();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();
