@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Frontend {
 
 	private $google_fonts = [];
+	private $registered_fonts = [];
 	private $google_early_access_fonts = [];
 
 	private $_is_frontend_mode = false;
@@ -25,6 +26,7 @@ class Frontend {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
+		add_action( 'wp_head', [ $this, 'print_google_fonts' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar
@@ -52,6 +54,8 @@ class Frontend {
 	}
 
 	public function register_scripts() {
+		do_action( 'elementor/frontend/before_register_scripts' );
+
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
@@ -117,7 +121,9 @@ class Frontend {
 	}
 
 	public function register_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		do_action( 'elementor/frontend/before_register_styles' );
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
@@ -186,7 +192,7 @@ class Frontend {
 	}
 
 	public function enqueue_styles() {
-		$this->print_google_fonts();
+		do_action( 'elementor/frontend/before_enqueue_styles' );
 
 		wp_enqueue_style( 'elementor-icons' );
 		wp_enqueue_style( 'font-awesome' );
@@ -212,7 +218,6 @@ class Frontend {
 		$this->enqueue_styles();
 		$this->enqueue_scripts();
 
-		// TODO: add JS to append the css to the `head` tag
 		$this->print_google_fonts();
 	}
 
@@ -252,7 +257,14 @@ class Frontend {
 	}
 
 	public function enqueue_font( $font ) {
-		switch ( Fonts::get_font_type( $font ) ) {
+		$font_type = Fonts::get_font_type( $font );
+		$cache_id = $font_type . $font;
+
+		if ( in_array( $cache_id, $this->registered_fonts ) ) {
+			return;
+		}
+
+		switch ( $font_type ) {
 			case Fonts::GOOGLE :
 				if ( ! in_array( $font, $this->google_fonts ) )
 					$this->google_fonts[] = $font;
@@ -263,6 +275,8 @@ class Frontend {
 					$this->google_early_access_fonts[] = $font;
 				break;
 		}
+
+		$this->registered_fonts[] = $cache_id;
 	}
 
 	protected function parse_global_css_code() {
