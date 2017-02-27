@@ -614,6 +614,10 @@ abstract class Element_Base {
 		return $this->_is_type_instance;
 	}
 
+	public function get_frontend_settings_keys() {
+		return [];
+	}
+
 	protected function _add_render_attributes() {
 		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-element',
