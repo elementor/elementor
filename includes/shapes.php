@@ -52,6 +52,10 @@ class Shapes {
 				'title' => __( 'Single Circle', 'elementor' ),
 				'has_negative' => true,
 			],
+			'round-split' => [
+				'title' => __( 'Round Split', 'elementor' ),
+				'has_negative' => true,
+			],
 			'curve' => [
 				'title' => __( 'Curve', 'elementor' ),
 				'has_negative' => true,
