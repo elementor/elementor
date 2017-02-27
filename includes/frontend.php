@@ -161,6 +161,9 @@ class Frontend {
 			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
 			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			'is_rtl' => is_rtl(),
+			'urls' => [
+				'assets' => ELEMENTOR_ASSETS_URL,
+			],
 		];
 
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
