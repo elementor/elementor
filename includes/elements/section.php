@@ -729,38 +729,9 @@ class Element_Section extends Element_Base {
 	}
 
 	public function before_render() {
-		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
-
-		$this->add_render_attribute( 'wrapper', 'class', [
-			'elementor-section',
-			'elementor-element',
-			'elementor-element-' . $this->get_id(),
-			'elementor-' . $section_type . '-section',
-		] );
-
 		$settings = $this->get_settings();
-
-		foreach ( $this->get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) )
-				continue;
-
-			if ( ! $this->is_control_visible( $control ) )
-				continue;
-
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
-		}
-
-		if ( ! empty( $settings['_element_id'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'id', trim( $settings['_element_id'] ) );
-		}
-
-		if ( ! empty( $settings['animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
-		}
-
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
 		?>
-		<section <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<section <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -790,6 +761,25 @@ class Element_Section extends Element_Base {
 			</div>
 		</section>
 		<?php
+	}
+
+	protected function _add_render_attributes() {
+	    parent::_add_render_attributes();
+
+	    $section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
+
+		$this->add_render_attribute( '_wrapper', 'class', [
+			'elementor-section',
+			'elementor-' . $section_type . '-section',
+		] );
+
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
+
+		$animation = $this->get_settings( 'animation' );
+
+		if ( $animation ) {
+			$this->add_render_attribute( '_wrapper', 'data-animation', $animation );
+		}
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
