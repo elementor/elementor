@@ -227,12 +227,6 @@ class Widgets_Manager {
 		}
 	}
 
-	public function enqueue_widgets_scripts() {
-		foreach ( $this->get_widget_types() as $widget ) {
-			$widget->enqueue_scripts();
-		}
-	}
-
 	public function get_widgets_frontend_settings_keys() {
 		$keys = [];
 
@@ -245,6 +239,12 @@ class Widgets_Manager {
 		}
 
 		return $keys;
+	}
+
+	public function enqueue_widgets_scripts() {
+		foreach ( $this->get_widget_types() as $widget ) {
+			$widget->enqueue_scripts();
+		}
 	}
 
 	public function __construct() {

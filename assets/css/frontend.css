@@ -1185,7 +1185,8 @@
   .elementor-widget-icon-list .elementor-icon-list-item:after {
     position: absolute;
     bottom: 0;
-    width: 100%; }
+    width: 100%;
+    left: 0; }
   .elementor-widget-icon-list .elementor-icon-list-item, .elementor-widget-icon-list .elementor-icon-list-item a {
     display: -webkit-box;
     display: -webkit-flex;

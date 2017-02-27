@@ -132,17 +132,10 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
-			'title_color',
+			'heading_title',
 			[
-				'label' => __( 'Title Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
-				],
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -150,10 +143,25 @@ class Widget_Accordion extends Widget_Base {
 		$this->add_control(
 			'title_background',
 			[
-				'label' => __( 'Title Background', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-title' => 'color: {{VALUE}};',
+				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);
@@ -176,7 +184,6 @@ class Widget_Accordion extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => __( 'Title Typography', 'elementor' ),
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
@@ -184,21 +191,29 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'heading_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'content_background_color',
 			[
-				'label' => __( 'Content Background', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'background-color: {{VALUE}};',
 				],
-				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
 			'content_color',
 			[
-				'label' => __( 'Content Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-content' => 'color: {{VALUE}};',
@@ -214,7 +229,6 @@ class Widget_Accordion extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'label' => __( 'Content Typography', 'elementor' ),
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
@@ -226,18 +240,18 @@ class Widget_Accordion extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 		?>
-		<div class="elementor-accordion">
+		<div class="elementor-accordion" role="tablist">
 			<?php
 			$counter = 1; ?>
 			<?php foreach ( $settings['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>">
+					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
-					<div class="elementor-accordion-content elementor-clearfix" data-section="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div class="elementor-accordion-content elementor-clearfix" data-section="<?php echo $counter; ?>" role="tabpanel"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php
 				$counter++;
@@ -248,19 +262,19 @@ class Widget_Accordion extends Widget_Base {
 
 	protected function _content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
+		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
 				var counter = 1;
 				_.each( settings.tabs, function( item ) { #>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-section="{{ counter }}">
+						<div class="elementor-accordion-title" data-section="{{ counter }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
 							{{{ item.tab_title }}}
 						</div>
-						<div class="elementor-accordion-content elementor-clearfix" data-section="{{ counter }}">{{{ item.tab_content }}}</div>
+						<div class="elementor-accordion-content elementor-clearfix" data-section="{{ counter }}" role="tabpanel">{{{ item.tab_content }}}</div>
 					</div>
 				<#
 					counter++;
