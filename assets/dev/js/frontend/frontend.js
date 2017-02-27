@@ -2,6 +2,7 @@
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
+		Module = require( './frontend-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	    Utils = require( 'elementor-frontend/utils' );
 
@@ -12,6 +13,8 @@
 		this.config = elementorFrontendConfig;
 
 		this.hooks = new EventManager();
+
+		this.Module = Module;
 
 		var initElements = function() {
 			elements.$document = $( self.getScopeWindow().document );

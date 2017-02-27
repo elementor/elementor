@@ -152,14 +152,20 @@ class Frontend {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
-		wp_localize_script(
-			'elementor-frontend',
-			'elementorFrontendConfig', [
-				'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
-				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
-				'is_rtl' => is_rtl(),
-			]
-		);
+		$elementor_frontend_config = [
+			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
+			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+			'is_rtl' => is_rtl(),
+		];
+
+		if ( Plugin::instance()->editor->is_edit_mode() ) {
+			$elementor_frontend_config['elements'] = [
+				'data' => (object) [],
+				'keys' => Plugin::instance()->widgets_manager->get_widgets_frontend_settings_keys(),
+			];
+		}
+
+		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
 	}
 
 	public function enqueue_styles() {
