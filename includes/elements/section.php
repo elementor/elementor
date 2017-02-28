@@ -939,7 +939,7 @@ class Element_Section extends Element_Base {
 	}
 
 	private function print_shape_divider( $side ) {
-	    $settings = $this->get_settings();
+	    $settings = $this->get_active_settings();
 
 	    $base_setting_key = "shape_divider_$side";
 	    ?>

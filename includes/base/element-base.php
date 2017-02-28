@@ -320,6 +320,10 @@ abstract class Element_Base {
 		return self::_get_items( $this->_settings, $setting );
 	}
 
+	public function get_active_settings() {
+		return array_intersect_key( $this->get_settings(), $this->get_active_controls() );
+	}
+
 	public function get_children() {
 		if ( null === $this->_children ) {
 			$this->_init_children();
@@ -642,7 +646,7 @@ abstract class Element_Base {
 			'elementor-element-' . $this->get_id(),
 		] );
 
-		$settings = $this->get_settings();
+		$settings = $this->get_active_settings();
 
 		foreach ( self::get_class_controls() as $control ) {
 			if ( empty( $settings[ $control['name'] ] ) )
