@@ -19,6 +19,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return {
+			'data-id': this.getID(),
 			'data-element_type': type
 		};
 	},
