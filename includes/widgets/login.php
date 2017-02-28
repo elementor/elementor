@@ -71,7 +71,6 @@ class Widget_Login extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'user_label',
 			[
@@ -321,7 +320,6 @@ class Widget_Login extends Widget_Base {
 				],
 			]
 		);
-
 
 		$this->end_controls_section();
 
@@ -749,7 +747,6 @@ class Widget_Login extends Widget_Base {
 		}
 
 		$this->form_fields_render_attributes();
-		$input_size = $settings['input_size'];
 		?>
 		<form class="elementor-login" method="post" action="<?php echo wp_login_url(); ?>">
 			<input type="hidden" name="redirect_to" value="<?php echo $current_url;?>">
