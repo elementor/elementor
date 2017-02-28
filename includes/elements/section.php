@@ -428,90 +428,6 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Typography
-		$this->start_controls_section(
-			'section_typo',
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'heading_color',
-			[
-				'label' => __( 'Heading Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link',
-			[
-				'label' => __( 'Link Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link_hover',
-			[
-				'label' => __( 'Link Hover Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_align',
-			[
-				'label' => __( 'Text Align', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-
 		// Section Shape Divider
 		$this->start_controls_section(
 			'section_shape_divider',
@@ -642,6 +558,90 @@ class Element_Section extends Element_Base {
 		}
 
 		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		// Section Typography
+		$this->start_controls_section(
+			'section_typo',
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'heading_color',
+			[
+				'label' => __( 'Heading Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link',
+			[
+				'label' => __( 'Link Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link_hover',
+			[
+				'label' => __( 'Link Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_align',
+			[
+				'label' => __( 'Text Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 
