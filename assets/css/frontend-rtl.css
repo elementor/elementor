@@ -1251,12 +1251,12 @@
 .elementor-aspect-ratio-32 .elementor-video-wrapper {
   padding-bottom: 66.6666%; }
 
-#elementor-widget-video-modal .dialog-widget-content {
+.elementor-widget-video-modal .dialog-widget-content {
   background: none;
   box-shadow: none;
   width: 50%; }
 
-#elementor-widget-video-modal .dialog-close-button {
+.elementor-widget-video-modal .dialog-close-button {
   top: 12px;
   right: 0; }
 
