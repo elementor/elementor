@@ -151,13 +151,14 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
+				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
 			'divider_style',
 			[
-				'label' => __( 'Divider Style', 'elementor' ),
+				'label' => __( 'Style', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'solid' => __( 'Solid', 'elementor' ),
@@ -176,31 +177,12 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$this->add_control(
-			'divider_color',
-			[
-				'label' => __( 'Divider Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '#ddd',
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
-				],
-				'condition' => [
-					'divider' => 'yes',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
 			'divider_weight',
 			[
-				'label' => __( 'Divider Weight', 'elementor' ),
+				'label' => __( 'Weight', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 2,
+					'size' => 1,
 				],
 				'range' => [
 					'px' => [
@@ -218,9 +200,28 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$this->add_control(
+			'divider_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#ddd',
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'divider_width',
 			[
-				'label' => __( 'Divider Width', 'elementor' ),
+				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'units' => [ '%' ],
 				'default' => [
