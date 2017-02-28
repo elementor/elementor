@@ -47,6 +47,7 @@ class Shapes {
 			'triangle-asymmetrical' => [
 				'title' => __( 'Triangle Asymmetrical', 'elementor' ),
 				'has_negative' => true,
+				'has_flip' => true,
 			],
 			'single-circle' => [
 				'title' => __( 'Single Circle', 'elementor' ),
@@ -63,13 +64,16 @@ class Shapes {
 			'curve-asymmetrical' => [
 				'title' => __( 'Curve Asymmetrical', 'elementor' ),
 				'has_negative' => true,
+				'has_flip' => true,
 			],
 			'tilt' => [
 				'title' => __( 'Tilt', 'elementor' ),
 				'has_negative' => true,
+				'has_flip' => true,
 			],
 			'opacity-tilt' => [
 				'title' => __( 'Opacity Tilt', 'elementor' ),
+				'has_flip' => true,
 			],
 			'opacity-tilt-fan' => [
 				'title' => __( 'Opacity Tilt Fan', 'elementor' ),
@@ -80,15 +84,19 @@ class Shapes {
 			'wave' => [
 				'title' => __( 'Wave', 'elementor' ),
 				'has_negative' => true,
+				'has_flip' => true,
 			],
 			'wave-brush' => [
 				'title' => __( 'Waves Brush', 'elementor' ),
+				'has_flip' => true,
 			],
 			'wave-zigzag' => [
 				'title' => __( 'Wave Zigzag', 'elementor' ),
+				'has_flip' => true,
 			],
 			'wave-opacity' => [
 				'title' => __( 'Waves Opacity', 'elementor' ),
+				'has_flip' => true,
 			],
 			'book' => [
 				'title' => __( 'Book', 'elementor' ),
@@ -97,10 +105,12 @@ class Shapes {
 			'drops' => [
 				'title' => __( 'Drops', 'elementor' ),
 				'has_negative' => true,
+				'has_flip' => true,
 			],
 			'clouds' => [
 				'title' => __( 'Clouds', 'elementor' ),
 				'has_negative' => true,
+				'has_flip' => true,
 			],
 		];
 	}
