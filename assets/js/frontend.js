@@ -122,6 +122,10 @@ FrontendModule = Module.extend( {
 		}
 	},
 
+	getID: function() {
+		return this.$element.data( 'id' );
+	},
+
 	getModelCID: function() {
 		return this.$element.data( 'model-cid' );
 	},
@@ -812,7 +816,7 @@ VideoModule = FrontendModule.extend( {
 		var self = this;
 
 		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
-			id: 'elementor-widget-video-modal',
+			className: 'elementor-widget-video-modal',
 			container: self.getElements( '$lightBoxContainer' ),
 			closeButton: true,
 			position: {
@@ -856,6 +860,7 @@ VideoModule = FrontendModule.extend( {
 
 			lightBoxModal
 				.setMessage( $videoFrame )
+				.setID( 'elementor-video-modal-' + self.getID() )
 				.show( function() {
 					self.playVideo();
 
