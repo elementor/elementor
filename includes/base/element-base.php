@@ -641,9 +641,13 @@ abstract class Element_Base {
 	}
 
 	protected function _add_render_attributes() {
+		$id = $this->get_id();
+
+		$this->add_render_attribute( '_wrapper', 'data-id', $id );
+
 		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-element',
-			'elementor-element-' . $this->get_id(),
+			'elementor-element-' . $id,
 		] );
 
 		$settings = $this->get_active_settings();
