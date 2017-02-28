@@ -532,7 +532,7 @@ class Element_Section extends Element_Base {
 					'label_off' => __( 'No', 'elementor' ),
 					'label_on' => __( 'Yes', 'elementor' ),
 					'condition' => [
-						"shape_divider_$side!" => '',
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'transform: rotateY(180deg)',
