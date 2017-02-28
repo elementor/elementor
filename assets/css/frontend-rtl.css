@@ -976,7 +976,9 @@
 @media (max-width: 767px) {
   .elementor-progress-wrapper {
     height: 25px;
-    line-height: 25px; } }
+    line-height: 25px; }
+  .elementor-progress-text {
+    padding-right: 10px; } }
 
 .elementor-widget-tabs.elementor-tabs-view-vertical .elementor-tabs-wrapper {
   width: 25%;
@@ -1185,7 +1187,8 @@
   .elementor-widget-icon-list .elementor-icon-list-item:after {
     position: absolute;
     bottom: 0;
-    width: 100%; }
+    width: 100%;
+    right: 0; }
   .elementor-widget-icon-list .elementor-icon-list-item, .elementor-widget-icon-list .elementor-icon-list-item a {
     display: -webkit-box;
     display: -webkit-flex;
