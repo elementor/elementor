@@ -358,8 +358,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	getID: function() {
+		return this.model.get( 'id' );
+	},
+
 	getElementUniqueID: function() {
-		return 'elementor-element-' + this.model.get( 'id' );
+		return 'elementor-element-' + this.getID();
 	},
 
 	duplicate: function() {
