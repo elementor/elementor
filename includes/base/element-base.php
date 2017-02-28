@@ -128,6 +128,24 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
+	public function get_active_controls() {
+		$controls = $this->get_controls();
+
+		$settings = $this->get_settings();
+
+		$active_controls = array_reduce( array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
+			$control = $controls[ $control_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				$active_controls[ $control_key ] = $control;
+			}
+
+			return $active_controls;
+		}, [] );
+
+		return $active_controls;
+	}
+
 	public function add_control( $id, array $args, $overwrite = false ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
@@ -181,7 +199,7 @@ abstract class Element_Base {
 
 	public final function get_style_controls( $controls = null ) {
 		if ( null === $controls ) {
-			$controls = $this->get_controls();
+			$controls = $this->get_active_controls();
 		}
 
 		$style_controls = [];
@@ -200,7 +218,7 @@ abstract class Element_Base {
 	}
 
 	public final function get_class_controls() {
-		return array_filter( $this->get_controls(), function( $control ) {
+		return array_filter( $this->get_active_controls(), function( $control ) {
 			return ( isset( $control['prefix_class'] ) );
 		} );
 	}
