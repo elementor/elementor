@@ -106,7 +106,7 @@ class Post_CSS_File extends CSS_File {
 				}
 			}
 
-			if ( ! $element->is_control_visible( $control, $values ) || empty( $control['selectors'] ) ) {
+			if ( empty( $control['selectors'] ) ) {
 				continue;
 			}
 
