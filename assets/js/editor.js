@@ -4846,6 +4846,11 @@ var HotKeys = function( $ ) {
 				return;
 			}
 
+			// Fix for some keyboard sources that consider alt key as ctrl key
+			if ( ! handler.allowAltKey && event.altKey ) {
+				return;
+			}
+
 			event.preventDefault();
 
 			handler.handle( event );
@@ -8875,7 +8880,6 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull )
-			.listenTo( this.collection, 'remove', this.onCollectionRemove )
 			.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
 	},
 
@@ -8995,7 +8999,7 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
-	onCollectionRemove: function() {
+	onRemoveChild: function() {
 		// If it's the last column, please create new one.
 		this._checkIsEmpty();
 
