@@ -373,7 +373,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'lightbox',
 			[
-				'label' => __( 'Open In Lightbox', 'elementor' ),
+				'label' => __( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Off', 'elementor' ),
 				'label_on' => __( 'On', 'elementor' ),
@@ -387,7 +387,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'lightbox_color',
 			[
-				'label' => __( 'Lightbox Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-widget-video-modal' => 'background-color: {{VALUE}};',
