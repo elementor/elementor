@@ -17,8 +17,7 @@ ElementsHandler = function( $ ) {
 		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
-		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-		'menu-anchor.default': require( 'elementor-frontend/handlers/menu-anchor' )
+		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' )
 	};
 
 	var addGlobalHandlers = function() {
@@ -97,7 +96,7 @@ ElementsHandler = function( $ ) {
 
 module.exports = ElementsHandler;
 
-},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/menu-anchor":9,"elementor-frontend/handlers/progress":10,"elementor-frontend/handlers/section":11,"elementor-frontend/handlers/tabs":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/handlers/widget":15}],2:[function(require,module,exports){
+},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/handlers/widget":14}],2:[function(require,module,exports){
 var Module = require( '../utils/module' ),
 	FrontendModule;
 
@@ -154,7 +153,7 @@ FrontendModule.prototype.getElementName = function() {};
 
 module.exports = FrontendModule;
 
-},{"../utils/module":18}],3:[function(require,module,exports){
+},{"../utils/module":17}],3:[function(require,module,exports){
 /* global elementorFrontendConfig */
 ( function( $ ) {
 	var elements = {},
@@ -201,6 +200,14 @@ module.exports = FrontendModule;
 
 		this.setScopeWindow = function( window ) {
 			scopeWindow = window;
+		};
+
+		this.getElements = function( element ) {
+			if ( element ) {
+				return elements[ element ];
+			}
+
+			return elements;
 		};
 
 		this.isEditMode = function() {
@@ -284,7 +291,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":17,"./frontend-module":2,"elementor-frontend/elements-handler":1,"elementor-frontend/utils":16}],4:[function(require,module,exports){
+},{"../utils/hooks":16,"./frontend-module":2,"elementor-frontend/elements-handler":1,"elementor-frontend/utils":15}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -395,38 +402,6 @@ module.exports = function( $scope, $ ) {
 
 },{}],9:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
-	if ( elementorFrontend.isEditMode() ) {
-		return;
-	}
-
-	var $anchor = $scope.find( '.elementor-menu-anchor' ),
-		anchorID = $anchor.attr( 'id' ),
-		$anchorLinks = $( 'a[href*="#' + anchorID + '"]' ),
-		$scrollable = $( 'html, body' ),
-		adminBarHeight = $( '#wpadminbar' ).height();
-
-	$anchorLinks.on( 'click', function( event ) {
-		var isSamePathname = ( location.pathname === this.pathname ),
-			isSameHostname = ( location.hostname === this.hostname );
-
-		if ( ! isSameHostname || ! isSamePathname ) {
-			return;
-		}
-
-		event.preventDefault();
-
-		var scrollTop = $anchor.offset().top - adminBarHeight;
-
-		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
-
-		$scrollable.animate( {
-			scrollTop: scrollTop
-		}, 1000 );
-	} );
-};
-
-},{}],10:[function(require,module,exports){
-module.exports = function( $scope, $ ) {
 	elementorFrontend.utils.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
 
@@ -434,7 +409,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
@@ -602,7 +577,7 @@ module.exports = function( $scope, $ ) {
 	}
 };
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
 		$tabsTitles = $scope.find( '.elementor-tab-title' ),
@@ -637,7 +612,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
@@ -655,7 +630,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var FrontendModule = require( 'elementor-frontend/frontend-module' ),
 	VideoModule;
 
@@ -847,7 +822,7 @@ module.exports = function( $scope ) {
 	new VideoModule( $scope );
 };
 
-},{"elementor-frontend/frontend-module":2}],15:[function(require,module,exports){
+},{"elementor-frontend/frontend-module":2}],14:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
@@ -862,24 +837,63 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],16:[function(require,module,exports){
-var Utils;
+},{}],15:[function(require,module,exports){
+var Module = require( '../utils/module' );
 
-Utils = function( $ ) {
-	var self = this;
+module.exports = Module.extend( {
+	getDefaultSettings: function() {
+		return {
+			YT: {
+				isInserted: false,
+				APISrc: 'https://www.youtube.com/iframe_api'
+			},
+			anchor: {
+				scrollDuration: 1000,
+				selectors: {
+					links: 'a[href*="#"]',
+					scrollable: 'html, body'
+				}
+			},
+			selectors: {
+				firstScript: 'script:first',
+				wpAdminBar: '#wpadminbar'
+			}
+		};
+	},
 
-	// FIXME: Choose other variable name for this flag
-	var isYTInserted = false;
+	getDefaultElements: function() {
+		var $ = jQuery,
+			selectors = this.getSettings( 'selectors' );
 
-	var insertYTApi = function() {
-		isYTInserted = true;
+		return {
+			window: elementorFrontend.getScopeWindow(),
+			$firstScript: $( selectors.firstScript ),
+			anchor: {
+				$scrollable: $( this.getSettings( 'anchor.selectors.scrollable' ) )
+			},
+			$wpAdminBar: $( selectors.wpAdminBar )
+		};
+	},
 
-		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
-	};
+	getClosureMethodsNames: function() {
+		return [ 'handleAnchorLinks' ];
+	},
 
-	this.onYoutubeApiReady = function( callback ) {
-		if ( ! isYTInserted ) {
-			insertYTApi();
+	bindEvents: function() {
+		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'anchor.selectors.links' ), this.handleAnchorLinks );
+	},
+
+	insertYTAPI: function() {
+		this.setSettings( 'YT.isInserted', true );
+
+		this.getElements( '$firstScript' ).before( jQuery( '<script>', { src: this.getSettings( 'YT.APISrc' ) } ) );
+	},
+
+	onYoutubeApiReady: function( callback ) {
+		var self = this;
+
+		if ( ! self.getSettings( 'YT.IsInserted' ) ) {
+			self.insertYTAPI();
 		}
 
 		if ( window.YT && YT.loaded ) {
@@ -890,9 +904,9 @@ Utils = function( $ ) {
 				self.onYoutubeApiReady( callback );
 			}, 350 );
 		}
-	};
+	},
 
-	this.waypoint = function( $element, callback, options ) {
+	waypoint: function( $element, callback, options ) {
 		var correctCallback = function() {
 			var element = this.element || this;
 
@@ -900,12 +914,38 @@ Utils = function( $ ) {
 		};
 
 		$element.elementorWaypoint( correctCallback, options );
-	};
-};
+	},
 
-module.exports = Utils;
+	handleAnchorLinks: function( event ) {
+		var clickedLink = event.currentTarget,
+			elements = this.getElements(),
+			location = elements.window.location,
+			isSamePathname = ( location.pathname === clickedLink.pathname ),
+			isSameHostname = ( location.hostname === clickedLink.hostname );
 
-},{}],17:[function(require,module,exports){
+		if ( ! isSameHostname || ! isSamePathname ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		var $anchor = jQuery( clickedLink.hash ),
+			adminBarHeight = elements.$wpAdminBar.height(),
+			scrollTop = $anchor.offset().top - adminBarHeight;
+
+		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
+
+		elements.anchor.$scrollable.animate( {
+			scrollTop: scrollTop
+		}, this.getSettings( 'anchor.scrollDuration' ) );
+	},
+
+	onInit: function() {
+		this.bindEvents();
+	}
+} );
+
+},{"../utils/module":17}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1150,7 +1190,7 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,

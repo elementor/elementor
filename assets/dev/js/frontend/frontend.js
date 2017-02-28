@@ -46,6 +46,14 @@
 			scopeWindow = window;
 		};
 
+		this.getElements = function( element ) {
+			if ( element ) {
+				return elements[ element ];
+			}
+
+			return elements;
+		};
+
 		this.isEditMode = function() {
 			return self.config.isEditMode;
 		};
