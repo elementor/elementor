@@ -22,6 +22,10 @@ FrontendModule = Module.extend( {
 		}
 	},
 
+	getID: function() {
+		return this.$element.data( 'id' );
+	},
+
 	getModelCID: function() {
 		return this.$element.data( 'model-cid' );
 	},
