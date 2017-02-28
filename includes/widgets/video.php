@@ -505,8 +505,8 @@ class Widget_Video extends Widget_Base {
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php if ( $settings['lightbox'] ) : ?>
 						<img src="<?php echo $settings['image_overlay']['url']; ?>">
-					<?php endif;
-					if ( 'yes' === $settings['show_play_icon'] ) : ?>
+					<?php endif; ?>
+					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
 							<i class="fa fa-play-circle"></i>
 						</div>
