@@ -157,7 +157,7 @@ class Post_CSS_File extends CSS_File {
 	private function render_styles( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
-		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{WRAPPER}}' ], [ $this->get_element_unique_selector( $element ) ] );
+		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
 		if ( 'column' === $element->get_name() ) {
 			if ( ! empty( $element_settings['_inline_size'] ) ) {
