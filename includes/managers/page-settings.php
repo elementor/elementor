@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Page_Settings_Manager {
 
+	const TEMPLATE_CANVAS = 'elementor_canvas';
 	private $settings = null;
 
 	public function get( $setting, $default = null ) {
@@ -76,7 +77,7 @@ class Page_Settings_Manager {
 	}
 
 	public function template_include( $template ) {
-		if ( 'elementor_blank' === get_post_meta( get_the_ID(), '_wp_page_template', true ) ) {
+		if ( self::TEMPLATE_CANVAS === get_post_meta( get_the_ID(), '_wp_page_template', true ) ) {
 			$template = ELEMENTOR_PATH . '/includes/templates/empty.php';
 		}
 		return $template;
@@ -84,7 +85,7 @@ class Page_Settings_Manager {
 
 	public function add_page_templates( $post_templates, $wp_theme, $post, $post_type ) {
 		$post_templates = [
-			'elementor_blank' => __( 'Elementor', 'elementor' ) . ' ' . __( 'Blank', 'elementor' ),
+				self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
 		] + $post_templates;
 
 		return $post_templates;
