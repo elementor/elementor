@@ -548,7 +548,7 @@ class Element_Section extends Element_Base {
 					'label_off' => __( 'No', 'elementor' ),
 					'label_on' => __( 'Yes', 'elementor' ),
 					'condition' => [
-						"shape_divider_$side" => array_keys( Shapes::get_negative_shapes() ),
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
 					],
 					'render_type' => 'none',
 				]

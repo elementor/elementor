@@ -18,9 +18,9 @@ class Shapes {
 		return self::$shapes;
 	}
 
-	public static function get_negative_shapes() {
-		return array_filter( self::get_shapes(), function( $shape ) {
-			return ! empty( $shape['has_negative'] );
+	public static function filter_shapes( $by ) {
+		return array_filter( self::get_shapes(), function( $shape ) use ( $by ) {
+			return ! empty( $shape[ $by ] );
 		} );
 	}
 
