@@ -944,7 +944,7 @@ class Element_Section extends Element_Base {
 	    $base_setting_key = "shape_divider_$side";
 	    ?>
 		<div class="elementor-shape elementor-shape-<?php echo $side; ?>">
-			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], $settings[ $base_setting_key . '_negative' ] ); ?>
+			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
 		</div>
 		<?php
 	}
