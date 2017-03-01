@@ -831,16 +831,20 @@ VideoModule = FrontendModule.extend( {
 				$widgetContent.removeClass( 'animated' );
 			};
 
+			lightBoxModal.onShow = function() {
+				DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( lightBoxModal, arguments );
+
+				self.animateVideo();
+
+				self.playVideo();
+			};
+
 			self.handleAspectRatio();
 
 			lightBoxModal
 				.setMessage( $videoFrame )
 				.setID( 'elementor-video-modal-' + self.getID() )
-				.show( function() {
-					self.playVideo();
-
-					self.animateVideo();
-				} );
+				.show();
 		} else {
 			elements.$imageOverlay.remove();
 
