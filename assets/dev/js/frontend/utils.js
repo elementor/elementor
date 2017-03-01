@@ -42,7 +42,7 @@ module.exports = Module.extend( {
 	insertYTAPI: function() {
 		this.setSettings( 'YT.isInserted', true );
 
-		this.getElements( '$firstScript' ).before( jQuery( '<script>', { src: this.getSettings( 'YT.APISrc' ) } ) );
+		this.elements.$firstScript.before( jQuery( '<script>', { src: this.getSettings( 'YT.APISrc' ) } ) );
 	},
 
 	onYoutubeApiReady: function( callback ) {
@@ -74,8 +74,7 @@ module.exports = Module.extend( {
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
-			elements = this.getElements(),
-			location = elements.window.location,
+			location = this.elements.window.location,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
@@ -86,12 +85,12 @@ module.exports = Module.extend( {
 		event.preventDefault();
 
 		var $anchor = jQuery( clickedLink.hash ),
-			adminBarHeight = elements.$wpAdminBar.height(),
+			adminBarHeight = this.elements.$wpAdminBar.height(),
 			scrollTop = $anchor.offset().top - adminBarHeight;
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
-		elements.anchor.$scrollable.animate( {
+		this.elements.anchor.$scrollable.animate( {
 			scrollTop: scrollTop
 		}, this.getSettings( 'anchor.scrollDuration' ) );
 	},

@@ -50,7 +50,7 @@ VideoModule = FrontendModule.extend( {
 
 		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
 			className: 'elementor-widget-video-modal',
-			container: self.getElements( '$lightBoxContainer' ),
+			container: this.elements.$lightBoxContainer,
 			closeButton: true,
 			position: {
 				within: elementorFrontend.getScopeWindow()
@@ -73,8 +73,7 @@ VideoModule = FrontendModule.extend( {
 
 	handleVideo: function() {
 		var self = this,
-			elements = self.getElements(),
-			$videoFrame = elements.$videoFrame,
+			$videoFrame = this.elements.$videoFrame,
 			isLightBoxEnabled = self.getElementSettings( 'lightbox' );
 
 		if ( isLightBoxEnabled ) {
@@ -104,14 +103,14 @@ VideoModule = FrontendModule.extend( {
 				.setID( 'elementor-video-modal-' + self.getID() )
 				.show();
 		} else {
-			elements.$imageOverlay.remove();
+			this.elements.$imageOverlay.remove();
 
 			self.playVideo();
 		}
 	},
 
 	playVideo: function() {
-		var $videoFrame = this.getElements( '$videoFrame' ),
+		var $videoFrame = this.elements.$videoFrame,
 			newSourceUrl = $videoFrame[0].src.replace( '&autoplay=0', '' );
 
 		$videoFrame[0].src = newSourceUrl + '&autoplay=1';
@@ -150,7 +149,7 @@ VideoModule = FrontendModule.extend( {
 	bindEvents: function() {
 		FrontendModule.prototype.bindEvents.apply( this, arguments );
 
-		this.getElements( '$imageOverlay' ).on( 'click', this.handleVideo );
+		this.elements.$imageOverlay.on( 'click', this.handleVideo );
 	},
 
 	onElementChange: function( propertyName ) {
