@@ -2,14 +2,6 @@
 // Global selectors for Elementor Front-End
 //
 
-// Admin Bar - Icon (Front-End)
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-	content: "\e800";
-	font-family: eicon;
-	font-size: 12px;
-	margin-top: 5px;
-}
-
 .elementor {
 
 	* {
@@ -25,10 +17,12 @@
 		box-shadow: none;
 		text-decoration: none;
 	}
+
 	hr {
 		margin: 0;
 		background-color: transparent;
 	}
+
 	img {
 		height: auto;
 		max-width: 100%;
@@ -36,6 +30,7 @@
 		border-radius: 0;
 		box-shadow: none;
 	}
+
 	figure {
 		margin: 0;
 	}
@@ -201,6 +196,14 @@
 			}
 		}
 	}
+}
+
+// Admin Bar - Icon (Front-End)
+#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
+	content: "\e800";
+	font-family: eicon;
+	font-size: 12px;
+	margin-top: 5px;
 }
 
 // TEMP CODE
