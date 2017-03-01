@@ -1,20 +1,55 @@
-var Utils;
+var Module = require( '../utils/module' );
 
-Utils = function( $ ) {
-	var self = this;
+module.exports = Module.extend( {
+	getDefaultSettings: function() {
+		return {
+			YT: {
+				isInserted: false,
+				APISrc: 'https://www.youtube.com/iframe_api'
+			},
+			anchor: {
+				scrollDuration: 1000,
+				selectors: {
+					links: 'a[href*="#"]',
+					scrollable: 'html, body'
+				}
+			},
+			selectors: {
+				firstScript: 'script:first',
+				wpAdminBar: '#wpadminbar'
+			}
+		};
+	},
 
-	// FIXME: Choose other variable name for this flag
-	var isYTInserted = false;
+	getDefaultElements: function() {
+		var $ = jQuery,
+			selectors = this.getSettings( 'selectors' );
 
-	var insertYTApi = function() {
-		isYTInserted = true;
+		return {
+			window: elementorFrontend.getScopeWindow(),
+			$firstScript: $( selectors.firstScript ),
+			anchor: {
+				$scrollable: $( this.getSettings( 'anchor.selectors.scrollable' ) )
+			},
+			$wpAdminBar: $( selectors.wpAdminBar )
+		};
+	},
 
-		$( 'script:first' ).before(  $( '<script>', { src: 'https://www.youtube.com/iframe_api' } ) );
-	};
+	bindEvents: function() {
+		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'anchor.selectors.links' ), this.handleAnchorLinks );
+	},
 
-	this.onYoutubeApiReady = function( callback ) {
-		if ( ! isYTInserted ) {
-			insertYTApi();
+	insertYTAPI: function() {
+		this.setSettings( 'YT.isInserted', true );
+
+		this.elements.$firstScript.before( jQuery( '<script>', { src: this.getSettings( 'YT.APISrc' ) } ) );
+	},
+
+	onYoutubeApiReady: function( callback ) {
+		var self = this;
+
+		if ( ! self.getSettings( 'YT.IsInserted' ) ) {
+			self.insertYTAPI();
 		}
 
 		if ( window.YT && YT.loaded ) {
@@ -25,9 +60,9 @@ Utils = function( $ ) {
 				self.onYoutubeApiReady( callback );
 			}, 350 );
 		}
-	};
+	},
 
-	this.waypoint = function( $element, callback, options ) {
+	waypoint: function( $element, callback, options ) {
 		var correctCallback = function() {
 			var element = this.element || this;
 
@@ -35,7 +70,32 @@ Utils = function( $ ) {
 		};
 
 		$element.elementorWaypoint( correctCallback, options );
-	};
-};
+	},
 
-module.exports = Utils;
+	handleAnchorLinks: function( event ) {
+		var clickedLink = event.currentTarget,
+			location = this.elements.window.location,
+			isSamePathname = ( location.pathname === clickedLink.pathname ),
+			isSameHostname = ( location.hostname === clickedLink.hostname );
+
+		if ( ! isSameHostname || ! isSamePathname ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		var $anchor = jQuery( clickedLink.hash ),
+			adminBarHeight = this.elements.$wpAdminBar.height(),
+			scrollTop = $anchor.offset().top - adminBarHeight;
+
+		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
+
+		this.elements.anchor.$scrollable.animate( {
+			scrollTop: scrollTop
+		}, this.getSettings( 'anchor.scrollDuration' ) );
+	},
+
+	onInit: function() {
+		this.bindEvents();
+	}
+} );

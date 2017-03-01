@@ -2044,7 +2044,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.8);
   z-index: 9999; }
 
 .dialog-widget-content {
