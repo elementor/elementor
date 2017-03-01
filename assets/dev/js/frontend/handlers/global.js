@@ -12,7 +12,7 @@ var GlobalHandler = elementorFrontend.Module.extend( {
 
 		$element.addClass( 'elementor-invisible' ).removeClass( animation );
 
-		elementorFrontend.utils.waypoint( $element, function() {
+		elementorFrontend.waypoint( $element, function() {
 			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, { offset: '90%' } );
 	}

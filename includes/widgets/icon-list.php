@@ -131,6 +131,7 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'fa fa-align-right',
 					],
 				],
+				'prefix_class' => 'elementor-align-',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item' => 'justify-content: {{VALUE}};',
 				],
