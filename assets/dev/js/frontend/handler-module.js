@@ -1,7 +1,7 @@
-	FrontendModule;
 var ViewModule = require( '../utils/view-module' ),
+	HandlerModule;
 
-FrontendModule = Module.extend( {
+HandlerModule = ViewModule.extend( {
 	$element: null,
 
 	onElementChange: null,
@@ -55,9 +55,7 @@ FrontendModule = Module.extend( {
 		}
 
 		return this.getItems( elementSettings, setting );
-	},
 	}
 } );
 
-
-module.exports = FrontendModule;
+module.exports = HandlerModule;

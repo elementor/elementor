@@ -1,7 +1,7 @@
-var FrontendModule = require( 'elementor-frontend/frontend-module' ),
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	VideoModule;
 
-VideoModule = FrontendModule.extend( {
+VideoModule = HandlerModule.extend( {
 	oldAnimation: null,
 
 	oldAspectRatio: null,
