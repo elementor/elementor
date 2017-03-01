@@ -3,6 +3,36 @@
 //
 .elementor-widget-icon-list {
 
+	&.elementor-align-center {
+
+		.elementor-icon-list-item {
+
+			&:after {
+				margin: auto;
+			}
+		}
+	}
+
+	&:not(.elementor-align-right) {
+
+		.elementor-icon-list-item {
+
+			&:after {
+				@include start(0);
+			}
+		}
+	}
+
+	&:not(.elementor-align-left) {
+
+		.elementor-icon-list-item {
+
+			&:after {
+				@include end(0);
+			}
+		}
+	}
+
 	.elementor-icon-list-items {
 		list-style-type: none;
 		margin: 0;
@@ -18,7 +48,6 @@
 			position: absolute;
 			bottom: 0;
 			width: 100%;
-			@include start(0);
 		}
 
 		&, a {
