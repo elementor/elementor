@@ -9,7 +9,7 @@ FrontendModule = Module.extend( {
 	bindEvents: function() {
 		var self = this;
 
-		if ( self.onWidgetChange && elementorFrontend.isEditMode() ) {
+		if ( self.onElementChange && elementorFrontend.isEditMode() ) {
 			var cid = self.getModelCID();
 
 			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
@@ -17,9 +17,13 @@ FrontendModule = Module.extend( {
 					return;
 				}
 
-				self.onWidgetChange( controlView.model.get( 'name' ) );
+				self.onElementChange( controlView.model.get( 'name' ) );
 			}, elementor.channels.editor );
 		}
+	},
+
+	getID: function() {
+		return this.$element.data( 'id' );
 	},
 
 	getModelCID: function() {
@@ -31,9 +35,11 @@ FrontendModule = Module.extend( {
 
 		if ( elementorFrontend.isEditMode() ) {
 			var settings = elementorFrontend.config.elements.data[ this.getModelCID() ],
-				settingsKeys = elementorFrontend.config.elements.keys[ settings.widgetType ];
+				activeControls = settings.getActiveControls(),
+				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
+				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( settings, settingsKeys );
+			elementSettings = _.pick( activeValues, settingsKeys );
 		} else {
 			elementSettings = this.$element.data( 'settings' );
 		}
@@ -42,7 +48,7 @@ FrontendModule = Module.extend( {
 	},
 
 	getClosureMethodsNames: function() {
-		return [ 'onWidgetChange' ];
+		return [ 'onElementChange' ];
 	},
 
 	onInit: function() {

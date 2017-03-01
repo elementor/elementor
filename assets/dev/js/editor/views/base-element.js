@@ -19,6 +19,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return {
+			'data-id': this.getID(),
 			'data-element_type': type
 		};
 	},
@@ -222,10 +223,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, settings.attributes ) ) {
-				return;
-			}
-
 			elementor.helpers.enqueueFont( fontFamilyName );
 		}, this ) );
 	},
@@ -284,10 +281,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
-			return;
-		}
-
 		return value;
 	},
 
@@ -297,7 +290,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#elementor .' + self.getElementUniqueID() ] );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
@@ -335,7 +328,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
 
-				var isVisible = elementor.helpers.isControlVisible( currentControl, settings.attributes );
+				var isVisible = elementor.helpers.isActiveControl( currentControl, settings.attributes );
 
 				if ( isVisible && ! _.isEmpty( classValue ) ) {
 					self.$el
@@ -365,8 +358,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	getID: function() {
+		return this.model.get( 'id' );
+	},
+
 	getElementUniqueID: function() {
-		return 'elementor-element-' + this.model.get( 'id' );
+		return 'elementor-element-' + this.getID();
 	},
 
 	duplicate: function() {

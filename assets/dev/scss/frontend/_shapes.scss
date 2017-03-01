@@ -1,0 +1,42 @@
+.elementor-shape {
+	overflow: hidden;
+	position: absolute;
+	left: 0;
+	width: 100%;
+	line-height: 0;
+
+	&-top {
+		top: 0;
+	}
+
+	&-bottom {
+		bottom: 0;
+	}
+
+	&[data-negative="false"] {
+
+		&.elementor-shape-bottom {
+			transform: rotate(180deg);
+		}
+	}
+
+	&[data-negative="true"] {
+
+		&.elementor-shape-top {
+			transform: rotate(180deg);
+		}
+	}
+
+	svg {
+		display: block;
+		width: 100%;
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.elementor-shape-fill {
+		fill: #fff;
+		transform-origin: center;
+	}
+}

@@ -1251,12 +1251,12 @@
 .elementor-aspect-ratio-32 .elementor-video-wrapper {
   padding-bottom: 66.6666%; }
 
-#elementor-widget-video-modal .dialog-widget-content {
+.elementor-widget-video-modal .dialog-widget-content {
   background: none;
   box-shadow: none;
   width: 50%; }
 
-#elementor-widget-video-modal .dialog-close-button {
+.elementor-widget-video-modal .dialog-close-button {
   top: 12px;
   right: 0; }
 
@@ -1733,6 +1733,34 @@ body.elementor-page .elementor-widget-menu-anchor {
 	animation-duration: .75s;
 }
 */
+.elementor-shape {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  line-height: 0; }
+  .elementor-shape-top {
+    top: 0; }
+  .elementor-shape-bottom {
+    bottom: 0; }
+  .elementor-shape[data-negative="false"].elementor-shape-bottom {
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  .elementor-shape[data-negative="true"].elementor-shape-top {
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  .elementor-shape svg {
+    display: block;
+    width: 100%;
+    position: relative;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%); }
+  .elementor-shape .elementor-shape-fill {
+    fill: #fff;
+    -webkit-transform-origin: center;
+            transform-origin: center; }
+
 .dialog-widget {
   position: fixed;
   height: 100%;

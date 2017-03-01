@@ -9,7 +9,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	public function test_enqueueScripts() {
 		ob_start();
 		Elementor\Plugin::$instance->editor->enqueue_scripts();
-		ob_get_clean();
+		ob_clean();
 
 		$scripts = [
 			'jquery-ui-sortable',
