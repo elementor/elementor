@@ -543,7 +543,7 @@ class Element_Section extends Element_Base {
 			$this->add_control(
 				$base_control_key . '_negative',
 				[
-					'label' => __( 'Negative', 'elementor' ),
+					'label' => __( 'Invert', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'label_off' => __( 'No', 'elementor' ),
 					'label_on' => __( 'Yes', 'elementor' ),
