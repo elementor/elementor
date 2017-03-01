@@ -1175,6 +1175,15 @@
 .elementor-shape-circle .elementor-icon {
   border-radius: 50%; }
 
+.elementor-widget-icon-list.elementor-align-center .elementor-icon-list-item:after {
+  margin: auto; }
+
+.elementor-widget-icon-list:not(.elementor-align-right) .elementor-icon-list-item:after {
+  right: 0; }
+
+.elementor-widget-icon-list:not(.elementor-align-left) .elementor-icon-list-item:after {
+  left: 0; }
+
 .elementor-widget-icon-list .elementor-icon-list-items {
   list-style-type: none;
   margin: 0;
@@ -1187,8 +1196,7 @@
   .elementor-widget-icon-list .elementor-icon-list-item:after {
     position: absolute;
     bottom: 0;
-    width: 100%;
-    right: 0; }
+    width: 100%; }
   .elementor-widget-icon-list .elementor-icon-list-item, .elementor-widget-icon-list .elementor-icon-list-item a {
     display: -webkit-box;
     display: -webkit-flex;
