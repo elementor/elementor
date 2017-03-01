@@ -103,7 +103,8 @@ module.exports = ElementsHandler;
 		EventManager = require( '../utils/hooks' ),
 		Module = require( './handler-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	    Utils = require( 'elementor-frontend/utils' );
+		YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
+		AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
 	var ElementorFrontend = function() {
 		var self = this,
@@ -122,7 +123,10 @@ module.exports = ElementsHandler;
 		};
 
 		var initOnReadyComponents = function() {
-			self.utils = new Utils( $ );
+			self.utils = {
+				youtube: new YouTubeModule(),
+				anchors: new AnchorsModule()
+			};
 
 			self.elementsHandler = new ElementsHandler( $ );
 
@@ -225,6 +229,16 @@ module.exports = ElementsHandler;
 		this.getCurrentDeviceMode = function() {
 			return getComputedStyle( elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
 		};
+
+		this.waypoint = function( $element, callback, options ) {
+			var correctCallback = function() {
+				var element = this.element || this;
+
+				return callback.apply( element, arguments );
+			};
+
+			$element.elementorWaypoint( correctCallback, options );
+		};
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
@@ -234,7 +248,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":16,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils":15}],3:[function(require,module,exports){
+},{"../utils/hooks":17,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":15,"elementor-frontend/utils/youtube":16}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -297,7 +311,7 @@ HandlerModule = ViewModule.extend( {
 
 module.exports = HandlerModule;
 
-},{"../utils/view-module":18}],4:[function(require,module,exports){
+},{"../utils/view-module":19}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -340,7 +354,7 @@ module.exports = function( $scope, $ ) {
 
 },{}],6:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
-	elementorFrontend.utils.waypoint( $scope.find( '.elementor-counter-number' ), function() {
+	elementorFrontend.waypoint( $scope.find( '.elementor-counter-number' ), function() {
 		var $number = $( this ),
 			data = $number.data();
 
@@ -369,7 +383,7 @@ var GlobalHandler = elementorFrontend.Module.extend( {
 
 		$element.addClass( 'elementor-invisible' ).removeClass( animation );
 
-		elementorFrontend.utils.waypoint( $element, function() {
+		elementorFrontend.waypoint( $element, function() {
 			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, { offset: '90%' } );
 	}
@@ -418,7 +432,7 @@ module.exports = function( $scope, $ ) {
 
 },{}],9:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
-	elementorFrontend.utils.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
+	elementorFrontend.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
 
 		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
@@ -490,7 +504,7 @@ var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 		if ( videoID ) {
 			isYTVideo = true;
 
-			elementorFrontend.utils.onYoutubeApiReady( function( YT ) {
+			elementorFrontend.utils.youtube.onYoutubeApiReady( function( YT ) {
 				setTimeout( function() {
 					prepareYTVideo( YT, videoID );
 				}, 1 );
@@ -788,7 +802,7 @@ VideoModule = HandlerModule.extend( {
 
 		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
 			className: 'elementor-widget-video-modal',
-			container: this.elements.$lightBoxContainer,
+			container: self.elements.$lightBoxContainer,
 			closeButton: true,
 			position: {
 				within: elementorFrontend.getScopeWindow()
@@ -941,24 +955,16 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],15:[function(require,module,exports){
-var Module = require( '../utils/module' );
+var ViewModule = require( '../../utils/view-module' );
 
-module.exports = Module.extend( {
+module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
+
 		return {
-			YT: {
-				isInserted: false,
-				APISrc: 'https://www.youtube.com/iframe_api'
-			},
-			anchor: {
-				scrollDuration: 1000,
-				selectors: {
-					links: 'a[href*="#"]',
-					scrollable: 'html, body'
-				}
-			},
+			scrollDuration: 1000,
 			selectors: {
-				firstScript: 'script:first',
+				links: 'a[href*="#"]',
+				scrollable: 'html, body',
 				wpAdminBar: '#wpadminbar'
 			}
 		};
@@ -970,49 +976,13 @@ module.exports = Module.extend( {
 
 		return {
 			window: elementorFrontend.getScopeWindow(),
-			$firstScript: $( selectors.firstScript ),
-			anchor: {
-				$scrollable: $( this.getSettings( 'anchor.selectors.scrollable' ) )
-			},
+			$scrollable: $( selectors.scrollable ),
 			$wpAdminBar: $( selectors.wpAdminBar )
 		};
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'anchor.selectors.links' ), this.handleAnchorLinks );
-	},
-
-	insertYTAPI: function() {
-		this.setSettings( 'YT.isInserted', true );
-
-		this.elements.$firstScript.before( jQuery( '<script>', { src: this.getSettings( 'YT.APISrc' ) } ) );
-	},
-
-	onYoutubeApiReady: function( callback ) {
-		var self = this;
-
-		if ( ! self.getSettings( 'YT.IsInserted' ) ) {
-			self.insertYTAPI();
-		}
-
-		if ( window.YT && YT.loaded ) {
-			callback( YT );
-		} else {
-			// If not ready check again by timeout..
-			setTimeout( function() {
-				self.onYoutubeApiReady( callback );
-			}, 350 );
-		}
-	},
-
-	waypoint: function( $element, callback, options ) {
-		var correctCallback = function() {
-			var element = this.element || this;
-
-			return callback.apply( element, arguments );
-		};
-
-		$element.elementorWaypoint( correctCallback, options );
+		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
 	},
 
 	handleAnchorLinks: function( event ) {
@@ -1033,17 +1003,64 @@ module.exports = Module.extend( {
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
-		this.elements.anchor.$scrollable.animate( {
+		this.elements.$scrollable.animate( {
 			scrollTop: scrollTop
-		}, this.getSettings( 'anchor.scrollDuration' ) );
+		}, this.getSettings( 'scrollDuration' ) );
 	},
 
 	onInit: function() {
+		ViewModule.prototype.onInit.apply( this, arguments );
+
 		this.bindEvents();
 	}
 } );
 
-},{"../utils/module":17}],16:[function(require,module,exports){
+},{"../../utils/view-module":19}],16:[function(require,module,exports){
+var ViewModule = require( '../../utils/view-module' );
+
+module.exports = ViewModule.extend( {
+	getDefaultSettings: function() {
+		return {
+			isInserted: false,
+			APISrc: 'https://www.youtube.com/iframe_api',
+			selectors: {
+				firstScript: 'script:first'
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+
+		return {
+			$firstScript: jQuery( this.getSettings( 'selectors.firstScript' ) )
+		};
+	},
+
+	insertYTAPI: function() {
+		this.setSettings( 'isInserted', true );
+
+		this.elements.$firstScript.before( jQuery( '<script>', { src: this.getSettings( 'APISrc' ) } ) );
+	},
+
+	onYoutubeApiReady: function( callback ) {
+		var self = this;
+
+		if ( ! self.getSettings( 'IsInserted' ) ) {
+			self.insertYTAPI();
+		}
+
+		if ( window.YT && YT.loaded ) {
+			callback( YT );
+		} else {
+			// If not ready check again by timeout..
+			setTimeout( function() {
+				self.onYoutubeApiReady( callback );
+			}, 350 );
+		}
+	}
+} );
+
+},{"../../utils/view-module":19}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1288,7 +1305,7 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,
@@ -1453,7 +1470,7 @@ Module.extend = function( properties ) {
 
 module.exports = Module;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var Module = require( './module' ),
 	ViewModule;
 
@@ -1479,5 +1496,5 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":17}]},{},[2])
+},{"./module":18}]},{},[2])
 //# sourceMappingURL=frontend.js.map
