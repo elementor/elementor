@@ -4,6 +4,8 @@ var ViewModule = require( '../utils/view-module' ),
 FrontendModule = Module.extend( {
 	$element: null,
 
+	onElementChange: null,
+
 	__construct: function( $element ) {
 		this.$element  = $element;
 
