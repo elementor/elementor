@@ -7,16 +7,10 @@ var Module = function() {
 		events = {};
 
 	var ensureClosureMethods = function() {
-		var closureMethodsNames = self.getClosureMethodsNames();
+		$.each( self, function( methodName ) {
+			var oldMethod = self[ methodName ];
 
-		$.each( closureMethodsNames, function() {
-			var oldMethod = self[ this ];
-
-			if ( ! oldMethod ) {
-				return;
-			}
-
-			self[ this ] = function() {
+			self[ methodName ] = function() {
 				oldMethod.apply( self, arguments );
 			};
 		});
@@ -160,10 +154,6 @@ Module.prototype.getDefaultSettings = function() {
 
 Module.prototype.getDefaultElements = function() {
 	return {};
-};
-
-Module.prototype.getClosureMethodsNames = function() {
-	return [];
 };
 
 Module.extend = function( properties ) {

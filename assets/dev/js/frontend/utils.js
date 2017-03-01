@@ -35,10 +35,6 @@ module.exports = Module.extend( {
 		};
 	},
 
-	getClosureMethodsNames: function() {
-		return [ 'handleAnchorLinks' ];
-	},
-
 	bindEvents: function() {
 		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'anchor.selectors.links' ), this.handleAnchorLinks );
 	},

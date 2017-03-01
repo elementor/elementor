@@ -47,10 +47,6 @@ FrontendModule = Module.extend( {
 		return this.getItems( elementSettings, setting );
 	},
 
-	getClosureMethodsNames: function() {
-		return [ 'onElementChange' ];
-	},
-
 	onInit: function() {
 		this.bindEvents();
 	}
