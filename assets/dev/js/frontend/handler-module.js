@@ -1,15 +1,23 @@
-var Module = require( '../utils/module' ),
-	FrontendModule;
+var ViewModule = require( '../utils/view-module' ),
+	HandlerModule;
 
-FrontendModule = Module.extend( {
+HandlerModule = ViewModule.extend( {
+	$element: null,
+
+	onElementChange: null,
+
 	__construct: function( $element ) {
 		this.$element  = $element;
+
+		if ( elementorFrontend.isEditMode() ) {
+			this.addEditorListener();
+		}
 	},
 
-	bindEvents: function() {
+	addEditorListener: function() {
 		var self = this;
 
-		if ( self.onElementChange && elementorFrontend.isEditMode() ) {
+		if ( self.onElementChange ) {
 			var cid = self.getModelCID();
 
 			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
@@ -21,6 +29,8 @@ FrontendModule = Module.extend( {
 			}, elementor.channels.editor );
 		}
 	},
+
+	getElementName: function() {},
 
 	getID: function() {
 		return this.$element.data( 'id' );
@@ -45,17 +55,7 @@ FrontendModule = Module.extend( {
 		}
 
 		return this.getItems( elementSettings, setting );
-	},
-
-	getClosureMethodsNames: function() {
-		return [ 'onElementChange' ];
-	},
-
-	onInit: function() {
-		this.bindEvents();
 	}
 } );
 
-FrontendModule.prototype.getElementName = function() {};
-
-module.exports = FrontendModule;
+module.exports = HandlerModule;
