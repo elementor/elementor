@@ -4,7 +4,7 @@
   width: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   z-index: 9999; }
 
 .dialog-widget-content {
@@ -95,7 +95,10 @@
   top: 16px;
   right: 20px;
   font-size: 16px;
-  color: #a4afb7; }
+  color: #ffffff;
+  opacity: .65; }
+  .dialog-lightbox-close-button:hover {
+    opacity: 1; }
 
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }

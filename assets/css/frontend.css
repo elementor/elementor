@@ -9,12 +9,6 @@
     height: 100%;
     width: 100%; }
 
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-  content: "\e800";
-  font-family: eicon;
-  font-size: 12px;
-  margin-top: 5px; }
-
 .elementor {
   -webkit-hyphens: manual;
       -ms-hyphens: manual;
@@ -120,6 +114,12 @@
       width: auto; }
   .elementor-mobile-align-justify .elementor-button {
     width: 100%; } }
+
+#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
+  content: "\e800";
+  font-family: eicon;
+  font-size: 12px;
+  margin-top: 5px; }
 
 #elementor-select-preset {
   display: none; }
@@ -1767,7 +1767,7 @@ body.elementor-page .elementor-widget-menu-anchor {
   width: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   z-index: 9999; }
 
 .dialog-widget-content {
@@ -1858,7 +1858,10 @@ body.elementor-page .elementor-widget-menu-anchor {
   top: 16px;
   right: 20px;
   font-size: 16px;
-  color: #a4afb7; }
+  color: #ffffff;
+  opacity: .65; }
+  .dialog-lightbox-close-button:hover {
+    opacity: 1; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
