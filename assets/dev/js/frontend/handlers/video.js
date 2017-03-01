@@ -50,7 +50,7 @@ VideoModule = HandlerModule.extend( {
 
 		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
 			className: 'elementor-widget-video-modal',
-			container: this.elements.$lightBoxContainer,
+			container: self.elements.$lightBoxContainer,
 			closeButton: true,
 			position: {
 				within: elementorFrontend.getScopeWindow()
