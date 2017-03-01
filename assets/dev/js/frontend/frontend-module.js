@@ -1,5 +1,5 @@
-var Module = require( '../utils/module' ),
 	FrontendModule;
+var ViewModule = require( '../utils/view-module' ),
 
 FrontendModule = Module.extend( {
 	$element: null,
@@ -23,6 +23,8 @@ FrontendModule = Module.extend( {
 			}, elementor.channels.editor );
 		}
 	},
+
+	getElementName: function() {},
 
 	getID: function() {
 		return this.$element.data( 'id' );
@@ -48,12 +50,8 @@ FrontendModule = Module.extend( {
 
 		return this.getItems( elementSettings, setting );
 	},
-
-	onInit: function() {
-		this.bindEvents();
 	}
 } );
 
-FrontendModule.prototype.getElementName = function() {};
 
 module.exports = FrontendModule;
