@@ -184,7 +184,7 @@ var Shapes = elementorFrontend.Module.extend( {
 		var self = this,
 			baseSettingKey = 'shape_divider_' + side,
 			shapeType = self.getElementSettings( baseSettingKey ),
-			$svgContainer = self.getElements( '$' + side + 'Container' );
+			$svgContainer = this.elements[ '$' + side + 'Container' ];
 
 		$svgContainer.empty().attr( 'data-shape', shapeType );
 
@@ -208,7 +208,7 @@ var Shapes = elementorFrontend.Module.extend( {
 	},
 
 	setNegative: function( side ) {
-		this.getElements( '$' + side + 'Container' ).attr( 'data-negative', !! this.getElementSettings( 'shape_divider_' + side + '_negative' ) );
+		this.elements[ '$' + side + 'Container' ].attr( 'data-negative', !! this.getElementSettings( 'shape_divider_' + side + '_negative' ) );
 	},
 
 	onInit: function() {
