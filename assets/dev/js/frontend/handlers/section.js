@@ -62,7 +62,7 @@ var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 		if ( videoID ) {
 			isYTVideo = true;
 
-			elementorFrontend.utils.onYoutubeApiReady( function( YT ) {
+			elementorFrontend.utils.youtube.onYoutubeApiReady( function( YT ) {
 				setTimeout( function() {
 					prepareYTVideo( YT, videoID );
 				}, 1 );
