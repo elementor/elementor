@@ -9,8 +9,12 @@ var Module = function() {
 		$.each( self, function( methodName ) {
 			var oldMethod = self[ methodName ];
 
+			if ( 'function' !== typeof oldMethod ) {
+				return;
+			}
+
 			self[ methodName ] = function() {
-				oldMethod.apply( self, arguments );
+				return oldMethod.apply( self, arguments );
 			};
 		});
 	};
