@@ -36,71 +36,9 @@ class Shapes {
 
 	private static function init_shapes() {
 		self::$shapes = [
-			'single-triangle' => [
-				'title' => __( 'Single Triangle', 'elementor' ),
-				'has_negative' => true,
-			],
-			'triangle' => [
-				'title' => __( 'Triangle', 'elementor' ),
-				'has_negative' => true,
-			],
-			'triangle-asymmetrical' => [
-				'title' => __( 'Triangle Asymmetrical', 'elementor' ),
-				'has_negative' => true,
+			'mountains' => [
+				'title' => __( 'Mountains', 'elementor' ),
 				'has_flip' => true,
-			],
-			'single-circle' => [
-				'title' => __( 'Single Circle', 'elementor' ),
-				'has_negative' => true,
-			],
-			'round-split' => [
-				'title' => __( 'Round Split', 'elementor' ),
-				'has_negative' => true,
-			],
-			'curve' => [
-				'title' => __( 'Curve', 'elementor' ),
-				'has_negative' => true,
-			],
-			'curve-asymmetrical' => [
-				'title' => __( 'Curve Asymmetrical', 'elementor' ),
-				'has_negative' => true,
-				'has_flip' => true,
-			],
-			'tilt' => [
-				'title' => __( 'Tilt', 'elementor' ),
-				'has_negative' => true,
-				'has_flip' => true,
-			],
-			'opacity-tilt' => [
-				'title' => __( 'Opacity Tilt', 'elementor' ),
-				'has_flip' => true,
-			],
-			'opacity-tilt-fan' => [
-				'title' => __( 'Opacity Tilt Fan', 'elementor' ),
-			],
-			'zigzag' => [
-				'title' => __( 'Zigzag', 'elementor' ),
-			],
-			'wave' => [
-				'title' => __( 'Wave', 'elementor' ),
-				'has_negative' => true,
-				'has_flip' => true,
-			],
-			'wave-brush' => [
-				'title' => __( 'Waves Brush', 'elementor' ),
-				'has_flip' => true,
-			],
-			'wave-zigzag' => [
-				'title' => __( 'Wave Zigzag', 'elementor' ),
-				'has_flip' => true,
-			],
-			'wave-opacity' => [
-				'title' => __( 'Waves Opacity', 'elementor' ),
-				'has_flip' => true,
-			],
-			'book' => [
-				'title' => __( 'Book', 'elementor' ),
-				'has_negative' => true,
 			],
 			'drops' => [
 				'title' => __( 'Drops', 'elementor' ),
@@ -111,6 +49,63 @@ class Shapes {
 				'title' => __( 'Clouds', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
+			],
+			'zigzag' => [
+				'title' => __( 'Zigzag', 'elementor' ),
+			],
+			'triangle' => [
+				'title' => __( 'Triangle', 'elementor' ),
+				'has_negative' => true,
+			],
+			'triangle-asymmetrical' => [
+				'title' => __( 'Triangle Asymmetrical', 'elementor' ),
+				'has_negative' => true,
+				'has_flip' => true,
+			],
+			'tilt' => [
+				'title' => __( 'Tilt', 'elementor' ),
+				'has_flip' => true,
+			],
+			'opacity-tilt' => [
+				'title' => __( 'Opacity Tilt', 'elementor' ),
+				'has_flip' => true,
+			],
+			'opacity-fan' => [
+				'title' => __( 'Opacity Fan', 'elementor' ),
+			],
+			'curve' => [
+				'title' => __( 'Curve', 'elementor' ),
+				'has_negative' => true,
+			],
+			'curve-asymmetrical' => [
+				'title' => __( 'Curve Asymmetrical', 'elementor' ),
+				'has_negative' => true,
+				'has_flip' => true,
+			],
+			'waves' => [
+				'title' => __( 'Waves', 'elementor' ),
+				'has_negative' => true,
+				'has_flip' => true,
+			],
+			'wave-brush' => [
+				'title' => __( 'Waves Brush', 'elementor' ),
+				'has_flip' => true,
+			],
+			'waves-pattern' => [
+				'title' => __( 'Waves Pattern', 'elementor' ),
+				'has_flip' => true,
+			],
+			'arrow' => [
+				'title' => __( 'Arrow', 'elementor' ),
+				'has_negative' => true,
+			],
+			'split' => [
+				'title' => __( 'Split', 'elementor' ),
+				'has_negative' => true,
+			],
+			'book' => [
+				'title' => __( 'Book', 'elementor' ),
+				'has_negative' => true,
 			],
 		];
 	}
