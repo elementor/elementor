@@ -167,12 +167,24 @@ class Frontend {
 			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
 			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			'is_rtl' => is_rtl(),
+			'urls' => [
+				'assets' => ELEMENTOR_ASSETS_URL,
+			],
 		];
 
-		if ( Plugin::instance()->editor->is_edit_mode() ) {
+		$elements_manager = Plugin::$instance->elements_manager;
+
+		$elements_frontend_keys = [
+			'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
+			'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
+		];
+
+		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
-				'keys' => Plugin::instance()->widgets_manager->get_widgets_frontend_settings_keys(),
+				'keys' => $elements_frontend_keys,
 			];
 		}
 

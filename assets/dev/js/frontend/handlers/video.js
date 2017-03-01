@@ -53,7 +53,7 @@ VideoModule = FrontendModule.extend( {
 		var self = this;
 
 		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
-			id: 'elementor-widget-video-modal',
+			className: 'elementor-widget-video-modal',
 			container: self.getElements( '$lightBoxContainer' ),
 			closeButton: true,
 			position: {
@@ -97,6 +97,7 @@ VideoModule = FrontendModule.extend( {
 
 			lightBoxModal
 				.setMessage( $videoFrame )
+				.setID( 'elementor-video-modal-' + self.getID() )
 				.show( function() {
 					self.playVideo();
 
@@ -152,7 +153,7 @@ VideoModule = FrontendModule.extend( {
 		this.getElements( '$imageOverlay' ).on( 'click', this.handleVideo );
 	},
 
-	onWidgetChange: function( propertyName ) {
+	onElementChange: function( propertyName ) {
 		if ( 'lightbox_content_animation' === propertyName ) {
 			this.animateVideo();
 

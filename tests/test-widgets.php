@@ -40,13 +40,17 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_controlsSelectorsData() {
-		$wrapper_text = '{{WRAPPER}}';
-
 		foreach ( Elementor\Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
-			foreach ( $widget->get_style_controls() as $control ) {
+			foreach ( $widget->get_controls() as $control ) {
+				if ( empty( $control['selectors'] ) ) {
+					continue;
+				}
+
 				foreach ( $control['selectors'] as $selector => $css_property ) {
 					foreach ( explode( ',', $selector ) as $item ) {
-						$this->assertTrue( false !== strpos( $item, $wrapper_text ) );
+						preg_match( '/\{\{(WRAPPER)|(ID)\}\}/', $item, $matches );
+
+						$this->assertTrue( !! $matches );
 					}
 				}
 			}

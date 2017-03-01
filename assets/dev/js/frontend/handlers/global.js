@@ -1,17 +1,27 @@
-module.exports = function( $scope, $ ) {
+var GlobalHandler = elementorFrontend.Module.extend( {
+	onInit: function() {
+		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+
+		var $element = this.$element;
+
+		var animation = $element.data( 'animation' );
+
+		if ( ! animation ) {
+			return;
+		}
+
+		$element.addClass( 'elementor-invisible' ).removeClass( animation );
+
+		elementorFrontend.utils.waypoint( $element, function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
+		}, { offset: '90%' } );
+	}
+} );
+
+module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() ) {
 		return;
 	}
 
-	var animation = $scope.data( 'animation' );
-
-	if ( ! animation ) {
-		return;
-	}
-
-	$scope.addClass( 'elementor-invisible' ).removeClass( animation );
-
-	elementorFrontend.utils.waypoint( $scope, function() {
-		$scope.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
-	}, { offset: '90%' } );
+	new GlobalHandler( $scope );
 };
