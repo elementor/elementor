@@ -6,12 +6,16 @@ FrontendModule = Module.extend( {
 
 	__construct: function( $element ) {
 		this.$element  = $element;
+
+		if ( elementorFrontend.isEditMode() ) {
+			this.addEditorListener();
+		}
 	},
 
 	addEditorListener: function() {
 		var self = this;
 
-		if ( self.onElementChange && elementorFrontend.isEditMode() ) {
+		if ( self.onElementChange ) {
 			var cid = self.getModelCID();
 
 			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
