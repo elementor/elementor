@@ -8,7 +8,7 @@ FrontendModule = Module.extend( {
 		this.$element  = $element;
 	},
 
-	bindEvents: function() {
+	addEditorListener: function() {
 		var self = this;
 
 		if ( self.onElementChange && elementorFrontend.isEditMode() ) {
