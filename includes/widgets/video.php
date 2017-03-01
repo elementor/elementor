@@ -357,19 +357,6 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_lightbox',
-			[
-				'label' => __( 'Lightbox', 'elementor' ),
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay[url]!' => '',
-				],
-			]
-		);
-
 		$this->add_control(
 			'lightbox',
 			[
@@ -381,6 +368,7 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
 				],
+                'separator' => 'before',
 			]
 		);
 
