@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
-**Stable tag:** 1.2.3  
+**Stable tag:** 1.2.4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -174,6 +174,15 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
 
 ## Changelog ##
+
+### 1.2.4 - 28.02.2017 ###
+* Tweak! - Improved embed google fonts in the front-end
+* Tweak! - Added selector in Button widget to override custom style in some themes ([#1285](https://github.com/pojome/elementor/issues/1285))
+* Tweak! - Load unminified color-picker.js file when `SCRIPT_DEBUG` is `true` ([#1364](https://github.com/pojome/elementor/issues/1364))
+* Fix! - Bug when dragging a column from a single-column section to another section ([#1346](https://github.com/pojome/elementor/issues/1346))
+* Fix! - Reduced padding for Progress Bar widget in mobile ([#1358](https://github.com/pojome/elementor/issues/1358))
+* Fix! - Descriptor field style in the repeater field
+* Fix! - Alt key for some keyboard input sources ([#1328](https://github.com/pojome/elementor/issues/1328))
 
 ### 1.2.3 - 14.02.2017 ###
 * Fix! - Typography group data render ([Topic](https://wordpress.org/support/topic/erro-after-upgrading-to-version-1-2-2/))
