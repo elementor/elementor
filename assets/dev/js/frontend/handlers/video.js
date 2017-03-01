@@ -147,8 +147,6 @@ VideoModule = FrontendModule.extend( {
 	},
 
 	bindEvents: function() {
-		FrontendModule.prototype.bindEvents.apply( this, arguments );
-
 		this.elements.$imageOverlay.on( 'click', this.handleVideo );
 	},
 
