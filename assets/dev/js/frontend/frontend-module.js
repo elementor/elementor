@@ -2,6 +2,8 @@ var Module = require( '../utils/module' ),
 	FrontendModule;
 
 FrontendModule = Module.extend( {
+	$element: null,
+
 	__construct: function( $element ) {
 		this.$element  = $element;
 	},
