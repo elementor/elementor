@@ -37,10 +37,6 @@ VideoModule = FrontendModule.extend( {
 		return elements;
 	},
 
-	getClosureMethodsNames: function() {
-		return FrontendModule.prototype.getClosureMethodsNames.apply( this, arguments ).concat( [ 'handleVideo', 'playVideo' ] );
-	},
-
 	getLightBoxModal: function() {
 		if ( ! VideoModule.lightBoxModal ) {
 			this.initLightBoxModal();
