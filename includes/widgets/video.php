@@ -390,7 +390,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'#elementor-widget-video-modal' => 'background-color: {{VALUE}};',
+					'#elementor-video-modal-{{ID}}' => 'background-color: {{VALUE}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
@@ -415,7 +415,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'#elementor-widget-video-modal .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+					'#elementor-video-modal-{{ID}} .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
