@@ -108,6 +108,7 @@ module.exports = ElementsHandler;
 
 	var ElementorFrontend = function() {
 		var self = this,
+			dialogsManager,
 			scopeWindow = window;
 
 		this.config = elementorFrontendConfig;
@@ -129,8 +130,6 @@ module.exports = ElementsHandler;
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
-
-			self.dialogsManager = new DialogsManager.Instance();
 		};
 
 		this.init = function() {
@@ -155,6 +154,14 @@ module.exports = ElementsHandler;
 			}
 
 			return elements;
+		};
+
+		this.getDialogsManager = function() {
+			if ( ! dialogsManager ) {
+				dialogsManager = new DialogsManager.Instance();
+			}
+
+			return dialogsManager;
 		};
 
 		this.isEditMode = function() {
@@ -800,7 +807,7 @@ VideoModule = HandlerModule.extend( {
 	initLightBoxModal: function() {
 		var self = this;
 
-		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
+		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-widget-video-modal',
 			container: self.elements.$lightBoxContainer,
 			closeButton: true,
