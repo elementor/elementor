@@ -4,6 +4,10 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Shapes {
+	const FILTER_EXCLUDE = 'exclude';
+
+	const FILTER_INCLUDE = 'include';
+
 	private static $shapes;
 
 	public static function get_shapes( $shape = null ) {
@@ -18,9 +22,9 @@ class Shapes {
 		return self::$shapes;
 	}
 
-	public static function filter_shapes( $by ) {
-		return array_filter( self::get_shapes(), function( $shape ) use ( $by ) {
-			return ! empty( $shape[ $by ] );
+	public static function filter_shapes( $by, $filter = self::FILTER_INCLUDE ) {
+		return array_filter( self::get_shapes(), function( $shape ) use ( $by, $filter ) {
+			return self::FILTER_INCLUDE === $filter xor empty( $shape[ $by ] );
 		} );
 	}
 
