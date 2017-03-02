@@ -622,25 +622,6 @@ class Widget_Login extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	private function make_radio_checkbox_field( $item, $item_index, $type ) {
-		$options = preg_split( "/\\r\\n|\\r|\\n/", $item['field_options'] );
-		$html = '';
-		if ( $options ) {
-			$html .= '<div class="elementor-field-subgroup ' . esc_attr( $item['css_classes'] ) . ' ' . $item['inline_list'] . '">';
-			foreach ( $options as $key => $option ) {
-				$html .= '<span class="elementor-field-option"><input type="' . $type . '"
-							value="' . esc_attr( $option ) . '"
-							id="' . $this->get_attribute_id( $item_index ) . '-' . $key . '"
-							name="' . $this->get_attribute_name( $item_index ) . ( ( 'checkbox' === $type && count( $options ) > 1 ) ? '[]"' : '"' ) .
-					( ( $item['required'] && 'radio' === $type ) ? ' required aria-required="true"' : '' ) . '>
-							<label for="' . $this->get_attribute_id( $item_index ) . '-' . $key . '">' . $option . '</label></span>';
-			}
-			$html .= '</div>';
-		}
-
-		return $html;
-	}
-
 	private function form_fields_render_attributes() {
 		$settings = $this->get_settings();
 
