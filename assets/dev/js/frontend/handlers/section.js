@@ -62,7 +62,7 @@ var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 		if ( videoID ) {
 			isYTVideo = true;
 
-			elementorFrontend.utils.onYoutubeApiReady( function( YT ) {
+			elementorFrontend.utils.youtube.onYoutubeApiReady( function( YT ) {
 				setTimeout( function() {
 					prepareYTVideo( YT, videoID );
 				}, 1 );
@@ -155,8 +155,97 @@ var StretchedSection = function( $section, $ ) {
 	init();
 };
 
+var Shapes = elementorFrontend.Module.extend( {
+	getElementName: function() {
+		return 'section';
+	},
+
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				container: '.elementor-shape-%s'
+			},
+			svgURL: elementorFrontend.config.urls.assets + 'shapes/'
+		};
+	},
+
+	getDefaultElements: function() {
+		var elements = {},
+			selectors = this.getSettings( 'selectors' );
+
+		elements.$topContainer = this.$element.find( selectors.container.replace( '%s', 'top' ) );
+
+		elements.$bottomContainer = this.$element.find( selectors.container.replace( '%s', 'bottom' ) );
+
+		return elements;
+	},
+
+	buildSVG: function( side ) {
+		var self = this,
+			baseSettingKey = 'shape_divider_' + side,
+			shapeType = self.getElementSettings( baseSettingKey ),
+			$svgContainer = this.elements[ '$' + side + 'Container' ];
+
+		$svgContainer.empty().attr( 'data-shape', shapeType );
+
+		if ( ! shapeType ) {
+			return;
+		}
+
+		var fileName = shapeType;
+
+		if ( self.getElementSettings( baseSettingKey + '_negative' ) ) {
+			fileName += '-negative';
+		}
+
+		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
+
+		jQuery.get( svgURL, function( data ) {
+			$svgContainer.append( data.children[0] );
+		} );
+
+		this.setNegative( side );
+	},
+
+	setNegative: function( side ) {
+		this.elements[ '$' + side + 'Container' ].attr( 'data-negative', !! this.getElementSettings( 'shape_divider_' + side + '_negative' ) );
+	},
+
+	onInit: function() {
+		var self = this;
+
+		elementorFrontend.Module.prototype.onInit.apply( self, arguments );
+
+		[ 'top', 'bottom' ].forEach( function( side ) {
+			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
+				self.buildSVG( side );
+			}
+		} );
+	},
+
+	onElementChange: function( propertyName ) {
+		var shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
+
+		if ( shapeChange ) {
+			this.buildSVG( shapeChange[1] );
+
+			return;
+		}
+
+		var negativeChange = propertyName.match( /^shape_divider_(top|bottom)_negative$/ );
+
+		if ( negativeChange ) {
+			this.buildSVG( negativeChange[1] );
+
+			this.setNegative( negativeChange[1] );
+		}
+	}
+} );
+
 module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
+
+	new Shapes( $scope );
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 

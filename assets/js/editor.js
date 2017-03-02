@@ -3866,7 +3866,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getFontControls: function() {
-		return _.filter( this.controls, function( control ) {
+		return _.filter( this.getActiveControls(), function( control ) {
 			return 'font' === control.type;
 		} );
 	},
@@ -3874,7 +3874,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	getStyleControls: function( controls ) {
 		var self = this;
 
-		controls = controls || self.controls;
+		controls = controls || self.getActiveControls();
 
 		return _.filter( controls, function( control ) {
 			if ( control.fields ) {
@@ -3909,6 +3909,19 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return _.find( this.controls, function( control ) {
 			return id === control.name;
 		} );
+	},
+
+	getActiveControls: function() {
+		var self = this,
+			controls = {};
+
+		_.each( self.controls, function( control, controlKey ) {
+			if ( elementor.helpers.isActiveControl( control, self.attributes ) ) {
+				controls[ controlKey ] = control;
+			}
+		} );
+
+		return controls;
 	},
 
 	clone: function() {
@@ -4054,7 +4067,7 @@ ElementModel = Backbone.Model.extend( {
 
 		this.set( 'settings', settings );
 
-		elementorFrontend.config.elements.data[ this.cid ] = settings.attributes;
+		elementorFrontend.config.elements.data[ this.cid ] = settings;
 	},
 
 	initEditSettings: function() {
@@ -4610,7 +4623,7 @@ helpers = {
 		} );
 	},
 
-	isControlVisible: function( controlModel, values ) {
+	isActiveControl: function( controlModel, values ) {
 		var condition;
 
 		// TODO: Better way to get this?
@@ -6004,6 +6017,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		return {
+			'data-id': this.getID(),
 			'data-element_type': type
 		};
 	},
@@ -6207,10 +6221,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 				return;
 			}
 
-			if ( ! elementor.helpers.isControlVisible( control, settings.attributes ) ) {
-				return;
-			}
-
 			elementor.helpers.enqueueFont( fontFamilyName );
 		}, this ) );
 	},
@@ -6269,10 +6279,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		if ( ! elementor.helpers.isControlVisible( control, values ) ) {
-			return;
-		}
-
 		return value;
 	},
 
@@ -6282,7 +6288,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{WRAPPER}}/g ], [ '#elementor .' + self.getElementUniqueID() ] );
+		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
@@ -6320,7 +6326,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
 
-				var isVisible = elementor.helpers.isControlVisible( currentControl, settings.attributes );
+				var isVisible = elementor.helpers.isActiveControl( currentControl, settings.attributes );
 
 				if ( isVisible && ! _.isEmpty( classValue ) ) {
 					self.$el
@@ -6350,8 +6356,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
+	getID: function() {
+		return this.model.get( 'id' );
+	},
+
 	getElementUniqueID: function() {
-		return 'elementor-element-' + this.model.get( 'id' );
+		return 'elementor-element-' + this.getID();
 	},
 
 	duplicate: function() {
@@ -7131,7 +7141,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	toggleControlVisibility: function() {
-		var isVisible = elementor.helpers.isControlVisible( this.model, this.elementSettingsModel.attributes );
+		var isVisible = elementor.helpers.isActiveControl( this.model, this.elementSettingsModel.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 

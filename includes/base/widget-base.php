@@ -203,47 +203,23 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function _add_render_attributes() {
+		parent::_add_render_attributes();
+
 		$this->add_render_attribute( '_wrapper', 'class', [
 			'elementor-widget',
-			'elementor-element',
-			'elementor-element-' . $this->get_id(),
 			'elementor-widget-' . $this->get_name(),
 		] );
-
-		$settings = $this->get_settings();
-
-		foreach ( self::get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) )
-				continue;
-
-			if ( ! $this->is_control_visible( $control ) )
-				continue;
-
-			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
-		}
 
 		if ( ! empty( $settings['_animation'] ) ) {
 			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		if ( ! empty( $settings['_element_id'] ) ) {
-			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
-		}
+		$skin_type = $this->get_settings( '_skin' );
 
-		$skin_type = ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default';
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . $skin_type );
-
-		// TODO: Change to $instance variable
-		if ( ! Plugin::instance()->preview->is_preview_mode() ) {
-			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
-
-			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
-		}
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( $skin_type ? $skin_type : 'default' ) );
 	}
 
 	public function before_render() {
-	    $this->_add_render_attributes();
 		?>
 		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 		<?php

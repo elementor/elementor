@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v3.1.0
+ * Dialogs Manager v3.1.1
  * https://github.com/cobicarmel/dialogs-manager/
  *
  * Copyright Kobi Zaltzberg
@@ -186,7 +186,14 @@
 
 			if (id) {
 
-				self.getElements('widget').attr('id', id);
+				self.setID(id);
+			}
+
+			var className = self.getSettings('className');
+
+			if (className) {
+
+				self.getElements('widget').addClass(className);
 			}
 		};
 
@@ -336,6 +343,13 @@
 		this.setMessage = function (message) {
 
 			elements.message.html(message);
+
+			return self;
+		};
+
+		this.setID = function (id) {
+
+			self.getElements('widget').attr('id', id);
 
 			return self;
 		};
