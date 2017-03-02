@@ -53,6 +53,11 @@ class Shapes {
 			'zigzag' => [
 				'title' => _x( 'Zigzag', 'Shapes', 'elementor' ),
 			],
+			'pyramids' => [
+				'title' => _x( 'Pyramids', 'Shapes', 'elementor' ),
+				'has_negative' => true,
+				'has_flip' => true,
+			],
 			'triangle' => [
 				'title' => _x( 'Triangle', 'Shapes', 'elementor' ),
 				'has_negative' => true,
