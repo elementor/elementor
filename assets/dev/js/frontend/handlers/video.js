@@ -48,7 +48,7 @@ VideoModule = HandlerModule.extend( {
 	initLightBoxModal: function() {
 		var self = this;
 
-		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
+		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-widget-video-modal',
 			container: self.elements.$lightBoxContainer,
 			closeButton: true,

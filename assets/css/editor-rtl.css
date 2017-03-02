@@ -1,4 +1,106 @@
 @charset "UTF-8";
+.dialog-widget {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9999; }
+
+.dialog-widget-content {
+  background-color: #fff;
+  position: absolute;
+  border-radius: 3px;
+  box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
+  overflow: hidden; }
+
+.dialog-widget-header, .dialog-message {
+  text-align: center; }
+
+.dialog-message {
+  font-size: 12px;
+  line-height: 1.4; }
+
+.dialog-buttons-wrapper {
+  border-top: 1px solid #e6e9ec;
+  text-align: center; }
+  .dialog-buttons-wrapper > button {
+    border: none;
+    background: none;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 13px 0;
+    outline: 0; }
+    .dialog-buttons-wrapper > button:first-child {
+      color: #6d7882; }
+    .dialog-buttons-wrapper > button.dialog-ok {
+      color: #b01b1b; }
+    .dialog-buttons-wrapper > button.dialog-take_over {
+      color: #39b54a; }
+    .dialog-buttons-wrapper > button:active {
+      background-color: rgba(230, 233, 236, 0.5); }
+    .dialog-buttons-wrapper > button::-moz-focus-inner {
+      border: 0; }
+
+.dialog-widget-header {
+  padding: 20px 0;
+  font-weight: 500; }
+
+.dialog-options-widget .dialog-widget-header,
+.dialog-confirm-widget .dialog-widget-header {
+  font-size: 15px;
+  color: #495157; }
+
+.dialog-options-widget .dialog-buttons-wrapper > button,
+.dialog-confirm-widget .dialog-buttons-wrapper > button {
+  width: 50%; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:first-child,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
+    border-left: 1px solid #e6e9ec; }
+  .dialog-options-widget .dialog-buttons-wrapper > button:hover,
+  .dialog-confirm-widget .dialog-buttons-wrapper > button:hover {
+    background-color: #f4f6f7; }
+
+.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
+  -webkit-user-select: none;
+  -moz-user-select: none; }
+  .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
+    margin: auto;
+    width: 375px; }
+  .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
+    padding: 0 20px;
+    min-height: 50px; }
+
+.dialog-alert-widget .dialog-buttons-wrapper > button {
+  width: 100%; }
+
+.dialog-popup-message {
+  height: 155px;
+  width: 155px;
+  background-color: #fff;
+  border-radius: 10px; }
+
+.elementor-dialog-message {
+  padding: 15px; }
+  .elementor-dialog-message .fa {
+    font-size: 85px;
+    padding: 10px; }
+
+.elementor-dialog-message-text {
+  text-transform: uppercase; }
+
+.dialog-lightbox-close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  font-size: 16px;
+  color: #ffffff;
+  opacity: .65; }
+  .dialog-lightbox-close-button:hover {
+    opacity: 1; }
+
 .elementor-video-wrapper {
   position: relative;
   height: 0; }
@@ -2037,108 +2139,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   left: 0;
   border-right-style: solid;
   border-left: none; }
-
-.dialog-widget {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 9999; }
-
-.dialog-widget-content {
-  background-color: #fff;
-  position: absolute;
-  border-radius: 3px;
-  box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
-  overflow: hidden; }
-
-.dialog-widget-header, .dialog-message {
-  text-align: center; }
-
-.dialog-message {
-  font-size: 12px;
-  line-height: 1.4; }
-
-.dialog-buttons-wrapper {
-  border-top: 1px solid #e6e9ec;
-  text-align: center; }
-  .dialog-buttons-wrapper > button {
-    border: none;
-    background: none;
-    font-size: 15px;
-    cursor: pointer;
-    padding: 13px 0;
-    outline: 0; }
-    .dialog-buttons-wrapper > button:first-child {
-      color: #6d7882; }
-    .dialog-buttons-wrapper > button.dialog-ok {
-      color: #b01b1b; }
-    .dialog-buttons-wrapper > button.dialog-take_over {
-      color: #39b54a; }
-    .dialog-buttons-wrapper > button:active {
-      background-color: rgba(230, 233, 236, 0.5); }
-    .dialog-buttons-wrapper > button::-moz-focus-inner {
-      border: 0; }
-
-.dialog-widget-header {
-  padding: 20px 0;
-  font-weight: 500; }
-
-.dialog-options-widget .dialog-widget-header,
-.dialog-confirm-widget .dialog-widget-header {
-  font-size: 15px;
-  color: #495157; }
-
-.dialog-options-widget .dialog-buttons-wrapper > button,
-.dialog-confirm-widget .dialog-buttons-wrapper > button {
-  width: 50%; }
-  .dialog-options-widget .dialog-buttons-wrapper > button:first-child,
-  .dialog-confirm-widget .dialog-buttons-wrapper > button:first-child {
-    border-left: 1px solid #e6e9ec; }
-  .dialog-options-widget .dialog-buttons-wrapper > button:hover,
-  .dialog-confirm-widget .dialog-buttons-wrapper > button:hover {
-    background-color: #f4f6f7; }
-
-.dialog-options-widget, .dialog-confirm-widget, .dialog-alert-widget {
-  -webkit-user-select: none;
-  -moz-user-select: none; }
-  .dialog-options-widget .dialog-widget-content, .dialog-confirm-widget .dialog-widget-content, .dialog-alert-widget .dialog-widget-content {
-    margin: auto;
-    width: 375px; }
-  .dialog-options-widget .dialog-message, .dialog-confirm-widget .dialog-message, .dialog-alert-widget .dialog-message {
-    padding: 0 20px;
-    min-height: 50px; }
-
-.dialog-alert-widget .dialog-buttons-wrapper > button {
-  width: 100%; }
-
-.dialog-popup-message {
-  height: 155px;
-  width: 155px;
-  background-color: #fff;
-  border-radius: 10px; }
-
-.elementor-dialog-message {
-  padding: 15px; }
-  .elementor-dialog-message .fa {
-    font-size: 85px;
-    padding: 10px; }
-
-.elementor-dialog-message-text {
-  text-transform: uppercase; }
-
-.dialog-lightbox-close-button {
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  left: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: .65; }
-  .dialog-lightbox-close-button:hover {
-    opacity: 1; }
 
 #elementor-introduction .dialog-widget-header {
   padding: 40px 0 0; }
