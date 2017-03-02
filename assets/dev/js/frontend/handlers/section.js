@@ -163,7 +163,7 @@ var Shapes = elementorFrontend.Module.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				container: '.elementor-shape-%s'
+				container: '> .elementor-shape-%s'
 			},
 			svgURL: elementorFrontend.config.urls.assets + 'shapes/'
 		};
