@@ -24,8 +24,13 @@
 // Animate
 @import "animate";
 
+// Shapes
+@import "shapes";
+
 // Compatibility
 @import "compatibility";
+
+@import "../editor/dialog";
 
 // Visibility (for preview mode or front-end)
 body:not(.elementor-editor-active) {

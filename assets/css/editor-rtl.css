@@ -2044,7 +2044,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   z-index: 9999; }
 
 .dialog-widget-content {
@@ -2129,13 +2129,16 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-dialog-message-text {
   text-transform: uppercase; }
 
-.dialog-elementor-modal-close-button {
+.dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
   top: 16px;
   left: 20px;
   font-size: 16px;
-  color: #a4afb7; }
+  color: #ffffff;
+  opacity: .65; }
+  .dialog-lightbox-close-button:hover {
+    opacity: 1; }
 
 #elementor-introduction .dialog-widget-header {
   padding: 40px 0 0; }
