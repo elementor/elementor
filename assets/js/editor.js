@@ -4048,13 +4048,17 @@ ElementModel = Backbone.Model.extend( {
 
 	initSettings: function() {
 		var elType = this.get( 'elType' ),
-			settings = this.get( 'settings' ) || {},
+			settings = this.get( 'settings' ),
 			settingModels = {
 				widget: WidgetSettingsModel,
 				column: ColumnSettingsModel,
 				section: SectionSettingsModel
 			},
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
+
+		if ( Backbone.$.isEmptyObject( settings ) ) {
+			settings = elementor.helpers.cloneObject( settings );
+		}
 
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
