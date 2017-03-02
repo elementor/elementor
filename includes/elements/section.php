@@ -497,7 +497,7 @@ class Element_Section extends Element_Base {
 						],
 					],
 					'condition' => [
-						"shape_divider_$side!" => '',
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: {{SIZE}}{{UNIT}};',
