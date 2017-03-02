@@ -9,6 +9,7 @@
 
 	var ElementorFrontend = function() {
 		var self = this,
+			dialogsManager,
 			scopeWindow = window;
 
 		this.config = elementorFrontendConfig;
@@ -30,8 +31,6 @@
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
-
-			self.dialogsManager = new DialogsManager.Instance();
 		};
 
 		this.init = function() {
@@ -56,6 +55,14 @@
 			}
 
 			return elements;
+		};
+
+		this.getDialogsManager = function() {
+			if ( ! dialogsManager ) {
+				dialogsManager = new DialogsManager.Instance();
+			}
+
+			return dialogsManager;
 		};
 
 		this.isEditMode = function() {

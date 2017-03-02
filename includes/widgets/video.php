@@ -578,6 +578,12 @@ class Widget_Video extends Widget_Base {
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}
 
+	public function get_script_depends() {
+		return [
+			'elementor-dialog'
+		];
+	}
+
 	public function get_frontend_settings_keys() {
 		return [
 			'aspect_ratio',
