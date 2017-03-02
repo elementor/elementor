@@ -113,7 +113,6 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
 				'elementor-waypoints',
-				'elementor-dialog',
 			],
 			ELEMENTOR_VERSION,
 			true
