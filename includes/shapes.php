@@ -79,11 +79,11 @@ class Shapes {
 				'height_only' => true,
 			],
 			'opacity-tilt' => [
-				'title' => _x( 'Opacity Tilt', 'Shapes', 'elementor' ),
+				'title' => _x( 'Tilt Opacity', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'opacity-fan' => [
-				'title' => _x( 'Opacity Fan', 'Shapes', 'elementor' ),
+				'title' => _x( 'Fan Opacity', 'Shapes', 'elementor' ),
 			],
 			'curve' => [
 				'title' => _x( 'Curve', 'Shapes', 'elementor' ),
