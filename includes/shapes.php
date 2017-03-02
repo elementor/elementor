@@ -44,11 +44,13 @@ class Shapes {
 				'title' => _x( 'Drops', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
+				'height_only' => true,
 			],
 			'clouds' => [
 				'title' => _x( 'Clouds', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
+				'height_only' => true,
 			],
 			'zigzag' => [
 				'title' => _x( 'Zigzag', 'Shapes', 'elementor' ),
@@ -70,6 +72,7 @@ class Shapes {
 			'tilt' => [
 				'title' => _x( 'Tilt', 'Shapes', 'elementor' ),
 				'has_flip' => true,
+				'height_only' => true,
 			],
 			'opacity-tilt' => [
 				'title' => _x( 'Opacity Tilt', 'Shapes', 'elementor' ),
@@ -81,6 +84,7 @@ class Shapes {
 			'curve' => [
 				'title' => _x( 'Curve', 'Shapes', 'elementor' ),
 				'has_negative' => true,
+				'height_only' => true,
 			],
 			'curve-asymmetrical' => [
 				'title' => _x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),
