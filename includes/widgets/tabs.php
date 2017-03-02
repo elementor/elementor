@@ -245,10 +245,10 @@ class Widget_Tabs extends Widget_Base {
 	protected function render() {
 		$tabs = $this->get_settings( 'tabs' );
 		?>
-		<div class="elementor-tabs">
+		<div class="elementor-tabs" role="tablist">
 			<?php
 			$counter = 1; ?>
-			<div class="elementor-tabs-wrapper">
+			<div class="elementor-tabs-wrapper" role="tab">
 				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 				<?php
@@ -258,7 +258,7 @@ class Widget_Tabs extends Widget_Base {
 
 			<?php
 			$counter = 1; ?>
-			<div class="elementor-tabs-content-wrapper">
+			<div class="elementor-tabs-content-wrapper" role="tabpanel">
 				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 					<div class="elementor-tab-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
@@ -272,11 +272,11 @@ class Widget_Tabs extends Widget_Base {
 
 	protected function _content_template() {
 		?>
-		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}">
+		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
 				var counter = 1; #>
-				<div class="elementor-tabs-wrapper">
+				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
 						<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
@@ -286,7 +286,7 @@ class Widget_Tabs extends Widget_Base {
 				</div>
 
 				<# counter = 1; #>
-				<div class="elementor-tabs-content-wrapper">
+				<div class="elementor-tabs-content-wrapper" role="tabpanel">
 					<#
 					_.each( settings.tabs, function( item ) { #>
 						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>

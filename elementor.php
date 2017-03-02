@@ -4,7 +4,7 @@
  * Description: The most advanced frontend drag & drop page builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
  * Plugin URI: https://elementor.com/
  * Author: Elementor.com
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author URI: https://elementor.com/
  *
  * Text Domain: elementor
@@ -22,7 +22,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-define( 'ELEMENTOR_VERSION', '1.2.3' );
+define( 'ELEMENTOR_VERSION', '1.2.4' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
