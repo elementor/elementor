@@ -2,9 +2,10 @@
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
-		Module = require( './frontend-module' ),
+		Module = require( './handler-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	    Utils = require( 'elementor-frontend/utils' );
+		YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
+		AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
 	var ElementorFrontend = function() {
 		var self = this,
@@ -23,7 +24,10 @@
 		};
 
 		var initOnReadyComponents = function() {
-			self.utils = new Utils( $ );
+			self.utils = {
+				youtube: new YouTubeModule(),
+				anchors: new AnchorsModule()
+			};
 
 			self.elementsHandler = new ElementsHandler( $ );
 
@@ -44,6 +48,14 @@
 
 		this.setScopeWindow = function( window ) {
 			scopeWindow = window;
+		};
+
+		this.getElements = function( element ) {
+			if ( element ) {
+				return elements[ element ];
+			}
+
+			return elements;
 		};
 
 		this.isEditMode = function() {
@@ -117,6 +129,16 @@
 
 		this.getCurrentDeviceMode = function() {
 			return getComputedStyle( elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
+		};
+
+		this.waypoint = function( $element, callback, options ) {
+			var correctCallback = function() {
+				var element = this.element || this;
+
+				return callback.apply( element, arguments );
+			};
+
+			$element.elementorWaypoint( correctCallback, options );
 		};
 	};
 

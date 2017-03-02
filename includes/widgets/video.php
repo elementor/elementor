@@ -357,19 +357,6 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_lightbox',
-			[
-				'label' => __( 'Lightbox', 'elementor' ),
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay[url]!' => '',
-				],
-			]
-		);
-
 		$this->add_control(
 			'lightbox',
 			[
@@ -381,6 +368,7 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
 				],
+                'separator' => 'before',
 			]
 		);
 
@@ -390,7 +378,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'#elementor-widget-video-modal' => 'background-color: {{VALUE}};',
+					'#elementor-video-modal-{{ID}}' => 'background-color: {{VALUE}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
@@ -415,7 +403,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'#elementor-widget-video-modal .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+					'#elementor-video-modal-{{ID}} .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',

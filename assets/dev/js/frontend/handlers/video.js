@@ -1,7 +1,7 @@
-var FrontendModule = require( 'elementor-frontend/frontend-module' ),
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	VideoModule;
 
-VideoModule = FrontendModule.extend( {
+VideoModule = HandlerModule.extend( {
 	oldAnimation: null,
 
 	oldAspectRatio: null,
@@ -37,10 +37,6 @@ VideoModule = FrontendModule.extend( {
 		return elements;
 	},
 
-	getClosureMethodsNames: function() {
-		return FrontendModule.prototype.getClosureMethodsNames.apply( this, arguments ).concat( [ 'handleVideo', 'playVideo' ] );
-	},
-
 	getLightBoxModal: function() {
 		if ( ! VideoModule.lightBoxModal ) {
 			this.initLightBoxModal();
@@ -53,8 +49,8 @@ VideoModule = FrontendModule.extend( {
 		var self = this;
 
 		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.dialogsManager.createWidget( 'lightbox', {
-			id: 'elementor-widget-video-modal',
-			container: self.getElements( '$lightBoxContainer' ),
+			className: 'elementor-widget-video-modal',
+			container: self.elements.$lightBoxContainer,
 			closeButton: true,
 			position: {
 				within: elementorFrontend.getScopeWindow()
@@ -77,8 +73,7 @@ VideoModule = FrontendModule.extend( {
 
 	handleVideo: function() {
 		var self = this,
-			elements = self.getElements(),
-			$videoFrame = elements.$videoFrame,
+			$videoFrame = this.elements.$videoFrame,
 			isLightBoxEnabled = self.getElementSettings( 'lightbox' );
 
 		if ( isLightBoxEnabled ) {
@@ -93,24 +88,29 @@ VideoModule = FrontendModule.extend( {
 				$widgetContent.removeClass( 'animated' );
 			};
 
+			lightBoxModal.onShow = function() {
+				DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( lightBoxModal, arguments );
+
+				self.animateVideo();
+
+				self.playVideo();
+			};
+
 			self.handleAspectRatio();
 
 			lightBoxModal
 				.setMessage( $videoFrame )
-				.show( function() {
-					self.playVideo();
-
-					self.animateVideo();
-				} );
+				.setID( 'elementor-video-modal-' + self.getID() )
+				.show();
 		} else {
-			elements.$imageOverlay.remove();
+			this.elements.$imageOverlay.remove();
 
 			self.playVideo();
 		}
 	},
 
 	playVideo: function() {
-		var $videoFrame = this.getElements( '$videoFrame' ),
+		var $videoFrame = this.elements.$videoFrame,
 			newSourceUrl = $videoFrame[0].src.replace( '&autoplay=0', '' );
 
 		$videoFrame[0].src = newSourceUrl + '&autoplay=1';
@@ -147,12 +147,10 @@ VideoModule = FrontendModule.extend( {
 	},
 
 	bindEvents: function() {
-		FrontendModule.prototype.bindEvents.apply( this, arguments );
-
-		this.getElements( '$imageOverlay' ).on( 'click', this.handleVideo );
+		this.elements.$imageOverlay.on( 'click', this.handleVideo );
 	},
 
-	onWidgetChange: function( propertyName ) {
+	onElementChange: function( propertyName ) {
 		if ( 'lightbox_content_animation' === propertyName ) {
 			this.animateVideo();
 
