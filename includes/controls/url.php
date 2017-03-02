@@ -49,7 +49,7 @@ class Control_URL extends Control_Base_Multiple {
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-description">{{{ data.description }}}</div>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}

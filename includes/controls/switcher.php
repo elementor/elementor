@@ -48,7 +48,7 @@ class Control_Switcher extends Control_Base {
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-description">{{{ data.description }}}</div>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}

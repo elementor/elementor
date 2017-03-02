@@ -1107,7 +1107,6 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
-		errorMessage = '';
 		if ( 'object' === typeof errorMessage ) {
 			var message = '';
 
@@ -4796,6 +4795,11 @@ var HotKeys = function( $ ) {
 				return;
 			}
 
+			// Fix for some keyboard sources that consider alt key as ctrl key
+			if ( ! handler.allowAltKey && event.altKey ) {
+				return;
+			}
+
 			event.preventDefault();
 
 			handler.handle( event );
@@ -6020,6 +6024,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 		if ( 'widget'  === type ) {
 			type = this.model.get( 'widgetType' );
 		}
+
 		return {
 			'data-element_type': type
 		};
@@ -8892,7 +8897,6 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull )
-			.listenTo( this.collection, 'remove', this.onCollectionRemove )
 			.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
 	},
 
@@ -9012,7 +9016,7 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
-	onCollectionRemove: function() {
+	onRemoveChild: function() {
 		// If it's the last column, please create new one.
 		this._checkIsEmpty();
 
@@ -9224,7 +9228,6 @@ WidgetView = BaseElementView.extend( {
             .remove();
 
         self.$el.imagesLoaded().always( function() {
-
             setTimeout( function() {
                 if ( 1 > self.$el.height() ) {
                     self.handleEmptyWidget();
