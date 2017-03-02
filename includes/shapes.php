@@ -4,6 +4,10 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Shapes {
+	const FILTER_EXCLUDE = 'exclude';
+
+	const FILTER_INCLUDE = 'include';
+
 	private static $shapes;
 
 	public static function get_shapes( $shape = null ) {
@@ -18,9 +22,9 @@ class Shapes {
 		return self::$shapes;
 	}
 
-	public static function filter_shapes( $by ) {
-		return array_filter( self::get_shapes(), function( $shape ) use ( $by ) {
-			return ! empty( $shape[ $by ] );
+	public static function filter_shapes( $by, $filter = self::FILTER_INCLUDE ) {
+		return array_filter( self::get_shapes(), function( $shape ) use ( $by, $filter ) {
+			return self::FILTER_INCLUDE === $filter xor empty( $shape[ $by ] );
 		} );
 	}
 
@@ -37,74 +41,83 @@ class Shapes {
 	private static function init_shapes() {
 		self::$shapes = [
 			'mountains' => [
-				'title' => __( 'Mountains', 'elementor' ),
+				'title' => _x( 'Mountains', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'drops' => [
-				'title' => __( 'Drops', 'elementor' ),
+				'title' => _x( 'Drops', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
+				'height_only' => true,
 			],
 			'clouds' => [
-				'title' => __( 'Clouds', 'elementor' ),
+				'title' => _x( 'Clouds', 'Shapes', 'elementor' ),
+				'has_negative' => true,
+				'has_flip' => true,
+				'height_only' => true,
+			],
+			'zigzag' => [
+				'title' => _x( 'Zigzag', 'Shapes', 'elementor' ),
+			],
+			'pyramids' => [
+				'title' => _x( 'Pyramids', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
-			'zigzag' => [
-				'title' => __( 'Zigzag', 'elementor' ),
-			],
 			'triangle' => [
-				'title' => __( 'Triangle', 'elementor' ),
+				'title' => _x( 'Triangle', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'triangle-asymmetrical' => [
-				'title' => __( 'Triangle Asymmetrical', 'elementor' ),
+				'title' => _x( 'Triangle Asymmetrical', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'tilt' => [
-				'title' => __( 'Tilt', 'elementor' ),
+				'title' => _x( 'Tilt', 'Shapes', 'elementor' ),
 				'has_flip' => true,
+				'height_only' => true,
 			],
 			'opacity-tilt' => [
-				'title' => __( 'Opacity Tilt', 'elementor' ),
+				'title' => _x( 'Tilt Opacity', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'opacity-fan' => [
-				'title' => __( 'Opacity Fan', 'elementor' ),
+				'title' => _x( 'Fan Opacity', 'Shapes', 'elementor' ),
 			],
 			'curve' => [
-				'title' => __( 'Curve', 'elementor' ),
+				'title' => _x( 'Curve', 'Shapes', 'elementor' ),
 				'has_negative' => true,
+				'height_only' => true,
 			],
 			'curve-asymmetrical' => [
-				'title' => __( 'Curve Asymmetrical', 'elementor' ),
+				'title' => _x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'waves' => [
-				'title' => __( 'Waves', 'elementor' ),
+				'title' => _x( 'Waves', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'wave-brush' => [
-				'title' => __( 'Waves Brush', 'elementor' ),
+				'title' => _x( 'Waves Brush', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'waves-pattern' => [
-				'title' => __( 'Waves Pattern', 'elementor' ),
+				'title' => _x( 'Waves Pattern', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'arrow' => [
-				'title' => __( 'Arrow', 'elementor' ),
+				'title' => _x( 'Arrow', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'split' => [
-				'title' => __( 'Split', 'elementor' ),
+				'title' => _x( 'Split', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'book' => [
-				'title' => __( 'Book', 'elementor' ),
+				'title' => _x( 'Book', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 		];
