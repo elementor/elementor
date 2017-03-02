@@ -512,7 +512,7 @@ class Element_Section extends Element_Base {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'max' => 150,
+							'max' => 500,
 						],
 					],
 					'condition' => [
