@@ -368,7 +368,7 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
 				],
-                'separator' => 'before',
+				'separator' => 'before',
 			]
 		);
 
