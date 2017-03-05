@@ -55,6 +55,14 @@ abstract class Skin_Base {
 		return $this->parent->add_control( $this->get_control_id( $id ), $args );
 	}
 
+	public function update_control( $id, $args ) {
+		$this->parent->update_control( $this->get_control_id( $id ), $args );
+	}
+
+	public function remove_control( $id ) {
+		$this->parent->remove_control( $this->get_control_id( $id ) );
+	}
+
 	public function add_responsive_control( $id, $args ) {
 		$args['condition']['_skin'] = $this->get_id();
 		$this->parent->add_responsive_control( $this->get_control_id( $id ), $args );
