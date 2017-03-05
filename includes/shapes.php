@@ -88,7 +88,6 @@ class Shapes {
 			'curve' => [
 				'title' => _x( 'Curve', 'Shapes', 'elementor' ),
 				'has_negative' => true,
-				'height_only' => true,
 			],
 			'curve-asymmetrical' => [
 				'title' => _x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),

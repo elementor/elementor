@@ -104,7 +104,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'3.1.0',
+			'3.1.1',
 			true
 		);
 
