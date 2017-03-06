@@ -210,14 +210,13 @@ abstract class Widget_Base extends Element_Base {
 			'elementor-widget-' . $this->get_name(),
 		] );
 
-		$animation = $this->get_settings( '_animation' );
-		if ( ! empty( $animation ) ) {
-			$this->add_render_attribute( '_wrapper', 'data-animation', $animation );
+		$settings = $this->get_settings();
+
+		if ( ! empty( $settings['_animation'] ) ) {
+			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
 		}
 
-		$skin_type = $this->get_settings( '_skin' );
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( $skin_type ? $skin_type : 'default' ) );
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
 	}
 
 	public function before_render() {
