@@ -19,19 +19,27 @@ class Under_Construction {
 	}
 
 	public function template_redirect() {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return;
+		}
+
 		query_posts( [
 			'post__in' => [ self::get( 'template_id' ) ],
 			'post_type' => Source_Local::CPT,
 		] );
+
+		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
 	}
 
-	public function template_include() {
+	public function template_include( $template ) {
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
 			header( "$protocol 503 Service Unavailable", true, 503 );
 			header( 'Content-Type: text/html; charset=utf-8' );
 			header( 'Retry-After: 600' );
 		}
+
+		return $template;
 	}
 
 	public function register_settings_fields() {
@@ -173,37 +181,38 @@ class Under_Construction {
 	}
 
 	public function __construct() {
-		$is_enabled = self::get( 'enabled' );
-
-		if ( $is_enabled ) {
-			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
-			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
-		}
+		$is_enabled = '' !== self::get( 'mode' );
 
 		if ( is_admin() ) {
 			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ], 20 );
 		}
 
-		if ( self::get( 'enabled' ) ) {
-			$user = wp_get_current_user();
+		if ( ! $is_enabled ) {
+			return;
+		}
 
-			$exclude_mode = self::get( 'exclude_mode', [] );
-			if ( 'logged_in' === $exclude_mode &&  is_user_logged_in() ) {
+		if ( is_admin() ) {
+			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+		}
+
+		$user = wp_get_current_user();
+
+		$exclude_mode = self::get( 'exclude_mode', [] );
+		if ( 'logged_in' === $exclude_mode &&  is_user_logged_in() ) {
+			return;
+		}
+
+		if ( 'custom' === $exclude_mode ) {
+			$exclude_roles = self::get( 'exclude_roles', [] );
+
+			$compare_roles = array_intersect( $user->roles, $exclude_roles );
+			if ( ! empty( $compare_roles ) ) {
 				return;
 			}
-
-			if ( 'custom' === $exclude_mode ) {
-				$exclude_roles = self::get( 'exclude_roles', [] );
-
-				$compare_roles = array_intersect( $user->roles, $exclude_roles );
-				if ( ! empty( $compare_roles ) ) {
-					return;
-				}
-			}
-
-			add_action( 'template_redirect', [ $this, 'template_redirect' ] );
-			add_filter( 'template_include', [ $this, 'template_include', 1 ] );
 		}
+
+		add_action( 'template_redirect', [ $this, 'template_redirect' ] );
 	}
 }
