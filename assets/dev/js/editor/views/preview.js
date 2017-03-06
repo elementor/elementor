@@ -30,18 +30,6 @@ Preview = BaseSectionsContainerView.extend( {
 		this.ui.selectPreset.hide();
 	},
 
-	fixBlankPageOffset: function() {
-		var sectionHandleHeight = 27,
-			elTopOffset = this.$el.offset().top,
-			elTopOffsetRange = sectionHandleHeight - elTopOffset;
-
-		if ( 0 < elTopOffsetRange ) {
-			var $style = Backbone.$( '<style>' ).text( '.elementor-editor-active .elementor-inner{margin-top: ' + elTopOffsetRange + 'px}' );
-
-			elementor.$previewContents.children().children( 'head' ).append( $style );
-		}
-	},
-
 	onAddSectionButtonClick: function() {
 		this.ui.addNewSection.hide();
 		this.ui.selectPreset.show();
@@ -69,8 +57,6 @@ Preview = BaseSectionsContainerView.extend( {
 				self.addSection().addElementFromPanel();
 			}
 		} );
-
-		_.defer( _.bind( self.fixBlankPageOffset, this ) );
 	},
 
 	onPresetSelected: function( event ) {
