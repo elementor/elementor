@@ -41,10 +41,11 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings;
+		var elementSettings,
+			modelCID = this.getModelCID();
 
-		if ( elementorFrontend.isEditMode() ) {
-			var settings = elementorFrontend.config.elements.data[ this.getModelCID() ],
+		if ( elementorFrontend.isEditMode() && modelCID ) {
+			var settings = elementorFrontend.config.elements.data[ modelCID ],
 				activeControls = settings.getActiveControls(),
 				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
