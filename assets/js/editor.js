@@ -3955,6 +3955,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 					}
 
 					if ( 'object' === typeof data[ key ] ) {
+						// First check length difference
+						if ( Object.keys( data[ key ] ).length !== Object.keys( control[ 'default' ] ).length ) {
+							return;
+						}
+
+						// If it's equal length, loop over value
 						var isEqual = true;
 
 						_.each( data[ key ], function( propertyValue, propertyKey ) {
