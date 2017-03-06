@@ -131,7 +131,7 @@
 }
 
 // Alert
-.panel-alert {
+.elementor-panel-alert {
 	padding: 15px;
 	border-left: 5px solid transparent;
 	position: relative;
@@ -139,28 +139,31 @@
 	line-height: 1.5;
 	text-align: $start;
 
-	&.panel-alert-info {
-		color: $info-text;
-		background-color: $info-bg;
-		border-color: $info-border;
-	}
+	&.elementor-panel-alert- {
 
-	&.panel-alert-success {
-		color: $success-text;
-		background-color: $success-bg;
-		border-color: $success-border;
-	}
+		&info {
+			color: $info-text;
+			background-color: $info-bg;
+			border-color: $info-border;
+		}
 
-	&.panel-alert-warning {
-		color: $warning-text;
-		background-color: $warning-bg;
-		border-color: $warning-border;
-	}
+		&success {
+			color: $success-text;
+			background-color: $success-bg;
+			border-color: $success-border;
+		}
 
-	&.panel-alert-danger {
-		color: $danger-text;
-		background-color: $danger-bg;
-		border-color: $danger-border;
+		&warning {
+			color: $warning-text;
+			background-color: $warning-bg;
+			border-color: $warning-border;
+		}
+
+		&danger {
+			color: $danger-text;
+			background-color: $danger-bg;
+			border-color: $danger-border;
+		}
 	}
 }
 

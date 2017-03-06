@@ -720,26 +720,26 @@ select {
     top: 0; }
   .elementor-panel #elementor-controls .pojo-widget-button-collapse {
     display: none; }
-  .elementor-panel .panel-alert {
+  .elementor-panel .elementor-panel-alert {
     padding: 15px;
     border-left: 5px solid transparent;
     position: relative;
     font-size: 12px;
     line-height: 1.5;
     text-align: left; }
-    .elementor-panel .panel-alert.panel-alert-info {
+    .elementor-panel .elementor-panel-alert.elementor-panel-alert-info {
       color: #31708f;
       background-color: #d9edf7;
       border-color: #bcdff1; }
-    .elementor-panel .panel-alert.panel-alert-success {
+    .elementor-panel .elementor-panel-alert.elementor-panel-alert-success {
       color: #3c763d;
       background-color: #dff0d8;
       border-color: #cae6be; }
-    .elementor-panel .panel-alert.panel-alert-warning {
+    .elementor-panel .elementor-panel-alert.elementor-panel-alert-warning {
       color: #8a6d3b;
       background-color: #fcf8e3;
       border-color: #f9f0c3; }
-    .elementor-panel .panel-alert.panel-alert-danger {
+    .elementor-panel .elementor-panel-alert.elementor-panel-alert-danger {
       color: #a94442;
       background-color: #f2dede;
       border-color: #e8c4c4; }
