@@ -14,6 +14,7 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
   - [Element](#element)
   - [The Editor](#the-editor)
   - [Controls](#controls)
+* [Hooks](#hooks)
 * [Additional components](#additional-components)
   - [Template Library](#template-library)
   - [Icons](#icons)
@@ -82,6 +83,10 @@ Elementor includes a wide array of controls:
 * [Raw HTML](content/controls/_raw-html.md) - Display HTML content in the panel
 * [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
+##Hooks
+Elementor has many hooks that allow to change the default behavior and even extend it with new functionality. 
+- [PHP Hooks](content/hooks/php-hooks.md) - Based on the WordPress Hooks API
+- [JS Hooks](content/hooks/js-hooks.md) - Using an API similar to WordPress Hooks
 
 ##Additional components
 
