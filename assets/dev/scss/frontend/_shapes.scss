@@ -10,11 +10,11 @@
 	line-height: 0;
 
 	&-top {
-		top: 0;
+		top: -1px;
 	}
 
 	&-bottom {
-		bottom: -0.5px;
+		bottom: -1px;
 	}
 
 	&[data-negative="false"] {

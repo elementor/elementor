@@ -1850,9 +1850,9 @@ body.elementor-page .elementor-widget-menu-anchor {
   width: 100%;
   line-height: 0; }
   .elementor-shape-top {
-    top: 0; }
+    top: -1px; }
   .elementor-shape-bottom {
-    bottom: -0.5px; }
+    bottom: -1px; }
   .elementor-shape[data-negative="false"].elementor-shape-bottom {
     -webkit-transform: rotate(180deg);
             transform: rotate(180deg); }
