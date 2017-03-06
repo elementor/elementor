@@ -283,7 +283,7 @@ HandlerModule = ViewModule.extend( {
 					return;
 				}
 
-				self.onElementChange( controlView.model.get( 'name' ) );
+				self.onElementChange( controlView.model.get( 'name' ),  controlView, elementView );
 			}, elementor.channels.editor );
 		}
 	},
