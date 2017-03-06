@@ -83,6 +83,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-twitch',
 							'fa fa-twitter',
 							'fa fa-vimeo',
+							'fa fa-vk',
 							'fa fa-wordpress',
 							'fa fa-youtube',
 						],
