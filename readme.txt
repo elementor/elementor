@@ -173,6 +173,17 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.3.0 - 06.03.2017 =
+* New! - Added Shape Divider to sections
+* New! - Added Lightbox for video widget ([#741](https://github.com/pojome/elementor/issues/741))
+* New! - Added new social icons for Slideshare, Vkontakte & Tripadvisor
+* New! - Print JS file just when is needed, by new method `Widget::get_script_depends()` ([Code Reference](https://github.com/pojome/elementor-hello-world/blob/5d37a45a9419ecb825e1706eb83689dfa0b252f8/widgets/hello-world.php#L34-L42))
+* Tweak! - Improved Icon List widget by adding: line-up, divider and space between options ([#822](https://github.com/pojome/elementor/issues/822))
+* Tweak! - Added box shadow control for Button widget ([#1357](https://github.com/pojome/elementor/issues/1357))
+* Tweak! - Don't use `html_entity_decode` on json posted data (Improving JSON format for saving Data by deprecated `html_entity_decode`)
+* Tweak! - Element-ID as anchor has no smooth scroll - Added ability to pass element id to selectors ([#1333](https://github.com/pojome/elementor/issues/1333))
+* Fix! - Added margin top property in `.elementor-inner` class for better handling with fixed headers
+
 = 1.2.4 - 28.02.2017 =
 * Tweak! - Improved embed google fonts in the front-end
 * Tweak! - Added selector in Button widget to override custom style in some themes ([#1285](https://github.com/pojome/elementor/issues/1285))
