@@ -175,6 +175,11 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.3.1 - 06.03.2017 =
+* Fix! - Insert or embed template in the editor ([#1426](https://github.com/pojome/elementor/issues/1426), [#1425](https://github.com/pojome/elementor/issues/1425))
+* Fix! - Imported templates were not saved correctly ([Topic](https://wordpress.org/support/topic/new-version-not-loading-2/))
+* Fix! - Comparing default values for array or multiple controls 
+
 = 1.3.0 - 06.03.2017 =
 * New! - Added Shape Divider to sections
 * New! - Added Lightbox for video widget ([#741](https://github.com/pojome/elementor/issues/741))
