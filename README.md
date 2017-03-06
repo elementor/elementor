@@ -168,10 +168,12 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Screenshots ##
 
 1. **Drag & Drop.** Our instant drag & drop lets you easily place every element anywhere on the page.
-2. **Resize Columns.** Set the column width exactly how you want it by dragging its corner left and right.
+2. **Visual Resize Control.** Customize the various elements of the page. Resizing images, changing column sizes and much more.
 3. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
 4. **Template Library.** Save your pages or sections as templates, so you can easily reuse them again, or choose one of our beautiful pre-designed templates.
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
+6. **Revision History.** Switch between earlier versions of your page design, so your design process is backed up, every step of the way.
+7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
 
