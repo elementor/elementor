@@ -12,8 +12,6 @@ class Upgrades {
 	public static function init() {
 		$elementor_version = get_option( 'elementor_version' );
 
-		self::_upgrade_v131();
-		
 		// Normal init
 		if ( ELEMENTOR_VERSION === $elementor_version ) {
 			return;
