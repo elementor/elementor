@@ -76,6 +76,8 @@ VideoModule = HandlerModule.extend( {
 			$videoFrame = this.elements.$videoFrame,
 			isLightBoxEnabled = self.getElementSettings( 'lightbox' );
 
+		self.playVideo();
+
 		if ( isLightBoxEnabled ) {
 			var lightBoxModal = self.getLightBoxModal(),
 				$widgetContent = lightBoxModal.getElements( 'widgetContent' );
@@ -91,21 +93,20 @@ VideoModule = HandlerModule.extend( {
 			lightBoxModal.onShow = function() {
 				DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( lightBoxModal, arguments );
 
-				self.animateVideo();
+				lightBoxModal.setMessage( $videoFrame );
 
-				self.playVideo();
+				self.animateVideo();
 			};
 
 			self.handleAspectRatio();
 
+			$videoFrame.remove();
+
 			lightBoxModal
-				.setMessage( $videoFrame )
 				.setID( 'elementor-video-modal-' + self.getID() )
 				.show();
 		} else {
 			this.elements.$imageOverlay.remove();
-
-			self.playVideo();
 		}
 	},
 

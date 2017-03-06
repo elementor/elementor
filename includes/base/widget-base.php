@@ -210,8 +210,9 @@ abstract class Widget_Base extends Element_Base {
 			'elementor-widget-' . $this->get_name(),
 		] );
 
-		if ( ! empty( $settings['_animation'] ) ) {
-			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
+		$animation = $this->get_settings( '_animation' );
+		if ( ! empty( $animation ) ) {
+			$this->add_render_attribute( '_wrapper', 'data-animation', $animation );
 		}
 
 		$skin_type = $this->get_settings( '_skin' );
