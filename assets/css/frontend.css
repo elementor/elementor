@@ -1861,7 +1861,8 @@ body.elementor-page .elementor-widget-menu-anchor {
             transform: rotate(180deg); }
   .elementor-shape svg {
     display: block;
-    width: 100%;
+    width: -webkit-calc(100% + 1px);
+    width: calc(100% + 1px);
     position: relative;
     left: 50%;
     -webkit-transform: translateX(-50%);
