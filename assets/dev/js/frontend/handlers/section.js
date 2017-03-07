@@ -245,7 +245,9 @@ var Shapes = elementorFrontend.Module.extend( {
 module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
 
-	new Shapes( $scope );
+	if ( elementorFrontend.isEditMode() ) {
+		new Shapes( $scope );
+	}
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
