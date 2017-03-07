@@ -36,6 +36,7 @@ class Upgrades {
 			'0.3.2'  => '_upgrade_v032',
 			'0.9.2'  => '_upgrade_v092',
 			'0.11.0' => '_upgrade_v0110',
+			'1.3.2' => '_upgrade_v132',
 		];
 
 		foreach ( $upgrades as $version => $function ) {
@@ -182,6 +183,32 @@ class Upgrades {
 			} );
 
 			Plugin::$instance->db->save_editor( $post_id, $data );
+		}
+	}
+
+	private static function _upgrade_v132() {
+		global $wpdb;
+
+		$post_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				'SELECT `post_id` FROM %1$s
+						WHERE `meta_key` = \'_elementor_version\'
+							AND `meta_value` = \'%2$s\';',
+				$wpdb->postmeta,
+				'0.4'
+			)
+		);
+
+		if ( empty( $post_ids ) )
+			return;
+
+		foreach ( $post_ids as $post_id ) {
+			$elementor_data = get_post_meta( $post_id, '_elementor_data', true );
+			$new_elementor_data = str_replace( '"background_overlay_image":null', '"background_overlay_image":{}', $elementor_data );
+
+			if ( $new_elementor_data !== $elementor_data ) {
+				update_post_meta( $post_id, '_elementor_data', $new_elementor_data );
+			}
 		}
 	}
 }
