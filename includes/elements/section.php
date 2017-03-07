@@ -557,7 +557,7 @@ class Element_Section extends Element_Base {
 			$this->add_control(
 				$base_control_key . '_above_content',
 				[
-					'label' => __( 'Above Content', 'elementor' ),
+					'label' => __( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'label_off' => __( 'No', 'elementor' ),
 					'label_on' => __( 'Yes', 'elementor' ),
