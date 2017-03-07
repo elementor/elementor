@@ -19,19 +19,27 @@ BaseSettingsModel = Backbone.Model.extend( {
 			defaults = {};
 
 		_.each( this.controls, function( field ) {
-			var control = elementor.config.controls[ field.type ];
+			var control = elementor.config.controls[ field.type ],
+				isMultipleControl = _.isObject( control.default_value );
 
-			if ( _.isObject( control.default_value )  ) {
+			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
 			} else {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
+
+			if ( undefined !== attrs[ field.name ] ) {
+				if ( isMultipleControl !== _.isObject( attrs[ field.name ] ) ) {
+					delete attrs[ field.name ];
+				}
+			}
+
+			if ( undefined === attrs[ field.name ] ) {
+				attrs[ field.name ] = defaults[ field.name ];
+			}
 		} );
 
 		this.defaults = defaults;
-
-		// TODO: Change method to recursive
-		attrs = _.defaults( {}, attrs, defaults );
 
 		this.handleRepeaterData( attrs );
 

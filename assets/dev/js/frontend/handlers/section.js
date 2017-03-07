@@ -201,7 +201,7 @@ var Shapes = elementorFrontend.Module.extend( {
 		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
 
 		jQuery.get( svgURL, function( data ) {
-			$svgContainer.append( data.children[0] );
+			$svgContainer.append( data.childNodes[0] );
 		} );
 
 		this.setNegative( side );
@@ -245,7 +245,9 @@ var Shapes = elementorFrontend.Module.extend( {
 module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
 
-	new Shapes( $scope );
+	if ( elementorFrontend.isEditMode() ) {
+		new Shapes( $scope );
+	}
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
