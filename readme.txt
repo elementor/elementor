@@ -175,6 +175,13 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.3.2 - 07.03.2017 =
+* Tweak! - Added Bring to Front option for shape divider
+* Fix! - Normalize template data in some situations ([#1432](https://github.com/pojome/elementor/issues/1432))
+* Fix! - Removed shapes handler JS from front-end
+* Fix! - Added support for shapes on Edge browser ([#1427](https://github.com/pojome/elementor/issues/1427))
+* Fix! - Shapes glitch on some screen width
+
 = 1.3.1 - 07.03.2017 =
 * Fix! - Insert or embed template in the editor ([#1426](https://github.com/pojome/elementor/issues/1426), [#1425](https://github.com/pojome/elementor/issues/1425))
 * Fix! - Imported templates were not saved correctly ([Topic](https://wordpress.org/support/topic/new-version-not-loading-2/))
