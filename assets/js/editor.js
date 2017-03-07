@@ -4659,7 +4659,7 @@ helpers = {
 				isNegativeCondition = !! conditionNameParts[3],
 				controlValue = values[ conditionRealName ];
 
-			if ( conditionSubKey && _.isArray( controlValue ) ) {
+			if ( conditionSubKey ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
