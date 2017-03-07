@@ -44,6 +44,16 @@ abstract class Element_Base {
 
 	private $_is_type_instance = true;
 
+	public function get_script_depends() {
+		return [];
+	}
+
+	final public function enqueue_scripts() {
+		foreach ( $this->get_script_depends() as $script ) {
+			wp_enqueue_script( $script );
+		}
+	}
+
 	public final static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
@@ -118,6 +128,24 @@ abstract class Element_Base {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
+	public function get_active_controls() {
+		$controls = $this->get_controls();
+
+		$settings = $this->get_settings();
+
+		$active_controls = array_reduce( array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
+			$control = $controls[ $control_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				$active_controls[ $control_key ] = $control;
+			}
+
+			return $active_controls;
+		}, [] );
+
+		return $active_controls;
+	}
+
 	public function add_control( $id, array $args, $overwrite = false ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
@@ -171,7 +199,7 @@ abstract class Element_Base {
 
 	public final function get_style_controls( $controls = null ) {
 		if ( null === $controls ) {
-			$controls = $this->get_controls();
+			$controls = $this->get_active_controls();
 		}
 
 		$style_controls = [];
@@ -190,7 +218,7 @@ abstract class Element_Base {
 	}
 
 	public final function get_class_controls() {
-		return array_filter( $this->get_controls(), function( $control ) {
+		return array_filter( $this->get_active_controls(), function( $control ) {
 			return ( isset( $control['prefix_class'] ) );
 		} );
 	}
@@ -290,6 +318,10 @@ abstract class Element_Base {
 
 	public function get_settings( $setting = null ) {
 		return self::_get_items( $this->_settings, $setting );
+	}
+
+	public function get_active_settings() {
+		return array_intersect_key( $this->get_settings(), $this->get_active_controls() );
 	}
 
 	public function get_children() {
@@ -437,7 +469,11 @@ abstract class Element_Base {
 	}
 
 	public function print_element() {
+		$this->enqueue_scripts();
+
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
+
+		$this->_add_render_attributes();
 
 		$this->before_render();
 
@@ -598,6 +634,40 @@ abstract class Element_Base {
 	 */
 	public function is_type_instance() {
 		return $this->_is_type_instance;
+	}
+
+	public function get_frontend_settings_keys() {
+		return [];
+	}
+
+	protected function _add_render_attributes() {
+		$id = $this->get_id();
+
+		$this->add_render_attribute( '_wrapper', 'data-id', $id );
+
+		$this->add_render_attribute( '_wrapper', 'class', [
+			'elementor-element',
+			'elementor-element-' . $id,
+		] );
+
+		$settings = $this->get_active_settings();
+
+		foreach ( self::get_class_controls() as $control ) {
+			if ( empty( $settings[ $control['name'] ] ) )
+				continue;
+
+			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+		}
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
+		}
+
+		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
+
+			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
+		}
 	}
 
 	protected function render() {}

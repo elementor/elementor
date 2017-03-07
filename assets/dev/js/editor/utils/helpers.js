@@ -105,7 +105,7 @@ helpers = {
 		} );
 	},
 
-	isControlVisible: function( controlModel, values ) {
+	isActiveControl: function( controlModel, values ) {
 		var condition;
 
 		// TODO: Better way to get this?
@@ -131,7 +131,7 @@ helpers = {
 				isNegativeCondition = !! conditionNameParts[3],
 				controlValue = values[ conditionRealName ];
 
-			if ( conditionSubKey ) {
+			if ( conditionSubKey && _.isArray( controlValue ) ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
