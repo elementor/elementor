@@ -1697,6 +1697,7 @@ App = Marionette.Application.extend( {
 	helpers: require( 'elementor-utils/helpers' ),
 	heartbeat: require( 'elementor-utils/heartbeat' ),
 	imagesManager: require( 'elementor-utils/images-manager' ),
+	debuggerModule: require( 'elementor-debugger/debugger' ),
 	schemes: require( 'elementor-utils/schemes' ),
 	presetsFactory: require( 'elementor-utils/presets-factory' ),
 	introduction: require( 'elementor-utils/introduction' ),
@@ -2242,7 +2243,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"../utils/hooks":108,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/ajax":63,"elementor-utils/conditions":64,"elementor-utils/heartbeat":65,"elementor-utils/helpers":66,"elementor-utils/hot-keys":67,"elementor-utils/images-manager":68,"elementor-utils/introduction":69,"elementor-utils/presets-factory":72,"elementor-utils/schemes":73,"elementor-views/controls/base":80,"elementor-views/controls/base-multiple":78,"elementor-views/controls/box-shadow":81,"elementor-views/controls/choose":82,"elementor-views/controls/code":83,"elementor-views/controls/color":84,"elementor-views/controls/date-time":85,"elementor-views/controls/dimensions":86,"elementor-views/controls/font":87,"elementor-views/controls/gallery":88,"elementor-views/controls/icon":89,"elementor-views/controls/image-dimensions":90,"elementor-views/controls/media":91,"elementor-views/controls/order":92,"elementor-views/controls/repeater":94,"elementor-views/controls/section":95,"elementor-views/controls/select2":96,"elementor-views/controls/slider":97,"elementor-views/controls/structure":98,"elementor-views/controls/switcher":99,"elementor-views/controls/tab":100,"elementor-views/controls/url":101,"elementor-views/controls/wp_widget":102,"elementor-views/controls/wysiwyg":103,"elementor-views/preview":105,"elementor-views/widget":107}],33:[function(require,module,exports){
+},{"../utils/hooks":108,"elementor-debugger/debugger":109,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/ajax":63,"elementor-utils/conditions":64,"elementor-utils/heartbeat":65,"elementor-utils/helpers":66,"elementor-utils/hot-keys":67,"elementor-utils/images-manager":68,"elementor-utils/introduction":69,"elementor-utils/presets-factory":72,"elementor-utils/schemes":73,"elementor-views/controls/base":80,"elementor-views/controls/base-multiple":78,"elementor-views/controls/box-shadow":81,"elementor-views/controls/choose":82,"elementor-views/controls/code":83,"elementor-views/controls/color":84,"elementor-views/controls/date-time":85,"elementor-views/controls/dimensions":86,"elementor-views/controls/font":87,"elementor-views/controls/gallery":88,"elementor-views/controls/icon":89,"elementor-views/controls/image-dimensions":90,"elementor-views/controls/media":91,"elementor-views/controls/order":92,"elementor-views/controls/repeater":94,"elementor-views/controls/section":95,"elementor-views/controls/select2":96,"elementor-views/controls/slider":97,"elementor-views/controls/structure":98,"elementor-views/controls/switcher":99,"elementor-views/controls/tab":100,"elementor-views/controls/url":101,"elementor-views/controls/wp_widget":102,"elementor-views/controls/wysiwyg":103,"elementor-views/preview":105,"elementor-views/widget":107}],33:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -9468,6 +9469,83 @@ var EventManager = function() {
 };
 
 module.exports = EventManager;
+
+},{}],109:[function(require,module,exports){
+var DebuggerModule = elementorFrontend.Module.extend( {
+	errorStack: [],
+	debounceSendErrors: null,
+
+	getDefaultSettings: function() {
+		return {
+			debounceDelay: 1000,
+			urlsToWatch: [
+				'elementor/assets'
+			]
+		};
+	},
+
+	addError: function( message, url, line, column, error ) {
+		this.errorStack.push( {
+			date: new Date().getTime(),
+			message: message,
+			url:url,
+			line: line,
+			column: column,
+			error: error
+		} );
+
+		this.debounceSendErrors();
+	},
+
+	onError: function( message, url, line, column, error ) {
+		var isInWatchList = false,
+			urlsToWatch = this.getSettings( 'urlsToWatch' );
+
+		for ( var urlIndex in urlsToWatch ) {
+			if ( -1 !== url.indexOf( urlsToWatch[ urlIndex ] ) ) {
+				isInWatchList = true;
+			}
+		}
+
+		if ( ! isInWatchList ) {
+			return;
+		}
+
+		this.addError( message, url, line, column, error );
+	},
+
+	bindEvents: function() {
+		window.onerror = this.onError;
+	},
+
+	sendErrors: function() {
+
+		// Avoid recursions on errors in ajax
+		var self = this,
+			oldErrorHandler = window.onerror;
+		window.onerror = null;
+
+		elementor.ajax.send( 'debugger_log', {
+			data: {
+				data: JSON.stringify( this.errorStack ),
+				_nonce: elementor.config.nonce
+			},
+			success: function() {
+				self.errorStack = [];
+
+				// Restore error handler
+				window.onerror = oldErrorHandler;
+			}
+		} );
+	},
+
+	onInit: function() {
+		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+		this.debounceSendErrors = _.debounce( this.sendErrors, this.getSettings( 'debounceDelay' ) );
+	}
+} );
+
+module.exports = new DebuggerModule();
 
 },{}]},{},[70,71,32])
 //# sourceMappingURL=editor.js.map

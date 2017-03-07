@@ -113,6 +113,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/editor/components/revisions',
 							src: '**/*.js',
 							expose: 'elementor-revisions'
+						},
+						{
+							cwd: 'includes/debugger/assets/js',
+							src: '**/*.js',
+							expose: 'elementor-debugger'
 						}
 					] );
 				}
@@ -255,7 +260,8 @@ module.exports = function( grunt ) {
 
 			scripts: {
 				files: [
-					'assets/dev/js/**/*.js'
+					'assets/dev/js/**/*.js',
+					'includes/debugger/assets/js/**/*.js'
 				],
 				tasks: [ 'scripts' ]
 			}

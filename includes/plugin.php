@@ -24,6 +24,11 @@ class Plugin {
 	public $controls_manager;
 
 	/**
+	 * @var Debugger
+	 */
+	public $debugger;
+
+	/**
 	 * @var Schemes_Manager
 	 */
 	public $schemes_manager;
@@ -180,6 +185,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/shapes.php' );
+		include( ELEMENTOR_PATH . 'includes/debugger/debugger.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -205,6 +211,7 @@ class Plugin {
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
+		$this->debugger = new Debugger\Debugger();
 
 		$this->heartbeat = new Heartbeat();
 		$this->system_info = new System_Info\Main();
