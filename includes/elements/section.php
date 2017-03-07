@@ -564,6 +564,9 @@ class Element_Section extends Element_Base {
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
 					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
 				]
 			);
 
