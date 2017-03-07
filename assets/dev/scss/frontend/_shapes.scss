@@ -33,7 +33,7 @@
 
 	svg {
 		display: block;
-		width: 100%;
+		width: calc(100% + 1px);
 		position: relative;
 		left: 50%;
 		transform: translateX(-50%);
