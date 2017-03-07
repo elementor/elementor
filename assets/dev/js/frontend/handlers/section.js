@@ -201,7 +201,7 @@ var Shapes = elementorFrontend.Module.extend( {
 		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
 
 		jQuery.get( svgURL, function( data ) {
-			$svgContainer.append( data.children[0] );
+			$svgContainer.append( data.childNodes[0] );
 		} );
 
 		this.setNegative( side );
