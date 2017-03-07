@@ -117,21 +117,29 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_control(
+			'heading_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'title_background',
 			[
-				'label' => __( 'Title Background', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'background-color: {{VALUE}};',
 				],
-				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
 			'title_color',
 			[
-				'label' => __( 'Title Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-title' => 'color: {{VALUE}};',
@@ -161,7 +169,6 @@ class Widget_Toggle extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => __( 'Title Typography', 'elementor' ),
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
@@ -169,21 +176,29 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_control(
+			'heading_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'content_background_color',
 			[
-				'label' => __( 'Content Background', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'background-color: {{VALUE}};',
 				],
-				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
 			'content_color',
 			[
-				'label' => __( 'Content Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-content' => 'color: {{VALUE}};',
@@ -199,7 +214,6 @@ class Widget_Toggle extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'label' => 'Content Typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]

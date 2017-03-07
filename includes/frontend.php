@@ -54,6 +54,8 @@ class Frontend {
 	}
 
 	public function register_scripts() {
+		do_action( 'elementor/frontend/before_register_scripts' );
+
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
@@ -97,13 +99,20 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.1.1',
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
 				'elementor-waypoints',
-				'jquery-numerator',
-				'imagesloaded',
-				'jquery-slick',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -111,7 +120,9 @@ class Frontend {
 	}
 
 	public function register_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		do_action( 'elementor/frontend/before_register_styles' );
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
@@ -151,17 +162,37 @@ class Frontend {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
-		wp_localize_script(
-			'elementor-frontend',
-			'elementorFrontendConfig', [
-				'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
-				'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
-				'is_rtl' => is_rtl(),
-			]
-		);
+		$elementor_frontend_config = [
+			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
+			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+			'is_rtl' => is_rtl(),
+			'urls' => [
+				'assets' => ELEMENTOR_ASSETS_URL,
+			],
+		];
+
+		$elements_manager = Plugin::$instance->elements_manager;
+
+		$elements_frontend_keys = [
+			'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
+			'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
+		];
+
+		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$elementor_frontend_config['elements'] = [
+				'data' => (object) [],
+				'keys' => $elements_frontend_keys,
+			];
+		}
+
+		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
 	}
 
 	public function enqueue_styles() {
+		do_action( 'elementor/frontend/before_enqueue_styles' );
+
 		wp_enqueue_style( 'elementor-icons' );
 		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );

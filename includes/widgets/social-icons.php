@@ -73,14 +73,17 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-pinterest',
 							'fa fa-product-hunt',
 							'fa fa-reddit',
+							'fa fa-slideshare',
 							'fa fa-snapchat',
 							'fa fa-soundcloud',
 							'fa fa-spotify',
 							'fa fa-stack-overflow',
+							'fa fa-tripadvisor',
 							'fa fa-tumblr',
 							'fa fa-twitch',
 							'fa fa-twitter',
 							'fa fa-vimeo',
+							'fa fa-vk',
 							'fa fa-wordpress',
 							'fa fa-youtube',
 						],
@@ -164,7 +167,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_control(
 			'icon_color',
 			[
-				'label' => __( 'Icon Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
@@ -205,7 +208,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_size',
 			[
-				'label' => __( 'Icon Size', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -222,7 +225,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_padding',
 			[
-				'label' => __( 'Icon Padding', 'elementor' ),
+				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
@@ -244,7 +247,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_spacing',
 			[
-				'label' => __( 'Icon Spacing', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [

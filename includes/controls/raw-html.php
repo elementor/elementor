@@ -24,13 +24,13 @@ class Control_Raw_Html extends Control_Base {
 		<# if ( data.label ) { #>
 		<span class="elementor-control-title">{{{ data.label }}}</span>
 		<# } #>
-		<div class="elementor-control-raw-html {{ data.classes }}">{{{ data.raw }}}</div>
+		<div class="elementor-control-raw-html {{ data.content_classes }}">{{{ data.raw }}}</div>
 		<?php
 	}
 
 	public function get_default_settings() {
 		return [
-			'classes' => '',
+			'content_classes' => '',
 		];
 	}
 }

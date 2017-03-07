@@ -1,5 +1,5 @@
 module.exports = function( $scope, $ ) {
-	elementorFrontend.utils.waypoint( $scope.find( '.elementor-counter-number' ), function() {
+	elementorFrontend.waypoint( $scope.find( '.elementor-counter-number' ), function() {
 		var $number = $( this ),
 			data = $number.data();
 
