@@ -968,10 +968,10 @@ class Element_Section extends Element_Base {
 
 	private function print_shape_divider( $side ) {
 	    $settings = $this->get_active_settings();
-
 	    $base_setting_key = "shape_divider_$side";
+		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 	    ?>
-		<div class="elementor-shape elementor-shape-<?php echo $side; ?>">
+		<div class="elementor-shape elementor-shape-<?php echo $side; ?>" data-negative="<?php echo var_export( $negative ); ?>">
 			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
 		</div>
 		<?php
