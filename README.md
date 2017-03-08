@@ -178,9 +178,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 1.3.3 - 08.03.2017 ###
-* Fix! - Negative shape rotation in front end ([#1438](https://github.com/pojome/elementor/issues/1438))
-* Fix! - Error for internal links with invalid target ([Topic](https://wordpress.org/support/topic/popup-maker-not-working-on-elementor-1-3-2-pages/))
-* Fix! - Alignment for icon list widget
+* Fix! - Negative shape rotation in front-end ([#1438](https://github.com/pojome/elementor/issues/1438))
+* Fix! - Error with anchor links with an invalid target ([Topic](https://wordpress.org/support/topic/popup-maker-not-working-on-elementor-1-3-2-pages/))
+* Fix! - Alignment issue in Icon List widget
 
 ### 1.3.2 - 07.03.2017 ###
 * Tweak! - Added Bring to Front option for shape divider
