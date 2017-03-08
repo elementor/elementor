@@ -177,6 +177,9 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.3.3 - 08.03.2017 ###
+* Fix! - Negative shape rotation in front end
+
 ### 1.3.2 - 07.03.2017 ###
 * Tweak! - Added Bring to Front option for shape divider
 * Fix! - Normalize template data in some situations ([#1432](https://github.com/pojome/elementor/issues/1432))
