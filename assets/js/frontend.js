@@ -1002,15 +1002,20 @@ module.exports = ViewModule.extend( {
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
-		if ( ! isSameHostname || ! isSamePathname ) {
+		if ( ! isSameHostname || ! isSamePathname || clickedLink.hash.length < 2 ) {
 			return;
 		}
 
-		event.preventDefault();
+		var $anchor = jQuery( clickedLink.hash );
 
-		var $anchor = jQuery( clickedLink.hash ),
-			adminBarHeight = this.elements.$wpAdminBar.height(),
+		if ( ! $anchor.length ) {
+			return;
+		}
+
+		var adminBarHeight = this.elements.$wpAdminBar.height(),
 			scrollTop = $anchor.offset().top - adminBarHeight;
+
+		event.preventDefault();
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
