@@ -3809,21 +3809,23 @@ BaseSettingsModel = Backbone.Model.extend( {
 	options: {},
 
 	initialize: function( data, options ) {
+		var self = this;
+
 		if ( options ) {
 			// Keep the options for cloning
-			this.options = options;
+			self.options = options;
 		}
 
-		this.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( this );
+		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
 
-		if ( ! this.controls ) {
+		if ( ! self.controls ) {
 			return;
 		}
 
 		var attrs = data || {},
 			defaults = {};
 
-		_.each( this.controls, function( field ) {
+		_.each( self.controls, function( field ) {
 			var control = elementor.config.controls[ field.type ],
 				isMultipleControl = _.isObject( control.default_value );
 
@@ -3835,9 +3837,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			if ( undefined !== attrs[ field.name ] ) {
 				if ( isMultipleControl && ! _.isObject( attrs[ field.name ] ) ) {
-					delete attrs[ field.name ];
+					elementor.debug.addCustomError(
+						new TypeError( 'An invalid argument supplied as multiple control value' ),
+						'InvalidElementData',
+						'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ field.name ] + '> as `' + field.name + '` value. Expected array or object.'
+					);
 
-					elementor.debug.addCustomError( new Error( 'An invalid argument supplied as multiple control default value' ) );
+					delete attrs[ field.name ];
 				}
 			}
 
@@ -3846,11 +3852,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		this.defaults = defaults;
+		self.defaults = defaults;
 
-		this.handleRepeaterData( attrs );
+		self.handleRepeaterData( attrs );
 
-		this.set( attrs );
+		self.set( attrs );
 	},
 
 	handleRepeaterData: function( attrs ) {
@@ -9502,11 +9508,12 @@ var Debug = function() {
 
 	var onError = function( event ) {
 		var originalEvent = event.originalEvent,
+			error = originalEvent.error,
 			isInWatchList = false,
 			urlsToWatch = settings.urlsToWatch;
 
 		jQuery.each( urlsToWatch, function() {
-			if ( -1 !== originalEvent.error.stack.indexOf( this ) ) {
+			if ( -1 !== error.stack.indexOf( this ) ) {
 				isInWatchList = true;
 
 				return false;
@@ -9517,7 +9524,13 @@ var Debug = function() {
 			return;
 		}
 
-		self.addError( originalEvent.message, originalEvent.filename, originalEvent.lineno, originalEvent.colno );
+		self.addError( {
+			type: error.name,
+			message: error.message,
+			url: originalEvent.filename,
+			line: originalEvent.lineno,
+			column: originalEvent.colno
+		} );
 	};
 
 	var bindEvents = function() {
@@ -9534,37 +9547,46 @@ var Debug = function() {
 		self.sendErrors = _.debounce( self.sendErrors, settings.debounceDelay );
 	};
 
-	this.addCustomError = function( error ) {
+	this.addCustomError = function( error, category, tag ) {
 		var errorInfo = {
+			type: error.name,
+			message: error.message,
 			url: error.fileName || error.sourceURL,
 			line: error.lineNumber || error.line,
-			column: error.columnNumber || error.column
+			column: error.columnNumber || error.column,
+			customFields: {
+				category: category || 'general',
+				tag: tag
+			}
 		};
 
 		if ( ! errorInfo.url ) {
 			var stackInfo =  error.stack.match( /\n {4}at (.*?(?=:(\d+):(\d+)))/ );
 
 			if ( stackInfo ) {
-				errorInfo = {
-					url: stackInfo[1],
-					line: stackInfo[2],
-					column: stackInfo[3]
-				};
+				errorInfo.url = stackInfo[1];
+
+				errorInfo.line = stackInfo[2];
+
+				errorInfo.column = stackInfo[3];
 			}
 		}
 
-		this.addError( error.message, errorInfo.url, errorInfo.line, errorInfo.column, { custom: 'Yes' } );
+		this.addError( errorInfo );
 	};
 
-	this.addError = function( message, url, line, column, custom ) {
-		errorStack.push( {
+	this.addError = function( errorParams ) {
+		var defaultParams = {
+			type: 'Error',
 			date: Math.floor( new Date().getTime() / 1000 ),
-			message: message,
-			url: url,
-			line: line,
-			column: column,
-			custom: custom
-		} );
+			message: null,
+			url: null,
+			line: null,
+			column: null,
+			customFields: {}
+		};
+
+		errorStack.push( jQuery.extend( true, defaultParams, errorParams ) );
 
 		self.sendErrors();
 	};
