@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
-**Stable tag:** 1.3.1  
+**Stable tag:** 1.3.2  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -176,6 +176,18 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.3.3 - 08.03.2017 ###
+* Fix! - Negative shape rotation in front end ([#1438](https://github.com/pojome/elementor/issues/1438))
+* Fix! - Error for internal links with invalid target ([Topic](https://wordpress.org/support/topic/popup-maker-not-working-on-elementor-1-3-2-pages/))
+* Fix! - Alignment for icon list widget
+
+### 1.3.2 - 07.03.2017 ###
+* Tweak! - Added Bring to Front option for shape divider
+* Fix! - Normalize template data in some situations ([#1432](https://github.com/pojome/elementor/issues/1432))
+* Fix! - Removed shapes handler JS from front-end
+* Fix! - Added support for shapes on Edge browser ([#1427](https://github.com/pojome/elementor/issues/1427))
+* Fix! - Shapes glitch on some screen width
 
 ### 1.3.1 - 07.03.2017 ###
 * Fix! - Insert or embed template in the editor ([#1426](https://github.com/pojome/elementor/issues/1426), [#1425](https://github.com/pojome/elementor/issues/1425))

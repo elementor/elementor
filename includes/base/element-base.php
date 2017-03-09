@@ -663,7 +663,7 @@ abstract class Element_Base {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
-		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
 
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
