@@ -9535,16 +9535,32 @@ var Debug = function() {
 	};
 
 	this.addCustomError = function( error ) {
-		var errorInfo = error.stack.match( /\n {4}at (.*?(?=:(\d+):(\d+)))/ );
+		var errorInfo = {
+			url: error.fileName || error.sourceURL,
+			line: error.lineNumber || error.line,
+			column: error.columnNumber || error.column
+		};
 
-		this.addError( error.message, errorInfo[1], errorInfo[2], errorInfo[3], { custom: 'Yes' } );
+		if ( ! errorInfo.url ) {
+			var stackInfo =  error.stack.match( /\n {4}at (.*?(?=:(\d+):(\d+)))/ );
+
+			if ( stackInfo ) {
+				errorInfo = {
+					url: stackInfo[1],
+					line: stackInfo[2],
+					column: stackInfo[3]
+				};
+			}
+		}
+
+		this.addError( error.message, errorInfo.url, errorInfo.line, errorInfo.column, { custom: 'Yes' } );
 	};
 
 	this.addError = function( message, url, line, column, custom ) {
 		errorStack.push( {
 			date: Math.floor( new Date().getTime() / 1000 ),
 			message: message,
-			url:url,
+			url: url,
 			line: line,
 			column: column,
 			custom: custom
@@ -9558,7 +9574,7 @@ var Debug = function() {
 		elements.$window.off( 'error', onError );
 
 		jQuery.ajax( {
-			url: ajaxurl,
+			url: ElementorConfig.ajaxurl,
 			method: 'POST',
 			data: {
 				action: 'elementor_debug_log',
