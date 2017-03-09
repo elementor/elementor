@@ -1870,7 +1870,9 @@ body.elementor-page .elementor-widget-menu-anchor {
   .elementor-shape .elementor-shape-fill {
     fill: #fff;
     -webkit-transform-origin: center;
-            transform-origin: center; }
+            transform-origin: center;
+    -webkit-transform: rotateY(0deg);
+            transform: rotateY(0deg); }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
