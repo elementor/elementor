@@ -86,16 +86,18 @@ var Debug = function() {
 		this.addError( errorInfo );
 	};
 
-	this.addError = function( message, url, line, column, custom ) {
-		errorStack.push( {
+	this.addError = function( errorParams ) {
+		var defaultParams = {
 			type: 'Error',
 			date: Math.floor( new Date().getTime() / 1000 ),
-			message: message,
-			url: url,
-			line: line,
-			column: column,
-			custom: custom
-		} );
+			message: null,
+			url: null,
+			line: null,
+			column: null,
+			customFields: {}
+		};
+
+		errorStack.push( jQuery.extend( true, defaultParams, errorParams ) );
 
 		self.sendErrors();
 	};
