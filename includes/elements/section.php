@@ -500,7 +500,7 @@ class Element_Section extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1px)',
 					],
 				]
 			);
@@ -551,6 +551,22 @@ class Element_Section extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
 					],
 					'render_type' => 'none',
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_above_content',
+				[
+					'label' => __( 'Bring to Front', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'No', 'elementor' ),
+					'label_on' => __( 'Yes', 'elementor' ),
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
 				]
 			);
 
@@ -868,10 +884,10 @@ class Element_Section extends Element_Base {
 			<div class="elementor-background-overlay"></div>
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
+		<div class="elementor-shape elementor-shape-bottom"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
-		<div class="elementor-shape elementor-shape-bottom"></div>
 		<?php
 	}
 
@@ -900,6 +916,10 @@ class Element_Section extends Element_Base {
 
 			if ( $settings['shape_divider_top'] ) {
 				$this->print_shape_divider( 'top' );
+			}
+
+			if ( $settings['shape_divider_bottom'] ) {
+				$this->print_shape_divider( 'bottom' );
 			} ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
 				<div class="elementor-row">
@@ -910,10 +930,6 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
-			<?php
-			if ( $this->get_settings( 'shape_divider_bottom' ) ) {
-				$this->print_shape_divider( 'bottom' );
-			} ?>
 		</section>
 		<?php
 	}
@@ -952,10 +968,10 @@ class Element_Section extends Element_Base {
 
 	private function print_shape_divider( $side ) {
 	    $settings = $this->get_active_settings();
-
 	    $base_setting_key = "shape_divider_$side";
+		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 	    ?>
-		<div class="elementor-shape elementor-shape-<?php echo $side; ?>">
+		<div class="elementor-shape elementor-shape-<?php echo $side; ?>" data-negative="<?php echo var_export( $negative ); ?>">
 			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
 		</div>
 		<?php

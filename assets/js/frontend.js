@@ -651,7 +651,7 @@ var Shapes = elementorFrontend.Module.extend( {
 		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
 
 		jQuery.get( svgURL, function( data ) {
-			$svgContainer.append( data.children[0] );
+			$svgContainer.append( data.childNodes[0] );
 		} );
 
 		this.setNegative( side );
@@ -695,7 +695,9 @@ var Shapes = elementorFrontend.Module.extend( {
 module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
 
-	new Shapes( $scope );
+	if ( elementorFrontend.isEditMode() ) {
+		new Shapes( $scope );
+	}
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
 
@@ -1000,15 +1002,20 @@ module.exports = ViewModule.extend( {
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
-		if ( ! isSameHostname || ! isSamePathname ) {
+		if ( ! isSameHostname || ! isSamePathname || clickedLink.hash.length < 2 ) {
 			return;
 		}
 
-		event.preventDefault();
+		var $anchor = jQuery( clickedLink.hash );
 
-		var $anchor = jQuery( clickedLink.hash ),
-			adminBarHeight = this.elements.$wpAdminBar.height(),
+		if ( ! $anchor.length ) {
+			return;
+		}
+
+		var adminBarHeight = this.elements.$wpAdminBar.height(),
 			scrollTop = $anchor.offset().top - adminBarHeight;
+
+		event.preventDefault();
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
