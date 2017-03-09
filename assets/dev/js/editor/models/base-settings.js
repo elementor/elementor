@@ -31,6 +31,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 			if ( undefined !== attrs[ field.name ] ) {
 				if ( isMultipleControl && ! _.isObject( attrs[ field.name ] ) ) {
 					delete attrs[ field.name ];
+
+					elementor.debug.addCustomError( new Error( 'An invalid argument supplied as multiple control default value' ) );
 				}
 			}
 
