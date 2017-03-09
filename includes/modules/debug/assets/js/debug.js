@@ -58,27 +58,32 @@ var Debug = function() {
 		self.sendErrors = _.debounce( self.sendErrors, settings.debounceDelay );
 	};
 
-	this.addCustomError = function( error ) {
+	this.addCustomError = function( error, category, tag ) {
 		var errorInfo = {
 			type: error.name,
+			message: error.message,
 			url: error.fileName || error.sourceURL,
 			line: error.lineNumber || error.line,
-			column: error.columnNumber || error.column
+			column: error.columnNumber || error.column,
+			customFields: {
+				category: category || 'general',
+				tag: tag
+			}
 		};
 
 		if ( ! errorInfo.url ) {
 			var stackInfo =  error.stack.match( /\n {4}at (.*?(?=:(\d+):(\d+)))/ );
 
 			if ( stackInfo ) {
-				errorInfo = {
-					url: stackInfo[1],
-					line: stackInfo[2],
-					column: stackInfo[3]
-				};
+				errorInfo.url = stackInfo[1];
+
+				errorInfo.line = stackInfo[2];
+
+				errorInfo.column = stackInfo[3];
 			}
 		}
 
-		this.addError( error.message, errorInfo.url, errorInfo.line, errorInfo.column, { custom: 'Yes' } );
+		this.addError( errorInfo );
 	};
 
 	this.addError = function( message, url, line, column, custom ) {
