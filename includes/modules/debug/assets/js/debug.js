@@ -19,11 +19,12 @@ var Debug = function() {
 
 	var onError = function( event ) {
 		var originalEvent = event.originalEvent,
+			error = originalEvent.error,
 			isInWatchList = false,
 			urlsToWatch = settings.urlsToWatch;
 
 		jQuery.each( urlsToWatch, function() {
-			if ( -1 !== originalEvent.error.stack.indexOf( this ) ) {
+			if ( -1 !== error.stack.indexOf( this ) ) {
 				isInWatchList = true;
 
 				return false;
