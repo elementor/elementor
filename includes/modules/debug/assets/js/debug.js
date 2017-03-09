@@ -34,7 +34,13 @@ var Debug = function() {
 			return;
 		}
 
-		self.addError( originalEvent.message, originalEvent.filename, originalEvent.lineno, originalEvent.colno );
+		self.addError( {
+			type: error.name,
+			message: error.message,
+			url: originalEvent.filename,
+			line: originalEvent.lineno,
+			column: originalEvent.colno
+		} );
 	};
 
 	var bindEvents = function() {
@@ -53,6 +59,7 @@ var Debug = function() {
 
 	this.addCustomError = function( error ) {
 		var errorInfo = {
+			type: error.name,
 			url: error.fileName || error.sourceURL,
 			line: error.lineNumber || error.line,
 			column: error.columnNumber || error.column
@@ -75,6 +82,7 @@ var Debug = function() {
 
 	this.addError = function( message, url, line, column, custom ) {
 		errorStack.push( {
+			type: 'Error',
 			date: Math.floor( new Date().getTime() / 1000 ),
 			message: message,
 			url: url,

@@ -27,7 +27,7 @@ class Debug_Reporter extends Base_Reporter {
 		foreach ( $log as $index => $item ) {
 			$item['date'] = date( 'Y-m-d H:i P', $item['date'] );
 
-			$log_string .= "\n\t\t$item[message]\n\t\t\tat $item[url] - $item[line]:$item[column]\n\t\t\t$item[date]\n";
+			$log_string .= "\n\t\t$item[type]: $item[message]\n\t\t\tat $item[url] - $item[line]:$item[column]\n\t\t\t$item[date]\n";
 
 			if ( $item['customFields'] ) {
 				foreach ( $item['customFields'] as $key => $value ) {

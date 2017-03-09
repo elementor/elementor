@@ -21,6 +21,7 @@ class Debug {
 			$last_error = end( $log );
 
 			$compare_fields = [
+				'type',
 				'message',
 				'url',
 				'line',
