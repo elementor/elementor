@@ -69,7 +69,7 @@ class Debug {
 		}
 
 		if ( self::MAX_LOGS_TO_SAVE && self::MAX_LOGS_TO_SAVE < count( $log ) ) {
-			$log = array_splice( $log, -10 );
+			$log = array_splice( $log, -self::MAX_LOGS_TO_SAVE );
 		}
 
 		update_option( self::OPTION_NAME, $log );
