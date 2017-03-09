@@ -29,8 +29,8 @@ class Debug_Reporter extends Base_Reporter {
 
 			$log_string .= "\n\t\t$item[message]\n\t\t\tat $item[url] - $item[line]:$item[column]\n\t\t\t$item[date]\n";
 
-			if ( $item['custom'] ) {
-				foreach ( $item['custom'] as $key => $value ) {
+			if ( $item['customFields'] ) {
+				foreach ( $item['customFields'] as $key => $value ) {
 					$log_string .= "\t\t\t$key: $value\n";
 				}
 			}
