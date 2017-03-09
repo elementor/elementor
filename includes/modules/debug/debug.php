@@ -27,8 +27,8 @@ class Debug {
 				'column',
 			];
 
-			if ( empty( $error['custom'] ) ) {
-				$error['custom'] = [];
+			if ( empty( $error['customFields'] ) ) {
+				$error['customFields'] = [];
 			}
 
 			$all_fields_identical = false;
@@ -41,12 +41,12 @@ class Debug {
 				$all_fields_identical = count( $compare_fields ) === count( $required_identical_fields );
 
 				if ( $all_fields_identical ) {
-					$error_custom_fields_count = count( $error['custom'] );
+					$error_custom_fields_count = count( $error['customFields'] );
 
-					if ( count( $last_error['custom'] ) !== $error_custom_fields_count ) {
+					if ( count( $last_error['customFields'] ) !== $error_custom_fields_count ) {
 						$all_fields_identical = false;
 					} else {
-						$identical_custom_fields = array_intersect( $error['custom'], $last_error['custom'] );
+						$identical_custom_fields = array_intersect( $error['customFields'], $last_error['customFields'] );
 
 						$all_fields_identical = count( $identical_custom_fields ) === $error_custom_fields_count;
 					}
