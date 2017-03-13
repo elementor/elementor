@@ -21,6 +21,10 @@ class Widget_Counter extends Widget_Base {
 		return [ 'general-elements' ];
 	}
 
+	public function get_script_depends() {
+		return [ 'jquery-numerator' ];
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_counter',

@@ -113,7 +113,7 @@ class Schemes_Manager {
 		if ( ! $scheme_obj ) {
 			wp_send_json_error();
 		}
-		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$posted = json_decode( stripslashes( $_POST['data'] ), true );
 		$scheme_obj->save_scheme( $posted );
 
 		wp_send_json_success();

@@ -428,6 +428,155 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Shape Divider
+		$this->start_controls_section(
+			'section_shape_divider',
+			[
+				'label' => __( 'Shape Divider', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_shape_dividers' );
+
+		$shapes_options = [
+			'' => __( 'None', 'elementor' ),
+		];
+
+		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
+		    $shapes_options[ $shape_name ] = $shape_props['title'];
+		}
+
+		foreach ( [ 'top' => __( 'Top', 'elementor' ), 'bottom' => __( 'Bottom', 'elementor' ) ] as $side => $side_label ) {
+			$base_control_key = "shape_divider_$side";
+
+			$this->start_controls_tab(
+				"tab_$base_control_key",
+				[
+					'label' => $side_label,
+				]
+			);
+
+			$this->add_control(
+				$base_control_key,
+				[
+					'label' => __( 'Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'options' => $shapes_options,
+					'render_type' => 'none',
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_color',
+				[
+					'label' => __( 'Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				$base_control_key . '_width',
+				[
+					'label' => __( 'Width', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'units' => [ '%' ],
+					'default' => [
+						'unit' => '%',
+					],
+					'range' => [
+						'%' => [
+							'min' => 100,
+							'max' => 300,
+						],
+					],
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1px)',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				$base_control_key . '_height',
+				[
+					'label' => __( 'Height', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'max' => 500,
+						],
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_flip',
+				[
+					'label' => __( 'Flip', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'No', 'elementor' ),
+					'label_on' => __( 'Yes', 'elementor' ),
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'transform: rotateY(180deg)',
+					],
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_negative',
+				[
+					'label' => __( 'Invert', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'No', 'elementor' ),
+					'label_on' => __( 'Yes', 'elementor' ),
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
+					],
+					'render_type' => 'none',
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_above_content',
+				[
+					'label' => __( 'Bring to Front', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'No', 'elementor' ),
+					'label_on' => __( 'Yes', 'elementor' ),
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+				]
+			);
+
+			$this->end_controls_tab();
+		}
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
 		// Section Typography
 		$this->start_controls_section(
 			'section_typo',
@@ -437,6 +586,17 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+			$this->add_control(
+				'colors_warning',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		}
+
 		$this->add_control(
 			'heading_color',
 			[
@@ -444,8 +604,9 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container .elementor-heading-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
 				],
+				'separator' => 'none',
 			]
 		);
 
@@ -456,7 +617,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container' => 'color: {{VALUE}};',
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -468,7 +629,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -480,7 +641,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container a:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -558,7 +719,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				'prefix_class' => 'animated ',
+				//'prefix_class' => 'animated ',
 				'label_block' => true,
 			]
 		);
@@ -643,7 +804,7 @@ class Element_Section extends Element_Base {
 			[
 				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
-				'classes' => 'elementor-descriptor',
+				'content_classes' => 'elementor-descriptor',
 			]
 		);
 
@@ -722,6 +883,8 @@ class Element_Section extends Element_Base {
 		if ( -1 !== [ 'classic', 'gradient' ].indexOf( settings.background_overlay_background ) ) { #>
 			<div class="elementor-background-overlay"></div>
 		<# } #>
+		<div class="elementor-shape elementor-shape-top"></div>
+		<div class="elementor-shape elementor-shape-bottom"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
@@ -729,38 +892,9 @@ class Element_Section extends Element_Base {
 	}
 
 	public function before_render() {
-		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
-
-		$this->add_render_attribute( 'wrapper', 'class', [
-			'elementor-section',
-			'elementor-element',
-			'elementor-element-' . $this->get_id(),
-			'elementor-' . $section_type . '-section',
-		] );
-
 		$settings = $this->get_settings();
-
-		foreach ( $this->get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) )
-				continue;
-
-			if ( ! $this->is_control_visible( $control ) )
-				continue;
-
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
-		}
-
-		if ( ! empty( $settings['_element_id'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'id', trim( $settings['_element_id'] ) );
-		}
-
-		if ( ! empty( $settings['animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
-		}
-
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
 		?>
-		<section <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<section <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -778,7 +912,15 @@ class Element_Section extends Element_Base {
 
 			if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
 				<div class="elementor-background-overlay"></div>
-			<?php endif; ?>
+			<?php endif;
+
+			if ( $settings['shape_divider_top'] ) {
+				$this->print_shape_divider( 'top' );
+			}
+
+			if ( $settings['shape_divider_bottom'] ) {
+				$this->print_shape_divider( 'bottom' );
+			} ?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
 				<div class="elementor-row">
 		<?php
@@ -792,7 +934,46 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
+	public function get_frontend_settings_keys() {
+		return [
+			'shape_divider_top',
+			'shape_divider_bottom',
+			'shape_divider_top_negative',
+			'shape_divider_bottom_negative',
+		];
+	}
+
+	protected function _add_render_attributes() {
+	    parent::_add_render_attributes();
+
+	    $section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
+
+		$this->add_render_attribute( '_wrapper', 'class', [
+			'elementor-section',
+			'elementor-' . $section_type . '-section',
+		] );
+
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
+
+		$animation = $this->get_settings( 'animation' );
+
+		if ( $animation ) {
+			$this->add_render_attribute( '_wrapper', 'data-animation', $animation );
+		}
+	}
+
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'column' );
+	}
+
+	private function print_shape_divider( $side ) {
+	    $settings = $this->get_active_settings();
+	    $base_setting_key = "shape_divider_$side";
+		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
+	    ?>
+		<div class="elementor-shape elementor-shape-<?php echo $side; ?>" data-negative="<?php echo var_export( $negative ); ?>">
+			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
+		</div>
+		<?php
 	}
 }

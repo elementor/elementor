@@ -148,7 +148,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'size',
 			[
-				'label' => __( 'Icon Size', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -185,7 +185,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'rotate',
 			[
-				'label' => __( 'Icon Rotate', 'elementor' ),
+				'label' => __( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0,
