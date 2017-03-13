@@ -123,10 +123,6 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
 				'elementor-waypoints',
-				'jquery-numerator',
-				'imagesloaded',
-				'jquery-swiper',
-				'jquery-slick',
 
 			],
 			ELEMENTOR_VERSION,
