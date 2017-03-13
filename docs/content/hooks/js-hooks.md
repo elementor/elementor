@@ -114,14 +114,14 @@ Argument    | Type                                        | Description
  
 ```javascript
 // For a widget without a skin (skin = default)
-elementorFrontend.hooks.addAction( 'frontend/element_ready/widget/image.default', function( $scope ) {
+elementorFrontend.hooks.addAction( 'frontend/element_ready/image.default', function( $scope ) {
 	if ( $scope.find( 'a' ) ){
 		$scope.find( 'a' ).lightbox();
 	}
 } );
 
 // For a widget with a skin named `satellite`
-elementorFrontend.hooks.addAction( 'frontend/element_ready/widget/google-maps.satellite', function( $scope ) {
+elementorFrontend.hooks.addAction( 'frontend/element_ready/google-maps.satellite', function( $scope ) {
 	var $iframe = $scope.find( 'iframe' ),
 		iframeUrl = $iframe.attr( 'src' );
 		
