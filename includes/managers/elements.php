@@ -139,7 +139,7 @@ class Elements_Manager {
 			$status = DB::STATUS_DRAFT;
 		}
 
-		$posted = json_decode( stripslashes( html_entity_decode( $_POST['data'] ) ), true );
+		$posted = json_decode( stripslashes( $_POST['data'] ), true );
 
 		Plugin::$instance->db->save_editor( $_POST['post_id'], $posted, $status );
 

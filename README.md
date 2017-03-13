@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.4  
 **Tested up to:** 4.7  
-**Stable tag:** 1.2.3  
+**Stable tag:** 1.3.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -168,12 +168,51 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 ## Screenshots ##
 
 1. **Drag & Drop.** Our instant drag & drop lets you easily place every element anywhere on the page.
-2. **Resize Columns.** Set the column width exactly how you want it by dragging its corner left and right.
+2. **Visual Resize Control.** Customize the various elements of the page. Resizing images, changing column sizes and much more.
 3. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
 4. **Template Library.** Save your pages or sections as templates, so you can easily reuse them again, or choose one of our beautiful pre-designed templates.
 5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
+6. **Revision History.** Switch between earlier versions of your page design, so your design process is backed up, every step of the way.
+7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.3.3 - 08.03.2017 ###
+* Fix! - Negative shape rotation in front-end ([#1438](https://github.com/pojome/elementor/issues/1438))
+* Fix! - Error with anchor links with an invalid target ([Topic](https://wordpress.org/support/topic/popup-maker-not-working-on-elementor-1-3-2-pages/))
+* Fix! - Alignment issue in Icon List widget
+
+### 1.3.2 - 07.03.2017 ###
+* Tweak! - Added Bring to Front option for shape divider
+* Fix! - Normalize template data in some situations ([#1432](https://github.com/pojome/elementor/issues/1432))
+* Fix! - Removed shapes handler JS from front-end
+* Fix! - Added support for shapes on Edge browser ([#1427](https://github.com/pojome/elementor/issues/1427))
+* Fix! - Shapes glitch on some screen width
+
+### 1.3.1 - 07.03.2017 ###
+* Fix! - Insert or embed template in the editor ([#1426](https://github.com/pojome/elementor/issues/1426), [#1425](https://github.com/pojome/elementor/issues/1425))
+* Fix! - Imported templates were not saved correctly ([Topic](https://wordpress.org/support/topic/new-version-not-loading-2/))
+* Fix! - Comparing default values for array or multiple controls 
+
+### 1.3.0 - 06.03.2017 ###
+* New! - Added Shape Divider to sections
+* New! - Added Lightbox for video widget ([#741](https://github.com/pojome/elementor/issues/741))
+* New! - Added new social icons for Slideshare, Vkontakte & Tripadvisor
+* New! - Print JS file just when is needed, by new method `Widget::get_script_depends()` ([Code Reference](https://github.com/pojome/elementor-hello-world/blob/5d37a45a9419ecb825e1706eb83689dfa0b252f8/widgets/hello-world.php#L34-L42))
+* Tweak! - Improved Icon List widget by adding: line-up, divider and space between options ([#822](https://github.com/pojome/elementor/issues/822))
+* Tweak! - Added box shadow control for Button widget ([#1357](https://github.com/pojome/elementor/issues/1357))
+* Tweak! - Don't use `html_entity_decode` on json posted data (Improving JSON format for saving Data by deprecated `html_entity_decode`)
+* Tweak! - Element-ID as anchor has no smooth scroll - Added ability to pass element id to selectors ([#1333](https://github.com/pojome/elementor/issues/1333))
+* Fix! - Added margin top property in `.elementor-inner` class for better handling with fixed headers
+
+### 1.2.4 - 28.02.2017 ###
+* Tweak! - Improved embed google fonts in the front-end
+* Tweak! - Added selector in Button widget to override custom style in some themes ([#1285](https://github.com/pojome/elementor/issues/1285))
+* Tweak! - Load unminified color-picker.js file when `SCRIPT_DEBUG` is `true` ([#1364](https://github.com/pojome/elementor/issues/1364))
+* Fix! - Bug when dragging a column from a single-column section to another section ([#1346](https://github.com/pojome/elementor/issues/1346))
+* Fix! - Reduced padding for Progress Bar widget in mobile ([#1358](https://github.com/pojome/elementor/issues/1358))
+* Fix! - Descriptor field style in the repeater field
+* Fix! - Alt key for some keyboard input sources ([#1328](https://github.com/pojome/elementor/issues/1328))
 
 ### 1.2.3 - 14.02.2017 ###
 * Fix! - Typography group data render ([Topic](https://wordpress.org/support/topic/erro-after-upgrading-to-version-1-2-2/))

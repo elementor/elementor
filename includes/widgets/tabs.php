@@ -94,7 +94,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->start_controls_section(
 			'section_tabs_style',
 			[
-				'label' => __( 'Tabs Style', 'elementor' ),
+				'label' => __( 'Tabs', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -166,9 +166,18 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
+			'heading_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'tab_color',
 			[
-				'label' => __( 'Title Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'color: {{VALUE}};',
@@ -177,7 +186,6 @@ class Widget_Tabs extends Widget_Base {
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_1,
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -205,20 +213,19 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_tabs_content',
+		$this->add_control(
+			'heading_content',
 			[
-				'label' => __( 'Tabs Content', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
 			'content_color',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',

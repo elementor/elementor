@@ -167,6 +167,8 @@ class Editor {
 		$plugin->frontend->register_scripts();
 		$plugin->frontend->enqueue_scripts();
 
+		$plugin->widgets_manager->enqueue_widgets_scripts();
+
 		wp_register_script(
 			'backbone-marionette',
 			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
@@ -226,16 +228,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.0.2',
-			true
-		);
-
-		wp_register_script(
 			'jquery-select2',
 			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2' . $suffix . '.js',
 			[
@@ -273,12 +265,11 @@ class Editor {
 				'backbone-marionette',
 				'backbone-radio',
 				'perfect-scrollbar',
-				'jquery-easing',
+				//'jquery-easing',
 				'nprogress',
 				'tipsy',
 				'imagesloaded',
 				'heartbeat',
-				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
 				'ace',
