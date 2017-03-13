@@ -17,8 +17,7 @@ ElementsHandler = function( $ ) {
 		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
-		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-		'image-swiper.default': require( 'elementor-frontend/handlers/image-swiper' )
+		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' )
 	};
 
 	var addGlobalHandlers = function() {
@@ -97,7 +96,7 @@ ElementsHandler = function( $ ) {
 
 module.exports = ElementsHandler;
 
-},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/image-swiper":9,"elementor-frontend/handlers/progress":10,"elementor-frontend/handlers/section":11,"elementor-frontend/handlers/tabs":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/handlers/widget":15}],2:[function(require,module,exports){
+},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/handlers/widget":14}],2:[function(require,module,exports){
 /* global elementorFrontendConfig */
 ( function( $ ) {
 	var elements = {},
@@ -256,7 +255,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":18,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":16,"elementor-frontend/utils/youtube":17}],3:[function(require,module,exports){
+},{"../utils/hooks":17,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":15,"elementor-frontend/utils/youtube":16}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -320,7 +319,7 @@ HandlerModule = ViewModule.extend( {
 
 module.exports = HandlerModule;
 
-},{"../utils/view-module":20}],4:[function(require,module,exports){
+},{"../utils/view-module":19}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -441,17 +440,6 @@ module.exports = function( $scope, $ ) {
 
 },{}],9:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
-	var $swiper = $scope.find( '.swiper-container' );
-	if ( ! $swiper.length ) {
-		return;
-	}
-
-	var savedOptions = $swiper.data( 'slider_options' );
-    var mySwiper = new Swiper( $swiper, savedOptions );
-};
-
-},{}],10:[function(require,module,exports){
-module.exports = function( $scope, $ ) {
 	elementorFrontend.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
 
@@ -459,7 +447,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
@@ -718,7 +706,7 @@ module.exports = function( $scope, $ ) {
 	}
 };
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
 		$tabsTitles = $scope.find( '.elementor-tab-title' ),
@@ -753,7 +741,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
@@ -771,7 +759,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	VideoModule;
 
@@ -962,7 +950,7 @@ module.exports = function( $scope ) {
 	new VideoModule( $scope );
 };
 
-},{"elementor-frontend/handler-module":3}],15:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],14:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
@@ -977,7 +965,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1043,7 +1031,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":20}],17:[function(require,module,exports){
+},{"../../utils/view-module":19}],16:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1088,7 +1076,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":20}],18:[function(require,module,exports){
+},{"../../utils/view-module":19}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1333,7 +1321,7 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,
@@ -1498,7 +1486,7 @@ Module.extend = function( properties ) {
 
 module.exports = Module;
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var Module = require( './module' ),
 	ViewModule;
 
@@ -1524,5 +1512,5 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":19}]},{},[2])
+},{"./module":18}]},{},[2])
 //# sourceMappingURL=frontend.js.map
