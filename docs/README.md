@@ -1,4 +1,4 @@
-#Introduction to Elementor
+# Introduction to Elementor
 
 Elementor is an [Open Source](https://opensource.org/) free frontend page builder for WordPress that features a simple and intuitive drag and drop interface.
 
@@ -8,7 +8,7 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
 * Client side: [jQuery](https://jquery.com/), [Backbone](http://backbonejs.org/) & [Marionette](http://marionettejs.com/)
 * Style: [SCSS](http://sass-lang.com/)
 
-##Table Of Contents
+## Table Of Contents
 
 * [Definitions](#definitions)
   - [Element](#element)
@@ -20,9 +20,9 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
   - [Icons](#icons)
   - [Menus](#menus)
 
-##Definitions
+## Definitions
 
-###Element
+### Element
 
 In Elementor, the main component is the 'Element'. An element is an visual entity that gets rendered on the page and can be controlled by the user in the editor.<br>
 There are three types of elements in Elementor: Section, Column, and Widget.<br>
@@ -36,17 +36,17 @@ A standard Element structure consists of the following settings and functions:
 * Preview render function - Written as a Backbone JavaScript template
 * Frontend HTML render function - Written in PHP
 
-###The Editor
+### The Editor
 
 The editor is the editing environment in which the user creates and edits elements on the page. To learn more about the editor you can read [this article](content/the-editor.md).
 
-###Controls
+### Controls
 
 Controls are different types of input fields and UI elements that are used to construct the UI of elements.<br>
 For more information about controls, Please refer to [this article](content/controls/README.md).<br>
 Elementor includes a wide array of controls:
 
-#####Default settings
+##### Default settings
 
 * [Text](content/controls/_text.md) - Simple text field
 * [Number](content/controls/_number.md) - Simple number field
@@ -57,7 +57,7 @@ Elementor includes a wide array of controls:
 * [WYSIWYG](content/controls/_wysiwyg.md) - The WordPress text editor (TinyMCE)
 * [Code](content/controls/_code.md) Editor - Ace Code editor - This includes syntax highlighting for HTML/CSS/JavaScript and other programming languages.
 
-#####Settings controls
+##### Settings controls
 
 * [Select](content/controls/_select.md) - A classic select input 
 * [Checkbox](content/controls/_checkbox.md) - Choose for Yes/No options
@@ -68,7 +68,7 @@ Elementor includes a wide array of controls:
 * [Date-Time](content/controls/_date.md) picker - A field that opens up a calendar + hours
 * [Repeater](content/controls/_repeater.md) - Repeater controls allow you to build repeatable blocks of fields. You can create for example a set of fields that will contain a checkbox and a textfield. The user will then be able to add “rows”, and each row will contain a checkbox and a textfield. (coming soon)
 
-#####Design Controls
+##### Design Controls
 
 * [Color](content/controls/_color.md) - A Color-Picker control with an alpha slider. Includes a customizable color palette that can be preset by the user
 * [Dimensions](content/controls/_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
@@ -77,32 +77,32 @@ Elementor includes a wide array of controls:
 * [Entrance Animation](content/controls/_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](content/controls/_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 
-#####Panel UI Controls
+##### Panel UI Controls
 
 * [Heading](content/controls/_heading.md) - Display the a heading in the panel
 * [Raw HTML](content/controls/_raw-html.md) - Display HTML content in the panel
 * [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
-##Hooks
+## Hooks
 Elementor has many hooks that allow to change the default behavior and even extend it with new functionality. 
 - [PHP Hooks](content/hooks/php-hooks.md) - Based on the WordPress Hooks API
 - [JS Hooks](content/hooks/js-hooks.md) - Using an API similar to WordPress Hooks
 
-##Additional components
+## Additional components
 
-###Template Library
+### Template Library
 
 The Template Library lets you save pages, sections and widgets for reuse, as well as use pre-designed Elementor templates.
 
-###Icons
+### Icons
 
 You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as well as [Font Awesome](http://fontawesome.io/).
 
-###Menus
+### Menus
 
 You can add admin menu under the Elementor menu. As long as it involves simple settings - use the Elementor settings page.
 
-###Elementor Pro
+### Elementor Pro
 
 [Elementor Pro](https://elementor.com/pro/) adds new features to the Elementor Page Builder plugin. Control your conversions, your user engagement, your entire website, from one page builder.
 
