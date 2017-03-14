@@ -68,8 +68,6 @@
 				} );
 			} );
 
-			require( 'elementor/includes/under-construction/assets/js/tools.js' )( $ );
-
 			$( '#elementor-clear-cache-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );
