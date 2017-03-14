@@ -177,6 +177,17 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+			$this->add_control(
+				'colors_warning',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		}
+
 		$this->add_control(
 			'heading_color',
 			[
@@ -186,6 +197,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
+				'separator' => 'none',
 			]
 		);
 
@@ -292,9 +304,9 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				'prefix_class' => 'animated ',
+				//'prefix_class' => 'animated ',
 				'label_block' => true,
-				]
+			]
 		);
 
 		$this->add_control(
@@ -466,43 +478,10 @@ class Element_Column extends Element_Base {
 	}
 
 	public function before_render() {
-		$is_inner = $this->get_data( 'isInner' );
-
-		$column_type = ! empty( $is_inner ) ? 'inner' : 'top';
-
-		$settings = $this->get_settings();
-
-		$this->add_render_attribute( 'wrapper', 'class', [
-			'elementor-column',
-			'elementor-element',
-			'elementor-element-' . $this->get_id(),
-			'elementor-col-' . $settings['_column_size'],
-			'elementor-' . $column_type . '-column',
-		] );
-
-		foreach ( self::get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) )
-				continue;
-
-			if ( ! $this->is_control_visible( $control ) )
-				continue;
-
-			$this->add_render_attribute( 'wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
-		}
-
-		if ( ! empty( $settings['_element_id'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'id', trim( $settings['_element_id'] ) );
-		}
-
-		if ( ! empty( $settings['animation'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'data-animation', $settings['animation'] );
-		}
-
-		$this->add_render_attribute( 'wrapper', 'data-element_type', $this->get_name() );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
-			<?php if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
+			<?php if ( in_array( $this->get_settings( 'background_overlay_background' ), [ 'classic', 'gradient' ] ) ) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif; ?>
 		<div class="elementor-widget-wrap">
@@ -515,6 +494,28 @@ class Element_Column extends Element_Base {
 			</div>
 		</div>
 		<?php
+	}
+
+	protected function _add_render_attributes() {
+		parent::_add_render_attributes();
+
+		$is_inner = $this->get_data( 'isInner' );
+
+		$column_type = ! empty( $is_inner ) ? 'inner' : 'top';
+
+		$settings = $this->get_settings();
+
+		$this->add_render_attribute( '_wrapper', 'class', [
+			'elementor-column',
+			'elementor-col-' . $settings['_column_size'],
+			'elementor-' . $column_type . '-column',
+		] );
+
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
+
+		if ( $settings['animation'] ) {
+			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['animation'] );
+		}
 	}
 
 	protected function _get_default_child_type( array $element_data ) {

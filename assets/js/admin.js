@@ -69,7 +69,6 @@
 				} );
 			} );
 
-			
 			$( '#elementor-clear-cache-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );

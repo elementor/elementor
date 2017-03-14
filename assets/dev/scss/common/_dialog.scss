@@ -8,7 +8,7 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.8);
 	z-index: 9999;
 }
 
@@ -139,11 +139,16 @@
 }
 
 // Modal widget
-.dialog-elementor-modal-close-button {
+.dialog-lightbox-close-button {
 	cursor: pointer;
 	position: absolute;
 	top: 16px;
 	@include end(20px);
 	font-size: 16px;
-	color: $editor-light;
+	color: #ffffff;
+	opacity: .65;
+
+	&:hover {
+		opacity: 1;
+	}
 }

@@ -47,7 +47,8 @@ abstract class Source_Base {
 			}
 
 			if ( method_exists( $element, $method ) ) {
-				$element_data = $element->{$method}( $element_data );
+				// TODO: Use the internal element data without parameters
+				$element_data = $element->{$method}( $element->get_data() );
 			}
 
 			foreach ( $element->get_controls() as $control ) {
@@ -59,7 +60,7 @@ abstract class Source_Base {
 				}
 
 				if ( method_exists( $control_class, $method ) ) {
-					$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element_data['settings'][ $control['name'] ] );
+					$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ) );
 				}
 			}
 

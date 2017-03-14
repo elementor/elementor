@@ -19,19 +19,27 @@ BaseSettingsModel = Backbone.Model.extend( {
 			defaults = {};
 
 		_.each( this.controls, function( field ) {
-			var control = elementor.config.controls[ field.type ];
+			var control = elementor.config.controls[ field.type ],
+				isMultipleControl = _.isObject( control.default_value );
 
-			if ( _.isObject( control.default_value )  ) {
+			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
 			} else {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
+
+			if ( undefined !== attrs[ field.name ] ) {
+				if ( isMultipleControl && ! _.isObject( attrs[ field.name ] ) ) {
+					delete attrs[ field.name ];
+				}
+			}
+
+			if ( undefined === attrs[ field.name ] ) {
+				attrs[ field.name ] = defaults[ field.name ];
+			}
 		} );
 
 		this.defaults = defaults;
-
-		// TODO: Change method to recursive
-		attrs = _.defaults( {}, attrs, defaults );
 
 		this.handleRepeaterData( attrs );
 
@@ -62,7 +70,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getFontControls: function() {
-		return _.filter( this.controls, function( control ) {
+		return _.filter( this.getActiveControls(), function( control ) {
 			return 'font' === control.type;
 		} );
 	},
@@ -70,7 +78,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	getStyleControls: function( controls ) {
 		var self = this;
 
-		controls = controls || self.controls;
+		controls = controls || self.getActiveControls();
 
 		return _.filter( controls, function( control ) {
 			if ( control.fields ) {
@@ -107,6 +115,19 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
+	getActiveControls: function() {
+		var self = this,
+			controls = {};
+
+		_.each( self.controls, function( control, controlKey ) {
+			if ( elementor.helpers.isActiveControl( control, self.attributes ) ) {
+				controls[ controlKey ] = control;
+			}
+		} );
+
+		return controls;
+	},
+
 	clone: function() {
 		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
@@ -138,6 +159,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 					}
 
 					if ( 'object' === typeof data[ key ] ) {
+						// First check length difference
+						if ( Object.keys( data[ key ] ).length !== Object.keys( control[ 'default' ] ).length ) {
+							return;
+						}
+
+						// If it's equal length, loop over value
 						var isEqual = true;
 
 						_.each( data[ key ], function( propertyValue, propertyKey ) {
