@@ -24,7 +24,7 @@ add_action( 'elementor/frontend/the_content', function( $content ) {
 ```
 
 ### `elementor/widget/render_content`
-Applied to the PHP html content of a single widget. ( in the Editor it will be shown after the finish edit the element. to change the JavaScript Template see [`elementor/element/print_template`](#`elementor/element/print_template`))
+Applied to the PHP html content of a single widget. ( in the Editor it will be shown after the finish edit the element. to change the JavaScript Template see [`elementor/element/print_template`](#elementorelementprint_template))
  
 #### Arguments
 
@@ -274,7 +274,7 @@ start_controls_section
 ### `elementor/element/after_section_end`
 Runs before/after an editor section is registered.
 Here is the place to add additional sections before and after each section for all elements in panel
-If you need to add a section in a specific place ( a specific element & section ), prefer to use the [next hook](###`elementor/element/{$element_name}/{$section_id}/before_section_start`)
+If you need to add a section in a specific place ( a specific element & section ), prefer to use the [next hook](#elementorelementelement_namesection_idbefore_section_start)
 
 #### Arguments
 
@@ -353,7 +353,7 @@ add_action( 'elementor/element/heading/section_title/before_section_start', func
 ### `elementor/element/before_section_end`
 Runs within an editor section. after it was opened / before the section is closed.
 Here is the place to add additional controls to existing sections.
-If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](###`elementor/element/{$element_name}/{$section_id}/after_section_start`)
+If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](#elementorelementelement_namesection_idafter_section_start`)
 
 #### Arguments
 
