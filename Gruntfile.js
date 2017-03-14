@@ -92,7 +92,7 @@ module.exports = function( grunt ) {
 						{
 							cwd: 'assets/dev/js/editor/utils',
 							src: '**/*.js',
-							expose: 'elementor-utils'
+							expose: 'elementor-editor-utils'
 						},
 						{
 							cwd: 'assets/dev/js/editor/layouts/panel',
