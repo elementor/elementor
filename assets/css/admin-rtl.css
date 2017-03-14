@@ -100,6 +100,24 @@
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
+#wp-admin-bar-elementor-maintenance-on .ab-item:before {
+  content: "\f160";
+  top: 2px; }
+
+#wp-admin-bar-elementor-maintenance-edit .ab-item:before {
+  content: "\f464";
+  top: 2px; }
+
+.elementor-video-wrapper {
+  position: relative;
+  height: 0; }
+  .elementor-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%; }
+
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
 
@@ -485,12 +503,4 @@ body.elementor-editor-inactive #elementor-editor {
 
 .form-table:not(.elementor-under-construction-is-enabled) .elementor-default-hide {
   display: none; }
-
-#wp-admin-bar-elementor-maintenance-on .ab-item:before {
-  content: "\f160";
-  top: 2px; }
-
-#wp-admin-bar-elementor-maintenance-edit .ab-item:before {
-  content: "\f464";
-  top: 2px; }
 /*# sourceMappingURL=admin-rtl.css.map */
