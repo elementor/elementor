@@ -24,7 +24,7 @@ add_action( 'elementor/frontend/the_content', function( $content ) {
 ```
 
 ### `elementor/widget/render_content`
-Applied to the PHP html content of a single widget. ( in the Editor it will be shown after the finish edit the element. to change the JavaScript Template see [`elementor/element/print_template`](####`elementor/element/print_template`))
+Applied to the PHP html content of a single widget. ( in the Editor it will be shown after the finish edit the element. to change the JavaScript Template see [`elementor/element/print_template`](#`elementor/element/print_template`))
  
 #### Arguments
 
