@@ -623,7 +623,8 @@
       top: 50%;
       -webkit-transform: translateY(-50%);
               transform: translateY(-50%);
-      right: 10px; }
+      right: 10px;
+      pointer-events: none; }
 
 .elementor-field-subgroup {
   display: -webkit-box;
