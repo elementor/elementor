@@ -1,11 +1,22 @@
+.form-table:not(.elementor-under-construction-is-enabled) {
+
+	.elementor-default-hide {
+		display: none;
+	}
+}
+
 #wp-admin-bar-{
+
 	&elementor-maintenance-on {
+
 		.ab-item:before {
 			content: "\f160";
 			top: 2px;
 		}
 	}
+
 	&elementor-maintenance-edit {
+
 		.ab-item:before {
 			content: "\f464";
 			top: 2px;

@@ -8,6 +8,7 @@ class Under_Construction {
 	const OPTION_PREFIX = 'elementor_under_construction_';
 
 	const MODE_MAINTENANCE = 'maintenance';
+
 	const MODE_COMING_SOON = 'coming_soon';
 
 	public static function get( $option, $default = false ) {
@@ -44,9 +45,11 @@ class Under_Construction {
 
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
+
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
 		$under_construction_section = 'elementor_under_construction_section';
+
 		add_settings_section(
 			$under_construction_section,
 			__( 'Under Construction', 'elementor' ),
@@ -74,6 +77,7 @@ class Under_Construction {
 				'desc' => __( 'Under Construction mode sends HTTP 200, Maintenance mode sends HTTP 503', 'elementor' ),
 			]
 		);
+
 		register_setting( Tools::PAGE_ID, $field_id );
 
 		$field_id = 'elementor_under_construction_exclude_mode';
@@ -86,7 +90,7 @@ class Under_Construction {
 			$under_construction_section,
 			[
 				'id' => $field_id,
-				'class' => $field_id,
+				'class' => $field_id . ' elementor-default-hide',
 				'type' => 'select',
 				'show_select' => true,
 				'std' => 'logged_in',
@@ -96,9 +100,11 @@ class Under_Construction {
 				],
 			]
 		);
+
 		register_setting( Tools::PAGE_ID, $field_id );
 
 		$field_id = 'elementor_under_construction_exclude_roles';
+
 		add_settings_field(
 			$field_id,
 			__( 'Exclude Roles', 'elementor' ),
@@ -107,7 +113,7 @@ class Under_Construction {
 			$under_construction_section,
 			[
 				'id' => $field_id,
-				'class' => $field_id,
+				'class' => $field_id . ' elementor-default-hide',
 				'type' => 'checkbox_list_roles',
 			]
 		);
@@ -115,12 +121,15 @@ class Under_Construction {
 		register_setting( Tools::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
 		$field_id = 'elementor_under_construction_template_id';
+
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+
 		$templates = array_filter( $source->get_items(), function( $template ) {
 			return 'local' === $template['source'] && 'page' === $template['type'];
 		} );
 
 		$options = [];
+
 		foreach ( $templates as $template ) {
 			$options[ $template['template_id'] ] = $template['title'];
 		}
@@ -133,15 +142,15 @@ class Under_Construction {
 			$under_construction_section,
 			[
 				'id'  => $field_id,
-				'class' => $field_id,
+				'class' => $field_id . ' elementor-default-hide',
 				'type' => 'select',
 				'show_select' => true,
 				'options' => $options,
 				'desc' => sprintf( '<a target="_blank" class="elementor-edit-template" style="display: none" href="%s"><i class="fa fa-pencil"></i> %s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) ),
 			]
 		);
-		register_setting( Tools::PAGE_ID, $field_id );
 
+		register_setting( Tools::PAGE_ID, $field_id );
 	}
 
 	public function admin_notices() {
@@ -200,6 +209,7 @@ class Under_Construction {
 		$user = wp_get_current_user();
 
 		$exclude_mode = self::get( 'exclude_mode', [] );
+
 		if ( 'logged_in' === $exclude_mode &&  is_user_logged_in() ) {
 			return;
 		}
@@ -208,6 +218,7 @@ class Under_Construction {
 			$exclude_roles = self::get( 'exclude_roles', [] );
 
 			$compare_roles = array_intersect( $user->roles, $exclude_roles );
+
 			if ( ! empty( $compare_roles ) ) {
 				return;
 			}

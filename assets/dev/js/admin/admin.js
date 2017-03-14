@@ -3,6 +3,8 @@
 
 	var ElementorAdminApp = {
 
+		underConstruction: null,
+
 		cacheElements: function() {
 			this.cache = {
 				$body: $( 'body' ),
@@ -130,9 +132,12 @@
 
 		init: function() {
 			this.cacheElements();
+
 			this.bindEvents();
 
 			this.initTemplatesImport();
+
+			this.initUnderConstruction();
 		},
 
 		initTemplatesImport: function() {
@@ -153,6 +158,12 @@
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
 			} );
+		},
+
+		initUnderConstruction: function() {
+			var UnderConstruction = require( 'elementor-admin/under-construction' );
+
+			this.underConstruction = new UnderConstruction();
 		},
 
 		getEditMode: function() {
