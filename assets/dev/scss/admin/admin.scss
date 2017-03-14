@@ -8,10 +8,6 @@
 
 @import "../common/dialog";
 
-.elementor-hidden{
-	display: none;
-}
-
 body {
 
 	&.elementor-editor-active {
@@ -56,6 +52,10 @@ body {
 			display: none;
 		}
 	}
+}
+
+.elementor-hidden{
+	display: none;
 }
 
 // Dashboard Icon
