@@ -115,7 +115,7 @@ class Revisions_Manager {
 
 	private static function register_actions() {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
-		//add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
+		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
 
 		if ( Utils::is_ajax() ) {
 			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );
