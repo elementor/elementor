@@ -89,6 +89,16 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'jquery-swiper',
+			ELEMENTOR_ASSETS_URL . 'lib/swiper/swiper.jquery' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'3.4.1',
+			true
+		);
+
+		wp_register_script(
 			'jquery-slick',
 			ELEMENTOR_ASSETS_URL . 'lib/slick/slick' . $suffix . '.js',
 			[
@@ -113,6 +123,7 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
 				'elementor-waypoints',
+
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -353,7 +364,7 @@ class Frontend {
 		return $content;
 	}
 
-	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
+	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
 		$is_not_builder_mode = ! is_singular() || ! User::is_current_user_can_edit( $post_id ) || 'builder' !== Plugin::$instance->db->get_edit_mode( $post_id );
 
