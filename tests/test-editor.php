@@ -17,7 +17,6 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 			'backbone-marionette',
 			'backbone-radio',
 			'perfect-scrollbar',
-			'jquery-easing',
 			'nprogress',
 			'tipsy',
 			'imagesloaded',
