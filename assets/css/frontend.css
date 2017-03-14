@@ -2358,7 +2358,8 @@ button.swiper-pagination-bullet {
   position: absolute;
   left: 0;
   width: 100%;
-  line-height: 0; }
+  line-height: 0;
+  direction: ltr; }
   .elementor-shape-top {
     top: -1px; }
   .elementor-shape-bottom {
