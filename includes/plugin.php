@@ -186,7 +186,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/shapes.php' );
-		include( ELEMENTOR_PATH . 'includes/under-construction/under-construction.php' );
+		include( ELEMENTOR_PATH . 'includes/under-construction.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
