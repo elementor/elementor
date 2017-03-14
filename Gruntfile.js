@@ -115,6 +115,11 @@ module.exports = function( grunt ) {
 							expose: 'elementor-revisions'
 						},
 						{
+							cwd: 'assets/dev/js/utils',
+							src: '**/*.js',
+							expose: 'elementor-utils'
+						},
+						{
 							cwd: 'assets/dev/js/admin',
 							src: '**/*.js',
 							expose: 'elementor-admin'
