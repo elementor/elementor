@@ -85,6 +85,7 @@
 			top: 50%;
 			transform: translateY(-50%);
 			@include end(10px);
+			pointer-events: none;
 		}
 	}
 }
