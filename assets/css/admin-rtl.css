@@ -100,9 +100,6 @@
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
-.elementor-hidden {
-  display: none; }
-
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
 
@@ -129,6 +126,9 @@ body.elementor-editor-inactive .elementor-switch-mode-on {
   display: none; }
 
 body.elementor-editor-inactive #elementor-editor {
+  display: none; }
+
+.elementor-hidden {
   display: none; }
 
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
@@ -483,12 +483,8 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 18px;
   color: #555d66; }
 
-tr[class^="elementor_under_construction"] {
+.form-table:not(.elementor-under-construction-is-enabled) .elementor-default-hide {
   display: none; }
-  tr[class^="elementor_under_construction"].elementor_under_construction_mode {
-    display: block; }
-  .elementor-under-construction-is-enabled tr[class^="elementor_under_construction"] {
-    display: block; }
 
 #wp-admin-bar-elementor-maintenance-on .ab-item:before {
   content: "\f160";

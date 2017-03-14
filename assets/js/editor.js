@@ -1694,17 +1694,17 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 };
 
 App = Marionette.Application.extend( {
-	helpers: require( 'elementor-utils/helpers' ),
-	heartbeat: require( 'elementor-utils/heartbeat' ),
-	imagesManager: require( 'elementor-utils/images-manager' ),
-	schemes: require( 'elementor-utils/schemes' ),
-	presetsFactory: require( 'elementor-utils/presets-factory' ),
-	introduction: require( 'elementor-utils/introduction' ),
+	helpers: require( 'elementor-editor-utils/helpers' ),
+	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
+	imagesManager: require( 'elementor-editor-utils/images-manager' ),
+	schemes: require( 'elementor-editor-utils/schemes' ),
+	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
+	introduction: require( 'elementor-editor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
-	ajax: require( 'elementor-utils/ajax' ),
-	conditions: require( 'elementor-utils/conditions' ),
+	ajax: require( 'elementor-editor-utils/ajax' ),
+	conditions: require( 'elementor-editor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
-	hotKeys: require( 'elementor-utils/hot-keys' ),
+	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -2242,7 +2242,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"../utils/hooks":108,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/ajax":63,"elementor-utils/conditions":64,"elementor-utils/heartbeat":65,"elementor-utils/helpers":66,"elementor-utils/hot-keys":67,"elementor-utils/images-manager":68,"elementor-utils/introduction":69,"elementor-utils/presets-factory":72,"elementor-utils/schemes":73,"elementor-views/controls/base":80,"elementor-views/controls/base-multiple":78,"elementor-views/controls/box-shadow":81,"elementor-views/controls/choose":82,"elementor-views/controls/code":83,"elementor-views/controls/color":84,"elementor-views/controls/date-time":85,"elementor-views/controls/dimensions":86,"elementor-views/controls/font":87,"elementor-views/controls/gallery":88,"elementor-views/controls/icon":89,"elementor-views/controls/image-dimensions":90,"elementor-views/controls/media":91,"elementor-views/controls/order":92,"elementor-views/controls/repeater":94,"elementor-views/controls/section":95,"elementor-views/controls/select2":96,"elementor-views/controls/slider":97,"elementor-views/controls/structure":98,"elementor-views/controls/switcher":99,"elementor-views/controls/tab":100,"elementor-views/controls/url":101,"elementor-views/controls/wp_widget":102,"elementor-views/controls/wysiwyg":103,"elementor-views/preview":105,"elementor-views/widget":107}],33:[function(require,module,exports){
+},{"../utils/hooks":108,"elementor-editor-utils/ajax":63,"elementor-editor-utils/conditions":64,"elementor-editor-utils/heartbeat":65,"elementor-editor-utils/helpers":66,"elementor-editor-utils/hot-keys":67,"elementor-editor-utils/images-manager":68,"elementor-editor-utils/introduction":69,"elementor-editor-utils/presets-factory":72,"elementor-editor-utils/schemes":73,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-views/controls/base":80,"elementor-views/controls/base-multiple":78,"elementor-views/controls/box-shadow":81,"elementor-views/controls/choose":82,"elementor-views/controls/code":83,"elementor-views/controls/color":84,"elementor-views/controls/date-time":85,"elementor-views/controls/dimensions":86,"elementor-views/controls/font":87,"elementor-views/controls/gallery":88,"elementor-views/controls/icon":89,"elementor-views/controls/image-dimensions":90,"elementor-views/controls/media":91,"elementor-views/controls/order":92,"elementor-views/controls/repeater":94,"elementor-views/controls/section":95,"elementor-views/controls/select2":96,"elementor-views/controls/slider":97,"elementor-views/controls/structure":98,"elementor-views/controls/switcher":99,"elementor-views/controls/tab":100,"elementor-views/controls/url":101,"elementor-views/controls/wp_widget":102,"elementor-views/controls/wysiwyg":103,"elementor-views/preview":105,"elementor-views/widget":107}],33:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -5663,7 +5663,7 @@ module.exports = presetsFactory;
 
 },{}],73:[function(require,module,exports){
 var Schemes,
-	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	BaseElementView = require( 'elementor-views/base-element' );
 
 Schemes = function() {
@@ -5797,7 +5797,7 @@ Schemes = function() {
 
 module.exports = new Schemes();
 
-},{"elementor-utils/stylesheet":74,"elementor-views/base-element":75}],74:[function(require,module,exports){
+},{"elementor-editor-utils/stylesheet":74,"elementor-views/base-element":75}],74:[function(require,module,exports){
 ( function( $ ) {
 
 	var Stylesheet = function() {
@@ -6015,7 +6015,7 @@ module.exports = new Schemes();
 
 },{}],75:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
-	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -6586,7 +6586,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 module.exports = BaseElementView;
 
-},{"elementor-models/base-settings":58,"elementor-utils/stylesheet":74,"elementor-views/column":77,"elementor-views/section":106}],76:[function(require,module,exports){
+},{"elementor-editor-utils/stylesheet":74,"elementor-models/base-settings":58,"elementor-views/column":77,"elementor-views/section":106}],76:[function(require,module,exports){
 var SectionView = require( 'elementor-views/section' ),
 	BaseSectionsContainerView;
 
