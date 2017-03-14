@@ -177,6 +177,14 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.3.4 - 14.03.2017 ###
+* Tweak! - Added more hooks for handling styles & scripts ([Topic](https://wordpress.org/support/topic/is-there-way-to-remove-google-font-link/))
+* Tweak! - Added Swiper library for future widgets
+* Fix! - Added Revision History for all Elementor-enabled CPTs
+* Fix! - Shapes for RTL direction
+* Fix! - Issue with images not loading in some situations
+* Fix! - Click on arrow icon in select field
+
 ### 1.3.3 - 08.03.2017 ###
 * Fix! - Negative shape rotation in front-end ([#1438](https://github.com/pojome/elementor/issues/1438))
 * Fix! - Error with anchor links with an invalid target ([Topic](https://wordpress.org/support/topic/popup-maker-not-working-on-elementor-1-3-2-pages/))
