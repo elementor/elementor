@@ -164,6 +164,8 @@ class Frontend {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		do_action( 'elementor/frontend/after_register_styles' );
 	}
 
 	public function enqueue_scripts() {
@@ -199,6 +201,8 @@ class Frontend {
 		}
 
 		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
+
+		do_action( 'elementor/frontend/after_enqueue_scripts' );
 	}
 
 	public function enqueue_styles() {
@@ -215,6 +219,8 @@ class Frontend {
 			$css_file = new Post_CSS_File( get_the_ID() );
 			$css_file->enqueue();
 		}
+
+		do_action( 'elementor/frontend/after_enqueue_styles' );
 	}
 
 	/**
@@ -232,6 +238,10 @@ class Frontend {
 	}
 
 	public function print_google_fonts() {
+		if ( ! apply_filters( 'elementor/frontend/print_google_fonts', true ) ) {
+			return;
+		}
+
 		// Print used fonts
 		if ( ! empty( $this->google_fonts ) ) {
 			foreach ( $this->google_fonts as &$font ) {
