@@ -8,7 +8,7 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
 * Client side: [jQuery](https://jquery.com/), [Backbone](http://backbonejs.org/) & [Marionette](http://marionettejs.com/)
 * Style: [SCSS](http://sass-lang.com/)
 
-##Table Of Contents
+## Table Of Contents
 
 * [Definitions](#definitions)
   - [Element](#element)
