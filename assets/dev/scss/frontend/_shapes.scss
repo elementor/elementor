@@ -8,6 +8,7 @@
 	left: 0;
 	width: 100%;
 	line-height: 0;
+	direction: ltr; // Fix for RTL pages
 
 	&-top {
 		top: -1px;
