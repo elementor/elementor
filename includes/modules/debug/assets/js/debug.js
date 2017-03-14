@@ -58,6 +58,10 @@ var Debug = function() {
 		self.sendErrors = _.debounce( self.sendErrors, settings.debounceDelay );
 	};
 
+	this.addURLToWatch = function( url ) {
+		settings.urlsToWatch.push( url );
+	};
+
 	this.addCustomError = function( error, category, tag ) {
 		var errorInfo = {
 			type: error.name,
