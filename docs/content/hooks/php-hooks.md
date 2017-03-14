@@ -353,7 +353,7 @@ add_action( 'elementor/element/heading/section_title/before_section_start', func
 ### `elementor/element/before_section_end`
 Runs within an editor section. after it was opened / before the section is closed.
 Here is the place to add additional controls to existing sections.
-If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](#elementorelementelement_namesection_idafter_section_start`)
+If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](#elementorelementelement_namesection_idafter_section_start)
 
 #### Arguments
 
