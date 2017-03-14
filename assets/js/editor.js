@@ -9228,14 +9228,17 @@ WidgetView = BaseElementView.extend( {
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
-        self.$el.imagesLoaded().always( function() {
-            setTimeout( function() {
-                if ( 1 > self.$el.height() ) {
-                    self.handleEmptyWidget();
-                }
-            }, 200 );
-            // Is element empty?
-        } );
+		// TODO: Find better way to detect if all images are loaded
+		_.defer( function() {
+			self.$el.imagesLoaded().always( function() {
+				setTimeout( function() {
+					if ( 1 > self.$el.height() ) {
+						self.handleEmptyWidget();
+					}
+				}, 200 );
+				// Is element empty?
+			} );
+		} );
 	}
 } );
 
