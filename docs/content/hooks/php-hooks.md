@@ -1,17 +1,17 @@
-#PHP Hooks
+# PHP Hooks
 
-##Frontend Filters
+## Frontend Filters
 
-###`elementor/frontend/the_content`
+### `elementor/frontend/the_content`
 Applied to frontend HTML content (the entire Elementor content in page).
 
-####Arguments
+#### Arguments
 
 Argument          | Type         | Description
 ------------      | :------:     | ---------------------------------------------
 `content`         | *`string`*   | The entire Elementor HTML output of current page/post
  
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/frontend/the_content', function( $content ) {
@@ -23,17 +23,17 @@ add_action( 'elementor/frontend/the_content', function( $content ) {
 } );
 ```
 
-###`elementor/widget/render_content`
-Applied to the PHP html content of a single widget. ( in the Editor it will be shown after the finish edit the element. to change the JavaScript Template see [`elementor/element/print_template`](####`elementor/element/print_template`))
+### `elementor/widget/render_content`
+Applied to the PHP html content of a single widget. ( in the Editor it will be shown after the finish edit the element. to change the JavaScript Template see [`elementor/element/print_template`](#elementorelementprint_template))
  
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `content`         | *`string`*        | The widget HTML output
 `widget`          | *`Widget_Base`*   | The widget instance
  
-####Example
+#### Example
 
  ```php
 add_action( 'elementor/widget/render_content', function( $content, $widget ) {
@@ -49,19 +49,19 @@ add_action( 'elementor/widget/render_content', function( $content, $widget ) {
 }, 10, 2 );
  ```
 
-##Editor Filters
+## Editor Filters
 
-###`elementor/element/print_template`
+### `elementor/element/print_template`
 Applied to the javascript preview templates.
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `template`        | *`string`*        | The JavaScript template output
 `widget`          | *`Widget_Base`*   | The widget instance
  
-####Example
+#### Example
 
  ```php
 add_action( 'elementor/element/print_template', function( $template, $widget ) {
@@ -76,27 +76,27 @@ add_action( 'elementor/element/print_template', function( $template, $widget ) {
  ```
  Note: The code above it for example only, we do not recommend to use `str_replace` on templates, because the template may be changed and the `str_replace` will fail. instead, take the whole original template and change it for your needs.
  
-##Init Actions
+## Init Actions
 
-###`elementor/loaded`
+### `elementor/loaded`
 Elementor plugin is loaded, before load all components
 
-####Arguments
+#### Arguments
 None
  
-####Example
+#### Example
 
  ```php
 add_action( 'elementor/loaded', 'load_my_plugin' );
  ```
 
-###`elementor/init`
+### `elementor/init`
 Elementor is fully loaded
 
-####Arguments
+#### Arguments
 None
  
-####Example
+#### Example
 
  ```php
 // Add a custom category for panel widgets
@@ -112,17 +112,17 @@ add_action( 'elementor/init', function() {
 } );
 ```
 
-###`elementor/widget/{name}/skins_init`
+### `elementor/widget/{name}/skins_init`
 Runs after widget construction. 
 Here is th place to register custom skins. 
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `widget`          | *`Widget_Base`*   | The widget instance
  
-####Example
+#### Example
 
  ```php
 // Add a custom skin for the Google Maps widget
@@ -131,15 +131,15 @@ add_action( 'elementor/widget/google_maps/skins_init', function( $widget ) {
 } );
 ```
 
-##Frontend Actions
+## Frontend Actions
 
-###`elementor/frontend/before_enqueue_scripts`
+### `elementor/frontend/before_enqueue_scripts`
 Before the frontend scripts enqueuing.
 
-####Arguments
+#### Arguments
 None
  
-####Example
+#### Example
 
  ```php
 add_action( 'elementor/frontend/before_enqueue_scripts', function() {
@@ -155,16 +155,16 @@ add_action( 'elementor/frontend/before_enqueue_scripts', function() {
 } );
 ```
 
-###`elementor/element/parse_css`
+### `elementor/element/parse_css`
 After Parse the element CSS in order to generate the CSS file
 
-####Arguments
+#### Arguments
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `post_css`        | *`Post_CSS_File`* | The Post CSS generator
 `element`         | *`Element_Base`*  | The element instance
  
-####Example
+#### Example
 
  ```php
 add_action(	'elementor/element/parse_css', function( $post_css, $element ) {
@@ -179,17 +179,17 @@ add_action(	'elementor/element/parse_css', function( $post_css, $element ) {
 }, 10, 2 );
 ```
 
-###`elementor/frontend/{section|column|widget}/before_render`
-###`elementor/frontend/{section|column|widget}/after_render`
+### `elementor/frontend/{section|column|widget}/before_render`
+### `elementor/frontend/{section|column|widget}/after_render`
 Before/after the element is printed
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `element`          | *`Element_Base`*   | The element instance
  
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/frontend/section/before_render', function( $element ) {
@@ -201,16 +201,16 @@ add_action( 'elementor/frontend/section/before_render', function( $element ) {
 }
 ```
 
-###`elementor/widgets/widgets_registered`
+### `elementor/widgets/widgets_registered`
 The place to register your custom widgets. 
 
-####Arguments
+#### Arguments
 
 Argument          | Type               | Description
 ------------      | :------:           | ----------------------
 `widgets_manager` | *`Widgets_Manager`*| The widgets manager instance
 
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/widgets/widgets_registered', function( $widgets_manager ) {
@@ -220,18 +220,18 @@ add_action( 'elementor/widgets/widgets_registered', function( $widgets_manager )
 } );
 ```
 
-##Editor Actions
-###`elementor/editor/after_save`
+## Editor Actions
+### `elementor/editor/after_save`
 Runs after saving Elementor data.
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `post_id`         | *`integer`*       | The post ID
 `editor_data`     | *`array`*         | Array of Elementor elements
 
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/editor/after_save', function( $post_id, $editor_data ) {
@@ -247,13 +247,13 @@ add_action( 'elementor/editor/after_save', function( $post_id, $editor_data ) {
 }
 ```
 
-###`elementor/editor/before_enqueue_scripts`
+### `elementor/editor/before_enqueue_scripts`
 Before the editor scripts enqueuing.
 
-####Arguments
+#### Arguments
 None
  
-####Example
+#### Example
 
  ```php
 add_action( 'elementor/editor/before_enqueue_scripts', function() {
@@ -270,13 +270,13 @@ add_action( 'elementor/editor/before_enqueue_scripts', function() {
 ```
 
 start_controls_section
-###`elementor/element/before_section_start`
-###`elementor/element/after_section_end`
+### `elementor/element/before_section_start`
+### `elementor/element/after_section_end`
 Runs before/after an editor section is registered.
 Here is the place to add additional sections before and after each section for all elements in panel
-If you need to add a section in a specific place ( a specific element & section ), prefer to use the [next hook](###`elementor/element/{$element_name}/{$section_id}/before_section_start`)
+If you need to add a section in a specific place ( a specific element & section ), prefer to use the [next hook](#elementorelementelement_namesection_idbefore_section_start)
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
@@ -284,7 +284,7 @@ Argument          | Type              | Description
 `section_id`      | *`string`*        | Current section  id
 `args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
  
-####Example
+#### Example
 
  ```php
 
@@ -313,18 +313,18 @@ add_action( 'elementor/element/before_section_start', function( $element, $secti
 }, 10, 3 );
 ```
 
-###`elementor/element/{$element_name}/{$section_id}/before_section_start`
-###`elementor/element/{element_name}/{section_id}/after_section_end`
+### `elementor/element/{$element_name}/{$section_id}/before_section_start`
+### `elementor/element/{element_name}/{section_id}/after_section_end`
 Runs before/after a specific element ( like `heading`) and a specific section ( like `section_title` )
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `element`         | *`Element_Base`*  | The edited element.
 `args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
  
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/element/heading/section_title/before_section_start', function( $element, $args ) {
@@ -349,13 +349,13 @@ add_action( 'elementor/element/heading/section_title/before_section_start', func
 }, 10, 2 );
 ```
 
-###`elementor/element/after_section_start`
-###`elementor/element/before_section_end`
+### `elementor/element/after_section_start`
+### `elementor/element/before_section_end`
 Runs within an editor section. after it was opened / before the section is closed.
 Here is the place to add additional controls to existing sections.
-If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](###`elementor/element/{$element_name}/{$section_id}/after_section_start`)
+If you need to add a control to a specific place ( a specific element & section ), prefer to use the [next hook](#elementorelementelement_namesection_idafter_section_start)
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
@@ -363,7 +363,7 @@ Argument          | Type              | Description
 `section_id`      | *`string`*        | Current section id
 `args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
  
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/element/after_section_start', function( $element, $section_id, $args ) {
@@ -380,20 +380,20 @@ add_action( 'elementor/element/after_section_start', function( $element, $sectio
 }, 10, 3 );
 ```
 
-###`elementor/element/{$element_name}/{$section_id}/after_section_start`
-###`elementor/element/{element_name}/{section_id}/before_section_end`
+### `elementor/element/{$element_name}/{$section_id}/after_section_start`
+### `elementor/element/{element_name}/{section_id}/before_section_end`
 
 Runs within an editor section. after it was opened / before the section is closed.
 Here is the place to add additional controls before and after a specific element ( like `heading`) and a specific section ( like `section_title` )
 
-####Arguments
+#### Arguments
 
 Argument          | Type              | Description
 ------------      | :------:          | ----------------------
 `element`         | *`Element_Base`*  | The edited element.
 `args`            | *`array`*         | The $args that sent to `$element->start_controls_section`
  
-####Example
+#### Example
 
 ```php
 add_action( 'elementor/element/heading/section_title/before_section_start', function( $element, $args ) {
@@ -408,14 +408,14 @@ add_action( 'elementor/element/heading/section_title/before_section_start', func
 }, 10, 2 );
 ```
 
-##Preview Actions
-###`elementor/preview/enqueue_styles`
+## Preview Actions
+### `elementor/preview/enqueue_styles`
 Before the preview styles enqueuing.
 
-####Arguments
+#### Arguments
 None
  
-####Example
+#### Example
 
  ```php
 add_action( 'elementor/preview/enqueue_styles', function() {
