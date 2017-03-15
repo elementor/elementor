@@ -36,7 +36,7 @@ class Control_Gallery extends Control_Base {
 		<div class="elementor-control-field">
 			<div class="elementor-control-input-wrapper">
 				<# if ( data.description ) { #>
-				<div class="elementor-control-description">{{{ data.description }}}</div>
+				<div class="elementor-control-field-description">{{{ data.description }}}</div>
 				<# } #>
 				<div class="elementor-control-media">
 					<div class="elementor-control-gallery-status">

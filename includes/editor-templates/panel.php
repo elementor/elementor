@@ -174,8 +174,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php
 		$scheme_fields_keys = Group_Control_Typography::get_scheme_fields_keys();
 
-		// TODO: Temp - Change to `Plugin::$instance`
-		$typography_group = Plugin::instance()->controls_manager->get_control_groups( 'typography' );
+		$typography_group = Plugin::$instance->controls_manager->get_control_groups( 'typography' );
 
 		$typography_fields = $typography_group->get_fields();
 

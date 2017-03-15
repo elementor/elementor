@@ -3,17 +3,18 @@ var Module = function() {
 		instanceParams = arguments,
 		self = this,
 		settings,
-		elements,
 		events = {};
 
 	var ensureClosureMethods = function() {
-		var closureMethodsNames = self.getClosureMethodsNames();
+		$.each( self, function( methodName ) {
+			var oldMethod = self[ methodName ];
 
-		$.each( closureMethodsNames, function() {
-			var oldMethod = self[ this ];
+			if ( 'function' !== typeof oldMethod ) {
+				return;
+			}
 
-			self[ this ] = function() {
-				oldMethod.apply( self, arguments );
+			self[ methodName ] = function() {
+				return oldMethod.apply( self, arguments );
 			};
 		});
 	};
@@ -22,18 +23,12 @@ var Module = function() {
 		settings = self.getDefaultSettings();
 	};
 
-	var initElements = function() {
-		elements = self.getDefaultElements();
-	};
-
 	var init = function() {
 		self.__construct.apply( self, instanceParams );
 
 		ensureClosureMethods();
 
 		initSettings();
-
-		initElements();
 
 		self.trigger( 'init' );
 	};
@@ -61,10 +56,6 @@ var Module = function() {
 		return this.getItems( settings, setting );
 	};
 
-	this.getElements = function( element ) {
-		return this.getItems( elements, element );
-	};
-
 	this.setSettings = function( settingKey, value, settingsContainer ) {
 		if ( ! settingsContainer ) {
 			settingsContainer = settings;
@@ -90,10 +81,6 @@ var Module = function() {
 		}
 
 		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
-	};
-
-	this.addElement = function( elementName, $element ) {
-		elements[ elementName ] = $element;
 	};
 
 	this.on = function( eventName, callback ) {
@@ -152,14 +139,6 @@ Module.prototype.__construct = function() {};
 
 Module.prototype.getDefaultSettings = function() {
 	return {};
-};
-
-Module.prototype.getDefaultElements = function() {
-	return {};
-};
-
-Module.prototype.getClosureMethodsNames = function() {
-	return [];
 };
 
 Module.extend = function( properties ) {

@@ -17,7 +17,6 @@ App = Marionette.Application.extend( {
 	imagesManager: require( 'elementor-utils/images-manager' ),
 	schemes: require( 'elementor-utils/schemes' ),
 	presetsFactory: require( 'elementor-utils/presets-factory' ),
-	modals: require( 'elementor-utils/modals' ),
 	introduction: require( 'elementor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-utils/ajax' ),
@@ -140,7 +139,6 @@ App = Marionette.Application.extend( {
 		this.initDialogsManager();
 
 		this.heartbeat.init();
-		this.modals.init();
 		this.ajax.init();
 		this.revisions.init();
 		this.pageSettings.init();

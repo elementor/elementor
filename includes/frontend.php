@@ -89,6 +89,16 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'jquery-swiper',
+			ELEMENTOR_ASSETS_URL . 'lib/swiper/swiper.jquery' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'3.4.1',
+			true
+		);
+
+		wp_register_script(
 			'jquery-slick',
 			ELEMENTOR_ASSETS_URL . 'lib/slick/slick' . $suffix . '.js',
 			[
@@ -99,10 +109,21 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.1.1',
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
 				'elementor-waypoints',
+
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -143,6 +164,8 @@ class Frontend {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		do_action( 'elementor/frontend/after_register_styles' );
 	}
 
 	public function enqueue_scripts() {
@@ -156,16 +179,30 @@ class Frontend {
 			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
 			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			'is_rtl' => is_rtl(),
+			'urls' => [
+				'assets' => ELEMENTOR_ASSETS_URL,
+			],
 		];
 
-		if ( Plugin::instance()->editor->is_edit_mode() ) {
+		$elements_manager = Plugin::$instance->elements_manager;
+
+		$elements_frontend_keys = [
+			'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
+			'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
+		];
+
+		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
-				'keys' => Plugin::instance()->widgets_manager->get_widgets_frontend_settings_keys(),
+				'keys' => $elements_frontend_keys,
 			];
 		}
 
 		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
+
+		do_action( 'elementor/frontend/after_enqueue_scripts' );
 	}
 
 	public function enqueue_styles() {
@@ -182,6 +219,8 @@ class Frontend {
 			$css_file = new Post_CSS_File( get_the_ID() );
 			$css_file->enqueue();
 		}
+
+		do_action( 'elementor/frontend/after_enqueue_styles' );
 	}
 
 	/**
@@ -199,6 +238,10 @@ class Frontend {
 	}
 
 	public function print_google_fonts() {
+		if ( ! apply_filters( 'elementor/frontend/print_google_fonts', true ) ) {
+			return;
+		}
+
 		// Print used fonts
 		if ( ! empty( $this->google_fonts ) ) {
 			foreach ( $this->google_fonts as &$font ) {
@@ -331,7 +374,7 @@ class Frontend {
 		return $content;
 	}
 
-	function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
+	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
 		$is_not_builder_mode = ! is_singular() || ! User::is_current_user_can_edit( $post_id ) || 'builder' !== Plugin::$instance->db->get_edit_mode( $post_id );
 
