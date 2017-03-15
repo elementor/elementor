@@ -113,11 +113,6 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/editor/components/revisions',
 							src: '**/*.js',
 							expose: 'elementor-revisions'
-						},
-						{
-							cwd: 'includes/modules',
-							src: '**/*.js',
-							expose: 'elementor-modules'
 						}
 					] );
 				}

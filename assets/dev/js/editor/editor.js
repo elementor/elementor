@@ -15,7 +15,7 @@ App = Marionette.Application.extend( {
 	helpers: require( 'elementor-utils/helpers' ),
 	heartbeat: require( 'elementor-utils/heartbeat' ),
 	imagesManager: require( 'elementor-utils/images-manager' ),
-	debug: require( 'elementor-modules/debug/assets/js/debug' ),
+	debug: require( 'elementor-utils/debug' ),
 	schemes: require( 'elementor-utils/schemes' ),
 	presetsFactory: require( 'elementor-utils/presets-factory' ),
 	introduction: require( 'elementor-utils/introduction' ),
