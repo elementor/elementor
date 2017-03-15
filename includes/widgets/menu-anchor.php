@@ -34,7 +34,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 			[
 				'raw' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
-				'classes' => 'elementor-descriptor',
+				'content_classes' => 'elementor-descriptor',
 			]
 		);
 

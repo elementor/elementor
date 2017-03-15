@@ -267,10 +267,8 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-w {
     display: none !important; } }
 
-.elementor-editor-active .elementor-inner:before {
-  content: '';
-  display: table;
-  clear: both; }
+.elementor-editor-active .elementor-inner {
+  margin-top: 27px; }
 
 @media (min-width: 768px) {
   .elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
