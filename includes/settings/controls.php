@@ -69,17 +69,14 @@ class Settings_Controls {
 
 	private static function _select( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] ); ?>
-		<select name="<?php echo $field['id']; ?>">
-			<?php
-			if ( ! empty( $field['show_select'] ) ) {
-				echo sprintf( '<option value="">— %s —</option>', __( 'Select', 'elementor' ) );
-			}
+		<select name="<?php echo esc_attr( $field['id'] ); ?>">
+			<?php if ( ! empty( $field['show_select'] ) ) : ?>
+				<option value="">— <?php _e( 'Select', 'elementor' ); ?> —</option>
+			<?php endif; ?>
 
-			foreach ( $field['options'] as $value => $label ) :
-				$selected = selected( $value, $old_value, false );
-				echo sprintf( '<option value="%1$s" %2$s >%3$s</option>', $value, $selected, $label );
-			endforeach;
-			?>
+			<?php foreach ( $field['options'] as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $old_value ); ?>><?php echo $label; ?></option>
+			<?php endforeach; ?>
 		</select>
 
 		<?php if ( ! empty( $field['desc'] ) ) : ?>
@@ -127,13 +124,13 @@ class Settings_Controls {
 			return;
 		?>
 		<div id="<?php echo $field['id'];?>">
-		<div><?php echo $field['html']; ?></div>
 
-		<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
-		<?php if ( ! empty( $field['desc'] ) ) : ?>
-			<p class="description"><?php echo $field['desc']; ?></p>
+			<div><?php echo $field['html']; ?></div>
+			<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
+			<?php if ( ! empty( $field['desc'] ) ) : ?>
+				<p class="description"><?php echo $field['desc']; ?></p>
 			<?php endif; ?>
-		</div>
+			</div>
 		<?php
 	}
 }
