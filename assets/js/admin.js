@@ -242,7 +242,7 @@ UnderConstructionModule = ViewModule.extend( {
 				return;
 			}
 
-			var editUrl = ElementorConfig.home_url + '?p=' + templateID + '&elementor';
+			var editUrl = ElementorAdminConfig.home_url + '?p=' + templateID + '&elementor';
 
 			elements.$editTemplateButton
 				.prop( 'href', editUrl )

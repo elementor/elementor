@@ -177,22 +177,11 @@ class Under_Construction {
 		] );
 	}
 
-	public function enqueue_scripts() {
-		wp_localize_script(
-			'elementor-admin-app',
-			'ElementorConfig',
-			[
-				'home_url' => home_url(),
-			]
-		);
-	}
-
 	public function __construct() {
 		$is_enabled = '' !== self::get( 'mode' );
 
 		if ( is_admin() ) {
 			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
-			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ], 20 );
 		}
 
 		if ( ! $is_enabled ) {
