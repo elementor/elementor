@@ -321,7 +321,13 @@ abstract class Element_Base {
 	}
 
 	public function get_active_settings() {
-		return array_intersect_key( $this->get_settings(), $this->get_active_controls() );
+		$settings = $this->get_settings();
+
+		$active_settings = array_intersect_key( $settings, $this->get_active_controls() );
+
+		$settings_mask = array_fill_keys( array_keys( $settings ), null );
+
+		return array_merge( $settings_mask, $active_settings );
 	}
 
 	public function get_children() {
