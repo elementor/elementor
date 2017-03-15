@@ -34,7 +34,7 @@
 
 	svg {
 		display: block;
-		width: calc(100% + 1px);
+		width: calc(100% + 1.3px);
 		position: relative;
 		left: 50%;
 		transform: translateX(-50%);
@@ -43,5 +43,6 @@
 	.elementor-shape-fill {
 		fill: #fff;
 		transform-origin: center;
+		transform: rotateY(0deg); // Reset default for safari
 	}
 }
