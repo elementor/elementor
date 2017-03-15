@@ -2355,6 +2355,9 @@ button.swiper-pagination-bullet {
     -webkit-transform: rotateY(0deg);
             transform: rotateY(0deg); }
 
+.elementor-open-lightbox .fluid-width-video-wrapper {
+  display: none; }
+
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
