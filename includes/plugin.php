@@ -44,7 +44,6 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
-	/**
 	 * @var Under_Construction
 	 */
 	public $under_construction;
