@@ -10,7 +10,7 @@ class Responsive {
 		'xs' => 0,
 		'sm' => 480,
 		'md' => 768,
-		'lg' => 1024,
+		'lg' => 1025,
 	];
 
 	private static $_editable_breakpoints_keys = [
