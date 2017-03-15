@@ -74,6 +74,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-pinterest',
 							'fa fa-product-hunt',
 							'fa fa-reddit',
+							'fa fa-shopping-cart',
 							'fa fa-slideshare',
 							'fa fa-snapchat',
 							'fa fa-soundcloud',
