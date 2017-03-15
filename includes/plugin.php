@@ -51,6 +51,11 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
+	 * @var Under_Construction
+	 */
+	public $under_construction;
+
+	/**
 	 * @var Settings
 	 */
 	public $settings;
@@ -188,6 +193,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/shapes.php' );
 		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
+		include( ELEMENTOR_PATH . 'includes/under-construction.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -219,6 +225,8 @@ class Plugin {
 		$this->system_info = new System_Info\Main();
 
 		$this->templates_manager = new TemplateLibrary\Manager();
+
+		$this->under_construction = new Under_Construction();
 
 		if ( is_admin() ) {
 			new Admin();
