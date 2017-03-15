@@ -8,7 +8,6 @@ class Under_Construction {
 	const OPTION_PREFIX = 'elementor_under_construction_';
 
 	const MODE_MAINTENANCE = 'maintenance';
-
 	const MODE_COMING_SOON = 'coming_soon';
 
 	public static function get( $option, $default = false ) {
@@ -45,7 +44,6 @@ class Under_Construction {
 
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
-
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
 		$under_construction_section = 'elementor_under_construction_section';
