@@ -1,5 +1,5 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
-	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
