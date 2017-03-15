@@ -4672,8 +4672,16 @@ helpers = {
 			}
 
 			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
 			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			var isContains = ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : _.isEqual( conditionValue, controlValue );
+			var isContains;
+			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
+				isContains = _.contains( conditionValue, controlValue );
+			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {
+				isContains = _.contains( controlValue, conditionValue );
+			} else {
+				isContains = _.isEqual( conditionValue, controlValue );
+			}
 
 			return isNegativeCondition ? isContains : ! isContains;
 		} );

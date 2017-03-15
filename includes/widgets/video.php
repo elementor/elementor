@@ -452,7 +452,7 @@ class Widget_Video extends Widget_Base {
 	}
 
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_active_settings();
 
 		add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
 
