@@ -1,4 +1,7 @@
-module.exports = require( 'elementor-utils/view-module' ).extend( {
+var ViewModule = require( 'elementor-utils/view-module' ),
+	UnderConstructionModule;
+
+UnderConstructionModule = ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
@@ -62,3 +65,5 @@ module.exports = require( 'elementor-utils/view-module' ).extend( {
 		} ).trigger( 'change' );
 	}
 } );
+
+module.exports = UnderConstructionModule;

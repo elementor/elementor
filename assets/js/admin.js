@@ -183,7 +183,10 @@
 }( jQuery, window, document ) );
 
 },{"elementor-admin/under-construction":2}],2:[function(require,module,exports){
-module.exports = require( 'elementor-utils/view-module' ).extend( {
+var ViewModule = require( 'elementor-utils/view-module' ),
+	UnderConstructionModule;
+
+UnderConstructionModule = ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
@@ -247,6 +250,8 @@ module.exports = require( 'elementor-utils/view-module' ).extend( {
 		} ).trigger( 'change' );
 	}
 } );
+
+module.exports = UnderConstructionModule;
 
 },{"elementor-utils/view-module":4}],3:[function(require,module,exports){
 var Module = function() {
