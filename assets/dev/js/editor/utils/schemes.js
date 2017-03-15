@@ -1,5 +1,5 @@
 var Schemes,
-	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	BaseElementView = require( 'elementor-views/base-element' );
 
 Schemes = function() {
