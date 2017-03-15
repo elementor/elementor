@@ -44,6 +44,11 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
+	 * @var Page_Settings_Manager
+	 */
+	public $page_settings_manager;
+
+	/**
 	 * @var Settings
 	 */
 	public $settings;
@@ -175,10 +180,12 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
+		include( ELEMENTOR_PATH . 'includes/managers/page-settings.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
+		include( ELEMENTOR_PATH . 'includes/shapes.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -199,6 +206,7 @@ class Plugin {
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
 		$this->revisions_manager = new Revisions_Manager();
+		$this->page_settings_manager = new Page_Settings_Manager();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();
@@ -220,7 +228,7 @@ class Plugin {
 		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
 
 		foreach ( $cpt_support as $cpt_slug ) {
-			add_post_type_support( $cpt_slug, [ 'elementor', 'revisions' ] );
+			add_post_type_support( $cpt_slug, 'elementor' );
 		}
 	}
 

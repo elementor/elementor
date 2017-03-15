@@ -90,7 +90,7 @@ class Control_Media extends Control_Base_Multiple {
 				</div>
 			</div>
 			<# if ( data.description ) { #>
-				<div class="elementor-control-description">{{{ data.description }}}</div>
+				<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
 			<input type="hidden" data-setting="{{ data.name }}" />
 		</div>

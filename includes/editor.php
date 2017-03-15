@@ -228,16 +228,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.0.2',
-			true
-		);
-
-		wp_register_script(
 			'jquery-select2',
 			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2' . $suffix . '.js',
 			[
@@ -280,7 +270,6 @@ class Editor {
 				'tipsy',
 				'imagesloaded',
 				'heartbeat',
-				'elementor-dialog',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
 				'ace',
@@ -317,6 +306,7 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post() ) ),
+			'page_settings' => $plugin->page_settings_manager->get_settings( $post_id ),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
@@ -380,6 +370,7 @@ class Editor {
 				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'preview' => __( 'Preview', 'elementor' ),
+				'page_settings' => __( 'Page Settings', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
 		];

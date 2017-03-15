@@ -34,6 +34,12 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 			},
 			{
 				icon: 'cog',
+				title: elementor.translate( 'page_settings' ),
+				type: 'page',
+				pageName: 'settingsPage'
+			},
+			{
+				icon: 'cog',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
 				link: elementor.config.settings_page_link,

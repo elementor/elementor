@@ -174,8 +174,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php
 		$scheme_fields_keys = Group_Control_Typography::get_scheme_fields_keys();
 
-		// TODO: Temp - Change to `Plugin::$instance`
-		$typography_group = Plugin::instance()->controls_manager->get_control_groups( 'typography' );
+		$typography_group = Plugin::$instance->controls_manager->get_control_groups( 'typography' );
 
 		$typography_fields = $typography_group->get_fields();
 
@@ -248,6 +247,102 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-panel-heading-title"><?php _e( 'Revision History', 'elementor' ); ?></div>
 		</div>
 		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-page-settings">
+	<div class="elementor-panel-scheme-buttons">
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
+			<button class="elementor-button" disabled>
+				<i class="fa fa-times"></i><?php _e( 'Discard', 'elementor' ); ?>
+			</button>
+		</div>
+		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
+			<button class="elementor-button elementor-button-success" disabled>
+				<?php _e( 'Apply', 'elementor' ); ?>
+			</button>
+		</div>
+	</div>
+	<div class="elementor-panel-box">
+		<div class="elementor-panel-heading">
+			<div class="elementor-panel-heading-title"><?php _e( 'Page Settings', 'elementor' ); ?></div>
+		</div>
+
+		<div class="elementor-control elementor-control-type-text elementor-control-under-section elementor-label-block elementor-control-separator-default">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">
+						<?php _e( 'Title', 'elementor' ); ?>
+					</label>
+					<div class="elementor-control-input-wrapper">
+						<input name="post_title" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<?php
+		$post = get_post();
+		$post_type = $post->post_type;
+		$post_type_object = get_post_type_object( $post_type );
+		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
+
+		if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) {
+		?>
+		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-before">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">
+						<?php _e( 'Post Status', 'elementor' ); ?>
+					</label>
+					<div class="elementor-control-input-wrapper">
+						<select name="post_status">
+						<?php
+						foreach ( get_post_statuses() as $value => $label ) {
+							echo "\n\t<option value='" . $value . "'>$label</option>";
+						}
+						?>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
+
+		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-before">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">
+						<?php _e( 'Template', 'elementor' ); ?>
+					</label>
+					<div class="elementor-control-input-wrapper">
+						<select name="template">
+							<option value=""><?php _e( 'None', 'elementor' ); ?></option>
+							<?php
+							require_once ABSPATH . '/wp-admin/includes/theme.php';
+							require_once ABSPATH . '/wp-admin/includes/template.php';
+							page_template_dropdown() ?>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="elementor-control elementor-control-content_width elementor-control-type-slider elementor-control-under-section elementor-label-block  elementor-control-separator-before">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">
+						<?php _e( 'Content Width', 'elementor' ); ?>
+					</label>
+					<div class="elementor-control-input-wrapper elementor-clearfix">
+						<div class="elementor-slider" data-input="content_width"></div>
+						<div class="elementor-slider-input">
+							<input type="number" min="500" max="1600" name="content_width" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </script>
 
