@@ -60,6 +60,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-delicious',
 							'fa fa-digg',
 							'fa fa-dribbble',
+							'fa fa-envelope',
 							'fa fa-facebook',
 							'fa fa-flickr',
 							'fa fa-foursquare',
