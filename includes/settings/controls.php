@@ -72,7 +72,7 @@ class Settings_Controls {
 		<select name="<?php echo $field['id']; ?>">
 			<?php
 			if ( ! empty( $field['show_select'] ) ) {
-				echo sprintf( '<option value="">— %s —</option>', __( 'Select' ) );
+				echo sprintf( '<option value="">— %s —</option>', __( 'Select', 'elementor' ) );
 			}
 
 			foreach ( $field['options'] as $value => $label ) :
