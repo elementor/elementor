@@ -12,18 +12,18 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 };
 
 App = Marionette.Application.extend( {
-	helpers: require( 'elementor-utils/helpers' ),
-	heartbeat: require( 'elementor-utils/heartbeat' ),
-	imagesManager: require( 'elementor-utils/images-manager' ),
-	debug: require( 'elementor-utils/debug' ),
-	schemes: require( 'elementor-utils/schemes' ),
-	presetsFactory: require( 'elementor-utils/presets-factory' ),
-	introduction: require( 'elementor-utils/introduction' ),
+	helpers: require( 'elementor-editor-utils/helpers' ),
+	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
+	imagesManager: require( 'elementor-editor-utils/images-manager' ),
+	debug: require( 'elementor-editor-utils/debug' ),
+	schemes: require( 'elementor-editor-utils/schemes' ),
+	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
+	introduction: require( 'elementor-editor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
-	ajax: require( 'elementor-utils/ajax' ),
-	conditions: require( 'elementor-utils/conditions' ),
+	ajax: require( 'elementor-editor-utils/ajax' ),
+	conditions: require( 'elementor-editor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
-	hotKeys: require( 'elementor-utils/hot-keys' ),
+	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
