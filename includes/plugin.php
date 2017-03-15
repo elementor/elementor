@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\Debug\Debug;
+use Elementor\Debug\Debug;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -187,7 +187,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/shapes.php' );
-		include( ELEMENTOR_PATH . 'includes/modules/debug/debug.php' );
+		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
