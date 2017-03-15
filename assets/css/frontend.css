@@ -2342,8 +2342,8 @@ button.swiper-pagination-bullet {
             transform: rotate(180deg); }
   .elementor-shape svg {
     display: block;
-    width: -webkit-calc(100% + 1px);
-    width: calc(100% + 1px);
+    width: -webkit-calc(100% + 1.3px);
+    width: calc(100% + 1.3px);
     position: relative;
     left: 50%;
     -webkit-transform: translateX(-50%);
