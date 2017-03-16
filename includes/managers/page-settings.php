@@ -66,10 +66,10 @@ class Page_Settings_Manager {
 			}
 
 			$defaults = [
-				'post_id'       => $post->ID,
-				'post_title'    => $post->post_title,
-				'post_status'   => $post->post_status,
-				'template'      => get_post_meta( $post->ID, '_wp_page_template', true ),
+				'post_id' => $post->ID,
+				'post_title' => $post->post_title,
+				'post_status' => $post->post_status,
+				'template' => get_post_meta( $post->ID, '_wp_page_template', true ),
 				'content_width' => '',
 			];
 
@@ -101,10 +101,13 @@ class Page_Settings_Manager {
 		}
 
 		$post_types = get_option( 'elementor_cpt_support', [] );
+
 		$post_types[] = 'elementor_library';
+
 		foreach ( $post_types as $post_type ) {
 			add_filter( "theme_{$post_type}_templates", [ $this, 'add_page_templates' ], 10, 4 );
 		}
+
 		add_filter( 'template_include', [ $this, 'template_include' ] );
 	}
 }
