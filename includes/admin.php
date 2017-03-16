@@ -33,6 +33,15 @@ class Admin {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_localize_script(
+			'elementor-admin-app',
+			'ElementorAdminConfig',
+			[
+				'home_url' => home_url(),
+			]
+		);
+
 		wp_enqueue_script( 'elementor-admin-app' );
 
 		if ( in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] ) ) {

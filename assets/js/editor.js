@@ -1694,17 +1694,17 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 };
 
 App = Marionette.Application.extend( {
-	helpers: require( 'elementor-utils/helpers' ),
-	heartbeat: require( 'elementor-utils/heartbeat' ),
-	imagesManager: require( 'elementor-utils/images-manager' ),
-	schemes: require( 'elementor-utils/schemes' ),
-	presetsFactory: require( 'elementor-utils/presets-factory' ),
-	introduction: require( 'elementor-utils/introduction' ),
+	helpers: require( 'elementor-editor-utils/helpers' ),
+	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
+	imagesManager: require( 'elementor-editor-utils/images-manager' ),
+	schemes: require( 'elementor-editor-utils/schemes' ),
+	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
+	introduction: require( 'elementor-editor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
-	ajax: require( 'elementor-utils/ajax' ),
-	conditions: require( 'elementor-utils/conditions' ),
+	ajax: require( 'elementor-editor-utils/ajax' ),
+	conditions: require( 'elementor-editor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
-	hotKeys: require( 'elementor-utils/hot-keys' ),
+	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -2242,7 +2242,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"../utils/hooks":110,"elementor-layouts/panel/panel":59,"elementor-models/element":62,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/ajax":65,"elementor-utils/conditions":66,"elementor-utils/heartbeat":67,"elementor-utils/helpers":68,"elementor-utils/hot-keys":69,"elementor-utils/images-manager":70,"elementor-utils/introduction":71,"elementor-utils/presets-factory":74,"elementor-utils/schemes":75,"elementor-views/controls/base":82,"elementor-views/controls/base-multiple":80,"elementor-views/controls/box-shadow":83,"elementor-views/controls/choose":84,"elementor-views/controls/code":85,"elementor-views/controls/color":86,"elementor-views/controls/date-time":87,"elementor-views/controls/dimensions":88,"elementor-views/controls/font":89,"elementor-views/controls/gallery":90,"elementor-views/controls/icon":91,"elementor-views/controls/image-dimensions":92,"elementor-views/controls/media":93,"elementor-views/controls/order":94,"elementor-views/controls/repeater":96,"elementor-views/controls/section":97,"elementor-views/controls/select2":98,"elementor-views/controls/slider":99,"elementor-views/controls/structure":100,"elementor-views/controls/switcher":101,"elementor-views/controls/tab":102,"elementor-views/controls/url":103,"elementor-views/controls/wp_widget":104,"elementor-views/controls/wysiwyg":105,"elementor-views/preview":107,"elementor-views/widget":109}],33:[function(require,module,exports){
+},{"../utils/hooks":110,"elementor-editor-utils/ajax":65,"elementor-editor-utils/conditions":66,"elementor-editor-utils/heartbeat":67,"elementor-editor-utils/helpers":68,"elementor-editor-utils/hot-keys":69,"elementor-editor-utils/images-manager":70,"elementor-editor-utils/introduction":71,"elementor-editor-utils/presets-factory":74,"elementor-editor-utils/schemes":75,"elementor-layouts/panel/panel":59,"elementor-models/element":62,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-views/controls/base":82,"elementor-views/controls/base-multiple":80,"elementor-views/controls/box-shadow":83,"elementor-views/controls/choose":84,"elementor-views/controls/code":85,"elementor-views/controls/color":86,"elementor-views/controls/date-time":87,"elementor-views/controls/dimensions":88,"elementor-views/controls/font":89,"elementor-views/controls/gallery":90,"elementor-views/controls/icon":91,"elementor-views/controls/image-dimensions":92,"elementor-views/controls/media":93,"elementor-views/controls/order":94,"elementor-views/controls/repeater":96,"elementor-views/controls/section":97,"elementor-views/controls/select2":98,"elementor-views/controls/slider":99,"elementor-views/controls/structure":100,"elementor-views/controls/switcher":101,"elementor-views/controls/tab":102,"elementor-views/controls/url":103,"elementor-views/controls/wp_widget":104,"elementor-views/controls/wysiwyg":105,"elementor-views/preview":107,"elementor-views/widget":109}],33:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -4812,8 +4812,16 @@ helpers = {
 			}
 
 			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
 			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			var isContains = ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) ? _.contains( conditionValue, controlValue ) : _.isEqual( conditionValue, controlValue );
+			var isContains;
+			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
+				isContains = _.contains( conditionValue, controlValue );
+			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {
+				isContains = _.contains( controlValue, conditionValue );
+			} else {
+				isContains = _.isEqual( conditionValue, controlValue );
+			}
 
 			return isNegativeCondition ? isContains : ! isContains;
 		} );
@@ -5803,7 +5811,7 @@ module.exports = presetsFactory;
 
 },{}],75:[function(require,module,exports){
 var Schemes,
-	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	BaseElementView = require( 'elementor-views/base-element' );
 
 Schemes = function() {
@@ -5937,7 +5945,7 @@ Schemes = function() {
 
 module.exports = new Schemes();
 
-},{"elementor-utils/stylesheet":76,"elementor-views/base-element":77}],76:[function(require,module,exports){
+},{"elementor-editor-utils/stylesheet":76,"elementor-views/base-element":77}],76:[function(require,module,exports){
 ( function( $ ) {
 
 	var Stylesheet = function() {
@@ -6155,7 +6163,7 @@ module.exports = new Schemes();
 
 },{}],77:[function(require,module,exports){
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
-	Stylesheet = require( 'elementor-utils/stylesheet' ),
+	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -6726,7 +6734,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 module.exports = BaseElementView;
 
-},{"elementor-models/base-settings":60,"elementor-utils/stylesheet":76,"elementor-views/column":79,"elementor-views/section":108}],78:[function(require,module,exports){
+},{"elementor-editor-utils/stylesheet":76,"elementor-models/base-settings":60,"elementor-views/column":79,"elementor-views/section":108}],78:[function(require,module,exports){
 var SectionView = require( 'elementor-views/section' ),
 	BaseSectionsContainerView;
 

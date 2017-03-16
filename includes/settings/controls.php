@@ -67,6 +67,23 @@ class Settings_Controls {
 		<?php endif;
 	}
 
+	private static function _select( array $field ) {
+		$old_value = get_option( $field['id'], $field['std'] ); ?>
+		<select name="<?php echo esc_attr( $field['id'] ); ?>">
+			<?php if ( ! empty( $field['show_select'] ) ) : ?>
+				<option value="">— <?php _e( 'Select', 'elementor' ); ?> —</option>
+			<?php endif; ?>
+
+			<?php foreach ( $field['options'] as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $old_value ); ?>><?php echo $label; ?></option>
+			<?php endforeach; ?>
+		</select>
+
+		<?php if ( ! empty( $field['desc'] ) ) : ?>
+			<p class="description"><?php echo $field['desc']; ?></p>
+		<?php endif;
+	}
+
 	private static function _checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
@@ -106,11 +123,14 @@ class Settings_Controls {
 		if ( empty( $field['html'] ) )
 			return;
 		?>
-		<div><?php echo $field['html']; ?></div>
+		<div id="<?php echo $field['id'];?>">
 
-		<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
-		<?php if ( ! empty( $field['desc'] ) ) : ?>
-			<p class="description"><?php echo $field['desc']; ?></p>
-		<?php endif;
+			<div><?php echo $field['html']; ?></div>
+			<?php if ( ! empty( $field['sub_desc'] ) ) echo $field['sub_desc']; ?>
+			<?php if ( ! empty( $field['desc'] ) ) : ?>
+				<p class="description"><?php echo $field['desc']; ?></p>
+			<?php endif; ?>
+			</div>
+		<?php
 	}
 }

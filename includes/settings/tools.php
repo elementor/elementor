@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Tools {
@@ -24,6 +26,8 @@ class Tools {
 
 	public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
+		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+
 		$tools_section = 'elementor_tools_section';
 		add_settings_section(
 			$tools_section,
@@ -96,10 +100,12 @@ class Tools {
 		?>
 		<div class="wrap">
 			<h2><?php _e( 'Elementor Tools', 'elementor' ); ?></h2>
-			<form method="post" action="">
+			<form method="post" action="options.php">
 				<?php
 				settings_fields( self::PAGE_ID );
 				do_settings_sections( self::PAGE_ID );
+
+				submit_button();
 				?>
 			</form>
 		</div><!-- /.wrap -->
