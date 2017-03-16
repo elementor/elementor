@@ -25,7 +25,7 @@ class Debug_Reporter extends Base_Reporter {
 		$log_string = '';
 
 		foreach ( $log as $index => $item ) {
-			$item['time'] = date( 'Y-m-d H:i P', $item['time'] );
+			$date = date( 'Y-m-d H:i P', $item['timestamp'] );
 
 			$log_string .= "\n\t\t$item[type]: $item[message]\n\t\t\tat $item[url] - $item[line]:$item[column]\n\t\t\t$item[time]\n";
 
