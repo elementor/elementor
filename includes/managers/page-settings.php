@@ -11,8 +11,8 @@ class Page_Settings_Manager {
 
 	private $settings = null;
 
-	public function get( $setting, $default = null ) {
-		$this->get_settings( get_the_ID() );
+	public function get( $post_id, $setting, $default = null ) {
+		$this->get_settings( $post_id );
 
 		if ( isset( $this->settings[ $setting ] ) ) {
 			return $this->settings[ $setting ];
@@ -57,7 +57,7 @@ class Page_Settings_Manager {
 		}
 	}
 
-	public function get_settings( $post_id = null ) {
+	public function get_settings( $post_id ) {
 		if ( null === $this->settings ) {
 			$post = get_post( $post_id );
 
@@ -73,7 +73,7 @@ class Page_Settings_Manager {
 				'content_width' => '',
 			];
 
-			$this->settings = array_merge( $defaults, get_post_meta( get_the_ID(), self::META_KEY, true ) );
+			$this->settings = array_merge( $defaults, get_post_meta( $post_id, self::META_KEY, true ) );
 		}
 
 		return $this->settings;
