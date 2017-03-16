@@ -13,7 +13,7 @@
 	@include margin-end(5px);
 	cursor: pointer;
 
-	@at-root a#{&}, & {
+	i {
 		color: white;
 	}
 

@@ -1550,7 +1550,7 @@
   padding: 0.5em;
   margin-left: 5px;
   cursor: pointer; }
-  a.elementor-social-icon, .elementor-social-icon {
+  .elementor-social-icon i {
     color: white; }
   .elementor-social-icon:last-child {
     margin: 0; }
