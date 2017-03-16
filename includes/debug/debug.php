@@ -4,10 +4,9 @@ namespace Elementor\Debug;
 use Elementor\System_Info\Main;
 
 class Debug {
+
 	const OPTION_NAME = 'elementor_debug_log';
-
 	const MAX_LOGS_TO_SAVE = 10;
-
 	const REPORT_NAME = 'debug';
 
 	public function debug_log() {
@@ -76,18 +75,18 @@ class Debug {
 		update_option( self::OPTION_NAME, $log );
 	}
 
+	private function add_system_info_report() {
+		Main::add_report( self::REPORT_NAME, [
+			'file_name' => __DIR__ . '/' . 'debug-reporter.php',
+			'class_name' => __NAMESPACE__ . '\Debug_Reporter',
+		] );
+	}
+
 	public function __construct() {
 		add_action( 'wp_ajax_elementor_debug_log', [ $this, 'debug_log' ] );
 
 		if ( is_admin() ) {
 			$this->add_system_info_report();
 		}
-	}
-
-	private function add_system_info_report() {
-		Main::add_report( self::REPORT_NAME, [
-			'file_name' => __DIR__ . '/' . 'debug-reporter.php',
-			'class_name' => __NAMESPACE__ . '\Debug_Reporter',
-		] );
 	}
 }
