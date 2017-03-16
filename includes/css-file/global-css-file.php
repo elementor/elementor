@@ -109,7 +109,7 @@ class Global_CSS_File extends CSS_File {
 	}
 
 	private function render_settings_css() {
-		$container_width = absint( get_option( 'elementor_container_width' ) );
+		$container_width = Plugin::$instance->page_settings_manager->get( $this->post_id, 'content_width', absint( get_option( 'elementor_container_width' ) ) );
 
 		if ( ! empty( $container_width ) ) {
 			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
