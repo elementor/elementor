@@ -204,7 +204,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon i' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -320,7 +320,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon:hover i' => 'color: {{VALUE}};',
 				],
 			]
 		);
