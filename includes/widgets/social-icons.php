@@ -60,6 +60,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-delicious',
 							'fa fa-digg',
 							'fa fa-dribbble',
+							'fa fa-envelope',
 							'fa fa-facebook',
 							'fa fa-flickr',
 							'fa fa-foursquare',
@@ -73,6 +74,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-pinterest',
 							'fa fa-product-hunt',
 							'fa fa-reddit',
+							'fa fa-shopping-cart',
 							'fa fa-slideshare',
 							'fa fa-snapchat',
 							'fa fa-soundcloud',
@@ -84,7 +86,9 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-twitter',
 							'fa fa-vimeo',
 							'fa fa-vk',
+							'fa fa-whatsapp',
 							'fa fa-wordpress',
+							'fa fa-xing',
 							'fa fa-youtube',
 						],
 					],
@@ -264,7 +268,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
-				'name' => 'image_border',
+				'name' => 'image_border', // We know this mistake - TODO: 'icon_border' (for hover control condition also)
 				'selector' => '{{WRAPPER}} .elementor-social-icon',
 			]
 		);
@@ -282,9 +286,78 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_social_hover',
+			[
+				'label' => __( 'Icon Hover', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'hover_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-social-icon:hover' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-social-icon:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_border_color',
+			[
+				'label' => __( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'image_border_border!' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-social-icon:hover' => 'border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+			]
+		);
+
+		$this->end_controls_section();
+
 	}
 
 	protected function render() {
+
+		if ( ! empty( $settings['hover_animation'] ) ) {
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $settings['hover_animation'] );
+		}
+
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<?php foreach ( $this->get_settings( 'social_icon_list' ) as $item ) :
