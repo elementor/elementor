@@ -268,7 +268,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-panel-heading-title"><?php _e( 'Page Settings', 'elementor' ); ?></div>
 		</div>
 
-		<div class="elementor-control elementor-control-type-text elementor-control-under-section elementor-label-block elementor-control-separator-default">
+		<div class="elementor-control elementor-control-type-text elementor-control-under-section elementor-label-block">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label class="elementor-control-title">
@@ -289,7 +289,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) {
 		?>
-		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-before">
+		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label class="elementor-control-title">
@@ -309,7 +309,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		</div>
 		<?php } ?>
 
-		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-before">
+		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label class="elementor-control-title">
@@ -328,7 +328,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 
-		<div class="elementor-control elementor-control-content_width elementor-control-type-slider elementor-control-under-section elementor-label-block  elementor-control-separator-before">
+		<div class="elementor-control elementor-control-content_width elementor-control-type-slider elementor-control-under-section elementor-label-block elementor-control-separator-default">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label class="elementor-control-title">
