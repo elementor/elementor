@@ -289,7 +289,13 @@ class DB {
 		}
 
 		foreach ( $data_container as $element_key => $element_value ) {
-			$data_container[ $element_key ] = $this->iterate_data( $data_container[ $element_key ], $callback );
+			$element_data = $this->iterate_data( $data_container[ $element_key ], $callback );
+
+			if ( null === $element_data ) {
+				continue;
+			}
+
+			$data_container[ $element_key ] = $element_data;
 		}
 
 		return $data_container;
