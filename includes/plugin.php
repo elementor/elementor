@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Debug\Debug;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -22,6 +24,11 @@ class Plugin {
 	 * @var Controls_Manager
 	 */
 	public $controls_manager;
+
+	/**
+	 * @var Debug
+	 */
+	public $debug;
 
 	/**
 	 * @var Schemes_Manager
@@ -185,6 +192,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/shapes.php' );
+		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
 		include( ELEMENTOR_PATH . 'includes/under-construction.php' );
 
 		if ( is_admin() ) {
@@ -211,6 +219,7 @@ class Plugin {
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
+		$this->debug = new Debug();
 
 		$this->heartbeat = new Heartbeat();
 		$this->system_info = new System_Info\Main();
