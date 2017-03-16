@@ -61,7 +61,7 @@ class Debug {
 					$last_error['times']++;
 				}
 
-				$last_error['date'] = $error['date'];
+				$last_error['time'] = $error['time'];
 
 				$log[ key( $log ) ] = $last_error;
 			} else {
