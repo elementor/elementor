@@ -6,6 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Page_Settings_Manager {
 
 	const TEMPLATE_CANVAS = 'elementor_canvas';
+
+	const META_KEY = '_elementor_page_settings';
+
 	private $settings = null;
 
 	public function get( $setting, $default = null ) {
@@ -45,7 +48,7 @@ class Page_Settings_Manager {
 
 		$elementor_page_settings['content_width'] = $_POST['content_width'];
 
-		update_post_meta( $post->ID, '_elementor_page_settings', $elementor_page_settings );
+		update_post_meta( $post->ID, self::META_KEY, $elementor_page_settings );
 
 		if ( $saved ) {
 			wp_send_json_success();
@@ -70,7 +73,7 @@ class Page_Settings_Manager {
 				'content_width' => '',
 			];
 
-			$this->settings = array_merge( $defaults, get_post_meta( get_the_ID(), '_elementor_page_settings', true ) );
+			$this->settings = array_merge( $defaults, get_post_meta( get_the_ID(), self::META_KEY, true ) );
 		}
 
 		return $this->settings;
