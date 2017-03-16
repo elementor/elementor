@@ -101,6 +101,14 @@
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
+#wp-admin-bar-elementor-maintenance-on .ab-item:before {
+  content: "\f160";
+  top: 2px; }
+
+#wp-admin-bar-elementor-maintenance-edit .ab-item:before {
+  content: "\f464";
+  top: 2px; }
+
 .elementor-video-wrapper {
   position: relative;
   height: 0; }
@@ -2342,8 +2350,8 @@ button.swiper-pagination-bullet {
             transform: rotate(180deg); }
   .elementor-shape svg {
     display: block;
-    width: -webkit-calc(100% + 1px);
-    width: calc(100% + 1px);
+    width: -webkit-calc(100% + 1.3px);
+    width: calc(100% + 1.3px);
     position: relative;
     left: 50%;
     -webkit-transform: translateX(-50%);
@@ -2351,7 +2359,12 @@ button.swiper-pagination-bullet {
   .elementor-shape .elementor-shape-fill {
     fill: #fff;
     -webkit-transform-origin: center;
-            transform-origin: center; }
+            transform-origin: center;
+    -webkit-transform: rotateY(0deg);
+            transform: rotateY(0deg); }
+
+.elementor-open-lightbox .fluid-width-video-wrapper {
+  display: none; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
