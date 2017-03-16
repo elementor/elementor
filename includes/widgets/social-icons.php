@@ -353,18 +353,20 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	protected function render() {
+		$settings = $this->get_settings();
 
+		$class_animation = '';
 		if ( ! empty( $settings['hover_animation'] ) ) {
-			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $settings['hover_animation'] );
+			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}
 
 		?>
 		<div class="elementor-social-icons-wrapper">
-			<?php foreach ( $this->get_settings( 'social_icon_list' ) as $item ) :
+			<?php foreach ( $settings['social_icon_list'] as $item ) :
 				$social = str_replace( 'fa fa-', '', $item['social'] );
 				$target = $item['link']['is_external'] ? ' target="_blank"' : '';
 				?>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social ); ?>" href="<?php echo esc_attr( $item['link']['url'] ); ?>"<?php echo $target; ?>>
+				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social . $class_animation ); ?>" href="<?php echo esc_attr( $item['link']['url'] ); ?>"<?php echo $target; ?>>
 					<i class="<?php echo $item['social']; ?>"></i>
 				</a>
 			<?php endforeach; ?>
@@ -378,7 +380,7 @@ class Widget_Social_Icons extends Widget_Base {
 			<# _.each( settings.social_icon_list, function( item ) {
 				var link = item.link ? item.link.url : '',
 					social = item.social.replace( 'fa fa-', '' ); #>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }}" href="{{ link }}">
+				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
 					<i class="{{ item.social }}"></i>
 				</a>
 			<# } ); #>
