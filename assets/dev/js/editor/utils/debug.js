@@ -80,9 +80,7 @@ var Debug = function() {
 
 			if ( stackInfo ) {
 				errorInfo.url = stackInfo[1];
-
 				errorInfo.line = stackInfo[2];
-
 				errorInfo.column = stackInfo[3];
 			}
 		}
