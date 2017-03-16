@@ -265,8 +265,7 @@ module.exports = function( grunt ) {
 
 			scripts: {
 				files: [
-					'assets/dev/js/**/*.js',
-					'includes/modules/**/*.js'
+					'assets/dev/js/**/*.js'
 				],
 				tasks: [ 'scripts' ]
 			}
