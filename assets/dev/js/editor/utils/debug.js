@@ -93,7 +93,7 @@ var Debug = function() {
 	this.addError = function( errorParams ) {
 		var defaultParams = {
 			type: 'Error',
-			time: Math.floor( new Date().getTime() / 1000 ),
+			timestamp: Math.floor( new Date().getTime() / 1000 ),
 			message: null,
 			url: null,
 			line: null,
