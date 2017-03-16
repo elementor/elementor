@@ -52,7 +52,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 				else : ?>
 					<tr>
 						<td><?php echo $field['label']; ?>:</td>
-						<td><?php echo $field['value']; ?></td>
+						<td><?php echo nl2br( $field['value'] ); ?></td>
 						<td><?php if ( ! empty( $field['recommendation'] ) ) :
 								echo $field['recommendation'];
 							endif; ?></td>
