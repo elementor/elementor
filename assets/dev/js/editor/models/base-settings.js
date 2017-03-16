@@ -4,21 +4,23 @@ BaseSettingsModel = Backbone.Model.extend( {
 	options: {},
 
 	initialize: function( data, options ) {
+		var self = this;
+
 		if ( options ) {
 			// Keep the options for cloning
-			this.options = options;
+			self.options = options;
 		}
 
-		this.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( this );
+		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
 
-		if ( ! this.controls ) {
+		if ( ! self.controls ) {
 			return;
 		}
 
 		var attrs = data || {},
 			defaults = {};
 
-		_.each( this.controls, function( field ) {
+		_.each( self.controls, function( field ) {
 			var control = elementor.config.controls[ field.type ],
 				isMultipleControl = _.isObject( control.default_value );
 
@@ -30,6 +32,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			if ( undefined !== attrs[ field.name ] ) {
 				if ( isMultipleControl && ! _.isObject( attrs[ field.name ] ) ) {
+					elementor.debug.addCustomError(
+						new TypeError( 'An invalid argument supplied as multiple control value' ),
+						'InvalidElementData',
+						'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ field.name ] + '> as `' + field.name + '` value. Expected array or object.'
+					);
+
 					delete attrs[ field.name ];
 				}
 			}
@@ -39,11 +47,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		this.defaults = defaults;
+		self.defaults = defaults;
 
-		this.handleRepeaterData( attrs );
+		self.handleRepeaterData( attrs );
 
-		this.set( attrs );
+		self.set( attrs );
 	},
 
 	handleRepeaterData: function( attrs ) {
