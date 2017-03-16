@@ -70,7 +70,7 @@ class Page_Settings_Manager {
 				'content_width' => '',
 			];
 
-			$this->settings = wp_parse_args( get_post_meta( get_the_ID(), '_elementor_page_settings', true ), $defaults );
+			$this->settings = array_merge( $defaults, get_post_meta( get_the_ID(), '_elementor_page_settings', true ) );
 		}
 
 		return $this->settings;
