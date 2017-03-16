@@ -87,7 +87,7 @@ class Page_Settings_Manager {
 		return $template;
 	}
 
-	public function add_page_templates( $post_templates, $wp_theme, $post, $post_type ) {
+	public function add_page_templates( $post_templates ) {
 		$post_templates = [
 				self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
 		] + $post_templates;
