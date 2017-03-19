@@ -673,6 +673,14 @@ select {
     clear: both;
     padding-left: 15px;
     padding-right: 15px; }
+  .elementor-panel #elementor-panel-content-wrapper {
+    position: absolute;
+    bottom: 40px;
+    top: 40px;
+    left: 0;
+    width: 100%; }
+  .elementor-panel .elementor-panel-hide {
+    display: none; }
   .elementor-panel .elementor-panel-heading {
     display: table;
     table-layout: fixed;
@@ -773,7 +781,7 @@ select {
       background-color: #f0ad4e; }
     .elementor-panel .elementor-label.elementor-label-danger {
       background-color: #d9534f; }
-  .elementor-panel .elementor-descriptor, .elementor-panel #elementor-panel-page-editor .elementor-control-field-description {
+  .elementor-panel .elementor-descriptor, .elementor-panel .elementor-control-field-description {
     font-size: 11px;
     font-style: italic;
     line-height: 1.4;
@@ -996,12 +1004,6 @@ select {
             flex-grow: 1; }
   .elementor-panel #elementor-panel-schemes-disabled a:hover {
     text-decoration: underline; }
-  .elementor-panel #elementor-panel-content-wrapper {
-    position: absolute;
-    bottom: 40px;
-    top: 40px;
-    left: 0;
-    width: 100%; }
   .elementor-panel #elementor-panel-page-menu {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
   .elementor-panel .elementor-panel-menu-item {
@@ -1057,23 +1059,23 @@ select {
           font-size: 16px;
           display: block;
           margin-bottom: 6px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control {
+  .elementor-panel .elementor-control {
     background-color: #fff;
     position: relative;
     padding: 0 20px 15px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-default:before {
+    .elementor-panel .elementor-control.elementor-control-separator-default:before {
       content: '';
       height: 1px;
       display: block;
       margin-bottom: 15px;
       background-color: #e6e9ec; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-default.elementor-control-wp {
+    .elementor-panel .elementor-control.elementor-control-separator-default.elementor-control-wp {
       margin-top: 15px; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-default.elementor-control-wp:before {
+      .elementor-panel .elementor-control.elementor-control-separator-default.elementor-control-wp:before {
         background-color: transparent; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-before {
+    .elementor-panel .elementor-control.elementor-control-separator-before {
       padding-top: 15px; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-before:before {
+      .elementor-panel .elementor-control.elementor-control-separator-before:before {
         content: '';
         position: absolute;
         height: 3px;
@@ -1081,7 +1083,7 @@ select {
         top: 0;
         left: 0;
         background-color: #d5dadf; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-after:after {
+    .elementor-panel .elementor-control.elementor-control-separator-after:after {
       content: '';
       position: absolute;
       height: 3px;
@@ -1089,30 +1091,30 @@ select {
       bottom: 0;
       left: 0;
       background-color: #d5dadf; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-separator-after + .elementor-control-type-tabs {
+    .elementor-panel .elementor-control.elementor-control-separator-after + .elementor-control-type-tabs {
       padding-top: 15px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-deprecated {
+    .elementor-panel .elementor-control.elementor-control-deprecated {
       color: #b01b1b; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-deprecated .elementor-control-field-description {
+      .elementor-panel .elementor-control.elementor-control-deprecated .elementor-control-field-description {
         color: #b01b1b; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-hidden-label .elementor-control-title {
+    .elementor-panel .elementor-control.elementor-control-hidden-label .elementor-control-title {
       display: none; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-hidden-control {
+    .elementor-panel .elementor-control.elementor-hidden-control {
       display: none; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-type-heading .elementor-control-title {
+    .elementor-panel .elementor-control.elementor-control-type-heading .elementor-control-title {
       font-weight: bold;
       margin: 0; }
-    body:not(.elementor-device-desktop) .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-responsive-desktop {
+    body:not(.elementor-device-desktop) .elementor-panel .elementor-control.elementor-control-responsive-desktop {
       display: none; }
-    body:not(.elementor-device-tablet) .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-responsive-tablet {
+    body:not(.elementor-device-tablet) .elementor-panel .elementor-control.elementor-control-responsive-tablet {
       display: none; }
-    body:not(.elementor-device-mobile) .elementor-panel #elementor-panel-page-editor .elementor-control.elementor-control-responsive-mobile {
+    body:not(.elementor-device-mobile) .elementor-panel .elementor-control.elementor-control-responsive-mobile {
       display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-wp {
+  .elementor-panel .elementor-control-wp {
     line-height: 1.5; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-wp p {
+    .elementor-panel .elementor-control-wp p {
       margin: 15px 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-block > .elementor-control-content > .elementor-control-field {
+  .elementor-panel .elementor-label-block > .elementor-control-content > .elementor-control-field {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -1124,24 +1126,24 @@ select {
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
-    .elementor-panel #elementor-panel-page-editor .elementor-label-block > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+    .elementor-panel .elementor-label-block > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
       -webkit-flex-basis: 100%;
           -ms-flex-preferred-size: 100%;
               flex-basis: 100%;
       margin-top: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-block.elementor-control-hidden-label > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+  .elementor-panel .elementor-label-block.elementor-control-hidden-label > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
     margin-top: 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-label-inline > .elementor-control-content > .elementor-control-field {
+  .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field {
     display: table;
     width: 100%; }
-    .elementor-panel #elementor-panel-page-editor .elementor-label-inline > .elementor-control-content > .elementor-control-field > * {
+    .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field > * {
       display: table-cell;
       vertical-align: middle; }
-    .elementor-panel #elementor-panel-page-editor .elementor-label-inline > .elementor-control-content > .elementor-control-field > .elementor-control-title {
+    .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field > .elementor-control-title {
       width: 45%; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-field-description {
+  .elementor-panel .elementor-control-field-description {
     margin-top: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-choices {
+  .elementor-panel .elementor-choices {
     display: table;
     width: 100%;
     height: 27px;
@@ -1149,21 +1151,21 @@ select {
     text-align: center;
     border-spacing: 1px;
     border-radius: 3px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-choices input {
+    .elementor-panel .elementor-choices input {
       display: none; }
-      .elementor-panel #elementor-panel-page-editor .elementor-choices input:checked + .elementor-choices-label {
+      .elementor-panel .elementor-choices input:checked + .elementor-choices-label {
         color: #fff; }
-      .elementor-panel #elementor-panel-page-editor .elementor-choices input:not(:checked) + .elementor-choices-label {
+      .elementor-panel .elementor-choices input:not(:checked) + .elementor-choices-label {
         background-color: #fff;
         color: #a4afb7; }
-    .elementor-panel #elementor-panel-page-editor .elementor-choices .elementor-choices-label {
+    .elementor-panel .elementor-choices .elementor-choices-label {
       display: table-cell;
       vertical-align: middle;
       font-size: 12px;
       -webkit-transition: all .5s;
       transition: all .5s;
       cursor: pointer; }
-  .elementor-panel #elementor-panel-page-editor .elementor-slider {
+  .elementor-panel .elementor-slider {
     display: inline-block;
     margin-top: 10px;
     height: 4px;
@@ -1171,7 +1173,7 @@ select {
     border-radius: 5px;
     position: relative;
     width: 67%; }
-    .elementor-panel #elementor-panel-page-editor .elementor-slider .ui-slider-handle {
+    .elementor-panel .elementor-slider .ui-slider-handle {
       height: 16px;
       width: 16px;
       background-color: #fff;
@@ -1183,36 +1185,36 @@ select {
       box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
       border-radius: 50%;
       cursor: pointer; }
-  .elementor-panel #elementor-panel-page-editor .elementor-slider-input {
+  .elementor-panel .elementor-slider-input {
     width: 33%;
     float: right; }
-    .elementor-panel #elementor-panel-page-editor .elementor-slider-input input {
+    .elementor-panel .elementor-slider-input input {
       width: 80%;
       float: right; }
-  .elementor-panel #elementor-panel-page-editor .elementor-units-choices {
+  .elementor-panel .elementor-units-choices {
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
     text-align: right; }
-    .elementor-panel #elementor-panel-page-editor .elementor-units-choices input {
+    .elementor-panel .elementor-units-choices input {
       display: none; }
-      .elementor-panel #elementor-panel-page-editor .elementor-units-choices input:not(:checked) + label {
+      .elementor-panel .elementor-units-choices input:not(:checked) + label {
         color: #c2cbd2; }
-      .elementor-panel #elementor-panel-page-editor .elementor-units-choices input:checked + label {
+      .elementor-panel .elementor-units-choices input:checked + label {
         text-decoration: underline; }
-    .elementor-panel #elementor-panel-page-editor .elementor-units-choices label {
+    .elementor-panel .elementor-units-choices label {
       cursor: pointer;
       padding: 0 2px;
       text-transform: uppercase;
       font-size: 9px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-responsive-switchers {
+  .elementor-panel .elementor-control-responsive-switchers {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
     margin-left: 5px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher {
+  .elementor-panel .elementor-responsive-switcher {
     display: inline-block;
     border-radius: 50%;
     height: 18px;
@@ -1226,19 +1228,19 @@ select {
     text-align: center;
     -webkit-transition: background-color .5s;
     transition: background-color .5s; }
-    .elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher:hover {
+    .elementor-panel .elementor-responsive-switcher:hover {
       background-color: #c2cbd2; }
-    .elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher i {
+    .elementor-panel .elementor-responsive-switcher i {
       line-height: 18px; }
   .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
     background: #c2cbd2; }
     .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
       display: none; }
-  .elementor-device-mobile .elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-mobile {
+  .elementor-device-mobile .elementor-panel .elementor-responsive-switcher-mobile {
     background-color: #71d7f7; }
-  .elementor-device-tablet .elementor-panel #elementor-panel-page-editor .elementor-responsive-switcher-tablet {
+  .elementor-device-tablet .elementor-panel .elementor-responsive-switcher-tablet {
     background-color: #71d7f7; }
-  .elementor-panel #elementor-panel-page-editor #elementor-update-preview {
+  .elementor-panel #elementor-update-preview {
     margin: 15px 15px 0;
     background-color: #e6e9ec;
     display: -webkit-box;
@@ -1249,36 +1251,36 @@ select {
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
-  .elementor-panel #elementor-panel-page-editor #elementor-update-preview-button-wrapper {
+  .elementor-panel #elementor-update-preview-button-wrapper {
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
     text-align: right; }
-  .elementor-panel #elementor-panel-page-editor #elementor-update-preview-button {
+  .elementor-panel #elementor-update-preview-button {
     padding: 8px 15px;
     text-transform: uppercase; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media {
+  .elementor-panel .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
     height: 150px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media:not(:hover) {
+    .elementor-panel .elementor-control-type-media .elementor-control-media:not(:hover) {
       border-color: #d5dadf; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media:not(:hover) .elementor-control-media-upload-button {
+      .elementor-panel .elementor-control-type-media .elementor-control-media:not(:hover) .elementor-control-media-upload-button {
         background-color: #d5dadf; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media:hover {
+    .elementor-panel .elementor-control-type-media .elementor-control-media:hover {
       border-color: #a4afb7; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media:hover .elementor-control-media-upload-button {
+      .elementor-panel .elementor-control-type-media .elementor-control-media:hover .elementor-control-media-upload-button {
         background-color: #a4afb7; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media.media-empty .elementor-control-media-image-area {
+    .elementor-panel .elementor-control-type-media .elementor-control-media.media-empty .elementor-control-media-image-area {
       display: none; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media:not(.media-empty) .elementor-control-media-upload-button {
+    .elementor-panel .elementor-control-type-media .elementor-control-media:not(.media-empty) .elementor-control-media-upload-button {
       display: none; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media > * {
+    .elementor-panel .elementor-control-type-media .elementor-control-media > * {
       height: 100%;
       cursor: pointer;
       position: relative; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .fa-plus-circle {
+  .elementor-panel .elementor-control-type-media .fa-plus-circle {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1286,11 +1288,11 @@ select {
             transform: translateX(-50%) translateY(-50%);
     color: #fff;
     font-size: 20px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media-image-area:not(:hover) .elementor-control-media-delete {
+  .elementor-panel .elementor-control-type-media .elementor-control-media-image-area:not(:hover) .elementor-control-media-delete {
     display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media-image-area:hover .elementor-control-media-image {
+  .elementor-panel .elementor-control-type-media .elementor-control-media-image-area:hover .elementor-control-media-image {
     opacity: .5; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media-delete {
+  .elementor-panel .elementor-control-type-media .elementor-control-media-delete {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -1301,35 +1303,35 @@ select {
     color: #fff;
     background-color: #a4afb7;
     text-transform: uppercase; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-media .elementor-control-media-image {
+  .elementor-panel .elementor-control-type-media .elementor-control-media-image {
     height: 100%;
     background-size: cover; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-control-dimensions {
+  .elementor-panel .elementor-control-type-dimensions .elementor-control-dimensions {
     overflow: hidden; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li {
+  .elementor-panel .elementor-control-type-dimensions li {
     float: left;
     width: 20%; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li input,
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li .elementor-link-dimensions {
+    .elementor-panel .elementor-control-type-dimensions li input,
+    .elementor-panel .elementor-control-type-dimensions li .elementor-link-dimensions {
       display: block;
       text-align: center;
       width: 100%;
       border-color: #a4afb7;
       height: 27px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li input {
+    .elementor-panel .elementor-control-type-dimensions li input {
       border-left: none;
       border-radius: 0;
       padding: 4px 0; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li input + span {
+      .elementor-panel .elementor-control-type-dimensions li input + span {
         display: block;
         text-align: center;
         color: #d5dadf;
         font-size: 9px;
         text-transform: uppercase;
         padding-top: 5px; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li input:focus + span {
+      .elementor-panel .elementor-control-type-dimensions li input:focus + span {
         color: #a4afb7; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li .elementor-link-dimensions {
+    .elementor-panel .elementor-control-type-dimensions li .elementor-link-dimensions {
       border: 1px solid #a4afb7;
       border-left: none;
       background-color: #fff;
@@ -1337,26 +1339,26 @@ select {
       outline: none;
       border-radius: 0 3px 3px 0;
       cursor: pointer; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions li:first-child input {
+    .elementor-panel .elementor-control-type-dimensions li:first-child input {
       border-left: 1px solid #a4afb7;
       border-radius: 3px 0 0 3px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions.unlinked {
+  .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions.unlinked {
     background-color: #fff; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions.unlinked .elementor-linked {
+    .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions.unlinked .elementor-linked {
       display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions:not(.unlinked) {
+  .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions:not(.unlinked) {
     background-color: #a4afb7; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions:not(.unlinked) .elementor-unlinked {
+    .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions:not(.unlinked) .elementor-unlinked {
       display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-dimensions .elementor-link-dimensions .elementor-linked {
+  .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions .elementor-linked {
     color: #fff; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-external-hide .elementor-control-url-target {
+  .elementor-panel .elementor-control-type-url .elementor-control-url-external-hide .elementor-control-url-target {
     display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-external-show input {
+  .elementor-panel .elementor-control-type-url .elementor-control-url-external-show input {
     padding-right: 46px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-input-wrapper {
+  .elementor-panel .elementor-control-type-url .elementor-control-input-wrapper {
     position: relative; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target {
+  .elementor-panel .elementor-control-type-url .elementor-control-url-target {
     position: absolute;
     top: 0;
     right: 0;
@@ -1369,177 +1371,170 @@ select {
     cursor: pointer;
     font-size: 10px;
     border-radius: 0 3px 3px 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target.active {
+    .elementor-panel .elementor-control-type-url .elementor-control-url-target.active {
       background-color: #a4afb7; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target.active .elementor-control-url-external {
+      .elementor-panel .elementor-control-type-url .elementor-control-url-target.active .elementor-control-url-external {
         color: #fff; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-url .elementor-control-url-target:not(.active) .elementor-control-url-external {
+    .elementor-panel .elementor-control-type-url .elementor-control-url-target:not(.active) .elementor-control-url-external {
       opacity: .5; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-url input {
+  .elementor-panel .elementor-control-type-url input {
     direction: ltr; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:not(:focus) + .elementor-control-url-target {
+    .elementor-panel .elementor-control-type-url input:not(:focus) + .elementor-control-url-target {
       border-color: #d5dadf; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:not(:focus) + .elementor-control-url-target.active {
+      .elementor-panel .elementor-control-type-url input:not(:focus) + .elementor-control-url-target.active {
         background-color: #d5dadf; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:focus + .elementor-control-url-target {
+    .elementor-panel .elementor-control-type-url input:focus + .elementor-control-url-target {
       border-color: #a4afb7; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-url input:focus + .elementor-control-url-target.active {
+      .elementor-panel .elementor-control-type-url input:focus + .elementor-control-url-target.active {
         background-color: #a4afb7; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-text_align .elementor-choices,
-  .elementor-panel #elementor-panel-page-editor .elementor-control-align .elementor-choices,
-  .elementor-panel #elementor-panel-page-editor .elementor-control-position .elementor-choices {
+  .elementor-panel .elementor-control-text_align .elementor-choices,
+  .elementor-panel .elementor-control-align .elementor-choices,
+  .elementor-panel .elementor-control-position .elementor-choices {
     direction: ltr; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-section {
+  .elementor-panel .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section) {
+    .elementor-panel .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section) {
       padding-top: 15px; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section):before {
+      .elementor-panel .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section):before {
         display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-color .elementor-control-input-wrapper {
+  .elementor-panel .elementor-control-type-color .elementor-control-input-wrapper {
     height: 27px; }
-  .elementor-panel #elementor-panel-page-editor .wp-picker-container:not(.wp-picker-active) {
-    float: right; }
-  .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(6px);
-            transform: translateY(6px); }
-    .elementor-panel #elementor-panel-page-editor .wp-picker-container.wp-picker-active .wp-color-result {
-      margin-right: 3px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg.elementor-rich-editing-disabled .wp-editor-container {
+  .elementor-panel .elementor-control-type-wysiwyg.elementor-rich-editing-disabled .wp-editor-container {
     margin-top: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg * {
+  .elementor-panel .elementor-control-type-wysiwyg * {
     box-sizing: content-box; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-editor-container {
+  .elementor-panel .elementor-control-type-wysiwyg .wp-editor-container {
     border: 1px solid #e6e9ec;
     border-radius: 3px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg #insert-media-button {
+  .elementor-panel .elementor-control-type-wysiwyg #insert-media-button {
     margin-top: 7px;
     height: initial;
     line-height: 1;
     font-size: 10px;
     padding: 3px 7px;
     background-color: #e6e9ec; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .ed_button {
+  .elementor-panel .elementor-control-type-wysiwyg .ed_button {
     height: 22px;
     width: initial; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-media-buttons-icon {
+  .elementor-panel .elementor-control-type-wysiwyg .wp-media-buttons-icon {
     height: 14px;
     margin: 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-media-buttons-icon:before {
+    .elementor-panel .elementor-control-type-wysiwyg .wp-media-buttons-icon:before {
       font-size: 14px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .wp-switch-editor {
+  .elementor-panel .elementor-control-type-wysiwyg .wp-switch-editor {
     border: none;
     color: #6d7882;
     font-size: 10px;
     padding: 3px 9px 4px;
     border-radius: 3px 3px 0 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .html-active .switch-tmce {
+  .elementor-panel .elementor-control-type-wysiwyg .html-active .switch-tmce {
     background-color: transparent; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .html-active .switch-html {
+  .elementor-panel .elementor-control-type-wysiwyg .html-active .switch-html {
     background-color: #e6e9ec; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .tmce-active .switch-tmce {
+  .elementor-panel .elementor-control-type-wysiwyg .tmce-active .switch-tmce {
     background-color: #e6e9ec; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .tmce-active .switch-html {
+  .elementor-panel .elementor-control-type-wysiwyg .tmce-active .switch-html {
     background-color: transparent; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-toolbar-grp, .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .quicktags-toolbar {
+  .elementor-panel .elementor-control-type-wysiwyg .mce-toolbar-grp, .elementor-panel .elementor-control-type-wysiwyg .quicktags-toolbar {
     background-color: #e6e9ec; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-toolbar-grp > div {
+  .elementor-panel .elementor-control-type-wysiwyg .mce-toolbar-grp > div {
     padding: 0 3px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .elementor-wp-editor {
+  .elementor-panel .elementor-control-type-wysiwyg .elementor-wp-editor {
     box-sizing: border-box; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-ico {
+  .elementor-panel .elementor-control-type-wysiwyg .mce-ico {
     color: #6d7882;
     font-size: 16px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn {
+  .elementor-panel .elementor-control-type-wysiwyg .mce-btn {
     margin-right: 0;
     margin-left: 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:hover, .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn:active, .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-btn.mce-active {
+    .elementor-panel .elementor-control-type-wysiwyg .mce-btn:hover, .elementor-panel .elementor-control-type-wysiwyg .mce-btn:active, .elementor-panel .elementor-control-type-wysiwyg .mce-btn.mce-active {
       border-color: #d5dadf; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-path {
+  .elementor-panel .elementor-control-type-wysiwyg .mce-path {
     padding: 5px 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-wysiwyg .mce-path-item {
+  .elementor-panel .elementor-control-type-wysiwyg .mce-path-item {
     font-size: 12px;
     color: #6d7882; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-icon .select2-selection__rendered .fa {
+  .elementor-panel .elementor-control-type-icon .select2-selection__rendered .fa {
     margin-right: 3px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery.elementor-gallery-empty .elementor-control-gallery-clear, .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery.elementor-gallery-empty .elementor-control-gallery-thumbnails {
+  .elementor-panel .elementor-control-type-gallery.elementor-gallery-empty .elementor-control-gallery-clear, .elementor-panel .elementor-control-type-gallery.elementor-gallery-empty .elementor-control-gallery-thumbnails {
     display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-gallery-thumbnails {
+  .elementor-panel .elementor-control-type-gallery .elementor-control-gallery-thumbnails {
     overflow: hidden;
     margin-top: 20px;
     cursor: pointer; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-gallery-thumbnail {
+  .elementor-panel .elementor-control-type-gallery .elementor-control-gallery-thumbnail {
     width: 40px;
     height: 40px;
     background-size: cover;
     background-position: 50% 50%;
     float: left;
     margin-bottom: 10px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-gallery-thumbnail:not(:nth-child(5n)) {
+    .elementor-panel .elementor-control-type-gallery .elementor-control-gallery-thumbnail:not(:nth-child(5n)) {
       margin-right: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-gallery-add {
+  .elementor-panel .elementor-control-type-gallery .elementor-control-gallery-add {
     width: 100%;
     height: 30px;
     color: #fff;
     background-color: #a4afb7;
     margin-top: 10px;
     text-transform: uppercase; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-gallery .elementor-control-gallery-clear {
+  .elementor-panel .elementor-control-type-gallery .elementor-control-gallery-clear {
     color: #b01b1b;
     cursor: pointer; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-preset {
     border: 1px solid #e6e9ec;
     padding: 3px;
     border-radius: 3px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) {
       display: inline-block;
       cursor: pointer;
       height: 50px; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) svg {
+      .elementor-panel .elementor-control-type-structure .elementor-control-structure-preset:not(.elementor-control-structure-current-preset) svg {
         height: 100%; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset path {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-preset path {
       fill: #e6e9ec; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-current-preset {
     margin-top: 15px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-current-preset svg {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-current-preset svg {
       display: block;
       width: 100%; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-reset {
     padding: 10px 0 0 2px;
     font-size: 11px;
     cursor: pointer;
     color: #a4afb7; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-reset i {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-reset i {
       margin-right: 8px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title, .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-title, .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     color: #495157;
     font-weight: bold;
     padding: 13.5px 20px;
     position: relative; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:before, .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:after, .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before, .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-title:before, .elementor-panel .elementor-control-type-structure .elementor-control-structure-title:after, .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:before, .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
       content: '';
       position: absolute;
       left: 0;
       right: 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:before, .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-title:before, .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
       top: 0;
       background-color: #e6e9ec;
       -webkit-transform: translateY(-100%);
               transform: translateY(-100%); }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:after, .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-title:after, .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
       bottom: 0;
       height: 1px;
       background-color: #e6e9ec; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-title {
     margin: 10px -20px 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-title:before {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-title:before {
       height: 10px;
       box-shadow: inset 0 2px 4px rgba(127, 127, 127, 0.1); }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title {
     margin: 15px -20px 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
       height: 3px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -1551,48 +1546,48 @@ select {
     -webkit-justify-content: space-between;
         -ms-flex-pack: justify;
             justify-content: space-between; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input {
+    .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets input {
       display: none; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset {
+      .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset {
         border: 1px solid #a4afb7; }
-        .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset path {
+        .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets input:checked + .elementor-control-structure-preset path {
           fill: #a4afb7; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset-wrapper {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-preset-wrapper {
     margin-top: 15px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-structure .elementor-control-structure-preset-title {
+  .elementor-panel .elementor-control-type-structure .elementor-control-structure-preset-title {
     text-align: center;
     padding-top: 5px;
     font-style: italic;
     font-size: 11px;
     color: #a4afb7; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-control-field-description {
+  .elementor-panel .elementor-control-type-image_dimensions .elementor-control-field-description {
     margin: 0 0 15px;
     line-height: 1.4; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-control-input-wrapper {
+  .elementor-panel .elementor-control-type-image_dimensions .elementor-control-input-wrapper {
     overflow: hidden; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-field {
+  .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-field {
     width: 70px;
     float: left; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-field input:focus + .elementor-image-dimensions-field-description {
+    .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-field input:focus + .elementor-image-dimensions-field-description {
       color: #a4afb7; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-separator {
+  .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-separator {
     width: 20px;
     text-align: center;
     float: left;
     padding-top: 4px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-field-description {
+  .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-field-description {
     text-transform: uppercase;
     margin-top: 5px;
     color: #d5dadf;
     font-size: 9px;
     text-align: center; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-image_dimensions .elementor-image-dimensions-apply-button {
+  .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-apply-button {
     float: right;
     height: 27px;
     width: 70px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-code {
+  .elementor-panel .elementor-control-type-code {
     padding: 0 10px 15px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tabs {
+  .elementor-panel .elementor-control-type-tabs {
     font-size: 0.8em;
     color: #a4afb7;
     text-transform: uppercase;
@@ -1600,7 +1595,7 @@ select {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab {
+  .elementor-panel .elementor-control-type-tab {
     text-align: center;
     width: 100%;
     padding: 0;
@@ -1609,38 +1604,38 @@ select {
     border-bottom: 1px solid #a4afb7;
     border-right: 1px solid #a4afb7;
     cursor: pointer; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:first-child {
+    .elementor-panel .elementor-control-type-tab:first-child {
       border-left: 1px solid #a4afb7;
       border-top-left-radius: 3px;
       border-bottom-left-radius: 3px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab:last-child {
+    .elementor-panel .elementor-control-type-tab:last-child {
       border-top-right-radius: 3px;
       border-bottom-right-radius: 3px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-tab.elementor-tab-active {
+    .elementor-panel .elementor-control-type-tab.elementor-tab-active {
       background-color: #a4afb7;
       color: #ffffff; }
-  .elementor-panel #elementor-panel-page-editor .elementor-tab-close {
+  .elementor-panel .elementor-tab-close {
     display: none !important; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater,
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:not(.elementor-control-type-tab) {
+  .elementor-panel .elementor-control-type-repeater,
+  .elementor-panel .elementor-control-type-repeater .elementor-control:not(.elementor-control-type-tab) {
     padding: 0 10px 15px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-control:before {
+  .elementor-panel .elementor-control-type-repeater .elementor-control:before {
     display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater.elementor-repeater-has-minimum-rows .elementor-repeater-tool-remove {
+  .elementor-panel .elementor-control-type-repeater.elementor-repeater-has-minimum-rows .elementor-repeater-tool-remove {
     display: none; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .repeater-fields {
+  .elementor-panel .elementor-control-type-repeater .repeater-fields {
     margin: 10px 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls {
+  .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-controls {
     border: 1px solid #d5dadf;
     border-top-width: 0;
     padding-top: 15px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls:not(.editable) {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-controls:not(.editable) {
       display: none; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-controls .wp-picker-container.wp-picker-active {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-controls .wp-picker-container.wp-picker-active {
       -webkit-transform: translateY(0);
               transform: translateY(0);
       border-width: 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools {
+  .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools {
     display: table;
     table-layout: fixed;
     width: 100%;
@@ -1650,43 +1645,43 @@ select {
     border-spacing: 1px;
     -webkit-transition: all .5s;
     transition: all .5s; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools:hover {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools:hover {
       background-color: #a4afb7; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools > div {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools > div {
       display: table-cell;
       text-align: center;
       vertical-align: middle;
       cursor: pointer; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools > div:not(.elementor-repeater-row-handle-sortable) {
+      .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools > div:not(.elementor-repeater-row-handle-sortable) {
         background-color: #fff; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools > div:hover {
+      .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools > div:hover {
         opacity: .95; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title {
       text-align: left;
       padding: 0 10px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
-      .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title .fa {
+      .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-item-title .fa {
         margin-right: 5px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-tool {
       width: 40px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-handle-sortable {
+    .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools .elementor-repeater-row-handle-sortable {
       cursor: move;
       width: 10px;
       color: #fff; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-repeater .elementor-button-wrapper {
+  .elementor-panel .elementor-control-type-repeater .elementor-button-wrapper {
     text-align: center;
     padding: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-textarea textarea {
+  .elementor-panel .elementor-control-type-textarea textarea {
     display: block; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-control-input-wrapper {
+  .elementor-panel .elementor-control-type-box_shadow .elementor-control-input-wrapper {
     overflow: hidden; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-box_shadow .elementor-box-shadow-slider {
+  .elementor-panel .elementor-control-type-box_shadow .elementor-box-shadow-slider {
     margin-top: 10px; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-control-input-wrapper {
+  .elementor-panel .elementor-control-type-switcher .elementor-control-input-wrapper {
     text-align: right; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch {
     position: relative;
     display: inline-block;
     vertical-align: top;
@@ -1695,12 +1690,12 @@ select {
     background-color: white;
     border-radius: 18px;
     cursor: pointer; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-input {
     position: absolute;
     top: 0;
     left: 0;
     opacity: 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-label {
     position: relative;
     display: block;
     height: inherit;
@@ -1713,7 +1708,7 @@ select {
     transition: 0.15s ease-out;
     -webkit-transition-property: opacity, background;
     transition-property: opacity, background; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:before, .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:after {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-label:before, .elementor-panel .elementor-control-type-switcher .elementor-switch-label:after {
     position: absolute;
     top: 0;
     width: 50%;
@@ -1721,25 +1716,25 @@ select {
     line-height: 20px;
     -webkit-transition: inherit;
     transition: inherit; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:before {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-label:before {
     content: attr(data-off);
     right: 3px;
     color: #a4afb7;
     text-shadow: 0 1px rgba(255, 255, 255, 0.5); }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-label:after {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-label:after {
     content: attr(data-on);
     left: 3px;
     color: white;
     text-shadow: 0 1px rgba(0, 0, 0, 0.2);
     opacity: 0; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label {
     background: #71d7f7;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:before {
+    .elementor-panel .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:before {
       opacity: 0; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:after {
+    .elementor-panel .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-label:after {
       opacity: 1; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-handle {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-handle {
     position: absolute;
     top: 1px;
     left: 1px;
@@ -1749,26 +1744,26 @@ select {
     border-radius: 10px;
     -webkit-transition: left 0.15s ease-out;
     transition: left 0.15s ease-out; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-handle {
+  .elementor-panel .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-handle {
     left: 30px;
     box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2); }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-order .elementor-control-oreder-wrapper {
+  .elementor-panel .elementor-control-type-order .elementor-control-oreder-wrapper {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-order input {
+  .elementor-panel .elementor-control-type-order input {
     display: none; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-order input:checked + .elementor-control-order-label {
+    .elementor-panel .elementor-control-type-order input:checked + .elementor-control-order-label {
       -webkit-transform: scale(1, -1);
               transform: scale(1, -1); }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-order select {
+  .elementor-panel .elementor-control-type-order select {
     border-radius: 3px 0 0 3px; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-order select:not(:focus) ~ .elementor-control-order-label {
+    .elementor-panel .elementor-control-type-order select:not(:focus) ~ .elementor-control-order-label {
       border-color: #d5dadf; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-order select:focus ~ .elementor-control-order-label {
+    .elementor-panel .elementor-control-type-order select:focus ~ .elementor-control-order-label {
       border-color: #a4afb7; }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-order .elementor-control-order-label {
+  .elementor-panel .elementor-control-type-order .elementor-control-order-label {
     position: relative;
     padding: 0;
     width: 40px;
@@ -1778,13 +1773,20 @@ select {
     margin-left: -3px;
     background-color: #fff;
     cursor: pointer; }
-    .elementor-panel #elementor-panel-page-editor .elementor-control-type-order .elementor-control-order-label i {
+    .elementor-panel .elementor-control-type-order .elementor-control-order-label i {
       position: absolute;
       top: 50%;
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
-  .elementor-panel #elementor-panel-page-editor .elementor-control-type-hidden {
+  .elementor-panel .elementor-control-type-color .wp-picker-container:not(.wp-picker-active) {
+    float: right; }
+  .elementor-panel .elementor-control-type-color .wp-picker-container.wp-picker-active {
+    -webkit-transform: translateY(6px);
+            transform: translateY(6px); }
+    .elementor-panel .elementor-control-type-color .wp-picker-container.wp-picker-active .wp-color-result {
+      margin-right: 3px; }
+  .elementor-panel .elementor-control-type-hidden {
     display: none !important; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
@@ -1840,6 +1842,8 @@ select {
     box-sizing: content-box; }
   .elementor-panel .wp-picker-open ~ .wp-picker-holder {
     clear: both;
+    margin-bottom: 15px; }
+  .elementor-panel #elementor-panel-page-settings .elementor-panel-heading {
     margin-bottom: 15px; }
   .elementor-panel #elementor-panel-footer {
     position: absolute;
@@ -1929,8 +1933,6 @@ select {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
     color: #b01b1b; }
-  .elementor-panel .elementor-panel-hide {
-    display: none; }
 
 #elementor-mode-switcher {
   position: absolute;
