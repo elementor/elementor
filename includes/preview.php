@@ -75,6 +75,7 @@ class Preview {
 
 	public function print_custom_css() {
 		$container_width = absint( get_option( 'elementor_container_width' ) );
+
 		if ( empty( $container_width ) ) {
 			return;
 		}
