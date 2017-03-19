@@ -1,4 +1,4 @@
-#Slider
+# Slider
 
 A draggable Range Slider control typically used to obtain a size setting.
 The slider control can optionally have a number of unit types (`size_units`) for the user to choose from.
@@ -7,7 +7,7 @@ The control also accepts a `range` argument that allows you to set the `min`, `m
 
 *Returns:* `array` of `size` and `unit`;
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -37,7 +37,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 Most times you won't have to manually retrieve the value of slider controls since the selectors argument can cover most use-cases. 
 
 **PHP** *(Under `render()` method)*
@@ -52,7 +52,7 @@ echo '<div style="width: ' . $width['size'] . $width['unit'] '"> ... </div>';
 <div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------

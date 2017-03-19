@@ -1,10 +1,10 @@
-#Font
+# Font
 A font select box control. The list is based on [Google Fonts](https://fonts.google.com/) project.<br>
 *Note: This control is usually not used as a stand-alone control, but as a part of the "Typography" control group.*
 
 *Returns*: `string` - The selected font-family name.
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -20,7 +20,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 Most times you won't have to manually retrieve the value of `font` controls since the selectors argument can cover most use-cases.
 
 **PHP:** *(Under `render()` method)*
@@ -34,7 +34,7 @@ echo '<h2 style="font-family: ' . $font_family . '"> ... </h2>';
 <h2 style="font-family: {{ settings.font_family }}"> ... </h2>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | ---------------------------- | ---------------------------------------------

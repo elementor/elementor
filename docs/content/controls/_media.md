@@ -1,9 +1,9 @@
-#Media (Image)
+# Media (Image)
 A control that allows the user to select an image from the WordPress media library. 
 
 *Returns:* `array( 'id' => (string), 'url' => (string) )`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -18,7 +18,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -35,7 +35,7 @@ echo wp_get_attachment_image( $image['id'], 'thumbnail' );
 <img src="{{ settings.image.url }}">
 ```
 
-##Arguments
+## Arguments
 
 Argument        | Required   | Type         | Default                      | Description
 ------------    | :--------: | :------:     | ---------------------------- | ---------------------------------------------
