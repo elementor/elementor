@@ -1,9 +1,9 @@
-#Switcher
+# Switcher
 A Switcher control (on/off) - basically a fancy UI representation of a checkbox. Accepts `label_on` and `label_off` for the on/off states, and `return_value` to specify the value returned when checked.
 
 *Returns* `string|empty` Returns the `return_value` if checked or empty if unchecked
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -19,7 +19,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP:** *(Under `render()` method)*
 ```php

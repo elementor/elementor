@@ -1,10 +1,10 @@
-#Raw-HTML
+# Raw-HTML
 
 Display HTML content in the panel. You can add custom `content_classes` to the content wrapper.
 
 *Returns:* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -17,11 +17,11 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 The raw HTML gets automatically outputted in the panel.
 
-##Arguments
+## Arguments
 
 Argument          | Required   | Type         | Default                      | Description
 ----------------- | :--------: | :------:     | ---------------------------- | ---------------------------------------------
