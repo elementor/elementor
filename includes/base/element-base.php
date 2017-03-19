@@ -370,7 +370,13 @@ abstract class Element_Base {
 	}
 
 	public function get_active_settings() {
-		return array_intersect_key( $this->get_settings(), $this->get_active_controls() );
+		$settings = $this->get_settings();
+
+		$active_settings = array_intersect_key( $settings, $this->get_active_controls() );
+
+		$settings_mask = array_fill_keys( array_keys( $settings ), null );
+
+		return array_merge( $settings_mask, $active_settings );
 	}
 
 	public function get_children() {
@@ -453,9 +459,18 @@ abstract class Element_Base {
 				$instance_value = $instance_value[ $condition_sub_key ];
 			}
 
-			// If it's a non empty array - check if the conditionValue contains the controlValue,
-			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			$is_contains = ( is_array( $condition_value ) && ! empty( $condition_value ) ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
+			/**
+			 * If the $condition_value is a non empty array - check if the $condition_value contains the $instance_value,
+			 * If the $instance_value is a non empty array - check if the $instance_value contains the $condition_value
+			 * otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			 **/
+			if ( is_array( $condition_value ) && ! empty( $condition_value ) ) {
+				$is_contains = in_array( $instance_value, $condition_value );
+			} elseif ( is_array( $instance_value ) && ! empty( $instance_value ) ) {
+				$is_contains = in_array( $condition_value, $instance_value );
+			} else {
+				$is_contains = $instance_value === $condition_value;
+			}
 
 			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
 				return false;
