@@ -50,7 +50,7 @@ class Page_Settings_Manager {
 
 		update_post_meta( $post->ID, self::META_KEY, $elementor_page_settings );
 
-		$css_file = new Global_CSS_File( $post->ID );
+		$css_file = new Post_CSS_File( $post->ID );
 
 		$css_file->update();
 
