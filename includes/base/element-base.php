@@ -223,7 +223,7 @@ abstract class Element_Base {
 		} );
 	}
 
-	public final function add_responsive_control( $id, array $args ) {
+	final public function add_responsive_control( $id, array $args, $overwrite = false ) {
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
 			self::RESPONSIVE_TABLET,
@@ -251,49 +251,15 @@ abstract class Element_Base {
 
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
-			$this->add_control(
-				$id . $id_suffix,
-				$control_args
-			);
+			$this->add_control( $id . $id_suffix, $control_args, $overwrite );
 		}
 	}
 
-	public final function update_responsive_control( $id, array $args ) {
-		$devices = [
-			self::RESPONSIVE_DESKTOP,
-			self::RESPONSIVE_TABLET,
-			self::RESPONSIVE_MOBILE,
-		];
-
-		foreach ( $devices as $device_name ) {
-			$control_args = $args;
-
-			if ( ! empty( $args['prefix_class'] ) ) {
-				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
-
-				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
-			}
-
-			$control_args['responsive'] = [ 'max' => $device_name ];
-
-			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
-				$control_args['default'] = $control_args[ $device_name . '_default' ];
-			}
-
-			unset( $control_args['desktop_default'] );
-			unset( $control_args['tablet_default'] );
-			unset( $control_args['mobile_default'] );
-
-			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
-
-			$this->update_control(
-				$id . $id_suffix,
-				$control_args
-			);
-		}
+	final public function update_responsive_control( $id, array $args ) {
+		$this->add_responsive_control( $id, $args, true );
 	}
 
-	public final function remove_responsive_control( $id ) {
+	final public function remove_responsive_control( $id ) {
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
 			self::RESPONSIVE_TABLET,
