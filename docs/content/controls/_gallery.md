@@ -1,4 +1,4 @@
-#Gallery
+# Gallery
 A control that allows the user to choose set of images from the WordPress media library. 
 
 *Returns:* An array of single image arrays:
@@ -10,7 +10,7 @@ array(
 )
 ```
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -22,7 +22,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -40,7 +40,7 @@ foreach ( $images as $image ) {
 <# }); #>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------

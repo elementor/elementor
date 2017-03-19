@@ -1,9 +1,9 @@
-#Text
+# Text
 A Simple text field
 
 *Returns* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -17,7 +17,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP:** *(Under `render()` method)*
 ```php
@@ -29,7 +29,7 @@ echo '<h2>' . $this->get_settings( 'widget_title' ) . '</h2>';
 <h2>{{{ settings.text }}}</h2>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------

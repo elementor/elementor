@@ -1,9 +1,9 @@
-#URL
+# URL
 A url field with a `show_external` option that shows a button that allows the user to set it to open the link in a new tab.
 
 *Returns:* `array( 'url' => (string), 'is_external' => (bool) )`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -17,7 +17,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -36,7 +36,7 @@ var target = settings.website_url.is_external ? 'target="_blank"' : '';
 <a href="{{ settings.website_url.url }}" {{ target }}>Visit Website</a>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------
