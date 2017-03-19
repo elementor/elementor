@@ -1,9 +1,9 @@
-#Select
+# Select
 A simple Select box control. Accepts an `array` of `options` in which the `key` is the value and the `value` is the option name. 
 
 *Returns* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -26,7 +26,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP:** *(Under `render()` method)*
 ```php
@@ -40,7 +40,7 @@ echo '<div style="border-style: ' . $settings['border_style'] . '"> ... </div>';
 <div style="border-style: {{ settings.text }}"> ... </div>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------

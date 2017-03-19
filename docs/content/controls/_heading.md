@@ -1,7 +1,7 @@
-#Heading
+# Heading
 A UI only control. Show a text heading between controls.
 
-##Example
+## Example
 ```php
 $this->add_control(
     'more_options',
@@ -13,10 +13,10 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 The `heading` gets automatically outputted in the panel.
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | ---------------------------- | ---------------------------------------------
