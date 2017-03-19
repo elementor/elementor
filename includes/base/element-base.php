@@ -258,6 +258,55 @@ abstract class Element_Base {
 		}
 	}
 
+	public final function update_responsive_control( $id, array $args ) {
+		$devices = [
+			self::RESPONSIVE_DESKTOP,
+			self::RESPONSIVE_TABLET,
+			self::RESPONSIVE_MOBILE,
+		];
+
+		foreach ( $devices as $device_name ) {
+			$control_args = $args;
+
+			if ( ! empty( $args['prefix_class'] ) ) {
+				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
+
+				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
+			}
+
+			$control_args['responsive'] = [ 'max' => $device_name ];
+
+			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
+				$control_args['default'] = $control_args[ $device_name . '_default' ];
+			}
+
+			unset( $control_args['desktop_default'] );
+			unset( $control_args['tablet_default'] );
+			unset( $control_args['mobile_default'] );
+
+			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+
+			$this->update_control(
+				$id . $id_suffix,
+				$control_args
+			);
+		}
+	}
+
+	public final function remove_responsive_control( $id ) {
+		$devices = [
+			self::RESPONSIVE_DESKTOP,
+			self::RESPONSIVE_TABLET,
+			self::RESPONSIVE_MOBILE,
+		];
+
+		foreach ( $devices as $device_name ) {
+			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+
+			$this->remove_control( $id . $id_suffix );
+		}
+	}
+
 	public final function get_class_name() {
 		return get_called_class();
 	}
@@ -321,13 +370,7 @@ abstract class Element_Base {
 	}
 
 	public function get_active_settings() {
-		$settings = $this->get_settings();
-
-		$active_settings = array_intersect_key( $settings, $this->get_active_controls() );
-
-		$settings_mask = array_fill_keys( array_keys( $settings ), null );
-
-		return array_merge( $settings_mask, $active_settings );
+		return array_intersect_key( $this->get_settings(), $this->get_active_controls() );
 	}
 
 	public function get_children() {
@@ -410,18 +453,9 @@ abstract class Element_Base {
 				$instance_value = $instance_value[ $condition_sub_key ];
 			}
 
-			/**
-			 * If the $condition_value is a non empty array - check if the $condition_value contains the $instance_value,
-			 * If the $instance_value is a non empty array - check if the $instance_value contains the $condition_value
-			 * otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			 **/
-			if ( is_array( $condition_value ) && ! empty( $condition_value ) ) {
-				$is_contains = in_array( $instance_value, $condition_value );
-			} elseif ( is_array( $instance_value ) && ! empty( $instance_value ) ) {
-				$is_contains = in_array( $condition_value, $instance_value );
-			} else {
-				$is_contains = $instance_value === $condition_value;
-			}
+			// If it's a non empty array - check if the conditionValue contains the controlValue,
+			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
+			$is_contains = ( is_array( $condition_value ) && ! empty( $condition_value ) ) ? in_array( $instance_value, $condition_value ) : $instance_value === $condition_value;
 
 			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
 				return false;
@@ -769,7 +803,7 @@ abstract class Element_Base {
 
 	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
-		    $this->_is_type_instance = false;
+			$this->_is_type_instance = false;
 			$this->_init( $data );
 		} elseif ( $args ) {
 			$this->_default_args = $args;
