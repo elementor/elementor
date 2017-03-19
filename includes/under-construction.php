@@ -178,7 +178,7 @@ class Under_Construction {
 	}
 
 	public function __construct() {
-		$is_enabled = '' !== self::get( 'mode' );
+		$is_enabled = (bool) self::get( 'mode' );
 
 		if ( is_admin() ) {
 			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
