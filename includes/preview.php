@@ -74,7 +74,7 @@ class Preview {
 	}
 
 	public function print_custom_css() {
-		$container_width = Plugin::$instance->page_settings_manager->get( get_the_ID(), 'content_width', absint( get_option( 'elementor_container_width' ) ) );
+		$container_width = absint( get_option( 'elementor_container_width' ) );
 
 		if ( empty( $container_width ) ) {
 			return;
