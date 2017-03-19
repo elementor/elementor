@@ -9,18 +9,6 @@ class Global_CSS_File extends CSS_File {
 
 	const FILE_HANDLER_ID = 'elementor-global';
 
-	private $post_id;
-
-	public function __construct( $post_id = null ) {
-		if ( ! $post_id ) {
-			$post_id = get_the_ID();
-		}
-
-		$this->post_id = $post_id;
-
-		parent::__construct();
-	}
-
 	/**
 	 * @return array
 	 */
