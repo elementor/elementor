@@ -221,10 +221,12 @@ class Widget_Alert extends Widget_Base {
 		}
 
 		if ( ! empty( $settings['show_dismiss'] ) && 'show' === $settings['show_dismiss'] ) {
-			$html .= '<button type="button" class="elementor-alert-dismiss">X</button></div>';
+			$html .= '<button type="button" class="elementor-alert-dismiss">X</button>';
 		}
 
 		echo $html;
+
+		echo '</div>';
 	}
 
 	protected function _content_template() {
@@ -239,9 +241,11 @@ class Widget_Alert extends Widget_Base {
 			}
 
 			if ( 'show' === settings.show_dismiss ) {
-				html += '<button type="button" class="elementor-alert-dismiss">X</button></div>';
+				html += '<button type="button" class="elementor-alert-dismiss">X</button>';
 			}
 
+			html += '</div>';
+		
 			print( html );
 		}
 		#>
