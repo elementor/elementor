@@ -2,7 +2,11 @@
 
 	&elementor-maintenance-on {
 
-		.ab-item:before {
+		> a {
+			background-color: #dc3232;
+		}
+
+		> .ab-item:before {
 			content: "\f160";
 			top: 2px;
 		}
@@ -11,8 +15,8 @@
 	&elementor-maintenance-edit {
 
 		.ab-item:before {
-			content: "\f464";
-			top: 2px;
+		//	content: "\f464";
+		//	top: 0;
 		}
 	}
 }

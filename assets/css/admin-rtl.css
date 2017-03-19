@@ -100,12 +100,11 @@
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
-#wp-admin-bar-elementor-maintenance-on .ab-item:before {
-  content: "\f160";
-  top: 2px; }
+#wp-admin-bar-elementor-maintenance-on > a {
+  background-color: #dc3232; }
 
-#wp-admin-bar-elementor-maintenance-edit .ab-item:before {
-  content: "\f464";
+#wp-admin-bar-elementor-maintenance-on > .ab-item:before {
+  content: "\f160";
   top: 2px; }
 
 .elementor-video-wrapper {
