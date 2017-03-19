@@ -59,7 +59,7 @@ class Post_CSS_File extends CSS_File {
 		$container_width = Plugin::$instance->page_settings_manager->get( $this->post_id, 'content_width' );
 
 		if ( $container_width ) {
-			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', [ 'max-width:' => $container_width . 'px' ] );
+			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', [ 'max-width' => $container_width . 'px' ] );
 		}
 
 		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
