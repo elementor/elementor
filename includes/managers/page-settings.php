@@ -77,7 +77,7 @@ class Page_Settings_Manager {
 				'content_width' => '',
 			];
 
-			$this->settings = array_merge( $defaults, get_post_meta( $post_id, self::META_KEY, true ) );
+			$this->settings = array_merge( $defaults, (array) get_post_meta( $post_id, self::META_KEY, true ) );
 		}
 
 		return $this->settings;
