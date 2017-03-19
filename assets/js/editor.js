@@ -5874,13 +5874,13 @@ module.exports = ViewModule.extend( {
 			this.createStylesheetElement();
 		}
 
+		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
+
 		this.$stylesheetElement.text( styleText );
 	},
 
 	createStylesheetElement: function() {
 		this.$stylesheetElement = Backbone.$( '<style>' );
-
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
 	},
 
 	bindEvents: function() {
