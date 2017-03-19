@@ -188,9 +188,10 @@ class Under_Construction {
 			return;
 		}
 
+		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+
 		if ( is_admin() ) {
 			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
-			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
 		}
 
 		$user = wp_get_current_user();

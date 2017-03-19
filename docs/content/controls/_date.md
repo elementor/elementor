@@ -1,10 +1,10 @@
-#Date Time Picker
+# Date Time Picker
 A control that allows the user to choose a date/time from a calendar. 
 Based on the [jquery-simple-datetimepicker](https://github.com/mugifly/jquery-simple-datetimepicker) jQuery plugin.
 
 *Returns:* `string` The date/time chosen in mysql format: `YYYY-mm-dd HH:ii`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -16,7 +16,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -41,7 +41,7 @@ echo '<div>Something will happen in ' .  $due_date_in_days .  ' days</div>';
 <div>Something will happen in  {{{ due_date_in_days }}} </div>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------

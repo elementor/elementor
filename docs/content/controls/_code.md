@@ -1,11 +1,11 @@
-#Code
+# Code
 
 A Code Editor control based on [Ace editor](https://ace.c9.io/).
 Includes syntax highlighting for HTML/CSS/JavaScript and other programming languages. Accepts a `language` argument to define the code language.
 
 *Returns:* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -18,7 +18,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -32,7 +32,7 @@ echo $settings['custom_html'];
 {{{ settings.custom_html }}}
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------
