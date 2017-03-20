@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
-**Stable tag:** 1.3.4  
+**Stable tag:** 1.3.5  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -176,6 +176,14 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.3.5 - 20.03.2017 ###
+* Tweak! - Minimum WP version is now v4.5
+* Fix! - Shape divider glitch on some screen widths
+* Fix! - Shape divider flip bug in safari browser
+* Fix! - Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))
+* Fix! - Generated CSS-file breakpoint for tablet - changed from 1023px to 1024px
+* Fix! - Close HTML `div` for Alert widget
 
 ### 1.3.4 - 14.03.2017 ###
 * Tweak! - Added more hooks for handling styles & scripts ([Topic](https://wordpress.org/support/topic/is-there-way-to-remove-google-font-link/))
