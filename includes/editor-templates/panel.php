@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
-		<i class="fa fa-{{ icon }}"></i>
+		<i class="{{ icon }}"></i>
 	</div>
 	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 </script>
