@@ -46,7 +46,7 @@ class Preview {
 	}
 
 	/**
-	 * Do not show the conent from the page. Just print empty start HTML.
+	 * Do not show the content from the page. Just print empty start HTML.
 	 * The Javascript will add the content later.
 	 *
 	 * @since 1.0.0
