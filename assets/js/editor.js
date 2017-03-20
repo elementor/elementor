@@ -3142,51 +3142,51 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initialize: function() {
 		this.collection = new Backbone.Collection( [
             {
-                icon: 'paint-brush',
+                icon: 'fa fa-paint-brush',
                 title: elementor.translate( 'global_colors' ),
 				type: 'page',
                 pageName: 'colorScheme'
             },
             {
-                icon: 'font',
+                icon: 'fa fa-font',
                 title: elementor.translate( 'global_fonts' ),
 				type: 'page',
                 pageName: 'typographyScheme'
             },
 			{
-				icon: 'eyedropper',
+				icon: 'fa fa-eyedropper',
 				title: elementor.translate( 'color_picker' ),
 				type: 'page',
 				pageName: 'colorPickerScheme'
 			},
 			{
-				icon: 'history',
+				icon: 'fa fa-history',
 				title: elementor.translate( 'revision_history' ),
 				type: 'page',
 				pageName: 'revisionsPage'
 			},
 			{
-				icon: 'cog',
+				icon: 'fa fa-cog',
 				title: elementor.translate( 'page_settings' ),
 				type: 'page',
 				pageName: 'settingsPage'
 			},
 			{
-				icon: 'cog',
+				icon: 'eicon-elementor',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
 				link: elementor.config.settings_page_link,
 				newTab: true
 			},
             {
-                icon: 'eraser',
+                icon: 'fa fa-eraser',
                 title: elementor.translate( 'clear_page' ),
                 callback: function() {
                     elementor.clearPage();
                 }
             },
 			{
-				icon: 'info-circle',
+				icon: 'fa fa-info-circle',
 				title: elementor.translate( 'about_elementor' ),
 				type: 'link',
 				link: elementor.config.elementor_site,
@@ -3246,15 +3246,7 @@ PanelMenuItemView = Marionette.ItemView.extend( {
 module.exports = PanelMenuItemView;
 
 },{}],49:[function(require,module,exports){
-var SettingsModel = Backbone.Model.extend( {
-	defaults: {
-		post_id: 0,
-		template: '',
-		content_width: '',
-		post_status: '',
-		post_title: ''
-	}
-} );
+var SettingsModel = Backbone.Model.extend();
 
 SettingsModel.prototype.sync = function() {
 	return null;
@@ -3273,7 +3265,7 @@ module.exports = Marionette.CompositeView.extend( {
 	ui: {
 		discard: '.elementor-panel-scheme-discard .elementor-button',
 		apply: '.elementor-panel-scheme-save .elementor-button',
-		input: ':input',
+		input: '.elementor-panel-box :input',
 		sliders: '.elementor-slider'
 	},
 
@@ -3314,9 +3306,16 @@ module.exports = Marionette.CompositeView.extend( {
 		var self = this;
 
 		self.ui.input.each( function() {
-			var $this = Backbone.$( this );
+			var $this = Backbone.$( this ),
+				value = self.model.get( this.name );
 
-			$this.val( self.model.get( this.name ) );
+			switch ( this.type ) {
+				case 'checkbox':
+					$this.prop( 'checked', !! value );
+					break;
+				default:
+					$this.val( value );
+			}
 		} );
 
 		self.initSliders();
@@ -3330,7 +3329,17 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onInputChange: function( event ) {
-		this.model.set( event.target.name, event.target.value );
+		var value;
+
+		switch ( event.target.type ) {
+			case 'checkbox':
+				value = event.target.checked;
+				break;
+			default:
+				value = event.target.value;
+		}
+
+		this.model.set( event.target.name, value );
 
 		this.ui.sliders.filter( '[data-input="' + event.target.name + '"]' ).slider( 'value', event.target.value );
 
@@ -5856,12 +5865,18 @@ module.exports = ViewModule.extend( {
 	},
 
 	renderStyles: function() {
-		var contentWidth = this.getSettings( 'savedSettings.content_width' );
+		var savedSettings = this.getSettings( 'savedSettings' );
 
-		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': contentWidth + 'px' } );
+		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': savedSettings.content_width + 'px' } );
+
+		if ( ! savedSettings.show_title ) {
+			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
+		}
 	},
 
 	updateStylesheet: function() {
+		this.stylesheet.empty();
+
 		this.renderStyles();
 
 		this.addStyleToDocument();
