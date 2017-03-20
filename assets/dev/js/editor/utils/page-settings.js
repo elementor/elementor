@@ -18,6 +18,10 @@ module.exports = ViewModule.extend( {
 		var contentWidth = this.getSettings( 'savedSettings.content_width' );
 
 		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': contentWidth + 'px' } );
+
+		if ( ! savedSettings.show_title ) {
+			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
+		}
 	},
 
 	updateStylesheet: function() {

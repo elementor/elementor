@@ -326,6 +326,7 @@ class Editor {
 			'introduction' => User::get_introduction(),
 			'viewportBreakpoints' => Responsive::get_breakpoints(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
+			'page_title_selector' => get_option( 'elementor_page_title_selector', 'h1.entry-title' ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
