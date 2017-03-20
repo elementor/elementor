@@ -9,7 +9,7 @@ class Page_Settings_Manager {
 
 	const META_KEY = '_elementor_page_settings';
 
-	private $settings = null;
+	private static $settings = [];
 
 	public function get( $post_id, $setting, $default = null ) {
 		$this->get_settings( $post_id );
@@ -21,7 +21,7 @@ class Page_Settings_Manager {
 		return $default;
 	}
 
-	public function save_page_settings() {
+	public static function save_page_settings() {
 		if ( empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( 'You must set the post ID' );
 		}
@@ -83,7 +83,7 @@ class Page_Settings_Manager {
 		return $this->settings;
 	}
 
-	public function template_include( $template ) {
+	public static function template_include( $template ) {
 		if ( self::TEMPLATE_CANVAS === get_post_meta( get_the_ID(), '_wp_page_template', true ) ) {
 			$template = ELEMENTOR_PATH . '/includes/page-templates/empty.php';
 		}
@@ -91,7 +91,7 @@ class Page_Settings_Manager {
 		return $template;
 	}
 
-	public function add_page_templates( $post_templates ) {
+	public static function add_page_templates( $post_templates ) {
 		$post_templates = [
 				self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
 		] + $post_templates;
@@ -101,7 +101,7 @@ class Page_Settings_Manager {
 
 	public function __construct() {
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_page_settings', [ $this, 'save_page_settings' ] );
+			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'save_page_settings' ] );
 		}
 
 		$post_types = get_option( 'elementor_cpt_support', [] );
@@ -109,9 +109,9 @@ class Page_Settings_Manager {
 		$post_types[] = 'elementor_library';
 
 		foreach ( $post_types as $post_type ) {
-			add_filter( "theme_{$post_type}_templates", [ $this, 'add_page_templates' ], 10, 4 );
+			add_filter( "theme_{$post_type}_templates", [ __CLASS__, 'add_page_templates' ], 10, 4 );
 		}
 
-		add_filter( 'template_include', [ $this, 'template_include' ] );
+		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
 	}
 }
