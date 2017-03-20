@@ -8,7 +8,7 @@ module.exports = Marionette.CompositeView.extend( {
 	ui: {
 		discard: '.elementor-panel-scheme-discard .elementor-button',
 		apply: '.elementor-panel-scheme-save .elementor-button',
-		input: ':input',
+		input: '.elementor-panel-box :input',
 		sliders: '.elementor-slider'
 	},
 
