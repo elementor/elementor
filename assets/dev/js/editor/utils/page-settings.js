@@ -25,6 +25,8 @@ module.exports = ViewModule.extend( {
 	},
 
 	updateStylesheet: function() {
+		this.stylesheet.empty();
+
 		this.renderStyles();
 
 		this.addStyleToDocument();
