@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<body <?php body_class(); ?>>
 
 	<?php
-	the_post();
 
 	the_content();
 

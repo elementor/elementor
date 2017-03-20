@@ -502,4 +502,7 @@ body.elementor-editor-inactive #elementor-editor {
 
 .form-table:not(.elementor-under-construction-is-enabled) .elementor-default-hide {
   display: none; }
+
+.elementor-under-construction-error {
+  color: red; }
 /*# sourceMappingURL=admin-rtl.css.map */
