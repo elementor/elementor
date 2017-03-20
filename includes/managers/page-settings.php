@@ -38,6 +38,7 @@ class Page_Settings_Manager {
 
 		$saved = wp_update_post( $post );
 
+		if ( Page_Settings_Manager::is_cpt_custom_templates_supported() ) {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
