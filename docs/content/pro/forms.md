@@ -22,7 +22,7 @@ add_action( 'elementor_pro/forms/form_submitted', function( $module ) {
 
 ## Validation - Filter
 
-###`elementor_pro/forms/validation`
+### `elementor_pro/forms/validation`
 After the forms module is loaded and it's a POST request with the form action.
 This is the place to add a form handlers. 
 
@@ -94,7 +94,7 @@ add_filter( 'elementor_pro/forms/validation', function( $return_array, $form_id,
 ### `elementor_pro/forms/valid_record_submitted`
 Same as the [`elementor_pro/forms/record`](###`elementor_pro/forms/record`), but an action.
 
-##Webhooks Request - Filter 
+## Webhooks Request - Filter 
 
 ### `elementor_pro/forms/webhooks/request_args`
 If the form has a webhook, it's fires here.

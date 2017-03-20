@@ -70,7 +70,7 @@ Argument    | Type                                        | Description
 `$scope`    | *`The current element wrapped with jQuery`* |
 `$`         | *`The jQuery instanse`*                     |
  
- #### Example
+#### Example
  
 ```javascript
 elementorFrontend.hooks.addAction( 'frontend/element_ready/global', function( $scope ) {
@@ -90,7 +90,7 @@ Argument    | Type                                        | Description
 `$scope`    | *`The current element wrapped with jQuery`* |
 `$`         | *`The jQuery instanse`*                     |
  
- #### Example
+#### Example
  
 ```javascript
 elementorFrontend.hooks.addAction( 'frontend/element_ready/widget', function( $scope ) {
@@ -110,7 +110,7 @@ Argument    | Type                                        | Description
 `$scope`    | *`The current element wrapped with jQuery`* |
 `$`         | *`The jQuery instanse`*                     |
  
- #### Example
+#### Example
  
 ```javascript
 // For a widget without a skin (skin = default)
@@ -132,7 +132,7 @@ elementorFrontend.hooks.addAction( 'frontend/element_ready/google-maps.satellite
 
 ## Editor Hooks
 
-###`panel/open_editor/{elementType}`
+### `panel/open_editor/{elementType}`
 Applied when the settings panel is opened to edit an element.
 
 #### Arguments
