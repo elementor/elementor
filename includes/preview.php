@@ -50,11 +50,10 @@ class Preview {
 	 * The Javascript will add the content later.
 	 *
 	 * @since 1.0.0
-	 * @param string $content
 	 *
 	 * @return string
 	 */
-	public function builder_wrapper( $content ) {
+	public function builder_wrapper() {
 		return '<div id="elementor" class="elementor elementor-edit-mode"></div>';
 	}
 
