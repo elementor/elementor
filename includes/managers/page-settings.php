@@ -32,17 +32,12 @@ class Page_Settings_Manager {
 			wp_send_json_error( 'Invalid Post' );
 		}
 
-		if ( ! empty( $_POST['post_title'] ) ) {
-			$post->post_title = $_POST['post_title'];
-		}
+		$post->post_title = $_POST['post_title'];
 
-		if ( ! empty( $_POST['post_status'] ) ) {
-			$post->post_status = $_POST['post_status'];
-		}
+		$post->post_status = $_POST['post_status'];
 
 		$saved = wp_update_post( $post );
 
-		if ( ! empty( $_POST['template'] ) ) {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
