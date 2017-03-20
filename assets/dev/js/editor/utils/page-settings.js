@@ -2,16 +2,20 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 	Stylesheet = require( 'elementor-editor-utils/stylesheet' );
 
 module.exports = ViewModule.extend( {
-	stylesheet: null,
+	stylesheet: new Stylesheet(),
 
-	$stylesheetElement: null,
+	getDefaultElements: function() {
+		return {
+			$stylesheetElement: Backbone.$( '<style>' )
+		};
+	},
 
-	initStylesheet: function() {
-		this.stylesheet = new Stylesheet();
+	bindEvents: function() {
+		elementor.on( 'preview:loaded', this.updateStylesheet );
 	},
 
 	renderStyles: function() {
-		var contentWidth = this.getSettings( 'content_width' );
+		var contentWidth = this.getSettings( 'savedSettings.content_width' );
 
 		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': contentWidth + 'px' } );
 	},
@@ -23,33 +27,13 @@ module.exports = ViewModule.extend( {
 	},
 
 	addStyleToDocument: function() {
-		var styleText = this.stylesheet.toString();
+		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
 
-		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
-			return;
-		}
-
-		if ( ! this.$stylesheetElement ) {
-			this.createStylesheetElement();
-		}
-
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
-
-		this.$stylesheetElement.text( styleText );
-	},
-
-	createStylesheetElement: function() {
-		this.$stylesheetElement = Backbone.$( '<style>' );
-	},
-
-	bindEvents: function() {
-		elementor.on( 'preview:loaded', this.updateStylesheet );
+		this.elements.$stylesheetElement.text( this.stylesheet );
 	},
 
 	onInit: function() {
-		this.setSettings( elementor.config.page_settings );
-
-		this.initStylesheet();
+		this.setSettings( 'savedSettings', elementor.config.page_settings );
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	}
