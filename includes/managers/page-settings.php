@@ -99,6 +99,12 @@ class Page_Settings_Manager {
 		return $post_templates;
 	}
 
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
+	}
+
 	public function __construct() {
 		if ( Utils::is_ajax() ) {
 			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'save_page_settings' ] );
