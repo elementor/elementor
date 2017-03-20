@@ -58,7 +58,7 @@ class Page_Settings_Manager {
 				return null;
 			}
 
-			$defaults = [
+			$settings = [
 				'post_id' => $post->ID,
 				'post_title' => $post->post_title,
 				'post_status' => $post->post_status,
@@ -67,7 +67,13 @@ class Page_Settings_Manager {
 				'show_title' => true,
 			];
 
-			self::$settings[ $post_id ] = array_merge( $defaults, (array) get_post_meta( $post_id, self::META_KEY, true ) );
+			$saved_settings = get_post_meta( $post_id, self::META_KEY, true );
+
+			if ( $saved_settings ) {
+				$settings = array_merge( $settings, $saved_settings );
+			}
+
+			self::$settings[ $post_id ] = $settings;
 		}
 
 		$post_settings = self::$settings[ $post_id ];
