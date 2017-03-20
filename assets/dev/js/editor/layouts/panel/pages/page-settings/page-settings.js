@@ -27,7 +27,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	initModel: function() {
-		this.model.set( elementor.pageSettings.getSettings() );
+		this.model.set( elementor.pageSettings.getSettings( 'savedSettings' ) );
 	},
 
 	initSliders: function() {
@@ -83,7 +83,7 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.ajax.send( 'save_page_settings', {
 			data: settings,
 			success: function() {
-				elementor.pageSettings.setSettings( settings );
+				elementor.pageSettings.setSettings( 'savedSettings', settings );
 
 				elementorFrontend.getScopeWindow().location.reload();
 
