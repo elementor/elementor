@@ -42,7 +42,7 @@ class Page_Settings_Manager {
 
 		$saved = wp_update_post( $post );
 
-		if ( ! empty( $_POST['template'] ) ) {
+		if ( isset( $_POST['template'] ) ) {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
