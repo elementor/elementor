@@ -1,9 +1,9 @@
-#Choose
+# Choose
 A component that represents radio buttons as a stylized group of buttons with icons. Accepts `options` as an associative array of arrays (array for each option).
  
 *Returns:* `string` - The key of the selected option.
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -29,7 +29,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -43,7 +43,7 @@ echo '<div style="text-align:' . $align . '"> ... </div>'
 <div style="text-align:{{ settings.align }}"> ... </div>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | ---------------------------  | ---------------------------------------------
