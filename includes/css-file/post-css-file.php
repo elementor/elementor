@@ -91,6 +91,12 @@ class Post_CSS_File extends CSS_File {
 		return 'elementor-frontend';
 	}
 
+	protected function get_file_handle_id() {
+		return 'elementor-post-' . $this->post_id;
+	}
+
+	protected function get_file_name() {
+		return self::FILE_PREFIX . $this->post_id;
 	/**
 	 * @param Element_Base $element
 	 * @param array $controls
@@ -179,12 +185,7 @@ class Post_CSS_File extends CSS_File {
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 
-	protected function get_file_handle_id() {
-		return 'elementor-post-' . $this->post_id;
-	}
 
-	protected function get_file_name() {
-		return self::FILE_PREFIX . $this->post_id;
 
 		if ( ! $settings['show_title'] ) {
 			$page_title_selector = get_option( 'elementor_page_title_selector', 'h1.entry-title' );
