@@ -177,6 +177,14 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.3.5 - 20.03.2017 ###
+* Tweak! - Minimum WP version is now v4.5
+* Fix! - Shape divider glitch on some screen widths
+* Fix! - Shape divider flip bug in safari browser
+* Fix! - Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))
+* Fix! - Generated CSS-file breakpoint for tablet - changed from 1023px to 1024px
+* Fix! - Close HTML `div` for Alert widget
+
 ### 1.3.4 - 14.03.2017 ###
 * Tweak! - Added more hooks for handling styles & scripts ([Topic](https://wordpress.org/support/topic/is-there-way-to-remove-google-font-link/))
 * Tweak! - Added Swiper library for future widgets
