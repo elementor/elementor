@@ -185,5 +185,11 @@ class Post_CSS_File extends CSS_File {
 
 	protected function get_file_name() {
 		return self::FILE_PREFIX . $this->post_id;
+
+		if ( ! $settings['show_title'] ) {
+			$page_title_selector = get_option( 'elementor_page_title_selector', 'h1.entry-title' );
+
+			$this->stylesheet_obj->add_rules( '.elementor-page ' . $page_title_selector, [ 'display' => 'none' ] );
+		}
 	}
 }

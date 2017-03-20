@@ -32,7 +32,10 @@ class Page_Settings_Manager {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
-		$elementor_page_settings['content_width'] = $_POST['content_width'];
+		$elementor_page_settings = [
+			'content_width' => $_POST['content_width'],
+			'show_title' => filter_var( $_POST['show_title'], FILTER_VALIDATE_BOOLEAN ),
+		];
 
 		update_post_meta( $post->ID, self::META_KEY, $elementor_page_settings );
 
@@ -60,7 +63,8 @@ class Page_Settings_Manager {
 				'post_title' => $post->post_title,
 				'post_status' => $post->post_status,
 				'template' => get_post_meta( $post->ID, '_wp_page_template', true ),
-				'content_width' => '',
+				'content_width' => null,
+				'show_title' => true,
 			];
 
 			self::$settings[ $post_id ] = array_merge( $defaults, (array) get_post_meta( $post_id, self::META_KEY, true ) );
