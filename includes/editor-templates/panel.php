@@ -299,7 +299,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 						<select name="post_status">
 						<?php
 						foreach ( get_post_statuses() as $value => $label ) {
-							echo "\n\t<option value='" . $value . "'>$label</option>";
+							echo '<option value="' . $value . '">' . $label . '</option>';
 						}
 						?>
 						</select>
