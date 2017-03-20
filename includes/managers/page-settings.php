@@ -33,7 +33,6 @@ class Page_Settings_Manager {
 		}
 
 		$elementor_page_settings = [
-			'content_width' => $_POST['content_width'],
 			'show_title' => filter_var( $_POST['show_title'], FILTER_VALIDATE_BOOLEAN ),
 		];
 
@@ -63,7 +62,6 @@ class Page_Settings_Manager {
 				'post_title' => $post->post_title,
 				'post_status' => $post->post_status,
 				'template' => get_post_meta( $post->ID, '_wp_page_template', true ),
-				'content_width' => null,
 				'show_title' => true,
 			];
 

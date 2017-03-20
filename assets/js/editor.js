@@ -5867,8 +5867,6 @@ module.exports = ViewModule.extend( {
 	renderStyles: function() {
 		var savedSettings = this.getSettings( 'savedSettings' );
 
-		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': savedSettings.content_width + 'px' } );
-
 		if ( ! savedSettings.show_title ) {
 			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
 		}
