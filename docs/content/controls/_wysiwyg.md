@@ -1,10 +1,10 @@
-#WYSIWYG
+# WYSIWYG
 
 The WordPress rich-text editor (TinyMCE)
 
 *Returns:* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -17,7 +17,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -31,7 +31,7 @@ echo '<div class="description">' . $settings['item_description'] . '</div>';
 <div class="description">{{{ settings.item_description }}}</div>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------

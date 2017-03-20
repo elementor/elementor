@@ -1,4 +1,4 @@
-#Dimensions
+# Dimensions
 A control that allows the user to set the "Box Model" dimensions: top / right / bottom / left - for margin / padding /   
 
 *Returns:* `array( 
@@ -10,7 +10,7 @@ A control that allows the user to set the "Box Model" dimensions: top / right / 
 		'isLinked' => (bool) 
 		)`
 		
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -26,11 +26,11 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 Because it's a Style Control, it's used with the `selectors` parameter that generates the css automatically.
 
-##Arguments
+## Arguments
 
 Argument            | Required   | Type             | Default                      | Description
 ------------        | :--------: | :--------------: | :--------------------------: | ---------------------------------------------

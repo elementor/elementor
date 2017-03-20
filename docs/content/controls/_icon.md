@@ -1,9 +1,9 @@
-#Icon
+# Icon
 A select box of font icons based on the [Font Awesome](http://fontawesome.io/) project. Accepts `include` or `exclude` arguments for showing only a partial list of icons.
 
 *Returns*: `string` - CSS classes of the selected icon.
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -28,7 +28,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP:** *(Under `render()` method)*
 ```php
@@ -41,7 +41,7 @@ echo '<i class="' . esc_attr( $icon ) . '"></i>';
 <i class="{{ settings.icon }}"></i>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | ---------------------------- | ---------------------------------------------
