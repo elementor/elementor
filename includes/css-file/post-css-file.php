@@ -186,10 +186,6 @@ class Post_CSS_File extends CSS_File {
 	private function add_page_settings_rules() {
 		$settings = Page_Settings_Manager::get_settings( $this->post_id );
 
-		if ( $settings['content_width'] ) {
-			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', [ 'max-width' => $settings['content_width'] . 'px' ] );
-		}
-
 		if ( ! $settings['show_title'] ) {
 			$page_title_selector = get_option( 'elementor_page_title_selector', 'h1.entry-title' );
 
