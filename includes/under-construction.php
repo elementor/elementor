@@ -50,7 +50,7 @@ class Under_Construction {
 
 		add_settings_section(
 			$under_construction_section,
-			__( 'Under Construction', 'elementor' ),
+			__( 'Maintenance Mode', 'elementor' ),
 			'__return_empty_string', // No need intro text for this section right now
 			Tools::PAGE_ID
 		);
@@ -82,7 +82,7 @@ class Under_Construction {
 
 		add_settings_field(
 			$field_id,
-			__( 'Hide The locked page for', 'elementor' ),
+			__( 'Who Can Access', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
 			$under_construction_section,
@@ -105,7 +105,7 @@ class Under_Construction {
 
 		add_settings_field(
 			$field_id,
-			__( 'Exclude Roles', 'elementor' ),
+			__( 'Roles', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
 			$under_construction_section,
