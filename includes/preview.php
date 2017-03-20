@@ -21,8 +21,6 @@ class Preview {
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'wp_head', [ $this, 'print_custom_css' ] );
-
-		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
 		// Tell to WP Cache plugins do not cache this request.
@@ -45,19 +43,6 @@ class Preview {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Add custom class in `<body>` element.
-	 *
-	 * @since 1.0.0
-	 * @param array $classes
-	 *
-	 * @return array
-	 */
-	public function body_class( $classes = [] ) {
-		$classes[] = 'elementor-body';
-		return $classes;
 	}
 
 	/**
