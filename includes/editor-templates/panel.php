@@ -308,26 +308,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 		<?php } ?>
-
-		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label class="elementor-control-title">
-						<?php _e( 'Template', 'elementor' ); ?>
-					</label>
-					<div class="elementor-control-input-wrapper">
-						<select name="template">
-							<option value=""><?php _e( 'None', 'elementor' ); ?></option>
-							<?php
-							require_once ABSPATH . '/wp-admin/includes/theme.php';
-							require_once ABSPATH . '/wp-admin/includes/template.php';
-							page_template_dropdown() ?>
-						</select>
+		<?php if ( Page_Settings_Manager::is_cpt_custom_templates_supported() ) { ?>
+			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
+				<div class="elementor-control-content">
+					<div class="elementor-control-field">
+						<label class="elementor-control-title">
+							<?php _e( 'Template', 'elementor' ); ?>
+						</label>
+						<div class="elementor-control-input-wrapper">
+							<select name="template">
+								<option value=""><?php _e( 'None', 'elementor' ); ?></option>
+								<?php
+								require_once ABSPATH . '/wp-admin/includes/template.php';
+								page_template_dropdown( '', $post_type );
+								?>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-
+		<?php } ?>
 		<div class="elementor-control elementor-control-content_width elementor-control-type-slider elementor-control-under-section elementor-label-block elementor-control-separator-default">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
