@@ -11,16 +11,6 @@ class Page_Settings_Manager {
 
 	private static $settings = [];
 
-	public function get( $post_id, $setting, $default = null ) {
-		$this->get_settings( $post_id );
-
-		if ( isset( $this->settings[ $setting ] ) ) {
-			return $this->settings[ $setting ];
-		}
-
-		return $default;
-	}
-
 	public static function save_page_settings() {
 		if ( empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( 'You must set the post ID' );
@@ -57,12 +47,12 @@ class Page_Settings_Manager {
 		}
 	}
 
-	public function get_settings( $post_id ) {
-		if ( null === $this->settings ) {
+	public static function get_settings( $post_id, $setting = null ) {
+		if ( ! isset( self::$settings[ $post_id ] ) ) {
 			$post = get_post( $post_id );
 
 			if ( ! $post ) {
-				return [];
+				return null;
 			}
 
 			$defaults = [
@@ -73,10 +63,16 @@ class Page_Settings_Manager {
 				'content_width' => '',
 			];
 
-			$this->settings = array_merge( $defaults, (array) get_post_meta( $post_id, self::META_KEY, true ) );
+			self::$settings[ $post_id ] = array_merge( $defaults, (array) get_post_meta( $post_id, self::META_KEY, true ) );
 		}
 
-		return $this->settings;
+		$post_settings = self::$settings[ $post_id ];
+
+		if ( $setting ) {
+			return isset( $post_settings[ $setting ] ) ? $post_settings[ $setting ] : null;
+		}
+
+		return $post_settings;
 	}
 
 	public static function template_include( $template ) {
