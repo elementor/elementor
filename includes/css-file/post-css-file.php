@@ -56,7 +56,7 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	protected function render_css() {
-		$container_width = Plugin::$instance->page_settings_manager->get( $this->post_id, 'content_width' );
+		$container_width = Page_Settings_Manager::get_settings( $this->post_id, 'content_width' );
 
 		if ( $container_width ) {
 			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', [ 'max-width' => $container_width . 'px' ] );
