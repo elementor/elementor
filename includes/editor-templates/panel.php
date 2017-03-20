@@ -281,34 +281,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 
-		<?php
-		$post = get_post();
-		$post_type = $post->post_type;
-		$post_type_object = get_post_type_object( $post_type );
-		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
-
-		if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) {
-		?>
-		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
+		<div class="elementor-control elementor-control-type-switcher elementor-control-under-section elementor-label-inline elementor-control-separator-default">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
-					<label class="elementor-control-title">
-						<?php _e( 'Post Status', 'elementor' ); ?>
-					</label>
+					<label class="elementor-control-title">Show Title</label>
 					<div class="elementor-control-input-wrapper">
-						<select name="post_status">
-						<?php
-						foreach ( get_post_statuses() as $value => $label ) {
-							echo '<option value="' . $value . '">' . $label . '</option>';
-						}
-						?>
-						</select>
+						<label class="elementor-switch">
+							<input type="checkbox" class="elementor-switch-input" name="show_title">
+							<span class="elementor-switch-label" data-on="Yes" data-off="No"></span>
+							<span class="elementor-switch-handle"></span>
+						</label>
 					</div>
 				</div>
 			</div>
 		</div>
-		<?php } ?>
-		<?php if ( Page_Settings_Manager::is_cpt_custom_templates_supported() ) { ?>
+
+		<?php
+		$post = get_post();
+		$post_type = $post->post_type;
+
+		if ( Page_Settings_Manager::is_cpt_custom_templates_supported() ) { ?>
 			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
 				<div class="elementor-control-content">
 					<div class="elementor-control-field">
@@ -343,6 +335,32 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				</div>
 			</div>
 		</div>
+
+		<?php
+		$post_type_object = get_post_type_object( $post_type );
+		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
+
+		if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) {
+		?>
+			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
+				<div class="elementor-control-content">
+					<div class="elementor-control-field">
+						<label class="elementor-control-title">
+							<?php _e( 'Post Status', 'elementor' ); ?>
+						</label>
+						<div class="elementor-control-input-wrapper">
+							<select name="post_status">
+								<?php
+								foreach ( get_post_statuses() as $value => $label ) {
+									echo '<option value="' . $value . '">' . $label . '</option>';
+								}
+								?>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		<?php } ?>
 	</div>
 </script>
 
