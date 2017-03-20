@@ -1,10 +1,10 @@
-#Textarea
+# Textarea
 
 A simple textarea field with an option to set the number of `rows`.
 
 *Returns:* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -17,7 +17,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -31,7 +31,7 @@ echo '<p>' . $settings['item_description'] . '</p>';
 <p>{{{ settings.item_description }}}</p>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------
