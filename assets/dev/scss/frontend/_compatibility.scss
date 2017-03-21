@@ -4,21 +4,3 @@
 		display: none; // Fix for jQuery FitVids plugin
 	}
 }
-
-//Elementor Reset (For themes & plugins compatibilities)
-.elementor {
-
-	ul.elementor-reset {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		line-height: 1;
-
-		li {
-			margin: 0;
-			padding: 0;
-			list-style: none;
-			line-height: 1;
-		}
-	}
-}
