@@ -223,7 +223,7 @@ abstract class Element_Base {
 		} );
 	}
 
-	public final function add_responsive_control( $id, array $args ) {
+	final public function add_responsive_control( $id, array $args, $overwrite = false ) {
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
 			self::RESPONSIVE_TABLET,
@@ -251,10 +251,25 @@ abstract class Element_Base {
 
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
-			$this->add_control(
-				$id . $id_suffix,
-				$control_args
-			);
+			$this->add_control( $id . $id_suffix, $control_args, $overwrite );
+		}
+	}
+
+	final public function update_responsive_control( $id, array $args ) {
+		$this->add_responsive_control( $id, $args, true );
+	}
+
+	final public function remove_responsive_control( $id ) {
+		$devices = [
+			self::RESPONSIVE_DESKTOP,
+			self::RESPONSIVE_TABLET,
+			self::RESPONSIVE_MOBILE,
+		];
+
+		foreach ( $devices as $device_name ) {
+			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+
+			$this->remove_control( $id . $id_suffix );
 		}
 	}
 
@@ -769,7 +784,7 @@ abstract class Element_Base {
 
 	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
-		    $this->_is_type_instance = false;
+			$this->_is_type_instance = false;
 			$this->_init( $data );
 		} elseif ( $args ) {
 			$this->_default_args = $args;

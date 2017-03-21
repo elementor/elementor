@@ -1504,9 +1504,10 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.model ? this.model.get( 'elType' ) : 'page';
+			saveType = this.model ? this.model.get( 'elType' ) : 'page',
+			JSONParams = { removeDefault: true };
 
-		formData.data = this.model ? [ this.model.toJSON() ] : elementor.elements.toJSON();
+		formData.data = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
@@ -3142,51 +3143,51 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initialize: function() {
 		this.collection = new Backbone.Collection( [
             {
-                icon: 'paint-brush',
+                icon: 'fa fa-paint-brush',
                 title: elementor.translate( 'global_colors' ),
 				type: 'page',
                 pageName: 'colorScheme'
             },
             {
-                icon: 'font',
+                icon: 'fa fa-font',
                 title: elementor.translate( 'global_fonts' ),
 				type: 'page',
                 pageName: 'typographyScheme'
             },
 			{
-				icon: 'eyedropper',
+				icon: 'fa fa-eyedropper',
 				title: elementor.translate( 'color_picker' ),
 				type: 'page',
 				pageName: 'colorPickerScheme'
 			},
 			{
-				icon: 'history',
+				icon: 'fa fa-history',
 				title: elementor.translate( 'revision_history' ),
 				type: 'page',
 				pageName: 'revisionsPage'
 			},
 			{
-				icon: 'cog',
+				icon: 'fa fa-cog',
 				title: elementor.translate( 'page_settings' ),
 				type: 'page',
 				pageName: 'settingsPage'
 			},
 			{
-				icon: 'cog',
+				icon: 'eicon-elementor',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
 				link: elementor.config.settings_page_link,
 				newTab: true
 			},
             {
-                icon: 'eraser',
+                icon: 'fa fa-eraser',
                 title: elementor.translate( 'clear_page' ),
                 callback: function() {
                     elementor.clearPage();
                 }
             },
 			{
-				icon: 'info-circle',
+				icon: 'fa fa-info-circle',
 				title: elementor.translate( 'about_elementor' ),
 				type: 'link',
 				link: elementor.config.elementor_site,
@@ -3246,15 +3247,7 @@ PanelMenuItemView = Marionette.ItemView.extend( {
 module.exports = PanelMenuItemView;
 
 },{}],49:[function(require,module,exports){
-var SettingsModel = Backbone.Model.extend( {
-	defaults: {
-		post_id: 0,
-		template: '',
-		content_width: '',
-		post_status: '',
-		post_title: ''
-	}
-} );
+var SettingsModel = Backbone.Model.extend();
 
 SettingsModel.prototype.sync = function() {
 	return null;
@@ -3273,7 +3266,7 @@ module.exports = Marionette.CompositeView.extend( {
 	ui: {
 		discard: '.elementor-panel-scheme-discard .elementor-button',
 		apply: '.elementor-panel-scheme-save .elementor-button',
-		input: ':input',
+		input: '.elementor-panel-box :input',
 		sliders: '.elementor-slider'
 	},
 
@@ -3292,7 +3285,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	initModel: function() {
-		this.model.set( elementor.pageSettings.getSettings() );
+		this.model.set( elementor.pageSettings.getSettings( 'savedSettings' ) );
 	},
 
 	initSliders: function() {
@@ -3314,9 +3307,16 @@ module.exports = Marionette.CompositeView.extend( {
 		var self = this;
 
 		self.ui.input.each( function() {
-			var $this = Backbone.$( this );
+			var $this = Backbone.$( this ),
+				value = self.model.get( this.name );
 
-			$this.val( self.model.get( this.name ) );
+			switch ( this.type ) {
+				case 'checkbox':
+					$this.prop( 'checked', !! value );
+					break;
+				default:
+					$this.val( value );
+			}
 		} );
 
 		self.initSliders();
@@ -3330,7 +3330,17 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onInputChange: function( event ) {
-		this.model.set( event.target.name, event.target.value );
+		var value;
+
+		switch ( event.target.type ) {
+			case 'checkbox':
+				value = event.target.checked;
+				break;
+			default:
+				value = event.target.value;
+		}
+
+		this.model.set( event.target.name, value );
 
 		this.ui.sliders.filter( '[data-input="' + event.target.name + '"]' ).slider( 'value', event.target.value );
 
@@ -3348,7 +3358,7 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.ajax.send( 'save_page_settings', {
 			data: settings,
 			success: function() {
-				elementor.pageSettings.setSettings( settings );
+				elementor.pageSettings.setSettings( 'savedSettings', settings );
 
 				elementorFrontend.getScopeWindow().location.reload();
 
@@ -5843,54 +5853,42 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 	Stylesheet = require( 'elementor-editor-utils/stylesheet' );
 
 module.exports = ViewModule.extend( {
-	stylesheet: null,
+	stylesheet: new Stylesheet(),
 
-	$stylesheetElement: null,
-
-	initStylesheet: function() {
-		this.stylesheet = new Stylesheet();
-	},
-
-	renderStyles: function() {
-		var contentWidth = this.getSettings( 'content_width' );
-
-		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': contentWidth + 'px' } );
-	},
-
-	updateStylesheet: function() {
-		this.renderStyles();
-
-		this.addStyleToDocument();
-	},
-
-	addStyleToDocument: function() {
-		var styleText = this.stylesheet.toString();
-
-		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
-			return;
-		}
-
-		if ( ! this.$stylesheetElement ) {
-			this.createStylesheetElement();
-		}
-
-		this.$stylesheetElement.text( styleText );
-	},
-
-	createStylesheetElement: function() {
-		this.$stylesheetElement = Backbone.$( '<style>' );
-
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
+	getDefaultElements: function() {
+		return {
+			$stylesheetElement: Backbone.$( '<style>' )
+		};
 	},
 
 	bindEvents: function() {
 		elementor.on( 'preview:loaded', this.updateStylesheet );
 	},
 
-	onInit: function() {
-		this.setSettings( elementor.config.page_settings );
+	renderStyles: function() {
+		var savedSettings = this.getSettings( 'savedSettings' );
 
-		this.initStylesheet();
+		if ( ! savedSettings.show_title ) {
+			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
+		}
+	},
+
+	updateStylesheet: function() {
+		this.stylesheet.empty();
+
+		this.renderStyles();
+
+		this.addStyleToDocument();
+	},
+
+	addStyleToDocument: function() {
+		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
+
+		this.elements.$stylesheetElement.text( this.stylesheet );
+	},
+
+	onInit: function() {
+		this.setSettings( 'savedSettings', elementor.config.page_settings );
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	}

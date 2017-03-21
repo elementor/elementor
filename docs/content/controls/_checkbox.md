@@ -34,7 +34,7 @@ if ( 'on' == $settings['show_title'] ) {
 <# } #>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------  | ---------------------------------------------

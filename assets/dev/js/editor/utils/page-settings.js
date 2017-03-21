@@ -2,54 +2,42 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 	Stylesheet = require( 'elementor-editor-utils/stylesheet' );
 
 module.exports = ViewModule.extend( {
-	stylesheet: null,
+	stylesheet: new Stylesheet(),
 
-	$stylesheetElement: null,
-
-	initStylesheet: function() {
-		this.stylesheet = new Stylesheet();
-	},
-
-	renderStyles: function() {
-		var contentWidth = this.getSettings( 'content_width' );
-
-		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': contentWidth + 'px' } );
-	},
-
-	updateStylesheet: function() {
-		this.renderStyles();
-
-		this.addStyleToDocument();
-	},
-
-	addStyleToDocument: function() {
-		var styleText = this.stylesheet.toString();
-
-		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
-			return;
-		}
-
-		if ( ! this.$stylesheetElement ) {
-			this.createStylesheetElement();
-		}
-
-		this.$stylesheetElement.text( styleText );
-	},
-
-	createStylesheetElement: function() {
-		this.$stylesheetElement = Backbone.$( '<style>' );
-
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
+	getDefaultElements: function() {
+		return {
+			$stylesheetElement: Backbone.$( '<style>' )
+		};
 	},
 
 	bindEvents: function() {
 		elementor.on( 'preview:loaded', this.updateStylesheet );
 	},
 
-	onInit: function() {
-		this.setSettings( elementor.config.page_settings );
+	renderStyles: function() {
+		var savedSettings = this.getSettings( 'savedSettings' );
 
-		this.initStylesheet();
+		if ( ! savedSettings.show_title ) {
+			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
+		}
+	},
+
+	updateStylesheet: function() {
+		this.stylesheet.empty();
+
+		this.renderStyles();
+
+		this.addStyleToDocument();
+	},
+
+	addStyleToDocument: function() {
+		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
+
+		this.elements.$stylesheetElement.text( this.stylesheet );
+	},
+
+	onInit: function() {
+		this.setSettings( 'savedSettings', elementor.config.page_settings );
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	}
