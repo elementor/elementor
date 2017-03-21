@@ -23,15 +23,19 @@ class Under_Construction {
 			return;
 		}
 
-		query_posts( [
-			'post__in' => [ self::get( 'template_id' ) ],
-			'post_type' => Source_Local::CPT,
-		] );
+		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`
+		$GLOBALS['post'] = get_post( self::get( 'template_id' ) );
 
 		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
 	}
 
 	public function template_include( $template ) {
+		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
+		query_posts( [
+			'p' => self::get( 'template_id' ),
+			'post_type' => Source_Local::CPT,
+		] );
+
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
 			header( "$protocol 503 Service Unavailable", true, 503 );
@@ -50,8 +54,10 @@ class Under_Construction {
 
 		add_settings_section(
 			$under_construction_section,
-			__( 'Under Construction', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
+			__( 'Maintenance Mode', 'elementor' ),
+			function () {
+				echo '<div id="elementor-maintenance-mode"></div>';
+			},
 			Tools::PAGE_ID
 		);
 
@@ -82,7 +88,7 @@ class Under_Construction {
 
 		add_settings_field(
 			$field_id,
-			__( 'Hide The locked page for', 'elementor' ),
+			__( 'Who Can Access', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
 			$under_construction_section,
@@ -90,7 +96,6 @@ class Under_Construction {
 				'id' => $field_id,
 				'class' => $field_id . ' elementor-default-hide',
 				'type' => 'select',
-				'show_select' => true,
 				'std' => 'logged_in',
 				'options' => [
 					'logged_in' => __( 'Logged In', 'elementor' ),
@@ -105,7 +110,7 @@ class Under_Construction {
 
 		add_settings_field(
 			$field_id,
-			__( 'Exclude Roles', 'elementor' ),
+			__( 'Roles', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
 			$under_construction_section,
@@ -132,6 +137,13 @@ class Under_Construction {
 			$options[ $template['template_id'] ] = $template['title'];
 		}
 
+		$template_description = __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
+			sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) );
+
+		if ( empty( $templates ) ) {
+			$template_description .= '<br><span class="elementor-under-construction-error">' . sprintf( __( 'You don\'t have any templates yet. Go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) . '</span>';
+		}
+
 		add_settings_field(
 			$field_id,
 			__( 'Choose Template', 'elementor' ),
@@ -144,29 +156,18 @@ class Under_Construction {
 				'type' => 'select',
 				'show_select' => true,
 				'options' => $options,
-				'desc' => sprintf( '<a target="_blank" class="elementor-edit-template" style="display: none" href="%s"><i class="fa fa-pencil"></i> %s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) ),
+				'desc' => $template_description,
 			]
 		);
 
 		register_setting( Tools::PAGE_ID, $field_id );
 	}
 
-	public function admin_notices() {
-		$tools_url = Tools::get_url() . '#elementor_under_construction_enabled';
-		?>
-		<div class="error">
-			<p>
-				<?php echo sprintf( __( 'The Maintenance Mode is active. Please don\'t forget to <a href="%s">deactivate</a> as soon as you are done.', 'elementor' ), $tools_url ) ?>
-			</p>
-		</div>
-		<?php
-	}
-
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-on',
 			'title' => __( 'Your site is locked', 'elementor' ),
-			'href' => Tools::get_url() . '#elementor_under_construction_enabled',
+			'href' => Tools::get_url() . '#elementor-maintenance-mode',
 		] );
 
 		$wp_admin_bar->add_node( [
@@ -190,10 +191,6 @@ class Under_Construction {
 
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
 
-		if ( is_admin() ) {
-			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
-		}
-
 		$user = wp_get_current_user();
 
 		$exclude_mode = self::get( 'exclude_mode', [] );
@@ -212,6 +209,6 @@ class Under_Construction {
 			}
 		}
 
-		add_action( 'template_redirect', [ $this, 'template_redirect' ] );
+		add_action( 'template_redirect', [ $this, 'template_redirect' ], 1 );
 	}
 }
