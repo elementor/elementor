@@ -15,12 +15,16 @@ module.exports = ViewModule.extend( {
 	},
 
 	renderStyles: function() {
-		var contentWidth = this.getSettings( 'savedSettings.content_width' );
+		var savedSettings = this.getSettings( 'savedSettings' );
 
-		this.stylesheet.addRules( '.elementor-section.elementor-section-boxed > .elementor-container', { 'max-width': contentWidth + 'px' } );
+		if ( ! savedSettings.show_title ) {
+			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
+		}
 	},
 
 	updateStylesheet: function() {
+		this.stylesheet.empty();
+
 		this.renderStyles();
 
 		this.addStyleToDocument();
