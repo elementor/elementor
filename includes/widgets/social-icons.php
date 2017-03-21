@@ -89,6 +89,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-whatsapp',
 							'fa fa-wordpress',
 							'fa fa-xing',
+							'fa fa-yelp',
 							'fa fa-youtube',
 						],
 					],
