@@ -8,7 +8,7 @@ module.exports = Marionette.CompositeView.extend( {
 	ui: {
 		discard: '.elementor-panel-scheme-discard .elementor-button',
 		apply: '.elementor-panel-scheme-save .elementor-button',
-		input: ':input',
+		input: '.elementor-panel-box :input',
 		sliders: '.elementor-slider'
 	},
 
@@ -27,7 +27,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	initModel: function() {
-		this.model.set( elementor.pageSettings.getSettings() );
+		this.model.set( elementor.pageSettings.getSettings( 'savedSettings' ) );
 	},
 
 	initSliders: function() {
@@ -49,9 +49,16 @@ module.exports = Marionette.CompositeView.extend( {
 		var self = this;
 
 		self.ui.input.each( function() {
-			var $this = Backbone.$( this );
+			var $this = Backbone.$( this ),
+				value = self.model.get( this.name );
 
-			$this.val( self.model.get( this.name ) );
+			switch ( this.type ) {
+				case 'checkbox':
+					$this.prop( 'checked', !! value );
+					break;
+				default:
+					$this.val( value );
+			}
 		} );
 
 		self.initSliders();
@@ -65,7 +72,17 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onInputChange: function( event ) {
-		this.model.set( event.target.name, event.target.value );
+		var value;
+
+		switch ( event.target.type ) {
+			case 'checkbox':
+				value = event.target.checked;
+				break;
+			default:
+				value = event.target.value;
+		}
+
+		this.model.set( event.target.name, value );
 
 		this.ui.sliders.filter( '[data-input="' + event.target.name + '"]' ).slider( 'value', event.target.value );
 
@@ -83,7 +100,7 @@ module.exports = Marionette.CompositeView.extend( {
 		elementor.ajax.send( 'save_page_settings', {
 			data: settings,
 			success: function() {
-				elementor.pageSettings.setSettings( settings );
+				elementor.pageSettings.setSettings( 'savedSettings', settings );
 
 				elementorFrontend.getScopeWindow().location.reload();
 
