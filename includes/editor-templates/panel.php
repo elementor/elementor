@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
-		<i class="fa fa-{{ icon }}"></i>
+		<i class="{{ icon }}"></i>
 	</div>
 	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 </script>
@@ -281,68 +281,71 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 
+		<div class="elementor-control elementor-control-type-switcher elementor-control-under-section elementor-label-inline elementor-control-separator-default">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">Show Title</label>
+					<div class="elementor-control-input-wrapper">
+						<label class="elementor-switch">
+							<input type="checkbox" class="elementor-switch-input" name="show_title">
+							<span class="elementor-switch-label" data-on="Yes" data-off="No"></span>
+							<span class="elementor-switch-handle"></span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<?php
 		$post = get_post();
 		$post_type = $post->post_type;
+
+		if ( Page_Settings_Manager::is_cpt_custom_templates_supported() ) { ?>
+			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
+				<div class="elementor-control-content">
+					<div class="elementor-control-field">
+						<label class="elementor-control-title">
+							<?php _e( 'Template', 'elementor' ); ?>
+						</label>
+						<div class="elementor-control-input-wrapper">
+							<select name="template">
+								<option value=""><?php _e( 'None', 'elementor' ); ?></option>
+								<?php
+								require_once ABSPATH . '/wp-admin/includes/template.php';
+								page_template_dropdown( '', $post_type );
+								?>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		<?php } ?>
+
+		<?php
 		$post_type_object = get_post_type_object( $post_type );
 		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
 		if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) {
 		?>
-		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label class="elementor-control-title">
-						<?php _e( 'Post Status', 'elementor' ); ?>
-					</label>
-					<div class="elementor-control-input-wrapper">
-						<select name="post_status">
-						<?php
-						foreach ( get_post_statuses() as $value => $label ) {
-							echo "\n\t<option value='" . $value . "'>$label</option>";
-						}
-						?>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label class="elementor-control-title">
-						<?php _e( 'Template', 'elementor' ); ?>
-					</label>
-					<div class="elementor-control-input-wrapper">
-						<select name="template">
-							<option value=""><?php _e( 'None', 'elementor' ); ?></option>
-							<?php
-							require_once ABSPATH . '/wp-admin/includes/theme.php';
-							require_once ABSPATH . '/wp-admin/includes/template.php';
-							page_template_dropdown() ?>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="elementor-control elementor-control-content_width elementor-control-type-slider elementor-control-under-section elementor-label-block elementor-control-separator-default">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label class="elementor-control-title">
-						<?php _e( 'Content Width', 'elementor' ); ?>
-					</label>
-					<div class="elementor-control-input-wrapper elementor-clearfix">
-						<div class="elementor-slider" data-input="content_width"></div>
-						<div class="elementor-slider-input">
-							<input type="number" min="500" max="1600" name="content_width" />
+			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
+				<div class="elementor-control-content">
+					<div class="elementor-control-field">
+						<label class="elementor-control-title">
+							<?php _e( 'Post Status', 'elementor' ); ?>
+						</label>
+						<div class="elementor-control-input-wrapper">
+							<select name="post_status">
+								<?php
+								foreach ( get_post_statuses() as $value => $label ) {
+									echo '<option value="' . $value . '">' . $label . '</option>';
+								}
+								?>
+							</select>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		<?php } ?>
 	</div>
 </script>
 

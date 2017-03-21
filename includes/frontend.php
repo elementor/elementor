@@ -13,14 +13,18 @@ class Frontend {
 	private $_has_elementor_in_page = false;
 
 	public function init() {
-		if ( Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode() ) {
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			return;
+		}
+
+		add_filter( 'body_class', [ $this, 'body_class' ] );
+
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return;
 		}
 
 		$this->_is_frontend_mode = true;
 		$this->_has_elementor_in_page = Plugin::$instance->db->has_elementor_in_post( get_the_ID() );
-
-		add_filter( 'body_class', [ $this, 'body_class' ] );
 
 		if ( $this->_has_elementor_in_page ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
@@ -47,9 +51,11 @@ class Frontend {
 
 	public function body_class( $classes = [] ) {
 		$classes[] = 'elementor-default';
+
 		if ( is_singular() && 'builder' === Plugin::$instance->db->get_edit_mode( get_the_ID() ) ) {
 			$classes[] = 'elementor-page';
 		}
+
 		return $classes;
 	}
 

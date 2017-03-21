@@ -161,6 +161,24 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		$field_id = 'elementor_page_title_selector';
+		add_settings_field(
+			$field_id,
+			__( 'Page Title Selector', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'std' => 'h1.entry-title',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'Enter page title selector (e.g. .entry-title / h1 etc). Leave blank to use the default selector.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
 		add_settings_field(
 			self::UPDATE_TIME_FIELD,
 			'',
