@@ -171,7 +171,7 @@ class Settings {
 			[
 				'id' => $field_id,
 				'type' => 'text',
-				'std' => 'h1.entry-title',
+				'placeholder' => 'h1.entry-title',
 				'classes' => [ 'medium-text' ],
 				'desc' => __( 'Enter page title selector (e.g. .entry-title / h1 etc). Leave blank to use the default selector.', 'elementor' ),
 			]
