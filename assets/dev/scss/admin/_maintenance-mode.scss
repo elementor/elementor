@@ -1,11 +1,11 @@
 
-.form-table:not(.elementor-under-construction-is-enabled) {
+.form-table:not(.elementor-maintenance-mode-is-enabled) {
 
 	.elementor-default-hide {
 		display: none;
 	}
 }
 
-.elementor-under-construction-error{
+.elementor-maintenance-mode-error{
 	color: red;
 }
