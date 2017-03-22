@@ -3,9 +3,9 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
-class Under_Construction {
+class Maintenance_Mode {
 
-	const OPTION_PREFIX = 'elementor_under_construction_';
+	const OPTION_PREFIX = 'elementor_maintenance_mode_';
 
 	const MODE_MAINTENANCE = 'maintenance';
 	const MODE_COMING_SOON = 'coming_soon';
@@ -18,6 +18,11 @@ class Under_Construction {
 		return update_option( self::OPTION_PREFIX . $option, $value );
 	}
 
+	public function body_class( $classes ) {
+		$classes[] = 'maintenance-mode';
+
+		return $classes;
+	}
 	public function template_redirect() {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return;
@@ -50,48 +55,55 @@ class Under_Construction {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
-		$under_construction_section = 'elementor_under_construction_section';
+		$maintenance_mode_section = 'elementor_maintenance_mode_section';
 
 		add_settings_section(
-			$under_construction_section,
+			$maintenance_mode_section,
 			__( 'Maintenance Mode', 'elementor' ),
 			function () {
+				// Add an anchor for the admin-bar menu
 				echo '<div id="elementor-maintenance-mode"></div>';
+				echo __( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' );
 			},
 			Tools::PAGE_ID
 		);
 
-		$field_id = 'elementor_under_construction_mode';
+		$field_id = 'elementor_maintenance_mode_mode';
 
 		add_settings_field(
 			$field_id,
 			__( 'Choose Mode', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
-			$under_construction_section,
+			$maintenance_mode_section,
 			[
 				'id' => $field_id,
 				'class' => $field_id,
 				'type' => 'select',
 				'options' => [
 					'' => __( 'Disabled', 'elementor' ),
-					'under_construction' => __( 'Under Construction', 'elementor' ),
-					'maintenance' => __( 'Maintenance', 'elementor' ),
+					self::MODE_COMING_SOON => __( 'Coming Soon', 'elementor' ),
+					self::MODE_MAINTENANCE => __( 'Maintenance', 'elementor' ),
 				],
-				'desc' => __( 'Under Construction mode sends HTTP 200, Maintenance mode sends HTTP 503', 'elementor' ),
+				'desc' => '<div id="elementor-maintenance-mode-description" style="display: none">' .
+					__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
+					'</div>' .
+					'<div id="elementor-coming-soon-mode-description" style="display: none">' .
+					__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
+					'</div>',
 			]
 		);
 
 		register_setting( Tools::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_under_construction_exclude_mode';
+		$field_id = 'elementor_maintenance_mode_exclude_mode';
 
 		add_settings_field(
 			$field_id,
 			__( 'Who Can Access', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
-			$under_construction_section,
+			$maintenance_mode_section,
 			[
 				'id' => $field_id,
 				'class' => $field_id . ' elementor-default-hide',
@@ -106,14 +118,14 @@ class Under_Construction {
 
 		register_setting( Tools::PAGE_ID, $field_id );
 
-		$field_id = 'elementor_under_construction_exclude_roles';
+		$field_id = 'elementor_maintenance_mode_exclude_roles';
 
 		add_settings_field(
 			$field_id,
 			__( 'Roles', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
-			$under_construction_section,
+			$maintenance_mode_section,
 			[
 				'id' => $field_id,
 				'class' => $field_id . ' elementor-default-hide',
@@ -123,7 +135,7 @@ class Under_Construction {
 
 		register_setting( Tools::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
 
-		$field_id = 'elementor_under_construction_template_id';
+		$field_id = 'elementor_maintenance_mode_template_id';
 
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
@@ -137,19 +149,21 @@ class Under_Construction {
 			$options[ $template['template_id'] ] = $template['title'];
 		}
 
-		$template_description = __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
-			sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) );
+		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) );
 
-		if ( empty( $templates ) ) {
-			$template_description .= '<br><span class="elementor-under-construction-error">' . sprintf( __( 'You don\'t have any templates yet. Go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) . '</span>';
-		}
+		$template_description .= '<span class="elementor-maintenance-mode-error" style="display: none">' .
+			__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
+			'<br>' .
+			sprintf( __( 'Select one. or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
+			'</span>';
+
 
 		add_settings_field(
 			$field_id,
 			__( 'Choose Template', 'elementor' ),
 			[ $controls_class_name, 'render' ],
 			Tools::PAGE_ID,
-			$under_construction_section,
+			$maintenance_mode_section,
 			[
 				'id'  => $field_id,
 				'class' => $field_id . ' elementor-default-hide',
@@ -166,7 +180,7 @@ class Under_Construction {
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-on',
-			'title' => __( 'Your site is locked', 'elementor' ),
+			'title' => __( 'Maintenance Mode ON', 'elementor' ),
 			'href' => Tools::get_url() . '#elementor-maintenance-mode',
 		] );
 
@@ -179,7 +193,7 @@ class Under_Construction {
 	}
 
 	public function __construct() {
-		$is_enabled = (bool) self::get( 'mode' );
+		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
 		if ( is_admin() ) {
 			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
@@ -209,6 +223,7 @@ class Under_Construction {
 			}
 		}
 
+		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_action( 'template_redirect', [ $this, 'template_redirect' ], 1 );
 	}
 }
