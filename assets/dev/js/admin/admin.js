@@ -3,7 +3,7 @@
 
 	var ElementorAdminApp = {
 
-		underConstruction: null,
+		maintenanceMode: null,
 
 		cacheElements: function() {
 			this.cache = {
@@ -137,7 +137,7 @@
 
 			this.initTemplatesImport();
 
-			this.initUnderConstruction();
+			this.initMaintenanceMode();
 		},
 
 		initTemplatesImport: function() {
@@ -160,10 +160,10 @@
 			} );
 		},
 
-		initUnderConstruction: function() {
-			var UnderConstruction = require( 'elementor-admin/under-construction' );
+		initMaintenanceMode: function() {
+			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
 
-			this.underConstruction = new UnderConstruction();
+			this.maintenanceMode = new MaintenanceMode();
 		},
 
 		getEditMode: function() {

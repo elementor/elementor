@@ -4,7 +4,7 @@
 
 	var ElementorAdminApp = {
 
-		underConstruction: null,
+		maintenanceMode: null,
 
 		cacheElements: function() {
 			this.cache = {
@@ -138,7 +138,7 @@
 
 			this.initTemplatesImport();
 
-			this.initUnderConstruction();
+			this.initMaintenanceMode();
 		},
 
 		initTemplatesImport: function() {
@@ -161,10 +161,10 @@
 			} );
 		},
 
-		initUnderConstruction: function() {
-			var UnderConstruction = require( 'elementor-admin/under-construction' );
+		initMaintenanceMode: function() {
+			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
 
-			this.underConstruction = new UnderConstruction();
+			this.maintenanceMode = new MaintenanceMode();
 		},
 
 		getEditMode: function() {
@@ -182,23 +182,26 @@
 
 }( jQuery, window, document ) );
 
-},{"elementor-admin/under-construction":2}],2:[function(require,module,exports){
+},{"elementor-admin/maintenance-mode":2}],2:[function(require,module,exports){
 var ViewModule = require( 'elementor-utils/view-module' ),
-	UnderConstructionModule;
+	MaintenanceModeModule;
 
-UnderConstructionModule = ViewModule.extend( {
+MaintenanceModeModule = ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				modeSelect: '.elementor_under_construction_mode select',
-				underConstructionTable: 'table',
-				excludeModeSelect: '.elementor_under_construction_exclude_mode select',
-				excludeRolesArea: '.elementor_under_construction_exclude_roles',
-				templateSelect: '.elementor_under_construction_template_id select',
-				editTemplateButton: '.elementor-edit-template'
+				modeSelect: '.elementor_maintenance_mode_mode select',
+				maintenanceModeTable: 'table',
+				maintenanceModeDescription: '#elementor-maintenance-mode-description',
+				comingSoonModeDescription: '#elementor-coming-soon-mode-description',
+				excludeModeSelect: '.elementor_maintenance_mode_exclude_mode select',
+				excludeRolesArea: '.elementor_maintenance_mode_exclude_roles',
+				templateSelect: '.elementor_maintenance_mode_template_id select',
+				editTemplateButton: '.elementor-edit-template',
+				maintenanceModeError: '.elementor-maintenance-mode-error'
 			},
 			classes: {
-				isEnabled: 'elementor-under-construction-is-enabled'
+				isEnabled: 'elementor-maintenance-mode-is-enabled'
 			}
 		};
 	},
@@ -209,15 +212,21 @@ UnderConstructionModule = ViewModule.extend( {
 
 		elements.$modeSelect = jQuery( selectors.modeSelect );
 
-		elements.$underConstructionTable = elements.$modeSelect.parents( selectors.underConstructionTable );
+		elements.$maintenanceModeTable = elements.$modeSelect.parents( selectors.maintenanceModeTable );
 
-		elements.$excludeModeSelect = elements.$underConstructionTable.find( selectors.excludeModeSelect );
+		elements.$excludeModeSelect = elements.$maintenanceModeTable.find( selectors.excludeModeSelect );
 
-		elements.$excludeRolesArea = elements.$underConstructionTable.find( selectors.excludeRolesArea );
+		elements.$excludeRolesArea = elements.$maintenanceModeTable.find( selectors.excludeRolesArea );
 
-		elements.$templateSelect = elements.$underConstructionTable.find( selectors.templateSelect );
+		elements.$templateSelect = elements.$maintenanceModeTable.find( selectors.templateSelect );
 
-		elements.$editTemplateButton = elements.$underConstructionTable.find( selectors.editTemplateButton );
+		elements.$editTemplateButton = elements.$maintenanceModeTable.find( selectors.editTemplateButton );
+
+		elements.$maintenanceModeDescription = elements.$maintenanceModeTable.find( selectors.maintenanceModeDescription );
+
+		elements.$comingSoonModeDescription = elements.$maintenanceModeTable.find( selectors.comingSoonModeDescription );
+
+		elements.$maintenanceModeError = elements.$maintenanceModeTable.find( selectors.maintenanceModeError );
 
 		return elements;
 	},
@@ -227,7 +236,14 @@ UnderConstructionModule = ViewModule.extend( {
 			elements = this.elements;
 
 		elements.$modeSelect.on( 'change', function() {
-			elements.$underConstructionTable.toggleClass( settings.classes.isEnabled, !! elements.$modeSelect.val() );
+			elements.$maintenanceModeTable.toggleClass( settings.classes.isEnabled, !! elements.$modeSelect.val() );
+			if ( 'maintenance' === elements.$modeSelect.val() ) {
+				elements.$maintenanceModeDescription.show();
+				elements.$comingSoonModeDescription.hide();
+			} else if ( 'coming_soon' === elements.$modeSelect.val() ) {
+				elements.$maintenanceModeDescription.hide();
+				elements.$comingSoonModeDescription.show();
+			}
 		} ).trigger( 'change' );
 
 		elements.$excludeModeSelect.on( 'change', function() {
@@ -239,6 +255,7 @@ UnderConstructionModule = ViewModule.extend( {
 
 			if ( ! templateID ) {
 				elements.$editTemplateButton.hide();
+				elements.$maintenanceModeError.show();
 				return;
 			}
 
@@ -247,11 +264,12 @@ UnderConstructionModule = ViewModule.extend( {
 			elements.$editTemplateButton
 				.prop( 'href', editUrl )
 				.show();
+			elements.$maintenanceModeError.hide();
 		} ).trigger( 'change' );
 	}
 } );
 
-module.exports = UnderConstructionModule;
+module.exports = MaintenanceModeModule;
 
 },{"elementor-utils/view-module":4}],3:[function(require,module,exports){
 var Module = function() {
