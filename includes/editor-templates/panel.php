@@ -263,90 +263,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</button>
 		</div>
 	</div>
-	<div class="elementor-panel-box">
-		<div class="elementor-panel-heading">
-			<div class="elementor-panel-heading-title"><?php _e( 'Page Settings', 'elementor' ); ?></div>
-		</div>
-
-		<div class="elementor-control elementor-control-type-text elementor-control-under-section elementor-label-block">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label class="elementor-control-title">
-						<?php _e( 'Title', 'elementor' ); ?>
-					</label>
-					<div class="elementor-control-input-wrapper">
-						<input name="post_title" />
-					</div>
-				</div>
+	<div class="elementor-panel-navigation">
+		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
 			</div>
-		</div>
-
-		<div class="elementor-control elementor-control-type-switcher elementor-control-under-section elementor-label-inline elementor-control-separator-default">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label class="elementor-control-title">Show Title</label>
-					<div class="elementor-control-input-wrapper">
-						<label class="elementor-switch">
-							<input type="checkbox" class="elementor-switch-input" name="show_title">
-							<span class="elementor-switch-label" data-on="Yes" data-off="No"></span>
-							<span class="elementor-switch-handle"></span>
-						</label>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<?php
-		$post = get_post();
-		$post_type = $post->post_type;
-
-		if ( Page_Settings_Manager::is_cpt_custom_templates_supported() ) { ?>
-			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
-				<div class="elementor-control-content">
-					<div class="elementor-control-field">
-						<label class="elementor-control-title">
-							<?php _e( 'Template', 'elementor' ); ?>
-						</label>
-						<div class="elementor-control-input-wrapper">
-							<select name="template">
-								<option value=""><?php _e( 'None', 'elementor' ); ?></option>
-								<?php
-								require_once ABSPATH . '/wp-admin/includes/template.php';
-								page_template_dropdown( '', $post_type );
-								?>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-		<?php } ?>
-
-		<?php
-		$post_type_object = get_post_type_object( $post_type );
-		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
-
-		if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) {
-		?>
-			<div class="elementor-control elementor-control-type-select elementor-control-under-section elementor-label-inline elementor-control-separator-default">
-				<div class="elementor-control-content">
-					<div class="elementor-control-field">
-						<label class="elementor-control-title">
-							<?php _e( 'Post Status', 'elementor' ); ?>
-						</label>
-						<div class="elementor-control-input-wrapper">
-							<select name="post_status">
-								<?php
-								foreach ( get_post_statuses() as $value => $label ) {
-									echo '<option value="' . $value . '">' . $label . '</option>';
-								}
-								?>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-		<?php } ?>
+			<# } ); #>
 	</div>
+	<div id="elementor-panel-page-settings-controls" class="elementor-panel-box"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
@@ -367,4 +291,3 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
 	</div>
 </script>
-

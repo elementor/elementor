@@ -184,7 +184,9 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	private function add_page_settings_rules() {
-		$settings = Page_Settings_Manager::get_settings( $this->post_id );
+		$page_settings_instance = Manager::get_page( $this->post_id );
+
+		$settings = $page_settings_instance->get_settings();
 
 		if ( ! $settings['show_title'] ) {
 			$page_title_selector = get_option( 'elementor_page_title_selector' );
