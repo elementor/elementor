@@ -2358,17 +2358,6 @@ button.swiper-pagination-bullet {
 .elementor-open-lightbox .fluid-width-video-wrapper {
   display: none; }
 
-.elementor ul.elementor-reset {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  line-height: 1; }
-  .elementor ul.elementor-reset li {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    line-height: 1; }
-
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
