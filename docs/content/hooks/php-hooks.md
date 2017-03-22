@@ -209,7 +209,7 @@ None
 
  ```php
 add_action( 'elementor/frontend/after_register_styles', function() {
-    wp_dequeue_script( 'font-awesome' );
+    wp_dequeue_style( 'font-awesome' );
 } );
 ```
 
