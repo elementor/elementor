@@ -7,7 +7,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private $args = [];
 
-	final public function add_controls( Element_Base $element, array $user_args ) {
+	final public function add_controls( Controls_Stack $element, array $user_args ) {
 		$this->init_args( $user_args );
 
 		// Filter witch controls to display
