@@ -189,7 +189,7 @@ class Post_CSS_File extends CSS_File {
 		if ( ! $settings['show_title'] ) {
 			$page_title_selector = get_option( 'elementor_page_title_selector' );
 
-			if ( ! $page_title_selector ) {
+			if ( empty( $page_title_selector ) ) {
 				$page_title_selector = 'h1.entry-title';
 			}
 
