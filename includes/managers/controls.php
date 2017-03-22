@@ -10,6 +10,7 @@ class Controls_Manager {
 	const TAB_ADVANCED = 'advanced';
 	const TAB_RESPONSIVE = 'responsive';
 	const TAB_LAYOUT = 'layout';
+	const TAB_SETTINGS = 'settings';
 
 	const TEXT = 'text';
 	const NUMBER = 'number';
@@ -72,6 +73,7 @@ class Controls_Manager {
 				self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
 				self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
 				self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
+				self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
 			];
 
 			self::$_available_tabs_controls = apply_filters( 'elementor/controls/get_available_tabs_controls', self::$_available_tabs_controls );
