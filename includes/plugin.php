@@ -51,9 +51,9 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
-	 * @var Under_Construction
+	 * @var Maintenance_Mode
 	 */
-	public $under_construction;
+	public $maintenance_mode;
 
 	/**
 	 * @var Page_Settings_Manager
@@ -199,7 +199,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/conditions.php' );
 		include( ELEMENTOR_PATH . 'includes/shapes.php' );
 		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
-		include( ELEMENTOR_PATH . 'includes/under-construction.php' );
+		include( ELEMENTOR_PATH . 'includes/maintenance-mode.php' );
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
@@ -233,7 +233,7 @@ class Plugin {
 
 		$this->templates_manager = new TemplateLibrary\Manager();
 
-		$this->under_construction = new Under_Construction();
+		$this->maintenance_mode = new Maintenance_Mode();
 
 		if ( is_admin() ) {
 			new Admin();
