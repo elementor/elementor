@@ -160,7 +160,6 @@ class Maintenance_Mode {
 			sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
 			'</span>';
 
-
 		add_settings_field(
 			$field_id,
 			__( 'Choose Template', 'elementor' ),
