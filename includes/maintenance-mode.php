@@ -19,7 +19,7 @@ class Maintenance_Mode {
 	}
 
 	public function body_class( $classes ) {
-		$classes[] = 'maintenance-mode';
+		$classes[] = 'elementor-maintenance-mode';
 
 		return $classes;
 	}
@@ -85,10 +85,13 @@ class Maintenance_Mode {
 					self::MODE_COMING_SOON => __( 'Coming Soon', 'elementor' ),
 					self::MODE_MAINTENANCE => __( 'Maintenance', 'elementor' ),
 				],
-				'desc' => '<div id="elementor-maintenance-mode-description" style="display: none">' .
+				'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
+					__( 'Choose between Coming Soon mode with HTTP 200 and Maintenance Mode with HTTP 503.', 'elementor' ) .
+					'</div>' .
+					'<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
 					__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
 					'</div>' .
-					'<div id="elementor-coming-soon-mode-description" style="display: none">' .
+					'<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
 					__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
 					'</div>',
 			]
@@ -154,7 +157,7 @@ class Maintenance_Mode {
 		$template_description .= '<span class="elementor-maintenance-mode-error" style="display: none">' .
 			__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
 			'<br>' .
-			sprintf( __( 'Select one. or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
+			sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
 			'</span>';
 
 
