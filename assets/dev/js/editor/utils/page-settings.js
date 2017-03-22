@@ -37,7 +37,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	onInit: function() {
-		this.setSettings( 'savedSettings', elementor.config.page_settings );
+		this.setSettings( 'savedSettings', elementor.config.page_settings.settings );
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	}
