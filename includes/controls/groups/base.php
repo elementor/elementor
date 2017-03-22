@@ -69,24 +69,31 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$fields = $this->get_fields();
 
-		if ( ! is_array( $args['fields'] ) ) {
-			return $fields;
+		if ( ! empty( $args['include'] ) ) {
+			$fields = array_intersect_key( $fields, array_flip( $args['include'] ) );
 		}
 
-		$filtered_fields = array_intersect_key( $fields, array_flip( $args['fields'] ) );
+		if ( ! empty( $args['exclude'] ) ) {
+			$fields = array_diff_key( $fields, array_flip( $args['exclude'] ) );
+		}
 
-		// Include all condition depended controls
-		foreach ( $filtered_fields as $field ) {
+		foreach ( $fields as $field_key => $field ) {
 			if ( empty( $field['condition'] ) ) {
 				continue;
 			}
 
-			$depended_controls = array_intersect_key( $fields, $field['condition'] );
-			$filtered_fields = array_merge( $filtered_fields, $depended_controls );
-			$filtered_fields = array_intersect_key( $fields, $filtered_fields );
+			foreach ( $field['condition'] as $condition_key => $condition_value ) {
+				preg_match( '/^\w+/', $condition_key, $matches );
+
+				if ( empty( $fields[ $matches[0] ] ) ) {
+					unset( $fields[ $field_key ] );
+
+					continue 2;
+				}
+			}
 		}
 
-		return $filtered_fields;
+		return $fields;
 	}
 
 	protected function add_group_args_to_field( $control_id, $field_args ) {
@@ -134,7 +141,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return [
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'fields' => 'all',
 		];
 	}
 

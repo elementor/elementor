@@ -1642,6 +1642,32 @@
 body.elementor-page .elementor-widget-menu-anchor {
   margin-bottom: 0; }
 
+.elementor-widget-text-editor.elementor-drop-cap-shape-circle .elementor-drop-cap {
+  border-radius: 50%; }
+
+.elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap {
+  background-color: #818a91;
+  color: #fff; }
+
+.elementor-widget-text-editor.elementor-drop-cap-view-framed .elementor-drop-cap {
+  color: #818a91;
+  border: 3px solid;
+  background-color: transparent; }
+
+.elementor-widget-text-editor .elementor-text-editor {
+  overflow: hidden; }
+
+.elementor-widget-text-editor .elementor-drop-cap {
+  float: left;
+  text-align: center;
+  line-height: 1;
+  margin-top: 8px;
+  font-size: 50px; }
+  .elementor-widget-text-editor .elementor-drop-cap-letter {
+    display: inline-block;
+    width: 1em;
+    height: 1em; }
+
 .slick-slider {
   position: relative;
   display: block;
