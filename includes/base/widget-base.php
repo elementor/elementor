@@ -265,10 +265,6 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::$instance->elements_manager->get_element_types( 'section' );
 	}
 
-	public function get_frontend_settings_keys() {
-		return [];
-	}
-
 	public function add_skin( Skin_Base $skin ) {
 		Plugin::$instance->skins_manager->add_skin( $this, $skin );
 	}

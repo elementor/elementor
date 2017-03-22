@@ -666,8 +666,16 @@ abstract class Element_Base {
 		return $this->_is_type_instance;
 	}
 
-	public function get_frontend_settings_keys() {
-		return [];
+	final public function get_frontend_settings_keys() {
+		$controls = [];
+
+		foreach ( $this->get_controls() as $control ) {
+			if ( ! empty( $control['frontend_available'] ) ) {
+				$controls[] = $control['name'];
+			}
+		}
+
+		return $controls;
 	}
 
 	protected function _add_render_attributes() {
