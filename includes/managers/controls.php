@@ -343,6 +343,12 @@ class Controls_Manager {
 		return true;
 	}
 
+	/**
+	 * @param string $stack_id
+	 * @param string $control_id
+	 *
+	 * @return array|\WP_Error
+	 */
 	public function get_control_from_stack( $stack_id, $control_id ) {
 		if ( empty( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			return new \WP_Error( 'Cannot get a not-exists control.' );
