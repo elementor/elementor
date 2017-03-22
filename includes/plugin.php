@@ -172,6 +172,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
+		include( ELEMENTOR_PATH . 'includes/base/controls-stack.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );

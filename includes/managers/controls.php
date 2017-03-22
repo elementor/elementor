@@ -271,7 +271,7 @@ class Controls_Manager {
 		}
 	}
 
-	public function open_stack( Element_Base $element ) {
+	public function open_stack( Controls_Stack $element ) {
 		$stack_id = $element->get_name();
 
 		$this->_controls_stack[ $stack_id ] = [
@@ -280,7 +280,7 @@ class Controls_Manager {
 		];
 	}
 
-	public function add_control_to_stack( Element_Base $element, $control_id, $control_data, $overwrite = false ) {
+	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $overwrite = false ) {
 		$default_args = [
 			'type' => self::TEXT,
 			'tab' => self::TAB_CONTENT,
@@ -351,7 +351,7 @@ class Controls_Manager {
 		return $this->_controls_stack[ $stack_id ]['controls'][ $control_id ];
 	}
 
-	public function update_control_in_stack( Element_Base $element, $control_id, $control_data ) {
+	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data ) {
 		$old_control_data = $this->get_control_from_stack( $element->get_name(), $control_id );
 		if ( is_wp_error( $old_control_data ) ) {
 			return false;
@@ -362,7 +362,7 @@ class Controls_Manager {
 		return $this->add_control_to_stack( $element, $control_id, $control_data, true );
 	}
 
-	public function get_element_stack( Element_Base $element ) {
+	public function get_element_stack( Controls_Stack $element ) {
 		$stack_id = $element->get_name();
 
 		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
