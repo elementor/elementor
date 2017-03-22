@@ -192,8 +192,7 @@ MaintenanceModeModule = ViewModule.extend( {
 			selectors: {
 				modeSelect: '.elementor_maintenance_mode_mode select',
 				maintenanceModeTable: 'table',
-				maintenanceModeDescription: '#elementor-maintenance-mode-description',
-				comingSoonModeDescription: '#elementor-coming-soon-mode-description',
+				maintenanceModeDescriptions: '.elementor-maintenance-mode-description',
 				excludeModeSelect: '.elementor_maintenance_mode_exclude_mode select',
 				excludeRolesArea: '.elementor_maintenance_mode_exclude_roles',
 				templateSelect: '.elementor_maintenance_mode_template_id select',
@@ -222,9 +221,7 @@ MaintenanceModeModule = ViewModule.extend( {
 
 		elements.$editTemplateButton = elements.$maintenanceModeTable.find( selectors.editTemplateButton );
 
-		elements.$maintenanceModeDescription = elements.$maintenanceModeTable.find( selectors.maintenanceModeDescription );
-
-		elements.$comingSoonModeDescription = elements.$maintenanceModeTable.find( selectors.comingSoonModeDescription );
+		elements.$maintenanceModeDescriptions = elements.$maintenanceModeTable.find( selectors.maintenanceModeDescriptions );
 
 		elements.$maintenanceModeError = elements.$maintenanceModeTable.find( selectors.maintenanceModeError );
 
@@ -237,13 +234,8 @@ MaintenanceModeModule = ViewModule.extend( {
 
 		elements.$modeSelect.on( 'change', function() {
 			elements.$maintenanceModeTable.toggleClass( settings.classes.isEnabled, !! elements.$modeSelect.val() );
-			if ( 'maintenance' === elements.$modeSelect.val() ) {
-				elements.$maintenanceModeDescription.show();
-				elements.$comingSoonModeDescription.hide();
-			} else if ( 'coming_soon' === elements.$modeSelect.val() ) {
-				elements.$maintenanceModeDescription.hide();
-				elements.$comingSoonModeDescription.show();
-			}
+			elements.$maintenanceModeDescriptions.hide();
+			elements.$maintenanceModeDescriptions.filter( '[data-value="' + elements.$modeSelect.val() + '"]' ).show();
 		} ).trigger( 'change' );
 
 		elements.$excludeModeSelect.on( 'change', function() {
