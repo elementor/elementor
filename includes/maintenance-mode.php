@@ -197,9 +197,7 @@ class Maintenance_Mode {
 	public function __construct() {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
-		if ( is_admin() ) {
-			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
-		}
+		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
 
 		if ( ! $is_enabled ) {
 			return;
