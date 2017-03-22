@@ -100,13 +100,6 @@
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
-#wp-admin-bar-elementor-maintenance-on > a {
-  background-color: #dc3232; }
-
-#wp-admin-bar-elementor-maintenance-on > .ab-item:before {
-  content: "\f160";
-  top: 2px; }
-
 .elementor-video-wrapper {
   position: relative;
   height: 0; }

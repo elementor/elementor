@@ -194,6 +194,13 @@ class Maintenance_Mode {
 		] );
 	}
 
+	public function print_style() {
+		?>
+		<style>#wp-admin-bar-elementor-maintenance-on > a { background-color: #dc3232; }
+			#wp-admin-bar-elementor-maintenance-on > .ab-item:before { content: "\f160"; top: 2px; }</style>
+		<?php
+	}
+
 	public function __construct() {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
@@ -204,6 +211,8 @@ class Maintenance_Mode {
 		}
 
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+		add_action( 'admin_head', [ $this, 'print_style' ] );
+		add_action( 'wp_head', [ $this, 'print_style' ] );
 
 		$user = wp_get_current_user();
 
