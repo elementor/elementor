@@ -500,9 +500,9 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 18px;
   color: #555d66; }
 
-.form-table:not(.elementor-under-construction-is-enabled) .elementor-default-hide {
+.form-table:not(.elementor-maintenance-mode-is-enabled) .elementor-default-hide {
   display: none; }
 
-.elementor-under-construction-error {
+.elementor-maintenance-mode-error {
   color: red; }
 /*# sourceMappingURL=admin.css.map */
