@@ -1,5 +1,37 @@
 # PHP Hooks
 
+## TOC
+  * [Frontend Filters](#frontend-filters)
+    + [`elementor/frontend/the_content`](#elementorfrontendthe_content)
+    + [`elementor/widget/render_content`](#elementorwidgetrender_content)
+    + [`elementor/frontend/print_google_fonts`](#elementorfrontendprint_google_fonts)
+  * [Editor Filters](#editor-filters)
+    + [`elementor/element/print_template`](#elementorelementprint_template)
+  * [Init Actions](#init-actions)
+    + [`elementor/loaded`](#elementorloaded)
+    + [`elementor/init`](#elementorinit)
+    + [`elementor/widget/{name}/skins_init`](#elementorwidgetnameskins_init)
+  * [Frontend Actions](#frontend-actions)
+    + [`elementor/frontend/before_enqueue_scripts`](#elementorfrontendbefore_enqueue_scripts)
+    + [`elementor/frontend/after_register_styles`](#elementorfrontendafter_register_styles)
+    + [`elementor/element/parse_css`](#elementorelementparse_css)
+    + [`elementor/frontend/{section|column|widget}/before_render`](#elementorfrontendsectioncolumnwidgetbefore_render)
+    + [`elementor/frontend/{section|column|widget}/after_render`](#elementorfrontendsectioncolumnwidgetafter_render)
+    + [`elementor/widgets/widgets_registered`](#elementorwidgetswidgets_registered)
+  * [Editor Actions](#editor-actions)
+    + [`elementor/editor/after_save`](#elementoreditorafter_save)
+    + [`elementor/editor/before_enqueue_scripts`](#elementoreditorbefore_enqueue_scripts)
+    + [`elementor/element/before_section_start`](#elementorelementbefore_section_start)
+    + [`elementor/element/after_section_end`](#elementorelementafter_section_end)
+    + [`elementor/element/{$element_name}/{$section_id}/before_section_start`](#elementorelementelementnamesection_idbefore_section_start)
+    + [`elementor/element/{element_name}/{section_id}/after_section_end`](#elementorelementelementnamesection_idafter_section_end)
+    + [`elementor/element/after_section_start`](#elementorelementafter_section_start)
+    + [`elementor/element/before_section_end`](#elementorelementbefore_section_end)
+    + [`elementor/element/{$element_name}/{$section_id}/after_section_start`](#elementorelementelementnamesection_idafter_section_start)
+    + [`elementor/element/{element_name}/{section_id}/before_section_end`](#elementorelementelementnamesection_idbefore_section_end)
+  * [Preview Actions](#preview-actions)
+    + [`elementor/preview/enqueue_styles`](#elementorpreviewenqueue_styles)
+
 ## Frontend Filters
 
 ### `elementor/frontend/the_content`
@@ -47,6 +79,18 @@ add_action( 'elementor/widget/render_content', function( $content, $widget ) {
 	
 	return $content;
 }, 10, 2 );
+ ```
+ 
+ ### `elementor/frontend/print_google_fonts`
+ Used to prevent loading of Google Fonts by Elementor
+ 
+ #### Arguments
+ None
+  
+ #### Example
+ 
+  ```php
+add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
  ```
 
 ## Editor Filters
@@ -152,6 +196,20 @@ add_action( 'elementor/frontend/before_enqueue_scripts', function() {
 		'plugin_version',
 		true // in_footer
 	);
+} );
+```
+
+### `elementor/frontend/after_register_styles`
+After Elementor registers all styles.
+
+#### Arguments
+None
+ 
+#### Example
+
+ ```php
+add_action( 'elementor/frontend/after_register_styles', function() {
+    wp_dequeue_style( 'font-awesome' );
 } );
 ```
 
