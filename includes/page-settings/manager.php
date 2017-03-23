@@ -30,11 +30,18 @@ class Manager {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
-		$elementor_page_settings = [
-			'show_title' => filter_var( $_POST['show_title'], FILTER_VALIDATE_BOOLEAN ),
+		$special_settings = [
+			'id',
+			'post_title',
+			'post_status',
+			'template',
 		];
 
-		update_post_meta( $post->ID, self::META_KEY, $elementor_page_settings );
+		foreach ( $special_settings as $special_setting ) {
+			unset( $_POST[ $special_setting ] );
+		}
+
+		update_post_meta( $post->ID, self::META_KEY, $_POST );
 
 		$css_file = new Post_CSS_File( $post->ID );
 
