@@ -125,12 +125,14 @@
 			}
 
 			if ( ! styleRules ) {
-				var parsedRules = selector.match( /[^\s\\].+?(?=\{)\{.+?(?=})}/g );
+				var parsedRules = selector.match( /[^{]+\{[^}]+}/g );
 
 				$.each( parsedRules, function() {
-					var parsedRule = this.match( /(.+?(?=\{))\{(.+?(?=}))}/ );
+					var parsedRule = this.match( /([^{]+)\{([^}]+)}/ );
 
-					self.addRules( parsedRule[1], parsedRule[2], query );
+					if ( parsedRule ) {
+						self.addRules( parsedRule[1].trim(), parsedRule[2].trim(), query );
+					}
 				} );
 
 				return;
@@ -147,6 +149,10 @@
 
 				$.each( styleRules, function() {
 					var property = this.split( /:(.*)?/ );
+
+					if ( ! property || ! property[0] || undefined === property[1] ) {
+						return;
+					}
 
 					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
 				} );
