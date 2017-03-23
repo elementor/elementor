@@ -1,5 +1,8 @@
 <?php
-namespace Elementor;
+namespace Elementor\PageSettings;
+
+use Elementor\Post_CSS_File;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

@@ -1,5 +1,9 @@
 <?php
-namespace Elementor;
+namespace Elementor\PageSettings;
+
+use Elementor\Controls_Manager;
+use Elementor\Controls_Stack;
+use Elementor\Group_Control_Background;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
