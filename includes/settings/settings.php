@@ -173,7 +173,7 @@ class Settings {
 				'type' => 'text',
 				'placeholder' => 'h1.entry-title',
 				'classes' => [ 'medium-text' ],
-				'desc' => __( 'Enter page title selector (e.g. .entry-title / h1 etc). Leave blank to use the default selector.', 'elementor' ),
+				'desc' => __( 'Elementor lets you customize your page\'s h1 title. This works for themes that have "h1.entry-title" selector. If you theme\'s selector is different, please enter it here.', 'elementor' ),
 			]
 		);
 

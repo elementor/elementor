@@ -6,8 +6,8 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
-	__construct: function( $element ) {
-		this.$element  = $element;
+	__construct: function( settings ) {
+		this.$element  = settings.$element;
 
 		if ( elementorFrontend.isEditMode() ) {
 			this.addEditorListener();

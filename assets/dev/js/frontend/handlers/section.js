@@ -1,3 +1,5 @@
+var HandlerModule = require( 'elementor-frontend/handler-module' );
+
 var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
@@ -155,7 +157,7 @@ var StretchedSection = function( $section, $ ) {
 	init();
 };
 
-var Shapes = elementorFrontend.Module.extend( {
+var Shapes = HandlerModule.extend( {
 
 	getDefaultSettings: function() {
 		return {
@@ -211,7 +213,7 @@ var Shapes = elementorFrontend.Module.extend( {
 	onInit: function() {
 		var self = this;
 
-		elementorFrontend.Module.prototype.onInit.apply( self, arguments );
+		HandlerModule.prototype.onInit.apply( self, arguments );
 
 		[ 'top', 'bottom' ].forEach( function( side ) {
 			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
@@ -243,7 +245,7 @@ module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( $scope );
+		new Shapes( { $element:  $scope } );
 	}
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );

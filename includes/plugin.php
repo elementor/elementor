@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Debug\Debug;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -56,7 +57,7 @@ class Plugin {
 	public $maintenance_mode;
 
 	/**
-	 * @var Page_Settings_Manager
+	 * @var Manager
 	 */
 	public $page_settings_manager;
 
@@ -172,6 +173,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
 
 		include( ELEMENTOR_PATH . 'includes/db.php' );
+		include( ELEMENTOR_PATH . 'includes/base/controls-stack.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
@@ -192,7 +194,7 @@ class Plugin {
 
 		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/page-settings.php' );
+		include( ELEMENTOR_PATH . 'includes/page-settings/manager.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
 		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
@@ -220,7 +222,7 @@ class Plugin {
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
 		$this->revisions_manager = new Revisions_Manager();
-		$this->page_settings_manager = new Page_Settings_Manager();
+		$this->page_settings_manager = new PageSettingsManager();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();

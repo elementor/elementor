@@ -296,7 +296,7 @@
 	}
 }
 
-@at-root .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+@at-root .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
 	background: $editor-lighter;
 
 	&:not(.elementor-responsive-switcher-desktop) {
@@ -982,9 +982,6 @@
 
 // Order control
 @import "controls/order";
-
-// Color control
-@import "controls/color";
 
 // Hidden control
 .elementor-control-type-hidden {
