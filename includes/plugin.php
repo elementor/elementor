@@ -2,7 +2,7 @@
 namespace Elementor;
 
 use Elementor\Debug\Debug;
-use Elementor\PageSettings\Manager;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -222,7 +222,7 @@ class Plugin {
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
 		$this->revisions_manager = new Revisions_Manager();
-		$this->page_settings_manager = new Manager();
+		$this->page_settings_manager = new PageSettingsManager();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();
