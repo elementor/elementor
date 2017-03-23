@@ -1,6 +1,6 @@
 var ViewModule = require( 'elementor-utils/view-module' ),
 	SettingsModel = require( 'elementor-models/base-settings' ),
-	ControlsCSS = require( 'elementor-editor-utils/controls-css' );
+	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
 module.exports = ViewModule.extend( {
 	controlsCSS: null,
@@ -37,8 +37,8 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
-	initControlsCSS: function() {
-		this.controlsCSS = new ControlsCSS();
+	initControlsCSSParser: function() {
+		this.controlsCSS = new ControlsCSSParser();
 	},
 
 	resetModel: function() {
@@ -48,7 +48,7 @@ module.exports = ViewModule.extend( {
 	onInit: function() {
 		this.initModel();
 
-		this.initControlsCSS();
+		this.initControlsCSSParser();
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	}

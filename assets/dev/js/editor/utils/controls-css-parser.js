@@ -1,8 +1,8 @@
 var ViewModule = require( 'elementor-utils/view-module' ),
 	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
-	ControlsCSS;
+	ControlsCSSParser;
 
-ControlsCSS = ViewModule.extend( {
+ControlsCSSParser = ViewModule.extend( {
 	stylesheet: null,
 
 	getDefaultSettings: function() {
@@ -50,7 +50,7 @@ ControlsCSS = ViewModule.extend( {
 	addControlStyleRules: function( control, values, controlsStack, placeholders, replacements ) {
 		var self = this;
 
-		ControlsCSS.addControlStyleRules( self.stylesheet, control, controlsStack, function( control ) {
+		ControlsCSSParser.addControlStyleRules( self.stylesheet, control, controlsStack, function( control ) {
 			return self.getStyleControlValue( control, values );
 		}, placeholders, replacements );
 	},
@@ -82,7 +82,7 @@ ControlsCSS = ViewModule.extend( {
 	}
 } );
 
-ControlsCSS.addControlStyleRules = function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
+ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
 	var value = valueCallback( control );
 
 	if ( undefined === value ) {
@@ -166,4 +166,4 @@ ControlsCSS.addControlStyleRules = function( stylesheet, control, controlsStack,
 	} );
 };
 
-module.exports = ControlsCSS;
+module.exports = ControlsCSSParser;
