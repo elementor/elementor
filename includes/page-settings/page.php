@@ -13,7 +13,7 @@ class Page extends Controls_Stack {
 	public function __construct( array $data = [] ) {
 		$this->post = get_post( $data['id'] );
 
-		$data['settings'] = $this->init_settings();
+		$data['settings'] = $this->get_saved_settings();
 
 		parent::__construct( $data );
 	}
@@ -36,6 +36,7 @@ class Page extends Controls_Stack {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'default' => $this->post->post_title,
 				'label_block' => true,
 				'separator' => 'none',
 			]
@@ -65,6 +66,7 @@ class Page extends Controls_Stack {
 				[
 					'label' => __( 'Template', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
+					'default' => $saved_template,
 					'options' => $options,
 				]
 			);
@@ -80,6 +82,7 @@ class Page extends Controls_Stack {
 				[
 					'label' => __( 'Post Status', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
+					'default' => $this->post->post_status,
 					'options' => get_post_statuses(),
 				]
 			);
@@ -123,21 +126,9 @@ class Page extends Controls_Stack {
 		$this->end_controls_section();
 	}
 
-	private function init_settings() {
-		$settings = [
-			'post_id' => $this->post->ID,
-			'post_title' => $this->post->post_title,
-			'post_status' => $this->post->post_status,
-			'template' => get_post_meta( $this->post->ID, '_wp_page_template', true ),
-			'show_title' => true,
-		];
-
+	private function get_saved_settings() {
 		$saved_settings = get_post_meta( $this->post->ID, Manager::META_KEY, true );
 
-		if ( $saved_settings ) {
-			$settings = array_merge( $settings, $saved_settings );
-		}
-
-		return $settings;
+		return $saved_settings ? $saved_settings : [];
 	}
 }
