@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\PageSettings\Manager;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -301,7 +301,7 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$page_settings_instance = Manager::get_page( $post_id );
+		$page_settings_instance = PageSettingsManager::get_page( $post_id );
 
 		$config = [
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),

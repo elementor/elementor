@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\PageSettings\Manager;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -188,7 +188,7 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	private function add_page_settings_rules() {
-		$page_settings_instance = Manager::get_page( $this->post_id );
+		$page_settings_instance = PageSettingsManager::get_page( $this->post_id );
 
 		$this->add_element_style_rules(
 			$page_settings_instance,
