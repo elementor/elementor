@@ -94,5 +94,5 @@ var TextEditor = elementorFrontend.Module.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new TextEditor( $scope );
+	new TextEditor( { $element: $scope } );
 };

@@ -23,5 +23,5 @@ module.exports = function( $scope ) {
 		return;
 	}
 
-	new GlobalHandler( $scope );
+	new GlobalHandler( { $element: $scope } );
 };
