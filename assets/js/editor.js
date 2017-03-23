@@ -5868,7 +5868,6 @@ module.exports = ViewModule.extend( {
 			savedSettings: elementor.config.page_settings.settings
 		};
 	},
-	
 
 	bindEvents: function() {
 		elementor.on( 'preview:loaded', this.updateStylesheet );
@@ -6315,10 +6314,6 @@ module.exports = new Schemes();
 				$.each( styleRules, function() {
 					var property = this.split( /:(.*)?/ );
 
-					if ( ! property || ! property[0] || undefined === property[1] ) {
-						return;
-					}
-
 					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
 				} );
 
@@ -6392,7 +6387,7 @@ var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
 
-	controlsCSS: null,
+	controlsCSSParser: null,
 
 	className: function() {
 		return this.getElementUniqueID();
@@ -6581,7 +6576,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSS = new ControlsCSSParser();
+		this.controlsCSSParser = new ControlsCSSParser();
 	},
 
 	enqueueFonts: function() {
@@ -6603,25 +6598,25 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var self = this,
 			settings = self.getEditModel().get( 'settings' );
 
-		self.controlsCSS.stylesheet.empty();
+		self.controlsCSSParser.stylesheet.empty();
 
-		self.controlsCSS.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
+		self.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.controlsCSS.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.controlsCSSParser.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
+
+		self.controlsCSSParser.addStyleToDocument();
 
 		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
 
 		if ( extraCSS ) {
-			self.controlsCSS.stylesheet.addRules( extraCSS );
+			self.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
 		}
-
-		self.controlsCSS.addStyleToDocument();
 	},
 
 	renderCustomClasses: function() {
@@ -6799,8 +6794,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.controlsCSS.$stylesheetElement ) {
-			this.controlsCSS.$stylesheetElement.remove();
+		if ( this.controlsCSSParser.$stylesheetElement ) {
+			this.controlsCSSParser.$stylesheetElement.remove();
 		}
 	}
 } );
