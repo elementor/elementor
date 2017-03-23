@@ -118,6 +118,9 @@ class Page extends Controls_Stack {
 			[
 				'label' => __( 'Margin' ),
 				'type' => Controls_Manager::DIMENSIONS,
+				'selectors' => [
+					'{{WRAPPER}}' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
+				],
 			]
 		);
 
@@ -126,6 +129,9 @@ class Page extends Controls_Stack {
 			[
 				'label' => __( 'Padding' ),
 				'type' => Controls_Manager::DIMENSIONS,
+				'selectors' => [
+					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
+				],
 			]
 		);
 
