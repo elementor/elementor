@@ -14,12 +14,6 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
-	getDefaultSettings: function() {
-		return {
-			$element: null
-		};
-	},
-
 	addEditorListener: function() {
 		var self = this;
 
