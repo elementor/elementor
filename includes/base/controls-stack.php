@@ -115,7 +115,7 @@ abstract class Controls_Stack {
 		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
 	}
 
-	public final function add_group_control( $group_name, array $args = [] ) {
+	final public function add_group_control( $group_name, array $args = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
@@ -125,7 +125,7 @@ abstract class Controls_Stack {
 		$group->add_controls( $this, $args );
 	}
 
-	public final function get_scheme_controls() {
+	final public function get_scheme_controls() {
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter( $this->get_controls(), function( $control ) use ( $enabled_schemes ) {
@@ -133,7 +133,7 @@ abstract class Controls_Stack {
 		} );
 	}
 
-	public final function get_style_controls( $controls = null ) {
+	final public function get_style_controls( $controls = null ) {
 		if ( null === $controls ) {
 			$controls = $this->get_active_controls();
 		}
@@ -153,13 +153,13 @@ abstract class Controls_Stack {
 		return $style_controls;
 	}
 
-	public final function get_class_controls() {
+	final public function get_class_controls() {
 		return array_filter( $this->get_active_controls(), function( $control ) {
 			return ( isset( $control['prefix_class'] ) );
 		} );
 	}
 
-	public final function get_tabs_controls() {
+	final public function get_tabs_controls() {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		return $stack['tabs'];
@@ -215,11 +215,11 @@ abstract class Controls_Stack {
 		}
 	}
 
-	public final function get_class_name() {
+	final public function get_class_name() {
 		return get_called_class();
 	}
 
-	public final function get_config() {
+	final public function get_config() {
 		if ( null === $this->_config ) {
 			$this->_config = $this->_get_initial_config();
 		}
@@ -372,7 +372,7 @@ abstract class Controls_Stack {
 		unset( $this->_current_tab['inner_tab'] );
 	}
 
-	public final function set_settings( $key, $value = null ) {
+	final public function set_settings( $key, $value = null ) {
 		if ( null === $value ) {
 			$this->_settings = $key;
 		} else {

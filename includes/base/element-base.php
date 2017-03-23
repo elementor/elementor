@@ -28,7 +28,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
-	public final static function get_edit_tools() {
+	final public static function get_edit_tools() {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
 		}
@@ -36,7 +36,7 @@ abstract class Element_Base extends Controls_Stack {
 		return static::$_edit_tools;
 	}
 
-	public final static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
+	final public static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
 		}
