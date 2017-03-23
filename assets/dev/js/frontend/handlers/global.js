@@ -1,6 +1,9 @@
-var GlobalHandler = elementorFrontend.Module.extend( {
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
+	GlobalHandler;
+
+GlobalHandler = HandlerModule.extend( {
 	onInit: function() {
-		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		var $element = this.$element;
 

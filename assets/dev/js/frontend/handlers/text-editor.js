@@ -1,4 +1,7 @@
-var TextEditor = elementorFrontend.Module.extend( {
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
+	TextEditor;
+
+TextEditor = HandlerModule.extend( {
 	dropCapLetter: '',
 
 	getDefaultSettings: function() {
@@ -81,7 +84,7 @@ var TextEditor = elementorFrontend.Module.extend( {
 	},
 
 	onInit: function() {
-		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		this.wrapDropCap();
 	},
