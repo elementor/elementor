@@ -150,10 +150,6 @@
 				$.each( styleRules, function() {
 					var property = this.split( /:(.*)?/ );
 
-					if ( ! property || ! property[0] || undefined === property[1] ) {
-						return;
-					}
-
 					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
 				} );
 
