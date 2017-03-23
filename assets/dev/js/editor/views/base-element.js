@@ -228,13 +228,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 		}
 
+		self.controlsCSSParser.addStyleToDocument();
+
 		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
 
 		if ( extraCSS ) {
-			self.controlsCSS.stylesheet.addRules( extraCSS );
+			self.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
 		}
-
-		self.controlsCSS.addStyleToDocument();
 	},
 
 	renderCustomClasses: function() {
