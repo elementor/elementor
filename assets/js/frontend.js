@@ -17,7 +17,8 @@ ElementsHandler = function( $ ) {
 		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
-		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' )
+		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
+		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' )
 	};
 
 	var addGlobalHandlers = function() {
@@ -96,7 +97,7 @@ ElementsHandler = function( $ ) {
 
 module.exports = ElementsHandler;
 
-},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/toggle":12,"elementor-frontend/handlers/video":13,"elementor-frontend/handlers/widget":14}],2:[function(require,module,exports){
+},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/text-editor":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/handlers/widget":15}],2:[function(require,module,exports){
 /* global elementorFrontendConfig */
 ( function( $ ) {
 	var elements = {},
@@ -255,7 +256,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":17,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":15,"elementor-frontend/utils/youtube":16}],3:[function(require,module,exports){
+},{"../utils/hooks":18,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":16,"elementor-frontend/utils/youtube":17}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -321,7 +322,7 @@ HandlerModule = ViewModule.extend( {
 
 module.exports = HandlerModule;
 
-},{"../utils/view-module":19}],4:[function(require,module,exports){
+},{"../utils/view-module":20}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -741,6 +742,106 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],12:[function(require,module,exports){
+var TextEditor = elementorFrontend.Module.extend( {
+	dropCapLetter: '',
+
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				paragraph: 'p:first'
+			},
+			classes: {
+				dropCap: 'elementor-drop-cap',
+				dropCapLetter: 'elementor-drop-cap-letter'
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		var selectors = this.getSettings( 'selectors' ),
+			classes = this.getSettings( 'classes' ),
+			$dropCap = jQuery( '<span>', { 'class': classes.dropCap } ),
+			$dropCapLetter = jQuery( '<span>', { 'class': classes.dropCapLetter } );
+
+		$dropCap.append( $dropCapLetter );
+
+		return {
+			$paragraph: this.$element.find( selectors.paragraph ),
+			$dropCap: $dropCap,
+			$dropCapLetter: $dropCapLetter
+		};
+	},
+
+	getElementName: function() {
+		return 'text-editor';
+	},
+
+	wrapDropCap: function() {
+		var isDropCapEnabled = this.getElementSettings( 'drop_cap' );
+
+		if ( ! isDropCapEnabled ) {
+			// If there is an old drop cap inside the paragraph
+			if ( this.dropCapLetter ) {
+				this.elements.$dropCap.remove();
+
+				this.elements.$paragraph.prepend( this.dropCapLetter );
+
+				this.dropCapLetter = '';
+			}
+
+			return;
+		}
+
+		var $paragraph = this.elements.$paragraph;
+
+		if ( ! $paragraph.length ) {
+			return;
+		}
+
+		var	paragraphContent = $paragraph.html().replace( /&nbsp;/g, ' ' ),
+			firstLetterMatch = paragraphContent.match( /^ *([^ ] ?)/ );
+
+		if ( ! firstLetterMatch ) {
+			return;
+		}
+
+		var firstLetter = firstLetterMatch[1],
+			trimmedFirstLetter = firstLetter.trim();
+
+		// Don't apply drop cap when the content starting with an HTML tag
+		if ( '<' === trimmedFirstLetter ) {
+			return;
+		}
+
+		this.dropCapLetter = firstLetter;
+
+		this.elements.$dropCapLetter.text( trimmedFirstLetter );
+
+		var restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
+			return new Array( match.length + 1 ).join( '&nbsp;' );
+		});
+
+		$paragraph.html( restoredParagraphContent ).prepend( this.elements.$dropCap );
+	},
+
+	onInit: function() {
+		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+
+		this.wrapDropCap();
+	},
+
+	onElementChange: function( propertyName ) {
+		if ( 'drop_cap' === propertyName ) {
+			this.wrapDropCap();
+		}
+	}
+} );
+
+module.exports = function( $scope ) {
+	new TextEditor( $scope );
+};
+
+},{}],13:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
@@ -758,7 +859,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	VideoModule;
 
@@ -945,7 +1046,7 @@ module.exports = function( $scope ) {
 	new VideoModule( $scope );
 };
 
-},{"elementor-frontend/handler-module":3}],14:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],15:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
@@ -960,7 +1061,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1026,7 +1127,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":19}],16:[function(require,module,exports){
+},{"../../utils/view-module":20}],17:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1071,7 +1172,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":19}],17:[function(require,module,exports){
+},{"../../utils/view-module":20}],18:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1316,7 +1417,7 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,
@@ -1481,7 +1582,7 @@ Module.extend = function( properties ) {
 
 module.exports = Module;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var Module = require( './module' ),
 	ViewModule;
 
@@ -1507,5 +1608,5 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":18}]},{},[2])
+},{"./module":19}]},{},[2])
 //# sourceMappingURL=frontend.js.map

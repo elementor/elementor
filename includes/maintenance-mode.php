@@ -160,7 +160,6 @@ class Maintenance_Mode {
 			sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
 			'</span>';
 
-
 		add_settings_field(
 			$field_id,
 			__( 'Choose Template', 'elementor' ),
@@ -195,18 +194,25 @@ class Maintenance_Mode {
 		] );
 	}
 
+	public function print_style() {
+		?>
+		<style>#wp-admin-bar-elementor-maintenance-on > a { background-color: #dc3232; }
+			#wp-admin-bar-elementor-maintenance-on > .ab-item:before { content: "\f160"; top: 2px; }</style>
+		<?php
+	}
+
 	public function __construct() {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
-		if ( is_admin() ) {
-			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
-		}
+		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
 
 		if ( ! $is_enabled ) {
 			return;
 		}
 
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+		add_action( 'admin_head', [ $this, 'print_style' ] );
+		add_action( 'wp_head', [ $this, 'print_style' ] );
 
 		$user = wp_get_current_user();
 
