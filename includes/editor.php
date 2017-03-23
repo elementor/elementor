@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\PageSettings\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Editor {
