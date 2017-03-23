@@ -120,22 +120,6 @@ class Page extends Controls_Stack {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'border',
-				'label' => __( 'Border', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'box_shadow',
-				'label' => __( 'Box Shadow', 'elementor' ),
-			]
-		);
-
 		$this->end_controls_section();
 	}
 
