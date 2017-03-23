@@ -1,5 +1,5 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
-	ControlsCSS = require( 'elementor-editor-utils/controls-css' ),
+	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -100,7 +100,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.initRemoveDialog();
 
-		this.initControlsCSS();
+		this.initControlsCSSParser();
 	},
 
 	edit: function() {
@@ -193,8 +193,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	initControlsCSS: function() {
-		this.controlsCSS = new ControlsCSS();
+	initControlsCSSParser: function() {
+		this.controlsCSS = new ControlsCSSParser();
 	},
 
 	enqueueFonts: function() {
