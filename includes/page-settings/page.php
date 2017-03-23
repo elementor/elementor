@@ -42,13 +42,22 @@ class Page extends Controls_Stack {
 			]
 		);
 
+		$page_title_selector = get_option( 'elementor_page_title_selector' );
+
+		if ( empty( $page_title_selector ) ) {
+			$page_title_selector = 'h1.entry-title';
+		}
+
 		$this->add_control(
-			'show_title',
+			'hide_title',
 			[
-				'label' => __( 'Show Title', 'elementor' ),
+				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'No', 'elementor' ),
 				'label_on' => __( 'Yes', 'elementor' ),
+				'selectors' => [
+					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
+				],
 			]
 		);
 
