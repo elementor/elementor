@@ -1,12 +1,17 @@
 var ViewModule = require( 'elementor-utils/view-module' ),
-	Stylesheet = require( 'elementor-editor-utils/stylesheet' );
+	SettingsModel = require( 'elementor-models/base-settings' ),
+	ControlsCSS = require( 'elementor-editor-utils/controls-css' );
 
 module.exports = ViewModule.extend( {
-	stylesheet: new Stylesheet(),
+	controlsCSS: null,
 
-	getDefaultElements: function() {
+	collection: null,
+
+	model: null,
+
+	getDefaultSettings: function() {
 		return {
-			$stylesheetElement: Backbone.$( '<style>' )
+			savedSettings: elementor.config.page_settings.settings
 		};
 	},
 
@@ -15,29 +20,35 @@ module.exports = ViewModule.extend( {
 	},
 
 	renderStyles: function() {
-		var savedSettings = this.getSettings( 'savedSettings' );
-
-		if ( ! savedSettings.show_title ) {
-			this.stylesheet.addRules( '.elementor-page ' + elementor.config.page_title_selector, { 'display': 'none' } );
-		}
+		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /\{\{WRAPPER}}/g ], [ '.elementor-page-' + elementor.config.post_id ] );
 	},
 
 	updateStylesheet: function() {
-		this.stylesheet.empty();
+		this.controlsCSS.stylesheet.empty();
 
 		this.renderStyles();
 
-		this.addStyleToDocument();
+		this.controlsCSS.addStyleToDocument();
 	},
 
-	addStyleToDocument: function() {
-		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
+	initModel: function() {
+		this.model = new SettingsModel( this.getSettings( 'savedSettings' ), {
+			controls: elementor.config.page_settings.controls
+		} );
+	},
 
-		this.elements.$stylesheetElement.text( this.stylesheet );
+	initControlsCSS: function() {
+		this.controlsCSS = new ControlsCSS();
+	},
+
+	resetModel: function() {
+		this.model.set( this.getSettings( 'savedSettings' ) );
 	},
 
 	onInit: function() {
-		this.setSettings( 'savedSettings', elementor.config.page_settings.settings );
+		this.initModel();
+
+		this.initControlsCSS();
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	}

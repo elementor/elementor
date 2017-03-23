@@ -1,5 +1,4 @@
-var ControlsStack = require( 'elementor-views/controls-stack' ),
-	SettingsModel = require( 'elementor-models/base-settings' );
+var ControlsStack = require( 'elementor-views/controls-stack' );
 
 module.exports = ControlsStack.extend( {
 	id: 'elementor-panel-page-settings',
@@ -35,17 +34,9 @@ module.exports = ControlsStack.extend( {
 	},
 
 	initialize: function() {
-		this.initCollection();
+		this.model = elementor.pageSettings.model;
 
-		this.model = new SettingsModel( elementor.pageSettings.getSettings( 'savedSettings' ), { collection: this.collection } );
-	},
-
-	initCollection: function() {
-		this.collection = new Backbone.Collection( _.values( elementor.config.page_settings.controls ) );
-	},
-
-	resetModel: function() {
-		this.model.set( elementor.pageSettings.getSettings( 'savedSettings' ) );
+		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
 	},
 
 	onChildviewSettingsChange: function() {
@@ -82,7 +73,7 @@ module.exports = ControlsStack.extend( {
 	},
 
 	onDiscardClick: function() {
-		this.resetModel();
+		elementor.pageSettings.resetModel();
 
 		this.render();
 
