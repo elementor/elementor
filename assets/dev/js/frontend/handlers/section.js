@@ -156,9 +156,6 @@ var StretchedSection = function( $section, $ ) {
 };
 
 var Shapes = elementorFrontend.Module.extend( {
-	getElementName: function() {
-		return 'section';
-	},
 
 	getDefaultSettings: function() {
 		return {

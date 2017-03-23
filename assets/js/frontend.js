@@ -288,7 +288,9 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
-	getElementName: function() {},
+	getElementName: function() {
+		return this.$element.data( 'element_type' ).split( '.' )[0];
+	},
 
 	getID: function() {
 		return this.$element.data( 'id' );
@@ -606,9 +608,6 @@ var StretchedSection = function( $section, $ ) {
 };
 
 var Shapes = elementorFrontend.Module.extend( {
-	getElementName: function() {
-		return 'section';
-	},
 
 	getDefaultSettings: function() {
 		return {
@@ -767,10 +766,6 @@ VideoModule = HandlerModule.extend( {
 	oldAnimation: null,
 
 	oldAspectRatio: null,
-
-	getElementName: function() {
-		return 'video';
-	},
 
 	getDefaultSettings: function() {
 		return {
