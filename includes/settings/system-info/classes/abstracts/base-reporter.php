@@ -17,7 +17,7 @@ abstract class Base_Reporter {
 		return true;
 	}
 
-	public final function get_report() {
+	final public function get_report() {
 		$result = [];
 
 		foreach ( $this->get_fields() as $field_name => $field_label ) {
@@ -46,11 +46,11 @@ abstract class Base_Reporter {
 		];
 	}
 
-	public final static function filter_possible_properties( $properties ) {
+	final public static function filter_possible_properties( $properties ) {
 		return Model_Helper::filter_possible_properties( self::get_properties_keys(), $properties );
 	}
 
-	public final function set_properties( $key, $value = null ) {
+	final public function set_properties( $key, $value = null ) {
 		if ( is_array( $key ) ) {
 			$key = self::filter_possible_properties( $key );
 
