@@ -1028,13 +1028,11 @@ select {
         content: '\f040'; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-style a:before {
         content: '\f042'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-advanced a:before {
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-advanced a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-settings a:before {
         content: '\f013'; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-responsive a:before {
         content: '\f10a'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before {
-        content: '\f0db'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
+      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
         content: '\f0db'; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.active {
         background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
@@ -1224,9 +1222,9 @@ select {
       background-color: #c2cbd2; }
     .elementor-panel .elementor-responsive-switcher i {
       line-height: 18px; }
-  .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+  .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
     background: #c2cbd2; }
-    .elementor-device-desktop #elementor-panel #elementor-panel-page-editor:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
+    .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
       display: none; }
   .elementor-device-mobile .elementor-panel .elementor-responsive-switcher-mobile {
     background-color: #71d7f7; }
@@ -1771,13 +1769,6 @@ select {
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
-  .elementor-panel .elementor-control-type-color .wp-picker-container:not(.wp-picker-active) {
-    float: right; }
-  .elementor-panel .elementor-control-type-color .wp-picker-container.wp-picker-active {
-    -webkit-transform: translateY(6px);
-            transform: translateY(6px); }
-    .elementor-panel .elementor-control-type-color .wp-picker-container.wp-picker-active .wp-color-result {
-      margin-right: 3px; }
   .elementor-panel .elementor-control-type-hidden {
     display: none !important; }
   .elementor-panel .wp-picker-container.wp-picker-active {
@@ -1835,6 +1826,13 @@ select {
   .elementor-panel .wp-picker-open ~ .wp-picker-holder {
     clear: both;
     margin-bottom: 15px; }
+  .elementor-panel .elementor-control .wp-picker-container:not(.wp-picker-active) {
+    float: right; }
+  .elementor-panel .elementor-control .wp-picker-container.wp-picker-active {
+    -webkit-transform: translateY(6px);
+            transform: translateY(6px); }
+    .elementor-panel .elementor-control .wp-picker-container.wp-picker-active .wp-color-result {
+      margin-right: 3px; }
   .elementor-panel #elementor-panel-page-settings .elementor-panel-heading {
     margin-bottom: 15px; }
   .elementor-panel #elementor-panel-footer {

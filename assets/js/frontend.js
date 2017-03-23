@@ -265,8 +265,8 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
-	__construct: function( $element ) {
-		this.$element  = $element;
+	__construct: function( settings ) {
+		this.$element  = settings.$element;
 
 		if ( elementorFrontend.isEditMode() ) {
 			this.addEditorListener();
@@ -380,9 +380,12 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],7:[function(require,module,exports){
-var GlobalHandler = elementorFrontend.Module.extend( {
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
+	GlobalHandler;
+
+GlobalHandler = HandlerModule.extend( {
 	onInit: function() {
-		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		var $element = this.$element;
 
@@ -405,10 +408,10 @@ module.exports = function( $scope ) {
 		return;
 	}
 
-	new GlobalHandler( $scope );
+	new GlobalHandler( { $element: $scope } );
 };
 
-},{}],8:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],8:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $carousel = $scope.find( '.elementor-image-carousel' );
 	if ( ! $carousel.length ) {
@@ -451,6 +454,8 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],10:[function(require,module,exports){
+var HandlerModule = require( 'elementor-frontend/handler-module' );
+
 var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 	var player,
 		elements = {},
@@ -608,7 +613,7 @@ var StretchedSection = function( $section, $ ) {
 	init();
 };
 
-var Shapes = elementorFrontend.Module.extend( {
+var Shapes = HandlerModule.extend( {
 
 	getDefaultSettings: function() {
 		return {
@@ -664,7 +669,7 @@ var Shapes = elementorFrontend.Module.extend( {
 	onInit: function() {
 		var self = this;
 
-		elementorFrontend.Module.prototype.onInit.apply( self, arguments );
+		HandlerModule.prototype.onInit.apply( self, arguments );
 
 		[ 'top', 'bottom' ].forEach( function( side ) {
 			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
@@ -696,7 +701,7 @@ module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( $scope );
+		new Shapes( { $element:  $scope } );
 	}
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
@@ -706,7 +711,7 @@ module.exports = function( $scope, $ ) {
 	}
 };
 
-},{}],11:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],11:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
 		$tabsTitles = $scope.find( '.elementor-tab-title' ),
@@ -742,7 +747,10 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],12:[function(require,module,exports){
-var TextEditor = elementorFrontend.Module.extend( {
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
+	TextEditor;
+
+TextEditor = HandlerModule.extend( {
 	dropCapLetter: '',
 
 	getDefaultSettings: function() {
@@ -825,7 +833,7 @@ var TextEditor = elementorFrontend.Module.extend( {
 	},
 
 	onInit: function() {
-		elementorFrontend.Module.prototype.onInit.apply( this, arguments );
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		this.wrapDropCap();
 	},
@@ -838,10 +846,10 @@ var TextEditor = elementorFrontend.Module.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new TextEditor( $scope );
+	new TextEditor( { $element: $scope } );
 };
 
-},{}],13:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],13:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
 
@@ -1043,7 +1051,7 @@ VideoModule = HandlerModule.extend( {
 VideoModule.lightBoxModal = null;
 
 module.exports = function( $scope ) {
-	new VideoModule( $scope );
+	new VideoModule( { $element: $scope } );
 };
 
 },{"elementor-frontend/handler-module":3}],15:[function(require,module,exports){
@@ -1441,6 +1449,12 @@ var Module = function() {
 
 	var initSettings = function() {
 		settings = self.getDefaultSettings();
+
+		var instanceSettings = instanceParams[0];
+
+		if ( instanceSettings ) {
+			$.extend( settings, instanceSettings );
+		}
 	};
 
 	var init = function() {

@@ -1,6 +1,6 @@
 var Schemes,
 	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
-	BaseElementView = require( 'elementor-views/base-element' );
+	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
 Schemes = function() {
 	var self = this,
@@ -28,7 +28,7 @@ Schemes = function() {
 	};
 
 	var fetchControlStyles = function( control, controlsStack, widgetType ) {
-		BaseElementView.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
+		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
 			return self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ).value;
 		}, [ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
 	};

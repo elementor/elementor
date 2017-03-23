@@ -227,7 +227,7 @@ class Main {
 	 *
 	 * @return mixed
 	 */
-	public final function get_settings( $setting = null, array $container = null ) {
+	final public function get_settings( $setting = null, array $container = null ) {
 		if ( ! $container ) {
 			$container = $this->settings;
 		}

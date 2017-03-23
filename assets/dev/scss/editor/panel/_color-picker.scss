@@ -95,3 +95,21 @@
 		margin-bottom: 15px;
 	}
 }
+
+.elementor-control {
+
+	.wp-picker-container {
+
+		&:not(.wp-picker-active) {
+			float: $end;
+		}
+
+		&.wp-picker-active {
+			transform: translateY(6px);
+
+			.wp-color-result {
+				margin-right: 3px;
+			}
+		}
+	}
+}

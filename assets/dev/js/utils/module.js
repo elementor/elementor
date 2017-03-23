@@ -21,6 +21,12 @@ var Module = function() {
 
 	var initSettings = function() {
 		settings = self.getDefaultSettings();
+
+		var instanceSettings = instanceParams[0];
+
+		if ( instanceSettings ) {
+			$.extend( settings, instanceSettings );
+		}
 	};
 
 	var init = function() {
