@@ -16,8 +16,8 @@ var TextEditor = elementorFrontend.Module.extend( {
 	getDefaultElements: function() {
 		var selectors = this.getSettings( 'selectors' ),
 			classes = this.getSettings( 'classes' ),
-			$dropCap = Backbone.$( '<span>', { 'class': classes.dropCap } ),
-			$dropCapLetter = Backbone.$( '<span>', { 'class': classes.dropCapLetter } );
+			$dropCap = jQuery( '<span>', { 'class': classes.dropCap } ),
+			$dropCapLetter = jQuery( '<span>', { 'class': classes.dropCapLetter } );
 
 		$dropCap.append( $dropCapLetter );
 

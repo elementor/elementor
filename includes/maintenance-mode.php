@@ -19,7 +19,7 @@ class Maintenance_Mode {
 	}
 
 	public function body_class( $classes ) {
-		$classes[] = 'maintenance-mode';
+		$classes[] = 'elementor-maintenance-mode';
 
 		return $classes;
 	}
@@ -85,10 +85,13 @@ class Maintenance_Mode {
 					self::MODE_COMING_SOON => __( 'Coming Soon', 'elementor' ),
 					self::MODE_MAINTENANCE => __( 'Maintenance', 'elementor' ),
 				],
-				'desc' => '<div id="elementor-maintenance-mode-description" style="display: none">' .
+				'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
+					__( 'Choose between Coming Soon mode with HTTP 200 and Maintenance Mode with HTTP 503.', 'elementor' ) .
+					'</div>' .
+					'<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
 					__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
 					'</div>' .
-					'<div id="elementor-coming-soon-mode-description" style="display: none">' .
+					'<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
 					__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
 					'</div>',
 			]
@@ -154,9 +157,8 @@ class Maintenance_Mode {
 		$template_description .= '<span class="elementor-maintenance-mode-error" style="display: none">' .
 			__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
 			'<br>' .
-			sprintf( __( 'Select one. or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
+			sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
 			'</span>';
-
 
 		add_settings_field(
 			$field_id,
@@ -192,18 +194,25 @@ class Maintenance_Mode {
 		] );
 	}
 
+	public function print_style() {
+		?>
+		<style>#wp-admin-bar-elementor-maintenance-on > a { background-color: #dc3232; }
+			#wp-admin-bar-elementor-maintenance-on > .ab-item:before { content: "\f160"; top: 2px; }</style>
+		<?php
+	}
+
 	public function __construct() {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
-		if ( is_admin() ) {
-			add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
-		}
+		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 30 ); /* 30 = after other tools */
 
 		if ( ! $is_enabled ) {
 			return;
 		}
 
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+		add_action( 'admin_head', [ $this, 'print_style' ] );
+		add_action( 'wp_head', [ $this, 'print_style' ] );
 
 		$user = wp_get_current_user();
 
