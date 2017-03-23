@@ -58,6 +58,8 @@ module.exports = ControlsStack.extend( {
 		var self = this,
 			settings = self.model.toJSON();
 
+		settings.id = elementor.config.post_id;
+
 		NProgress.start();
 
 		elementor.ajax.send( 'save_page_settings', {
