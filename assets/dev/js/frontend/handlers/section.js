@@ -243,7 +243,7 @@ module.exports = function( $scope, $ ) {
 	new StretchedSection( $scope, $ );
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( $scope );
+		new Shapes( { $element:  $scope } );
 	}
 
 	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
