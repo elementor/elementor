@@ -30,7 +30,9 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
-	getElementName: function() {},
+	getElementName: function() {
+		return this.$element.data( 'element_type' ).split( '.' )[0];
+	},
 
 	getID: function() {
 		return this.$element.data( 'id' );

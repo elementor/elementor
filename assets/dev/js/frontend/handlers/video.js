@@ -6,10 +6,6 @@ VideoModule = HandlerModule.extend( {
 
 	oldAspectRatio: null,
 
-	getElementName: function() {
-		return 'video';
-	},
-
 	getDefaultSettings: function() {
 		return {
 			selectors: {
