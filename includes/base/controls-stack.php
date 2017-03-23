@@ -11,6 +11,8 @@ abstract class Controls_Stack {
 
 	const RESPONSIVE_MOBILE = 'mobile';
 
+	private $_id;
+
 	private $_settings;
 
 	private $_data;
@@ -30,6 +32,10 @@ abstract class Controls_Stack {
 	 * @var null|array
 	 */
 	protected $_current_tab = null;
+
+	public function get_id() {
+		return $this->_id;
+	}
 
 	abstract public function get_name();
 
@@ -378,6 +384,7 @@ abstract class Controls_Stack {
 
 	protected function get_default_data() {
 		return [
+			'id' => 0,
 			'settings' => [],
 		];
 	}
@@ -416,6 +423,9 @@ abstract class Controls_Stack {
 
 	protected function _init( $data ) {
 		$this->_data = array_merge( $this->get_default_data(), $data );
+
+		$this->_id = $data['id'];
+
 		$this->_settings = $this->_get_parsed_settings();
 	}
 

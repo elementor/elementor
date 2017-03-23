@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Element_Base extends Controls_Stack {
 
-	private $_id;
-
 	/**
 	 * @var Element_Base[]
 	 */
@@ -126,10 +124,6 @@ abstract class Element_Base extends Controls_Stack {
 			<?php echo $content_template; ?>
 		</script>
 		<?php
-	}
-
-	public function get_id() {
-		return $this->_id;
 	}
 
 	public function get_children() {
@@ -255,7 +249,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		return [
-			'id' => $this->_id,
+			'id' => $this->get_id(),
 			'elType' => $data['elType'],
 			'settings' => $data['settings'],
 			'elements' => $elements,
@@ -353,7 +347,6 @@ abstract class Element_Base extends Controls_Stack {
 		$data = parent::get_default_data();
 
 		return array_merge( $data, [
-			'id' => 0,
 			'elements' => [],
 			'isInner' => false,
 		] );
@@ -404,12 +397,6 @@ abstract class Element_Base extends Controls_Stack {
 
 			$this->add_child( $child_data );
 		}
-	}
-
-	protected function _init( $data ) {
-		parent::_init( $data );
-
-		$this->_id = $data['id'];
 	}
 
 	public function __construct( array $data = [], array $args = null ) {

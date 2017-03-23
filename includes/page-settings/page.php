@@ -11,7 +11,7 @@ class Page extends Controls_Stack {
 	private $post;
 
 	public function __construct( array $data = [] ) {
-		$this->post = get_post( $data['post_id'] );
+		$this->post = get_post( $data['id'] );
 
 		$data['settings'] = $this->init_settings();
 

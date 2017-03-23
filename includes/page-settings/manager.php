@@ -10,11 +10,11 @@ class Manager {
 	const META_KEY = '_elementor_page_settings';
 
 	public static function save_page_settings() {
-		if ( empty( $_POST['post_id'] ) ) {
+		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the post ID' );
 		}
 
-		$post = get_post( $_POST['post_id'] );
+		$post = get_post( $_POST['id'] );
 
 		if ( empty( $post ) ) {
 			wp_send_json_error( 'Invalid Post' );
@@ -70,7 +70,7 @@ class Manager {
 	}
 
 	public static function get_page( $post_id ) {
-		return new Page( [ 'post_id' => $post_id ] );
+		return new Page( [ 'id' => $post_id ] );
 	}
 
 	public function __construct() {
