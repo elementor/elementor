@@ -65,10 +65,16 @@ class Page extends Controls_Stack {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 
 			$options = [
-				'' => __( 'None', 'elementor' ),
+				'default' => __( 'Default', 'elementor' ),
 			];
 
 			$options += array_flip( get_page_templates( null, $this->post->post_type ) );
+
+			$saved_template = get_post_meta( $this->post->ID, '_wp_page_template', true );
+
+			if ( ! $saved_template ) {
+				$saved_template = 'default';
+			}
 
 			$this->add_control(
 				'template',
