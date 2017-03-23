@@ -1,11 +1,11 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
-	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
+	ControlsCSS = require( 'elementor-editor-utils/controls-css' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
 	tagName: 'div',
 
-	stylesheet: null,
+	controlsCSS: null,
 
 	className: function() {
 		return this.getElementUniqueID();
@@ -39,8 +39,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 			'click @ui.duplicateButton': 'onClickDuplicate'
 		};
 	},
-
-	$stylesheetElement: null,
 
 	getElementType: function() {
 		return this.model.get( 'elType' );
@@ -102,7 +100,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.initRemoveDialog();
 
-		this.initStylesheet();
+		this.initControlsCSS();
 	},
 
 	edit: function() {
@@ -195,21 +193,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	initStylesheet: function() {
-		var viewportBreakpoints = elementor.config.viewportBreakpoints;
-
-		this.stylesheet = new Stylesheet();
-
-		this.stylesheet
-			.addDevice( 'mobile', 0 )
-			.addDevice( 'tablet', viewportBreakpoints.md )
-			.addDevice( 'desktop', viewportBreakpoints.lg );
-	},
-
-	createStylesheetElement: function() {
-		this.$stylesheetElement = Backbone.$( '<style>', { id: 'elementor-style-' + this.model.cid } );
-
-		elementor.$previewContents.find( 'head' ).append( this.$stylesheetElement );
+	initControlsCSS: function() {
+		this.controlsCSS = new ControlsCSS();
 	},
 
 	enqueueFonts: function() {
@@ -227,80 +212,29 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	addStyleRules: function( controls, values, placeholders, replacements ) {
-		var self = this;
-
-		_.each( controls, function( control ) {
-			if ( control.styleFields ) {
-				values[ control.name ].each( function( itemModel ) {
-					self.addStyleRules(
-						control.styleFields,
-						itemModel.attributes,
-						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
-						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
-					);
-				} );
-			}
-
-			self.addControlStyleRules( control, values, self.getEditModel().get( 'settings' ).controls, placeholders, replacements );
-		} );
-	},
-
-	addControlStyleRules: function( control, values, controlsStack, placeholders, replacements ) {
-		var self = this;
-
-		BaseElementView.addControlStyleRules( self.stylesheet, control, controlsStack, function( control ) {
-			return self.getStyleControlValue( control, values );
-		}, placeholders, replacements );
-	},
-
-	addStyleToDocument: function() {
-		var styleText = this.stylesheet.toString();
-
-		styleText = elementor.hooks.applyFilters( 'editor/style/styleText', styleText, this );
-
-		if ( _.isEmpty( styleText ) && ! this.$stylesheetElement ) {
-			return;
-		}
-
-		if ( ! this.$stylesheetElement ) {
-			this.createStylesheetElement();
-		}
-
-		this.$stylesheetElement.text( styleText );
-	},
-
-	getStyleControlValue: function( control, values ) {
-		var value = values[ control.name ];
-
-		if ( control.selectors_dictionary ) {
-			value = control.selectors_dictionary[ value ] || value;
-		}
-
-		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
-			return;
-		}
-
-		return value;
-	},
-
 	renderStyles: function() {
 		var self = this,
 			settings = self.getEditModel().get( 'settings' );
 
-		self.stylesheet.empty();
+		self.controlsCSS.stylesheet.empty();
 
-		self.addStyleRules( settings.getStyleControls(), settings.attributes, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
+		self.controlsCSS.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
 
 		if ( 'column' === self.model.get( 'elType' ) ) {
 			var inlineSize = settings.get( '_inline_size' );
 
 			if ( ! _.isEmpty( inlineSize ) ) {
-				self.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
+				self.controlsCSS.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
 			}
 		}
 
-		self.addStyleToDocument();
+		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
+
+		if ( extraCSS ) {
+			self.controlsCSS.stylesheet.addRules( extraCSS );
+		}
+
+		self.controlsCSS.addStyleToDocument();
 	},
 
 	renderCustomClasses: function() {
@@ -478,93 +412,9 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.$stylesheetElement ) {
-			this.$stylesheetElement.remove();
+		if ( this.controlsCSS.$stylesheetElement ) {
+			this.controlsCSS.$stylesheetElement.remove();
 		}
-	}
-}, {
-	addControlStyleRules: function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
-		var value = valueCallback( control );
-
-		if ( undefined === value ) {
-			return;
-		}
-
-		_.each( control.selectors, function( cssProperty, selector ) {
-			var outputCssProperty;
-
-			try {
-				outputCssProperty = cssProperty.replace( /\{\{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
-					var parserControl = control,
-						valueToInsert = value;
-
-					if ( controlName ) {
-						parserControl = _.findWhere( controlsStack, { name: controlName } );
-
-						valueToInsert = valueCallback( parserControl );
-					}
-
-					var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
-
-					if ( '' === parsedValue ) {
-						throw '';
-					}
-
-					return parsedValue;
-				} );
-			} catch ( e ) {
-				return;
-			}
-
-			if ( _.isEmpty( outputCssProperty ) ) {
-				return;
-			}
-
-			var devicePattern = /^(?:\([^)]+\)){1,2}/,
-				deviceRules = selector.match( devicePattern ),
-				query = {};
-
-			if ( deviceRules ) {
-				deviceRules = deviceRules[0];
-
-				selector = selector.replace( devicePattern, '' );
-
-				var pureDevicePattern = /\(([^)]+)\)/g,
-					pureDeviceRules = [],
-					matches;
-
-				while ( matches = pureDevicePattern.exec( deviceRules ) ) {
-					pureDeviceRules.push( matches[1] );
-				}
-
-				_.each( pureDeviceRules, function( deviceRule ) {
-					if ( 'desktop' === deviceRule ) {
-						return;
-					}
-
-					var device = deviceRule.replace( /\+$/, '' ),
-						endPoint = device === deviceRule ? 'max' : 'min';
-
-					query[ endPoint ] = device;
-				} );
-			}
-
-			_.each( placeholders, function( placeholder, index ) {
-				var placeholderPattern = new RegExp( placeholder, 'g' );
-
-				selector = selector.replace( placeholderPattern, replacements[ index ] );
-			} );
-
-			if ( ! Object.keys( query ).length && control.responsive ) {
-				query = elementor.helpers.cloneObject( control.responsive );
-
-				if ( 'desktop' === query.max ) {
-					delete query.max;
-				}
-			}
-
-			stylesheet.addRules( selector, outputCssProperty, query );
-		} );
 	}
 } );
 
