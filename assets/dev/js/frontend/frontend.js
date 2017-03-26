@@ -14,8 +14,6 @@
 
 		this.config = elementorFrontendConfig;
 
-		this.hooks = new EventManager();
-
 		this.Module = Module;
 
 		var initElements = function() {
@@ -33,7 +31,13 @@
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var initializeHooks = function() {
+			self.hooks = new EventManager();
+		};
+
 		this.init = function() {
+			initializeHooks();
+
 			initElements();
 
 			initOnReadyComponents();
@@ -147,6 +151,8 @@
 
 			$element.elementorWaypoint( correctCallback, options );
 		};
+
+		initializeHooks();
 	};
 
 	window.elementorFrontend = new ElementorFrontend();
