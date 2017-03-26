@@ -86,7 +86,7 @@ class Maintenance_Mode {
 					self::MODE_MAINTENANCE => __( 'Maintenance', 'elementor' ),
 				],
 				'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
-					__( 'Choose between Coming Soon mode with HTTP 200 and Maintenance Mode with HTTP 503.', 'elementor' ) .
+					__( 'Choose between Coming Soon mode (returning HTTP200) or Maintenance Mode (returning HTTP503).', 'elementor' ) .
 					'</div>' .
 					'<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
 					__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
