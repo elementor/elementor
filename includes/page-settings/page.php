@@ -4,6 +4,7 @@ namespace Elementor\PageSettings;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Group_Control_Background;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -59,6 +60,7 @@ class Page extends Controls_Stack {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'No', 'elementor' ),
 				'label_on' => __( 'Yes', 'elementor' ),
+				'description' => sprintf( __( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ), Settings::get_url() ),
 				'selectors' => [
 					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
 				],
@@ -117,6 +119,15 @@ class Page extends Controls_Stack {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background',
+				'label' => __( 'Background', 'elementor' ),
+				'types' => [ 'none', 'classic', 'gradient' ],
+			]
+		);
+
 		$this->add_responsive_control(
 			'margin',
 			[
@@ -136,15 +147,6 @@ class Page extends Controls_Stack {
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background',
-				'label' => __( 'Background', 'elementor' ),
-				'types' => [ 'none', 'classic', 'gradient' ],
 			]
 		);
 

@@ -38,13 +38,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
 				pageName: 'settingsPage'
 			},
-			{
-				icon: 'eicon-elementor',
-				title: elementor.translate( 'elementor_settings' ),
-				type: 'link',
-				link: elementor.config.settings_page_link,
-				newTab: true
-			},
             {
                 icon: 'fa fa-eraser',
                 title: elementor.translate( 'clear_page' ),
@@ -52,6 +45,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
                     elementor.clearPage();
                 }
             },
+			{
+				icon: 'eicon-elementor',
+				title: elementor.translate( 'elementor_settings' ),
+				type: 'link',
+				link: elementor.config.settings_page_link,
+				newTab: true
+			},
 			{
 				icon: 'fa fa-info-circle',
 				title: elementor.translate( 'about_elementor' ),

@@ -11,13 +11,15 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			tabs: '.elementor-panel-navigation-tab'
+			tabs: '.elementor-panel-navigation-tab',
+			reloadButton: '.elementor-update-preview-button'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.tabs': 'onClickTabControl'
+			'click @ui.tabs': 'onClickTabControl',
+			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
 	},
 
@@ -131,6 +133,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.activateTab( $tab );
 
 		this._renderChildren();
+	},
+
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	},
 
 	onDeviceModeChange: function() {
