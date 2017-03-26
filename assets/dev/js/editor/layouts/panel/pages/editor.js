@@ -8,24 +8,6 @@ EditorView = ControlsStack.extend( {
 
 	childViewContainer: '#elementor-controls',
 
-	ui: function() {
-		return _.extend(
-			ControlsStack.prototype.ui.apply( this, arguments ),
-			{
-				reloadButton: '#elementor-update-preview-button'
-			}
-		);
-	},
-
-	events: function() {
-		return _.extend(
-			ControlsStack.prototype.events.apply( this, arguments ),
-			{
-				'click @ui.reloadButton': 'onReloadButtonClick'
-			}
-		);
-	},
-
 	childViewOptions: function() {
 		return {
 			elementSettingsModel: this.model.get( 'settings' ),
@@ -81,10 +63,6 @@ EditorView = ControlsStack.extend( {
 				scrollTop: self.getOption( 'editedElementView' ).$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
 			} );
 		}, 500 );
-	},
-
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
 	},
 
 	onChildviewSettingsChange: function( childView ) {

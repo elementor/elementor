@@ -7,26 +7,6 @@ module.exports = ControlsStack.extend( {
 
 	childViewContainer: '#elementor-panel-page-settings-controls',
 
-	ui: function() {
-		return _.extend(
-			ControlsStack.prototype.ui.apply( this, arguments ),
-			{
-				discard: '.elementor-panel-scheme-discard .elementor-button',
-				apply: '.elementor-panel-scheme-save .elementor-button'
-			}
-		);
-	},
-
-	events: function() {
-		return _.extend(
-			ControlsStack.prototype.events.apply( this, arguments ),
-			{
-				'click @ui.discard': 'onDiscardClick',
-				'click @ui.apply': 'onApplyClick'
-			}
-		);
-	},
-
 	childViewOptions: function() {
 		return {
 			elementSettingsModel: this.model
@@ -40,12 +20,10 @@ module.exports = ControlsStack.extend( {
 	},
 
 	onChildviewSettingsChange: function() {
-		this.ui.discard.prop( 'disabled', false );
-
-		this.ui.apply.prop( 'disabled', false );
+		this.ui.reloadButton.prop( 'disabled', false );
 	},
 
-	onApplyClick: function() {
+	onReloadButtonClick: function() {
 		var self = this,
 			settings = self.model.toJSON();
 
@@ -58,7 +36,7 @@ module.exports = ControlsStack.extend( {
 			success: function() {
 				elementor.pageSettings.setSettings( 'savedSettings', settings );
 
-				elementorFrontend.getScopeWindow().location.reload();
+				elementor.reloadPreview();
 
 				elementor.once( 'preview:loaded', function() {
 					NProgress.done();
@@ -72,13 +50,7 @@ module.exports = ControlsStack.extend( {
 		} );
 	},
 
-	onDiscardClick: function() {
+	onDestroy: function() {
 		elementor.pageSettings.resetModel();
-
-		this.render();
-
-		this.ui.discard.prop( 'disabled', true );
-
-		this.ui.apply.prop( 'disabled', true );
 	}
 } );
