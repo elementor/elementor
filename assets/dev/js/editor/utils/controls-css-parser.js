@@ -32,7 +32,7 @@ ControlsCSSParser = ViewModule.extend( {
 		var self = this;
 
 		_.each( controls, function( control ) {
-			if ( control.styleFields ) {
+			if ( 'undefined' !== typeof control.styleFields && control.styleFields.length ) {
 				values[ control.name ].each( function( itemModel ) {
 					self.addStyleRules(
 						control.styleFields,
