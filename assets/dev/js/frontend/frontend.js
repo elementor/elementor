@@ -38,6 +38,8 @@
 
 			initOnReadyComponents();
 
+			$( window ).trigger( 'elementor/frontend/init' );
+
 			self.hooks.doAction( 'init' );
 		};
 
