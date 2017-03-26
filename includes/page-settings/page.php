@@ -119,6 +119,15 @@ class Page extends Controls_Stack {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background',
+				'label' => __( 'Background', 'elementor' ),
+				'types' => [ 'none', 'classic', 'gradient' ],
+			]
+		);
+
 		$this->add_responsive_control(
 			'margin',
 			[
@@ -138,15 +147,6 @@ class Page extends Controls_Stack {
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background',
-				'label' => __( 'Background', 'elementor' ),
-				'types' => [ 'none', 'classic', 'gradient' ],
 			]
 		);
 
