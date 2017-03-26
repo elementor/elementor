@@ -5,6 +5,11 @@ sudo: false
 # Tell Travis CI we're using PHP
 language: php
 
+cache:
+  - composer
+  - $HOME/.composer/cache
+  - $HOME/.npm
+
 # PHP version used in first build configuration.
 php:
     - 5.4
