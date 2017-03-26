@@ -1230,7 +1230,7 @@ select {
     background-color: #71d7f7; }
   .elementor-device-tablet .elementor-panel .elementor-responsive-switcher-tablet {
     background-color: #71d7f7; }
-  .elementor-panel #elementor-update-preview {
+  .elementor-panel .elementor-update-preview {
     margin: 15px 15px 0;
     background-color: #e6e9ec;
     display: -webkit-box;
@@ -1241,13 +1241,13 @@ select {
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
-  .elementor-panel #elementor-update-preview-button-wrapper {
+  .elementor-panel .elementor-update-preview-button-wrapper {
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
     text-align: right; }
-  .elementor-panel #elementor-update-preview-button {
+  .elementor-panel .elementor-update-preview-button {
     padding: 8px 15px;
     text-transform: uppercase; }
   .elementor-panel .elementor-control-type-media .elementor-control-media {

@@ -2530,24 +2530,6 @@ EditorView = ControlsStack.extend( {
 
 	childViewContainer: '#elementor-controls',
 
-	ui: function() {
-		return _.extend(
-			ControlsStack.prototype.ui.apply( this, arguments ),
-			{
-				reloadButton: '#elementor-update-preview-button'
-			}
-		);
-	},
-
-	events: function() {
-		return _.extend(
-			ControlsStack.prototype.events.apply( this, arguments ),
-			{
-				'click @ui.reloadButton': 'onReloadButtonClick'
-			}
-		);
-	},
-
 	childViewOptions: function() {
 		return {
 			elementSettingsModel: this.model.get( 'settings' ),
@@ -2603,10 +2585,6 @@ EditorView = ControlsStack.extend( {
 				scrollTop: self.getOption( 'editedElementView' ).$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
 			} );
 		}, 500 );
-	},
-
-	onReloadButtonClick: function() {
-		elementor.reloadPreview();
 	},
 
 	onChildviewSettingsChange: function( childView ) {
@@ -3141,26 +3119,6 @@ module.exports = ControlsStack.extend( {
 
 	childViewContainer: '#elementor-panel-page-settings-controls',
 
-	ui: function() {
-		return _.extend(
-			ControlsStack.prototype.ui.apply( this, arguments ),
-			{
-				discard: '.elementor-panel-scheme-discard .elementor-button',
-				apply: '.elementor-panel-scheme-save .elementor-button'
-			}
-		);
-	},
-
-	events: function() {
-		return _.extend(
-			ControlsStack.prototype.events.apply( this, arguments ),
-			{
-				'click @ui.discard': 'onDiscardClick',
-				'click @ui.apply': 'onApplyClick'
-			}
-		);
-	},
-
 	childViewOptions: function() {
 		return {
 			elementSettingsModel: this.model
@@ -3174,12 +3132,10 @@ module.exports = ControlsStack.extend( {
 	},
 
 	onChildviewSettingsChange: function() {
-		this.ui.discard.prop( 'disabled', false );
-
-		this.ui.apply.prop( 'disabled', false );
+		this.ui.reloadButton.prop( 'disabled', false );
 	},
 
-	onApplyClick: function() {
+	onReloadButtonClick: function() {
 		var self = this,
 			settings = self.model.toJSON();
 
@@ -3192,7 +3148,7 @@ module.exports = ControlsStack.extend( {
 			success: function() {
 				elementor.pageSettings.setSettings( 'savedSettings', settings );
 
-				elementorFrontend.getScopeWindow().location.reload();
+				elementor.reloadPreview();
 
 				elementor.once( 'preview:loaded', function() {
 					NProgress.done();
@@ -3206,14 +3162,8 @@ module.exports = ControlsStack.extend( {
 		} );
 	},
 
-	onDiscardClick: function() {
+	onDestroy: function() {
 		elementor.pageSettings.resetModel();
-
-		this.render();
-
-		this.ui.discard.prop( 'disabled', true );
-
-		this.ui.apply.prop( 'disabled', true );
 	}
 } );
 
@@ -4492,7 +4442,6 @@ ControlsCSSParser = ViewModule.extend( {
 						control.styleFields,
 						itemModel.attributes,
 						controlsStack,
-						
 						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
 						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
@@ -7076,13 +7025,15 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			tabs: '.elementor-panel-navigation-tab'
+			tabs: '.elementor-panel-navigation-tab',
+			reloadButton: '.elementor-update-preview-button'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.tabs': 'onClickTabControl'
+			'click @ui.tabs': 'onClickTabControl',
+			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
 	},
 
@@ -7196,6 +7147,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.activateTab( $tab );
 
 		this._renderChildren();
+	},
+
+	onReloadButtonClick: function() {
+		elementor.reloadPreview();
 	},
 
 	onDeviceModeChange: function() {

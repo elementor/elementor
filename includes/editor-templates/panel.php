@@ -140,10 +140,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
-		<div id="elementor-update-preview">
-			<div id="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
-			<div id="elementor-update-preview-button-wrapper">
-				<button id="elementor-update-preview-button" class="elementor-button elementor-button-success"><?php echo __( 'Apply', 'elementor' ); ?></button>
+		<div class="elementor-update-preview">
+			<div class="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
+			<div class="elementor-update-preview-button-wrapper">
+				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo __( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 	<# } #>
@@ -251,24 +251,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-page-settings">
-	<div class="elementor-panel-scheme-buttons">
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-			<button class="elementor-button" disabled>
-				<i class="fa fa-times"></i><?php _e( 'Discard', 'elementor' ); ?>
-			</button>
-		</div>
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-			<button class="elementor-button elementor-button-success" disabled>
-				<?php _e( 'Apply', 'elementor' ); ?>
-			</button>
-		</div>
-	</div>
 	<div class="elementor-panel-navigation">
 		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
 			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>
 			<# } ); #>
+	</div>
+	<div class="elementor-update-preview">
+		<div class="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
+		<div class="elementor-update-preview-button-wrapper">
+			<button class="elementor-update-preview-button elementor-button elementor-button-success" disabled><?php echo __( 'Apply', 'elementor' ); ?></button>
+		</div>
 	</div>
 	<div id="elementor-panel-page-settings-controls" class="elementor-panel-box"></div>
 </script>

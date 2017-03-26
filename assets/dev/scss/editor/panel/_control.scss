@@ -318,19 +318,19 @@
 	}
 }
 
-#elementor-update-preview {
+.elementor-update-preview {
 	margin: 15px 15px 0;
 	background-color: $editor-background;
 	display: flex;
 	align-items: center;
 }
 
-#elementor-update-preview-button-wrapper {
+.elementor-update-preview-button-wrapper {
 	flex-grow: 1;
 	text-align: $end;
 }
 
-#elementor-update-preview-button {
+.elementor-update-preview-button {
 	padding: 8px 15px;
 	text-transform: uppercase;
 }
