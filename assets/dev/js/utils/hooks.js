@@ -94,6 +94,20 @@ var EventManager = function() {
 		// Utilize 'prop itself' : http://jsperf.com/hasownproperty-vs-in-vs-undefined/19
 		var hooks = STORAGE[ type ][ hook ];
 		if ( hooks ) {
+			// TEMP FIX BUG
+			var hasSameCallback = false;
+			jQuery.each( hooks, function() {
+				if ( this.callback === callback ) {
+					hasSameCallback = true;
+					return false;
+				}
+			} );
+
+			if ( hasSameCallback ) {
+				return;
+			}
+			// END TEMP FIX BUG
+
 			hooks.push( hookObject );
 			hooks = _hookInsertSort( hooks );
 		} else {
