@@ -136,9 +136,11 @@ module.exports = ElementsHandler;
 		this.init = function() {
 			initElements();
 
-			initOnReadyComponents();
+
+			$( window ).trigger( 'elementor/frontend/init' );
 
 			self.hooks.doAction( 'init' );
+			initOnReadyComponents();
 		};
 
 		this.getScopeWindow = function() {
