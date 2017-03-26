@@ -445,7 +445,8 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 12px;
   color: #a4afb7;
   background: none;
-  float: left; }
+  float: left;
+  width: auto; }
 
 #elementor-deactivate-feedback-dialog-header i {
   color: #9b0a46;
