@@ -36,7 +36,6 @@
 		this.init = function() {
 			initElements();
 
-
 			$( window ).trigger( 'elementor/frontend/init' );
 
 			self.hooks.doAction( 'init' );
