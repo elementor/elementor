@@ -7,9 +7,9 @@ language: php
 
 # PHP version used in first build configuration.
 php:
-    - 5.4
-    - 5.5
-    - 5.6
+#    - 5.4
+#    - 5.5
+#    - 5.6
     - 7.0
 
 # WordPress version used in first build configuration.
@@ -23,10 +23,18 @@ env:
 
 install:
   - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --no-interaction
+#  - php composer.phar install --dev --no-interaction
 
 before_script:
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - |
+      if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
+        composer global require "phpunit/phpunit=5.7.*"
+      else
+        composer global require "phpunit/phpunit=4.8.*"
+      fi
+  - composer global require "satooshi/php-coveralls=1.0.*"
 
 after_success:
   - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt
