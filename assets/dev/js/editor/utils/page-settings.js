@@ -5,9 +5,15 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 module.exports = ViewModule.extend( {
 	controlsCSS: null,
 
-	collection: null,
-
 	model: null,
+
+	changeCallbacks: {
+		post_title: function( newValue ) {
+			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
+
+			$title.text( newValue );
+		}
+	},
 
 	getDefaultSettings: function() {
 		return {
@@ -17,6 +23,8 @@ module.exports = ViewModule.extend( {
 
 	bindEvents: function() {
 		elementor.on( 'preview:loaded', this.updateStylesheet );
+
+		this.model.on( 'change', this.onModelChange );
 	},
 
 	renderStyles: function() {
@@ -51,5 +59,24 @@ module.exports = ViewModule.extend( {
 		this.initControlsCSSParser();
 
 		ViewModule.prototype.onInit.apply( this, arguments );
+	},
+
+	onModelChange: function( model ) {
+		var self = this,
+			isStyleNeedUpdate = false;
+
+		_.each( model.changed, function( value, key ) {
+			if ( self.changeCallbacks[ key ] ) {
+				self.changeCallbacks[ key ].call( self, value );
+			}
+
+			if ( self.model.controls[ key ].selectors ) {
+				isStyleNeedUpdate = true;
+			}
+		} );
+
+		if ( isStyleNeedUpdate ) {
+			self.updateStylesheet();
+		}
 	}
 } );
