@@ -4491,6 +4491,8 @@ ControlsCSSParser = ViewModule.extend( {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
+						controlsStack,
+						
 						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
 						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
