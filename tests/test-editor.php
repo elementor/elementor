@@ -2,6 +2,14 @@
 
 class Elementor_Test_Editor extends WP_UnitTestCase {
 
+	public function setUp() {
+		parent::setUp();
+
+		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+
+		$GLOBALS['post'] = $this->factory->post->create_and_get();
+	}
+
 	public function test_getInstance() {
 		$this->assertInstanceOf( '\Elementor\Editor', Elementor\Plugin::$instance->editor );
 	}
@@ -9,7 +17,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	public function test_enqueueScripts() {
 		ob_start();
 		Elementor\Plugin::$instance->editor->enqueue_scripts();
-		ob_clean();
+		ob_end_clean();
 
 		$scripts = [
 			'jquery-ui-sortable',
