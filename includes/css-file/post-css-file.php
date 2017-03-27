@@ -195,7 +195,7 @@ class Post_CSS_File extends CSS_File {
 			$page_settings_instance->get_style_controls(),
 			$page_settings_instance->get_settings(),
 			[ '{{WRAPPER}}' ],
-			[ '.elementor-page-' . $this->post_id ]
+			[ 'body.elementor-page-' . $this->post_id ]
 		);
 	}
 }

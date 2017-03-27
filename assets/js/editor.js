@@ -5821,7 +5821,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	renderStyles: function() {
-		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /\{\{WRAPPER}}/g ], [ '.elementor-page-' + elementor.config.post_id ] );
+		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /\{\{WRAPPER}}/g ], [ 'body.elementor-page-' + elementor.config.post_id ] );
 	},
 
 	updateStylesheet: function() {
