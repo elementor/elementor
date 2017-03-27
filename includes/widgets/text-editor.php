@@ -237,7 +237,6 @@ class Widget_Text_Editor extends Widget_Base {
 				'name' => 'drop_cap_typography',
 				'selector' => '{{WRAPPER}} .elementor-drop-cap-letter',
 				'exclude' => [
-					'line_height',
 					'letter_spacing',
 				],
 				'condition' => [
