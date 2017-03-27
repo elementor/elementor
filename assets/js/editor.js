@@ -151,6 +151,8 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	active: function() {
+		this.deactivate();
+
 		var options = _.clone( this.options );
 
 		delete options.behaviorClass;
@@ -4457,6 +4459,10 @@ ControlsCSSParser = ViewModule.extend( {
 		this.elements.$stylesheetElement.text( this.stylesheet );
 	},
 
+	removeStyleFromDocument: function() {
+		this.elements.$stylesheetElement.remove();
+	},
+
 	onInit: function() {
 		ViewModule.prototype.onInit.apply( this, arguments );
 
@@ -6561,7 +6567,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSSParser = new ControlsCSSParser();
+		this.controlsCSSParser = new ControlsCSSParser( { id: this.model.cid } );
 	},
 
 	enqueueFonts: function() {
@@ -6779,9 +6785,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.controlsCSSParser.$stylesheetElement ) {
-			this.controlsCSSParser.$stylesheetElement.remove();
-		}
+		this.controlsCSSParser.removeStyleFromDocument();
 	}
 } );
 
@@ -9373,6 +9377,10 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onRemoveChild: function() {
+		if ( this._isRendering ) {
+			return;
+		}
+
 		// If it's the last column, please create new one.
 		this._checkIsEmpty();
 
