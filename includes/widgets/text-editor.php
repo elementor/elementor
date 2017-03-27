@@ -139,24 +139,6 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'drop_cap_shape',
-			[
-				'label' => __( 'Shape', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'circle' => __( 'Circle', 'elementor' ),
-					'square' => __( 'Square', 'elementor' ),
-				],
-				'default' => 'circle',
-				'prefix_class' => 'elementor-drop-cap-shape-',
-				'condition' => [
-					'drop_cap' => 'yes',
-					'drop_cap_view!' => 'default',
-				],
-			]
-		);
-
-		$this->add_control(
 			'drop_cap_primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
