@@ -129,18 +129,6 @@ class Page extends Controls_Stack {
 		);
 
 		$this->add_responsive_control(
-			'margin',
-			[
-				'label' => __( 'Margin', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'selectors' => [
-					'{{WRAPPER}}' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
