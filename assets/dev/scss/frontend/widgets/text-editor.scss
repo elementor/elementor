@@ -1,15 +1,5 @@
 .elementor-widget-text-editor {
 
-	&.elementor-drop-cap-shape- {
-
-		&circle {
-
-			.elementor-drop-cap {
-				border-radius: 50%;
-			}
-		}
-	}
-
 	&.elementor-drop-cap {
 
 		&-view- {
@@ -33,6 +23,22 @@
 		}
 	}
 
+	&.elementor-drop-cap-view-default {
+
+	}
+
+	&:not(.elementor-drop-cap-view-default) {
+
+		.elementor-drop-cap {
+			margin-top: 8px;
+
+			&-letter {
+				width: 1em;
+				height: 1em;
+			}
+		}
+	}
+
 	.elementor-text-editor {
 		overflow: hidden;
 	}
@@ -41,13 +47,10 @@
 		float: $start;
 		text-align: center;
 		line-height: 1;
-		margin-top: 8px;
 		font-size: 50px;
 
 		&-letter {
 			display: inline-block;
-			width: 1em;
-			height: 1em;
 		}
 	}
 }

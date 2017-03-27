@@ -1635,9 +1635,6 @@
 body.elementor-page .elementor-widget-menu-anchor {
   margin-bottom: 0; }
 
-.elementor-widget-text-editor.elementor-drop-cap-shape-circle .elementor-drop-cap {
-  border-radius: 50%; }
-
 .elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap {
   background-color: #818a91;
   color: #fff; }
@@ -1647,6 +1644,12 @@ body.elementor-page .elementor-widget-menu-anchor {
   border: 3px solid;
   background-color: transparent; }
 
+.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap {
+  margin-top: 8px; }
+  .elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap-letter {
+    width: 1em;
+    height: 1em; }
+
 .elementor-widget-text-editor .elementor-text-editor {
   overflow: hidden; }
 
@@ -1654,12 +1657,9 @@ body.elementor-page .elementor-widget-menu-anchor {
   float: right;
   text-align: center;
   line-height: 1;
-  margin-top: 8px;
   font-size: 50px; }
   .elementor-widget-text-editor .elementor-drop-cap-letter {
-    display: inline-block;
-    width: 1em;
-    height: 1em; }
+    display: inline-block; }
 
 .slick-slider {
   position: relative;

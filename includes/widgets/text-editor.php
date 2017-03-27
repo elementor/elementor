@@ -139,24 +139,6 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'drop_cap_shape',
-			[
-				'label' => __( 'Shape', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'circle' => __( 'Circle', 'elementor' ),
-					'square' => __( 'Square', 'elementor' ),
-				],
-				'default' => 'circle',
-				'prefix_class' => 'elementor-drop-cap-shape-',
-				'condition' => [
-					'drop_cap' => 'yes',
-					'drop_cap_view!' => 'default',
-				],
-			]
-		);
-
-		$this->add_control(
 			'drop_cap_primary_color',
 			[
 				'label' => __( 'Primary Color', 'elementor' ),
@@ -226,7 +208,41 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-drop-cap' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'body:not(.rtl) {{WRAPPER}} .elementor-drop-cap' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'body.rtl {{WRAPPER}} .elementor-drop-cap' => 'margin-left: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'drop_cap_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'range' => [
+					'%' => [
+						'max' => 50,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-drop-cap' => 'border-radius: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'drop_cap_border_width',[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-drop-cap' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'drop_cap_view' => 'framed',
 				],
 			]
 		);
@@ -237,7 +253,6 @@ class Widget_Text_Editor extends Widget_Base {
 				'name' => 'drop_cap_typography',
 				'selector' => '{{WRAPPER}} .elementor-drop-cap-letter',
 				'exclude' => [
-					'line_height',
 					'letter_spacing',
 				],
 				'condition' => [

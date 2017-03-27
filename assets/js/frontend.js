@@ -314,7 +314,7 @@ HandlerModule = ViewModule.extend( {
 
 			elementSettings = _.pick( activeValues, settingsKeys );
 		} else {
-			elementSettings = this.$element.data( 'settings' );
+			elementSettings = this.$element.data( 'settings' ) || {};
 		}
 
 		return this.getItems( elementSettings, setting );
@@ -1080,6 +1080,7 @@ module.exports = ViewModule.extend( {
 			scrollDuration: 1000,
 			selectors: {
 				links: 'a[href*="#"]',
+				targets: '.elementor-element, .elementor-menu-anchor',
 				scrollable: 'html, body',
 				wpAdminBar: '#wpadminbar'
 			}
@@ -1111,7 +1112,7 @@ module.exports = ViewModule.extend( {
 			return;
 		}
 
-		var $anchor = jQuery( clickedLink.hash );
+		var $anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
 
 		if ( ! $anchor.length ) {
 			return;

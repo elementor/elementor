@@ -83,6 +83,14 @@ class Manager {
 		return new Page( [ 'id' => $post_id ] );
 	}
 
+	public static function init() {
+		$post_types = get_post_types_by_support( 'elementor' );
+
+		foreach ( $post_types as $post_type ) {
+			add_filter( "theme_{$post_type}_templates", [ __CLASS__, 'add_page_templates' ], 10, 4 );
+		}
+	}
+
 	public function __construct() {
 		require 'page.php';
 
@@ -90,13 +98,7 @@ class Manager {
 			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'save_page_settings' ] );
 		}
 
-		$post_types = get_option( 'elementor_cpt_support', [] );
-
-		$post_types[] = 'elementor_library';
-
-		foreach ( $post_types as $post_type ) {
-			add_filter( "theme_{$post_type}_templates", [ __CLASS__, 'add_page_templates' ], 10, 4 );
-		}
+		add_action( 'init', [ __CLASS__, 'init' ] );
 
 		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
 	}
