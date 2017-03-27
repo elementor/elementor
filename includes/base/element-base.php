@@ -337,7 +337,15 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
 
-			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
+			foreach ( $frontend_settings as $key => $setting ) {
+				if ( in_array( $setting, [ null, '' ], true ) ) {
+					unset( $frontend_settings[ $key ] );
+				}
+			}
+
+			if ( $frontend_settings ) {
+				$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
+			}
 		}
 	}
 

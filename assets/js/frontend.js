@@ -314,7 +314,7 @@ HandlerModule = ViewModule.extend( {
 
 			elementSettings = _.pick( activeValues, settingsKeys );
 		} else {
-			elementSettings = this.$element.data( 'settings' );
+			elementSettings = this.$element.data( 'settings' ) || {};
 		}
 
 		return this.getItems( elementSettings, setting );
