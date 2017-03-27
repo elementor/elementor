@@ -13,9 +13,9 @@ cache:
 # PHP version used in first build configuration.
 php:
     - 5.4
-    - 5.5
-    - 5.6
-    - 7.0
+#    - 5.5
+#    - 5.6
+#    - 7.0
 
 # WordPress version used in first build configuration.
 env:
@@ -38,13 +38,13 @@ before_script:
       else
         composer global require "phpunit/phpunit=4.8.*"
       fi
-  - composer global require satooshi/php-coveralls '~1.0'
-
-after_success:
-  - travis_retry php coveralls --verbose --exclude-no-stmt
+  - composer require satooshi/php-coveralls '~1.0'
 
 script:
   - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
+
+after_success:
+  - travis_retry php coveralls --verbose --exclude-no-stmt
