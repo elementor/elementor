@@ -171,6 +171,10 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onRemoveChild: function() {
+		if ( this._isRendering ) {
+			return;
+		}
+
 		// If it's the last column, please create new one.
 		this._checkIsEmpty();
 

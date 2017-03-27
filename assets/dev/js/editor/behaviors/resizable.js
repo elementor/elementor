@@ -22,6 +22,8 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	},
 
 	active: function() {
+		this.deactivate();
+
 		var options = _.clone( this.options );
 
 		delete options.behaviorClass;

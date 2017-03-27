@@ -24,33 +24,10 @@ module.exports = ControlsStack.extend( {
 	},
 
 	onReloadButtonClick: function() {
-		var self = this,
-			settings = self.model.toJSON();
-
-		settings.id = elementor.config.post_id;
-
-		NProgress.start();
-
-		elementor.ajax.send( 'save_page_settings', {
-			data: settings,
-			success: function() {
-				elementor.pageSettings.setSettings( 'savedSettings', settings );
-
-				elementor.reloadPreview();
-
-				elementor.once( 'preview:loaded', function() {
-					NProgress.done();
-
-					elementor.getPanelView().setPage( 'settingsPage' );
-				} );
-			},
-			error: function() {
-				alert( 'An error occurred' );
-			}
-		} );
+		elementor.pageSettings.save();
 	},
 
 	onDestroy: function() {
-		elementor.pageSettings.resetModel();
+		elementor.pageSettings.save();
 	}
 } );

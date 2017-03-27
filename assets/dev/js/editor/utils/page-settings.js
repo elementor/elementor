@@ -12,6 +12,15 @@ module.exports = ViewModule.extend( {
 			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
 
 			$title.text( newValue );
+		},
+		template: function() {
+			this.save( function() {
+				elementor.reloadPreview();
+
+				elementor.once( 'preview:loaded', function() {
+					elementor.getPanelView().setPage( 'settingsPage' );
+				} );
+			} );
 		}
 	},
 
@@ -49,8 +58,36 @@ module.exports = ViewModule.extend( {
 		this.controlsCSS = new ControlsCSSParser();
 	},
 
-	resetModel: function() {
-		this.model.set( this.getSettings( 'savedSettings' ) );
+	save: function( callback ) {
+		var self = this;
+
+		if ( _.isEmpty( self.model.changed ) ) {
+			return;
+		}
+
+		var settings = self.model.toJSON();
+
+		settings.id = elementor.config.post_id;
+
+		NProgress.start();
+
+		elementor.ajax.send( 'save_page_settings', {
+			data: settings,
+			success: function() {
+				NProgress.done();
+
+				self.setSettings( 'savedSettings', settings );
+
+				self.model.changed = {};
+
+				if ( callback ) {
+					callback.apply( self, arguments );
+				}
+			},
+			error: function() {
+				alert( 'An error occurred' );
+			}
+		} );
 	},
 
 	onInit: function() {
@@ -62,21 +99,14 @@ module.exports = ViewModule.extend( {
 	},
 
 	onModelChange: function( model ) {
-		var self = this,
-			isStyleNeedUpdate = false;
+		var self = this;
 
 		_.each( model.changed, function( value, key ) {
 			if ( self.changeCallbacks[ key ] ) {
 				self.changeCallbacks[ key ].call( self, value );
 			}
-
-			if ( self.model.controls[ key ].selectors ) {
-				isStyleNeedUpdate = true;
-			}
 		} );
 
-		if ( isStyleNeedUpdate ) {
-			self.updateStylesheet();
-		}
+		self.updateStylesheet();
 	}
 } );
