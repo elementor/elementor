@@ -38,13 +38,13 @@ before_script:
       else
         composer global require "phpunit/phpunit=4.8.*"
       fi
-  - composer global require satooshi/php-coveralls '~1.0'
-
-after_success:
-  - travis_retry php coveralls --verbose --exclude-no-stmt
+  - composer require satooshi/php-coveralls '~1.0'
 
 script:
   - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
+
+after_success:
+  - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt
