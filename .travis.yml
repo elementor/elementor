@@ -47,4 +47,4 @@ script:
   - phpunit --coverage-clover=build/logs/clover.xml
 
 after_success:
-  - travis_retry php coveralls --verbose --exclude-no-stmt
+  - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt
