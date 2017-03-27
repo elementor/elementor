@@ -86,6 +86,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Aspect Ratio', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'frontend_available' => true,
 				'options' => [
 					'169' => '16:9',
 					'43' => '4:3',
@@ -362,6 +363,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 				'label_off' => __( 'Off', 'elementor' ),
 				'label_on' => __( 'On', 'elementor' ),
 				'condition' => [
@@ -419,6 +421,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Content Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'center center',
+				'frontend_available' => true,
 				'options' => [
 					'center center' => __( 'Center', 'elementor' ),
 					'center top' => __( 'Top', 'elementor' ),
@@ -438,6 +441,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
+				'frontend_available' => true,
 				'label_block' => true,
 				'condition' => [
 					'show_image_overlay' => 'yes',
@@ -581,15 +585,6 @@ class Widget_Video extends Widget_Base {
 	public function get_script_depends() {
 		return [
 			'elementor-dialog'
-		];
-	}
-
-	public function get_frontend_settings_keys() {
-		return [
-			'aspect_ratio',
-			'lightbox',
-			'lightbox_content_position',
-			'lightbox_content_animation',
 		];
 	}
 }
