@@ -97,19 +97,15 @@ App = Marionette.Application.extend( {
 	},
 
 	getElementControls: function( modelElement ) {
-		var elementData = this.getElementData( modelElement );
+		var self = this,
+			elementData = self.getElementData( modelElement );
 
 		if ( ! elementData ) {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' );
-
-		if ( 'widget' === elType ) {
-			return elementData.controls;
-		}
-
-		var isInner = modelElement.get( 'isInner' ),
+		var elType = modelElement.get( 'elType' ),
+			isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
@@ -117,7 +113,7 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			controls[ controlKey ] = controlData;
+			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
 		return controls;
