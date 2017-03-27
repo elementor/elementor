@@ -234,6 +234,19 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'drop_cap_border_width',[
+				'label' => __( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-drop-cap' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'drop_cap_view' => 'framed',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
