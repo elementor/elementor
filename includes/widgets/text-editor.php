@@ -41,6 +41,7 @@ class Widget_Text_Editor extends Widget_Base {
 				'label_off' => __( 'Off', 'elementor' ),
 				'label_on' => __( 'On', 'elementor' ),
 				'prefix_class' => 'elementor-drop-cap-',
+				'frontend_available' => true,
 			]
 		);
 
@@ -276,12 +277,6 @@ class Widget_Text_Editor extends Widget_Base {
 	public function render_plain_content() {
 		// In plain mode, render without shortcode
 		echo $this->get_settings( 'editor' );
-	}
-
-	public function get_frontend_settings_keys() {
-		return [
-			'drop_cap',
-		];
 	}
 
 	protected function _content_template() {
