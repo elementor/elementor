@@ -412,9 +412,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.controlsCSSParser.$stylesheetElement ) {
-			this.controlsCSSParser.$stylesheetElement.remove();
-		}
+		this.controlsCSSParser.removeStyleFromDocument();
 	}
 } );
 
