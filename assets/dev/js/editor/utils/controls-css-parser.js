@@ -76,6 +76,10 @@ ControlsCSSParser = ViewModule.extend( {
 		this.elements.$stylesheetElement.text( this.stylesheet );
 	},
 
+	removeStyleFromDocument: function() {
+		this.elements.$stylesheetElement.remove();
+	},
+
 	onInit: function() {
 		ViewModule.prototype.onInit.apply( this, arguments );
 
