@@ -59,8 +59,13 @@ module.exports = ViewModule.extend( {
 	},
 
 	save: function( callback ) {
-		var self = this,
-			settings = self.model.toJSON();
+		var self = this;
+
+		if ( _.isEmpty( self.model.changed ) ) {
+			return;
+		}
+
+		var settings = self.model.toJSON();
 
 		settings.id = elementor.config.post_id;
 
@@ -72,6 +77,8 @@ module.exports = ViewModule.extend( {
 				NProgress.done();
 
 				self.setSettings( 'savedSettings', settings );
+
+				self.model.changed = {};
 
 				if ( callback ) {
 					callback.apply( self, arguments );
