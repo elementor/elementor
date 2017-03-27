@@ -6,17 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 abstract class Controls_Stack {
 
 	const RESPONSIVE_DESKTOP = 'desktop';
-
 	const RESPONSIVE_TABLET = 'tablet';
-
 	const RESPONSIVE_MOBILE = 'mobile';
 
 	private $_id;
-
 	private $_settings;
-
 	private $_data;
-
 	private $_config;
 
 	/**
