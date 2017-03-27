@@ -194,7 +194,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSSParser = new ControlsCSSParser();
+		this.controlsCSSParser = new ControlsCSSParser( { id: this.model.cid } );
 	},
 
 	enqueueFonts: function() {
