@@ -13,9 +13,9 @@ cache:
 # PHP version used in first build configuration.
 php:
     - 5.4
-#    - 5.5
-#    - 5.6
-#    - 7.0
+    - 5.5
+    - 5.6
+    - 7.0
 
 # WordPress version used in first build configuration.
 env:
