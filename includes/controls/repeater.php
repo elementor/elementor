@@ -23,6 +23,7 @@ class Control_Repeater extends Control_Base {
 	protected function get_default_settings() {
 		return [
 			'prevent_empty' => true,
+			'is_repeater' => true,
 		];
 	}
 
