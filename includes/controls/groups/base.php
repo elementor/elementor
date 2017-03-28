@@ -50,7 +50,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	public function get_controls_prefix() {
-		return $this->get_args()['name'] . '_';
+		return $this->args['name'] . '_';
 	}
 
 	public function get_base_group_classes() {
@@ -145,9 +145,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	private function add_conditions_prefix( $field ) {
+		$controls_prefix = $this->get_controls_prefix();
+
 		$prefixed_condition_keys = array_map(
-			function ( $key ) {
-				return $this->get_controls_prefix() . $key;
+			function ( $key ) use ( $controls_prefix ) {
+				return $controls_prefix . $key;
 			},
 			array_keys( $field['condition'] )
 		);
@@ -170,9 +172,15 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$selectors
 		);
 
+		if ( ! $selectors ) {
+			return $selectors;
+		}
+
+		$controls_prefix = $this->get_controls_prefix();
+
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback( '/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function ( $matches ) {
-				return $this->get_controls_prefix() . $matches[0];
+			$selector = preg_replace_callback( '/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function ( $matches ) use ( $controls_prefix ) {
+				return $controls_prefix . $matches[0];
 			}, $selector );
 		}
 

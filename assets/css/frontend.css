@@ -1650,9 +1650,6 @@ body.elementor-page .elementor-widget-menu-anchor {
     width: 1em;
     height: 1em; }
 
-.elementor-widget-text-editor .elementor-text-editor {
-  overflow: hidden; }
-
 .elementor-widget-text-editor .elementor-drop-cap {
   float: left;
   text-align: center;
