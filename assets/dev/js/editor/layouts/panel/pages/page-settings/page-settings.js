@@ -19,14 +19,6 @@ module.exports = ControlsStack.extend( {
 		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
 	},
 
-	onChildviewSettingsChange: function() {
-		this.ui.reloadButton.prop( 'disabled', false );
-	},
-
-	onReloadButtonClick: function() {
-		elementor.pageSettings.save();
-	},
-
 	onDestroy: function() {
 		elementor.pageSettings.save();
 	}

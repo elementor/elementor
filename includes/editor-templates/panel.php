@@ -258,12 +258,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 			<# } ); #>
 	</div>
-	<div class="elementor-update-preview">
-		<div class="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
-		<div class="elementor-update-preview-button-wrapper">
-			<button class="elementor-update-preview-button elementor-button elementor-button-success" disabled><?php echo __( 'Apply', 'elementor' ); ?></button>
-		</div>
-	</div>
 	<div id="elementor-panel-page-settings-controls" class="elementor-panel-box"></div>
 </script>
 
