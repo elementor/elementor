@@ -4,3 +4,14 @@
 		display: none; // Fix for jQuery FitVids plugin
 	}
 }
+
+// Canvas Page template
+.page-template-elementor_canvas {
+
+	&.elementor-page {
+
+		&:before {
+			display: none; // Twenty Fifteen Theme
+		}
+	}
+}
