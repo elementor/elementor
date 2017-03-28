@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Revisions_Manager {
 
-	private static $avatars = [];
+	private static $authors = [];
 
 	public function __construct() {
 		self::register_actions();
@@ -33,11 +33,13 @@ class Revisions_Manager {
 			return $posts;
 		}
 
+		$current_time = current_time( 'timestamp' );
+
 		/** @var \WP_Post $revision */
 		foreach ( $posts as $revision ) {
 			$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $revision->post_modified ) );
 
-			$human_time = human_time_diff( strtotime( $revision->post_modified ), current_time( 'timestamp' ) );
+			$human_time = human_time_diff( strtotime( $revision->post_modified ), $current_time );
 
 			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
@@ -45,16 +47,19 @@ class Revisions_Manager {
 				$type = 'revision';
 			}
 
-			if ( ! isset( self::$avatars[ $revision->post_author ] ) ) {
-				self::$avatars[ $revision->post_author ] = get_avatar( $revision->post_author, 22 );
+			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
+				self::$authors[ $revision->post_author ] = [
+					'avatar' => get_avatar( $revision->post_author, 22 ),
+					'display_name' => get_the_author_meta( 'display_name' , $revision->post_author ),
+				];
 			}
 
 			$revisions[] = [
 				'id' => $revision->ID,
-				'author' => get_the_author_meta( 'display_name' , $revision->post_author ),
+				'author' => self::$authors[ $revision->post_author ]['display_name'],
 				'date' => sprintf( __( '%1$s ago (%2$s)', 'elementor' ), $human_time, $date ),
 				'type' => $type,
-				'gravatar' => self::$avatars[ $revision->post_author ],
+				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
 			];
 		}
 
