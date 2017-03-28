@@ -2407,6 +2407,9 @@ button.swiper-pagination-bullet {
 .elementor-open-lightbox .fluid-width-video-wrapper {
   display: none; }
 
+.page-template-elementor_canvas.elementor-page:before {
+  display: none; }
+
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
