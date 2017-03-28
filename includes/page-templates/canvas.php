@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<meta charset="<?php bloginfo( 'charset' ); ?>">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<?php if ( ! current_theme_supports( 'title-tag' ) ) : ?>
-		<title><?php wp_title( '|', true, 'right' ); ?></title>
+		<title><?php echo wp_get_document_title(); ?></title>
 		<?php endif; ?>
 		<?php wp_head(); ?>
 	</head>
