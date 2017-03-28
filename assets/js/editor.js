@@ -5783,6 +5783,8 @@ module.exports = ViewModule.extend( {
 
 	model: null,
 
+	hasChange: false,
+
 	changeCallbacks: {
 		post_title: function( newValue ) {
 			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
@@ -5837,7 +5839,7 @@ module.exports = ViewModule.extend( {
 	save: function( callback ) {
 		var self = this;
 
-		if ( _.isEmpty( self.model.changed ) ) {
+		if ( ! self.hasChange ) {
 			return;
 		}
 
@@ -5854,7 +5856,7 @@ module.exports = ViewModule.extend( {
 
 				self.setSettings( 'savedSettings', settings );
 
-				self.model.changed = {};
+				self.hasChange = false;
 
 				if ( callback ) {
 					callback.apply( self, arguments );
@@ -5876,6 +5878,8 @@ module.exports = ViewModule.extend( {
 
 	onModelChange: function( model ) {
 		var self = this;
+
+		self.hasChange = true;
 
 		_.each( model.changed, function( value, key ) {
 			if ( self.changeCallbacks[ key ] ) {
