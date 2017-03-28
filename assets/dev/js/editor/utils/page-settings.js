@@ -15,6 +15,7 @@ module.exports = ViewModule.extend( {
 
 			$title.text( newValue );
 		},
+
 		template: function() {
 			this.save( function() {
 				elementor.reloadPreview();
@@ -24,6 +25,10 @@ module.exports = ViewModule.extend( {
 				} );
 			} );
 		}
+	},
+
+	addChangeCallback: function( attribute, callback ) {
+		this.changeCallbacks[ attribute ] = callback;
 	},
 
 	getDefaultSettings: function() {
@@ -43,8 +48,6 @@ module.exports = ViewModule.extend( {
 	},
 
 	updateStylesheet: function() {
-		this.controlsCSS.stylesheet.empty();
-
 		this.renderStyles();
 
 		this.controlsCSS.addStyleToDocument();
@@ -104,6 +107,8 @@ module.exports = ViewModule.extend( {
 		var self = this;
 
 		self.hasChange = true;
+
+		this.controlsCSS.stylesheet.empty();
 
 		_.each( model.changed, function( value, key ) {
 			if ( self.changeCallbacks[ key ] ) {

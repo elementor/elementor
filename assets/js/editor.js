@@ -5791,6 +5791,7 @@ module.exports = ViewModule.extend( {
 
 			$title.text( newValue );
 		},
+
 		template: function() {
 			this.save( function() {
 				elementor.reloadPreview();
@@ -5800,6 +5801,10 @@ module.exports = ViewModule.extend( {
 				} );
 			} );
 		}
+	},
+
+	addChangeCallback: function( attribute, callback ) {
+		this.changeCallbacks[ attribute ] = callback;
 	},
 
 	getDefaultSettings: function() {
@@ -5819,8 +5824,6 @@ module.exports = ViewModule.extend( {
 	},
 
 	updateStylesheet: function() {
-		this.controlsCSS.stylesheet.empty();
-
 		this.renderStyles();
 
 		this.controlsCSS.addStyleToDocument();
@@ -5880,6 +5883,8 @@ module.exports = ViewModule.extend( {
 		var self = this;
 
 		self.hasChange = true;
+
+		this.controlsCSS.stylesheet.empty();
 
 		_.each( model.changed, function( value, key ) {
 			if ( self.changeCallbacks[ key ] ) {
@@ -6150,6 +6155,7 @@ module.exports = new Schemes();
 	var Stylesheet = function() {
 		var self = this,
 			rules = {},
+			rawCSS = {},
 			devices = {};
 
 		var getDeviceMaxValue = function( deviceName ) {
@@ -6260,6 +6266,10 @@ module.exports = new Schemes();
 			return self;
 		};
 
+		this.addRawCSS = function( key, css ) {
+			rawCSS[ key ] = css;
+		},
+
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
 
@@ -6314,6 +6324,7 @@ module.exports = new Schemes();
 
 		this.empty = function() {
 			rules = {};
+			rawCSS = {};
 		};
 
 		this.toString = function() {
@@ -6327,6 +6338,10 @@ module.exports = new Schemes();
 				}
 
 				styleText += deviceText;
+			} );
+
+			$.each( rawCSS, function() {
+				styleText += this;
 			} );
 
 			return styleText;
