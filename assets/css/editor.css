@@ -1833,8 +1833,6 @@ select {
             transform: translateY(6px); }
     .elementor-panel .elementor-control .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
-  .elementor-panel #elementor-panel-page-settings .elementor-panel-heading {
-    margin-bottom: 15px; }
   .elementor-panel #elementor-panel-footer {
     position: absolute;
     bottom: 0;
