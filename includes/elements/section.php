@@ -337,6 +337,14 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'none', 'classic', 'gradient', 'video' ],
+				'fields_options' => [
+					'background' => [
+						'frontend_available' => true,
+					],
+					'video_link' => [
+						'frontend_available' => true,
+					],
+				],
 			]
 		);
 
@@ -862,29 +870,12 @@ class Element_Section extends Element_Base {
 
 	protected function _content_template() {
 		?>
-		<# if ( 'video' === settings.background_background ) {
-			var videoLink = settings.background_video_link;
-	
-			if ( videoLink ) {
-				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); #>
-	
-				<div class="elementor-background-video-container elementor-hidden-phone">
-					<# if ( videoID ) { #>
-						<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
-					<# } else { #>
-						<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
-					<# } #>
-				</div>
-			<# }
-	
-			if ( settings.background_video_fallback ) { #>
-				<div class="elementor-background-video-fallback" style="background-image: url({{ settings.background_video_fallback.url }})"></div>
-			<# }
-		}
-
-		if ( -1 !== [ 'classic', 'gradient' ].indexOf( settings.background_overlay_background ) ) { #>
-			<div class="elementor-background-overlay"></div>
-		<# } #>
+		<div class="elementor-background-video-container elementor-hidden-phone">
+			<div class="elementor-background-video-embed"></div>
+			<video class="elementor-background-video-hosted" autoplay loop muted></video>
+		</div>
+		<div class="elementor-background-video-fallback"></div>
+		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
@@ -904,9 +895,9 @@ class Element_Section extends Element_Base {
 					?>
 					<div class="elementor-background-video-container elementor-hidden-phone">
 						<?php if ( $video_id ) : ?>
-							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
+							<div class="elementor-background-video-embed"></div>
 						<?php else : ?>
-							<video class="elementor-background-video elementor-html5-video" src="<?php echo $settings['background_video_link'] ?>" autoplay loop muted></video>
+							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
 				<?php endif;
