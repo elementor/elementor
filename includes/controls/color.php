@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                           Default true
  * @since 1.0.0
  */
-class Control_Color extends Control_Base {
+class Control_Color extends Base_Data_Control {
 
 	public function get_type() {
 		return 'color';

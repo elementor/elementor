@@ -3,7 +3,7 @@
 ### Table of Contents
 * [What is a Control?](#what-is-a-control)
 * [The structure of a control](#the-structure-of-a-control)
-  - [`Control_Base` class](#control_base-class)
+  - [`Base_Control` class](#control_base-class)
 * [Control settings](#control-settings)
   - [Default settings](#default-settings)
   - [Settings Hierarchy](#settings-hierarchy)
@@ -16,13 +16,13 @@
 A control is a tool that allows you to change a certain widget setting. The control settings include all the functional, design and interaction settings that are available for customization by the user.
 
 ### The structure of a control
-Each control is represented in the system by a class with the type of `Control_Base`.
+Each control is represented in the system by a class with the type of `Base_Control`.
 
-#### `Control_Base` class
+#### `Base_Control` class
 Here is the structure of the class:
 
 ```php
-abstract class Control_Base {
+abstract class Base_Control {
   // Contains the base control settings. (e.g. whether to show a label, the separator type etc.).
   private $_base_settings = [];
 
@@ -100,7 +100,7 @@ In addition, with every addition of a control to a widget, you can send another 
 Default settings in the base class:
 
 ```php
-abstract class Control_Base {
+abstract class Base_Control {
 
   // here is some base default settings
   private $_base_settings = [
@@ -114,7 +114,7 @@ abstract class Control_Base {
 Default settings in the 'Choose' class:
 
 ```php
-class Control_Choose extends Control_Base {
+class Control_Choose extends Base_Control {
 
  // here is some base default settings set by the `choose` control
   protected function get_default_settings() {
@@ -176,7 +176,7 @@ For example, the value returned by a 'media' control can look like this:
 ]
 ```
 
-Each multiple control is inherited from the abstract class `Control_Base_Multiple`, that inherits from the `Control_Base` class.
+Each multiple control is inherited from the abstract class `Control_Base_Multiple`, that inherits from the `Base_Control` class.
 
 ### Adding a control to an element
 To learn how to add a control to an element, go to the next part: [Controls and the Editor](controls-and-the-editor.md).

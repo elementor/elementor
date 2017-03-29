@@ -2,6 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\DB;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -236,6 +237,10 @@ class Source_Local extends Source_Base {
 			'type' => self::get_template_type( $item_id ),
 			'data' => $template_data,
 		];
+
+		if ( 'page' === $export_data['type'] ) {
+			$export_data['page_settings'] = PageSettingsManager::get_page( $item_id )->get_settings();
+		}
 
 		$filename = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
 		$template_contents = wp_json_encode( $export_data );

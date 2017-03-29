@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-class Control_Choose extends Control_Base {
+class Control_Choose extends Base_Data_Control {
 
 	public function get_type() {
 		return 'choose';
