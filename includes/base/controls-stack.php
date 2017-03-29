@@ -68,7 +68,7 @@ abstract class Controls_Stack {
 	public function get_active_controls() {
 		$controls = $this->get_controls();
 
-		$settings = $this->get_settings();
+		$settings = $this->get_controls_settings();
 
 		$active_controls = array_reduce( array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
 			$control = $controls[ $control_key ];
@@ -81,6 +81,10 @@ abstract class Controls_Stack {
 		}, [] );
 
 		return $active_controls;
+	}
+
+	public function get_controls_settings() {
+		return array_intersect_key( $this->get_settings(), $this->get_controls() );
 	}
 
 	public function add_control( $id, array $args, $overwrite = false ) {
