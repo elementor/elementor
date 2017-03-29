@@ -18,8 +18,6 @@ class Page extends Controls_Stack {
 	public function __construct( array $data = [] ) {
 		$this->post = get_post( $data['id'] );
 
-		$data['settings'] = $this->get_saved_settings();
-
 		parent::__construct( $data );
 	}
 
