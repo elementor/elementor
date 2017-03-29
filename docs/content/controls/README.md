@@ -3,7 +3,7 @@
 ### Table of Contents
 * [What is a Control?](#what-is-a-control)
 * [The structure of a control](#the-structure-of-a-control)
-  - [`Base_Control` class](#control_base-class)
+  - [`Base_Control` class](#base_control-class)
 * [Control settings](#control-settings)
   - [Default settings](#default-settings)
   - [Settings Hierarchy](#settings-hierarchy)
