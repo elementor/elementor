@@ -2407,6 +2407,10 @@ button.swiper-pagination-bullet {
 .page-template-elementor_canvas.elementor-page:before {
   display: none; }
 
+.elementor-post__thumbnail__link {
+  -webkit-transition: none;
+  transition: none; }
+
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
     display: none; } }
