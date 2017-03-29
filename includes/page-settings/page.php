@@ -101,7 +101,7 @@ class Page extends Controls_Stack {
 			$this->add_control(
 				'post_status',
 				[
-					'label' => __( 'Post Status', 'elementor' ),
+					'label' => __( 'Status', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => $this->post->post_status,
 					'options' => get_post_statuses(),
