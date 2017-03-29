@@ -189,7 +189,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - Duplicate repeater field with switcher control ([#1442](https://github.com/pojome/elementor/issues/1442), [#1472](https://github.com/pojome/elementor/issues/1472))
 * Fix! - Google Font family with spacing
 * Fix! - Custom image size in some situations ([Topic](https://wordpress.org/support/topic/insider-elementor-editor-error-500-admin-ajax/))
-* Fix! - Smooth scrolling for anchor links, now limited only to links with `.elementor-element` or `.elementor-menu-anchor` classes
+* Fix! - Smooth scrolling for anchor links, now limited only to links with `.elementor-element` or `.elementor-menu-anchor` classes ([#1478](https://github.com/pojome/elementor/issues/1478))
 
 ### 1.3.5 - 20.03.2017 ###
 * Tweak! - Minimum WP version is now v4.5
