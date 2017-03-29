@@ -302,10 +302,6 @@ class DB {
 	}
 
 	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
-		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
-			return;
-		}
-
 		$from_post_meta = get_post_meta( $from_post_id );
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
@@ -324,10 +320,7 @@ class DB {
 	}
 
 	public function is_built_with_elementor( $post_id ) {
-		$data = $this->get_plain_editor( $post_id );
-		$edit_mode = $this->get_edit_mode( $post_id );
-
-		return ( ! empty( $data ) && 'builder' === $edit_mode );
+		return 'builder' === $this->get_edit_mode( $post_id );
 	}
 
 	/**
