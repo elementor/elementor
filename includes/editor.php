@@ -402,10 +402,14 @@ class Editor {
 		echo '</script>';
 
 		$plugin->controls_manager->enqueue_control_scripts();
+
+		do_action( 'elementor/editor/after_enqueue_scripts' );
 	}
 
 	public function enqueue_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		do_action( 'elementor/editor/before_enqueue_styles' );
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
@@ -459,6 +463,8 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		do_action( 'elementor/editor/after_enqueue_styles' );
 	}
 
 	protected function _get_wp_editor_config() {
