@@ -3727,7 +3727,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		_.each( self.controls, function( field ) {
 			var control = elementor.config.controls[ field.type ],
-				isMultipleControl = _.isObject( control.default_value );
+				isUIControl = -1 !== control.features.indexOf( 'ui' );
+
+			if ( isUIControl ) {
+				return;
+			}
+
+			var isMultipleControl = _.isObject( control.default_value );
 
 			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
