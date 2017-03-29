@@ -15,3 +15,7 @@
 		}
 	}
 }
+
+.elementor-post__thumbnail__link {
+	transition: none; // Avoid size calculation failures on some themes
+}
