@@ -33,18 +33,9 @@ class Manager {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
-		$special_settings = [
-			'id',
-			'post_title',
-			'post_status',
-			'template',
-		];
+		$page = self::get_page( $post->ID, $_POST );
 
-		foreach ( $special_settings as $special_setting ) {
-			unset( $_POST[ $special_setting ] );
-		}
-
-		update_post_meta( $post->ID, self::META_KEY, $_POST );
+		update_post_meta( $post->ID, self::META_KEY, $page->get_controls_settings() );
 
 		$css_file = new Post_CSS_File( $post->ID );
 
