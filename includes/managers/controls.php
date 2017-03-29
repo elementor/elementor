@@ -433,7 +433,6 @@ class Controls_Manager {
 		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-data.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-ui.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-compatibility.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
 
