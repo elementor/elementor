@@ -17,9 +17,5 @@ module.exports = ControlsStack.extend( {
 		this.model = elementor.pageSettings.model;
 
 		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	onDestroy: function() {
-		elementor.pageSettings.save();
 	}
 } );

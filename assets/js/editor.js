@@ -3127,10 +3127,6 @@ module.exports = ControlsStack.extend( {
 		this.model = elementor.pageSettings.model;
 
 		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	onDestroy: function() {
-		elementor.pageSettings.save();
 	}
 } );
 
@@ -5876,6 +5872,8 @@ module.exports = ViewModule.extend( {
 
 		this.initControlsCSSParser();
 
+		this.save = _.debounce( this.save, 3000 );
+
 		ViewModule.prototype.onInit.apply( this, arguments );
 	},
 
@@ -5893,6 +5891,8 @@ module.exports = ViewModule.extend( {
 		} );
 
 		self.updateStylesheet();
+
+		this.save();
 	}
 } );
 
