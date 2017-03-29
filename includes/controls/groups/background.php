@@ -49,6 +49,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Background Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'label_block' => true,
+			'render_type' => 'ui',
 		];
 
 		$fields['color'] = [
