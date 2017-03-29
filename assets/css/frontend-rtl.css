@@ -1338,6 +1338,8 @@
   .elementor-widget-video .elementor-custom-embed-image-overlay:hover .elementor-custom-embed-play i {
     opacity: 0.9;
     text-shadow: 3px 2px 30px rgba(0, 0, 0, 0.6); }
+  .elementor-widget-video .elementor-custom-embed-image-overlay img {
+    display: block; }
 
 .elementor-widget-video .elementor-custom-embed-play {
   position: absolute;
