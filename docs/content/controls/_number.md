@@ -1,10 +1,10 @@
-#Number
+# Number
 
 A simple number field with the option to limit the `min` and `max` values and define the `step` of changing the value.
 
 *Returns:* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -20,7 +20,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP** *(Under `render()` method)*
 ```php
@@ -34,7 +34,7 @@ echo '<span class="price">' . $settings['price'] . '</span>';
 <span class="price">{{{ settings.price }}}</span>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------

@@ -161,6 +161,24 @@ class Settings {
 
 		register_setting( self::PAGE_ID, $field_id );
 
+		$field_id = 'elementor_page_title_selector';
+		add_settings_field(
+			$field_id,
+			__( 'Page Title Selector', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$style_section,
+			[
+				'id' => $field_id,
+				'type' => 'text',
+				'placeholder' => 'h1.entry-title',
+				'classes' => [ 'medium-text' ],
+				'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
+			]
+		);
+
+		register_setting( self::PAGE_ID, $field_id );
+
 		add_settings_field(
 			self::UPDATE_TIME_FIELD,
 			'',

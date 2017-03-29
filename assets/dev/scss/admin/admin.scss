@@ -6,7 +6,8 @@
 @import "../helpers/variables";
 @import "../helpers/mixins";
 
-@import "../common/dialog";
+// Common
+@import "../common/common";
 
 body {
 
@@ -52,6 +53,10 @@ body {
 			display: none;
 		}
 	}
+}
+
+.elementor-hidden{
+	display: none;
 }
 
 // Dashboard Icon
@@ -161,7 +166,7 @@ body {
 }
 
 // Tools
-button.elementor-button-spinner {
+.elementor-button-spinner {
 	&:before {
 		font: normal 20px/.5 dashicons;
 		speak: none;
@@ -196,3 +201,4 @@ button.elementor-button-spinner {
 @import "system_info";
 @import "feedback";
 @import "import-template";
+@import "maintenance-mode";

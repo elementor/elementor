@@ -6,10 +6,6 @@ VideoModule = HandlerModule.extend( {
 
 	oldAspectRatio: null,
 
-	getElementName: function() {
-		return 'video';
-	},
-
 	getDefaultSettings: function() {
 		return {
 			selectors: {
@@ -185,5 +181,5 @@ VideoModule = HandlerModule.extend( {
 VideoModule.lightBoxModal = null;
 
 module.exports = function( $scope ) {
-	new VideoModule( $scope );
+	new VideoModule( { $element: $scope } );
 };

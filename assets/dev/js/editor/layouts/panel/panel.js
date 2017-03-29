@@ -53,6 +53,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			},
 			colorPickerScheme: {
 				view: require( 'elementor-panel/pages/schemes/color-picker' )
+			},
+			settingsPage: {
+				view: require( 'elementor-panel/pages/page-settings/page-settings' ),
+				title: elementor.translate( 'page_settings' )
 			}
 		};
 

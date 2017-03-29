@@ -29,9 +29,10 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.model ? this.model.get( 'elType' ) : 'page';
+			saveType = this.model ? this.model.get( 'elType' ) : 'page',
+			JSONParams = { removeDefault: true };
 
-		formData.data = this.model ? [ this.model.toJSON() ] : elementor.elements.toJSON();
+		formData.data = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 

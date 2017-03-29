@@ -3,6 +3,7 @@
 	var Stylesheet = function() {
 		var self = this,
 			rules = {},
+			rawCSS = {},
 			devices = {};
 
 		var getDeviceMaxValue = function( deviceName ) {
@@ -113,6 +114,10 @@
 			return self;
 		};
 
+		this.addRawCSS = function( key, css ) {
+			rawCSS[ key ] = css;
+		},
+
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
 
@@ -125,12 +130,14 @@
 			}
 
 			if ( ! styleRules ) {
-				var parsedRules = selector.match( /[^\s\\].+?(?=\{)\{.+?(?=})}/g );
+				var parsedRules = selector.match( /[^{]+\{[^}]+}/g );
 
 				$.each( parsedRules, function() {
-					var parsedRule = this.match( /(.+?(?=\{))\{(.+?(?=}))}/ );
+					var parsedRule = this.match( /([^{]+)\{([^}]+)}/ );
 
-					self.addRules( parsedRule[1], parsedRule[2], query );
+					if ( parsedRule ) {
+						self.addRules( parsedRule[1].trim(), parsedRule[2].trim(), query );
+					}
 				} );
 
 				return;
@@ -165,6 +172,7 @@
 
 		this.empty = function() {
 			rules = {};
+			rawCSS = {};
 		};
 
 		this.toString = function() {
@@ -178,6 +186,10 @@
 				}
 
 				styleText += deviceText;
+			} );
+
+			$.each( rawCSS, function() {
+				styleText += this;
 			} );
 
 			return styleText;

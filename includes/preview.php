@@ -21,8 +21,6 @@ class Preview {
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'wp_head', [ $this, 'print_custom_css' ] );
-
-		add_filter( 'body_class', [ $this, 'body_class' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
 		// Tell to WP Cache plugins do not cache this request.
@@ -48,33 +46,20 @@ class Preview {
 	}
 
 	/**
-	 * Add custom class in `<body>` element.
-	 *
-	 * @since 1.0.0
-	 * @param array $classes
-	 *
-	 * @return array
-	 */
-	public function body_class( $classes = [] ) {
-		$classes[] = 'elementor-body';
-		return $classes;
-	}
-
-	/**
-	 * Do not show the conent from the page. Just print empty start HTML.
+	 * Do not show the content from the page. Just print empty start HTML.
 	 * The Javascript will add the content later.
 	 *
 	 * @since 1.0.0
-	 * @param string $content
 	 *
 	 * @return string
 	 */
-	public function builder_wrapper( $content ) {
+	public function builder_wrapper() {
 		return '<div id="elementor" class="elementor elementor-edit-mode"></div>';
 	}
 
 	public function print_custom_css() {
 		$container_width = absint( get_option( 'elementor_container_width' ) );
+
 		if ( empty( $container_width ) ) {
 			return;
 		}

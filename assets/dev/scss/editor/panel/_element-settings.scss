@@ -24,7 +24,7 @@
 			}
 		}
 
-		&.elementor-tab-control-advanced {
+		&.elementor-tab-control-advanced, &.elementor-tab-control-settings {
 			a:before {
 				content: '\f013';
 			}
@@ -36,13 +36,7 @@
 			}
 		}
 
-		&.elementor-tab-control-layout {
-			a:before {
-				content: '\f0db';
-			}
-		}
-
-		&.elementor-tab-control-column {
+		&.elementor-tab-control-layout, &.elementor-tab-control-column {
 			a:before {
 				content: '\f0db';
 			}

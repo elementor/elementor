@@ -3,6 +3,8 @@
 
 	var ElementorAdminApp = {
 
+		maintenanceMode: null,
+
 		cacheElements: function() {
 			this.cache = {
 				$body: $( 'body' ),
@@ -130,9 +132,12 @@
 
 		init: function() {
 			this.cacheElements();
+
 			this.bindEvents();
 
 			this.initTemplatesImport();
+
+			this.initMaintenanceMode();
 		},
 
 		initTemplatesImport: function() {
@@ -153,6 +158,12 @@
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
 			} );
+		},
+
+		initMaintenanceMode: function() {
+			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
+
+			this.maintenanceMode = new MaintenanceMode();
 		},
 
 		getEditMode: function() {

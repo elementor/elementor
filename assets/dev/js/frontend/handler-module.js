@@ -6,8 +6,8 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
-	__construct: function( $element ) {
-		this.$element  = $element;
+	__construct: function( settings ) {
+		this.$element  = settings.$element;
 
 		if ( elementorFrontend.isEditMode() ) {
 			this.addEditorListener();
@@ -30,7 +30,9 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
-	getElementName: function() {},
+	getElementName: function() {
+		return this.$element.data( 'element_type' ).split( '.' )[0];
+	},
 
 	getID: function() {
 		return this.$element.data( 'id' );
@@ -52,7 +54,7 @@ HandlerModule = ViewModule.extend( {
 
 			elementSettings = _.pick( activeValues, settingsKeys );
 		} else {
-			elementSettings = this.$element.data( 'settings' );
+			elementSettings = this.$element.data( 'settings' ) || {};
 		}
 
 		return this.getItems( elementSettings, setting );

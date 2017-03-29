@@ -123,7 +123,7 @@ abstract class Widget_Base extends Element_Base {
 		] );
 	}
 
-	public final function print_template() {
+	final public function print_template() {
 		ob_start();
 
 		$this->_content_template();
@@ -263,10 +263,6 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'section' );
-	}
-
-	public function get_frontend_settings_keys() {
-		return [];
 	}
 
 	public function add_skin( Skin_Base $skin ) {

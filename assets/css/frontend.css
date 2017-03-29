@@ -1537,17 +1537,20 @@
   font-size: 0; }
 
 .elementor-social-icon {
-  color: white;
   font-size: 25px;
   text-align: center;
   padding: 0.5em;
   margin-right: 5px;
   cursor: pointer; }
+  .elementor-social-icon i {
+    color: white; }
   .elementor-social-icon:last-child {
     margin: 0; }
   .elementor-social-icon:hover {
-    opacity: .5;
+    opacity: .9;
     color: white; }
+  .elementor-social-icon-apple {
+    background-color: #999999; }
   .elementor-social-icon-behance {
     background-color: #1769ff; }
   .elementor-social-icon-bitbucket {
@@ -1560,6 +1563,8 @@
     background-color: #005be2; }
   .elementor-social-icon-dribbble {
     background-color: #ea4c89; }
+  .elementor-social-icon-envelope {
+    background-color: #607D8B; }
   .elementor-social-icon-facebook {
     background-color: #3b5998; }
   .elementor-social-icon-flickr {
@@ -1570,6 +1575,8 @@
     background-color: #333333; }
   .elementor-social-icon-google-plus {
     background-color: #dd4b39; }
+  .elementor-social-icon-houzz {
+    background-color: #7ac142; }
   .elementor-social-icon-instagram {
     background-color: #262626; }
   .elementor-social-icon-jsfiddle {
@@ -1584,12 +1591,20 @@
     background-color: #da552f; }
   .elementor-social-icon-reddit {
     background-color: #ff4500; }
+  .elementor-social-icon-shopping-cart {
+    background-color: #4CAF50; }
+  .elementor-social-icon-slideshare {
+    background-color: #0077b5; }
   .elementor-social-icon-snapchat {
     background-color: #fffc00; }
   .elementor-social-icon-soundcloud {
     background-color: #ff8800; }
+  .elementor-social-icon-spotify {
+    background-color: #2ebd59; }
   .elementor-social-icon-stack-overflow {
     background-color: #fe7a15; }
+  .elementor-social-icon-tripadvisor {
+    background-color: #589442; }
   .elementor-social-icon-tumblr {
     background-color: #35465c; }
   .elementor-social-icon-twitch {
@@ -1598,8 +1613,16 @@
     background-color: #55acee; }
   .elementor-social-icon-vimeo {
     background-color: #1ab7ea; }
+  .elementor-social-icon-vk {
+    background-color: #45668e; }
+  .elementor-social-icon-whatsapp {
+    background-color: #25d366; }
   .elementor-social-icon-wordpress {
     background-color: #21759b; }
+  .elementor-social-icon-xing {
+    background-color: #026466; }
+  .elementor-social-icon-yelp {
+    background-color: #af0606; }
   .elementor-social-icon-youtube {
     background-color: #cd201f; }
 
@@ -1611,6 +1634,29 @@
 
 body.elementor-page .elementor-widget-menu-anchor {
   margin-bottom: 0; }
+
+.elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap {
+  background-color: #818a91;
+  color: #fff; }
+
+.elementor-widget-text-editor.elementor-drop-cap-view-framed .elementor-drop-cap {
+  color: #818a91;
+  border: 3px solid;
+  background-color: transparent; }
+
+.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap {
+  margin-top: 8px; }
+  .elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap-letter {
+    width: 1em;
+    height: 1em; }
+
+.elementor-widget-text-editor .elementor-drop-cap {
+  float: left;
+  text-align: center;
+  line-height: 1;
+  font-size: 50px; }
+  .elementor-widget-text-editor .elementor-drop-cap-letter {
+    display: inline-block; }
 
 .slick-slider {
   position: relative;
@@ -2342,8 +2388,8 @@ button.swiper-pagination-bullet {
             transform: rotate(180deg); }
   .elementor-shape svg {
     display: block;
-    width: -webkit-calc(100% + 1px);
-    width: calc(100% + 1px);
+    width: -webkit-calc(100% + 1.3px);
+    width: calc(100% + 1.3px);
     position: relative;
     left: 50%;
     -webkit-transform: translateX(-50%);
@@ -2351,7 +2397,15 @@ button.swiper-pagination-bullet {
   .elementor-shape .elementor-shape-fill {
     fill: #fff;
     -webkit-transform-origin: center;
-            transform-origin: center; }
+            transform-origin: center;
+    -webkit-transform: rotateY(0deg);
+            transform: rotateY(0deg); }
+
+.elementor-open-lightbox .fluid-width-video-wrapper {
+  display: none; }
+
+.page-template-elementor_canvas.elementor-page:before {
+  display: none; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\PageSettings\Manager as PageSettingsManager;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Post_CSS_File extends CSS_File {
@@ -56,6 +58,8 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	protected function render_css() {
+		$this->add_page_settings_rules();
+
 		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
 
 		foreach ( $data as $element_data ) {
@@ -85,19 +89,27 @@ class Post_CSS_File extends CSS_File {
 		return 'elementor-frontend';
 	}
 
+	protected function get_file_handle_id() {
+		return 'elementor-post-' . $this->post_id;
+	}
+
+	protected function get_file_name() {
+		return self::FILE_PREFIX . $this->post_id;
+	}
+
 	/**
-	 * @param Element_Base $element
-	 * @param array $controls
-	 * @param array $values
-	 * @param array $placeholders
-	 * @param array $replacements
+	 * @param Controls_Stack $controls_stack
+	 * @param array          $controls
+	 * @param array          $values
+	 * @param array          $placeholders
+	 * @param array          $replacements
 	 */
-	private function add_element_style_rules( Element_Base $element, array $controls, array $values, array $placeholders, array $replacements ) {
+	private function add_element_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
 		foreach ( $controls as $control ) {
 			if ( ! empty( $control['style_fields'] ) ) {
 				foreach ( $values[ $control['name'] ] as $field_value ) {
 					$this->add_element_style_rules(
-						$element,
+						$controls_stack,
 						$control['style_fields'],
 						$field_value,
 						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
@@ -110,11 +122,13 @@ class Post_CSS_File extends CSS_File {
 				continue;
 			}
 
-			$this->add_control_style_rules( $control, $values, $element->get_controls(), $placeholders, $replacements );
+			$this->add_control_style_rules( $control, $values, $controls_stack->get_controls(), $placeholders, $replacements );
 		}
 
-		foreach ( $element->get_children() as $child_element ) {
-			$this->render_styles( $child_element );
+		if ( $controls_stack instanceof Element_Base ) {
+			foreach ( $controls_stack->get_children() as $child_element ) {
+				$this->render_styles( $child_element );
+			}
 		}
 	}
 
@@ -173,11 +187,15 @@ class Post_CSS_File extends CSS_File {
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 
-	protected function get_file_handle_id() {
-		return 'elementor-post-' . $this->post_id;
-	}
+	private function add_page_settings_rules() {
+		$page_settings_instance = PageSettingsManager::get_page( $this->post_id );
 
-	protected function get_file_name() {
-		return self::FILE_PREFIX . $this->post_id;
+		$this->add_element_style_rules(
+			$page_settings_instance,
+			$page_settings_instance->get_style_controls(),
+			$page_settings_instance->get_settings(),
+			[ '{{WRAPPER}}' ],
+			[ 'body.elementor-page-' . $this->post_id ]
+		);
 	}
 }
