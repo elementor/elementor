@@ -102,4 +102,10 @@ class Manager {
 
 		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
 	}
+
+	private static function get_saved_settings( $post_id ) {
+		$settings = get_post_meta( $post_id, Manager::META_KEY, true );
+
+		return $settings ? $settings : [];
+	}
 }

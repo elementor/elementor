@@ -142,10 +142,4 @@ class Page extends Controls_Stack {
 
 		$this->end_controls_section();
 	}
-
-	private function get_saved_settings() {
-		$saved_settings = get_post_meta( $this->post->ID, Manager::META_KEY, true );
-
-		return $saved_settings ? $saved_settings : [];
-	}
 }
