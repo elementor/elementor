@@ -45,38 +45,47 @@
       padding-left: 15px;
       padding-right: 15px;
     }
-	// Global
-	@import "global";
-    // Header
-    @import "header";
-    // Elements
-    @import "elements";
-    // Categories
-    @import "categories";
-    // Schemes
-    @import "schemes";
 
-    // Main Panel
-    #elementor-panel-content-wrapper {
-        position: absolute;
-        bottom: 40px;
-        top: 40px;
-        left: 0;
-        width: 100%;
-    }
-
-	// Menu
-	@import "menu";
-    // Element Edit
-    @import "element-settings";
-    // Controls
-    @import "control";
-	// Color Picker
-	@import "color-picker";
-    //Footer
-    @import "footer";
+	// Main Panel
+	#elementor-panel-content-wrapper {
+		position: absolute;
+		bottom: 40px;
+		top: 40px;
+		left: 0;
+		width: 100%;
+	}
 
 	.elementor-panel-hide {
 		display: none;
 	}
+
+	// Global
+	@import "global";
+
+    // Header
+    @import "header";
+
+    // Elements
+    @import "elements";
+
+    // Categories
+    @import "categories";
+
+    // Schemes
+    @import "schemes";
+
+	// Menu
+	@import "menu";
+
+    // Element Edit
+    @import "element-settings";
+
+    // Controls
+    @import "control";
+
+	// Color Picker
+	@import "color-picker";
+
+    //Footer
+    @import "footer";
 }

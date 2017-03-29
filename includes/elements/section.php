@@ -464,6 +464,7 @@ class Element_Section extends Element_Base {
 					'type' => Controls_Manager::SELECT,
 					'options' => $shapes_options,
 					'render_type' => 'none',
+					'frontend_available' => true,
 				]
 			);
 
@@ -500,7 +501,7 @@ class Element_Section extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1px)',
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
 					],
 				]
 			);
@@ -547,6 +548,7 @@ class Element_Section extends Element_Base {
 					'type' => Controls_Manager::SWITCHER,
 					'label_off' => __( 'No', 'elementor' ),
 					'label_on' => __( 'Yes', 'elementor' ),
+					'frontend_available' => true,
 					'condition' => [
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
 					],
@@ -932,15 +934,6 @@ class Element_Section extends Element_Base {
 			</div>
 		</section>
 		<?php
-	}
-
-	public function get_frontend_settings_keys() {
-		return [
-			'shape_divider_top',
-			'shape_divider_bottom',
-			'shape_divider_top_negative',
-			'shape_divider_bottom_negative',
-		];
 	}
 
 	protected function _add_render_attributes() {

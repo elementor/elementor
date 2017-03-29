@@ -1,10 +1,10 @@
-#Color
+# Color
 A Color-Picker control with an alpha slider. Includes a customizable color palette that can be preset by the user.
 Accepts a`scheme` argument that allows you to set a value from the active color scheme as the default value returned by the control.
  
 *Returns:* `string`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -23,7 +23,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 Most times you won't have to manually retrieve the value of color controls since the selectors argument can cover most use-cases.
 
 **PHP** *(Under `render()` method)*
@@ -38,7 +38,7 @@ echo '<h2 style="color:' . $title_color . '"> ... </h2>'
 <h2 style="color:{{ settings.title_color }}"> ... </h2>
 ```
 
-##Arguments
+## Arguments
 
 Argument           | Required   | Type         | Default                      | Description
 ------------       | :--------: | :------:     | :--------------------------: | ---------------------------------------------

@@ -16,7 +16,8 @@ ElementsHandler = function( $ ) {
 		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
-		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' )
+		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
+		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' )
 	};
 
 	var addGlobalHandlers = function() {

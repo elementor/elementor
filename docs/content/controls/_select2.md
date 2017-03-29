@@ -1,9 +1,9 @@
-#Select2
+# Select2
 A select field based on the select2 plugin. Accepts an `array` of `options` in which the `key` is the value and the `value` is the option name. Set `multiple` to `true`, to allow multiple value selection choice.
 
 *Returns* `string|array` The selected option key, or an array of selected values if `multiple == true`
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -21,7 +21,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP:** *(Under `render()` method)*
 ```php
@@ -39,7 +39,7 @@ foreach ( $show_elements as $element ) {
 <# } ); #>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------

@@ -1,9 +1,9 @@
-#Checkbox
+# Checkbox
 A simple checkbox.
 
 *Returns* `string|empty` Returns the string `on` if checked or empty if unchecked
 
-##Example
+## Example
 
 ```php
 $this->add_control(
@@ -16,7 +16,7 @@ $this->add_control(
 );
 ```
 
-##Usage
+## Usage
 
 **PHP:** *(Under `render()` method)*
 ```php
@@ -34,7 +34,7 @@ if ( 'on' == $settings['show_title'] ) {
 <# } #>
 ```
 
-##Arguments
+## Arguments
 
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------  | ---------------------------------------------

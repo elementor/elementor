@@ -43,15 +43,15 @@ class Tracker {
 			return;
 		}
 
+		$last_send = self::_get_last_send_time();
+
 		if ( ! apply_filters( 'elementor/tracker/send_override', $override ) ) {
 			// Send a maximum of once per week by default.
-			$last_send = self::_get_last_send_time();
 			if ( $last_send && $last_send > apply_filters( 'elementor/tracker/last_send_interval', strtotime( '-1 week' ) ) ) {
 				return;
 			}
 		} else {
 			// Make sure there is at least a 1 hour delay between override sends, we dont want duplicate calls due to double clicking links.
-			$last_send = self::_get_last_send_time();
 			if ( $last_send && $last_send > strtotime( '-1 hours' ) ) {
 				return;
 			}
@@ -69,7 +69,10 @@ class Tracker {
 				'posts' => self::_get_posts_usage(),
 				'library' => self::_get_library_usage(),
 			],
+			'is_first_time' => empty( $last_send ),
 		];
+
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 
 		add_filter( 'https_ssl_verify', '__return_false' );
 
@@ -129,9 +132,12 @@ class Tracker {
 		// TODO: Skip for development env
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
+
+		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
+		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
 		?>
 		<div class="updated">
-			<p><?php _e( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php _e( 'Learn more.', 'elementor' ); ?></a></p>
+			<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php _e( 'Learn more.', 'elementor' ); ?></a></p>
 			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'No thanks', 'elementor' ); ?></a></p>
 		</div>
 		<?php

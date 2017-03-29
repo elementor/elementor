@@ -1,8 +1,8 @@
-#Controls Sheet
+# Controls Sheet
 Elementor includes a wide array of settings controls. Let's get to know them.
 
 
-####Content controls
+#### Content controls
 
 * [Text](_text.md) - Simple text field
 * [Number](_number.md) - Simple number field
@@ -13,7 +13,7 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [WYSIWYG](_wysiwyg.md) - The WordPress text editor (TinyMCE)
 * [Code](_code.md) Editor - Ace Code editor - This includes syntax highlighting for HTML/CSS/JavaScript and other programming languages.
 
-####Settings controls
+#### Settings controls
 
 * [Select](_select.md) - A classic select input 
 * [Checkbox](_checkbox.md) - Choose for Yes/No options
@@ -24,7 +24,7 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [Date-Time](_date.md) picker - A field that opens up a calendar + hours
 * [Repeater](_repeater.md) - Repeater controls allow you to build repeatable blocks of fields. You can create for example a set of fields that will contain a checkbox and a textfield. The user will then be able to add "rows", and each row will contain a checkbox and a textfield. (coming soon)
 
-####Design Controls
+#### Design Controls
 
 * [Color](_color.md) - A Color-Picker control with an alpha slider. Includes a customizable color palette that can be preset by the user
 * [Dimensions](_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
@@ -33,7 +33,7 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [Entrance Animation](_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 
-####UI controls
+#### UI controls
 
 * [Heading](_heading.md) - Display the a heading in the panel (coming soon)
 * [Raw HTML](_raw-html.md) - Display HTML content in the panel

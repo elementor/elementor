@@ -15,7 +15,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 		return '';
 	}
 
-	public final function get_system_schemes() {
+	final public function get_system_schemes() {
 		if ( null === $this->_system_schemes ) {
 			$this->_system_schemes = $this->_init_system_schemes();
 		}
@@ -58,7 +58,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 		return $scheme;
 	}
 
-	public final function print_template() {
+	final public function print_template() {
 		?>
 		<script type="text/template" id="tmpl-elementor-panel-schemes-<?php echo static::get_type(); ?>">
 			<div class="elementor-panel-scheme-buttons">

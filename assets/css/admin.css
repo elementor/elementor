@@ -100,6 +100,16 @@
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
+.elementor-video-wrapper {
+  position: relative;
+  height: 0; }
+  .elementor-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%; }
+
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
 
@@ -126,6 +136,9 @@ body.elementor-editor-inactive .elementor-switch-mode-on {
   display: none; }
 
 body.elementor-editor-inactive #elementor-editor {
+  display: none; }
+
+.elementor-hidden {
   display: none; }
 
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
@@ -236,7 +249,7 @@ body.elementor-editor-inactive #elementor-editor {
   font-size: 11px;
   letter-spacing: 5px; }
 
-button.elementor-button-spinner:before {
+.elementor-button-spinner:before {
   font: normal 20px/.5 dashicons;
   speak: none;
   display: inline-block;
@@ -247,11 +260,11 @@ button.elementor-button-spinner:before {
   vertical-align: top;
   content: "\f463"; }
 
-button.elementor-button-spinner.loading:before {
+.elementor-button-spinner.loading:before {
   -webkit-animation: rotation 1s infinite linear;
   animation: rotation 1s infinite linear; }
 
-button.elementor-button-spinner.success:before {
+.elementor-button-spinner.success:before {
   content: "\f147";
   color: #46b450; }
 
@@ -432,7 +445,8 @@ button.elementor-button-spinner.success:before {
   font-size: 12px;
   color: #a4afb7;
   background: none;
-  float: right; }
+  float: right;
+  width: auto; }
 
 #elementor-deactivate-feedback-dialog-header i {
   color: #9b0a46;
@@ -479,4 +493,10 @@ button.elementor-button-spinner.success:before {
 #elementor-import-template-title {
   font-size: 18px;
   color: #555d66; }
+
+.form-table:not(.elementor-maintenance-mode-is-enabled) .elementor-default-hide {
+  display: none; }
+
+.elementor-maintenance-mode-error {
+  color: red; }
 /*# sourceMappingURL=admin.css.map */

@@ -17,6 +17,10 @@ class Images_Manager {
 	}
 
 	public function get_details( $id, $size, $is_first_time ) {
+		if ( ! class_exists( 'Group_Control_Image_Size' ) ) {
+			require_once ELEMENTOR_PATH . '/includes/controls/groups/image-size.php';
+		}
+
 		if ( 'true' === $is_first_time ) {
 			$sizes = get_intermediate_image_sizes();
 			$sizes[] = 'full';

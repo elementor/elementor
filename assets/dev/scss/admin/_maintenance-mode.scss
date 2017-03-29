@@ -1,0 +1,11 @@
+
+.form-table:not(.elementor-maintenance-mode-is-enabled) {
+
+	.elementor-default-hide {
+		display: none;
+	}
+}
+
+.elementor-maintenance-mode-error{
+	color: red;
+}

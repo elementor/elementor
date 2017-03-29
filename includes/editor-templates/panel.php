@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
-		<i class="fa fa-{{ icon }}"></i>
+		<i class="{{ icon }}"></i>
 	</div>
 	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 </script>
@@ -140,10 +140,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
-		<div id="elementor-update-preview">
-			<div id="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
-			<div id="elementor-update-preview-button-wrapper">
-				<button id="elementor-update-preview-button" class="elementor-button elementor-button-success"><?php echo __( 'Apply', 'elementor' ); ?></button>
+		<div class="elementor-update-preview">
+			<div class="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
+			<div class="elementor-update-preview-button-wrapper">
+				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo __( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 	<# } #>
@@ -180,6 +180,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		$scheme_fields = array_intersect_key( $typography_fields, array_flip( $scheme_fields_keys ) );
 
+		$system_fonts = Fonts::get_fonts_by_groups( [ Fonts::SYSTEM ] );
+
+		$google_fonts = Fonts::get_fonts_by_groups( [ Fonts::GOOGLE, Fonts::EARLYACCESS ] );
+
 		foreach ( $scheme_fields as $option_name => $option ) : ?>
 			<div class="elementor-panel-scheme-typography-item">
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
@@ -195,13 +199,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 							<option value=""><?php _e( 'Default', 'elementor' ); ?></option>
 
 							<optgroup label="<?php _e( 'System', 'elementor' ); ?>">
-								<?php foreach ( Fonts::get_fonts_by_groups( [ Fonts::SYSTEM ] ) as $font_title => $font_type ) : ?>
+								<?php foreach ( $system_fonts as $font_title => $font_type ) : ?>
 									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
 								<?php endforeach; ?>
 							</optgroup>
 
 							<optgroup label="<?php _e( 'Google', 'elementor' ); ?>">
-								<?php foreach ( Fonts::get_fonts_by_groups( [ Fonts::GOOGLE, Fonts::EARLYACCESS ] ) as $font_title => $font_type ) : ?>
+								<?php foreach ( $google_fonts as $font_title => $font_type ) : ?>
 									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
 								<?php endforeach; ?>
 							</optgroup>
@@ -250,6 +254,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-panel-page-settings">
+	<div class="elementor-panel-navigation">
+		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
+			<# } ); #>
+	</div>
+	<div id="elementor-panel-page-settings-controls" class="elementor-panel-box"></div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
 	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
 	<div class="elementor-panel-nerd-box-title"><?php _e( 'No Revisions Saved Yet', 'elementor' ); ?></div>
@@ -268,4 +283,3 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
 	</div>
 </script>
-

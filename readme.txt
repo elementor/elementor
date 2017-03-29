@@ -1,9 +1,9 @@
 === Elementor Page Builder ===
 Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
-Tags: page builder, editor, elementor, builder, visual editor, front-end editor, design, drag and drop builder, front-end builder, landing page, page builder plugin, site builder, template builder, visual builder, website builder, wysiwyg
-Requires at least: 4.4
+Tags: page builder, editor, elementor, builder, visual editor, design, drag and drop, landing page, visual builder, wysiwyg, maintenance mode, coming soon, under construction,
+Requires at least: 4.5
 Tested up to: 4.7
-Stable tag: 1.3.4
+Stable tag: 1.4.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -115,7 +115,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Minimum Requirements =
 
-* WordPress 4.4 or greater
+* WordPress 4.5 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
@@ -161,7 +161,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 5.6 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 5.6 or greater and MySQL version 5.6 or greater.
 
 == Screenshots ==
 
@@ -174,6 +174,28 @@ No. Elementor supports WordPress 4.4 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.4.0 - 28.03.2017 =
+* New! - Canvas: Native Blank Page Template. No header, no footer, just Elementor
+* New! - Maintenance Mode for Under Contraction and Coming Soon page
+* New! - Page Settings: Choose Page Template, Change Status, Edit / Hide Page Title ([#632](https://github.com/pojome/elementor/issues/632), [#447](https://github.com/pojome/elementor/issues/447))
+* New! - Page Style: Padding and Background Color, Image or Gradient
+* New! - Drop Cap option for Text Editor widget
+* New! - Added Debug box in the System Info screen, to keep a record of recent error messages in the editor
+* New! - Added more icons to Social Icons widget: Yelp, Xing, Email, Shopping Cart and Whatsapp ([#1462](https://github.com/pojome/elementor/issues/1462), [#1463](https://github.com/pojome/elementor/issues/1463), [#1471](https://github.com/pojome/elementor/issues/1471), [#1481](https://github.com/pojome/elementor/issues/1481))
+* Tweak! - Added hover style and animation for Social Icons widget ([#426](https://github.com/pojome/elementor/issues/426), [#1472](https://github.com/pojome/elementor/issues/1472))
+* Fix! - Duplicate repeater field with switcher control ([#1442](https://github.com/pojome/elementor/issues/1442), [#1472](https://github.com/pojome/elementor/issues/1472))
+* Fix! - Google Font family with spacing
+* Fix! - Custom image size in some situations ([Topic](https://wordpress.org/support/topic/insider-elementor-editor-error-500-admin-ajax/))
+* Fix! - Smooth scrolling for anchor links, now limited only to links with `.elementor-element` or `.elementor-menu-anchor` classes ([#1478](https://github.com/pojome/elementor/issues/1478))
+
+= 1.3.5 - 20.03.2017 =
+* Tweak! - Minimum WP version is now v4.5
+* Fix! - Shape divider glitch on some screen widths
+* Fix! - Shape divider flip bug in safari browser
+* Fix! - Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))
+* Fix! - Generated CSS-file breakpoint for tablet - changed from 1023px to 1024px ([#1454](https://github.com/pojome/elementor/issues/1454))
+* Fix! - Close HTML `div` for Alert widget
 
 = 1.3.4 - 14.03.2017 =
 * Tweak! - Added more hooks for handling styles & scripts ([Topic](https://wordpress.org/support/topic/is-there-way-to-remove-google-font-link/))

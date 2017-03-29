@@ -12,17 +12,18 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 };
 
 App = Marionette.Application.extend( {
-	helpers: require( 'elementor-utils/helpers' ),
-	heartbeat: require( 'elementor-utils/heartbeat' ),
-	imagesManager: require( 'elementor-utils/images-manager' ),
-	schemes: require( 'elementor-utils/schemes' ),
-	presetsFactory: require( 'elementor-utils/presets-factory' ),
-	introduction: require( 'elementor-utils/introduction' ),
+	helpers: require( 'elementor-editor-utils/helpers' ),
+	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
+	imagesManager: require( 'elementor-editor-utils/images-manager' ),
+	debug: require( 'elementor-editor-utils/debug' ),
+	schemes: require( 'elementor-editor-utils/schemes' ),
+	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
+	introduction: require( 'elementor-editor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
-	ajax: require( 'elementor-utils/ajax' ),
-	conditions: require( 'elementor-utils/conditions' ),
+	ajax: require( 'elementor-editor-utils/ajax' ),
+	conditions: require( 'elementor-editor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
-	hotKeys: require( 'elementor-utils/hot-keys' ),
+	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -96,19 +97,15 @@ App = Marionette.Application.extend( {
 	},
 
 	getElementControls: function( modelElement ) {
-		var elementData = this.getElementData( modelElement );
+		var self = this,
+			elementData = self.getElementData( modelElement );
 
 		if ( ! elementData ) {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' );
-
-		if ( 'widget' === elType ) {
-			return elementData.controls;
-		}
-
-		var isInner = modelElement.get( 'isInner' ),
+		var elType = modelElement.get( 'elType' ),
+			isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
@@ -116,7 +113,7 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			controls[ controlKey ] = controlData;
+			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
 		return controls;
@@ -131,8 +128,13 @@ App = Marionette.Application.extend( {
 	},
 
 	initComponents: function() {
-		var EventManager = require( '../utils/hooks' );
+		var EventManager = require( 'elementor-utils/hooks' ),
+			PageSettings = require( 'elementor-editor-utils/page-settings' );
+
 		this.hooks = new EventManager();
+
+		this.pageSettings = new PageSettings();
+
 		this.templates.init();
 
 		this.initDialogsManager();

@@ -15,6 +15,16 @@ class Main {
 	 */
 	private $settings = [];
 
+	private static $reports = [
+		'server' => [],
+		'wordpress' => [],
+		'theme' => [],
+		'user' => [],
+		'plugins' => [],
+		'network_plugins' => [],
+		'mu_plugins' => [],
+	];
+
 	public function __construct() {
 		$this->require_files();
 		$this->init_settings();
@@ -35,8 +45,6 @@ class Main {
 		$properties = Model_Helper::prepare_properties( $this->get_settings( 'reporter_properties' ), $properties );
 
 		$reporter_class = $properties['class_name'] ? $properties['class_name'] : $this->get_reporter_class( $properties['name'] );
-
-		$reporter_class = $this->get_settings( 'namespaces.classes_namespace' ) . '\\' . $reporter_class;
 
 		$reporter = new $reporter_class( $properties );
 
@@ -111,7 +119,7 @@ class Main {
 	}
 
 	public function get_reporter_class( $reporter_type ) {
-		return ucfirst( $reporter_type ) . '_Reporter';
+		return $this->get_settings( 'namespaces.classes_namespace' ) . '\\' . ucfirst( $reporter_type ) . '_Reporter';
 	}
 
 	public function load_reports( $reports ) {
@@ -120,13 +128,19 @@ class Main {
 		$settings = $this->get_settings();
 
 		foreach ( $reports as $report_name => $report_info ) {
-			$file_name = str_replace( '_', '-', $report_name );
+			if ( ! empty( $report_info['file_name'] ) ) {
+				$file_name = $report_info['file_name'];
+			} else {
+				$file_name = $settings['dirs']['classes'] . $settings['reportFilePrefix'] . str_replace( '_', '-', $report_name ) . '.php';
+			}
 
-			require_once $settings['dirs']['classes'] . $settings['reportFilePrefix'] . $file_name . '.php';
+			require_once $file_name;
 
 			$reporter_params = [
 				'name' => $report_name,
 			];
+
+			$reporter_params = array_merge( $reporter_params, $report_info );
 
 			$reporter = $this->create_reporter( $reporter_params );
 
@@ -213,7 +227,7 @@ class Main {
 	 *
 	 * @return mixed
 	 */
-	public final function get_settings( $setting = null, array $container = null ) {
+	final public function get_settings( $setting = null, array $container = null ) {
 		if ( ! $container ) {
 			$container = $this->settings;
 		}
@@ -232,14 +246,10 @@ class Main {
 	}
 
 	public static function get_allowed_reports() {
-		return [
-			'server' => [],
-			'wordpress' => [],
-			'theme' => [],
-			'user' => [],
-			'plugins' => [],
-			'network_plugins' => [],
-			'mu_plugins' => [],
-		];
+		return self::$reports;
+	}
+
+	public static function add_report( $report_name, $report_info ) {
+		self::$reports[ $report_name ] = $report_info;
 	}
 }

@@ -9,8 +9,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			select: 'select[data-setting]',
 			textarea: 'textarea[data-setting]',
 			controlTitle: '.elementor-control-title',
-			responsiveSwitchers: '.elementor-responsive-switcher',
-			switcherDesktop: '.elementor-responsive-switcher-desktop'
+			responsiveSwitchers: '.elementor-responsive-switcher'
 		};
 	},
 
@@ -58,7 +57,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		'change @ui.radio': 'onBaseInputChange',
 		'input @ui.textarea': 'onBaseInputChange',
 		'change @ui.select': 'onBaseInputChange',
-		'click @ui.switcherDesktop': 'onSwitcherDesktopClick',
 		'click @ui.responsiveSwitchers': 'onSwitcherClick'
 	},
 
@@ -205,10 +203,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		var device = Backbone.$( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
-	},
 
-	onSwitcherDesktopClick: function() {
-		elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+		this.triggerMethod( 'responsive:switcher:click', device );
 	},
 
 	renderResponsiveSwitchers: function() {
