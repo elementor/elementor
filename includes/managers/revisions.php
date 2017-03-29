@@ -69,7 +69,7 @@ class Revisions_Manager {
 	public static function save_revision( $revision_id ) {
 		$parent_id = wp_is_post_revision( $revision_id );
 
-		if ( ! $parent_id ) {
+		if ( ! $parent_id || ! Plugin::$instance->db->is_built_with_elementor( $parent_id ) ) {
 			return;
 		}
 
@@ -77,9 +77,14 @@ class Revisions_Manager {
 	}
 
 	public static function restore_revision( $parent_id, $revision_id ) {
+		if ( ! Plugin::$instance->db->is_built_with_elementor( $revision_id ) ) {
+			return;
+		}
+
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
 		$post_css = new Post_CSS_File( $parent_id );
+
 		$post_css->update();
 	}
 
