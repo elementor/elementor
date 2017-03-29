@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	);
 ?>```
  */
-class Control_Switcher extends Control_Base {
+class Control_Switcher extends Base_Data_Control {
 
 	public function get_type() {
 		return 'switcher';
