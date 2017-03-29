@@ -79,8 +79,15 @@ class Manager {
 		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 
-	public static function get_page( $post_id ) {
-		return new Page( [ 'id' => $post_id ] );
+	public static function get_page( $post_id, $settings = [] ) {
+		if ( ! $settings ) {
+			$settings = self::get_saved_settings( $post_id );
+		}
+
+		return new Page( [
+			'id' => $post_id,
+			'settings' => $settings,
+		] );
 	}
 
 	public static function init() {
