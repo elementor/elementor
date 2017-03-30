@@ -161,10 +161,8 @@ class Source_Local extends Source_Base {
 
 		$this->save_item_type( $template_id, $template_data['type'] );
 
-		if ( 'page' === $template_data['type'] ) {
-			$page_settings = PageSettingsManager::export_page( $template_data['post_id'] );
-
-			PageSettingsManager::save_page_settings( $template_id, $page_settings );
+		if ( $template_data['page_settings'] ) {
+			PageSettingsManager::save_page_settings( $template_id, $template_data['page_settings'] );
 		}
 
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
