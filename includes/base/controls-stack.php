@@ -244,6 +244,28 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
+		if ( ! $settings ) {
+			$settings = $this->get_settings();
+		}
+
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		return array_reduce( array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
+			if ( isset( $controls[ $setting_key ] ) ) {
+				$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
+
+				if ( null !== $result ) {
+					$filtered_settings[ $setting_key ] = $result;
+				}
+			}
+
+			return $filtered_settings;
+		}, [] );
+	}
+
 	public function is_control_visible( $control, $values = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
