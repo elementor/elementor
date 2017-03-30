@@ -161,6 +161,12 @@ class Source_Local extends Source_Base {
 
 		$this->save_item_type( $template_id, $template_data['type'] );
 
+		if ( 'page' === $template_data['type'] ) {
+			$page_settings = PageSettingsManager::export_page( $template_data['post_id'] );
+
+			PageSettingsManager::save_page_settings( $template_id, $page_settings );
+		}
+
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
 
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
@@ -272,6 +278,7 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 
 		$content = json_decode( file_get_contents( $import_file ), true );
+
 		$is_invalid_file = empty( $content ) || empty( $content['data'] ) || ! is_array( $content['data'] );
 
 		if ( $is_invalid_file )
