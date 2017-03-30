@@ -12,7 +12,7 @@ class Manager {
 
 	const META_KEY = '_elementor_page_settings';
 
-	public static function save_page_settings() {
+	public static function ajax_save_page_settings() {
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the post ID' );
 		}
@@ -33,19 +33,23 @@ class Manager {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
-		$page = self::get_page( $post->ID, $_POST );
-
-		update_post_meta( $post->ID, self::META_KEY, $page->get_controls_settings() );
-
-		$css_file = new Post_CSS_File( $post->ID );
-
-		$css_file->update();
+		self::save_page_settings( $post->ID, $_POST );
 
 		if ( $saved ) {
 			wp_send_json_success();
 		} else {
 			wp_send_json_error();
 		}
+	}
+
+	public static function save_page_settings( $post_id, $settings ) {
+		$page = self::get_page( $post_id, $settings );
+
+		update_post_meta( $post_id, self::META_KEY, $page->get_controls_settings() );
+
+		$css_file = new Post_CSS_File( $post_id );
+
+		$css_file->update();
 	}
 
 	public static function export_page( $page_id ) {
@@ -103,7 +107,7 @@ class Manager {
 		require 'page.php';
 
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'save_page_settings' ] );
+			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'ajax_save_page_settings' ] );
 		}
 
 		add_action( 'init', [ __CLASS__, 'init' ] );
