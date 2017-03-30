@@ -81,14 +81,21 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel ) {
+	this.importTemplate = function( templateModel, withPageSettings ) {
 		layout.showLoadingView();
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
+			data: {
+				page_settings: withPageSettings
+			},
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data.content );
+
+				if ( withPageSettings ) {
+					elementor.pageSettings.model.set( data.page_settings );
+				}
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );
@@ -129,10 +136,10 @@ TemplateLibraryManager = function() {
 		};
 
 		if ( ajaxOptions ) {
-			_.extend( options, ajaxOptions );
+			Backbone.$.extend( true, options, ajaxOptions );
 		}
 
-		return elementor.ajax.send( 'get_template_content', options );
+		return elementor.ajax.send( 'get_template_data', options );
 	};
 
 	this.getDeleteDialog = function() {

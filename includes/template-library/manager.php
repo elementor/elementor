@@ -166,6 +166,24 @@ class Manager {
 		return $source->get_content( $args['template_id'] );
 	}
 
+	public function get_template_data( array $args ) {
+		$content = $this->get_template_content( $args );
+
+		if ( is_wp_error( $content ) ) {
+			return $content;
+		}
+
+		$return = [
+			'content' => $content,
+		];
+
+		if ( ! empty( $args['page_settings'] ) ) {
+			$return['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
+		}
+
+		return $return;
+	}
+
 	public function delete_template( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
@@ -283,7 +301,7 @@ class Manager {
 	private function init_ajax_calls() {
 		$allowed_ajax_requests = [
 			'get_templates',
-			'get_template_content',
+			'get_template_data',
 			'save_template',
 			'update_templates',
 			'delete_template',
