@@ -157,12 +157,6 @@ helpers = {
 		return JSON.parse( JSON.stringify( object ) );
 	},
 
-	getYoutubeIDFromURL: function( url ) {
-		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/ );
-
-		return videoIDParts && videoIDParts[1];
-	},
-
 	disableElementEvents: function( $element ) {
 		$element.each( function() {
 			var currentPointerEvents = this.style.pointerEvents;
