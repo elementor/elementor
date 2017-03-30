@@ -387,6 +387,10 @@ class Editor {
 				'preview' => __( 'Preview', 'elementor' ),
 				'page_settings' => __( 'Page Settings', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
+				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
+				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
+				'no' => __( 'No', 'elementor' ),
+				'yes' => __( 'Yes', 'elementor' ),
 			],
 		];
 
