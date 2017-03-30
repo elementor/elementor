@@ -22,7 +22,7 @@ class Page extends Controls_Stack {
 	}
 
 	public function get_name() {
-		return 'page-settings';
+		return 'page-settings-' . $this->post->ID;
 	}
 
 	protected function _register_controls() {
