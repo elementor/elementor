@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</head>
 	<body <?php body_class(); ?>>
 	<?php
-	do_action( 'elementor/page_templates/canvas/after_body' );
+	do_action( 'elementor/page_templates/canvas/before_content' );
 
 	while ( have_posts() ) : the_post();
 		the_content();
