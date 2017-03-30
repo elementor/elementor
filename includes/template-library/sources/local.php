@@ -243,7 +243,9 @@ class Source_Local extends Source_Base {
 		];
 
 		if ( 'page' === $export_data['type'] ) {
-			$export_data['page_settings'] = PageSettingsManager::export_page( $item_id );
+			$page_settings = PageSettingsManager::get_page( $item_id );
+
+			$export_data['page_settings'] = PageSettingsManager::export_page( $page_settings );
 		}
 
 		$filename = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
@@ -288,6 +290,7 @@ class Source_Local extends Source_Base {
 			'data' => $content_data,
 			'title' => $content['title'],
 			'type' => $content['type'],
+			'page_settings' => $content['page_settings'],
 		] );
 
 		if ( is_wp_error( $item_id ) )
