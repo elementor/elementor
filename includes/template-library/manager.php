@@ -2,6 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\TemplateLibrary\Classes\Import_Images;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -95,6 +96,10 @@ class Manager {
 		}
 
 		$args['data'] = json_decode( stripslashes( $args['data'] ), true );
+
+		if ( 'page' === $args['type'] ) {
+			$args['page_settings'] = PageSettingsManager::export_page( PageSettingsManager::get_page( $args['post_id'] ) );
+		}
 
 		$template_id = $source->save_item( $args );
 
