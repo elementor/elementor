@@ -52,8 +52,8 @@ class Manager {
 		$css_file->update();
 	}
 
-	public static function export_page( $page_id ) {
-		return self::get_page( $page_id )->filter_controls_settings( function ( $value, $control ) {
+	public static function export_page( Page $page ) {
+		return $page->filter_controls_settings( function ( $value, $control ) {
 			if ( empty( $control['export'] ) ) {
 				return null;
 			}
