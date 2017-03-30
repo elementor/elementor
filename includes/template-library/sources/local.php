@@ -239,7 +239,7 @@ class Source_Local extends Source_Base {
 		];
 
 		if ( 'page' === $export_data['type'] ) {
-			$export_data['page_settings'] = PageSettingsManager::get_page( $item_id )->get_settings();
+			$export_data['page_settings'] = PageSettingsManager::export_page( $item_id );
 		}
 
 		$filename = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
