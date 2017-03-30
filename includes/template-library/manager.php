@@ -82,7 +82,7 @@ class Manager {
 	}
 
 	public function save_template( array $args ) {
-		$validate_args = $this->ensure_args( [ 'source', 'data' ], $args );
+		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'data' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
