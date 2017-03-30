@@ -98,7 +98,7 @@ class Manager {
 		$args['data'] = json_decode( stripslashes( $args['data'] ), true );
 
 		if ( 'page' === $args['type'] ) {
-			$args['page_settings'] = PageSettingsManager::export_page( PageSettingsManager::get_page( $args['post_id'] ) );
+			$args['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['post_id'] ) );
 		}
 
 		$template_id = $source->save_item( $args );

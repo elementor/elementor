@@ -52,7 +52,7 @@ class Manager {
 		$css_file->update();
 	}
 
-	public static function export_page( Page $page ) {
+	public static function get_export_page_settings( Page $page ) {
 		return $page->filter_controls_settings( function ( $value, $control ) {
 			if ( empty( $control['export'] ) ) {
 				return null;
