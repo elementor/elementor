@@ -457,14 +457,37 @@ module.exports = function( $scope, $ ) {
 },{}],10:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' );
 
-var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
-	var player,
-		elements = {},
-		isYTVideo = false;
+var BackgroundVideo = HandlerModule.extend( {
+	player: null,
 
-	var calcVideosSize = function() {
-		var containerWidth = $backgroundVideoContainer.outerWidth(),
-			containerHeight = $backgroundVideoContainer.outerHeight(),
+	isYTVideo: null,
+
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				backgroundVideoContainer: '.elementor-background-video-container',
+				backgroundVideoEmbed: '.elementor-background-video-embed',
+				backgroundVideoHosted: '.elementor-background-video-hosted'
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		var selectors = this.getSettings( 'selectors' ),
+			elements = {
+				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer )
+			};
+
+		elements.$backgroundVideoEmbed = elements.$backgroundVideoContainer.children( selectors.backgroundVideoEmbed );
+
+		elements.$backgroundVideoHosted = elements.$backgroundVideoContainer.children( selectors.backgroundVideoHosted );
+
+		return elements;
+	},
+
+	calcVideosSize: function() {
+		var containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
+			containerHeight = this.elements.$backgroundVideoContainer.outerHeight(),
 			aspectRatioSetting = '16:9', //TEMP
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
 			aspectRatio = aspectRatioArray[ 0 ] / aspectRatioArray[ 1 ],
@@ -476,29 +499,31 @@ var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 			width: isWidthFixed ? containerWidth : ratioHeight,
 			height: isWidthFixed ? ratioWidth : containerHeight
 		};
-	};
+	},
 
-	var changeVideoSize = function() {
-		var $video = isYTVideo ? $( player.getIframe() ) : elements.$backgroundVideo,
-			size = calcVideosSize();
+	changeVideoSize: function() {
+		var $video = this.isYTVideo ? jQuery( this.player.getIframe() ) : this.elements.$backgroundVideoHosted,
+			size = this.calcVideosSize();
 
 		$video.width( size.width ).height( size.height );
-	};
+	},
 
-	var prepareYTVideo = function( YT, videoID ) {
-		player = new YT.Player( elements.$backgroundVideo[ 0 ], {
+	prepareYTVideo: function( YT, videoID ) {
+		var self = this;
+
+		self.player = new YT.Player( self.elements.$backgroundVideoEmbed[ 0 ], {
 			videoId: videoID,
 			events: {
 				onReady: function() {
-					player.mute();
+					self.player.mute();
 
-					changeVideoSize();
+					self.changeVideoSize();
 
-					player.playVideo();
+					self.player.playVideo();
 				},
 				onStateChange: function( event ) {
 					if ( event.data === YT.PlayerState.ENDED ) {
-						player.seekTo( 0 );
+						self.player.seekTo( 0 );
 					}
 				}
 			},
@@ -508,36 +533,57 @@ var BackgroundVideo = function( $backgroundVideoContainer, $ ) {
 			}
 		} );
 
-		$( elementorFrontend.getScopeWindow() ).on( 'resize', changeVideoSize );
-	};
+		jQuery( elementorFrontend.getScopeWindow() ).on( 'resize', self.changeVideoSize );
+	},
 
-	var initElements = function() {
-		elements.$backgroundVideo = $backgroundVideoContainer.children( '.elementor-background-video' );
-	};
+	activate: function() {
+		var self = this,
+			videoLink = self.getElementSettings( 'background_video_link' ),
+			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink );
 
-	var run = function() {
-		var videoID = elements.$backgroundVideo.data( 'video-id' );
+		self.isYTVideo = !! videoID;
 
 		if ( videoID ) {
-			isYTVideo = true;
-
 			elementorFrontend.utils.youtube.onYoutubeApiReady( function( YT ) {
 				setTimeout( function() {
-					prepareYTVideo( YT, videoID );
+					self.prepareYTVideo( YT, videoID );
 				}, 1 );
 			} );
 		} else {
-			elements.$backgroundVideo.one( 'canplay', changeVideoSize );
+			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
 		}
-	};
+	},
 
-	var init = function() {
-		initElements();
-		run();
-	};
+	deactivate: function() {
+		if ( this.isYTVideo && this.player.getIframe() ) {
+			this.player.destroy();
+		} else {
+			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
+		}
+	},
 
-	init();
-};
+	run: function() {
+		var elementSettings = this.getElementSettings();
+
+		if ( 'video' === elementSettings.background_background && elementSettings.background_video_link ) {
+			this.activate();
+		} else {
+			this.deactivate();
+		}
+	},
+
+	onInit: function() {
+		HandlerModule.prototype.onInit.apply( this, arguments );
+
+		this.run();
+	},
+
+	onElementChange: function( propertyName ) {
+		if ( 'background_background' === propertyName ) {
+			this.run();
+		}
+	}
+} );
 
 var StretchedSection = function( $section, $ ) {
 	var elements = {},
@@ -705,11 +751,7 @@ module.exports = function( $scope, $ ) {
 		new Shapes( { $element:  $scope } );
 	}
 
-	var $backgroundVideoContainer = $scope.find( '.elementor-background-video-container' );
-
-	if ( $backgroundVideoContainer ) {
-		new BackgroundVideo( $backgroundVideoContainer, $ );
-	}
+	new BackgroundVideo( { $element: $scope } );
 };
 
 },{"elementor-frontend/handler-module":3}],11:[function(require,module,exports){
@@ -1179,6 +1221,12 @@ module.exports = ViewModule.extend( {
 				self.onYoutubeApiReady( callback );
 			}, 350 );
 		}
+	},
+
+	getYoutubeIDFromURL: function( url ) {
+		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#&?]*).*/ );
+
+		return videoIDParts && videoIDParts[1];
 	}
 } );
 

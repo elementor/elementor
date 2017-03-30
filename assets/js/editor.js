@@ -4562,8 +4562,13 @@ var Debug = function() {
 
 	var onError = function( event ) {
 		var originalEvent = event.originalEvent,
-			error = originalEvent.error,
-			isInWatchList = false,
+			error = originalEvent.error;
+
+		if ( ! error ) {
+			return;
+		}
+
+		var isInWatchList = false,
 			urlsToWatch = settings.urlsToWatch;
 
 		jQuery.each( urlsToWatch, function() {
@@ -4908,12 +4913,6 @@ helpers = {
 
 	cloneObject: function( object ) {
 		return JSON.parse( JSON.stringify( object ) );
-	},
-
-	getYoutubeIDFromURL: function( url ) {
-		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/ );
-
-		return videoIDParts && videoIDParts[1];
 	},
 
 	disableElementEvents: function( $element ) {

@@ -120,13 +120,17 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	protected function prepare_fields( $fields ) {
-		foreach ( $fields as &$field ) {
+		foreach ( $fields as $field_key => &$field ) {
 			if ( ! empty( $field['condition'] ) ) {
 				$field = $this->add_conditions_prefix( $field );
 			}
 
 			if ( ! empty( $field['selectors'] ) ) {
 				$field['selectors'] = $this->handle_selectors( $field['selectors'] );
+			}
+
+			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
+				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
 			}
 		}
 
@@ -141,6 +145,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return [
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
+			'fields_options' => [],
 		];
 	}
 
