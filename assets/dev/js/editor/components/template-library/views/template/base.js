@@ -1,5 +1,4 @@
-var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
-	TemplateLibraryTemplateView;
+var TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: function() {
@@ -14,20 +13,24 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 
 	ui: function() {
 		return {
-			previewButton: '.elementor-template-library-template-preview'
+			previewButton: '.elementor-template-library-template-preview',
+			insertButton: '.elementor-template-library-template-insert'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.previewButton': 'onPreviewButtonClick'
+			'click @ui.previewButton': 'onPreviewButtonClick',
+			'click @ui.insertButton': 'onInsertButtonClick'
 		};
 	},
 
-	behaviors: {
-		insertTemplate: {
-			behaviorClass: TemplateLibraryInsertTemplateBehavior
-		}
+	insert: function() {
+		elementor.templates.importTemplate( this.model );
+	},
+
+	onInsertButtonClick: function() {
+		this.insert( this.ui.insertButton.data( 'action' ) );
 	}
 } );
 

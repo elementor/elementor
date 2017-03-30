@@ -5,7 +5,15 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-remote',
 
 	onPreviewButtonClick: function() {
-		elementor.templates.getLayout().showPreviewView( this.model );
+		elementor.templates.getLayout().showPreviewView( this );
+	},
+
+	insert: function( action ) {
+		if ( 'insert' === action ) {
+			TemplateLibraryTemplateView.prototype.insert.apply( this, arguments );
+		} else {
+			open( elementor.config.pro_library_url, '_blank' );
+		}
 	}
 } );
 
