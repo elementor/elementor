@@ -62,6 +62,7 @@ class Page extends Controls_Stack {
 				'selectors' => [
 					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
 				],
+				'export' => '__return_true',
 			]
 		);
 
@@ -87,6 +88,9 @@ class Page extends Controls_Stack {
 					'type' => Controls_Manager::SELECT,
 					'default' => $saved_template,
 					'options' => $options,
+					'export' => function( $value ) {
+						return Manager::TEMPLATE_CANVAS === $value;
+					},
 				]
 			);
 		}
@@ -123,6 +127,11 @@ class Page extends Controls_Stack {
 				'name' => 'background',
 				'label' => __( 'Background', 'elementor' ),
 				'types' => [ 'none', 'classic', 'gradient' ],
+				'fields_options' => [
+					'__all' => [
+						'export' => '__return_true',
+					],
+				],
 			]
 		);
 
@@ -135,6 +144,7 @@ class Page extends Controls_Stack {
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
+				'export' => '__return_true',
 			]
 		);
 
