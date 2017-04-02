@@ -1133,6 +1133,8 @@ select {
       width: 45%; }
   .elementor-panel .elementor-control-field-description {
     margin-top: 10px; }
+  .elementor-panel .elementor-required {
+    color: #b01b1b; }
   .elementor-panel .elementor-choices {
     display: table;
     width: 100%;
