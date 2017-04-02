@@ -250,12 +250,13 @@ Argument          | Type              | Description
 #### Example
 
 ```php
-add_action( 'elementor/frontend/section/before_render', function( $element ) {
-	if ( ! $section->get_settings( 'my-custom-settings ) {
-		return;
+add_action( 'elementor/frontend/element/before_render', function( $element ) {
+    if ( ! $element->get_settings( 'my-custom-settings' ) {
+	return;
     }
     
-    $element->add_render_attribute( 'wrapper', 'class', 'my-custom-class' );
+    $element->add_render_attribute( '_wrapper', 'class', 'my-custom-class' );
+    $element->add_render_attribute( '_wrapper', 'data-my_data', 'my-data-value' );
 }
 ```
 
