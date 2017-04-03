@@ -46,18 +46,11 @@
 }
 
 #elementor-template-library-header {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
-
-	> * {
-		display: table-cell;
-		vertical-align: middle;
-	}
+	display: flex;
+	align-items: center;
 }
 
 #elementor-template-library-header-logo-area {
-	width: 35%;
 	text-align: $start;
 	@include padding-start(15px);
 
@@ -84,6 +77,10 @@
 	}
 }
 
+#elementor-template-library-header-menu-area {
+	flex-grow: 1;
+}
+
 #elementor-template-library-header-menu {
 	text-align: center;
 }
@@ -100,7 +97,6 @@
 }
 
 #elementor-template-library-header-items-area {
-	width: 35%;
 
 	> * {
 		float: $end;
@@ -293,9 +289,8 @@
 
 .elementor-template-library-template-local {
 	background-color: #fff;
-	display: table;
-	table-layout: fixed;
-	width: 100%;
+	display: flex;
+	align-items: center;
 	border-bottom: 1px solid $editor-lightest;
 	height: 50px;
 	transition: background-color .3s linear;
@@ -312,8 +307,6 @@
 	}
 
 	> * {
-		display: table-cell;
-		vertical-align: middle;
 		text-align: start;
 	}
 
@@ -333,8 +326,8 @@
 	}
 
 	.elementor-template-library-template-controls {
-		width: 42%;
 		direction: getInverseDirection();
+		flex-grow: 1;
 
 		> * {
 			direction: $direction;
