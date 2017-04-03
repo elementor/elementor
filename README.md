@@ -216,7 +216,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - Shape divider glitch on some screen widths
 * Fix! - Shape divider flip bug in safari browser
 * Fix! - Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))
-* Fix! - Generated CSS-file breakpoint for tablet - changed from 1023px to 1024px ([#1454](https://github.com/pojome/elementor/issues/1454))
+* Fix! - Generated CSS-file breakpoint for tablet - changed from `1023px` to `1024px` ([#1454](https://github.com/pojome/elementor/issues/1454))
 * Fix! - Close HTML `div` for Alert widget
 
 ### 1.3.4 - 14.03.2017 ###
