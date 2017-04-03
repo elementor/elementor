@@ -2,7 +2,7 @@
 
 
 **Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [yehudah](https://profiles.wordpress.org/yehudah)  
-**Tags:** page builder, editor, landing page, drag-and-drop, wysiwyg, maintenance mode, coming soon, under construction, elementor,  
+**Tags:** page builder, editor, elementor, builder, visual editor, design, drag and drop, landing page, visual builder, wysiwyg, maintenance mode, coming soon, under construction,  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
 **Stable tag:** 1.4.1  
