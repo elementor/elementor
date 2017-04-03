@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, wysiwyg, maintenance mode, coming soon, under construction, elementor,  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
-**Stable tag:** 1.4.0  
+**Stable tag:** 1.4.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
