@@ -1868,7 +1868,7 @@ select {
     padding: 10px;
     box-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
     cursor: default;
-    z-index: 2; }
+    z-index: 4; }
   .elementor-panel .elementor-panel-footer-sub-menu {
     border-radius: 5px;
     overflow: hidden; }
