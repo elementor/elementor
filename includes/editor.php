@@ -395,8 +395,15 @@ class Editor {
 
 		echo '<script type="text/javascript">' . PHP_EOL;
 		echo '/* <![CDATA[ */' . PHP_EOL;
-		// Add new lines to avoid memory limits in some hosting servers that handles th buffer output according to new line characters
-		echo 'var ElementorConfig = ' . str_replace( '}},"', '}},' . PHP_EOL . '"', wp_json_encode( $config ) ) . ';' . PHP_EOL;
+		$config_json = wp_json_encode( $config );
+		unset( $config );
+
+		if ( get_option( 'elementor_editor_break_lines' ) ) {
+			// Add new lines to avoid memory limits in some hosting servers that handles th buffer output according to new line characters
+			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
+		}
+
+		echo 'var ElementorConfig = ' . $config_json . ';' . PHP_EOL;
 		echo '/* ]]> */' . PHP_EOL;
 		echo '</script>';
 
