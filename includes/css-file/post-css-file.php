@@ -71,6 +71,8 @@ class Post_CSS_File extends CSS_File {
 
 			$this->render_styles( $element );
 		}
+
+		do_action( 'elementor/post-css-file/parse', $this );
 	}
 
 	public function enqueue() {
