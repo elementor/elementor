@@ -5877,7 +5877,7 @@ module.exports = ViewModule.extend( {
 
 		this.initControlsCSSParser();
 
-		this.save = _.debounce( this.save, 3000 );
+		this.debounceSave = _.debounce( this.save, 3000 );
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	},
@@ -5897,7 +5897,7 @@ module.exports = ViewModule.extend( {
 
 		self.updateStylesheet();
 
-		this.save();
+		self.debounceSave();
 	}
 } );
 
