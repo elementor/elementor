@@ -2,7 +2,7 @@
 
 
 **Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [yehudah](https://profiles.wordpress.org/yehudah)  
-**Tags:** page builder, editor, elementor, builder, visual editor, design, drag and drop, landing page, visual builder, wysiwyg, maintenance mode, coming soon, under construction,  
+**Tags:** page builder, editor, landing page, drag-and-drop, wysiwyg, maintenance mode, coming soon, under construction, elementor,  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
 **Stable tag:** 1.4.0  
@@ -34,12 +34,19 @@ We've added **Library**, which includes a collection of 20+ beautiful templates,
 ### Mobile Editing ###
 Elementor comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
 
-### NEW! Revision History ###
+### Revision History ###
 Never lose your page designs again! Elementor includes a Revision History feature, which means every time you click on the save button, a new revision is saved. You can always trace your steps and switch back and forth between versions. All revisions are seen visually, so you can visually compare between versions and choose the best one!
 
-> <strong>Elementor Pro</strong><br />
-> We've made sure the free Elementor offers the best possible solution for designing WordPress. Elementor Pro is the next step, and extends the basic features even further.<br />
-> Features you won't get anywhere else: Live form design, posts and portfolio widgets, the faster slider ever, WooCommerce widgets, global templates, custom CSS and much more. [Click here to buy the ultimate page builder for WordPress!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+### Canvas - Blank Page Template ###
+Design your entire page in Elementor. No header, no footer, just Elementor. This is perfect for landing pages and coming soon pages. Canvas works on any theme, and lets you get rid of the header area so you get a blank template to work on.
+
+### New! Maintenance Mode ###
+Need to get your site offline for maintenance? Use Elementor's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page, while still allowing admins to access your site. This feature also sends the right HTTP responses to search engines, so you can safely move to maintenance mode without it affecting your traffic.
+
+### Get More With Elementor Pro ###
+If you thought Elementor is full of useful features, check out Elementor Pro! Elementor Pro extends the basic features even further, and allows you to control your entire website with Elementor.
+
+Design forms live on the frontend, customize your blog posts visually, incorporate slides, WooCommerce, global widgets, custom CSS and much more. [Upgrade now to Elementor Pro!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 
 ### 28 widgets and counting ###
 We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
@@ -177,6 +184,18 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.4.1 - 03.04.2017 ###
+New! - `Added action elementor/frontend/after_register_scripts` - runs after register scripts in the frontend
+New! - `Added action elementor/editor/after_enqueue_styles` - runs after enqueue styles in the Editor
+New! - `Added action elementor/editor/before_enqueue_styles` - runs before enqueue styles in the Editor
+New! - `Added action elementor/editor/after_enqueue_scripts` - runs after enqueue scripts in Editor
+New! - `Added action elementor/post-css-file/parse` to change Post CSS output
+Tweak! - Added new tool for editor loader method
+Fix! - Autosave settings on each change after 3 seconds ([#1546](https://github.com/pojome/elementor/issues/1546))
+Fix! - Reset column resize after section sorting
+Fix! - Incorrect wrapper height in some cases in Video lightbox
+Fix! - ACE editor lines gutter overflows over panel footer menu ([#1575](https://github.com/pojome/elementor/issues/1575))
+
 ### 1.4.0 - 28.03.2017 ###
 * New! - Canvas: Native Blank Page Template. No header, no footer, just Elementor
 * New! - Maintenance Mode for Under Contraction and Coming Soon page
@@ -186,6 +205,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * New! - Added Debug box in the System Info screen, to keep a record of recent error messages in the editor
 * New! - Added more icons to Social Icons widget: Yelp, Xing, Email, Shopping Cart and Whatsapp ([#1462](https://github.com/pojome/elementor/issues/1462), [#1463](https://github.com/pojome/elementor/issues/1463), [#1471](https://github.com/pojome/elementor/issues/1471), [#1481](https://github.com/pojome/elementor/issues/1481))
 * Tweak! - Added hover style and animation for Social Icons widget ([#426](https://github.com/pojome/elementor/issues/426), [#1472](https://github.com/pojome/elementor/issues/1472))
+* Tweak! - Removed unnecessary data settings from frontend output
 * Fix! - Duplicate repeater field with switcher control ([#1442](https://github.com/pojome/elementor/issues/1442), [#1472](https://github.com/pojome/elementor/issues/1472))
 * Fix! - Google Font family with spacing
 * Fix! - Custom image size in some situations ([Topic](https://wordpress.org/support/topic/insider-elementor-editor-error-500-admin-ajax/))
