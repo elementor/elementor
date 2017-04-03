@@ -183,16 +183,16 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 == Changelog ==
 
 = 1.4.1 - 03.04.2017 =
-New! - `Added action elementor/frontend/after_register_scripts` - runs after register scripts in the frontend
-New! - `Added action elementor/editor/after_enqueue_styles` - runs after enqueue styles in the Editor
-New! - `Added action elementor/editor/before_enqueue_styles` - runs before enqueue styles in the Editor
-New! - `Added action elementor/editor/after_enqueue_scripts` - runs after enqueue scripts in Editor
-New! - `Added action elementor/post-css-file/parse` to change Post CSS output
-Tweak! - Added new tool for editor loader method
-Fix! - Autosave settings on each change after 3 seconds ([#1546](https://github.com/pojome/elementor/issues/1546))
-Fix! - Reset column resize after section sorting
-Fix! - Incorrect wrapper height in some cases in Video lightbox
-Fix! - ACE editor lines gutter overflows over panel footer menu ([#1575](https://github.com/pojome/elementor/issues/1575))
+* New! - `Added action elementor/frontend/after_register_scripts` - runs after register scripts in the frontend
+* New! - `Added action elementor/editor/after_enqueue_styles` - runs after enqueue styles in the Editor
+* New! - `Added action elementor/editor/before_enqueue_styles` - runs before enqueue styles in the Editor
+* New! - `Added action elementor/editor/after_enqueue_scripts` - runs after enqueue scripts in Editor
+* New! - `Added action elementor/post-css-file/parse` to change Post CSS output
+* Tweak! - Added new tool for editor loader method
+* Fix! - Autosave settings on each change after 3 seconds ([#1546](https://github.com/pojome/elementor/issues/1546))
+* Fix! - Reset column resize after section sorting
+* Fix! - Incorrect wrapper height in some cases in Video lightbox
+* Fix! - ACE editor lines gutter overflows over panel footer menu ([#1575](https://github.com/pojome/elementor/issues/1575))
 
 = 1.4.0 - 28.03.2017 =
 * New! - Canvas: Native Blank Page Template. No header, no footer, just Elementor
