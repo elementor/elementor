@@ -8518,6 +8518,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	onRender: function() {
 		this.setTitle();
 		this.checkConditions();
+	},
+
+	onChildviewResponsiveSwitcherClick: function( childView, device ) {
+		if ( 'desktop' === device ) {
+			elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+		}
 	}
 } );
 
