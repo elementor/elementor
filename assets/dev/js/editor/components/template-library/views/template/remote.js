@@ -11,8 +11,6 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	insert: function( action ) {
 		if ( 'insert' === action ) {
 			TemplateLibraryTemplateView.prototype.insert.apply( this, arguments );
-		} else {
-			open( elementor.config.pro_library_url, '_blank' );
 		}
 	}
 } );
