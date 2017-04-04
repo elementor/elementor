@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-template-library-header-item">
-		{{{ elementor.templates.getLayout().getTemplateActionButton( isPro ) }}}
+		{{{ elementor.templates.getLayout().getTemplateActionButton( obj ) }}}
 	</div>
 </script>
 
@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			<div class="elementor-template-library-template-preview">
 				<i class="fa fa-search-plus"></i>
 			</div>
-			{{{ elementor.templates.getLayout().getTemplateActionButton( isPro ) }}}
+			{{{ elementor.templates.getLayout().getTemplateActionButton( obj ) }}}
 		</div>
 	</div>
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
