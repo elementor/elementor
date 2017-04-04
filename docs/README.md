@@ -85,6 +85,7 @@ Elementor includes a wide array of controls:
 * [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
 ## Hooks
+
 Elementor has many hooks that allow to change the default behavior and even extend it with new functionality. 
 - [PHP Hooks](content/hooks/php-hooks.md) - Based on the WordPress Hooks API
 - [JS Hooks](content/hooks/js-hooks.md) - Using an API similar to WordPress Hooks
