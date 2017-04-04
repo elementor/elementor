@@ -2,7 +2,7 @@
 
 
 **Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [yehudah](https://profiles.wordpress.org/yehudah)  
-**Tags:** page builder, editor, elementor, builder, visual editor, design, drag and drop, landing page, visual builder, wysiwyg, maintenance mode, coming soon, under construction,  
+**Tags:** page builder, editor, landing page, drag-and-drop, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, builder, elementor  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
 **Stable tag:** 1.4.1  
@@ -183,6 +183,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.4.2 - 04.04.2017 ###
+* Fix! - Page Settings not reload on the page template ([#1586](https://github.com/pojome/elementor/issues/1586))
+* Fix! - Full width default value in preview mode
+* Fix! - Responsive switcher in repeater control
 
 ### 1.4.1 - 03.04.2017 ###
 * New! - `Added action elementor/frontend/after_register_scripts` - runs after register scripts in the frontend

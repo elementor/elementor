@@ -182,6 +182,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.4.2 - 04.04.2017 =
+* Fix! - Page Settings not reload on the page template ([#1586](https://github.com/pojome/elementor/issues/1586))
+* Fix! - Full width default value in preview mode
+* Fix! - Responsive switcher in repeater control
+
 = 1.4.1 - 03.04.2017 =
 * New! - `Added action elementor/frontend/after_register_scripts` - runs after register scripts in the frontend
 * New! - `Added action elementor/editor/after_enqueue_styles` - runs after enqueue styles in the Editor
