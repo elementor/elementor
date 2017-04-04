@@ -77,9 +77,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
-	<button class="elementor-template-library-template-insert elementor-button elementor-button-go-pro" data-action="get-pro">
-		<i class="fa fa-external-link-square"></i><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
-	</button>
+	<a href="https://go.elementor.com/pro-library/" target="_blank">
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-go-pro">
+			<i class="fa fa-external-link-square"></i><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
+		</button>
+	</a>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
@@ -89,7 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-template-library-template-name">{{{ title }}}</div>
 	<div class="elementor-template-library-template-type">{{{ elementor.translate( type ) }}}</div>
 	<div class="elementor-template-library-template-controls">
-		<button class="elementor-template-library-template-insert elementor-button elementor-button-success" data-action="insert">
+		<button class="elementor-template-library-template-insert elementor-button elementor-button-success">
 			<i class="eicon-file-download"></i><span class="elementor-button-title"><?php _e( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-template-library-template-export">
