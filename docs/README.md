@@ -19,6 +19,7 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
   - [Template Library](#template-library)
   - [Icons](#icons)
   - [Menus](#menus)
+* [Elementor Pro](#additional-components)
 
 ## Definitions
 
@@ -102,7 +103,7 @@ You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as
 
 You can add admin menu under the Elementor menu. As long as it involves simple settings - use the Elementor settings page.
 
-### Elementor Pro
+## Elementor Pro
 
 [Elementor Pro](https://elementor.com/pro/) adds new features to the Elementor Page Builder plugin. Control your conversions, your user engagement, your entire website, from one page builder.
 
