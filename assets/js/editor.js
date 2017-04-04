@@ -1168,12 +1168,12 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		return this.getRegion( 'modalHeader' ).currentView;
 	},
 
-	getTemplateActionButton: function( isPro ) {
-		var templateId = '#tmpl-elementor-template-library-' + ( isPro ? 'get-pro-button' : 'insert-button' );
+	getTemplateActionButton: function( templateData ) {
+		var viewId = '#tmpl-elementor-template-library-' + ( templateData.isPro ? 'get-pro-button' : 'insert-button' );
 
-		templateId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', templateId );
+		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
-		var template = Marionette.TemplateCache.get( templateId );
+		var template = Marionette.TemplateCache.get( viewId );
 
 		return Marionette.Renderer.render( template );
 	},
@@ -1721,8 +1721,6 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	insert: function( action ) {
 		if ( 'insert' === action ) {
 			TemplateLibraryTemplateView.prototype.insert.apply( this, arguments );
-		} else {
-			open( elementor.config.pro_library_url, '_blank' );
 		}
 	}
 } );
