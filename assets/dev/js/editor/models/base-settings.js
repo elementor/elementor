@@ -109,6 +109,14 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return currentControl && ! _.isEmpty( currentControl.selectors );
 	},
 
+	getClassControls: function( controls ) {
+		controls = controls || this.controls;
+
+		return _.filter( controls, function( control ) {
+			return ! _.isUndefined( control.prefix_class );
+		} );
+	},
+
 	isClassControl: function( attribute ) {
 		var currentControl = _.find( this.controls, function( control ) {
 			return attribute === control.name;
