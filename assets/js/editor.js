@@ -3819,6 +3819,14 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return currentControl && ! _.isEmpty( currentControl.selectors );
 	},
 
+	getClassControls: function( controls ) {
+		controls = controls || this.controls;
+
+		return _.filter( controls, function( control ) {
+			return ! _.isUndefined( control.prefix_class );
+		} );
+	},
+
 	isClassControl: function( attribute ) {
 		var currentControl = _.find( this.controls, function( control ) {
 			return attribute === control.name;
@@ -6627,33 +6635,39 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.$el.addClass( 'elementor-element' );
 
-		var settings = self.getEditModel().get( 'settings' );
+		var settings = self.getEditModel().get( 'settings' ),
+			classControls = settings.getClassControls();
 
-		_.each( settings.attributes, function( value, attribute ) {
-			if ( settings.isClassControl( attribute ) ) {
-				var currentControl = settings.getControl( attribute ),
-					previousClassValue = settings.previous( attribute ),
-					classValue = value;
+		// Remove all previous classes
+		_.each( classControls, function( control ) {
+			var previousClassValue = settings.previous( control.name );
 
-				if ( currentControl.classes_dictionary ) {
-					if ( undefined !== currentControl.classes_dictionary[ previousClassValue ] ) {
-						previousClassValue = currentControl.classes_dictionary[ previousClassValue ];
-					}
-
-					if ( undefined !== currentControl.classes_dictionary[ value ] ) {
-						classValue = currentControl.classes_dictionary[ value ];
-					}
+			if ( control.classes_dictionary ) {
+				if ( undefined !== control.classes_dictionary[ previousClassValue ] ) {
+					previousClassValue = control.classes_dictionary[ previousClassValue ];
 				}
+			}
 
-				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
+			self.$el.removeClass( control.prefix_class + previousClassValue );
+		} );
 
-				var isVisible = elementor.helpers.isActiveControl( currentControl, settings.attributes );
+		// Add new classes
+		_.each( classControls, function( control ) {
+			var value = settings.attributes[ control.name ],
+				classValue = value;
 
-				if ( isVisible && ! _.isEmpty( classValue ) ) {
-					self.$el
-						.addClass( currentControl.prefix_class + classValue )
-						.addClass( _.result( self, 'className' ) );
+			if ( control.classes_dictionary ) {
+				if ( undefined !== control.classes_dictionary[ value ] ) {
+					classValue = control.classes_dictionary[ value ];
 				}
+			}
+
+			var isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
+
+			if ( isVisible && ! _.isEmpty( classValue ) ) {
+				self.$el
+					.addClass( control.prefix_class + classValue )
+					.addClass( _.result( self, 'className' ) );
 			}
 		} );
 	},
