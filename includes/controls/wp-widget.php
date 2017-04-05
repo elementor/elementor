@@ -14,6 +14,10 @@ class Control_WP_Widget extends Control_Base {
 		return 'wp_widget';
 	}
 
+	public function get_default_value() {
+		return [];
+	}
+
 	public function content_template() {
 		?>
 		<form action="" method="post">
