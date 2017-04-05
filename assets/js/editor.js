@@ -6651,7 +6651,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			self.$el.removeClass( control.prefix_class + previousClassValue );
 		} );
 
-		// Remove new classes
+		// Add new classes
 		_.each( classControls, function( control ) {
 			var value = settings.attributes[ control.name ],
 				classValue = value;
