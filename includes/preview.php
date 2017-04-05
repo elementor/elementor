@@ -64,7 +64,7 @@ class Preview {
 			return;
 		}
 
-		?><style>.elementor-section.elementor-section-boxed > .elementor-container{max-width: <?php echo esc_html( $container_width ); ?>px</style><?php
+		?><style>.elementor-section.elementor-section-boxed > .elementor-container{max-width: <?php echo esc_html( $container_width ); ?>px}</style><?php
 	}
 
 	/**
