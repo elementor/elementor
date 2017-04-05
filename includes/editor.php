@@ -309,6 +309,9 @@ class Editor {
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
 			'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
+			'controls' => $plugin->controls_manager->get_controls_data(),
+			'elements' => $plugin->elements_manager->get_element_types_config(),
+			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
@@ -396,20 +399,27 @@ class Editor {
 
 		echo '<script type="text/javascript">' . PHP_EOL;
 		echo '/* <![CDATA[ */' . PHP_EOL;
-		echo 'var ElementorConfig = ' . wp_json_encode( $config ) . ';' . PHP_EOL;
+		$config_json = wp_json_encode( $config );
+		unset( $config );
 
-		// Encode small pieces of data to avoid memory limits in some hosting servers
-		echo 'ElementorConfig.controls = ' . wp_json_encode( $plugin->controls_manager->get_controls_data() ) . ';' . PHP_EOL;
-		echo 'ElementorConfig.elements = ' . wp_json_encode( $plugin->elements_manager->get_element_types_config() ) . ';' . PHP_EOL;
-		echo 'ElementorConfig.widgets = ' . wp_json_encode( $plugin->widgets_manager->get_widget_types_config() ) . ';' . PHP_EOL;
+		if ( get_option( 'elementor_editor_break_lines' ) ) {
+			// Add new lines to avoid memory limits in some hosting servers that handles th buffer output according to new line characters
+			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
+		}
+
+		echo 'var ElementorConfig = ' . $config_json . ';' . PHP_EOL;
 		echo '/* ]]> */' . PHP_EOL;
 		echo '</script>';
 
 		$plugin->controls_manager->enqueue_control_scripts();
+
+		do_action( 'elementor/editor/after_enqueue_scripts' );
 	}
 
 	public function enqueue_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		do_action( 'elementor/editor/before_enqueue_styles' );
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
@@ -463,6 +473,8 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		do_action( 'elementor/editor/after_enqueue_styles' );
 	}
 
 	protected function _get_wp_editor_config() {

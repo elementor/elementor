@@ -57,7 +57,7 @@ class Plugin {
 	public $maintenance_mode;
 
 	/**
-	 * @var Manager
+	 * @var PageSettingsManager
 	 */
 	public $page_settings_manager;
 

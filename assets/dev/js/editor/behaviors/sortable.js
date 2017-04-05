@@ -191,7 +191,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 				var oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
+					var child = this.view.children.findByModelCid( model.cid );
+
+					child._isRendering = true;
+
 					collection.remove( model );
+
 					this.view.addChildModel( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
