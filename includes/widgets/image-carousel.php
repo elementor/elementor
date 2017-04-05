@@ -57,7 +57,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Slides to Show', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '3',
+				'default_desktop' => '3',
 				'options' => $slides_to_show,
 				'frontend_available' => true,
 			]
