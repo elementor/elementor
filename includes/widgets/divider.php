@@ -120,7 +120,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'gap',
 			[
 				'label' => __( 'Gap', 'elementor' ),
