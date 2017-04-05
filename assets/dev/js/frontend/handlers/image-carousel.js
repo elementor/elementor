@@ -22,35 +22,37 @@ ImageCarouselHandler = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		var elementSettings = this.getElementSettings(),
-			isSingleSlide = 1 === +elementSettings.slides_to_show,
-			tabletSlides = isSingleSlide ? 1 : 2,
-			slickOptions = {
-				slidesToShow: +elementSettings.slides_to_show,
-				autoplay: !! elementSettings.autoplay,
-				autoplaySpeed: elementSettings.autoplay_speed,
-				infinite: !! elementSettings.infinite,
-				pauseOnHover: !! elementSettings.pause_on_hover,
-				speed: elementSettings.speed,
-				arrows: 'dots' !== elementSettings.navigation,
-				dots: 'arrows' !== elementSettings.navigation,
-				rtl: 'rtl' === elementSettings.direction,
-				responsive: [
-					{
-						breakpoint: 767,
-						settings: {
-							slidesToShow: tabletSlides,
-							slidesToScroll: tabletSlides
-						}
-					},
-					{
-						breakpoint: 480,
-						settings: {
-							slidesToShow: 1,
-							slidesToScroll: 1
-						}
+			slidesToShow = +elementSettings.slides_to_show,
+			isSingleSlide = 1 === slidesToShow,
+			tabletSlides = +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 );
+
+		var slickOptions = {
+			slidesToShow: slidesToShow,
+			autoplay: !! elementSettings.autoplay,
+			autoplaySpeed: elementSettings.autoplay_speed,
+			infinite: !! elementSettings.infinite,
+			pauseOnHover: !! elementSettings.pause_on_hover,
+			speed: elementSettings.speed,
+			arrows: 'dots' !== elementSettings.navigation,
+			dots: 'arrows' !== elementSettings.navigation,
+			rtl: 'rtl' === elementSettings.direction,
+			responsive: [
+				{
+					breakpoint: 767,
+					settings: {
+						slidesToShow: tabletSlides,
+						slidesToScroll: 1
 					}
-				]
-			};
+				},
+				{
+					breakpoint: 480,
+					settings: {
+						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
+						slidesToScroll: 1
+					}
+				}
+			]
+		};
 
 		if ( isSingleSlide ) {
 			slickOptions.fade = 'fade' === elementSettings.effect;
