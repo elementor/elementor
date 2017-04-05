@@ -84,6 +84,12 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px' ],
+				'range' => [
+					'px' => [
+						'max' => 1000,
+					],
+				],
 				'default' => [
 					'size' => 100,
 					'unit' => '%',
