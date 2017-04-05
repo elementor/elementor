@@ -94,6 +94,35 @@ class Tools {
 				'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 			]
 		);
+
+		$editor_break_lines_section = 'elementor_editor_break_lines_section';
+
+		add_settings_section(
+			$editor_break_lines_section,
+			__( 'Editor Loader', 'elementor' ),
+			'__return_false',
+			self::PAGE_ID
+		);
+
+		$field_id = 'elementor_editor_break_lines';
+		add_settings_field(
+			$field_id,
+			__( 'Switch front-end editor loader method', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$editor_break_lines_section,
+			[
+				'id' => $field_id,
+				'type' => 'select',
+				'options' => [
+					'' => __( 'Disable', 'elementor' ),
+					1 => __( 'Enable', 'elementor' ),
+				],
+				'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
+			]
+		);
+
+		register_setting( Tools::PAGE_ID, $field_id );
 	}
 
 	public function display_settings_page() {

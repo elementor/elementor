@@ -1338,6 +1338,8 @@
   .elementor-widget-video .elementor-custom-embed-image-overlay:hover .elementor-custom-embed-play i {
     opacity: 0.9;
     text-shadow: 3px 2px 30px rgba(0, 0, 0, 0.6); }
+  .elementor-widget-video .elementor-custom-embed-image-overlay img {
+    display: block; }
 
 .elementor-widget-video .elementor-custom-embed-play {
   position: absolute;
@@ -2406,6 +2408,10 @@ button.swiper-pagination-bullet {
 
 .page-template-elementor_canvas.elementor-page:before {
   display: none; }
+
+.elementor-post__thumbnail__link {
+  -webkit-transition: none;
+  transition: none; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {

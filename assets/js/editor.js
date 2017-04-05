@@ -409,7 +409,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 				var oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
+					var child = this.view.children.findByModelCid( model.cid );
+
+					child._isRendering = true;
+
 					collection.remove( model );
+
 					this.view.addChildModel( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
@@ -5871,7 +5876,7 @@ module.exports = ViewModule.extend( {
 
 		this.initControlsCSSParser();
 
-		this.save = _.debounce( this.save, 3000 );
+		this.debounceSave = _.debounce( this.save, 3000 );
 
 		ViewModule.prototype.onInit.apply( this, arguments );
 	},
@@ -5891,7 +5896,7 @@ module.exports = ViewModule.extend( {
 
 		self.updateStylesheet();
 
-		this.save();
+		self.debounceSave();
 	}
 } );
 
@@ -8512,6 +8517,12 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	onRender: function() {
 		this.setTitle();
 		this.checkConditions();
+	},
+
+	onChildviewResponsiveSwitcherClick: function( childView, device ) {
+		if ( 'desktop' === device ) {
+			elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
+		}
 	}
 } );
 

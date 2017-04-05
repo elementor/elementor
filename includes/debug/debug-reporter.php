@@ -43,7 +43,7 @@ class Debug_Reporter extends Base_Reporter {
 		}
 
 		if ( ! $log_string ) {
-			$log_string = __( 'There are no errors to display', 'elementor' );
+			$log_string = 'There are no errors to display';
 		}
 
 		return [
