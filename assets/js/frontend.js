@@ -437,9 +437,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		var elementSettings = this.getElementSettings(),
-			slidesToShow = +elementSettings.slides_to_show,
-			isSingleSlide = 1 === slidesToShow,
-			tabletSlides = +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 );
+			slidesToShow = +elementSettings.slides_to_show || 3,
+			isSingleSlide = 1 === slidesToShow;
 
 		var slickOptions = {
 			slidesToShow: slidesToShow,
@@ -455,7 +454,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 				{
 					breakpoint: 767,
 					settings: {
-						slidesToShow: tabletSlides,
+						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
 						slidesToScroll: 1
 					}
 				},
