@@ -181,6 +181,12 @@ class Manager {
 			$return['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
 		}
 
+		// TODO: Temp patch since 1.5.0
+		if ( 'widget' === $content[0]['elType'] ) {
+			$return = $content;
+		}
+		// END Patch
+
 		return $return;
 	}
 
