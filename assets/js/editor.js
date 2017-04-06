@@ -6703,7 +6703,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			self.$el.removeClass( control.prefix_class + previousClassValue );
 		} );
 
-		// Remove new classes
+		// Add new classes
 		_.each( classControls, function( control ) {
 			var value = settings.attributes[ control.name ],
 				classValue = value;
@@ -9039,6 +9039,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 	onReady: function() {
 		elementor.ajax.send( 'editor_get_wp_widget_form', {
 			data: {
+				// Fake Widget ID
+				id: this.model.cid,
 				widget_type: this.model.get( 'widget' ),
 				data: JSON.stringify( this.elementSettingsModel.toJSON() )
 			},
