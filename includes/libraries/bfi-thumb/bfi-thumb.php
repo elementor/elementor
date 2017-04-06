@@ -40,9 +40,7 @@
  * @return string|array containing the url of the resized modified image
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if ( ! defined( 'BFITHUMB_UPLOAD_DIR' ) ) {
 	define( 'BFITHUMB_UPLOAD_DIR', 'elementor/thumbs' );
