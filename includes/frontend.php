@@ -11,6 +11,7 @@ class Frontend {
 
 	private $_is_frontend_mode = false;
 	private $_has_elementor_in_page = false;
+	private $_is_excerpt = false;
 
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -352,8 +353,10 @@ class Frontend {
 			return '';
 		}
 
-		$css_file = new Post_CSS_File( $post_id );
-		$css_file->enqueue();
+		if ( ! $this->_is_excerpt ) {
+			$css_file = new Post_CSS_File( $post_id );
+			$css_file->enqueue();
+		}
 
 		ob_start();
 
@@ -440,6 +443,16 @@ class Frontend {
 		return $content;
 	}
 
+	public function start_excerpt_flag( $excerpt ) {
+		$this->_is_excerpt = true;
+		return $excerpt;
+	}
+
+	public function end_excerpt_flag( $excerpt ) {
+		$this->_is_excerpt = false;
+		return $excerpt;
+	}
+
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests
 		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
@@ -450,5 +463,9 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+
+		// Hack to avoid enqueue post css wail it's a `the_excerpt` call
+		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
+		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
 	}
 }
