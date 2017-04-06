@@ -17,8 +17,10 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
 * [Hooks](#hooks)
 * [Additional components](#additional-components)
   - [Template Library](#template-library)
+  - [Page Settings](#page-settings)
   - [Icons](#icons)
   - [Menus](#menus)
+* [Elementor Pro](#additional-components)
 
 ## Definitions
 
@@ -84,6 +86,7 @@ Elementor includes a wide array of controls:
 * [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
 ## Hooks
+
 Elementor has many hooks that allow to change the default behavior and even extend it with new functionality. 
 - [PHP Hooks](content/hooks/php-hooks.md) - Based on the WordPress Hooks API
 - [JS Hooks](content/hooks/js-hooks.md) - Using an API similar to WordPress Hooks
@@ -94,6 +97,13 @@ Elementor has many hooks that allow to change the default behavior and even exte
 
 The Template Library lets you save pages, sections and widgets for reuse, as well as use pre-designed Elementor templates.
 
+### Page Settings
+
+Page Settings lets the user control some basic and useful settings in the page from within Elementor.
+
+For more information about extending the Page Settings features, please follow [this article](content/controls/page-settings.md).
+
+
 ### Icons
 
 You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as well as [Font Awesome](http://fontawesome.io/).
@@ -102,7 +112,7 @@ You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as
 
 You can add admin menu under the Elementor menu. As long as it involves simple settings - use the Elementor settings page.
 
-### Elementor Pro
+## Elementor Pro
 
 [Elementor Pro](https://elementor.com/pro/) adds new features to the Elementor Page Builder plugin. Control your conversions, your user engagement, your entire website, from one page builder.
 

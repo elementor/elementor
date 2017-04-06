@@ -136,6 +136,8 @@ class Frontend {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		do_action( 'elementor/frontend/after_register_scripts' );
 	}
 
 	public function register_styles() {
