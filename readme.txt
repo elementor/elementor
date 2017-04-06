@@ -1,6 +1,6 @@
 === Elementor Page Builder ===
 Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
-Tags: page builder, editor, landing page, drag-and-drop, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, builder, elementor
+Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 4.5
 Tested up to: 4.7
 Stable tag: 1.4.2
@@ -18,7 +18,7 @@ It's about time for a live page builder, with no limits of design. A page builde
 It's time for **[Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
 
 = Faster. Much faster. =
-Instant reaction was a key feature we wanted to achieve. Instant drag & drop, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
+Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
 = Live design. Truly live. =
 Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the page and simultaneously see exactly how it looks like. Elementor features live editing that is truly live, with no need to press update or go to preview mode.
@@ -30,13 +30,13 @@ Create pages that have "the designer touch", by including unique features like b
 We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
 
 = Mobile Editing =
-Elementor comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
+Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
 
 = Revision History =
 Never lose your page designs again! Elementor includes a Revision History feature, which means every time you click on the save button, a new revision is saved. You can always trace your steps and switch back and forth between versions. All revisions are seen visually, so you can visually compare between versions and choose the best one!
 
 = Canvas - Blank Page Template =
-Design your entire page in Elementor. No header, no footer, just Elementor. This is perfect for landing pages and coming soon pages. Canvas works on any theme, and lets you get rid of the header area so you get a blank template to work on.
+Design your entire page in the page builder. No header, no footer, just Elementor. This is perfect for landing pages and coming soon pages. Canvas works on any theme, and lets you get rid of the header area so you get a blank template to work on.
 
 = New! Maintenance Mode =
 Need to get your site offline for maintenance? Use Elementor's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page, while still allowing admins to access your site. This feature also sends the right HTTP responses to search engines, so you can safely move to maintenance mode without it affecting your traffic.
@@ -47,14 +47,14 @@ If you thought Elementor is full of useful features, check out Elementor Pro! El
 Design forms live on the frontend, customize your blog posts visually, incorporate slides, WooCommerce, global widgets, custom CSS and much more. [Upgrade now to Elementor Pro!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 
 = 28 widgets and counting =
-We packed 28 of the most useful widgets into Elementor. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+We packed 28 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
-- **Text Editor**. A wysiwyg text editor, just like the WordPress editor.
+- **Text Editor**. A WYSIWYG text editor, just like the WordPress editor.
 - **Video**. Add YouTube \ Vimeo to your page.
 - **Button**. Controlling every aspect of the button design.
-- **Image Box**. A box that includes an image, headline and text.
+- **Image Box**. A box that includes image, headline and text.
 - **Testimonials**. Customer testimonials that show social proof.
 - **Icon**. Place one or more of 600+ icons available.
 - **Icon Box**. Works the same as the image box, only with icons.
@@ -71,7 +71,7 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 - **HTML**. Insert code into the page.
 - **Shortcode**. Easily insert shortcodes from any plugin into the page.
 - **Menu Anchor**. Link any menu to this anchor.
-- **Sidebar**. Include any sidebar you create into the page.
+- **Sidebar**. Add any sidebar into the page.
 - **Google Maps**. Embed maps into the page.
 - **SoundCloud**. Add audio bits from SoundCloud.
 - **Divider**. A line that divides different elements in the page.
@@ -80,10 +80,10 @@ We packed 28 of the most useful widgets into Elementor. True, that's way more th
 - **And counting...**
 
 = Multilingual & RTL supported. =
-We've integrated RTL and multi language support within the framework of Elementor, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
+We've integrated RTL and multi language support within the framework of our page builder, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
-Elementor is free and open source, and is the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
+Elementor is free and open source. It's the perfect page builder plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
 We have created an extensive [API documentation](https://github.com/pojome/elementor/tree/master/docs), to help you get started and learn just how to integrate with Elementor.
 
 = Translations =
