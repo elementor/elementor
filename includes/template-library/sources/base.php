@@ -12,12 +12,12 @@ abstract class Source_Base {
 	abstract public function get_title();
 	abstract public function register_data();
 	abstract public function get_items( $args = [] );
-	abstract public function get_item( $item_id );
 	abstract public function get_content( $item_id );
-	abstract public function delete_template( $item_id );
+	abstract public function get_item( $template_id );
+	abstract public function delete_template( $template_id );
 	abstract public function save_item( $template_data );
 	abstract public function update_item( $new_data );
-	abstract public function export_template( $item_id );
+	abstract public function export_template( $template_id );
 
 	public function __construct() {
 		$this->register_data();
