@@ -83,7 +83,7 @@ class Manager {
 	}
 
 	public function save_template( array $args ) {
-		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'data', 'type' ], $args );
+		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'content', 'type' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -95,7 +95,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['data'] = json_decode( stripslashes( $args['data'] ), true );
+		$args['content'] = json_decode( stripslashes( $args['content'] ), true );
 
 		if ( 'page' === $args['type'] ) {
 			$args['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['post_id'] ) );
@@ -111,7 +111,7 @@ class Manager {
 	}
 
 	public function update_template( array $template_data ) {
-		$validate_args = $this->ensure_args( [ 'source', 'data', 'type' ], $template_data );
+		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -123,7 +123,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$template_data['data'] = json_decode( stripslashes( $template_data['data'] ), true );
+		$template_data['content'] = json_decode( stripslashes( $template_data['content'] ), true );
 
 		$update = $source->update_item( $template_data );
 
