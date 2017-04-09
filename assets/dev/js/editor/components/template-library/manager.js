@@ -81,19 +81,21 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel, withPageSettings ) {
+	this.importTemplate = function( templateModel, options ) {
+		options = options || {};
+
 		layout.showLoadingView();
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
 			data: {
-				page_settings: withPageSettings
+				page_settings: options.withPageSettings
 			},
 			success: function( data ) {
 				self.closeModal();
 
 				elementor.getRegion( 'sections' ).currentView.addChildModel( data.content );
 
-				if ( withPageSettings ) {
+				if ( options.withPageSettings ) {
 					elementor.pageSettings.model.set( data.page_settings );
 				}
 			},

@@ -29,7 +29,7 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 				cancel: elementor.translate( 'no' )
 			},
 			onConfirm: function() {
-				elementor.templates.importTemplate( self.model, true );
+				elementor.templates.importTemplate( self.model, { withPageSettings: true } );
 			},
 			onCancel: function() {
 				TemplateLibraryTemplateView.prototype.insert.apply( self, arguments );
