@@ -1026,10 +1026,18 @@ TemplateLibraryManager = function() {
 		} );
 
 		if ( templateType.prepareSavedData ) {
+			// TODO: Temp patch since 1.5.0
+			data.data = data.content;
+			// END Patch
+
 			data = templateType.prepareSavedData( data );
+
+			// TODO: Temp patch since 1.5.0
+			delete data.data;
+			// END Patch
 		}
 
-		data.data = JSON.stringify( data.data );
+		data.content = JSON.stringify( data.content );
 
 		var ajaxParams = { data: data };
 
@@ -1562,7 +1570,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			saveType = this.model ? this.model.get( 'elType' ) : 'page',
 			JSONParams = { removeDefault: true };
 
-		formData.data = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
+		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
