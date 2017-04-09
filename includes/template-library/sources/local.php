@@ -161,7 +161,7 @@ class Source_Local extends Source_Base {
 
 		$this->save_item_type( $template_id, $template_data['type'] );
 
-		if ( $template_data['page_settings'] ) {
+		if ( ! empty( $template_data['page_settings'] ) ) {
 			PageSettingsManager::save_page_settings( $template_id, $template_data['page_settings'] );
 		}
 
