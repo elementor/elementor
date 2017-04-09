@@ -114,7 +114,15 @@ TemplateLibraryManager = function() {
 		} );
 
 		if ( templateType.prepareSavedData ) {
+			// TODO: Temp patch since 1.5.0
+			data.data = data.content;
+			// END Patch
+
 			data = templateType.prepareSavedData( data );
+
+			// TODO: Temp patch since 1.5.0
+			delete data.data;
+			// END Patch
 		}
 
 		data.content = JSON.stringify( data.content );
