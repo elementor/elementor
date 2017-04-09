@@ -53,7 +53,7 @@ class Manager {
 	}
 
 	public static function get_export_page_settings( Page $page ) {
-		return $page->filter_controls_settings( function ( $value, $control ) {
+		return $page->filter_controls_settings( function( $value, $control ) {
 			if ( empty( $control['export'] ) ) {
 				return null;
 			}
