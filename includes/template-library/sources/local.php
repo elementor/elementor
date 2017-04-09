@@ -181,12 +181,12 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * @param int $item_id
+	 * @param int $template_id
 	 *
 	 * @return array
 	 */
-	public function get_item( $item_id ) {
-		$post = get_post( $item_id );
+	public function get_item( $template_id ) {
+		$post = get_post( $template_id );
 
 		$user = get_user_by( 'id', $post->post_author );
 
@@ -200,7 +200,7 @@ class Source_Local extends Source_Base {
 			'author' => $user->display_name,
 			'categories' => [],
 			'keywords' => [],
-			'export_link' => $this->_get_export_link( $item_id ),
+			'export_link' => $this->_get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
 
@@ -212,9 +212,9 @@ class Source_Local extends Source_Base {
 
 		// TODO: Validate the data (in JS too!)
 		if ( 'display' === $context ) {
-			$data = $db->get_builder( $item_id );
+			$content = $db->get_builder( $template_id );
 		} else {
-			$data = $db->get_plain_editor( $item_id );
+			$content = $db->get_plain_editor( $template_id );
 		}
 
 		$data = $this->replace_elements_ids( $data );
@@ -222,12 +222,12 @@ class Source_Local extends Source_Base {
 		return $data;
 	}
 
-	public function delete_template( $item_id ) {
-		wp_delete_post( $item_id, true );
+	public function delete_template( $template_id ) {
+		wp_delete_post( $template_id, true );
 	}
 
-	public function export_template( $item_id ) {
 		$template_data = $this->get_content( $item_id, 'raw' );
+	public function export_template( $template_id ) {
 
 		$template_data = $this->process_export_import_data( $template_data, 'on_export' );
 
@@ -237,8 +237,6 @@ class Source_Local extends Source_Base {
 		// TODO: More fields to export?
 		$export_data = [
 			'version' => DB::DB_VERSION,
-			'title' => get_the_title( $item_id ),
-			'type' => self::get_template_type( $item_id ),
 			'data' => $template_data,
 		];
 
@@ -248,7 +246,7 @@ class Source_Local extends Source_Base {
 			$export_data['page_settings'] = PageSettingsManager::get_export_page_settings( $page_settings );
 		}
 
-		$filename = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
+		$filename = 'elementor-' . $template_id . '-' . date( 'Y-m-d' ) . '.json';
 		$template_contents = wp_json_encode( $export_data );
 		$filesize = strlen( $template_contents );
 
@@ -286,17 +284,17 @@ class Source_Local extends Source_Base {
 
 		$content_data = $this->process_export_import_data( $content['data'], 'on_import' );
 
-		$item_id = $this->save_item( [
 			'data' => $content_data,
 			'title' => $content['title'],
 			'type' => $content['type'],
 			'page_settings' => $content['page_settings'],
+		$template_id = $this->save_item( [
 		] );
 
-		if ( is_wp_error( $item_id ) )
-			return $item_id;
+		if ( is_wp_error( $template_id ) )
+			return $template_id;
 
-		return $this->get_item( $item_id );
+		return $this->get_item( $template_id );
 	}
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
@@ -343,12 +341,12 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
-	private function _get_export_link( $item_id ) {
+	private function _get_export_link( $template_id ) {
 		return add_query_arg(
 			[
 				'action' => 'elementor_export_template',
 				'source' => $this->get_id(),
-				'template_id' => $item_id,
+				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )
 		);

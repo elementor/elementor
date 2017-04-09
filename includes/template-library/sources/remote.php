@@ -25,6 +25,7 @@ class Source_Remote extends Source_Base {
 		$templates_data = Api::get_templates_data();
 
 		$templates = [];
+
 		if ( ! empty( $templates_data ) ) {
 			foreach ( $templates_data as $template_data ) {
 				$templates[] = $this->get_item( $template_data );
@@ -66,11 +67,11 @@ class Source_Remote extends Source_Base {
 		return false;
 	}
 
-	public function delete_template( $item_id ) {
+	public function delete_template( $template_id ) {
 		return false;
 	}
 
-	public function export_template( $item_id ) {
+	public function export_template( $template_id ) {
 		return false;
 	}
 
