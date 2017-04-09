@@ -207,8 +207,10 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template-library/get_template', $data );
 	}
 
-	public function get_content( $item_id, $context = 'display' ) {
+	public function get_data( array $args, $context = 'display' ) {
 		$db = Plugin::$instance->db;
+
+		$template_id = $args['template_id'];
 
 		// TODO: Validate the data (in JS too!)
 		if ( 'display' === $context ) {
@@ -217,7 +219,13 @@ class Source_Local extends Source_Base {
 			$content = $db->get_plain_editor( $template_id );
 		}
 
-		$data = $this->replace_elements_ids( $data );
+		$data = [
+			'content' => $this->replace_elements_ids( $content ),
+		];
+
+		if ( ! empty( $args['page_settings'] ) ) {
+			$data['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
+		}
 
 		return $data;
 	}
@@ -226,25 +234,28 @@ class Source_Local extends Source_Base {
 		wp_delete_post( $template_id, true );
 	}
 
-		$template_data = $this->get_content( $item_id, 'raw' );
 	public function export_template( $template_id ) {
+		$template_type = self::get_template_type( $template_id );
 
-		$template_data = $this->process_export_import_data( $template_data, 'on_export' );
+		$template_data = $this->get_data( [
+			'template_id' => $template_id,
+			'page_settings' => 'page' === $template_type,
+		], 'raw' );
 
-		if ( empty( $template_data ) )
+		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
+
+		if ( empty( $template_data['content'] ) )
 			return new \WP_Error( '404', 'The template does not exist' );
 
 		// TODO: More fields to export?
 		$export_data = [
 			'version' => DB::DB_VERSION,
-			'data' => $template_data,
+			'title' => get_the_title( $template_id ),
+			'type' => self::get_template_type( $template_id ),
 		];
 
-		if ( 'page' === $export_data['type'] ) {
-			$page_settings = PageSettingsManager::get_page( $item_id );
-
-			$export_data['page_settings'] = PageSettingsManager::get_export_page_settings( $page_settings );
-		}
+		$export_data += $template_data;
 
 		$filename = 'elementor-' . $template_id . '-' . date( 'Y-m-d' ) . '.json';
 		$template_contents = wp_json_encode( $export_data );
@@ -275,20 +286,23 @@ class Source_Local extends Source_Base {
 		if ( empty( $import_file ) )
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 
-		$content = json_decode( file_get_contents( $import_file ), true );
+		$data = json_decode( file_get_contents( $import_file ), true );
 
-		$is_invalid_file = empty( $content ) || empty( $content['data'] ) || ! is_array( $content['data'] );
+		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		$content = $data['data'];
+
+		$is_invalid_file = empty( $data ) || empty( $content ) || ! is_array( $content );
 
 		if ( $is_invalid_file )
 			return new \WP_Error( 'file_error', 'Invalid File' );
 
-		$content_data = $this->process_export_import_data( $content['data'], 'on_import' );
+		$content = $this->process_export_import_content( $content, 'on_import' );
 
-			'data' => $content_data,
-			'title' => $content['title'],
-			'type' => $content['type'],
-			'page_settings' => $content['page_settings'],
 		$template_id = $this->save_item( [
+			'content' => $content,
+			'title' => $data['title'],
+			'type' => $data['type'],
+			'page_settings' => $data['page_settings'],
 		] );
 
 		if ( is_wp_error( $template_id ) )

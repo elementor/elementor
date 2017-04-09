@@ -146,7 +146,12 @@ class Manager {
 		return true;
 	}
 
-	public function get_template_content( array $args ) {
+	/**
+	 * @param array $args
+	 *
+	 * @return array|bool|\WP_Error
+	 */
+	public function get_template_data( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -163,31 +168,26 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->get_content( $args['template_id'] );
+		return $source->get_data( $args );
 	}
 
-	public function get_template_data( array $args ) {
-		$content = $this->get_template_content( $args );
+	/**
+	 * @param array $args
+	 *
+	 * @deprecated
+	 *
+	 * TODO: Temp fallback method since 1.5.0
+	 *
+	 * @return array|bool|mixed|\WP_Error
+	 */
+	public function get_template_content( array $args ) {
+		$data = $this->get_template_data( $args );
 
-		if ( is_wp_error( $content ) ) {
-			return $content;
+		if ( is_wp_error( $data ) ) {
+			return $data;
 		}
 
-		$return = [
-			'content' => $content,
-		];
-
-		if ( ! empty( $args['page_settings'] ) ) {
-			$return['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
-		}
-
-		// TODO: Temp patch since 1.5.0
-		if ( 'widget' === $content[0]['elType'] ) {
-			$return = $content;
-		}
-		// END Patch
-
-		return $return;
+		return $data['content'];
 	}
 
 	public function delete_template( array $args ) {
