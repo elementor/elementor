@@ -208,7 +208,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'custom_height',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
