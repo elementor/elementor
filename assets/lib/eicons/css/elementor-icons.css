@@ -1,9 +1,10 @@
 @font-face {
   font-family: 'eicon';
-  src: url("../fonts/eicons.eot?2.0");
-  src: url("../fonts/eicons.eot?2.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.0") format("woff2"), url("../fonts/eicons.woff?2.0") format("woff"), url("../fonts/eicons.ttf?2.0") format("truetype"), url("../fonts/eicons.svg?2.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?2.1");
+  src: url("../fonts/eicons.eot?2.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.1") format("woff2"), url("../fonts/eicons.woff?2.1") format("woff"), url("../fonts/eicons.ttf?2.1") format("truetype"), url("../fonts/eicons.svg?2.1#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
+
 [class^="eicon-"],
 [class*=" eicon-"] {
   display: inline-block;
@@ -406,3 +407,9 @@
 
 .eicon-pro-icon:before {
   content: '\e929'; }
+
+.eicon-mail:before {
+  content: '\e930'; }
+
+.eicon-lock-user:before {
+  content: '\e931'; }
