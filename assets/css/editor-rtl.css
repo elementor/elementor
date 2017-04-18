@@ -2346,7 +2346,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     background-color: rgba(0, 0, 0, 0.5);
     -webkit-transition: opacity .5s;
     transition: opacity .5s; }
-  .elementor-template-library-template-remote .elementor-template-library-template-insert {
+  .elementor-template-library-template-remote .elementor-template-library-template-action {
     font-size: 11px;
     width: 150px;
     padding: 11px; }
@@ -2418,7 +2418,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     margin-right: 6px; }
   .elementor-template-library-template-local .elementor-template-library-template-delete:hover {
     color: #b01b1b; }
-  .elementor-template-library-template-local .elementor-template-library-template-insert {
+  .elementor-template-library-template-local .elementor-template-library-template-action {
     padding: 8px 18px;
     margin: 0 20px; }
 
