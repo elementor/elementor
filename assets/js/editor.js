@@ -852,13 +852,7 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	onInsertButtonClick: function() {
-		var action = this.ui.insertButton.data( 'action' );
-
-		if ( 'insert' === action ) {
-			InsertTemplateHandler.showImportDialog( this.view.model );
-		} else {
-			open( elementor.config.pro_library_url, '_blank' );
-		}
+		InsertTemplateHandler.showImportDialog( this.view.model );
 	}
 }, {
 	dialog: null,
