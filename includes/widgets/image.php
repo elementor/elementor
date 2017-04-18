@@ -128,7 +128,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'space',
 			[
 				'label' => __( 'Size (%)', 'elementor' ),
@@ -188,7 +188,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),

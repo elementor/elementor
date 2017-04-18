@@ -68,7 +68,7 @@ abstract class Controls_Stack {
 	public function get_active_controls() {
 		$controls = $this->get_controls();
 
-		$settings = $this->get_settings();
+		$settings = $this->get_controls_settings();
 
 		$active_controls = array_reduce( array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
 			$control = $controls[ $control_key ];
@@ -81,6 +81,10 @@ abstract class Controls_Stack {
 		}, [] );
 
 		return $active_controls;
+	}
+
+	public function get_controls_settings() {
+		return array_intersect_key( $this->get_settings(), $this->get_controls() );
 	}
 
 	public function add_control( $id, array $args, $overwrite = false ) {
@@ -240,6 +244,28 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
+		if ( ! $settings ) {
+			$settings = $this->get_settings();
+		}
+
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		return array_reduce( array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
+			if ( isset( $controls[ $setting_key ] ) ) {
+				$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
+
+				if ( null !== $result ) {
+					$filtered_settings[ $setting_key ] = $result;
+				}
+			}
+
+			return $filtered_settings;
+		}, [] );
+	}
+
 	public function is_control_visible( $control, $values = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
@@ -389,6 +415,10 @@ abstract class Controls_Stack {
 
 		foreach ( $this->get_controls() as $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_control ) {
+				continue;
+			}
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}

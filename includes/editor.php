@@ -332,7 +332,6 @@ class Editor {
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'pro_library_url' => 'https://go.elementor.com/pro-library/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'data' => $editor_data,
 			'locked_user' => $locked_user,
@@ -390,6 +389,10 @@ class Editor {
 				'preview' => __( 'Preview', 'elementor' ),
 				'page_settings' => __( 'Page Settings', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
+				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
+				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
+				'no' => __( 'No', 'elementor' ),
+				'yes' => __( 'Yes', 'elementor' ),
 			],
 		];
 
