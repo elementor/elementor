@@ -81,19 +81,21 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel, withPageSettings ) {
+	this.importTemplate = function( templateModel, options ) {
+		options = options || {};
+
 		layout.showLoadingView();
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
 			data: {
-				page_settings: withPageSettings
+				page_settings: options.withPageSettings
 			},
 			success: function( data ) {
 				self.closeModal();
 
 				elementor.getRegion( 'sections' ).currentView.addChildModel( data.content );
 
-				if ( withPageSettings ) {
+				if ( options.withPageSettings ) {
 					elementor.pageSettings.model.set( data.page_settings );
 				}
 			},
@@ -112,10 +114,18 @@ TemplateLibraryManager = function() {
 		} );
 
 		if ( templateType.prepareSavedData ) {
+			// TODO: Temp patch since 1.5.0
+			data.data = data.content;
+			// END Patch
+
 			data = templateType.prepareSavedData( data );
+
+			// TODO: Temp patch since 1.5.0
+			delete data.data;
+			// END Patch
 		}
 
-		data.data = JSON.stringify( data.data );
+		data.content = JSON.stringify( data.content );
 
 		var ajaxParams = { data: data };
 
