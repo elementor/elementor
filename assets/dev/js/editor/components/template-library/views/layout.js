@@ -67,9 +67,9 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
-	showPreviewView: function( templateView ) {
+	showPreviewView: function( templateModel ) {
 		this.modalContent.show( new TemplateLibraryPreviewView( {
-			templateView: templateView
+			url: templateModel.get( 'url' )
 		} ) );
 
 		var headerView = this.getHeaderView();
@@ -77,7 +77,7 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		headerView.menuArea.reset();
 
 		headerView.tools.show( new TemplateLibraryHeaderPreviewView( {
-			templateView: templateView
+			model: templateModel
 		} ) );
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
