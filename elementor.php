@@ -34,6 +34,8 @@ add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
 
 if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
+} elseif ( ! version_compare( get_bloginfo( 'version' ), '4.5', '>=' ) ) {
+	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require( ELEMENTOR_PATH . 'includes/plugin.php' );
 }
@@ -50,7 +52,7 @@ function elementor_load_plugin_textdomain() {
 }
 
 /**
- * Show in WP Dashboard notice about the plugin is not activated.
+ * Show in WP Dashboard notice about the plugin is not activated (PHP version).
  *
  * @since 1.0.0
  *
@@ -58,6 +60,19 @@ function elementor_load_plugin_textdomain() {
  */
 function elementor_fail_php_version() {
 	$message = esc_html__( 'Elementor requires PHP version 5.4+, plugin is currently NOT ACTIVE.', 'elementor' );
+	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
+	echo wp_kses_post( $html_message );
+}
+
+/**
+ * Show in WP Dashboard notice about the plugin is not activated (WP version).
+ *
+ * @since 1.5.0
+ *
+ * @return void
+ */
+function elementor_fail_wp_version() {
+	$message = sprintf( esc_html__( 'Elementor requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT ACTIVE.', 'elementor' ), '4.5' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
