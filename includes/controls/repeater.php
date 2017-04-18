@@ -35,10 +35,8 @@ class Control_Repeater extends Base_Data_Control {
 				foreach ( $control['fields'] as $field ) {
 					$control_obj = Plugin::$instance->controls_manager->get_control( $field['type'] );
 
-					// TODO: Temp patch since 1.5.0
 					if ( ! $control_obj instanceof Base_Data_control )
 						continue;
-					// End patch
 
 					$item[ $field['name'] ] = $control_obj->get_value( $field, $item );
 				}
