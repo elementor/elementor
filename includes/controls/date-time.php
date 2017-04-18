@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                                  Default empty array
  * @since 1.0.0
  */
-class Control_Date_Time extends Control_Base {
+class Control_Date_Time extends Base_Data_Control {
 
 	public function get_type() {
 		return 'date_time';

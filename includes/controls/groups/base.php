@@ -129,6 +129,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				$field['selectors'] = $this->handle_selectors( $field['selectors'] );
 			}
 
+			if ( isset( $this->args['fields_options']['__all'] ) ) {
+				$field = array_merge( $field, $this->args['fields_options']['__all'] );
+			}
+
 			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
 				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
 			}

@@ -110,6 +110,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-excerpt">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
+		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php _e( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
 			<span class="elementor-state-icon">

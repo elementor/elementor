@@ -840,7 +840,9 @@ module.exports =  Marionette.ItemView.extend( {
 } );
 
 },{}],12:[function(require,module,exports){
-module.exports = Marionette.Behavior.extend( {
+var InsertTemplateHandler;
+
+InsertTemplateHandler = Marionette.Behavior.extend( {
 	ui: {
 		insertButton: '.elementor-template-library-template-insert'
 	},
@@ -853,12 +855,49 @@ module.exports = Marionette.Behavior.extend( {
 		var action = this.ui.insertButton.data( 'action' );
 
 		if ( 'insert' === action ) {
-			elementor.templates.importTemplate( this.view.model );
+			InsertTemplateHandler.showImportDialog( this.view.model );
 		} else {
 			open( elementor.config.pro_library_url, '_blank' );
 		}
 	}
+}, {
+	dialog: null,
+
+	showImportDialog: function( model ) {
+		var dialog = InsertTemplateHandler.getDialog();
+
+		dialog.onConfirm = function() {
+			elementor.templates.importTemplate( model, { withPageSettings: true } );
+		};
+
+		dialog.onCancel = function() {
+			elementor.templates.importTemplate( model );
+		};
+
+		dialog.show();
+	},
+
+	initDialog: function() {
+		InsertTemplateHandler.dialog = elementor.dialogsManager.createWidget( 'confirm', {
+			headerMessage: elementor.translate( 'import_template_dialog_header' ),
+			message: elementor.translate( 'import_template_dialog_message' ),
+			strings: {
+				confirm: elementor.translate( 'yes' ),
+				cancel: elementor.translate( 'no' )
+			}
+		} );
+	},
+
+	getDialog: function() {
+		if ( ! InsertTemplateHandler.dialog ) {
+			InsertTemplateHandler.initDialog();
+		}
+
+		return InsertTemplateHandler.dialog;
+	}
 } );
+
+module.exports = InsertTemplateHandler;
 
 },{}],13:[function(require,module,exports){
 var TemplateLibraryTemplateModel = require( 'elementor-templates/models/template' ),
@@ -954,14 +993,23 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel ) {
+	this.importTemplate = function( templateModel, options ) {
+		options = options || {};
+
 		layout.showLoadingView();
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
+			data: {
+				page_settings: options.withPageSettings
+			},
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
+				elementor.getRegion( 'sections' ).currentView.addChildModel( data.content );
+
+				if ( options.withPageSettings ) {
+					elementor.pageSettings.model.set( data.page_settings );
+				}
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );
@@ -978,10 +1026,18 @@ TemplateLibraryManager = function() {
 		} );
 
 		if ( templateType.prepareSavedData ) {
+			// TODO: Temp patch since 1.5.0
+			data.data = data.content;
+			// END Patch
+
 			data = templateType.prepareSavedData( data );
+
+			// TODO: Temp patch since 1.5.0
+			delete data.data;
+			// END Patch
 		}
 
-		data.data = JSON.stringify( data.data );
+		data.content = JSON.stringify( data.content );
 
 		var ajaxParams = { data: data };
 
@@ -1002,10 +1058,10 @@ TemplateLibraryManager = function() {
 		};
 
 		if ( ajaxOptions ) {
-			_.extend( options, ajaxOptions );
+			Backbone.$.extend( true, options, ajaxOptions );
 		}
 
-		return elementor.ajax.send( 'get_template_content', options );
+		return elementor.ajax.send( 'get_template_data', options );
 	};
 
 	this.getDeleteDialog = function() {
@@ -1514,7 +1570,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			saveType = this.model ? this.model.get( 'elType' ) : 'page',
 			JSONParams = { removeDefault: true };
 
-		formData.data = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
+		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
@@ -3066,14 +3122,14 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		var menuItemType = childView.model.get( 'type' );
 
 		switch ( menuItemType ) {
-			case 'page' :
+			case 'page':
 				var pageName = childView.model.get( 'pageName' ),
 					pageTitle = childView.model.get( 'title' );
 
 				elementor.getPanelView().setPage( pageName, pageTitle );
 				break;
 
-			case 'link' :
+			case 'link':
 				var link = childView.model.get( 'link' ),
 					isNewTab = childView.model.get( 'newTab' );
 
@@ -3732,7 +3788,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		_.each( self.controls, function( field ) {
 			var control = elementor.config.controls[ field.type ],
-				isMultipleControl = _.isObject( control.default_value );
+				isUIControl = -1 !== control.features.indexOf( 'ui' );
+
+			if ( isUIControl ) {
+				return;
+			}
+
+			var isMultipleControl = _.isObject( control.default_value );
 
 			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );

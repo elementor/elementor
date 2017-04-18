@@ -1,31 +1,68 @@
-module.exports = function( $scope, $ ) {
-	var $carousel = $scope.find( '.elementor-image-carousel' );
-	if ( ! $carousel.length ) {
-		return;
-	}
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
+	ImageCarouselHandler;
 
-	var savedOptions = $carousel.data( 'slider_options' ),
-		tabletSlides = 1 === savedOptions.slidesToShow ? 1 : 2,
-		defaultOptions = {
+ImageCarouselHandler = HandlerModule.extend( {
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				carousel: '.elementor-image-carousel'
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		var selectors = this.getSettings( 'selectors' );
+
+		return {
+			$carousel: this.$element.find( selectors.carousel )
+		};
+	},
+
+	onInit: function() {
+		HandlerModule.prototype.onInit.apply( this, arguments );
+
+		var elementSettings = this.getElementSettings(),
+			slidesToShow = +elementSettings.slides_to_show || 3,
+			isSingleSlide = 1 === slidesToShow;
+
+		var slickOptions = {
+			slidesToShow: slidesToShow,
+			autoplay: !! elementSettings.autoplay,
+			autoplaySpeed: elementSettings.autoplay_speed,
+			infinite: !! elementSettings.infinite,
+			pauseOnHover: !! elementSettings.pause_on_hover,
+			speed: elementSettings.speed,
+			arrows: 'dots' !== elementSettings.navigation,
+			dots: 'arrows' !== elementSettings.navigation,
+			rtl: 'rtl' === elementSettings.direction,
 			responsive: [
 				{
 					breakpoint: 767,
 					settings: {
-						slidesToShow: tabletSlides,
-						slidesToScroll: tabletSlides
+						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
+						slidesToScroll: 1
 					}
 				},
 				{
 					breakpoint: 480,
 					settings: {
-						slidesToShow: 1,
+						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
 						slidesToScroll: 1
 					}
 				}
 			]
-		},
+		};
 
-		slickOptions = $.extend( {}, defaultOptions, $carousel.data( 'slider_options' ) );
+		if ( isSingleSlide ) {
+			slickOptions.fade = 'fade' === elementSettings.effect;
+		} else {
+			slickOptions.slidesToScroll = +elementSettings.slides_to_scroll;
+		}
 
-	$carousel.slick( slickOptions );
+		this.elements.$carousel.slick( slickOptions );
+	}
+} );
+
+module.exports = function( $scope ) {
+	new ImageCarouselHandler( { $element: $scope } );
 };

@@ -109,7 +109,7 @@ class Api {
 			return new \WP_Error( 'template_data_error', 'An invalid data was returned' );
 		}
 
-		return $template_content['data'];
+		return $template_content;
 	}
 
 	public static function send_feedback( $feedback_key, $feedback_text ) {
