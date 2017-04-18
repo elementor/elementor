@@ -12,7 +12,7 @@ class Manager {
 
 	const META_KEY = '_elementor_page_settings';
 
-	public static function save_page_settings() {
+	public static function ajax_save_page_settings() {
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the post ID' );
 		}
@@ -33,28 +33,33 @@ class Manager {
 			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
 		}
 
-		$special_settings = [
-			'id',
-			'post_title',
-			'post_status',
-			'template',
-		];
-
-		foreach ( $special_settings as $special_setting ) {
-			unset( $_POST[ $special_setting ] );
-		}
-
-		update_post_meta( $post->ID, self::META_KEY, $_POST );
-
-		$css_file = new Post_CSS_File( $post->ID );
-
-		$css_file->update();
+		self::save_page_settings( $post->ID, $_POST );
 
 		if ( $saved ) {
 			wp_send_json_success();
 		} else {
 			wp_send_json_error();
 		}
+	}
+
+	public static function save_page_settings( $post_id, $settings ) {
+		$page = self::get_page( $post_id, $settings );
+
+		update_post_meta( $post_id, self::META_KEY, $page->get_controls_settings() );
+
+		$css_file = new Post_CSS_File( $post_id );
+
+		$css_file->update();
+	}
+
+	public static function get_export_page_settings( Page $page ) {
+		return $page->filter_controls_settings( function( $value, $control ) {
+			if ( empty( $control['export'] ) ) {
+				return null;
+			}
+
+			return $control['export']( $value ) ? $value : null;
+		} );
 	}
 
 	public static function template_include( $template ) {
@@ -79,8 +84,15 @@ class Manager {
 		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 
-	public static function get_page( $post_id ) {
-		return new Page( [ 'id' => $post_id ] );
+	public static function get_page( $post_id, $settings = [] ) {
+		if ( ! $settings ) {
+			$settings = self::get_saved_settings( $post_id );
+		}
+
+		return new Page( [
+			'id' => $post_id,
+			'settings' => $settings,
+		] );
 	}
 
 	public static function init() {
@@ -95,11 +107,17 @@ class Manager {
 		require 'page.php';
 
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'save_page_settings' ] );
+			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'ajax_save_page_settings' ] );
 		}
 
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
 		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
+	}
+
+	private static function get_saved_settings( $post_id ) {
+		$settings = get_post_meta( $post_id, Manager::META_KEY, true );
+
+		return $settings ? $settings : [];
 	}
 }

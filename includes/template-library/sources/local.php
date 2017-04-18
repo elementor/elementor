@@ -2,6 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\DB;
+use Elementor\PageSettings\Manager as PageSettingsManager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -156,19 +157,31 @@ class Source_Local extends Source_Base {
 
 		Plugin::$instance->db->set_edit_mode( $template_id );
 
-		Plugin::$instance->db->save_editor( $template_id, $template_data['data'] );
+		Plugin::$instance->db->save_editor( $template_id, $template_data['content'] );
 
 		$this->save_item_type( $template_id, $template_data['type'] );
+
+		if ( ! empty( $template_data['page_settings'] ) ) {
+			PageSettingsManager::save_page_settings( $template_id, $template_data['page_settings'] );
+		}
+
+		// TODO: Temp patch since 1.5.0
+		$template_data['data'] = $template_data['content'];
+		// END Patch
 
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
 
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
+		// TODO: Temp patch since 1.5.0
+		unset( $template_data['data'] );
+		// END Patch
+
 		return $template_id;
 	}
 
 	public function update_item( $new_data ) {
-		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['data'] );
+		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
 		do_action( 'elementor/template-library/after_update_template', $new_data['id'], $new_data );
 
@@ -176,12 +189,12 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * @param int $item_id
+	 * @param int $template_id
 	 *
 	 * @return array
 	 */
-	public function get_item( $item_id ) {
-		$post = get_post( $item_id );
+	public function get_item( $template_id ) {
+		$post = get_post( $template_id );
 
 		$user = get_user_by( 'id', $post->post_author );
 
@@ -195,49 +208,70 @@ class Source_Local extends Source_Base {
 			'author' => $user->display_name,
 			'categories' => [],
 			'keywords' => [],
-			'export_link' => $this->_get_export_link( $item_id ),
+			'export_link' => $this->_get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
 
 		return apply_filters( 'elementor/template-library/get_template', $data );
 	}
 
-	public function get_content( $item_id, $context = 'display' ) {
+	public function get_data( array $args, $context = 'display' ) {
 		$db = Plugin::$instance->db;
+
+		$template_id = $args['template_id'];
 
 		// TODO: Validate the data (in JS too!)
 		if ( 'display' === $context ) {
-			$data = $db->get_builder( $item_id );
+			$content = $db->get_builder( $template_id );
 		} else {
-			$data = $db->get_plain_editor( $item_id );
+			$content = $db->get_plain_editor( $template_id );
 		}
 
-		$data = $this->replace_elements_ids( $data );
+		$data = [
+			'content' => $this->replace_elements_ids( $content ),
+		];
+
+		if ( ! empty( $args['page_settings'] ) ) {
+			$data['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
+		}
+
+		// TODO: Temp patch since 1.5.0
+		if ( 'widget' === $data['content'][0]['elType'] && did_action( 'wp_ajax_elementor_get_template_data' ) && 'widget' === self::get_template_type( $_POST['template_id'] ) ) {
+			$data = $data['content'];
+		}
+		// END Patch
 
 		return $data;
 	}
 
-	public function delete_template( $item_id ) {
-		wp_delete_post( $item_id, true );
+	public function delete_template( $template_id ) {
+		wp_delete_post( $template_id, true );
 	}
 
-	public function export_template( $item_id ) {
-		$template_data = $this->get_content( $item_id, 'raw' );
+	public function export_template( $template_id ) {
+		$template_type = self::get_template_type( $template_id );
 
-		$template_data = $this->process_export_import_data( $template_data, 'on_export' );
+		$template_data = $this->get_data( [
+			'template_id' => $template_id,
+			'page_settings' => 'page' === $template_type,
+		], 'raw' );
 
-		if ( empty( $template_data ) )
+		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
+
+		if ( empty( $template_data['content'] ) )
 			return new \WP_Error( '404', 'The template does not exist' );
 
 		// TODO: More fields to export?
 		$export_data = [
 			'version' => DB::DB_VERSION,
-			'title' => get_the_title( $item_id ),
-			'type' => self::get_template_type( $item_id ),
-			'data' => $template_data,
+			'title' => get_the_title( $template_id ),
+			'type' => self::get_template_type( $template_id ),
 		];
 
-		$filename = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
+		$export_data += $template_data;
+
+		$filename = 'elementor-' . $template_id . '-' . date( 'Y-m-d' ) . '.json';
 		$template_contents = wp_json_encode( $export_data );
 		$filesize = strlen( $template_contents );
 
@@ -266,24 +300,29 @@ class Source_Local extends Source_Base {
 		if ( empty( $import_file ) )
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 
-		$content = json_decode( file_get_contents( $import_file ), true );
-		$is_invalid_file = empty( $content ) || empty( $content['data'] ) || ! is_array( $content['data'] );
+		$data = json_decode( file_get_contents( $import_file ), true );
+
+		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		$content = $data['data'];
+
+		$is_invalid_file = empty( $data ) || empty( $content ) || ! is_array( $content );
 
 		if ( $is_invalid_file )
 			return new \WP_Error( 'file_error', 'Invalid File' );
 
-		$content_data = $this->process_export_import_data( $content['data'], 'on_import' );
+		$content = $this->process_export_import_content( $content, 'on_import' );
 
-		$item_id = $this->save_item( [
-			'data' => $content_data,
-			'title' => $content['title'],
-			'type' => $content['type'],
+		$template_id = $this->save_item( [
+			'content' => $content,
+			'title' => $data['title'],
+			'type' => $data['type'],
+			'page_settings' => $data['page_settings'],
 		] );
 
-		if ( is_wp_error( $item_id ) )
-			return $item_id;
+		if ( is_wp_error( $template_id ) )
+			return $template_id;
 
-		return $this->get_item( $item_id );
+		return $this->get_item( $template_id );
 	}
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
@@ -330,12 +369,12 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
-	private function _get_export_link( $item_id ) {
+	private function _get_export_link( $template_id ) {
 		return add_query_arg(
 			[
 				'action' => 'elementor_export_template',
 				'source' => $this->get_id(),
-				'template_id' => $item_id,
+				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )
 		);

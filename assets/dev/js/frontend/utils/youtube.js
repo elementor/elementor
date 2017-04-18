@@ -42,7 +42,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	getYoutubeIDFromURL: function( url ) {
-		var videoIDParts = url.match( /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#&?]*).*/ );
+		var videoIDParts = url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/ );
 
 		return videoIDParts && videoIDParts[1];
 	}

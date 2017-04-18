@@ -139,7 +139,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_space',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
@@ -161,7 +161,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_size',
 			[
 				'label' => __( 'Image Size', 'elementor' ),

@@ -25,6 +25,7 @@ class Source_Remote extends Source_Base {
 		$templates_data = Api::get_templates_data();
 
 		$templates = [];
+
 		if ( ! empty( $templates_data ) ) {
 			foreach ( $templates_data as $template_data ) {
 				$templates[] = $this->get_item( $template_data );
@@ -66,24 +67,27 @@ class Source_Remote extends Source_Base {
 		return false;
 	}
 
-	public function delete_template( $item_id ) {
+	public function delete_template( $template_id ) {
 		return false;
 	}
 
-	public function export_template( $item_id ) {
+	public function export_template( $template_id ) {
 		return false;
 	}
 
-	public function get_content( $item_id, $context = 'display' ) {
-		$data = Api::get_template_content( $item_id );
+	public function get_data( array $args, $context = 'display' ) {
+		$data = Api::get_template_content( $args['template_id'] );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
 		}
 
-		$data = $this->replace_elements_ids( $data );
+		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		$data['content'] = $this->replace_elements_ids( $data['data'] );
 
-		$data = $this->process_export_import_data( $data, 'on_import' );
+		unset( $data['data'] );
+
+		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
 
 		return $data;
 	}
