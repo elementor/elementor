@@ -78,7 +78,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
 	<a href="https://go.elementor.com/pro-library/" target="_blank">
-		<button class="elementor-template-library-template-insert elementor-button elementor-button-go-pro">
+		<button class="elementor-template-library-template-action elementor-button elementor-button-go-pro">
 			<i class="fa fa-external-link-square"></i><span class="elementor-button-title"><?php _e( 'Go Pro', 'elementor' ); ?></span>
 		</button>
 	</a>
