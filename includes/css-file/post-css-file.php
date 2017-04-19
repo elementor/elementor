@@ -62,14 +62,16 @@ class Post_CSS_File extends CSS_File {
 
 		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
 
-		foreach ( $data as $element_data ) {
-			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+		if ( ! empty( $data ) ) {
+			foreach ( $data as $element_data ) {
+				$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( ! $element ) {
-				continue;
+				if ( ! $element ) {
+					continue;
+				}
+
+				$this->render_styles( $element );
 			}
-
-			$this->render_styles( $element );
 		}
 
 		do_action( 'elementor/post-css-file/parse', $this );
