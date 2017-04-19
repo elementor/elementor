@@ -182,6 +182,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.4.2 - 19.04.2017 =
+* Tweak! - Avoid enqueue `post.css` for `the_excerpt`
+* Tweak! - Updated E-Icons font v2.1.0
+* Fix! - Conflict between different skins sharing a control with same prefix-class
+* Fix! - Added compatibility for more WP widgets ([Topic](https://wordpress.org/support/topic/cant-change-event-calendar-widget/))
+
 = 1.4.2 - 04.04.2017 =
 * Fix! - Page Settings not reload on the page template ([#1586](https://github.com/pojome/elementor/issues/1586))
 * Fix! - Full width default value in preview mode
