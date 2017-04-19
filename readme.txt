@@ -182,7 +182,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.4.2 - 19.04.2017 =
+= 1.4.3 - 19.04.2017 =
 * Tweak! - Avoid enqueue `post.css` for `the_excerpt`
 * Tweak! - Updated E-Icons font v2.1.0
 * Fix! - Conflict between different skins sharing a control with same prefix-class
