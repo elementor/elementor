@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * 		@type integer $vertical   Default 0
  * 		@type integer $blur       Default 10
  * 		@type integer $spread     Default 0
- * 		@type bool    $inset      Unused //TODO: allow set an inset shadow
  * 		@type string  $color      Shadow color, in rgb|rgba|hex format.
  * }
  *
@@ -29,7 +28,6 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 			'vertical' => 0,
 			'blur' => 10,
 			'spread' => 0,
-			'inset' => '',
 			'color' => 'rgba(0,0,0,0.5)',
 		];
 	}
