@@ -365,7 +365,7 @@ class Frontend {
 			$with_css = true;
 		}
 
-		if ( $with_css ) {
+		if ( ! empty( $css_file ) && $with_css ) {
 			echo '<style>' . $css_file->get_css() . '</style>';
 		}
 
