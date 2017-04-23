@@ -186,10 +186,17 @@ class Frontend {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
+		$post = get_post();
+
 		$elementor_frontend_config = [
 			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
 			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			'is_rtl' => is_rtl(),
+			'post' => [
+				'id' => $post->ID,
+				'title' => $post->post_title,
+				'excerpt' => $post->post_excerpt,
+			],
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
