@@ -327,8 +327,6 @@ class Editor {
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
-			'post_permalink' => get_the_permalink(),
-			'edit_post_link' => get_edit_post_link(),
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
