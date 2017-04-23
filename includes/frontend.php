@@ -190,6 +190,11 @@ class Frontend {
 			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
 			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			'is_rtl' => is_rtl(),
+			'post' => [
+				'id' => get_the_ID(),
+				'title' => get_the_title(),
+				'excerpt' => get_the_excerpt(),
+			],
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
