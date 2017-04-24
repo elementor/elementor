@@ -262,7 +262,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 			<# } ); #>
 	</div>
-	<div id="elementor-panel-page-settings-controls" class="elementor-panel-box"></div>
+	<div id="elementor-panel-page-settings-controls"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
