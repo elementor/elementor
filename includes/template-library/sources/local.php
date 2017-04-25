@@ -155,7 +155,7 @@ class Source_Local extends Source_Base {
 			return $template_id;
 		}
 
-		Plugin::$instance->db->set_edit_mode( $template_id );
+		Plugin::$instance->db->set_is_elementor_page( $template_id );
 
 		Plugin::$instance->db->save_editor( $template_id, $template_data['content'] );
 

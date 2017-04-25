@@ -55,7 +55,7 @@ class Frontend {
 
 		$id = get_the_ID();
 
-		if ( is_singular() && 'builder' === Plugin::$instance->db->get_edit_mode( $id ) ) {
+		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $id ) ) {
 			$classes[] = 'elementor-page elementor-page-' . $id;
 		}
 
@@ -275,6 +275,7 @@ class Frontend {
 				'el' => 'greek',
 				'vi' => 'vietnamese',
 				'uk' => 'cyrillic',
+				'cs_CZ' => 'latin-ext',
 			];
 			$locale = get_locale();
 
@@ -348,8 +349,7 @@ class Frontend {
 			return '';
 		}
 
-		$edit_mode = Plugin::$instance->db->get_edit_mode( $post_id );
-		if ( 'builder' !== $edit_mode ) {
+		if ( ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
 			return '';
 		}
 
@@ -396,9 +396,10 @@ class Frontend {
 
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
-		$is_not_builder_mode = ! is_singular() || ! User::is_current_user_can_edit( $post_id ) || 'builder' !== Plugin::$instance->db->get_edit_mode( $post_id );
 
-		if ( $is_not_builder_mode ) {
+		$is_builder_mode = is_singular() && User::is_current_user_can_edit( $post_id ) || Plugin::$instance->db->is_built_with_elementor( $post_id );
+
+		if ( ! $is_builder_mode ) {
 			return;
 		}
 
