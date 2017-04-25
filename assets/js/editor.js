@@ -7221,7 +7221,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+			this.activateSection( activeSection );
 		}
 	},
 
