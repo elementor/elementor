@@ -79,7 +79,7 @@ class Revisions_Manager {
 	public static function restore_revision( $parent_id, $revision_id ) {
 		$is_built_with_elementor = Plugin::$instance->db->is_built_with_elementor( $revision_id );
 
-		Plugin::$instance->db->set_is_elementor_mode( $parent_id, $is_built_with_elementor );
+		Plugin::$instance->db->set_is_elementor_page( $parent_id, $is_built_with_elementor );
 
 		if ( ! $is_built_with_elementor ) {
 			return;
