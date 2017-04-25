@@ -174,19 +174,8 @@ class DB {
 	}
 
 	/**
-	 * Get edit mode by Page ID
 	 * Set whether the page is elementor page or not
 	 *
-	 * @since 1.0.0
-	 *
-	 * @param $post_id
-	 *
-	 * @return mixed
-	 */
-	public function get_edit_mode( $post_id ) {
-		return get_post_meta( $post_id, '_elementor_edit_mode', true );
-	}
-
 	 * @since 1.5.0
 	 *
 	 * @param int $post_id
@@ -317,7 +306,7 @@ class DB {
 	}
 
 	public function is_built_with_elementor( $post_id ) {
-		return 'builder' === $this->get_edit_mode( $post_id );
+		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 	}
 
 	/**
