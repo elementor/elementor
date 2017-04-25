@@ -102,15 +102,10 @@ class Admin {
 			return;
 		}
 
-		$current_mode = Plugin::$instance->db->get_edit_mode( $post->ID );
-		if ( 'builder' !== $current_mode ) {
-			$current_mode = 'editor';
-		}
-
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 		?>
 		<div id="elementor-switch-mode">
-			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
+			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo Plugin::$instance->db->is_built_with_elementor( $post->ID ); ?>" />
 			<button id="elementor-switch-mode-button" class="elementor-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
@@ -177,7 +172,7 @@ class Admin {
 	 * @return array
 	 */
 	public function add_edit_in_dashboard( $actions, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && 'builder' === Plugin::$instance->db->get_edit_mode( $post->ID ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
 				Utils::get_edit_link( $post->ID ),
@@ -193,9 +188,8 @@ class Admin {
 
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
 			$post = get_post();
-			$current_mode = Plugin::$instance->db->get_edit_mode( $post->ID );
 
-			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';
+			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
 
 			$classes .= ' ' . $mode_class;
 		}
