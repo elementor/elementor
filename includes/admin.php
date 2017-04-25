@@ -151,14 +151,6 @@ class Admin {
 			return;
 		}
 
-		// Exit when you don't have $_POST array.
-		if ( empty( $_POST ) ) {
-			return;
-		}
-
-		if ( ! isset( $_POST['_elementor_post_mode'] ) )
-			$_POST['_elementor_post_mode'] = '';
-
 		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
 	}
 
