@@ -275,6 +275,7 @@ class Frontend {
 				'el' => 'greek',
 				'vi' => 'vietnamese',
 				'uk' => 'cyrillic',
+				'cs_CZ' => 'latin-ext',
 			];
 			$locale = get_locale();
 
