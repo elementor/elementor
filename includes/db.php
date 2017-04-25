@@ -175,6 +175,7 @@ class DB {
 
 	/**
 	 * Get edit mode by Page ID
+	 * Set whether the page is elementor page or not
 	 *
 	 * @since 1.0.0
 	 *
@@ -186,19 +187,15 @@ class DB {
 		return get_post_meta( $post_id, '_elementor_edit_mode', true );
 	}
 
-	/**
-	 * Setup the edit mode per Page ID
-	 *
-	 * @since 1.0.0
+	 * @since 1.5.0
 	 *
 	 * @param int $post_id
-	 * @param string $mode
+	 * @param bool $is_elementor
 	 *
-	 * @return void
 	 */
-	public function set_edit_mode( $post_id, $mode = 'builder' ) {
-		if ( 'builder' === $mode ) {
-			update_post_meta( $post_id, '_elementor_edit_mode', $mode );
+	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
+		if ( $is_elementor ) {
+			update_post_meta( $post_id, '_elementor_edit_mode', true );
 		} else {
 			delete_post_meta( $post_id, '_elementor_edit_mode' );
 		}

@@ -50,7 +50,7 @@ class Editor {
 		$post_id = get_the_ID();
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_edit_mode( $post_id );
+		Plugin::$instance->db->set_is_elementor_page( $post_id );
 
 		// Post Lock
 		if ( ! $this->get_locked_user( $post_id ) ) {

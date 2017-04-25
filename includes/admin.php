@@ -164,7 +164,7 @@ class Admin {
 		if ( ! isset( $_POST['_elementor_post_mode'] ) )
 			$_POST['_elementor_post_mode'] = '';
 
-		Plugin::$instance->db->set_edit_mode( $post_id, $_POST['_elementor_post_mode'] );
+		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
 	}
 
 	/**
