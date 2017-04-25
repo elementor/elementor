@@ -21,11 +21,11 @@
 		},
 
 		toggleStatus: function() {
-			var isBuilderMode = 'builder' === this.getEditMode();
+			var isElementorMode = this.isElementorMode();
 
 			this.cache.$body
-			    .toggleClass( 'elementor-editor-active', isBuilderMode )
-			    .toggleClass( 'elementor-editor-inactive', ! isBuilderMode );
+			    .toggleClass( 'elementor-editor-active', isElementorMode )
+			    .toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
 
 		bindEvents: function() {
@@ -34,10 +34,10 @@
 			self.cache.$switchModeButton.on( 'click', function( event ) {
 				event.preventDefault();
 
-				if ( 'builder' === self.getEditMode() ) {
-					self.cache.$switchModeInput.val( 'editor' );
+				if ( self.isElementorMode() ) {
+					self.cache.$switchModeInput.val( '' );
 				} else {
-					self.cache.$switchModeInput.val( 'builder' );
+					self.cache.$switchModeInput.val( true );
 
 					var $wpTitle = $( '#title' );
 
@@ -167,8 +167,8 @@
 			this.maintenanceMode = new MaintenanceMode();
 		},
 
-		getEditMode: function() {
-			return this.cache.$switchModeInput.val();
+		isElementorMode: function() {
+			return !! this.cache.$switchModeInput.val();
 		},
 
 		animateLoader: function() {
