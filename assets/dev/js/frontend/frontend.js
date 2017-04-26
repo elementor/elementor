@@ -14,8 +14,6 @@
 
 		this.config = elementorFrontendConfig;
 
-		this.hooks = new EventManager();
-
 		this.Module = Module;
 
 		var initElements = function() {
@@ -34,11 +32,12 @@
 		};
 
 		this.init = function() {
+			self.hooks = new EventManager();
+
 			initElements();
 
 			$( window ).trigger( 'elementor/frontend/init' );
 
-			self.hooks.doAction( 'init' );
 			initOnReadyComponents();
 		};
 
