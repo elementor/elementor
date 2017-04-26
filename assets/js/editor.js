@@ -9065,7 +9065,9 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		tinyMCEPreInit.mceInit[ self.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
 
-		self.rearrangeButtons();
+		if ( ! elementor.config.tinymceHasCustomConfig ) {
+			self.rearrangeButtons();
+		}
 	},
 
 	attachElContent: function() {
