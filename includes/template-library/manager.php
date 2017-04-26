@@ -111,14 +111,6 @@ class Manager {
 	}
 
 	public function update_template( array $template_data ) {
-		// TODO: Temp patch since 1.5.0
-		if ( isset( $template_data['data'] ) ) {
-			$template_data['content'] = $template_data['data'];
-
-			unset( $template_data['data'] );
-		}
-		// END Patch
-
 		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -177,25 +169,6 @@ class Manager {
 		}
 
 		return $source->get_data( $args );
-	}
-
-	/**
-	 * @param array $args
-	 *
-	 * @deprecated
-	 *
-	 * TODO: Temp fallback method since 1.5.0
-	 *
-	 * @return array|bool|mixed|\WP_Error
-	 */
-	public function get_template_content( array $args ) {
-		$data = $this->get_template_data( $args );
-
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-
-		return $data['content'];
 	}
 
 	public function delete_template( array $args ) {
