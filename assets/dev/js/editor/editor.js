@@ -230,6 +230,8 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
+		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
+
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
@@ -324,10 +326,14 @@ App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
+		this.onEditModeSwitched();
+
 		this.trigger( 'preview:loaded' );
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched: function() {
+		var activeMode = this.channels.dataEditMode.request( 'activeMode' );
+
 		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
 		} else {
