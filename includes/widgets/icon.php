@@ -95,7 +95,7 @@ class Widget_Icon extends Widget_Base {
 						'icon' => 'fa fa-align-right',
 					],
 				],
-				'default' => 'center',
+				'desktop_default' => 'center',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-wrapper' => 'text-align: {{VALUE}};',
 				],
