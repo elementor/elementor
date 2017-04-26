@@ -167,6 +167,12 @@ abstract class Controls_Stack {
 			self::RESPONSIVE_MOBILE,
 		];
 
+		if ( isset( $args['default'] ) ) {
+			$args['desktop_default'] = $args['default'];
+
+			unset( $args['default'] );
+		}
+
 		foreach ( $devices as $device_name ) {
 			$control_args = $args;
 
