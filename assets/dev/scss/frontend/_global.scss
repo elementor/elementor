@@ -85,6 +85,13 @@
 	.elementor-invisible {
 		visibility: hidden;
 	}
+
+	.elementor-section,
+	.elementor-background-overlay,
+	.elementor-element-populated,
+	.elementor-widget-container {
+		transition-property: background, border, box-shadow;
+	}
 }
 
 // Alignment Classes

@@ -147,6 +147,61 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
+			'_section_hover',
+			[
+				'label' => __( 'Element Hover', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => '_background_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => '_border_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => '_box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_control(
+			'_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0.1,
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-widget-container' => 'transition-duration: {{SIZE}}s;',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'_section_responsive',
 			[
 				'label' => __( 'Responsive', 'elementor' ),

@@ -456,6 +456,103 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Hover
+		$this->start_controls_section(
+			'_section_hover',
+			[
+				'label' => __( 'Element Hover', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_hover',
+				'types' => [ 'none', 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}:hover',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_hover_title',
+			[
+				'label' => __( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay_hover',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}:hover > .elementor-background-overlay',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_hover_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}:hover > .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'border_hover',
+				'selector' => '{{WRAPPER}}:hover',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover',
+			]
+		);
+
+		$this->add_control(
+			'hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0.1,
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}, {{WRAPPER}} > .elementor-background-overlay' => 'transition-duration: {{SIZE}}s;',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 		// Section Shape Divider
 		$this->start_controls_section(
 			'section_shape_divider',
