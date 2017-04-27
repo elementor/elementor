@@ -32,6 +32,10 @@ ColumnView = BaseElementView.extend( {
 		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
+	tagName: function() {
+		return this.model.getSetting( 'html_tag' );
+	},
+
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 

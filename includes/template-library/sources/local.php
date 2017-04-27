@@ -165,17 +165,9 @@ class Source_Local extends Source_Base {
 			PageSettingsManager::save_page_settings( $template_id, $template_data['page_settings'] );
 		}
 
-		// TODO: Temp patch since 1.5.0
-		$template_data['data'] = $template_data['content'];
-		// END Patch
-
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
 
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
-
-		// TODO: Temp patch since 1.5.0
-		unset( $template_data['data'] );
-		// END Patch
 
 		return $template_id;
 	}
@@ -234,12 +226,6 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $args['page_settings'] ) ) {
 			$data['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
 		}
-
-		// TODO: Temp patch since 1.5.0
-		if ( 'widget' === $data['content'][0]['elType'] && did_action( 'wp_ajax_elementor_get_template_data' ) && 'widget' === self::get_template_type( $_POST['template_id'] ) ) {
-			$data = $data['content'];
-		}
-		// END Patch
 
 		return $data;
 	}

@@ -1020,15 +1020,7 @@ TemplateLibraryManager = function() {
 		} );
 
 		if ( templateType.prepareSavedData ) {
-			// TODO: Temp patch since 1.5.0
-			data.data = data.content;
-			// END Patch
-
 			data = templateType.prepareSavedData( data );
-
-			// TODO: Temp patch since 1.5.0
-			delete data.data;
-			// END Patch
 		}
 
 		data.content = JSON.stringify( data.content );
@@ -6985,6 +6977,10 @@ ColumnView = BaseElementView.extend( {
 		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
+	tagName: function() {
+		return this.model.getSetting( 'html_tag' );
+	},
+
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
@@ -7484,21 +7480,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel.set( this.model.get( 'name' ), value );
 
 		this.triggerMethod( 'settings:change' );
-
-		var elementType = this.elementSettingsModel.get( 'elType' );
-
-		// TODO: The following is a temp fallback from 1.2.0
-		if ( 'widget' === elementType ) {
-			elementType = this.elementSettingsModel.get( 'widgetType' );
-		}
-
-		if ( undefined === elementType ) {
-			return;
-		}
-
-		// Do not use with this action
-		// It's here for tests and maybe later will be publish
-		elementor.hooks.doAction( 'panel/editor/element/' + elementType + '/' + this.model.get( 'name' ) + '/changed' );
 	},
 
 	applySavedValue: function() {
@@ -9306,7 +9287,9 @@ SectionView = BaseElementView.extend( {
 		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
-	tagName: 'section',
+	tagName: function() {
+		return this.model.getSetting( 'html_tag' );
+	},
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 

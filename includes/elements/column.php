@@ -165,6 +165,23 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$possible_tags = [
+			'div',
+			'article',
+			'aside',
+			'nav',
+		];
+
+		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'div',
+				'options' => array_combine( $possible_tags, $possible_tags ),
+			]
+		);
+
 		$this->end_controls_section();
 
 		// Section Typography
@@ -479,7 +496,7 @@ class Element_Column extends Element_Base {
 
 	public function before_render() {
 		?>
-		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $this->get_settings( 'html_tag' ) . ' ' .  $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
 			<?php if ( in_array( $this->get_settings( 'background_overlay_background' ), [ 'classic', 'gradient' ] ) ) : ?>
 				<div class="elementor-background-overlay"></div>
@@ -492,7 +509,7 @@ class Element_Column extends Element_Base {
 		?>
 				</div>
 			</div>
-		</div>
+		</<?php echo $this->get_settings( 'html_tag' ); ?>>
 		<?php
 	}
 

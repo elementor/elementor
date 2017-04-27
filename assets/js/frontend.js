@@ -69,11 +69,6 @@ ElementsHandler = function( $ ) {
 		return handlers;
 	};
 
-	// TODO: Temp fallback method from 1.2.0
-	this.addExternalListener = function( $scope, event, callback, externalElement ) {
-		elementorFrontend.addListenerOnce( $scope.data( 'model-cid' ), event, callback, externalElement );
-	};
-
 	this.runReadyTrigger = function( $scope ) {
 		var elementType = $scope.data( 'element_type' );
 
@@ -114,8 +109,6 @@ module.exports = ElementsHandler;
 
 		this.config = elementorFrontendConfig;
 
-		this.hooks = new EventManager();
-
 		this.Module = Module;
 
 		var initElements = function() {
@@ -134,11 +127,12 @@ module.exports = ElementsHandler;
 		};
 
 		this.init = function() {
+			self.hooks = new EventManager();
+
 			initElements();
 
 			$( window ).trigger( 'elementor/frontend/init' );
 
-			self.hooks.doAction( 'init' );
 			initOnReadyComponents();
 		};
 
