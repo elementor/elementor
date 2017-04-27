@@ -1920,6 +1920,8 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
+		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
+
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.setWorkSaver();
@@ -2014,10 +2016,14 @@ App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
+		this.onEditModeSwitched();
+
 		this.trigger( 'preview:loaded' );
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched: function() {
+		var activeMode = this.channels.dataEditMode.request( 'activeMode' );
+
 		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
 		} else {
@@ -2289,15 +2295,16 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		this.onPreviewButtonChange();
+		this.onEditModeChanged();
 	},
 
 	onPreviewButtonChange: function() {
 		elementor.changeEditMode( this.getCurrentMode() );
 	},
 
-	onEditModeChanged: function( activeMode ) {
-		var title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
+	onEditModeChanged: function() {
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' ),
+			title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
 
 		this.ui.previewLabel.attr( 'title', title );
 		this.ui.previewLabelA11y.text( title );
@@ -9065,7 +9072,9 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		tinyMCEPreInit.mceInit[ self.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
 
-		self.rearrangeButtons();
+		if ( ! elementor.config.tinymceHasCustomConfig ) {
+			self.rearrangeButtons();
+		}
 	},
 
 	attachElContent: function() {
