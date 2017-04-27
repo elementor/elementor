@@ -138,7 +138,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'_section_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => __( 'Elementor Hover', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
