@@ -11,7 +11,9 @@ SectionView = BaseElementView.extend( {
 		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
-	tagName: 'section',
+	tagName: function() {
+		return this.model.getSetting( 'html_tag' );
+	},
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 

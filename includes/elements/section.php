@@ -321,6 +321,26 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$possible_tags = [
+			'section',
+			'header',
+			'footer',
+			'aside',
+			'article',
+			'nav',
+			'div',
+		];
+
+		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'section',
+				'options' => array_combine( $possible_tags, $possible_tags ),
+			]
+		);
+
 		$this->end_controls_section();
 
 		// Section background
@@ -887,7 +907,7 @@ class Element_Section extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings();
 		?>
-		<section <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $settings['html_tag'] . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -923,7 +943,7 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
-		</section>
+		</<?php echo $this->get_settings( 'html_tag' ); ?>>
 		<?php
 	}
 
