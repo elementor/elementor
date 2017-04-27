@@ -104,7 +104,7 @@ class Element_Column extends Element_Base {
 				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 				'condition' => [
-					'background_background' => [ 'classic', 'gradient', 'video' ],
+					'background_background' => [ 'classic', 'gradient' ],
 				],
 			]
 		);
