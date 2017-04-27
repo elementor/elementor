@@ -552,8 +552,20 @@ class Widget_Image_Carousel extends Widget_Base {
 			}
 
 			$image_caption = $this->get_image_caption( $attachment );
+			
+			$caption_type = $this->get_settings( 'caption_type' );
 
-			$slides[] = '<div class="slick-slide"><figure class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></figure></div>';
+				if ( '' === $caption_type ) {
+
+					$carosel_caption = '';
+					
+				} else {
+				
+					$carosel_caption = '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption>';
+				
+				}
+				
+			$slides[] = '<div class="slick-slide"><figure class="slick-slide-inner">' . $image_html . '' . $carosel_caption . '</figure></div>';
 
 		}
 
