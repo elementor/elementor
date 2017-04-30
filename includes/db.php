@@ -40,7 +40,8 @@ class DB {
 		if ( self::STATUS_PUBLISH === $status ) {
 			$this->remove_draft( $post_id );
 
-			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
+			// Don't use `update_post_meta` that can't handle `revision` post type
+			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 
 			if ( $is_meta_updated ) {
 				Revisions_Manager::handle_revision();
@@ -318,6 +319,7 @@ class DB {
 					$value = wp_slash( $value );
 				}
 
+				// Don't use `update_post_meta` that can't handle `revision` post type
 				update_metadata( 'post', $to_post_id, $meta_key, $value );
 			}
 		}
