@@ -871,6 +871,22 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 0.1,
+				'condition' => [
+					'animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
 			'_element_id',
 			[
 				'label' => __( 'CSS ID', 'elementor' ),
