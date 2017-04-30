@@ -553,7 +553,15 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slides[] = '<div class="slick-slide"><figure class="slick-slide-inner">' . $image_html . '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption></figure></div>';
+			$slide_html = '<div class="slick-slide"><figure class="slick-slide-inner">' . $image_html;
+
+			if ( ! empty( $image_caption ) ) {
+				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption>';
+			}
+
+			$slide_html .= '</figure></div>';
+
+			$slides[] = $slide_html;
 
 		}
 
@@ -628,7 +636,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	private function get_image_caption( $attachment ) {
 		$caption_type = $this->get_settings( 'caption_type' );
 
-		if ( '' === $caption_type ) {
+		if ( empty( $caption_type ) ) {
 			return '';
 		}
 
