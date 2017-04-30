@@ -846,8 +846,9 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				//'prefix_class' => 'animated ',
+				'prefix_class' => 'elementor-invisible animated ',
 				'label_block' => true,
+				'frontend_available' => true,
 			]
 		);
 
@@ -1055,12 +1056,6 @@ class Element_Section extends Element_Base {
 		] );
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
-
-		$animation = $this->get_settings( 'animation' );
-
-		if ( $animation ) {
-			$this->add_render_attribute( '_wrapper', 'data-animation', $animation );
-		}
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
