@@ -509,6 +509,12 @@ class Widget_Video extends Widget_Base {
 	<?php
 	}
 
+	public function render_plain_content() {
+		$settings = $this->get_active_settings();
+
+		echo 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
+	}
+
 	public function filter_oembed_result( $html ) {
 		$settings = $this->get_settings();
 
