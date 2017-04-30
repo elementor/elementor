@@ -52,8 +52,9 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				//'prefix_class' => 'animated ',
+				'prefix_class' => 'elementor-invisible animated ',
 				'label_block' => true,
+				'frontend_available' => true,
 			]
 		);
 
@@ -72,6 +73,22 @@ class Widget_Common extends Widget_Base {
 				'condition' => [
 					'_animation!' => '',
 				],
+			]
+		);
+
+		$this->add_control(
+			'_animation_delay',
+			[
+				'label' => __( 'Animation Delay (s)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0.1,
+				'step' => 0.1,
+				'condition' => [
+					'_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
@@ -141,6 +158,61 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_box_shadow',
 				'selector' => '{{WRAPPER}} .elementor-widget-container',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_hover',
+			[
+				'label' => __( 'Element Hover', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => '_background_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => '_border_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => '_box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_control(
+			'_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0.1,
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-widget-container' => 'transition-duration: {{SIZE}}s;',
+				],
 			]
 		);
 
