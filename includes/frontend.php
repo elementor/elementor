@@ -57,10 +57,6 @@ class Frontend {
 
 		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $id ) ) {
 			$classes[] = 'elementor-page elementor-page-' . $id;
-
-			if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-				$classes[] = 'elementor-frontend';
-			}
 		}
 
 		return $classes;
