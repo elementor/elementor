@@ -18,9 +18,15 @@ HandlerModule = ViewModule.extend( {
 		var self = this;
 
 		if ( self.onElementChange ) {
-			var cid = self.getModelCID();
+			var cid = self.getModelCID(),
+				elementName = self.getElementName(),
+				eventName = 'change';
 
-			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
+			if ( 'global' !== elementName ) {
+				eventName += ':' + elementName;
+			}
+
+			elementorFrontend.addListenerOnce( cid, eventName, function( controlView, elementView ) {
 				if ( elementView.model.cid !== cid ) {
 					return;
 				}

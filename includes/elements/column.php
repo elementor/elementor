@@ -104,7 +104,7 @@ class Element_Column extends Element_Base {
 				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 				'condition' => [
-					'background_background' => [ 'classic', 'gradient', 'video' ],
+					'background_background' => [ 'classic', 'gradient' ],
 				],
 			]
 		);
@@ -128,6 +128,103 @@ class Element_Column extends Element_Base {
 				],
 				'condition' => [
 					'background_overlay_background' => [ 'classic', 'gradient' ],
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		// Section Hover
+		$this->start_controls_section(
+			'_section_hover',
+			[
+				'label' => __( 'Element Hover', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_hover',
+				'types' => [ 'none', 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_hover_title',
+			[
+				'label' => __( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay_hover',
+				'types' => [ 'none', 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_hover_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'border_hover',
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
+			]
+		);
+
+		$this->add_control(
+			'hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0.1,
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition-duration: {{SIZE}}s;',
 				],
 			]
 		);
@@ -321,8 +418,9 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				//'prefix_class' => 'animated ',
+				'prefix_class' => 'elementor-invisible animated ',
 				'label_block' => true,
+				'frontend_available' => true,
 			]
 		);
 
@@ -341,6 +439,22 @@ class Element_Column extends Element_Base {
 				'condition' => [
 					'animation!' => '',
 				],
+			]
+		);
+
+		$this->add_control(
+			'animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 0.1,
+				'condition' => [
+					'animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
@@ -529,10 +643,6 @@ class Element_Column extends Element_Base {
 		] );
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
-
-		if ( $settings['animation'] ) {
-			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['animation'] );
-		}
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
