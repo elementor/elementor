@@ -47,7 +47,7 @@ App = Marionette.Application.extend( {
 			Slider: require( 'elementor-views/controls/slider' ),
 			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
 			Choose: require( 'elementor-views/controls/choose' ),
-			Url: require( 'elementor-views/controls/url' ),
+			Url: require( 'elementor-views/controls/base-multiple' ),
 			Font: require( 'elementor-views/controls/font' ),
 			Section: require( 'elementor-views/controls/section' ),
 			Tab: require( 'elementor-views/controls/tab' ),
