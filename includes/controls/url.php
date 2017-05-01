@@ -25,8 +25,9 @@ class Control_URL extends Control_Base_Multiple {
 
 	public function get_default_value() {
 		return [
-			'is_external' => '',
 			'url' => '',
+			'is_external' => '',
+			'nofollow' => '',
 		];
 	}
 
@@ -43,9 +44,20 @@ class Control_URL extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<input type="url" data-setting="url" placeholder="{{ data.placeholder }}" />
-				<button class="elementor-control-url-target tooltip-target" data-tooltip="<?php _e( 'Open Link in new Tab', 'elementor' ); ?>" title="<?php esc_attr_e( 'Open Link in new Tab', 'elementor' ); ?>">
-					<span class="elementor-control-url-external" title="<?php esc_attr_e( 'New Window', 'elementor' ); ?>"><i class="fa fa-external-link"></i></span>
-				</button>
+				<label for="elementor-control-url-more-input-{{data._cid}}" class="elementor-control-url-more tooltip-target" data-tooltip="<?php _e( 'Link Options', 'elementor' ); ?>">
+					<i class="fa fa-cog"></i>
+				</label>
+				<input type="checkbox" id="elementor-control-url-more-input-{{data._cid}}" class="elementor-control-url-more-input">
+				<div class="elementor-control-url-more-options">
+					<div class="elementor-control-url-option">
+						<input type="checkbox" id="elementor-control-url-option-input-is_external-{{data._cid}}" class="elementor-control-url-option-input" data-setting="is_external">
+						<label for="elementor-control-url-option-input-is_external-{{data._cid}}"><?php echo __( 'Open in new window', 'elementor' ); ?></label>
+					</div>
+					<div class="elementor-control-url-option">
+						<input type="checkbox" id="elementor-control-url-option-input-nofollow-{{data._cid}}" class="elementor-control-url-option-input" data-setting="nofollow">
+						<label for="elementor-control-url-option-input-nofollow-{{data._cid}}"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
+					</div>
+				</div>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
