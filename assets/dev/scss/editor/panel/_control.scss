@@ -519,7 +519,7 @@
 
 	.elementor-control-url-external-hide {
 
-		.elementor-control-url-target {
+		.elementor-control-url-more {
 			display: none;
 		}
 	}
@@ -535,33 +535,45 @@
 		position: relative;
 	}
 
-	.elementor-control-url-target {
-		position: absolute;
-		top: 0;
-		right: 0;
-		padding: 0;
-		height: 100%;
-		width: 40px;
-		border: none;
-		border-left: 1px solid;
-		background: none;
-		cursor: pointer;
-		font-size: 10px;
-		border-radius: 0 3px 3px 0;
+	.elementor-control-url {
 
-		&.active {
-			background-color: $editor-light;
+		&-more {
+			position: absolute;
+			top: 0;
+			right: 0;
+			height: 27px;
+			width: 40px;
+			border-left: 1px solid;
+			cursor: pointer;
+			font-size: 10px;
+			border-radius: 0 3px 3px 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
-			.elementor-control-url-external {
-				color: #fff;
+			i {
+				font-size: 13px;
+			}
+
+			&-input {
+				display: none;
+
+				&:not(:checked) {
+
+					+ .elementor-control-url-more-options {
+						display: none;
+					}
+				}
+			}
+
+			&-options {
+				padding-top: 10px;
 			}
 		}
 
-		&:not(.active) {
-
-			.elementor-control-url-external {
-				opacity: .5;
-			}
+		&-option {
+			padding: 5px;
+			font-size: 12px;
 		}
 	}
 
@@ -570,7 +582,7 @@
 
 		&:not(:focus) {
 
-			+ .elementor-control-url-target {
+			+ .elementor-control-url-more {
 				border-color: $editor-lightest;
 
 				&.active {
@@ -581,7 +593,7 @@
 
 		&:focus {
 
-			+ .elementor-control-url-target {
+			+ .elementor-control-url-more {
 				border-color: $editor-light;
 
 				&.active {
