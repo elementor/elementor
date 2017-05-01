@@ -171,7 +171,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onRemoveChild: function() {
-		if ( this._isRendering ) {
+		if ( ! this.isManualRemoving ) {
 			return;
 		}
 
