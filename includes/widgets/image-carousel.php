@@ -544,7 +544,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$slides = [];
 
-		foreach ( $settings['carousel'] as $attachment ) {
+		foreach ( $settings['carousel'] as $index => $attachment ) {
 			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 
 			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
@@ -552,13 +552,19 @@ class Widget_Image_Carousel extends Widget_Base {
 			$link = $this->get_link_url( $attachment, $settings );
 
 			if ( $link ) {
-				$target = '';
+				$link_key = 'link_' . $index;
+
+				$this->add_render_attribute( $link_key, 'href', $link );
 
 				if ( ! empty( $link['is_external'] ) ) {
-					$target = ' target="_blank"';
+					$this->add_render_attribute( $link_key, 'target', '_blank' );
 				}
 
-				$image_html = sprintf( '<a href="%s"%s>%s</a>', $link['url'], $target, $image_html );
+				if ( ! empty( $link['nofollow'] ) ) {
+					$this->add_render_attribute( $link_key, 'nofollow', '' );
+				}
+
+				$image_html = '<a ' . $this->get_render_attribute_string( $link_key ) . '>' . $image_html . '</a>';
 			}
 
 			$image_caption = $this->get_image_caption( $attachment );
