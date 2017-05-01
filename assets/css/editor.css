@@ -1344,40 +1344,54 @@ select {
       display: none; }
   .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions .elementor-linked {
     color: #fff; }
-  .elementor-panel .elementor-control-type-url .elementor-control-url-external-hide .elementor-control-url-target {
+  .elementor-panel .elementor-control-type-url .elementor-control-url-external-hide .elementor-control-url-more {
     display: none; }
   .elementor-panel .elementor-control-type-url .elementor-control-url-external-show input {
     padding-right: 46px; }
   .elementor-panel .elementor-control-type-url .elementor-control-input-wrapper {
     position: relative; }
-  .elementor-panel .elementor-control-type-url .elementor-control-url-target {
+  .elementor-panel .elementor-control-type-url .elementor-control-url-more {
     position: absolute;
     top: 0;
     right: 0;
-    padding: 0;
-    height: 100%;
+    height: 27px;
     width: 40px;
-    border: none;
     border-left: 1px solid;
-    background: none;
     cursor: pointer;
     font-size: 10px;
-    border-radius: 0 3px 3px 0; }
-    .elementor-panel .elementor-control-type-url .elementor-control-url-target.active {
-      background-color: #a4afb7; }
-      .elementor-panel .elementor-control-type-url .elementor-control-url-target.active .elementor-control-url-external {
-        color: #fff; }
-    .elementor-panel .elementor-control-type-url .elementor-control-url-target:not(.active) .elementor-control-url-external {
-      opacity: .5; }
+    border-radius: 0 3px 3px 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+    .elementor-panel .elementor-control-type-url .elementor-control-url-more i {
+      font-size: 13px; }
+    .elementor-panel .elementor-control-type-url .elementor-control-url-more-input {
+      display: none; }
+      .elementor-panel .elementor-control-type-url .elementor-control-url-more-input:not(:checked) + .elementor-control-url-more-options {
+        display: none; }
+    .elementor-panel .elementor-control-type-url .elementor-control-url-more-options {
+      padding-top: 10px; }
+  .elementor-panel .elementor-control-type-url .elementor-control-url-option {
+    padding: 5px;
+    font-size: 12px; }
   .elementor-panel .elementor-control-type-url input {
     direction: ltr; }
-    .elementor-panel .elementor-control-type-url input:not(:focus) + .elementor-control-url-target {
+    .elementor-panel .elementor-control-type-url input:not(:focus) + .elementor-control-url-more {
       border-color: #d5dadf; }
-      .elementor-panel .elementor-control-type-url input:not(:focus) + .elementor-control-url-target.active {
+      .elementor-panel .elementor-control-type-url input:not(:focus) + .elementor-control-url-more.active {
         background-color: #d5dadf; }
-    .elementor-panel .elementor-control-type-url input:focus + .elementor-control-url-target {
+    .elementor-panel .elementor-control-type-url input:focus + .elementor-control-url-more {
       border-color: #a4afb7; }
-      .elementor-panel .elementor-control-type-url input:focus + .elementor-control-url-target.active {
+      .elementor-panel .elementor-control-type-url input:focus + .elementor-control-url-more.active {
         background-color: #a4afb7; }
   .elementor-panel .elementor-control-text_align .elementor-choices,
   .elementor-panel .elementor-control-align .elementor-choices,
