@@ -411,8 +411,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 				if ( oldIndex !== newIndex ) {
 					var child = this.view.children.findByModelCid( model.cid );
 
-					child._isRendering = true;
-
 					collection.remove( model );
 
 					this.view.addChildModel( model, { at: newIndex } );
@@ -6584,7 +6582,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 					},
 					defaultOption: 'confirm',
 					onConfirm: _.bind( function() {
+						var parent = this._parent;
+
+						parent.isManualRemoving = true;
+
 						this.model.destroy();
+
+						parent.isManualRemoving = false;
 					}, this )
 				} );
 			}
@@ -9420,7 +9424,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onRemoveChild: function() {
-		if ( this._isRendering ) {
+		if ( ! this.isManualRemoving ) {
 			return;
 		}
 
