@@ -24,6 +24,6 @@ abstract class Base_Data_control extends Base_Control {
 	}
 
 	protected function get_control_uid( $input_type = 'default' ) {
-		return 'elementor-control-' . $input_type . '-{{{data._cid}}}';
+		return 'elementor-control-' . $input_type . '-{{{ data._cid }}}';
 	}
 }
