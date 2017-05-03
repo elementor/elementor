@@ -33,14 +33,15 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<?php $this->print_units_template(); ?>
 			<div class="elementor-control-input-wrapper elementor-clearfix">
 				<div class="elementor-slider"></div>
 				<div class="elementor-slider-input">
-					<input type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
+					<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
 				</div>
 			</div>
 		</div>

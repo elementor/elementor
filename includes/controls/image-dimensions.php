@@ -35,9 +35,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 
 	public function content_template() {
 		if ( ! $this->_is_image_editor_supports() ) : ?>
-		<div class="elementor-panel-alert elementor-panel-alert-danger">
-			<?php _e( 'The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing.', 'elementor' ); ?>
-		</div>
+			<div class="elementor-panel-alert elementor-panel-alert-danger">
+				<?php _e( 'The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing.', 'elementor' ); ?>
+			</div>
 		<?php
 			return;
 		endif;
@@ -49,13 +49,15 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-image-dimensions-field">
-					<input type="text" data-setting="width" />
-					<div class="elementor-image-dimensions-field-description"><?php _e( 'Width', 'elementor' ); ?></div>
+					<?php $control_uid = $this->get_control_uid( 'width' );  ?>
+					<input id="<?php echo $control_uid; ?>" type="text" data-setting="width" />
+					<label for="<?php echo $control_uid; ?>" class="elementor-image-dimensions-field-description"><?php _e( 'Width', 'elementor' ); ?></label>
 				</div>
 				<div class="elementor-image-dimensions-separator">x</div>
 				<div class="elementor-image-dimensions-field">
-					<input type="text" data-setting="height" />
-					<div class="elementor-image-dimensions-field-description"><?php _e( 'Height', 'elementor' ); ?></div>
+					<?php $control_uid = $this->get_control_uid( 'height' );  ?>
+					<input id="<?php echo $control_uid; ?>" type="text" data-setting="height" />
+					<label for="<?php echo $control_uid; ?>" class="elementor-image-dimensions-field-description"><?php _e( 'Height', 'elementor' ); ?></label>
 				</div>
 				<button class="elementor-button elementor-button-success elementor-image-dimensions-apply-button"><?php _e( 'Apply', 'elementor' ); ?></button>
 			</div>
