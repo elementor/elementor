@@ -454,17 +454,11 @@
 			padding: 4px 0;
 
 			+ span {
-				display: block;
-				text-align: center;
-				color: $editor-lightest;
-				font-size: 9px;
-				text-transform: uppercase;
-				padding-top: 5px;
 			}
 
 			&:focus {
 
-				+ span {
+				+ .elementor-control-dimension-label {
 					color: $editor-light;
 				}
 			}
@@ -487,6 +481,15 @@
 				border-radius: 3px 0 0 3px;
 			}
 		}
+	}
+
+	.elementor-control-dimension-label {
+		display: block;
+		text-align: center;
+		color: $editor-lightest;
+		font-size: 9px;
+		text-transform: uppercase;
+		padding-top: 5px;
 	}
 
 	.elementor-link-dimensions {
@@ -962,6 +965,7 @@
 	}
 
 	.elementor-image-dimensions-field-description {
+		display: block;
 		text-transform: uppercase;
 		margin-top: 5px;
 		color: $editor-lightest;
