@@ -18,6 +18,16 @@ WidgetView = BaseElementView.extend( {
 		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.editButton = '.elementor-editor-element-edit';
+
+		ui.settingsList = '.elementor-editor-element-settings-list';
+
+		return ui;
+	},
+
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
@@ -144,6 +154,12 @@ WidgetView = BaseElementView.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
+
+		self.ui.settingsList.hoverIntent( function() {
+			self.ui.editButton.addClass( 'elementor-active' );
+		}, function() {
+			self.ui.editButton.removeClass( 'elementor-active' );
+		}, { timeout: 1000 } );
 	}
 } );
 
