@@ -113,9 +113,11 @@ html.elementor-html {
   position: absolute;
   overflow: hidden; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list {
-    display: table;
-    table-layout: fixed;
-    height: 20px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    height: 28px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -126,29 +128,32 @@ html.elementor-html {
     line-height: 1; }
     .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list {
       background-color: #a4afb7; }
+      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:hover {
+        background-color: #c2cbd2; }
       @media (min-width: 1025px) {
         .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:not(:last-child) {
           border-right: 1px solid #c2cbd2; } }
       .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting.elementor-editor-element-trigger:not(.elementor-active) {
         border: none; }
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting > a:hover {
-        background-color: #c2cbd2; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list .fa {
-      color: #ffffff; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-setting {
-    display: table-cell;
-    vertical-align: middle;
-    width: 35px;
-    text-align: center;
+    cursor: pointer;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     padding: 0;
-    margin: 0; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-setting > a {
-      padding: 8.5px 0;
-      display: inline-block;
-      width: 100%;
-      font-size: 11px;
-      line-height: 1;
-      color: #fff; }
+    margin: 0;
+    font-size: 11px;
+    color: #fff;
+    width: 35px; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-remove .fa {
     color: #f00; }
 
@@ -164,47 +169,55 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list {
     float: left;
     background-color: #495157; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting:hover {
+      background-color: #556068; }
     @media (min-width: 1025px) {
       .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting:not(:last-child) {
         border-right: 1px solid #556068; } }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting > a:hover {
-      background-color: #556068; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
-    display: none; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger > a {
-    padding: 8.5px; }
-  @media (min-width: 1025px) {
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger > a {
-      cursor: move; }
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger > a:hover:after {
-        content: "";
-        font-family: 'FontAwesome';
-        margin-left: 5px; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger.elementor-active > a:after {
-      content: "";
-      font-family: 'FontAwesome';
-      margin-left: 5px; } }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger {
+    padding: 8.5px;
+    width: initial; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
+      display: none; }
+    @media (min-width: 1025px) {
+      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger {
+        cursor: move; }
+        .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger:hover:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger.elementor-active:after {
+          content: "";
+          font-family: 'FontAwesome';
+          margin-left: 5px; } }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings {
   z-index: 2;
   top: 2px;
   right: 2px; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-settings-list {
+    height: 23px;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+    -webkit-flex-direction: row-reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting {
-    width: 24px; }
+    width: 25px;
+    background-color: #71d7f7;
+    font-size: 10px;
+    -webkit-transition: all .3s;
+    transition: all .3s; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
+      background-color: #41c9f4; }
     .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:not(:last-child) {
-      padding-right: 2px; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting > a {
-      background-color: #71d7f7;
-      font-size: 10px;
-      padding: 6px 8px; }
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting > a:hover {
-        background-color: #41c9f4; }
+      margin-left: 2px; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-remove .fa {
     color: #ffffff; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-remove:hover .fa {
     color: #f00; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit a {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit {
     cursor: move; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit:not(.elementor-active) ~ * {
+      width: 0;
+      margin-left: 0;
+      font-size: 0; }
 
 @media (max-width: 1024px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
