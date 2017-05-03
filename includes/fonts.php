@@ -77,6 +77,7 @@ class Fonts {
 			'Archivo Black' => self::GOOGLE,
 			'Archivo Narrow' => self::GOOGLE,
 			'Aref Ruqaa' => self::GOOGLE,
+			'Arsenal' => self::GOOGLE,
 			'Arima Madurai' => self::GOOGLE,
 			'Arimo' => self::GOOGLE,
 			'Arizonia' => self::GOOGLE,
