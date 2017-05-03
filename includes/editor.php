@@ -260,6 +260,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'jquery-hover-intent',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -277,6 +285,7 @@ class Editor {
 				'jquery-select2',
 				'jquery-simple-dtpicker',
 				'ace',
+				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,
 			true
