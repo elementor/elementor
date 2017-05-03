@@ -42,6 +42,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<#
 		var defaultColorValue = '';
@@ -57,9 +58,9 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		}
 		#>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><?php _e( 'Color', 'elementor' ); ?></label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title"><?php _e( 'Color', 'elementor' ); ?></label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="color" class="elementor-box-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
+				<input id="<?php echo $control_uid; ?>" data-setting="color" class="elementor-box-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
 			</div>
 		</div>
 		<?php foreach ( $this->get_sliders() as $slider ) : ?>

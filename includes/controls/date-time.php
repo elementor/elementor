@@ -26,11 +26,12 @@ class Control_Date_Time extends Base_Data_Control {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input class="elementor-date-time-picker" type="text" data-setting="{{ data.name }}">
+				<input id="<?php echo $control_uid; ?>" class="elementor-date-time-picker" type="text" data-setting="{{ data.name }}">
 			</div>
 		</div>
 		<# if ( data.description ) { #>

@@ -39,23 +39,30 @@ class Control_URL extends Control_Base_Multiple {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
+
+		$more_input_control_uid = $this->get_control_uid( 'more-input' );
+
+		$is_external_control_uid = $this->get_control_uid( 'is_external' );
+
+		$nofollow_control_uid = $this->get_control_uid( 'nofollow' );
 		?>
 		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input type="url" data-setting="url" placeholder="{{ data.placeholder }}" />
-				<label for="elementor-control-url-more-input-{{data._cid}}" class="elementor-control-url-more tooltip-target" data-tooltip="<?php _e( 'Link Options', 'elementor' ); ?>">
+				<input id="<?php echo $control_uid; ?>" type="url" data-setting="url" placeholder="{{ data.placeholder }}" />
+				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php _e( 'Link Options', 'elementor' ); ?>">
 					<i class="fa fa-cog"></i>
 				</label>
-				<input type="checkbox" id="elementor-control-url-more-input-{{data._cid}}" class="elementor-control-url-more-input">
+				<input id="<?php echo $more_input_control_uid; ?>" type="checkbox" class="elementor-control-url-more-input">
 				<div class="elementor-control-url-more-options">
 					<div class="elementor-control-url-option">
-						<input type="checkbox" id="elementor-control-url-option-input-is_external-{{data._cid}}" class="elementor-control-url-option-input" data-setting="is_external">
-						<label for="elementor-control-url-option-input-is_external-{{data._cid}}"><?php echo __( 'Open in new window', 'elementor' ); ?></label>
+						<input id="<?php echo $is_external_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
+						<label for="<?php echo $is_external_control_uid; ?>"><?php echo __( 'Open in new window', 'elementor' ); ?></label>
 					</div>
 					<div class="elementor-control-url-option">
-						<input type="checkbox" id="elementor-control-url-option-input-nofollow-{{data._cid}}" class="elementor-control-url-option-input" data-setting="nofollow">
-						<label for="elementor-control-url-option-input-nofollow-{{data._cid}}"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
+						<input id="<?php echo $nofollow_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
+						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
 					</div>
 				</div>
 			</div>
