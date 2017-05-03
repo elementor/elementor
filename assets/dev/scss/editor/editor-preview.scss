@@ -174,9 +174,8 @@ html.elementor-html {
 			overflow: hidden;
 
 			.elementor-editor-element-settings-list {
-				display: table;
-				table-layout: fixed;
-				height: 20px;
+				display: flex;
+				height: 28px;
 				list-style: none;
 				margin: 0;
 				padding: 0;
@@ -190,6 +189,9 @@ html.elementor-html {
 					background-color: $editor-light;
 
 					.elementor-editor-element-setting {
+						&:hover {
+							background-color: $editor-lighter;
+						}
 
 						@media (min-width: $screen-lg-min) {
 							&:not(:last-child) {
@@ -203,37 +205,20 @@ html.elementor-html {
 								border: none;
 							}
 						}
-
-						> a {
-
-							&:hover {
-								background-color: $editor-lighter;
-							}
-						}
 					}
-				}
-
-				.fa {
-					color: $white;
 				}
 			}
 
 			.elementor-editor-element-setting {
-				display: table-cell;
-				vertical-align: middle;
-				width: 35px;
-				text-align: center;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 				padding: 0;
 				margin: 0;
-
-				> a {
-					padding: 8.5px 0;
-					display: inline-block;
-					width: 100%;
-					font-size: 11px;
-					line-height: 1;
-					color: #fff;
-				}
+				font-size: 11px;
+				color: #fff;
+				width: 35px;
 			}
 
 			.elementor-editor-element-remove {
@@ -260,22 +245,21 @@ html.elementor-html {
 
 				.elementor-editor-element-setting {
 
+					&:hover {
+						background-color: $editor-darker;
+					}
+
 					@media (min-width: $screen-lg-min) {
 						&:not(:last-child) {
 							@include border-end(1px solid $editor-darker);
-						}
-					}
-
-					> a {
-
-						&:hover {
-							background-color: $editor-darker;
 						}
 					}
 				}
 			}
 
 			.elementor-editor-element-trigger {
+				padding: 8.5px;
+				width: initial;
 
 				&:not(.elementor-active) {
 
@@ -284,32 +268,15 @@ html.elementor-html {
 					}
 				}
 
-				> a {
-					padding: 8.5px;
-				}
-
 				@media(min-width: $screen-lg-min) {
+					cursor: move;
 
-					> a {
-						cursor: move;
+					&:hover, &.elementor-active {
 
-						&:hover {
-
-							&:after {
-								content: getValueByDirection('\f105', '\f104');
-								font-family: 'FontAwesome';
-								@include margin-start(5px);
-							}
-						}
-					}
-
-					&.elementor-active {
-						> a {
-							&:after {
-								content: getValueByDirection('\f105', '\f104');
-								font-family: 'FontAwesome';
-								@include margin-start(5px);
-							}
+						&:after {
+							content: getValueByDirection('\f105', '\f104');
+							font-family: 'FontAwesome';
+							@include margin-start(5px);
 						}
 					}
 				}
@@ -322,21 +289,23 @@ html.elementor-html {
 			top: 2px;
 			@include end(2px);
 
-			.elementor-editor-element-setting {
-				width: 24px;
+			.elementor-editor-element-settings-list {
+				height: 23px;
+				flex-direction: row-reverse;
+			}
 
-				&:not(:last-child) {
-					@include padding-end(2px);
+			.elementor-editor-element-setting {
+				width: 25px;
+				background-color: $editor-info;
+				font-size: 10px;
+				transition: all .3s;
+
+				&:hover {
+					background-color: darken( $editor-info, 10% );
 				}
 
-				> a {
-					background-color: $editor-info;
-					font-size: 10px;
-					padding: 6px 8px;
-
-					&:hover {
-						background-color: darken( $editor-info, 10% );
-					}
+				&:not(:last-child) {
+					@include margin-start(2px);
 				}
 			}
 
@@ -355,9 +324,14 @@ html.elementor-html {
 			}
 
 			.elementor-editor-element-edit {
+				cursor: move;
 
-				a {
-					cursor: move;
+				&:not(.elementor-active) {
+					~ * {
+						width: 0;
+						margin-left: 0;
+						font-size: 0;
+					}
 				}
 			}
 		}
