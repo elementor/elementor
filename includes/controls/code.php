@@ -26,11 +26,12 @@ class Control_Code extends Base_Data_Control {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<textarea rows="10" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
+				<textarea id="<?php echo $control_uid; ?>" rows="10" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

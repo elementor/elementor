@@ -61,8 +61,7 @@ Elementor includes a wide array of controls:
 
 ##### Settings controls
 
-* [Select](content/controls/_select.md) - A classic select input 
-* [Checkbox](content/controls/_checkbox.md) - Choose for Yes/No options
+* [Select](content/controls/_select.md) - A classic select input
 * [Switcher](content/controls/_switcher.md) - A Switcher control (on/off) - basically a fancy UI representation of a checkbox.
 * [Choose](content/controls/_choose.md) - A component that represents radio buttons as a stylized group of buttons with icons
 * [Select2](content/controls/_select2.md) - A select field based on the select2 plugin.

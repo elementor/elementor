@@ -16,7 +16,6 @@ class Controls_Manager {
 	const NUMBER = 'number';
 	const TEXTAREA = 'textarea';
 	const SELECT = 'select';
-	const CHECKBOX = 'checkbox';
 	const SWITCHER = 'switcher';
 
 	const HIDDEN = 'hidden';
@@ -92,7 +91,6 @@ class Controls_Manager {
 			self::NUMBER,
 			self::TEXTAREA,
 			self::SELECT,
-			self::CHECKBOX,
 			self::SWITCHER,
 
 			self::HIDDEN,

@@ -1314,14 +1314,7 @@ select {
       border-left: none;
       border-radius: 0;
       padding: 4px 0; }
-      .elementor-panel .elementor-control-type-dimensions li input + span {
-        display: block;
-        text-align: center;
-        color: #d5dadf;
-        font-size: 9px;
-        text-transform: uppercase;
-        padding-top: 5px; }
-      .elementor-panel .elementor-control-type-dimensions li input:focus + span {
+      .elementor-panel .elementor-control-type-dimensions li input:focus + .elementor-control-dimension-label {
         color: #a4afb7; }
     .elementor-panel .elementor-control-type-dimensions li .elementor-link-dimensions {
       border: 1px solid #a4afb7;
@@ -1334,6 +1327,13 @@ select {
     .elementor-panel .elementor-control-type-dimensions li:first-child input {
       border-left: 1px solid #a4afb7;
       border-radius: 3px 0 0 3px; }
+  .elementor-panel .elementor-control-type-dimensions .elementor-control-dimension-label {
+    display: block;
+    text-align: center;
+    color: #d5dadf;
+    font-size: 9px;
+    text-transform: uppercase;
+    padding-top: 5px; }
   .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions.unlinked {
     background-color: #fff; }
     .elementor-panel .elementor-control-type-dimensions .elementor-link-dimensions.unlinked .elementor-linked {
@@ -1582,6 +1582,7 @@ select {
     float: left;
     padding-top: 4px; }
   .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-field-description {
+    display: block;
     text-transform: uppercase;
     margin-top: 5px;
     color: #d5dadf;
