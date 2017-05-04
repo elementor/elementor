@@ -426,6 +426,8 @@ abstract class Controls_Stack {
 				continue;
 			}
 
+			$control = array_merge( $control, $control_obj->get_settings() );
+
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
 
