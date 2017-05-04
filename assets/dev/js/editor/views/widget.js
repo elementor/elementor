@@ -159,7 +159,7 @@ WidgetView = BaseElementView.extend( {
 			self.ui.editButton.addClass( 'elementor-active' );
 		}, function() {
 			self.ui.editButton.removeClass( 'elementor-active' );
-		}, { timeout: 1000 } );
+		}, { timeout: 500 } );
 	}
 } );
 
