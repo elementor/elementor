@@ -155,6 +155,12 @@ ColumnView = BaseElementView.extend( {
 				self.addElementFromPanel( { at: newIndex } );
 			}
 		} );
+
+		self.$el.hoverIntent( function() {
+			self.$el.addClass( 'elementor-state-hover' );
+		}, function() {
+			self.$el.removeClass( 'elementor-state-hover' );
+		}, { timeout: 500 } );
 	},
 
 	onClickTrigger: function( event ) {
