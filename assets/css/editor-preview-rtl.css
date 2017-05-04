@@ -77,10 +77,10 @@ html.elementor-html {
     color: #818a91;
     font-size: 22px; }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(:hover):not(.elementor-element-editable) > .elementor-element-overlay .elementor-editor-element-settings-list {
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(.elementor-state-hover):not(.elementor-element-editable) > .elementor-element-overlay .elementor-editor-element-settings-list {
   display: none; }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(:hover):not(.ui-resizable-resizing) > .elementor-element-overlay .column-title {
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(.elementor-state-hover):not(.ui-resizable-resizing) > .elementor-element-overlay .column-title {
   display: none; }
 
 @media (max-width: 1024px) {
@@ -235,9 +235,9 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-row {
   min-height: 100px; }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-column:hover > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay {
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-state-hover > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay {
   border: 1px solid #ffffff; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-column:hover > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay:after {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-state-hover > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay:after {
     position: absolute;
     content: '';
     left: 0;
