@@ -7107,6 +7107,12 @@ ColumnView = BaseElementView.extend( {
 				self.addElementFromPanel( { at: newIndex } );
 			}
 		} );
+
+		self.$el.hoverIntent( function() {
+			self.$el.addClass( 'elementor-state-hover' );
+		}, function() {
+			self.$el.removeClass( 'elementor-state-hover' );
+		}, { timeout: 500 } );
 	},
 
 	onClickTrigger: function( event ) {
@@ -9666,7 +9672,7 @@ WidgetView = BaseElementView.extend( {
 			self.ui.editButton.addClass( 'elementor-active' );
 		}, function() {
 			self.ui.editButton.removeClass( 'elementor-active' );
-		}, { timeout: 1000 } );
+		}, { timeout: 500 } );
 	}
 } );
 
