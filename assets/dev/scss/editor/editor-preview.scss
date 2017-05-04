@@ -87,7 +87,7 @@ html.elementor-html {
 				}
 			}
 
-			&:not(:hover) {
+			&:not(.elementor-state-hover) {
 
 				&:not(.elementor-element-editable) {
 
@@ -379,7 +379,7 @@ html.elementor-html {
 		// Column
 		.elementor-column {
 
-			&:hover,
+			&.elementor-state-hover,
 			&.elementor-element-editable {
 
 				> .elementor-element-overlay {
