@@ -75,7 +75,7 @@ ElementsHandler = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( $scope ) {
-		var elementType = $scope.data( 'element_type' );
+		var elementType = $scope.attr( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
@@ -278,10 +278,18 @@ HandlerModule = ViewModule.extend( {
 		var self = this;
 
 		if ( self.onElementChange ) {
-			var cid = self.getModelCID();
+			var uniqueGroup = self.getModelCID() + self.$element.attr( 'data-element_type' ),
+				elementName = self.getElementName(),
+				eventName = 'change';
 
-			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
-				if ( elementView.model.cid !== cid ) {
+			if ( 'global' !== elementName ) {
+				eventName += ':' + elementName;
+			}
+
+			elementorFrontend.addListenerOnce( uniqueGroup, eventName, function( controlView, elementView ) {
+				var currentUniqueGroup = elementView.model.cid + elementView.$el.attr( 'data-element_type' );
+
+				if ( currentUniqueGroup !== uniqueGroup ) {
 					return;
 				}
 
