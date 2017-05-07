@@ -6454,6 +6454,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	controlsCSSParser: null,
 
+	toggleEditTools: true,
+
 	className: function() {
 		return this.getElementUniqueID();
 	},
@@ -6473,9 +6475,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
-			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
-			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+			triggerButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-trigger',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-add',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-remove',
+			saveButton: '> .elementor-element-overlay > .elementor-editor-element-settings-list .elementor-editor-element-save',
+			settingsList: '> .elementor-element-overlay > .elementor-editor-element-settings-list'
 		};
 	},
 
@@ -6483,7 +6488,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
 			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'onClickDuplicate'
+			'click @ui.duplicateButton': 'onClickDuplicate',
+			'click @ui.triggerButton': 'onClickEdit'
 		};
 	},
 
@@ -6539,11 +6545,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
-
-		this.on( 'render', function() {
-			this.renderUI();
-			this.runReadyTrigger();
-		} );
 
 		this.initRemoveDialog();
 
@@ -6819,6 +6820,28 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 	},
 
+	onRender: function() {
+		var self = this;
+
+		self.renderUI();
+
+		self.runReadyTrigger();
+
+		self.$el.hoverIntent( function() {
+			self.$el.addClass( 'elementor-state-hover' );
+		}, function() {
+			self.$el.removeClass( 'elementor-state-hover' );
+		}, { timeout: 500 } );
+
+		if ( self.toggleEditTools ) {
+			self.ui.settingsList.hoverIntent( function() {
+				self.ui.triggerButton.addClass( 'elementor-active' );
+			}, function() {
+				self.ui.triggerButton.removeClass( 'elementor-active' );
+			}, { timeout: 500 } );
+		}
+	},
+
 	onCollectionChanged: function() {
 		elementor.setFlagEditorChange( true );
 	},
@@ -6899,7 +6922,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-container > .elementor-row > .elementor-column > .elementor-element-overlay .elementor-editor-section-settings-list .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-section-settings-list .elementor-editor-element-trigger',
 			items: '> .elementor-section'
 		};
 	},
@@ -6997,29 +7020,14 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.duplicateButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger';
-		ui.addButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add';
 		ui.columnTitle = '.column-title';
 		ui.columnInner = '> .elementor-column-wrap';
-		ui.listTriggers = '> .elementor-element-overlay .elementor-editor-element-trigger';
 
 		return ui;
 	},
 
 	triggers: {
 		'click @ui.addButton': 'click:new'
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
-
-		return events;
 	},
 
 	initialize: function() {
@@ -7078,7 +7086,10 @@ ColumnView = BaseElementView.extend( {
 	onRender: function() {
 		var self = this;
 
+		BaseElementView.prototype.onRender.apply( self, arguments );
+
 		self.changeChildContainerClasses();
+
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
@@ -7113,25 +7124,6 @@ ColumnView = BaseElementView.extend( {
 				self.addElementFromPanel( { at: newIndex } );
 			}
 		} );
-
-		self.$el.hoverIntent( function() {
-			self.$el.addClass( 'elementor-state-hover' );
-		}, function() {
-			self.$el.removeClass( 'elementor-state-hover' );
-		}, { timeout: 500 } );
-	},
-
-	onClickTrigger: function( event ) {
-		event.preventDefault();
-
-		var $trigger = this.$( event.currentTarget ),
-			isTriggerActive = $trigger.hasClass( 'elementor-active' );
-
-		this.ui.listTriggers.removeClass( 'elementor-active' );
-
-		if ( ! isTriggerActive ) {
-			$trigger.addClass( 'elementor-active' );
-		}
 	},
 
 	onWidgetDragStart: function() {
@@ -9289,25 +9281,6 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
-	ui: function() {
-		var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-		ui.duplicateButton = '.elementor-editor-section-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '.elementor-editor-section-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '.elementor-editor-section-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '.elementor-editor-section-settings-list .elementor-editor-element-trigger';
-
-		return ui;
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
-
-		return events;
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
@@ -9421,6 +9394,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
+		BaseElementView.prototype.onRender.apply( this, arguments );
+
 		this._checkIsFull();
 	},
 
@@ -9537,16 +9512,6 @@ WidgetView = BaseElementView.extend( {
 		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
 	},
 
-	ui: function() {
-		var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-		ui.editButton = '.elementor-editor-element-edit';
-
-		ui.settingsList = '.elementor-editor-element-settings-list';
-
-		return ui;
-	},
-
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
@@ -9653,8 +9618,11 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-        var self = this,
-	        editModel = self.getEditModel(),
+        var self = this;
+
+		BaseElementView.prototype.onRender.apply( self, arguments );
+
+	    var editModel = self.getEditModel(),
 	        skinType = editModel.getSetting( '_skin' ) || 'default';
 
         self.$el
@@ -9673,12 +9641,6 @@ WidgetView = BaseElementView.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
-
-		self.ui.settingsList.hoverIntent( function() {
-			self.ui.editButton.addClass( 'elementor-active' );
-		}, function() {
-			self.ui.editButton.removeClass( 'elementor-active' );
-		}, { timeout: 500 } );
 	}
 } );
 

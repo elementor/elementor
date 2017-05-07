@@ -13,10 +13,6 @@ abstract class Widget_Base extends Element_Base {
 
 	protected static function get_default_edit_tools() {
 		return [
-			'edit' => [
-				'title' => __( 'Edit', 'elementor' ),
-				'icon' => 'pencil',
-			],
 			'duplicate' => [
 				'title' => __( 'Duplicate', 'elementor' ),
 				'icon' => 'files-o',
@@ -147,8 +143,11 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _render_settings() {
 		?>
-		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
-			<ul class="elementor-editor-element-settings-list">
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings-list elementor-editor-widget-settings-list">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Widget', 'elementor' ); ?>">
+					<i class="fa fa-pencil"></i>
+				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>

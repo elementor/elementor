@@ -1,4 +1,3 @@
-@charset "UTF-8";
 body.elementor-editor-active.layout-section .entry-content {
   overflow: visible; }
 
@@ -48,8 +47,6 @@ html.elementor-html {
   position: absolute;
   top: 0;
   right: 0;
-  left: 0;
-  bottom: 0;
   letter-spacing: 0;
   z-index: 2;
   pointer-events: none; }
@@ -99,6 +96,9 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element[data-side="bottom"]:last-child {
   border-bottom: 4px solid #71d7f7; }
 
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay:after {
+  outline: 2px solid #3b97e3; }
+
 @media (min-width: 768px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-section:not(.elementor-section-height-full) .elementor-column-wrap.elementor-element-empty, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section:not(.elementor-section-height-full) .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
     position: absolute;
@@ -106,121 +106,107 @@ html.elementor-html {
     height: 100%;
     top: 0; } }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-top-column .elementor-widget-wrap .elementor-inner-section {
-  margin-top: 20px; }
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-inner-section {
+  margin-top: 24px; }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings {
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings-list {
   position: absolute;
-  overflow: hidden; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    height: 28px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
-    font-weight: normal;
-    font-style: normal;
-    line-height: 1; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list {
-      background-color: #a4afb7; }
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:hover {
-        background-color: #c2cbd2; }
-      @media (min-width: 1025px) {
-        .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting:not(:last-child) {
-          border-right: 1px solid #c2cbd2; } }
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-settings-list.elementor-editor-section-settings-list .elementor-editor-element-setting.elementor-editor-element-trigger:not(.elementor-active) {
-        border: none; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-setting {
-    cursor: pointer;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    padding: 0;
-    margin: 0;
-    font-size: 11px;
-    color: #fff;
-    width: 35px; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-remove .fa {
-    color: #f00; }
-
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings {
-  left: -1px;
+  overflow: hidden;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 23px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
   z-index: 1;
-  bottom: 100%;
-  margin-bottom: 1px;
-  -webkit-transform: translateY(1px);
-          transform: translateY(1px);
-  border-radius: 3px 3px 0 0;
   pointer-events: all; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list {
-    float: left;
-    background-color: #495157; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting:hover {
-      background-color: #556068; }
-    @media (min-width: 1025px) {
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-settings-list .elementor-editor-element-setting:not(:last-child) {
-        border-right: 1px solid #556068; } }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger {
-    padding: 8.5px;
-    width: initial; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
-      display: none; }
-    @media (min-width: 1025px) {
-      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger {
-        cursor: move; }
-        .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger:hover:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-trigger.elementor-active:after {
-          content: "";
-          font-family: 'FontAwesome';
-          margin-left: 5px; } }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings-list .elementor-editor-element-trigger.elementor-active ~ .elementor-editor-element-setting {
+    border-left-width: 1px; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings-list .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
+    width: 0;
+    font-size: 0; }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings {
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings-list {
+  bottom: 100%;
+  left: 50%;
+  -webkit-transform: translateY(-1px) translateX(-50%);
+          transform: translateY(-1px) translateX(-50%);
+  background-color: #3b97e3; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings-list .elementor-editor-element-setting:hover {
+    background-color: #1d7ece; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting {
+  cursor: pointer;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 0;
+  margin: 0;
+  font-size: 10px;
+  color: #fff;
+  width: 25px;
+  border-style: solid;
+  border-width: 0;
+  -webkit-transition: margin .3s, width .3s, font .3s;
+  transition: margin .3s, width .3s, font .3s; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-remove .fa {
+  color: #f00; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings-list {
+  float: left;
+  background-color: #495157; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings-list .elementor-editor-element-setting {
+    border-left-color: #556068; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings-list .elementor-editor-element-setting:hover {
+      background-color: #556068; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
+  padding: 8.5px;
+  width: initial; }
+  @media (min-width: 1025px) {
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
+      cursor: move; } }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list {
   z-index: 2;
-  top: 2px;
-  right: 2px; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-settings-list {
-    height: 23px;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: reverse;
-    -webkit-flex-direction: row-reverse;
-        -ms-flex-direction: row-reverse;
-            flex-direction: row-reverse; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting {
-    width: 25px;
-    background-color: #71d7f7;
-    font-size: 10px;
-    -webkit-transition: all .3s;
-    transition: all .3s; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
+  top: 1px;
+  right: 1px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  -webkit-flex-direction: row-reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-setting {
+    background-color: #71d7f7; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-setting:hover {
       background-color: #41c9f4; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:not(:last-child) {
-      margin-left: 2px; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-remove .fa {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-remove .fa {
     color: #ffffff; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-remove:hover .fa {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-remove:hover .fa {
     color: #f00; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit {
-    cursor: move; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-edit:not(.elementor-active) ~ * {
-      width: 0;
-      margin-left: 0;
-      font-size: 0; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-trigger.elementor-active ~ .elementor-editor-element-setting {
+    border-right-width: 1px;
+    border-left-width: 0; }
 
 @media (max-width: 1024px) {
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-trigger) {
     display: none; } }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-section-filled .elementor-editor-column-settings .elementor-editor-element-add, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section-filled .elementor-editor-column-settings .elementor-editor-element-duplicate {
@@ -235,18 +221,8 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-row {
   min-height: 100px; }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-state-hover > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay {
-  border: 1px solid #ffffff; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-state-hover > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay:after {
-    position: absolute;
-    content: '';
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    outline: 1px dashed #373a3c; }
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .elementor-element-overlay:after {
+  outline: 1px dashed #373a3c; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-dragging-on-child > .elementor-element-overlay {
   border: 1px solid #71d7f7; }
@@ -280,8 +256,25 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-w {
     display: none !important; } }
 
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay {
+  left: 0;
+  bottom: 0; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay:after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-state-hover > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section.elementor-state-hover > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section.elementor-element-editable > .elementor-element-overlay {
+  border: 1px solid #ffffff; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-state-hover > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section.elementor-state-hover > .elementor-element-overlay:after, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section.elementor-element-editable > .elementor-element-overlay:after {
+    content: ''; }
+
 .elementor-editor-active .elementor-inner {
-  margin-top: 27px; }
+  margin-top: 23px; }
 
 @media (min-width: 768px) {
   .elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
@@ -297,7 +290,7 @@ html.elementor-html {
 .elementor-editor-active .elementor-widget.elementor-element-editable, .elementor-editor-active .elementor-widget.elementor-widget-can-edit:hover {
   outline: 1px solid #71d7f7; }
 
-.elementor-editor-active .elementor-widget:not(.elementor-element-editable):not(:hover) .elementor-editor-element-settings {
+.elementor-editor-active .elementor-widget:not(.elementor-element-editable):not(:hover) .elementor-editor-element-settings-list {
   display: none; }
 
 .elementor-editor-active .elementor-column.elementor-dragging div.elementor-column-wrap {
@@ -445,7 +438,6 @@ html.elementor-html {
       height: 50px; }
 
 .elementor-editor-preview .elementor-element-overlay,
-.elementor-editor-preview .elementor-editor-widget-settings,
 .elementor-editor-preview .column-title,
 .elementor-editor-preview .elementor-empty,
 .elementor-editor-preview #elementor-add-section,

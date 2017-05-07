@@ -998,7 +998,17 @@ class Element_Section extends Element_Base {
 
 	protected function _render_settings() {
 		?>
-		<div class="elementor-element-overlay"></div>
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings-list  elementor-editor-section-settings-list">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><i class="fa fa-bars"></i></li>
+				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
 		<?php
 	}
 
