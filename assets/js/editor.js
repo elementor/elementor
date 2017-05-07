@@ -411,8 +411,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 				if ( oldIndex !== newIndex ) {
 					var child = this.view.children.findByModelCid( model.cid );
 
-					child._isRendering = true;
-
 					collection.remove( model );
 
 					this.view.addChildModel( model, { at: newIndex } );
