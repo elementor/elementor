@@ -69,7 +69,7 @@ ElementsHandler = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( $scope ) {
-		var elementType = $scope.data( 'element_type' );
+		var elementType = $scope.attr( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
