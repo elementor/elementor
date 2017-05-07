@@ -274,14 +274,6 @@ abstract class Element_Base extends Controls_Stack {
 							<i class="fa fa-plus"></i>
 						</a>
 					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
 						<a href="#" title="<?php _e( 'Duplicate Widget', 'elementor' ); ?>">
 							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>

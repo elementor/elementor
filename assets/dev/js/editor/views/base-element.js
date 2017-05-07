@@ -7,6 +7,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	controlsCSSParser: null,
 
+	toggleEditTools: true,
+
 	className: function() {
 		return this.getElementUniqueID();
 	},
@@ -26,9 +28,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
-			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
-			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+			triggerButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-trigger',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-add',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-remove',
+			saveButton: '> .elementor-element-overlay > .elementor-editor-element-settings-list .elementor-editor-element-save',
+			settingsList: '> .elementor-element-overlay > .elementor-editor-element-settings-list'
 		};
 	},
 
@@ -36,7 +41,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
 			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'onClickDuplicate'
+			'click @ui.duplicateButton': 'onClickDuplicate',
+			'click @ui.triggerButton': 'onClickEdit'
 		};
 	},
 
@@ -92,11 +98,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
-
-		this.on( 'render', function() {
-			this.renderUI();
-			this.runReadyTrigger();
-		} );
 
 		this.initRemoveDialog();
 
@@ -369,6 +370,28 @@ BaseElementView = Marionette.CompositeView.extend( {
 			editModel.renderOnLeave = true;
 		} else {
 			editModel.renderRemoteServer();
+		}
+	},
+
+	onRender: function() {
+		var self = this;
+
+		self.renderUI();
+
+		self.runReadyTrigger();
+
+		self.$el.hoverIntent( function() {
+			self.$el.addClass( 'elementor-state-hover' );
+		}, function() {
+			self.$el.removeClass( 'elementor-state-hover' );
+		}, { timeout: 500 } );
+
+		if ( self.toggleEditTools ) {
+			self.ui.settingsList.hoverIntent( function() {
+				self.ui.triggerButton.addClass( 'elementor-active' );
+			}, function() {
+				self.ui.triggerButton.removeClass( 'elementor-active' );
+			}, { timeout: 500 } );
 		}
 	},
 

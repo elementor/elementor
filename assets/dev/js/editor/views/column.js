@@ -39,29 +39,14 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.duplicateButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger';
-		ui.addButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add';
 		ui.columnTitle = '.column-title';
 		ui.columnInner = '> .elementor-column-wrap';
-		ui.listTriggers = '> .elementor-element-overlay .elementor-editor-element-trigger';
 
 		return ui;
 	},
 
 	triggers: {
 		'click @ui.addButton': 'click:new'
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
-
-		return events;
 	},
 
 	initialize: function() {
@@ -120,7 +105,10 @@ ColumnView = BaseElementView.extend( {
 	onRender: function() {
 		var self = this;
 
+		BaseElementView.prototype.onRender.apply( self, arguments );
+
 		self.changeChildContainerClasses();
+
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
@@ -155,25 +143,6 @@ ColumnView = BaseElementView.extend( {
 				self.addElementFromPanel( { at: newIndex } );
 			}
 		} );
-
-		self.$el.hoverIntent( function() {
-			self.$el.addClass( 'elementor-state-hover' );
-		}, function() {
-			self.$el.removeClass( 'elementor-state-hover' );
-		}, { timeout: 500 } );
-	},
-
-	onClickTrigger: function( event ) {
-		event.preventDefault();
-
-		var $trigger = this.$( event.currentTarget ),
-			isTriggerActive = $trigger.hasClass( 'elementor-active' );
-
-		this.ui.listTriggers.removeClass( 'elementor-active' );
-
-		if ( ! isTriggerActive ) {
-			$trigger.addClass( 'elementor-active' );
-		}
 	},
 
 	onWidgetDragStart: function() {

@@ -3,7 +3,6 @@
 //
 @import '../helpers/variables';
 @import '../helpers/mixins';
-
 @import '_compatibility';
 
 // Hidden WP Admin Bar
@@ -11,7 +10,7 @@ html.elementor-html {
 	margin-top: 0 !important;
 }
 
-#elementor{
+#elementor {
 	position: relative;
 }
 
@@ -52,8 +51,6 @@ html.elementor-html {
 				position: absolute;
 				top: 0;
 				right: 0;
-				left: 0;
-				bottom: 0;
 				letter-spacing: 0; // Hack for front-end style themes
 				z-index: $element-overlay;
 				pointer-events: none;
@@ -137,6 +134,13 @@ html.elementor-html {
 		// Section
 		.elementor-section {
 
+			> .elementor-element-overlay {
+
+				&:after {
+					outline: 2px solid #3b97e3;
+				}
+			}
+
 			&:not(.elementor-section-height-full) {
 
 				.elementor-column-wrap {
@@ -158,154 +162,117 @@ html.elementor-html {
 		}
 
 		// Inner Section
-		.elementor-top-column {
-
-			.elementor-widget-wrap {
-
-				.elementor-inner-section {
-					margin-top: 20px;
-				}
-			}
+		.elementor-inner-section {
+			margin-top: 24px;
 		}
 
 		// General - Overlay Settings
-		.elementor-editor-element-settings {
+		.elementor-editor-element-settings-list {
 			position: absolute;
 			overflow: hidden;
-
-			.elementor-editor-element-settings-list {
-				display: flex;
-				height: 28px;
-				list-style: none;
-				margin: 0;
-				padding: 0;
-				font-family: Arial, Helvetica, sans-serif;
-				font-size: 13px;
-				font-weight: normal;
-				font-style: normal;
-				line-height: 1;
-
-				&.elementor-editor-section-settings-list {
-					background-color: $editor-light;
-
-					.elementor-editor-element-setting {
-						&:hover {
-							background-color: $editor-lighter;
-						}
-
-						@media (min-width: $screen-lg-min) {
-							&:not(:last-child) {
-								@include border-end(1px solid $editor-lighter);
-							}
-						}
-
-						&.elementor-editor-element-trigger {
-
-							&:not(.elementor-active) {
-								border: none;
-							}
-						}
-					}
-				}
-			}
-
-			.elementor-editor-element-setting {
-				cursor: pointer;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				padding: 0;
-				margin: 0;
-				font-size: 11px;
-				color: #fff;
-				width: 35px;
-			}
-
-			.elementor-editor-element-remove {
-
-				.fa {
-					color: $editor-danger;
-				}
-			}
-		}
-
-		// Column - Overlay Settings
-		.elementor-editor-column-settings {
-			@include start(-1px);
+			display: flex;
+			height: 23px;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 13px;
+			font-weight: normal;
+			font-style: normal;
+			line-height: 1;
 			z-index: $first-layer;
-			bottom: 100%;
-			margin-bottom: 1px;
-			transform: translateY(1px);
-			border-radius: 3px 3px 0 0;
 			pointer-events: all;
 
-			.elementor-editor-element-settings-list {
-				float: $start;
-				background-color: $editor-darkest;
+			.elementor-editor-element-trigger {
 
-				.elementor-editor-element-setting {
+				&.elementor-active {
 
-					&:hover {
-						background-color: $editor-darker;
-					}
-
-					@media (min-width: $screen-lg-min) {
-						&:not(:last-child) {
-							@include border-end(1px solid $editor-darker);
-						}
+					~ .elementor-editor-element-setting {
+						@include border-start-property(width, 1px)
 					}
 				}
-			}
-
-			.elementor-editor-element-trigger {
-				padding: 8.5px;
-				width: initial;
 
 				&:not(.elementor-active) {
 
 					~ .elementor-editor-element-setting {
-						display: none;
-					}
-				}
-
-				@media(min-width: $screen-lg-min) {
-					cursor: move;
-
-					&:hover, &.elementor-active {
-
-						&:after {
-							content: getValueByDirection('\f105', '\f104');
-							font-family: 'FontAwesome';
-							@include margin-start(5px);
-						}
+						width: 0;
+						font-size: 0;
 					}
 				}
 			}
 		}
 
-		// Widget - Overlay Settings
-		.elementor-editor-widget-settings {
-			z-index: $second-layer;
-			top: 2px;
-			@include end(2px);
-
-			.elementor-editor-element-settings-list {
-				height: 23px;
-				flex-direction: row-reverse;
-			}
+		.elementor-editor-section-settings-list {
+			bottom: 100%;
+			@include start(50%);
+			transform: translateY(-1px) translateX(-50%);
+			background-color: #3b97e3;
 
 			.elementor-editor-element-setting {
-				width: 25px;
-				background-color: $editor-info;
-				font-size: 10px;
-				transition: all .3s;
 
 				&:hover {
-					background-color: darken( $editor-info, 10% );
+					background-color: darken(#3b97e3, 10%);
 				}
+			}
+		}
 
-				&:not(:last-child) {
-					@include margin-start(2px);
+		.elementor-editor-element-setting {
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+			margin: 0;
+			font-size: 10px;
+			color: #fff;
+			width: 25px;
+			border-style: solid;
+			border-width: 0;
+			transition: margin .3s, width .3s, font .3s;
+		}
+
+		.elementor-editor-element-remove {
+
+			.fa {
+				color: $editor-danger;
+			}
+		}
+
+		// Column - Overlay Settings
+		.elementor-editor-column-settings-list {
+			float: $start;
+			background-color: $editor-darkest;
+
+			.elementor-editor-element-setting {
+				@include border-start-property(color, $editor-darker);
+
+				&:hover {
+					background-color: $editor-darker;
+				}
+			}
+		}
+
+		.elementor-editor-element-trigger {
+			padding: 8.5px;
+			width: initial;
+
+			@media(min-width: $screen-lg-min) {
+				cursor: move;
+			}
+		}
+
+		// Widget - Overlay Settings
+		.elementor-editor-widget-settings-list {
+			z-index: $second-layer;
+			top: 1px;
+			@include end(1px);
+			flex-direction: row-reverse;
+
+			.elementor-editor-element-setting {
+				background-color: $editor-info;
+
+				&:hover {
+					background-color: darken($editor-info, 10%);
 				}
 			}
 
@@ -323,14 +290,13 @@ html.elementor-html {
 				}
 			}
 
-			.elementor-editor-element-edit {
-				cursor: move;
+			.elementor-editor-element-trigger {
 
-				&:not(.elementor-active) {
-					~ * {
-						width: 0;
-						margin-left: 0;
-						font-size: 0;
+				&.elementor-active {
+
+					~ .elementor-editor-element-setting {
+						@include border-end-property(width, 1px);
+						@include border-start-property(width, 0);
 					}
 				}
 			}
@@ -338,7 +304,7 @@ html.elementor-html {
 
 		.elementor-editor-element-setting {
 
-			&:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
+			&:not(.elementor-editor-element-trigger) {
 
 				@media (max-width: $screen-md-max) {
 					display: none;
@@ -379,23 +345,10 @@ html.elementor-html {
 		// Column
 		.elementor-column {
 
-			&.elementor-state-hover,
-			&.elementor-element-editable {
+			> .elementor-element-overlay {
 
-				> .elementor-element-overlay {
-					border: 1px solid $white;
-
-					&:after {
-						position: absolute;
-						content: '';
-						left: 0;
-						right: 0;
-						top: 0;
-						bottom: 0;
-						width: 100%;
-						height: 100%;
-						outline: 1px dashed $gray-darker;
-					}
+				&:after {
+					outline: 1px dashed $gray-darker;
 				}
 			}
 
@@ -444,10 +397,39 @@ html.elementor-html {
 				}
 			}
 		}
+
+		.elementor-column, .elementor-section {
+			> .elementor-element-overlay {
+				left: 0;
+				bottom: 0;
+
+				&:after {
+					position: absolute;
+					left: 0;
+					right: 0;
+					top: 0;
+					bottom: 0;
+					width: 100%;
+					height: 100%;
+				}
+			}
+
+			&.elementor-state-hover,
+			&.elementor-element-editable {
+
+				> .elementor-element-overlay {
+					border: 1px solid $white;
+
+					&:after {
+						content: '';
+					}
+				}
+			}
+		}
 	}
 
 	.elementor-inner {
-		margin-top: 27px;
+		margin-top: 23px;
 	}
 
 	.elementor-column-wrap {
@@ -479,7 +461,7 @@ html.elementor-html {
 
 		&:not(.elementor-element-editable):not(:hover) {
 
-			.elementor-editor-element-settings {
+			.elementor-editor-element-settings-list {
 				display: none;
 			}
 		}
@@ -696,7 +678,6 @@ html.elementor-html {
 .elementor-editor-preview {
 
 	.elementor-element-overlay,
-	.elementor-editor-widget-settings,
 	.column-title,
 	.elementor-empty,
 	#elementor-add-section,

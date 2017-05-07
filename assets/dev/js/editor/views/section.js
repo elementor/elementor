@@ -30,25 +30,6 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
-	ui: function() {
-		var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-		ui.duplicateButton = '.elementor-editor-section-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '.elementor-editor-section-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '.elementor-editor-section-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '.elementor-editor-section-settings-list .elementor-editor-element-trigger';
-
-		return ui;
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
-
-		return events;
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
@@ -162,6 +143,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
+		BaseElementView.prototype.onRender.apply( this, arguments );
+
 		this._checkIsFull();
 	},
 
