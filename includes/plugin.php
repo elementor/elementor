@@ -67,6 +67,15 @@ class Plugin {
 	public $settings;
 
 	/**
+	 * @var Admin
+	 */
+	public $admin;
+	/**
+	 * @var Tools
+	 */
+	public $tools;
+
+	/**
 	 * @var Preview
 	 */
 	public $preview;
@@ -239,8 +248,8 @@ class Plugin {
 		$this->maintenance_mode = new Maintenance_Mode();
 
 		if ( is_admin() ) {
-			new Admin();
-			new Tools();
+			$this->admin = new Admin();
+			$this->tools = new Tools();
 		}
 	}
 
