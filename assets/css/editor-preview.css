@@ -48,7 +48,7 @@ html.elementor-html {
   top: 0;
   right: 0;
   letter-spacing: 0;
-  z-index: 2;
+  z-index: 9998;
   pointer-events: none; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-widget-empty {
