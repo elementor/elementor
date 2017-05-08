@@ -197,6 +197,14 @@ body {
 	font-size: 17px;
 }
 
+.elementor-settings-form-page {
+	padding-top: 30px;
+
+	&:not(.elementor-active) {
+		display: none;
+	}
+}
+
 @import "message";
 @import "system_info";
 @import "feedback";
