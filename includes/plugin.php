@@ -245,12 +245,12 @@ class Plugin {
 
 		$this->templates_manager = new TemplateLibrary\Manager();
 
-		$this->maintenance_mode = new Maintenance_Mode();
-
 		if ( is_admin() ) {
 			$this->admin = new Admin();
 			$this->tools = new Tools();
 		}
+
+		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
 	private function add_cpt_support() {
