@@ -1,4 +1,4 @@
-( function( $, window, document ) {
+( function( $ ) {
 	'use strict';
 
 	var ElementorAdminApp = {
@@ -7,6 +7,7 @@
 
 		cacheElements: function() {
 			this.cache = {
+				$window: $( window ),
 				$body: $( 'body' ),
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
@@ -15,8 +16,18 @@
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
-				$importArea: $( '#elementor-import-template-area' )
+				$importArea: $( '#elementor-import-template-area' ),
+				$settingsForm: $( '#elementor-settings-form' ),
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
 			};
+
+			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
+
+			this.cache.$activeSettingsPage = this.cache.$settingsFormPages.filter( '.elementor-active' );
+
+			this.cache.$settingsTabs = this.cache.$settingsTabsWrapper.children();
+
+			this.cache.$activeSettingsTab = this.cache.$settingsTabs.filter( '.nav-tab-active' );
 		},
 
 		toggleStatus: function() {
@@ -49,7 +60,8 @@
 					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
-						$( window ).off( 'beforeunload.edit-post' );
+						self.cache.$window.off( 'beforeunload.edit-post' );
+
 						window.location = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
@@ -128,6 +140,19 @@
 							} ).show();
 					} );
 			} );
+
+			self.cache.$settingsTabs.on( {
+				click: function( event ) {
+					event.preventDefault();
+				},
+				focus: function() {
+					var hrefWithoutHash = location.href.replace( /#.*/, '' );
+
+					history.pushState( {}, '', hrefWithoutHash + this.hash );
+
+					self.goToSettingsTabFromHash();
+				}
+			} );
 		},
 
 		init: function() {
@@ -138,6 +163,8 @@
 			this.initTemplatesImport();
 
 			this.initMaintenanceMode();
+
+			this.goToSettingsTabFromHash();
 		},
 
 		initTemplatesImport: function() {
@@ -172,6 +199,36 @@
 
 		animateLoader: function() {
 			this.cache.$goToEditLink.addClass( 'elementor-animate' );
+		},
+
+		goToSettingsTabFromHash: function() {
+			var hash = location.hash.slice( 1 );
+
+			if ( hash ) {
+				this.goToSettingsTab( hash );
+			}
+		},
+
+		goToSettingsTab: function( tabName ) {
+			var $activePage = this.cache.$settingsFormPages.filter( '#' + tabName );
+
+			if ( ! $activePage.length ) {
+				return;
+			}
+
+			this.cache.$activeSettingsPage.removeClass( 'elementor-active' );
+
+			this.cache.$activeSettingsTab.removeClass( 'nav-tab-active' );
+
+			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName );
+
+			$activePage.addClass( 'elementor-active' );
+
+			$activeTab.addClass( 'nav-tab-active' );
+
+			this.cache.$activeSettingsPage = $activePage;
+
+			this.cache.$activeSettingsTab = $activeTab;
 		}
 	};
 
@@ -179,4 +236,5 @@
 		ElementorAdminApp.init();
 	} );
 
-}( jQuery, window, document ) );
+	window.elementorAdmin = ElementorAdminApp;
+}( jQuery ) );
