@@ -179,6 +179,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
+		include( ELEMENTOR_PATH . 'includes/settings/settings-page.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
