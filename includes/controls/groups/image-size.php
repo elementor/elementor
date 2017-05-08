@@ -173,6 +173,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
 
 			$attachment_size = [
+				// Defaults sizes
+				0 => null, // Width
+				1 => null, // Height
+
 				'bfi_thumb' => true,
 				'crop' => true,
 			];
