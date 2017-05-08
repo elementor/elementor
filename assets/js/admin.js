@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-( function( $, window, document ) {
+( function( $ ) {
 	'use strict';
 
 	var ElementorAdminApp = {
@@ -8,6 +8,7 @@
 
 		cacheElements: function() {
 			this.cache = {
+				$window: $( window ),
 				$body: $( 'body' ),
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
@@ -16,8 +17,18 @@
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
-				$importArea: $( '#elementor-import-template-area' )
+				$importArea: $( '#elementor-import-template-area' ),
+				$settingsForm: $( '#elementor-settings-form' ),
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
 			};
+
+			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
+
+			this.cache.$activeSettingsPage = this.cache.$settingsFormPages.filter( '.elementor-active' );
+
+			this.cache.$settingsTabs = this.cache.$settingsTabsWrapper.children();
+
+			this.cache.$activeSettingsTab = this.cache.$settingsTabs.filter( '.nav-tab-active' );
 		},
 
 		toggleStatus: function() {
@@ -50,7 +61,8 @@
 					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
-						$( window ).off( 'beforeunload.edit-post' );
+						self.cache.$window.off( 'beforeunload.edit-post' );
+
 						window.location = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
@@ -129,6 +141,19 @@
 							} ).show();
 					} );
 			} );
+
+			self.cache.$settingsTabs.on( {
+				click: function( event ) {
+					event.preventDefault();
+				},
+				focus: function() {
+					var hrefWithoutHash = location.href.replace( /#.*/, '' );
+
+					history.pushState( {}, '', hrefWithoutHash + this.hash );
+
+					self.goToSettingsTabFromHash();
+				}
+			} );
 		},
 
 		init: function() {
@@ -139,6 +164,8 @@
 			this.initTemplatesImport();
 
 			this.initMaintenanceMode();
+
+			this.goToSettingsTabFromHash();
 		},
 
 		initTemplatesImport: function() {
@@ -173,6 +200,36 @@
 
 		animateLoader: function() {
 			this.cache.$goToEditLink.addClass( 'elementor-animate' );
+		},
+
+		goToSettingsTabFromHash: function() {
+			var hash = location.hash.slice( 1 );
+
+			if ( hash ) {
+				this.goToSettingsTab( hash );
+			}
+		},
+
+		goToSettingsTab: function( tabName ) {
+			var $activePage = this.cache.$settingsFormPages.filter( '#' + tabName );
+
+			if ( ! $activePage.length ) {
+				return;
+			}
+
+			this.cache.$activeSettingsPage.removeClass( 'elementor-active' );
+
+			this.cache.$activeSettingsTab.removeClass( 'nav-tab-active' );
+
+			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName );
+
+			$activePage.addClass( 'elementor-active' );
+
+			$activeTab.addClass( 'nav-tab-active' );
+
+			this.cache.$activeSettingsPage = $activePage;
+
+			this.cache.$activeSettingsTab = $activeTab;
 		}
 	};
 
@@ -180,7 +237,8 @@
 		ElementorAdminApp.init();
 	} );
 
-}( jQuery, window, document ) );
+	window.elementorAdmin = ElementorAdminApp;
+}( jQuery ) );
 
 },{"elementor-admin/maintenance-mode":2}],2:[function(require,module,exports){
 var ViewModule = require( 'elementor-utils/view-module' ),
