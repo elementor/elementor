@@ -183,6 +183,16 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.4.6 - 30.04.2017 =
+* New! - Added new Google font `Arsenal` for typography control
+* Fix! - An issue with custom size in Image Widget ([#1688](https://github.com/pojome/elementor/issues/1688))
+* Fix! - Tilt shape glitch in wide screens
+* Fix! - Increasing `z-index` for overlay settings in the editor ([#1209](https://github.com/pojome/elementor/issues/1209))
+* Fix! - The layout is reset when you drag the section
+* Fix! - Register events on different skins to register multiple handles in one widget
+* Fix! - Parse controls default settings by PHP
+* Fix! - Advanced style apply in the element inside element
+
 = 1.4.5 - 30.04.2017 =
 * Tweak! - Use `update_metadata` instead of `update_post_meta` for revision history
 * Fix! - If Image Carousel caption is set to none, don't print the markup for the `figcaption`
