@@ -183,7 +183,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.4.6 - 30.04.2017 =
+= 1.4.6 - 09.05.2017 =
 * New! - Added new Google font `Arsenal` for typography control
 * Fix! - An issue with custom size in Image Widget ([#1688](https://github.com/pojome/elementor/issues/1688))
 * Fix! - Tilt shape glitch in wide screens
