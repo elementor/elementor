@@ -111,13 +111,6 @@ ColumnView = BaseElementView.extend( {
 		};
 	},
 
-	// Events
-	onCollectionChanged: function() {
-		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
-
-		this.changeChildContainerClasses();
-	},
-
 	changeChildContainerClasses: function() {
 		var emptyClass = 'elementor-element-empty',
 			populatedClass = 'elementor-element-populated';
@@ -127,6 +120,13 @@ ColumnView = BaseElementView.extend( {
 		} else {
 			this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
 		}
+	},
+
+	// Events
+	onCollectionChanged: function() {
+		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
+
+		this.changeChildContainerClasses();
 	},
 
 	onRender: function() {
