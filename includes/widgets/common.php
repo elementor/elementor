@@ -29,7 +29,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-widget-container' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -41,7 +41,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-widget-container' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -129,7 +129,7 @@ class Widget_Common extends Widget_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => '_background',
-				'selector' => '{{WRAPPER}} .elementor-widget-container',
+				'selector' => '{{WRAPPER}} > .elementor-widget-container',
 			]
 		);
 
@@ -137,7 +137,7 @@ class Widget_Common extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => '_border',
-				'selector' => '{{WRAPPER}} .elementor-widget-container',
+				'selector' => '{{WRAPPER}} > .elementor-widget-container',
 			]
 		);
 
@@ -148,7 +148,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -157,7 +157,7 @@ class Widget_Common extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => '_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-widget-container',
+				'selector' => '{{WRAPPER}} > .elementor-widget-container',
 			]
 		);
 
