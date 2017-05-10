@@ -67,6 +67,8 @@ ColumnView = BaseElementView.extend( {
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
+		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
+
 		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
 		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
@@ -198,6 +200,24 @@ ColumnView = BaseElementView.extend( {
 
 	onWidgetDragEnd: function() {
 		this.$el.removeClass( 'elementor-dragging' );
+	},
+
+	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
+		var errors = [];
+
+		if ( ! oldValue ) {
+			oldValue = this.model.getSetting( '_column_size' );
+		}
+
+		try {
+			this._parent.resizeChild( this, +oldValue, +newValue );
+		} catch ( e ) {
+			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
+				errors.push( 'Could not do a resize' );
+			}
+		}
+
+		return errors;
 	}
 } );
 
