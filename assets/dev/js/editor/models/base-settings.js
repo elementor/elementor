@@ -13,6 +13,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
 
+		self.validators = {};
+
 		if ( ! self.controls ) {
 			return;
 		}
