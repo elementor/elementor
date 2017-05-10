@@ -6335,7 +6335,7 @@ module.exports = new Schemes();
 
 		this.addRawCSS = function( key, css ) {
 			rawCSS[ key ] = css;
-		},
+		};
 
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
