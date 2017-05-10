@@ -150,11 +150,18 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
-	getNextColumn: function( columnView ) {
-		var modelIndex = this.collection.indexOf( columnView.model ),
-			nextModel = this.collection.at( modelIndex + 1 );
+	getColumnAt: function( index ) {
+		var model = this.collection.at( index );
 
-		return this.children.findByModelCid( nextModel.cid );
+		return model ? this.children.findByModelCid( model.cid ) : null;
+	},
+
+	getNextColumn: function( columnView ) {
+		return this.getColumnAt( this.collection.indexOf( columnView.model ) + 1 );
+	},
+
+	getPreviousColumn: function( columnView ) {
+		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
 	onBeforeRender: function() {
