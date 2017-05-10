@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
-**Stable tag:** 1.4.5  
+**Stable tag:** 1.4.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -99,9 +99,10 @@ We have created an extensive [API documentation](https://github.com/pojome/eleme
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Swedish](https://translate.wordpress.org/locale/se/default/wp-plugins/elementor) - (sv_SE)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
+- [Chinese (Taiwan)](https://translate.wordpress.org/locale/zh-tw/default/wp-plugins/elementor) - (zh_TW)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO) - in progress
+- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar) - in progress
 - [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU) - in progress
 
@@ -183,6 +184,16 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.4.6 - 09.05.2017 ###
+* New! - Added new Google font `Arsenal` for typography control
+* Fix! - An issue with custom size in Image Widget ([#1688](https://github.com/pojome/elementor/issues/1688))
+* Fix! - Tilt shape glitch in wide screens
+* Fix! - Increasing `z-index` for overlay settings in the editor ([#1209](https://github.com/pojome/elementor/issues/1209))
+* Fix! - The layout is reset when you drag the section
+* Fix! - Register events on different skins to register multiple handles in one widget
+* Fix! - Parse controls default settings by PHP
+* Fix! - Advanced style apply in the element inside element
 
 ### 1.4.5 - 30.04.2017 ###
 * Tweak! - Use `update_metadata` instead of `update_post_meta` for revision history

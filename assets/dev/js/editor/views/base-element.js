@@ -184,7 +184,13 @@ BaseElementView = Marionette.CompositeView.extend( {
 					},
 					defaultOption: 'confirm',
 					onConfirm: _.bind( function() {
+						var parent = this._parent;
+
+						parent.isManualRemoving = true;
+
 						this.model.destroy();
+
+						parent.isManualRemoving = false;
 					}, this )
 				} );
 			}
