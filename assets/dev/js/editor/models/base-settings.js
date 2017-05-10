@@ -182,7 +182,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 						return;
 					}
 
-					if ( 'object' === typeof data[ key ] ) {
+					if ( data[ key ] && 'object' === typeof data[ key ] ) {
 						// First check length difference
 						if ( Object.keys( data[ key ] ).length !== Object.keys( control[ 'default' ] ).length ) {
 							return;
