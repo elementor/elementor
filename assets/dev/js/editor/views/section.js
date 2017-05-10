@@ -52,8 +52,7 @@ SectionView = BaseElementView.extend( {
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull )
-			.listenTo( this.model, 'change:settings:structure', this.onStructureChanged );
+		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
 	},
 
 	addEmptyColumn: function() {
@@ -107,7 +106,9 @@ SectionView = BaseElementView.extend( {
 			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
 		}
 
-		this.model.setSetting( 'structure', structure, true );
+		this.model.setSetting( 'structure', structure );
+
+		this.redefineLayout();
 	},
 
 	redefineLayout: function() {
@@ -117,8 +118,6 @@ SectionView = BaseElementView.extend( {
 			model.setSetting( '_column_size', preset.preset[ index ] );
 			model.setSetting( '_inline_size', null );
 		} );
-
-		this.children.invoke( 'changeSizeUI' );
 	},
 
 	resetLayout: function() {
@@ -129,8 +128,6 @@ SectionView = BaseElementView.extend( {
 		this.collection.each( function( model ) {
 			model.setSetting( '_inline_size', null );
 		} );
-
-		this.children.invoke( 'changeSizeUI' );
 	},
 
 	isCollectionFilled: function() {
