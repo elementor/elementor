@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
-**Stable tag:** 1.4.5  
+**Stable tag:** 1.4.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -184,6 +184,16 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.4.6 - 09.05.2017 ###
+* New! - Added new Google font `Arsenal` for typography control
+* Fix! - An issue with custom size in Image Widget ([#1688](https://github.com/pojome/elementor/issues/1688))
+* Fix! - Tilt shape glitch in wide screens
+* Fix! - Increasing `z-index` for overlay settings in the editor ([#1209](https://github.com/pojome/elementor/issues/1209))
+* Fix! - The layout is reset when you drag the section
+* Fix! - Register events on different skins to register multiple handles in one widget
+* Fix! - Parse controls default settings by PHP
+* Fix! - Advanced style apply in the element inside element
 
 ### 1.4.5 - 30.04.2017 ###
 * Tweak! - Use `update_metadata` instead of `update_post_meta` for revision history
