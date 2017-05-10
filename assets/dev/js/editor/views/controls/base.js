@@ -81,20 +81,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return this.elementSettingsModel.get( this.model.get( 'name' ) );
 	},
 
-	isValidValue: function( value ) {
-		return true;
-	},
-
 	setValue: function( value ) {
 		this.setSettingsModel( value );
 	},
 
 	setSettingsModel: function( value ) {
-		if ( true !== this.isValidValue( value ) ) {
-			this.triggerMethod( 'settings:error' );
-			return;
-		}
-
 		this.elementSettingsModel.set( this.model.get( 'name' ), value );
 
 		this.triggerMethod( 'settings:change' );
@@ -179,7 +170,25 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	onBaseInputChange: function( event ) {
-		this.updateElementModel( event );
+		var input = event.currentTarget,
+			value = this.getInputValue( input ),
+			validators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+
+		if ( validators ) {
+			var oldValue = this.getControlValue();
+
+			var isValidValue = validators.every( function( validator ) {
+				return validator.isValid( value, oldValue );
+			} );
+
+			if ( ! isValidValue ) {
+				this.setInputValue( input, oldValue );
+
+				return;
+			}
+		}
+
+		this.updateElementModel( value, input );
 
 		this.triggerMethod( 'input:change', event );
 	},

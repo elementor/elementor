@@ -1,5 +1,6 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
+	Validator = require( 'elementor-editor-utils/validator' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -158,6 +159,19 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 
 		this.addChildElement( itemData, options );
+	},
+
+	addControlValidator: function( controlName, validationCallback ) {
+		validationCallback = _.bind( validationCallback, this );
+
+		var validator = new Validator( { customValidationMethod: validationCallback } ),
+			validators = this.getEditModel().get( 'settings' ).validators;
+
+		if ( ! validators[ controlName ] ) {
+			validators[ controlName ] = [];
+		}
+
+		validators[ controlName ].push( validator );
 	},
 
 	isCollectionFilled: function() {
