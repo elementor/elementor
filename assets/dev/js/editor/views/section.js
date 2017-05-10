@@ -30,6 +30,11 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
+	errors: {
+		columnWidthTooLarge: 'New column width is too large',
+		columnWidthTooSmall: 'New column width is too small'
+	},
+
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
