@@ -74,7 +74,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		this.model.set( controlSettings );
 
-		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility );
+		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility )
+			.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onSettingsExternalChange );
 	},
 
 	getControlValue: function() {
@@ -199,6 +200,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		elementor.changeDeviceMode( device );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
+	},
+
+	onSettingsExternalChange: function() {
+		this.applySavedValue();
 	},
 
 	renderResponsiveSwitchers: function() {

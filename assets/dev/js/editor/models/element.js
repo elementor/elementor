@@ -105,20 +105,8 @@ ElementModel = Backbone.Model.extend( {
 		}
 	},
 
-	setSetting: function( key, value, triggerChange ) {
-		triggerChange = triggerChange || false;
-
-		var settings = this.get( 'settings' );
-
-		settings.set( key, value );
-
-		this.set( 'settings', settings );
-
-		if ( triggerChange ) {
-			this.trigger( 'change', this );
-			this.trigger( 'change:settings', this );
-			this.trigger( 'change:settings:' + key, this );
-		}
+	setSetting: function( key, value ) {
+		this.get( 'settings' ).setExternalChange( key, value );
 	},
 
 	getSetting: function( key ) {
