@@ -89,7 +89,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	getColumnPercentSize: function( element, size ) {
-		return size / element.parent().width() * 100;
+		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
 
 	getDefaultStructure: function() {
@@ -209,49 +209,47 @@ SectionView = BaseElementView.extend( {
 
 	onChildviewRequestResize: function( childView, ui ) {
 		// Get current column details
-		var currentSize = childView.model.getSetting( '_inline_size' );
-
-		if ( ! currentSize ) {
-			currentSize = this.getColumnPercentSize( ui.element, ui.originalSize.width );
-		}
-
-		var newSize = this.getColumnPercentSize( ui.element, ui.size.width ),
-			difference = newSize - currentSize;
+		var currentSize = +childView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( childView.$el, childView.$el.data( 'originalWidth' ) );
 
 		ui.element.css( {
-			//width: currentSize + '%',
 			width: '',
 			left: 'initial' // Fix for RTL resizing
 		} );
 
-		// Get next column details
-		var nextChildView = this.getNextColumn( childView );
+		var newSize = this.getColumnPercentSize( ui.element, ui.size.width );
 
-		if ( ! nextChildView ) {
+		try {
+			this.resizeChild( childView, currentSize, newSize );
+		} catch ( e ) {
 			return;
 		}
 
-		var MINIMUM_COLUMN_SIZE = 10,
-
-			$nextElement = nextChildView.$el,
-			nextElementCurrentSize = this.getColumnPercentSize( $nextElement, $nextElement.width() ),
-			nextElementNewSize = nextElementCurrentSize - difference;
-
-		if ( newSize < MINIMUM_COLUMN_SIZE || newSize > 100 || ! difference || nextElementNewSize < MINIMUM_COLUMN_SIZE || nextElementNewSize > 100 ) {
-			return;
-		}
-
-		// Set the current column size
-		childView.model.setSetting( '_inline_size', newSize.toFixed( 3 ) );
-		childView.changeSizeUI();
-
-		// Set the next column size
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize.toFixed( 3 ) );
-		nextChildView.changeSizeUI();
+		childView.model.setSetting( '_inline_size', newSize );
 	},
 
-	onStructureChanged: function() {
-		this.redefineLayout();
+	resizeChild: function( childView, currentSize, newSize ) {
+		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
+
+		if ( ! nextChildView ) {
+			throw new ReferenceError( 'There is not any next column' );
+		}
+
+		var minColumnSize = 10,
+			$nextElement = nextChildView.$el,
+			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
+			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
+
+		if ( nextElementNewSize < minColumnSize ) {
+			throw new RangeError( this.errors.columnWidthTooLarge );
+		}
+
+		if ( newSize < minColumnSize ) {
+			throw new RangeError( this.errors.columnWidthTooSmall );
+		}
+
+		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
+
+		return true;
 	}
 } );
 
