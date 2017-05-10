@@ -169,6 +169,16 @@ ColumnView = BaseElementView.extend( {
 		} );
 	},
 
+	onSettingsChanged: function( settings ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+
+		var changedAttributes = settings.changedAttributes();
+
+		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
+			this.changeSizeUI();
+		}
+	},
+
 	onClickTrigger: function( event ) {
 		event.preventDefault();
 
