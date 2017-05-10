@@ -110,6 +110,10 @@ class Stylesheet {
 			foreach ( $style_rules as $rule ) {
 				$property = explode( ':', $rule, 2 );
 
+				if ( count( $property ) < 2 ) {
+					return $this;
+				}
+
 				$ordered_rules[ trim( $property[0] ) ] = trim( $property[1], ' ;' );
 			}
 

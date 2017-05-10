@@ -6335,7 +6335,7 @@ module.exports = new Schemes();
 
 		this.addRawCSS = function( key, css ) {
 			rawCSS[ key ] = css;
-		},
+		};
 
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
@@ -6371,11 +6371,15 @@ module.exports = new Schemes();
 
 				var orderedRules = {};
 
-				$.each( styleRules, function() {
-					var property = this.split( /:(.*)?/ );
+				try {
+					$.each( styleRules, function() {
+						var property = this.split( /:(.*)?/ );
 
-					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
-				} );
+						orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
+					} );
+				} catch ( error ) { // At least one of the properties is incorrect
+					return;
+				}
 
 				styleRules = orderedRules;
 			}
