@@ -159,8 +159,10 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickSaveTemplate: function() {
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView();
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView();
+			}
 		} );
 	},
 
