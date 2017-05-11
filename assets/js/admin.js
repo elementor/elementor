@@ -154,6 +154,22 @@
 					self.goToSettingsTabFromHash();
 				}
 			} );
+
+			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+
+				var $this = $( this ),
+					dialogsManager = new DialogsManager.Instance();
+
+				dialogsManager.createWidget( 'confirm', {
+					message: ElementorAdminConfig.rollback_confirm,
+					onConfirm: function() {
+						$this.addClass( 'loading' );
+
+						location.href = $this.attr( 'href' );
+					}
+				} ).show();
+			} );
 		},
 
 		init: function() {

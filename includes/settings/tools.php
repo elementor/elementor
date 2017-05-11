@@ -60,6 +60,23 @@ class Tools extends Settings_Page {
 		}
 	}
 
+	public function post_elementor_rollback() {
+		check_admin_referer( 'elementor_rollback' );
+
+		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
+
+		$rollback = new Rollback( [
+			'version' => ELEMENTOR_PREVIOUS_STABLE_VERSION,
+			'plugin_name' => ELEMENTOR_PLUGIN_BASE,
+			'plugin_slug' => $plugin_slug,
+			'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, ELEMENTOR_PREVIOUS_STABLE_VERSION ),
+		] );
+
+		$rollback->run();
+
+		wp_die( '', __( 'Rollback to Previous Version', 'elementor' ), [ 'response' => 200 ] );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -69,6 +86,8 @@ class Tools extends Settings_Page {
 			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
 		}
+
+		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
 
 	protected function create_tabs() {
@@ -131,6 +150,30 @@ class Tools extends Settings_Page {
 									'type' => 'raw_html',
 									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), __( 'Replace URL', 'elementor' ) ),
 									'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
+								],
+							],
+						],
+					],
+				],
+			],
+			'rollback' => [
+				'label' => __( 'Rollback', 'elementor' ),
+				'sections' => [
+					'rollback' => [
+						'label' => __( 'Rollback to Previous Version', 'elementor' ),
+						'callback' => function() {
+							$intro_text = sprintf( __( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ), ELEMENTOR_VERSION );
+							$intro_text = '<p>' . $intro_text . '</p>';
+
+							echo $intro_text;
+						},
+						'fields' => [
+							'rollback' => [
+								'label' => __( 'Rollback Version', 'elementor' ),
+								'field_args' => [
+									'type' => 'raw_html',
+									'html' => sprintf( '<a href="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>', wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback' ), 'elementor_rollback' ), sprintf( __( 'Reinstall v%s', 'elementor' ), ELEMENTOR_PREVIOUS_STABLE_VERSION ) ),
+									'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
 							],
 						],
