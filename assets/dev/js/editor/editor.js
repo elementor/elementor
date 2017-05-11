@@ -63,7 +63,8 @@ App = Marionette.Application.extend( {
 			Animation: require( 'elementor-views/controls/select2' ),
 			Hover_animation: require( 'elementor-views/controls/select2' ),
 			Order: require( 'elementor-views/controls/order' ),
-			Switcher: require( 'elementor-views/controls/switcher' )
+			Switcher: require( 'elementor-views/controls/switcher' ),
+			Number: require( 'elementor-views/controls/number' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
