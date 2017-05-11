@@ -30,6 +30,22 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.addButton = '> .elementor-editor-element-add';
+
+		return ui;
+	},
+
+	events: function() {
+		var events = BaseElementView.prototype.events.apply( this, arguments );
+
+		events[ 'click @ui.addButton' ] = 'onClickAdd';
+
+		return events;
+	},
+
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 

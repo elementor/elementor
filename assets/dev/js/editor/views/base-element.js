@@ -28,12 +28,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			triggerButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-trigger',
-			addButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-add',
-			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-duplicate',
-			removeButton: '> .elementor-element-overlay .elementor-editor-element-settings-list .elementor-editor-element-remove',
-			saveButton: '> .elementor-element-overlay > .elementor-editor-element-settings-list .elementor-editor-element-save',
-			settingsList: '> .elementor-element-overlay > .elementor-editor-element-settings-list'
+			triggerButton: '> .elementor-element-overlay .elementor-editor-element-trigger',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
+			saveButton: '> .elementor-element-overlay .elementor-editor-element-save',
+			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings-list'
 		};
 	},
 
