@@ -138,26 +138,10 @@ html.elementor-html {
 		// Section
 		.elementor-section {
 
-			.elementor-editor-element-add {
-				position: absolute;
-				bottom: 0;
-				left: 50%;
-				z-index: $editor-layer;
-				transform: translateX(-50%) translateY(1px);
-				color: #fff;
-				background-color: #3b97e3;
-				height: 23px;
-				width: 25px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				cursor: pointer;
-			}
+			&:last-child {
 
-			> .elementor-element-overlay {
-
-				&:after {
-					outline: 2px solid #3b97e3;
+				.elementor-editor-element-add {
+					display: none;
 				}
 			}
 
@@ -177,6 +161,29 @@ html.elementor-html {
 							}
 						}
 					}
+				}
+			}
+
+			.elementor-editor-element-add {
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				z-index: $editor-layer;
+				transform: translateX(-50%) translateY(100%);
+				color: #fff;
+				background-color: #3b97e3;
+				height: 23px;
+				width: 26px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+			}
+
+			> .elementor-element-overlay {
+
+				&:after {
+					outline: 2px solid #3b97e3;
 				}
 			}
 		}
