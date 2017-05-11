@@ -39,6 +39,7 @@ class Admin {
 			'ElementorAdminConfig',
 			[
 				'home_url' => home_url(),
+				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
 			]
 		);
 
