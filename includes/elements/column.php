@@ -241,6 +241,19 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
+			'_inline_size',
+			[
+				'label' => __( 'Column Size', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 10,
+				'max' => 90,
+				'selectors' => [
+					'(tablet+){{WRAPPER}}' => 'width: {{VALUE}}%',
+				],
+			]
+		);
+
+		$this->add_control(
 			'content_position',
 			[
 				'label' => __( 'Content Position', 'elementor' ),

@@ -23,6 +23,14 @@ class Control_Number extends Base_Data_Control {
 		return 'number';
 	}
 
+	public function get_default_settings() {
+		return [
+			'min' => '',
+			'max' => '',
+			'step' => '',
+		];
+	}
+
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>
