@@ -7,8 +7,8 @@ class Rollback {
 
 	protected $package_url;
 	protected $version;
-	protected $plugin_name; // ELEMENTOR_PRO_PLUGIN_BASE
-	protected $plugin_slug; // basename( ELEMENTOR__FILE__, '.php' );
+	protected $plugin_name;
+	protected $plugin_slug;
 
 	public function __construct( $args = [] ) {
 		foreach ( $args as $key => $value ) {
