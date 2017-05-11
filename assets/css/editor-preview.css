@@ -74,6 +74,9 @@ html.elementor-html {
     color: #818a91;
     font-size: 22px; }
 
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(.elementor-state-hover):not(.elementor-element-editable) .elementor-editor-element-add {
+  display: none; }
+
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(.elementor-state-hover):not(.elementor-element-editable) > .elementor-element-overlay .elementor-editor-element-settings-list {
   display: none; }
 
@@ -95,6 +98,31 @@ html.elementor-html {
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element[data-side="bottom"]:last-child {
   border-bottom: 4px solid #71d7f7; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-section .elementor-editor-element-add {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 9999;
+  -webkit-transform: translateX(-50%) translateY(1px);
+          transform: translateX(-50%) translateY(1px);
+  color: #fff;
+  background-color: #3b97e3;
+  height: 23px;
+  width: 25px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay:after {
   outline: 2px solid #3b97e3; }
@@ -141,6 +169,12 @@ html.elementor-html {
   background-color: #3b97e3; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings-list .elementor-editor-element-setting:hover {
     background-color: #1d7ece; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings-list + .elementor-editor-element-add {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%); }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting {
   cursor: pointer;
@@ -302,11 +336,48 @@ html.elementor-html {
 .elementor-editor-active .elementor-sortable-placeholder {
   background: #71d7f7;
   -webkit-transition-timing-function: ease-out;
-          transition-timing-function: ease-out; }
+          transition-timing-function: ease-out;
+  opacity: .9; }
+
+@-webkit-keyframes placeholder-height {
+  0% {
+    height: 0;
+    opacity: 0; }
+  100% {
+    height: 40px;
+    opacity: .9; } }
+
+@keyframes placeholder-height {
+  0% {
+    height: 0;
+    opacity: 0; }
+  100% {
+    height: 40px;
+    opacity: .9; } }
+
+@-webkit-keyframes placeholder-width {
+  0% {
+    width: 0;
+    opacity: 0; }
+  100% {
+    width: 10px;
+    opacity: .9; } }
+
+@keyframes placeholder-width {
+  0% {
+    width: 0;
+    opacity: 0; }
+  100% {
+    width: 10px;
+    opacity: .9; } }
   .elementor-editor-active .elementor-sortable-placeholder:not(.elementor-column) {
-    height: 5px; }
+    height: 40px;
+    -webkit-animation: placeholder-height 500ms;
+            animation: placeholder-height 500ms; }
   .elementor-editor-active .elementor-sortable-placeholder.elementor-column {
-    width: 5px; }
+    width: 10px;
+    -webkit-animation: placeholder-width 500ms;
+            animation: placeholder-width 500ms; }
 
 .elementor-editor-active .elementor-sortable-helper {
   position: absolute;
@@ -345,27 +416,30 @@ html.elementor-html {
 .elementor-editor-active .elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] .elementor-inner-column .elementor-sortable-placeholder {
   display: none; }
 
-.elementor-editor-active #elementor-add-section {
+.elementor-add-section {
   background-color: rgba(255, 255, 255, 0.5);
-  margin: 60px auto;
   max-width: 1140px;
   position: relative; }
-  .elementor-editor-active #elementor-add-section:not([data-side]) {
+  .elementor-add-section:not([data-side]) {
     border: 2px dashed #d5dadf; }
-  .elementor-editor-active #elementor-add-section[data-side] {
+  .elementor-add-section[data-side] {
     border: 3px dashed #71d7f7; }
+  .elementor-add-section[data-view="choose-action"] .elementor-select-preset {
+    display: none; }
+  .elementor-add-section[data-view="select-preset"] .elementor-add-new-section {
+    display: none; }
   @media (max-width: 479px) {
-    .elementor-editor-active #elementor-add-section {
+    .elementor-add-section {
       display: none; } }
 
-.elementor-editor-active #elementor-add-section-inner {
+.elementor-add-section-inner {
   text-align: center;
   margin-top: 10px;
   padding: 40px 0; }
 
-.elementor-editor-active #elementor-add-new-section {
+.elementor-add-new-section {
   display: inline-block; }
-  .elementor-editor-active #elementor-add-new-section .elementor-button {
+  .elementor-add-new-section .elementor-button {
     color: #fff;
     background-image: none;
     font-size: 13px;
@@ -380,20 +454,20 @@ html.elementor-html {
     border: none;
     border-radius: 3px;
     cursor: pointer; }
-    .elementor-editor-active #elementor-add-new-section .elementor-button:hover {
+    .elementor-add-new-section .elementor-button:hover {
       opacity: 0.85;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2); }
-    .elementor-editor-active #elementor-add-new-section .elementor-button:active {
+    .elementor-add-new-section .elementor-button:active {
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.1); }
 
-.elementor-editor-active #elementor-add-section-button {
+.elementor-add-section-button {
   background-color: #9b0a46; }
 
-.elementor-editor-active #elementor-add-template-button {
+.elementor-add-template-button {
   background-color: #6d7882;
   margin-left: 25px; }
 
-.elementor-editor-active #elementor-add-section-drag-title {
+.elementor-add-section-drag-title {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -402,7 +476,7 @@ html.elementor-html {
   color: #556068;
   margin-top: 15px; }
 
-.elementor-editor-active #elementor-select-preset-close {
+.elementor-add-section-close {
   position: absolute;
   right: 20px;
   top: 20px;
@@ -411,7 +485,7 @@ html.elementor-html {
   line-height: 1;
   color: #d5dadf; }
 
-.elementor-editor-active #elementor-select-preset-title {
+.elementor-select-preset-title {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: 500;
@@ -419,28 +493,36 @@ html.elementor-html {
   text-transform: uppercase;
   color: #556068; }
 
-.elementor-editor-active #elementor-select-preset-list {
+.elementor-select-preset-list {
   list-style: none;
   padding: 0 25px;
   margin: 20px auto 0;
   overflow: hidden;
   max-width: 700px; }
-  .elementor-editor-active #elementor-select-preset-list .elementor-preset {
+  .elementor-select-preset-list .elementor-preset {
     cursor: pointer;
     margin: 0;
     padding: 10px;
     float: left; }
-    .elementor-editor-active #elementor-select-preset-list .elementor-preset:hover path {
+    .elementor-select-preset-list .elementor-preset:hover path {
       fill: #6d7882; }
-    .elementor-editor-active #elementor-select-preset-list .elementor-preset:not(:hover) path {
+    .elementor-select-preset-list .elementor-preset:not(:hover) path {
       fill: #d5dadf; }
-    .elementor-editor-active #elementor-select-preset-list .elementor-preset svg {
+    .elementor-select-preset-list .elementor-preset svg {
       height: 50px; }
+
+#elementor-add-new-section {
+  margin: 60px auto; }
+  #elementor-add-new-section[data-view="choose-action"] .elementor-add-section-close {
+    display: none; }
+
+.elementor-add-section-inline {
+  margin: 10px auto; }
 
 .elementor-editor-preview .elementor-element-overlay,
 .elementor-editor-preview .column-title,
 .elementor-editor-preview .elementor-empty,
-.elementor-editor-preview #elementor-add-section,
+.elementor-editor-preview .elementor-add-section,
 .elementor-editor-preview .elementor-element-empty,
 .elementor-editor-preview .elementor-widget-empty {
   display: none; }
