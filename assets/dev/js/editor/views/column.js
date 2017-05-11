@@ -41,6 +41,7 @@ ColumnView = BaseElementView.extend( {
 
 		ui.columnTitle = '.column-title';
 		ui.columnInner = '> .elementor-column-wrap';
+		ui.addButton = '> .elementor-element-overlay .elementor-editor-element-add';
 
 		return ui;
 	},
