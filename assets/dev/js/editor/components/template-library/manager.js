@@ -94,7 +94,7 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data.content );
+				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
 				if ( options.withPageSettings ) {
 					elementor.pageSettings.model.set( data.page_settings );
