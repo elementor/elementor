@@ -88,6 +88,10 @@ html.elementor-html {
 
 				&:not(.elementor-element-editable) {
 
+					.elementor-editor-element-add {
+						display: none;
+					}
+
 					> .elementor-element-overlay {
 
 						.elementor-editor-element-settings-list {
@@ -133,6 +137,22 @@ html.elementor-html {
 
 		// Section
 		.elementor-section {
+
+			.elementor-editor-element-add {
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				z-index: $editor-layer;
+				transform: translateX(-50%) translateY(1px);
+				color: #fff;
+				background-color: #3b97e3;
+				height: 23px;
+				width: 25px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+			}
 
 			> .elementor-element-overlay {
 
@@ -213,6 +233,13 @@ html.elementor-html {
 				&:hover {
 					background-color: darken(#3b97e3, 10%);
 				}
+			}
+
+			+ .elementor-editor-element-add {
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				transform: translateX(-50%);
 			}
 		}
 
@@ -481,13 +508,41 @@ html.elementor-html {
 	.elementor-sortable-placeholder {
 		background: $editor-info;
 		transition-timing-function: ease-out;
+		opacity: .9;
+
+		$horizontal-placeholder-size: 40px;
+		$vertical-placeholder-size: 10px;
+
+		@keyframes placeholder-height {
+			0% {
+				height: 0;
+				opacity: 0;
+			}
+			100% {
+				height: $horizontal-placeholder-size;
+				opacity: .9;
+			}
+		}
+
+		@keyframes placeholder-width {
+			0% {
+				width: 0;
+				opacity: 0;
+			}
+			100% {
+				width: $vertical-placeholder-size;
+				opacity: .9;
+			}
+		}
 
 		&:not(.elementor-column) {
-			height: 5px;
+			height: $horizontal-placeholder-size;
+			animation: placeholder-height 500ms;
 		}
 
 		&.elementor-column {
-			width: 5px;
+			width: $vertical-placeholder-size;
+			animation: placeholder-width 500ms;
 		}
 	}
 
@@ -545,133 +600,161 @@ html.elementor-html {
 			}
 		}
 	}
+}
 
-	// Add new Section
-	#elementor-add-section {
-		background-color: rgba(255, 255, 255, .5);
-		margin: 60px auto;
-		max-width: 1140px;
-		position: relative;
+// Add new Section
+.elementor-add-section {
+	background-color: rgba(255, 255, 255, .5);
+	max-width: 1140px;
+	position: relative;
 
-		&:not([data-side]) {
-			border: 2px dashed $editor-lightest;
-		}
+	&:not([data-side]) {
+		border: 2px dashed $editor-lightest;
+	}
 
-		&[data-side] {
-			border: 3px dashed $editor-info;
-		}
+	&[data-side] {
+		border: 3px dashed $editor-info;
+	}
 
-		@media (max-width: $screen-xs-max) {
+	&[data-view="choose-action"] {
+
+		.elementor-select-preset {
 			display: none;
 		}
 	}
 
-	#elementor-add-section-inner {
-		text-align: center;
-		margin-top: 10px;
-		padding: 40px 0;
-	}
+	&[data-view="select-preset"] {
 
-	#elementor-add-new-section {
-		display: inline-block; // For smooth dragging above
-
-		.elementor-button {
-			color: #fff;
-			background-image: none; // Reset for some themes
-			font-size: 13px;
-			font-family: Arial, Helvetica, sans-serif;
-			font-weight: normal;
-			font-style: normal;
-			line-height: 1;
-			text-transform: uppercase;
-			height: 40px;
-			width: 170px;
-			padding: 0;
-			border: none;
-			border-radius: 3px;
-			cursor: pointer;
-
-			&:hover {
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
-			}
-
-			&:active {
-				box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
-			}
+		.elementor-add-new-section {
+			display: none;
 		}
 	}
 
-	#elementor-add-section-button {
-		background-color: $editor-accent;
+	@media (max-width: $screen-xs-max) {
+		display: none;
 	}
+}
 
-	#elementor-add-template-button {
-		background-color: $editor-dark;
-		@include margin-start(25px);
-	}
+.elementor-add-section-inner {
+	text-align: center;
+	margin-top: 10px;
+	padding: 40px 0;
+}
 
-	#elementor-add-section-drag-title {
-		font-family: Arial, Helvetica, sans-serif;
+.elementor-add-new-section {
+	display: inline-block; // For smooth dragging above
+
+	.elementor-button {
+		color: #fff;
+		background-image: none; // Reset for some themes
 		font-size: 13px;
+		font-family: Arial, Helvetica, sans-serif;
 		font-weight: normal;
-		font-style: italic;
-		line-height: 1;
-		color: $editor-darker;
-		margin-top: 15px;
-	}
-
-	#elementor-select-preset-close {
-		position: absolute;
-		right: 20px;
-		top: 20px;
-		font-size: 20px;
-		cursor: pointer;
-		line-height: 1;
-		color: $editor-lightest;
-	}
-
-	#elementor-select-preset-title {
-		font-family: Arial, Helvetica, sans-serif;
-		font-size: 13px;
-		font-weight: 500;
 		font-style: normal;
+		line-height: 1;
 		text-transform: uppercase;
-		color: $editor-darker;
-	}
+		height: 40px;
+		width: 170px;
+		padding: 0;
+		border: none;
+		border-radius: 3px;
+		cursor: pointer;
 
-	#elementor-select-preset-list {
-		list-style: none;
-		padding: 0 25px;
-		margin: 20px auto 0;
-		overflow: hidden;
-		max-width: 700px;
+		&:hover {
+			opacity: 0.85;
+			box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
+		}
 
-		.elementor-preset {
-			cursor: pointer;
-			margin: 0;
-			padding: 10px;
-			float: $start;
-
-			&:hover {
-
-				path {
-					fill: $editor-dark;
-				}
-			}
-
-			&:not(:hover) {
-
-				path {
-					fill: $editor-lightest;
-				}
-			}
-
-			svg {
-				height: 50px;
-			}
+		&:active {
+			box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
 		}
 	}
+}
+
+.elementor-add-section-button {
+	background-color: $editor-accent;
+}
+
+.elementor-add-template-button {
+	background-color: $editor-dark;
+	@include margin-start(25px);
+}
+
+.elementor-add-section-drag-title {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	font-style: italic;
+	line-height: 1;
+	color: $editor-darker;
+	margin-top: 15px;
+}
+
+.elementor-add-section-close {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	font-size: 20px;
+	cursor: pointer;
+	line-height: 1;
+	color: $editor-lightest;
+}
+
+.elementor-select-preset-title {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	font-style: normal;
+	text-transform: uppercase;
+	color: $editor-darker;
+}
+
+.elementor-select-preset-list {
+	list-style: none;
+	padding: 0 25px;
+	margin: 20px auto 0;
+	overflow: hidden;
+	max-width: 700px;
+
+	.elementor-preset {
+		cursor: pointer;
+		margin: 0;
+		padding: 10px;
+		float: $start;
+
+		&:hover {
+
+			path {
+				fill: $editor-dark;
+			}
+		}
+
+		&:not(:hover) {
+
+			path {
+				fill: $editor-lightest;
+			}
+		}
+
+		svg {
+			height: 50px;
+		}
+	}
+}
+
+#elementor-add-new-section {
+	margin: 60px auto;
+
+	&[data-view="choose-action"] {
+
+		.elementor-add-section-close {
+			display: none;
+		}
+	}
+}
+
+.elementor-add-section-inline {
+	margin: 10px auto;
 }
 
 // Preview Mode
@@ -680,7 +763,7 @@ html.elementor-html {
 	.elementor-element-overlay,
 	.column-title,
 	.elementor-empty,
-	#elementor-add-section,
+	.elementor-add-section,
 	.elementor-element-empty,
 	.elementor-widget-empty {
 		display: none;
