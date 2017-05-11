@@ -177,12 +177,6 @@ class Post_CSS_File extends CSS_File {
 
 		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
-		if ( 'column' === $element->get_name() ) {
-			if ( ! empty( $element_settings['_inline_size'] ) ) {
-				$this->stylesheet_obj->add_rules( $this->get_element_unique_selector( $element ), [ 'width' => $element_settings['_inline_size'] . '%' ], [ 'min' => 'tablet' ] );
-			}
-		}
-
 		/**
 		 * @deprecated, use `elementor/element/parse_css`
 		 */
