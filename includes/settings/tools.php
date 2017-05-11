@@ -74,7 +74,7 @@ class Tools extends Settings_Page {
 	protected function create_tabs() {
 		return [
 			'general' => [
-				'label' => __( 'General', '' ),
+				'label' => __( 'General', 'elementor' ),
 				'sections' => [
 					'tools' => [
 						'fields' => [
@@ -141,6 +141,6 @@ class Tools extends Settings_Page {
 	}
 
 	protected function get_page_title() {
-		return __( 'Tools', '' );
+		return __( 'Tools', 'elementor' );
 	}
 }

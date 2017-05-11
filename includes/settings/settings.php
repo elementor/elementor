@@ -70,7 +70,7 @@ class Settings extends Settings_Page {
 
 		return [
 			self::TAB_GENERAL => [
-				'label' => __( 'General', '' ),
+				'label' => __( 'General', 'elementor' ),
 				'sections' => [
 					'general' => [
 						'fields' => [
@@ -124,7 +124,7 @@ class Settings extends Settings_Page {
 				],
 			],
 			self::TAB_STYLE => [
-				'label' => __( 'Style', '' ),
+				'label' => __( 'Style', 'elementor' ),
 				'sections' => [
 					'style' => [
 						'fields' => [
@@ -186,13 +186,13 @@ class Settings extends Settings_Page {
 				],
 			],
 			self::TAB_INTEGRATIONS => [
-				'label' => __( 'Integrations', '' ),
+				'label' => __( 'Integrations', 'elementor' ),
 				'sections' => [],
 			],
 		];
 	}
 
 	protected function get_page_title() {
-		return __( 'Elementor', '' );
+		return __( 'Elementor', 'elementor' );
 	}
 }
