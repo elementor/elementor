@@ -1025,6 +1025,11 @@ class Element_Section extends Element_Base {
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
+		<# if ( ! isInner ) { #>
+		<div class="elementor-editor-element-add">
+			<i class="fa fa-plus"></i>
+		</div>
+		<# } #>
 		<?php
 	}
 

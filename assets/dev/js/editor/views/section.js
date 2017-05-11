@@ -1,8 +1,11 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
+	AddSectionView = require( 'elementor-views/add-section/inline' ),
 	SectionView;
 
 SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
+
+	addSectionView: null,
 
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
@@ -162,6 +165,37 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this._checkIsFull();
+	},
+
+	onClickAdd: function() {
+		var self = this;
+
+		if ( self.addSectionView && ! self.addSectionView.isDestroyed ) {
+			self.addSectionView.fadeToDeath();
+
+			return;
+		}
+
+		var myIndex = self.model.collection.indexOf( self.model ),
+			addSectionView = new AddSectionView( {
+				atIndex: myIndex + 1
+			} );
+
+		addSectionView.render();
+
+		self.$el.after( addSectionView.$el );
+
+		self.addSectionView = addSectionView;
+
+		var timeout = setTimeout( function() {
+			self.addSectionView.fadeToDeath();
+		}, 2000 );
+
+		self.addSectionView.$el.on( 'mouseenter', function() {
+			clearTimeout( timeout );
+
+			self.addSectionView.$el.off( 'mouseenter' );
+		} );
 	},
 
 	onAddChild: function() {
