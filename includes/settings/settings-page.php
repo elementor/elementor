@@ -191,6 +191,8 @@ abstract class Settings_Page {
 	private function ensure_tabs() {
 		if ( null === $this->tabs ) {
 			$this->tabs = $this->create_tabs();
+
+			do_action( 'elementor/admin/after_create_settings/' . static::PAGE_ID );
 		}
 	}
 }
