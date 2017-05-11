@@ -67,6 +67,8 @@ ColumnView = BaseElementView.extend( {
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
+		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
+
 		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
 		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
@@ -83,13 +85,25 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	changeSizeUI: function() {
-		var columnSize = this.model.getSetting( '_column_size' ),
-			inlineSize = this.model.getSetting( '_inline_size' ),
-			columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
+		var self = this,
+			columnSize = self.model.getSetting( '_column_size' );
 
-		this.$el.attr( 'data-col', columnSize );
+		self.$el.attr( 'data-col', columnSize );
 
-		this.ui.columnTitle.html( columnSizeTitle );
+		_.defer( function() { // Wait for the column size to be applied
+			var inlineSize = +self.model.getSetting( '_inline_size' ) || self.getPercentSize(),
+				columnSizeTitle = inlineSize.toFixed( 1 ) + '%';
+
+			self.ui.columnTitle.html( columnSizeTitle );
+		} );
+	},
+
+	getPercentSize: function( size ) {
+		if ( ! size ) {
+			size = this.el.getBoundingClientRect().width;
+		}
+
+		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
 	},
 
 	getSortableOptions: function() {
@@ -97,13 +111,6 @@ ColumnView = BaseElementView.extend( {
 			connectWith: '.elementor-widget-wrap',
 			items: '> .elementor-element'
 		};
-	},
-
-	// Events
-	onCollectionChanged: function() {
-		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
-
-		this.changeChildContainerClasses();
 	},
 
 	changeChildContainerClasses: function() {
@@ -115,6 +122,13 @@ ColumnView = BaseElementView.extend( {
 		} else {
 			this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
 		}
+	},
+
+	// Events
+	onCollectionChanged: function() {
+		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
+
+		this.changeChildContainerClasses();
 	},
 
 	onRender: function() {
@@ -157,6 +171,16 @@ ColumnView = BaseElementView.extend( {
 		} );
 	},
 
+	onSettingsChanged: function( settings ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+
+		var changedAttributes = settings.changedAttributes();
+
+		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
+			this.changeSizeUI();
+		}
+	},
+
 	onClickTrigger: function( event ) {
 		event.preventDefault();
 
@@ -176,6 +200,24 @@ ColumnView = BaseElementView.extend( {
 
 	onWidgetDragEnd: function() {
 		this.$el.removeClass( 'elementor-dragging' );
+	},
+
+	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
+		var errors = [];
+
+		if ( ! oldValue ) {
+			oldValue = this.model.getSetting( '_column_size' );
+		}
+
+		try {
+			this._parent.resizeChild( this, +oldValue, +newValue );
+		} catch ( e ) {
+			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
+				errors.push( 'Could not do a resize' );
+			}
+		}
+
+		return errors;
 	}
 } );
 

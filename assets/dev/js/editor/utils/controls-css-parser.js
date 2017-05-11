@@ -98,7 +98,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		var outputCssProperty;
 
 		try {
-			outputCssProperty = cssProperty.replace( /\{\{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
+			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
 				var parserControl = control,
 					valueToInsert = value;
 

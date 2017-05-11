@@ -1,5 +1,6 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
+	Validator = require( 'elementor-editor-utils/validator' ),
 	BaseElementView;
 
 BaseElementView = Marionette.CompositeView.extend( {
@@ -160,6 +161,19 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.addChildElement( itemData, options );
 	},
 
+	addControlValidator: function( controlName, validationCallback ) {
+		validationCallback = _.bind( validationCallback, this );
+
+		var validator = new Validator( { customValidationMethod: validationCallback } ),
+			validators = this.getEditModel().get( 'settings' ).validators;
+
+		if ( ! validators[ controlName ] ) {
+			validators[ controlName ] = [];
+		}
+
+		validators[ controlName ].push( validator );
+	},
+
 	isCollectionFilled: function() {
 		return false;
 	},
@@ -224,15 +238,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.controlsCSSParser.stylesheet.empty();
 
-		self.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
-
-		if ( 'column' === self.model.get( 'elType' ) ) {
-			var inlineSize = settings.get( '_inline_size' );
-
-			if ( ! _.isEmpty( inlineSize ) ) {
-				self.controlsCSSParser.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
-			}
-		}
+		self.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
 
 		self.controlsCSSParser.addStyleToDocument();
 
