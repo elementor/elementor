@@ -187,6 +187,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
 		include( ELEMENTOR_PATH . 'includes/responsive.php' );
 		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
+		require( ELEMENTOR_PATH . 'includes/rollback.php' );
 
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
