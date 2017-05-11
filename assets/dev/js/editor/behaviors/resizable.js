@@ -64,6 +64,8 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	onResizeStart: function( event ) {
 		event.stopPropagation();
 
+		this.view.$el.data( 'originalWidth', this.view.el.getBoundingClientRect().width );
+
 		this.view.triggerMethod( 'request:resize:start' );
 	},
 

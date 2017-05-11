@@ -3,7 +3,7 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 
 ControlWysiwygItemView = ControlBaseItemView.extend( {
 	childEvents: {
-		'keyup textarea.elementor-wp-editor': 'updateElementModel'
+		'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
 	},
 
 	// List of buttons to move {buttonToMove: afterButton}
