@@ -43,7 +43,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 		return this.collection.add( model, options, true );
 	},
 
-	addSection: function( properties ) {
+	addSection: function( properties, options ) {
 		var newSection = {
 			id: elementor.helpers.getUniqueID(),
 			elType: 'section',
@@ -55,7 +55,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 			_.extend( newSection, properties );
 		}
 
-		var newModel = this.addChildModel( newSection );
+		var newModel = this.addChildModel( newSection, options );
 
 		return this.children.findByModelCid( newModel.cid );
 	},
