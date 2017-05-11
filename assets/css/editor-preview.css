@@ -99,17 +99,27 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element[data-side="bottom"]:last-child {
   border-bottom: 4px solid #71d7f7; }
 
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-section:last-child .elementor-editor-element-add {
+  display: none; }
+
+@media (min-width: 768px) {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-section:not(.elementor-section-height-full) .elementor-column-wrap.elementor-element-empty, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section:not(.elementor-section-height-full) .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; } }
+
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-section .elementor-editor-element-add {
   position: absolute;
   bottom: 0;
   left: 50%;
   z-index: 9999;
-  -webkit-transform: translateX(-50%) translateY(1px);
-          transform: translateX(-50%) translateY(1px);
+  -webkit-transform: translateX(-50%) translateY(100%);
+          transform: translateX(-50%) translateY(100%);
   color: #fff;
   background-color: #3b97e3;
   height: 23px;
-  width: 25px;
+  width: 26px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -126,13 +136,6 @@ html.elementor-html {
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay:after {
   outline: 2px solid #3b97e3; }
-
-@media (min-width: 768px) {
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-section:not(.elementor-section-height-full) .elementor-column-wrap.elementor-element-empty, .elementor-editor-active .elementor.elementor-edit-mode .elementor-section:not(.elementor-section-height-full) .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0; } }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-inner-section {
   margin-top: 24px; }
