@@ -13,6 +13,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
 
+		self.validators = {};
+
 		if ( ! self.controls ) {
 			return;
 		}
@@ -154,6 +156,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
 
+	setExternalChange: function( key, value ) {
+		this.set( key, value );
+
+		this.trigger( 'change:external', key, value )
+			.trigger( 'change:external:' + key, value );
+	},
+
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -180,7 +189,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 						return;
 					}
 
-					if ( 'object' === typeof data[ key ] ) {
+					if ( data[ key ] && 'object' === typeof data[ key ] ) {
 						// First check length difference
 						if ( Object.keys( data[ key ] ).length !== Object.keys( control[ 'default' ] ).length ) {
 							return;
