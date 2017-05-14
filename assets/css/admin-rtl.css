@@ -273,6 +273,14 @@ body.elementor-editor-inactive #elementor-editor {
   font-family: eicon;
   font-size: 17px; }
 
+.elementor-settings-form-page {
+  padding-top: 30px; }
+  .elementor-settings-form-page:not(.elementor-active) {
+    display: none; }
+
+._elementor_settings_update_time {
+  display: none; }
+
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {

@@ -55,7 +55,7 @@ body {
 	}
 }
 
-.elementor-hidden{
+.elementor-hidden {
 	display: none;
 }
 
@@ -195,6 +195,20 @@ body {
 	content: "\e801";
 	font-family: eicon;
 	font-size: 17px;
+}
+
+
+// Settings
+.elementor-settings-form-page {
+	padding-top: 30px;
+
+	&:not(.elementor-active) {
+		display: none;
+	}
+}
+
+._elementor_settings_update_time {
+	display: none;
 }
 
 @import "message";
