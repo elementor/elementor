@@ -74,6 +74,15 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'general' => [
 						'fields' => [
+							self::UPDATE_TIME_FIELD => [
+								'full_field_id' => self::UPDATE_TIME_FIELD,
+								'field_args' => [
+									'type' => 'hidden',
+								],
+								'setting_args' => [
+									'sanitize_callback' => 'time',
+								],
+							],
 							'cpt_support' => [
 								'label' => __( 'Post Types', 'elementor' ),
 								'field_args' => [
@@ -105,19 +114,6 @@ class Settings extends Settings_Page {
 									'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
-							],
-						],
-					],
-					'hidden' => [
-						'fields' => [
-							self::UPDATE_TIME_FIELD => [
-								'full_field_id' => self::UPDATE_TIME_FIELD,
-								'field_args' => [
-									'type' => 'hidden',
-								],
-								'setting_args' => [
-									'sanitize_callback' => 'time',
-								],
 							],
 						],
 					],
