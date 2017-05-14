@@ -123,6 +123,38 @@ class Tools {
 		);
 
 		register_setting( Tools::PAGE_ID, $field_id );
+
+		// Rollback
+		$rollback_section = 'elementor_rollback_section';
+
+		add_settings_section(
+			$rollback_section,
+			__( 'Rollback to Previous Version', 'elementor' ),
+			function() {
+				$intro_text = sprintf( __( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ), ELEMENTOR_VERSION );
+				$intro_text = '<p>' . $intro_text . '</p>';
+
+				echo $intro_text;
+			},
+			self::PAGE_ID
+		);
+
+		$rollback_url = wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback' ), 'elementor_rollback' );
+
+		$field_id = 'elementor_rollback';
+		add_settings_field(
+			$field_id,
+			__( 'Rollback Version', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$rollback_section,
+			[
+				'id' => $field_id,
+				'type' => 'raw_html',
+				'html' => sprintf( '<a href="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>', $rollback_url, sprintf( __( 'Reinstall v%s', 'elementor' ), ELEMENTOR_PREVIOUS_STABLE_VERSION ) ),
+				'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
+			]
+		);
 	}
 
 	public function display_settings_page() {
@@ -181,6 +213,23 @@ class Tools {
 		}
 	}
 
+	public function post_elementor_rollback() {
+		check_admin_referer( 'elementor_rollback' );
+
+		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
+
+		$rollback = new Rollback( [
+			'version' => ELEMENTOR_PREVIOUS_STABLE_VERSION,
+			'plugin_name' => ELEMENTOR_PLUGIN_BASE,
+			'plugin_slug' => $plugin_slug,
+			'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, ELEMENTOR_PREVIOUS_STABLE_VERSION ),
+		] );
+
+		$rollback->run();
+
+		wp_die( '', __( 'Rollback to Previous Version', 'elementor' ), [ 'response' => 200 ] );
+	}
+
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
@@ -189,5 +238,7 @@ class Tools {
 			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
 		}
+
+		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
 }
