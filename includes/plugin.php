@@ -67,6 +67,15 @@ class Plugin {
 	public $settings;
 
 	/**
+	 * @var Admin
+	 */
+	public $admin;
+	/**
+	 * @var Tools
+	 */
+	public $tools;
+
+	/**
 	 * @var Preview
 	 */
 	public $preview;
@@ -179,6 +188,7 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
+		include( ELEMENTOR_PATH . 'includes/settings/settings-page.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
@@ -236,12 +246,12 @@ class Plugin {
 
 		$this->templates_manager = new TemplateLibrary\Manager();
 
-		$this->maintenance_mode = new Maintenance_Mode();
-
 		if ( is_admin() ) {
-			new Admin();
-			new Tools();
+			$this->admin = new Admin();
+			$this->tools = new Tools();
 		}
+
+		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
 	private function add_cpt_support() {
