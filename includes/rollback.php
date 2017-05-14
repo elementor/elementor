@@ -19,6 +19,10 @@ class Rollback {
 	private function print_inline_style() {
 		?>
 		<style>
+			.wrap {
+				overflow: hidden;
+			}
+
 			h1 {
 				background: #9b0a46;
 				text-align: center;
