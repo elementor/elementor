@@ -52,7 +52,7 @@ class Maintenance_Mode {
 		return $template;
 	}
 
-	public function register_settings_fields() {
+	public function register_settings_fields( Tools $tools ) {
 		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [ 'type' => 'page' ] );
 
 		$templates_options = [];
@@ -69,7 +69,7 @@ class Maintenance_Mode {
 		                         sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
 		                         '</span>';
 
-		Plugin::$instance->tools->add_tab( 'maintenance_mode', [
+		$tools->add_tab( 'maintenance_mode', [
 			'label' => __( 'Maintenance Mode', 'elementor' ),
 			'sections' => [
 				'maintenance_mode' => [
