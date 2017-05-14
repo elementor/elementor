@@ -73,7 +73,7 @@ class Maintenance_Mode {
 			'label' => __( 'Maintenance Mode', 'elementor' ),
 			'sections' => [
 				'maintenance_mode' => [
-					'callback' => function () {
+					'callback' => function() {
 						echo '<div>' . __( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
 					},
 					'fields' => [

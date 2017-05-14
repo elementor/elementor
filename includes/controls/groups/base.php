@@ -157,7 +157,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		$prefixed_condition_keys = array_map(
-			function ( $key ) use ( $controls_prefix ) {
+			function( $key ) use ( $controls_prefix ) {
 				return $controls_prefix . $key;
 			},
 			array_keys( $field['condition'] )
@@ -175,7 +175,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$args = $this->get_args();
 
 		$selectors = array_combine(
-			array_map( function ( $key ) use ( $args ) {
+			array_map( function( $key ) use ( $args ) {
 				return str_replace( '{{SELECTOR}}', $args['selector'], $key );
 			}, array_keys( $selectors ) ),
 			$selectors
@@ -188,7 +188,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback( '/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function ( $matches ) use ( $controls_prefix ) {
+			$selector = preg_replace_callback( '/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function( $matches ) use ( $controls_prefix ) {
 				return $controls_prefix . $matches[0];
 			}, $selector );
 		}
