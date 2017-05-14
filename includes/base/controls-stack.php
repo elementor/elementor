@@ -70,7 +70,7 @@ abstract class Controls_Stack {
 
 		$settings = $this->get_controls_settings();
 
-		$active_controls = array_reduce( array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
+		$active_controls = array_reduce( array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 			$control = $controls[ $control_key ];
 
 			if ( $this->is_control_visible( $control, $settings ) ) {
