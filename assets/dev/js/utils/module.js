@@ -143,9 +143,15 @@ var Module = function() {
 
 Module.prototype.__construct = function() {};
 
+Module.prototype.getConstructorID = function() {
+	return this._constructorID;
+};
+
 Module.prototype.getDefaultSettings = function() {
 	return {};
 };
+
+Module.extendsCount = 0;
 
 Module.extend = function( properties ) {
 	var $ = jQuery,
@@ -160,6 +166,12 @@ Module.extend = function( properties ) {
 	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
 
 	child.prototype.constructor = child;
+
+	var constructorID = ++Module.extendsCount;
+
+	child.prototype.getConstructorID = function() {
+		return constructorID;
+	};
 
 	child.__super__ = parent.prototype;
 
