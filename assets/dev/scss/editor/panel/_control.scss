@@ -71,7 +71,7 @@
 
 	&.elementor-control-hidden-label {
 
-		.elementor-control-title {
+		> * > .elementor-control-title, > * > * > .elementor-control-title { // Avoid repeater titles to be affected from above
 			display: none;
 		}
 	}
