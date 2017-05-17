@@ -65,7 +65,7 @@ abstract class Skin_Base {
 	}
 
 	public function end_controls_tabs() {
-		$this->parent->end_controls_tab();
+		$this->parent->end_controls_tabs();
 	}
 
 	public function add_control( $id, $args ) {
