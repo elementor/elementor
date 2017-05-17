@@ -50,6 +50,24 @@ abstract class Skin_Base {
 		$this->parent->end_controls_section();
 	}
 
+	public function start_controls_tab( $id, $args ) {
+		$args['condition']['_skin'] = $this->get_id();
+		$this->parent->start_controls_tab( $this->get_control_id( $id ), $args );
+	}
+
+	public function end_controls_tab() {
+		$this->parent->end_controls_tab();
+	}
+
+	public function start_controls_tabs( $id ) {
+		$args['condition']['_skin'] = $this->get_id();
+		$this->parent->start_controls_tabs( $this->get_control_id( $id ) );
+	}
+
+	public function end_controls_tabs() {
+		$this->parent->end_controls_tab();
+	}
+
 	public function add_control( $id, $args ) {
 		$args['condition']['_skin'] = $this->get_id();
 		return $this->parent->add_control( $this->get_control_id( $id ), $args );
