@@ -48,9 +48,11 @@ class Group_Control_Image_Size extends Group_Control_Base {
 				$image_src = $settings[ $setting_key ]['url'] ;
 			}
 
-			$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
+			if ( ! empty( $image_src ) ) {
+				$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
 
-			$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings[ $setting_key ] ), Control_Media::get_image_alt( $settings[ $setting_key ] ), $image_class_html );
+				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings[ $setting_key ] ), Control_Media::get_image_alt( $settings[ $setting_key ] ), $image_class_html );
+			}
 		}
 
 		return $html;
