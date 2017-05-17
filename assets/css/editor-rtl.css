@@ -1087,7 +1087,7 @@ select {
       color: #b01b1b; }
       .elementor-panel .elementor-control.elementor-control-deprecated .elementor-control-field-description {
         color: #b01b1b; }
-    .elementor-panel .elementor-control.elementor-control-hidden-label .elementor-control-title {
+    .elementor-panel .elementor-control.elementor-control-hidden-label > * > .elementor-control-title, .elementor-panel .elementor-control.elementor-control-hidden-label > * > * > .elementor-control-title {
       display: none; }
     .elementor-panel .elementor-control.elementor-hidden-control {
       display: none; }
