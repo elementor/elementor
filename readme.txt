@@ -183,7 +183,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.4.6 - 09.05.2017 =
+= 1.4.7 - 18.05.2017 =
 * Tweak! - Added WP favicon support on Editor mode
 * Fix! - Do not return empty `<img>` tag when not found image source on Image Size group control
 
