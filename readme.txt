@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 4.5
 Tested up to: 4.7
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -182,6 +182,10 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.4.7 - 18.05.2017 =
+* Tweak! - Added WP favicon support on Editor mode
+* Fix! - Do not return empty `<img>` tag when not found image source on Image Size group control
 
 = 1.4.6 - 09.05.2017 =
 * New! - Added new Google font `Arsenal` for typography control
