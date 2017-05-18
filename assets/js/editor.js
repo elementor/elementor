@@ -8109,32 +8109,26 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	ControlColorItemView;
 
 ControlColorItemView = ControlBaseItemView.extend( {
-	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
-
-		ui.picker = '.color-picker-hex';
-
-		return ui;
-	},
-
 	onReady: function() {
-		elementor.helpers.wpColorPicker( this.ui.picker, {
-			change: _.bind( function() {
-				this.setValue( this.ui.picker.wpColorPicker( 'color' ) );
-			}, this ),
+		var self = this;
 
-			clear: _.bind( function() {
+		elementor.helpers.wpColorPicker( self.ui.input, {
+			change: function() {
+				self.ui.input.val( self.ui.input.wpColorPicker( 'color' ) ).trigger( 'input' );
+			},
+			clear: function() {
 				this.setValue( '' );
-			}, this )
+			}
 		} ).wpColorPicker( 'instance' )
 			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );
 	},
 
 	onBeforeDestroy: function() {
-		if ( this.ui.picker.wpColorPicker( 'instance' ) ) {
-			this.ui.picker.wpColorPicker( 'close' );
+		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
+			this.ui.input.wpColorPicker( 'close' );
 		}
+
 		this.$el.remove();
 	}
 } );
