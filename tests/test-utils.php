@@ -11,9 +11,11 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 		];
 		
 		foreach ( $youtube_urls as $youtube_url ) {
-			$this->assertEquals( $youtube_id, \Elementor\Utils::get_youtube_id_from_url( $youtube_url ) );
+			$video_properties = \Elementor\Embed::get_video_properties( $youtube_url );
+
+			$this->assertEquals( $youtube_id, $video_properties['video_id'] );
 		}
-		
-		$this->assertFalse( \Elementor\Utils::get_youtube_id_from_url( 'https://www.youtube.com/' ) );
+
+		$this->assertNull( \Elementor\Embed::get_video_properties( 'https://www.youtube.com/' ) );
 	}
 }
