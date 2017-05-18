@@ -30,7 +30,7 @@ class Embed {
 		return null;
 	}
 
-	public static function get_embed_html( $video_url, array $embed_url_params = [], array $frame_attributes = [] ) {
+	public static function get_embed_url( $video_url, array $embed_url_params = [] ) {
 		$video_properties = self::get_video_properties( $video_url );
 
 		if ( ! $video_properties ) {
@@ -41,10 +41,18 @@ class Embed {
 
 		$embed_pattern = str_replace( '{VIDEO_ID}', $video_properties['video_id'], $embed_pattern );
 
-		$embed_pattern = add_query_arg( $embed_url_params, $embed_pattern );
+		return add_query_arg( $embed_url_params, $embed_pattern );
+	}
+
+	public static function get_embed_html( $video_url, array $embed_url_params = [], array $frame_attributes = [] ) {
+		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params );
+
+		if ( ! $video_embed_url ) {
+			return null;
+		}
 
 		$default_frame_attributes = [
-			'src' => $embed_pattern,
+			'src' => $video_embed_url,
 			'allowfullscreen',
 		];
 
