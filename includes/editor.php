@@ -34,6 +34,7 @@ class Editor {
 		add_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 		add_action( 'wp_head', 'wp_print_styles', 8 );
 		add_action( 'wp_head', 'wp_print_head_scripts', 9 );
+		add_action( 'wp_head', 'wp_site_icon' );
 		add_action( 'wp_head', [ $this, 'editor_head_trigger' ], 30 );
 
 		// Handle `wp_footer`

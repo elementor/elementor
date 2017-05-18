@@ -73,7 +73,7 @@ class Control_Color extends Base_Data_Control {
 				<# } #>
 			</label>
 			<div class="elementor-control-input-wrapper">
-				<input class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
+				<input data-setting="{{ name }}" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
 			</div>
 		</div>
 		<?php
