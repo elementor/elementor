@@ -1025,10 +1025,10 @@ class Element_Section extends Element_Base {
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
-					$video_id = Utils::get_youtube_id_from_url( $settings['background_video_link'] );
+					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 					?>
 					<div class="elementor-background-video-container elementor-hidden-phone">
-						<?php if ( $video_id ) : ?>
+						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
 						<?php else : ?>
 							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
