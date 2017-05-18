@@ -33,16 +33,6 @@ class Utils {
 		return substr( str_shuffle( str_repeat( $salt, $length ) ), 0, $length );
 	}
 
-	public static function get_youtube_id_from_url( $url ) {
-		preg_match( '/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/', $url, $video_id_parts );
-
-		if ( empty( $video_id_parts[1] ) ) {
-			return false;
-		}
-
-		return $video_id_parts[1];
-	}
-
 	/**
 	 * Tell to WP Cache plugins do not cache this request.
 	 *
