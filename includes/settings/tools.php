@@ -117,7 +117,7 @@ class Tools extends Settings_Page {
 						'label' => __( 'Editor Loader', 'elementor' ),
 						'fields' => [
 							'editor_break_lines' => [
-								'label' => __( 'Switch front-end editor loader method', 'elementor' ),
+								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
