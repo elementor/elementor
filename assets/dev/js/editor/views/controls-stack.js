@@ -41,16 +41,16 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	filter: function( model ) {
-		if ( model.get( 'tab' ) !== this.activeTab ) {
+	filter: function( controlModel ) {
+		if ( controlModel.get( 'tab' ) !== this.activeTab ) {
 			return false;
 		}
 
-		if ( 'section' === model.get( 'type' ) ) {
+		if ( 'section' === controlModel.get( 'type' ) ) {
 			return true;
 		}
 
-		var section = model.get( 'section' );
+		var section = controlModel.get( 'section' );
 
 		return ! section || section === this.activeSection;
 	},
