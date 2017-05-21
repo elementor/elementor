@@ -55,15 +55,20 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return ! section || section === this.activeSection;
 	},
 
+	isVisibleSectionControl: function( sectionControlModel ) {
+		return this.activeTab === sectionControlModel.get( 'tab' );
+	},
+
 	activateTab: function( $tab ) {
-		var activeTab = this.activeTab = $tab.data( 'tab' );
+		var self = this,
+			activeTab = this.activeTab = $tab.data( 'tab' );
 
 		this.ui.tabs.removeClass( 'active' );
 
 		$tab.addClass( 'active' );
 
-		var sectionControls = this.collection.filter( function( model ) {
-			return 'section' === model.get( 'type' ) && activeTab === model.get( 'tab' );
+		var sectionControls = this.collection.filter( function( controlModel ) {
+			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
 		if ( sectionControls[0] ) {
