@@ -5,7 +5,8 @@
 		Module = require( './handler-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 		YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
-		AnchorsModule = require( 'elementor-frontend/utils/anchors' );
+		AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
+		LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
 	var ElementorFrontend = function() {
 		var self = this,
@@ -25,7 +26,8 @@
 		var initOnReadyComponents = function() {
 			self.utils = {
 				youtube: new YouTubeModule(),
-				anchors: new AnchorsModule()
+				anchors: new AnchorsModule(),
+				lightbox: new LightboxModule()
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
