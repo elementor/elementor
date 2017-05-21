@@ -191,6 +191,15 @@
 .elementor-align-justify .elementor-button {
   width: 100%; }
 
+.elementor-lightbox-modal .dialog-widget-content {
+  background: none;
+  box-shadow: none;
+  width: 50%; }
+
+.elementor-lightbox-modal .dialog-close-button {
+  top: 12px;
+  right: 0; }
+
 @media (max-width: 1024px) {
   .elementor-tablet-align-center {
     text-align: center; }
@@ -1369,15 +1378,6 @@
 
 .elementor-aspect-ratio-32 .elementor-video-wrapper {
   padding-bottom: 66.6666%; }
-
-.elementor-widget-video-modal .dialog-widget-content {
-  background: none;
-  box-shadow: none;
-  width: 50%; }
-
-.elementor-widget-video-modal .dialog-close-button {
-  top: 12px;
-  right: 0; }
 
 .elementor-image-carousel-wrapper .slick-image-stretch .slick-slide .slick-slide-image {
   width: 100%; }
