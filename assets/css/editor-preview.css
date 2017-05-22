@@ -158,6 +158,7 @@ html.elementor-html {
   bottom: 100%;
   margin-bottom: 1px;
   -webkit-transform: translateY(1px);
+      -ms-transform: translateY(1px);
           transform: translateY(1px);
   border-radius: 3px 3px 0 0;
   pointer-events: all; }
@@ -278,7 +279,6 @@ html.elementor-html {
   opacity: .3; }
 
 .elementor-editor-active .elementor-widget:not(.elementor-loading):not(.elementor-widget-menu-anchor) {
-  -webkit-transition: all .1s;
   transition: all .1s; }
 
 .elementor-editor-active .elementor-widget.elementor-element-editable, .elementor-editor-active .elementor-widget.elementor-widget-can-edit:hover {
@@ -295,8 +295,7 @@ html.elementor-html {
 
 .elementor-editor-active .elementor-sortable-placeholder {
   background: #71d7f7;
-  -webkit-transition-timing-function: ease-out;
-          transition-timing-function: ease-out; }
+  transition-timing-function: ease-out; }
   .elementor-editor-active .elementor-sortable-placeholder:not(.elementor-column) {
     height: 5px; }
   .elementor-editor-active .elementor-sortable-placeholder.elementor-column {
