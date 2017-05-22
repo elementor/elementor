@@ -8542,7 +8542,7 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 			validValue = min;
 		}
 
-		if ( isFinite( max ) && inputValue > max ) {
+		if ( _.isFinite( max ) && inputValue > max ) {
 			validValue = max;
 		}
 
