@@ -21,6 +21,10 @@ EditorView = ControlsStack.extend( {
 		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
 	},
 
+	isVisibleSectionControl: function( sectionControlModel ) {
+		return ControlsStack.prototype.isVisibleSectionControl.apply( this, arguments ) && elementor.helpers.isActiveControl( sectionControlModel, this.model.get( 'settings' ).attributes );
+	},
+
 	onBeforeRender: function() {
 		var controls = elementor.getElementControls( this.model );
 
