@@ -205,7 +205,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - Don’t run buttons arrangement when TinyMCE has custom configuration
 * Fix! - Apply default value to desktop only for mobile editing
 * Fix! - Double rendering in the editor
-* Fix! - Prevent Elementor video autoplay in wordpress backend editor
+* Fix! - Prevent Elementor video autoplay in WordPress backend editor
 
 ### 1.4.4 - 20.04.2017 ###
 * Fix! - Customizer is not loading in some cases ([Topic](https://wordpress.org/support/topic/cant-load-wp-customizer-because-of-get_css-error/))
