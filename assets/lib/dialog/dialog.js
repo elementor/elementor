@@ -1,10 +1,10 @@
 /*!
- * Dialogs Manager v3.1.1
- * https://github.com/cobicarmel/dialogs-manager/
+ * Dialogs Manager v3.1.2
+ * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
  * Released under the MIT license
- * https://github.com/cobicarmel/dialogs-manager/blob/master/LICENSE.txt
+ * https://github.com/kobizz/dialogs-manager/blob/master/LICENSE.txt
  */
 
 (function ($, global) {
@@ -16,6 +16,7 @@
 	var DialogsManager = {
 		widgetsTypes: {},
 		createWidgetType: function (typeName, properties, Parent) {
+
 			if (!Parent) {
 				Parent = this.Widget;
 			}
@@ -130,6 +131,7 @@
 
 			if ( settings.hideOnBackgroundClick ) {
 				self.getElements( 'widget' ).on( 'click', function (event) {
+
 					if ( event.target !== this ) {
 						return;
 					}
@@ -159,6 +161,7 @@
 		};
 
 		var ensureClosureMethods = function() {
+
 			var closureMethodsNames = self.getClosureMethods();
 
 			$.each(closureMethodsNames, function () {
@@ -167,6 +170,7 @@
 					oldMethod = self[methodName];
 
 				self[methodName] = function () {
+
 					oldMethod.apply(self, arguments);
 				};
 			});
@@ -238,11 +242,13 @@
 		var normalizeClassName = function (name) {
 
 			return name.replace(/([a-z])([A-Z])/g, function () {
+
 				return arguments[1] + '-' + arguments[2].toLowerCase();
 			});
 		};
 
 		var onWindowKeyUp = function(event) {
+
 			var ESC_KEY = 27,
 				keyCode = event.which;
 
@@ -331,6 +337,7 @@
 		};
 
 		this.on = function (eventName, callback) {
+
 			if (!events[eventName]) {
 				events[eventName] = [];
 			}
@@ -361,6 +368,8 @@
 			} else {
 				settings[key] = value;
 			}
+
+			return self;
 		};
 
 		this.show = function () {
@@ -389,8 +398,11 @@
 			}
 
 			$.each(callbacks, function (index, callback) {
+
 				callback.call(self, params);
 			});
+
+			return self;
 		};
 	};
 
@@ -438,6 +450,7 @@
 			};
 		},
 		getClosureMethods: function() {
+
 			return [
 				'refreshPosition'
 			];
@@ -475,6 +488,7 @@
 			elements.widgetContent.position(position);
 		},
 		attachEvents: function() {
+
 			if ( this.getSettings( 'closeButton' ) ) {
 				this.getElements( 'closeButton' ).on( 'click', this.hide );
 			}
@@ -598,6 +612,7 @@
 			});
 		},
 		buildWidget: function () {
+
 			DialogsManager.getWidgetType('lightbox').prototype.buildWidget.apply(this, arguments);
 
 			var $buttonsWrapper = this.addElement('buttonsWrapper');
@@ -633,6 +648,7 @@
 			this.unbindHotKeys();
 		},
 		onInit: function () {
+
 			this.buttons = [];
 
 			this.hotKeys = {};
@@ -722,6 +738,7 @@
 			});
 		},
 		getDefaultSettings: function () {
+
 			var settings = DialogsManager.getWidgetType('options').prototype.getDefaultSettings.apply(this, arguments);
 
 			settings.strings = {

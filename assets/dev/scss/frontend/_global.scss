@@ -129,6 +129,24 @@
 	}
 }
 
+// Lightbox Modal
+.elementor-lightbox-modal {
+
+	.dialog- {
+
+		&widget-content {
+			background: none;
+			box-shadow: none;
+			width: 50%;
+		}
+
+		&close-button {
+			top: 12px;
+			right: 0;
+		}
+	}
+}
+
 // Alignment for Tablet
 @media (max-width: $screen-md-max) {
 
