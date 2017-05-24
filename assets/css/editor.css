@@ -193,7 +193,6 @@ body {
 
 #elementor-preview:not(.ui-resizable-resizing),
 #elementor-panel:not(.ui-resizable-resizing) {
-  -webkit-transition: left 0.5s, width 0.5s;
   transition: left 0.5s, width 0.5s; }
 
 #elementor-loading {
@@ -210,6 +209,7 @@ body {
   top: 50%;
   left: 50%;
   -webkit-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
           transform: translateX(-50%) translateY(-50%);
   width: 100px; }
   .elementor-loader-wrapper .elementor-loader {
@@ -286,15 +286,12 @@ body {
     opacity: 1; } }
 
 #elementor-preview-loading {
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -327,10 +324,8 @@ body {
   outline: none;
   border: none;
   border-radius: 3px;
-  -webkit-transition-property: background, color, box-shadow, opacity;
   transition-property: background, color, box-shadow, opacity;
-  -webkit-transition-duration: .5s;
-          transition-duration: .5s; }
+  transition-duration: .5s; }
   .elementor-button:not([disabled]) {
     cursor: pointer; }
   .elementor-button:not(.elementor-button-state) .elementor-state-icon {
@@ -408,7 +403,6 @@ input[type="radio"] {
   vertical-align: middle;
   width: 16px;
   min-width: 16px;
-  -webkit-transition: .05s border-color ease-in-out;
   transition: .05s border-color ease-in-out; }
   input[type="checkbox"]:focus,
   input[type="radio"]:focus {
@@ -453,7 +447,6 @@ select {
   /* please don't change 'position' */
   border-radius: 4px;
   opacity: 0;
-  -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
   transition: background-color 0.2s linear, opacity 0.2s linear;
   bottom: 3px;
   /* there must be 'bottom' for ps-scrollbar-x-rail */
@@ -464,7 +457,6 @@ select {
   /* please don't change 'position' */
   background-color: #aaa;
   border-radius: 4px;
-  -webkit-transition: background-color 0.2s linear;
   transition: background-color 0.2s linear;
   bottom: 0;
   /* there must be 'bottom' for ps-scrollbar-x */
@@ -476,7 +468,6 @@ select {
   /* please don't change 'position' */
   border-radius: 4px;
   opacity: 0;
-  -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
   transition: background-color 0.2s linear, opacity 0.2s linear;
   right: 3px;
   /* there must be 'right' for ps-scrollbar-y-rail */
@@ -487,7 +478,6 @@ select {
   /* please don't change 'position' */
   background-color: #aaa;
   border-radius: 4px;
-  -webkit-transition: background-color 0.2s linear;
   transition: background-color 0.2s linear;
   right: 0;
   /* there must be 'right' for ps-scrollbar-y */
@@ -551,6 +541,7 @@ select {
   box-shadow: 0 0 10px #39b54a, 0 0 5px #39b54a;
   opacity: 1.0;
   -webkit-transform: rotate(3deg) translate(0px, -4px);
+      -ms-transform: rotate(3deg) translate(0px, -4px);
           transform: rotate(3deg) translate(0px, -4px); }
 
 /* Remove these to get rid of the spinner */
@@ -617,7 +608,6 @@ select {
     color: #ffffff; }
   .elementor-panel a {
     color: #9b0a46;
-    -webkit-transition: none;
     transition: none; }
   .elementor-panel h1,
   .elementor-panel h2,
@@ -798,7 +788,6 @@ select {
       padding: 7px 25px;
       margin-top: 20px;
       box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
-      -webkit-transition: .5s;
       transition: .5s; }
       .elementor-panel .elementor-panel-nerd-box .elementor-button.elementor-panel-nerd-box-link:hover {
         background-color: #fdca5e; }
@@ -822,7 +811,6 @@ select {
       font-size: 19px;
       height: 40px;
       line-height: 40px;
-      -webkit-transition: all 0.5s;
       transition: all 0.5s; }
       .elementor-panel .elementor-header-button .elementor-icon:hover {
         color: #d5dadf; }
@@ -875,8 +863,8 @@ select {
       top: 50%;
       color: #a4afb7;
       -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
               transform: translateY(-50%);
-      -webkit-transition: right 1s;
       transition: right 1s; }
   .elementor-panel #elementor-panel-elements-search-input {
     font-size: 11px;
@@ -885,7 +873,6 @@ select {
     font-style: italic;
     color: #a4afb7;
     border: none;
-    -webkit-transition: all 1s;
     transition: all 1s; }
     .elementor-panel #elementor-panel-elements-search-input:focus {
       background-color: rgba(255, 255, 255, 0.7);
@@ -942,6 +929,7 @@ select {
         margin-right: 19px; } }
   .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active {
     -webkit-transform: translateY(10px);
+        -ms-transform: translateY(10px);
             transform: translateY(10px); }
     @media (max-width: 1439px) {
       .elementor-panel .elementor-panel-scheme-color .wp-picker-container.wp-picker-active .wp-color-result {
@@ -975,11 +963,9 @@ select {
       font-style: italic;
       margin-top: 5px; }
   .elementor-panel .elementor-panel-scheme-color-system-items {
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-transition: border .5s;
     transition: border .5s;
     overflow: hidden;
     padding: 3px;
@@ -990,7 +976,6 @@ select {
       border: 1px solid #a4afb7; }
   .elementor-panel .elementor-panel-scheme-color-system-item {
     height: 20px;
-    -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1; }
@@ -1035,7 +1020,6 @@ select {
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
         content: '\f0db'; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.active {
-        background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
         background-image: linear-gradient(to bottom, #f3f3f3, #fff);
         border-bottom: 3px solid #9b0a46; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a {
@@ -1105,14 +1089,12 @@ select {
     .elementor-panel .elementor-control-wp p {
       margin: 15px 0; }
   .elementor-panel .elementor-label-block > .elementor-control-content > .elementor-control-field {
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
     -webkit-flex-wrap: wrap;
         -ms-flex-wrap: wrap;
             flex-wrap: wrap;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -1154,7 +1136,6 @@ select {
       display: table-cell;
       vertical-align: middle;
       font-size: 12px;
-      -webkit-transition: all .5s;
       transition: all .5s;
       cursor: pointer; }
   .elementor-panel .elementor-slider {
@@ -1172,6 +1153,7 @@ select {
       display: inline-block;
       top: 50%;
       -webkit-transform: translateY(-50%) translateX(-8px);
+          -ms-transform: translateY(-50%) translateX(-8px);
               transform: translateY(-50%) translateX(-8px);
       position: absolute;
       box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
@@ -1184,7 +1166,6 @@ select {
       width: 80%;
       float: right; }
   .elementor-panel .elementor-units-choices {
-    -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
@@ -1201,7 +1182,6 @@ select {
       text-transform: uppercase;
       font-size: 9px; }
   .elementor-panel .elementor-control-responsive-switchers {
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
@@ -1218,7 +1198,6 @@ select {
     color: #fff;
     font-size: 8px;
     text-align: center;
-    -webkit-transition: background-color .5s;
     transition: background-color .5s; }
     .elementor-panel .elementor-responsive-switcher:hover {
       background-color: #c2cbd2; }
@@ -1235,16 +1214,13 @@ select {
   .elementor-panel .elementor-update-preview {
     margin: 15px 15px 0;
     background-color: #e6e9ec;
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
   .elementor-panel .elementor-update-preview-button-wrapper {
-    -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
@@ -1277,6 +1253,7 @@ select {
     top: 50%;
     left: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
             transform: translateX(-50%) translateY(-50%);
     color: #fff;
     font-size: 20px; }
@@ -1360,15 +1337,12 @@ select {
     cursor: pointer;
     font-size: 10px;
     border-radius: 0 3px 3px 0;
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
@@ -1526,6 +1500,7 @@ select {
       top: 0;
       background-color: #e6e9ec;
       -webkit-transform: translateY(-100%);
+          -ms-transform: translateY(-100%);
               transform: translateY(-100%); }
     .elementor-panel .elementor-control-type-structure .elementor-control-structure-title:after, .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:after {
       bottom: 0;
@@ -1541,14 +1516,12 @@ select {
     .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets-title:before {
       height: 3px; }
   .elementor-panel .elementor-control-type-structure .elementor-control-structure-more-presets {
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
     -webkit-flex-wrap: wrap;
         -ms-flex-wrap: wrap;
             flex-wrap: wrap;
-    -webkit-box-pack: justify;
     -webkit-justify-content: space-between;
         -ms-flex-pack: justify;
             justify-content: space-between; }
@@ -1598,7 +1571,6 @@ select {
     font-size: 0.8em;
     color: #a4afb7;
     text-transform: uppercase;
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex; }
@@ -1640,6 +1612,7 @@ select {
       display: none; }
     .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-controls .wp-picker-container.wp-picker-active {
       -webkit-transform: translateY(0);
+          -ms-transform: translateY(0);
               transform: translateY(0);
       border-width: 0; }
   .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools {
@@ -1650,7 +1623,6 @@ select {
     background-color: #d5dadf;
     height: 40px;
     border-spacing: 1px;
-    -webkit-transition: all .5s;
     transition: all .5s; }
     .elementor-panel .elementor-control-type-repeater .elementor-repeater-row-tools:hover {
       background-color: #a4afb7; }
@@ -1711,9 +1683,7 @@ select {
     background: #eceeef;
     border-radius: inherit;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
-    -webkit-transition: 0.15s ease-out;
     transition: 0.15s ease-out;
-    -webkit-transition-property: opacity, background;
     transition-property: opacity, background; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-label:before, .elementor-panel .elementor-control-type-switcher .elementor-switch-label:after {
     position: absolute;
@@ -1721,7 +1691,6 @@ select {
     width: 50%;
     text-align: center;
     line-height: 20px;
-    -webkit-transition: inherit;
     transition: inherit; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-label:before {
     content: attr(data-off);
@@ -1749,13 +1718,11 @@ select {
     height: 18px;
     background: white;
     border-radius: 10px;
-    -webkit-transition: left 0.15s ease-out;
     transition: left 0.15s ease-out; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-handle {
     left: 30px;
     box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2); }
   .elementor-panel .elementor-control-type-order .elementor-control-oreder-wrapper {
-    display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex; }
@@ -1763,6 +1730,7 @@ select {
     display: none; }
     .elementor-panel .elementor-control-type-order input:checked + .elementor-control-order-label {
       -webkit-transform: scale(1, -1);
+          -ms-transform: scale(1, -1);
               transform: scale(1, -1); }
   .elementor-panel .elementor-control-type-order select {
     border-radius: 3px 0 0 3px; }
@@ -1785,6 +1753,7 @@ select {
       top: 50%;
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
+          -ms-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
   .elementor-panel .elementor-control-type-hidden {
     display: none !important; }
@@ -1811,7 +1780,6 @@ select {
     margin: 0;
     width: 48px;
     height: 25px;
-    -webkit-transition: border .5s;
     transition: border .5s;
     padding: 0;
     border-radius: 3px;
@@ -1847,6 +1815,7 @@ select {
     float: right; }
   .elementor-panel .elementor-control .wp-picker-container.wp-picker-active {
     -webkit-transform: translateY(6px);
+        -ms-transform: translateY(6px);
             transform: translateY(6px); }
     .elementor-panel .elementor-control .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
@@ -1868,7 +1837,6 @@ select {
     text-align: center;
     cursor: pointer;
     color: #a4afb7;
-    -webkit-transition: all 0.5s;
     transition: all 0.5s; }
     .elementor-panel .elementor-panel-footer-tool.elementor-open {
       color: #fff; }
@@ -1899,6 +1867,7 @@ select {
       margin-bottom: 1px; }
     .elementor-panel .elementor-panel-footer-sub-menu-item[data-device-mode="mobile-landscape"] .fa-mobile {
       -webkit-transform: rotate(-90deg);
+          -ms-transform: rotate(-90deg);
               transform: rotate(-90deg); }
     .elementor-panel .elementor-panel-footer-sub-menu-item:hover {
       background-color: rgba(0, 0, 0, 0.2); }
@@ -1946,6 +1915,7 @@ select {
   width: 15px;
   height: 50px;
   -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
           transform: translateY(-50%);
   background-color: #e6e9ec;
   font-size: 15px;
@@ -1973,17 +1943,16 @@ body.elementor-editor-preview #elementor-mode-switcher {
     top: 50%;
     left: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
             transform: translateX(-50%) translateY(-50%); }
 
 #elementor-mode-switcher-preview-input {
   display: none; }
 
 .elementor-revision-item {
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -2005,7 +1974,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
       display: block; }
   .elementor-revision-item__details {
     padding-left: 15px;
-    -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
@@ -2042,7 +2010,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   bottom: 0;
   left: 0;
   right: 0;
-  -webkit-transition: all .5s ease 0s;
   transition: all .5s ease 0s; }
   .elementor-device-desktop #elementor-preview-responsive-wrapper {
     min-width: 1025px;
@@ -2202,7 +2169,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   color: inherit; }
 
 #elementor-template-library-modal a.elementor-template-library-blank-footer-link {
-  -webkit-transition: color .5s;
   transition: color .5s; }
   #elementor-template-library-modal a.elementor-template-library-blank-footer-link:hover {
     color: #9b0a46; }
@@ -2211,11 +2177,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
   text-transform: uppercase; }
 
 #elementor-template-library-header {
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center; }
@@ -2240,7 +2204,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
     font-size: 20px; }
 
 #elementor-template-library-header-menu-area {
-  -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
       -ms-flex-positive: 1;
           flex-grow: 1; }
@@ -2253,7 +2216,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 17px;
   cursor: pointer; }
   .elementor-template-library-menu-item.elementor-active {
-    background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
     background-image: linear-gradient(to bottom, #f3f3f3, #fff);
     border-bottom: 3px solid #9b0a46; }
 
@@ -2269,7 +2231,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   height: 50px;
   box-sizing: content-box;
   cursor: pointer;
-  -webkit-transition: color .5s;
   transition: color .5s; }
   .elementor-template-library-header-item:not(:hover) {
     color: #a4afb7; }
@@ -2278,6 +2239,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     top: 50%;
     left: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
             transform: translateX(-50%) translateY(-50%); }
   .elementor-template-library-header-item > i {
     font-size: 18px; }
@@ -2299,7 +2261,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 16.5px 16.5px 15px 0;
   border-right: 1px solid #e6e9ec;
   cursor: pointer;
-  -webkit-transition: color .5s;
   transition: color .5s; }
   #elementor-template-library-header-preview-back:not(:hover) {
     color: #a4afb7; }
@@ -2359,7 +2320,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    -webkit-transition: opacity .5s;
     transition: opacity .5s; }
   .elementor-template-library-template-remote .elementor-template-library-template-action {
     font-size: 11px;
@@ -2376,6 +2336,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
       top: 50%;
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
+          -ms-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
   .elementor-template-library-template-remote .elementor-template-library-template-name {
     margin: 13px 0 10px;
@@ -2385,17 +2346,14 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-template-library-template-local {
   background-color: #fff;
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
   border-bottom: 1px solid #d5dadf;
   height: 50px;
-  -webkit-transition: background-color .3s linear;
   transition: background-color .3s linear; }
   .elementor-template-library-template-local:hover {
     background-color: #fafbfb; }
@@ -2414,7 +2372,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
     color: #a4afb7; }
   .elementor-template-library-template-local .elementor-template-library-template-controls {
     direction: rtl;
-    -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
             flex-grow: 1; }
@@ -2425,7 +2382,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
       margin-left: 15px;
       cursor: pointer;
       font-weight: 500;
-      -webkit-transition: color .5s;
       transition: color .5s; }
       .elementor-template-library-template-local .elementor-template-library-template-controls > div:not(:hover) {
         color: #a4afb7; }
@@ -2444,6 +2400,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 1440px;
     height: 150%;
     -webkit-transform: scale(0.666) translateX(-25%) translateY(-25%);
+        -ms-transform: scale(0.666) translateX(-25%) translateY(-25%);
             transform: scale(0.666) translateX(-25%) translateY(-25%); }
 
 .elementor-template-library-blank-title {
@@ -2458,15 +2415,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-template-library-save-template-form {
   margin-top: 55px;
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center; }
@@ -2497,6 +2451,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   bottom: 90px;
   left: 50%;
   -webkit-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
           transform: translateX(-50%);
   color: #a4afb7;
   font-size: 13px;

@@ -115,20 +115,18 @@ html.elementor-html {
   left: 50%;
   z-index: 9999;
   -webkit-transform: translateX(-50%) translateY(100%);
+      -ms-transform: translateX(-50%) translateY(100%);
           transform: translateX(-50%) translateY(100%);
   color: #fff;
   background-color: #3b97e3;
   height: 23px;
   width: 26px;
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -143,7 +141,6 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings-list {
   position: absolute;
   overflow: hidden;
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -168,6 +165,7 @@ html.elementor-html {
   bottom: 100%;
   right: 50%;
   -webkit-transform: translateY(-1px) translateX(-50%);
+      -ms-transform: translateY(-1px) translateX(-50%);
           transform: translateY(-1px) translateX(-50%);
   background-color: #3b97e3; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings-list .elementor-editor-element-setting:hover {
@@ -177,19 +175,17 @@ html.elementor-html {
     bottom: 0;
     left: 50%;
     -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
             transform: translateX(-50%); }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting {
   cursor: pointer;
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -200,7 +196,6 @@ html.elementor-html {
   width: 25px;
   border-style: solid;
   border-width: 0;
-  -webkit-transition: margin .3s, width .3s, font .3s;
   transition: margin .3s, width .3s, font .3s; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-remove .fa {
@@ -225,8 +220,6 @@ html.elementor-html {
   z-index: 2;
   top: 1px;
   left: 1px;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: reverse;
   -webkit-flex-direction: row-reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse; }
@@ -321,7 +314,6 @@ html.elementor-html {
   opacity: .3; }
 
 .elementor-editor-active .elementor-widget:not(.elementor-loading):not(.elementor-widget-menu-anchor) {
-  -webkit-transition: all .1s;
   transition: all .1s; }
 
 .elementor-editor-active .elementor-widget.elementor-element-editable, .elementor-editor-active .elementor-widget.elementor-widget-can-edit:hover {
@@ -338,8 +330,7 @@ html.elementor-html {
 
 .elementor-editor-active .elementor-sortable-placeholder {
   background: #71d7f7;
-  -webkit-transition-timing-function: ease-out;
-          transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
   opacity: .9; }
 
 @-webkit-keyframes placeholder-height {
