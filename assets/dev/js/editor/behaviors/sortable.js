@@ -110,6 +110,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		elementor.channels.data
 			.reply( 'dragging:model', model )
+			.reply( 'dragging:parent:view', this.view );
 	},
 
 	onSortOver: function( event ) {
