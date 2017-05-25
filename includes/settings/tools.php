@@ -171,8 +171,8 @@ class Tools extends Settings_Page {
 					],
 				],
 			],
-			'rollback' => [
-				'label' => __( 'Rollback', 'elementor' ),
+			'versions' => [
+				'label' => __( 'Versions', 'elementor' ),
 				'sections' => [
 					'rollback' => [
 						'label' => __( 'Rollback to Previous Version', 'elementor' ),
