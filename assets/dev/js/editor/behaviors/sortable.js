@@ -163,13 +163,20 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		elementor.channels.data.trigger( draggedElType + ':drag:end' );
 
+		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
+
+		senderSection.isManualRemoving = true;
+
 		model.destroy();
+
+		senderSection.isManualRemoving = false;
 	},
 
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
 		var model = this.view.collection.get( ui.item.attr( 'data-model-cid' ) );
+
 		if ( model ) {
 			elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:end' );
 		}
