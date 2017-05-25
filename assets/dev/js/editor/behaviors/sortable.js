@@ -108,13 +108,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:start' );
 
-		elementor.channels.data.reply( 'cache:' + model.cid, model );
+		elementor.channels.data
+			.reply( 'dragging:model', model )
 	},
 
-	onSortOver: function( event, ui ) {
+	onSortOver: function( event ) {
 		event.stopPropagation();
 
-		var model = elementor.channels.data.request( 'cache:' + ui.item.data( 'model-cid' ) );
+		var model = elementor.channels.data.request( 'dragging:model' );
 
 		Backbone.$( event.target )
 			.addClass( 'elementor-draggable-over' )
@@ -144,7 +145,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var model = elementor.channels.data.request( 'cache:' + ui.item.data( 'model-cid' ) ),
+		var model = elementor.channels.data.request( 'dragging:model' ),
 			draggedElType = model.get( 'elType' ),
 			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
 			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
