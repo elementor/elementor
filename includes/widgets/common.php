@@ -125,6 +125,15 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( '_tabs_background' );
+
+		$this->start_controls_tab(
+			'_tab_background_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
@@ -132,6 +141,27 @@ class Widget_Common extends Widget_Base {
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'_tab_background_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => '_background_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 
@@ -143,23 +173,20 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( '_tabs_border' );
+
+		$this->start_controls_tab(
+			'_tab_border_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => '_border',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
-			]
-		);
-
-		$this->add_control(
-			'_border_radius',
-			[
-				'label' => __( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
 			]
 		);
 
@@ -171,21 +198,12 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->end_controls_section();
+		$this->end_controls_tab();
 
-		$this->start_controls_section(
-			'_section_hover',
+		$this->start_controls_tab(
+			'_tab_border_hover',
 			[
-				'label' => __( 'Element Hover', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => '_background_hover',
-				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -222,6 +240,22 @@ class Widget_Common extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'transition-duration: {{SIZE}}s;',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
