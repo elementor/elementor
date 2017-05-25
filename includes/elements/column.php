@@ -40,8 +40,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_style',
 			[
-				'label' => __( 'Background & Border', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
+				'label' => __( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -52,6 +51,16 @@ class Element_Column extends Element_Base {
 				'name' => 'background',
 				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_border',
+			[
+				'label' => __( 'Border', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 

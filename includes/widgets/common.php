@@ -120,7 +120,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_background',
 			[
-				'label' => __( 'Background & Border', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -130,6 +130,16 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_border',
+			[
+				'label' => __( 'Border', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
