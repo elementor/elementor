@@ -66,6 +66,32 @@ class Tools {
 			]
 		);
 
+		$field_id = 'elementor_css_print_method';
+		add_settings_field(
+			$field_id,
+			__( 'CSS Print Method', 'elementor' ),
+			[ $controls_class_name, 'render' ],
+			self::PAGE_ID,
+			$tools_section,
+			[
+				'id' => $field_id,
+				'class' => $field_id,
+				'type' => 'select',
+				'options' => [
+					'external' => __( 'External File', 'elementor' ),
+					'internal' => __( 'Internal Embedding', 'elementor' ),
+				],
+				'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
+					__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
+					'</div>' .
+					'<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
+					__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts.', 'elementor' ) .
+					'</div>',
+			]
+		);
+
+		register_setting( Tools::PAGE_ID, $field_id, [ $validations_class_name, 'clear_cache' ] );
+
 		$replace_url_section = 'elementor_replace_url_section';
 
 		add_settings_section(
