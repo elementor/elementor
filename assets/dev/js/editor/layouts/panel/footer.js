@@ -55,9 +55,15 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 				$dialogMessage.append( $messageIcon, $messageText );
 
-				dialog = elementor.dialogsManager.createWidget( 'popup', {
+				dialog = elementor.dialogsManager.createWidget( 'simple', {
+					id: 'elementor-saved-popup',
+					position: {
+						element: 'message',
+						of: 'widget'
+					},
 					hide: {
-						delay: 1500
+						auto: true,
+						autoDelay: 1500
 					}
 				} );
 
