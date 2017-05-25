@@ -460,7 +460,7 @@ class Element_Section extends Element_Base {
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
-			'tab_background__overlay_hover',
+			'tab_background_overlay_hover',
 			[
 				'label' => __( 'Hover', 'elementor' ),
 			]
