@@ -58,7 +58,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			defaultSortableOptions = {
 				connectWith: $childViewContainer.selector,
 				cursor: 'move',
-				placeholder: 'elementor-sortable-placeholder',
+				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
 					top: 20,
 					left: 25
@@ -92,9 +92,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		} );
 
 		if ( 'column' === this.options.elChildType ) {
-			// the following code is just for touch
-			ui.placeholder.addClass( 'elementor-column' );
-
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
 				itemHeight = 0;
