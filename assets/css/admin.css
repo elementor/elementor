@@ -124,6 +124,7 @@ body.elementor-editor-active #elementor-switch-mode-button {
   body.elementor-editor-active #elementor-switch-mode-button:active {
     box-shadow: inset 0 1px 0 #ccc;
     -webkit-transform: translateY(1px);
+        -ms-transform: translateY(1px);
             transform: translateY(1px); }
 
 body.elementor-editor-active #elementor-editor {
@@ -176,7 +177,6 @@ body.elementor-editor-inactive #elementor-editor {
   border: 1px solid #DDD;
   height: 300px;
   width: 100%;
-  -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease; }
   #elementor-editor:hover {
     background-color: #ffffff; }
@@ -315,6 +315,7 @@ body.elementor-editor-inactive #elementor-editor {
       .notice.elementor-message .elementor-update-now .elementor-button:active {
         box-shadow: inset 0 1px 0 #7c1337;
         -webkit-transform: translateY(1px);
+            -ms-transform: translateY(1px);
                 transform: translateY(1px); }
 
 @media (max-width: 767px) {
