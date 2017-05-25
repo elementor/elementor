@@ -6,8 +6,8 @@
 	'use strict';
 
 	var hoverIntent = function( el, onOver, onOut ) {
-		var x, y, pX, pY;
-		var h = {},
+		var x, y, pX, pY,
+			h = {},
 			state = 0,
 			timer = 0;
 
