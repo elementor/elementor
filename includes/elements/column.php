@@ -45,6 +45,15 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'tabs_background' );
+
+		$this->start_controls_tab(
+			'tab_background_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
@@ -54,43 +63,27 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->end_controls_section();
+		$this->end_controls_tab();
 
-		$this->start_controls_section(
-			'section_border',
+		$this->start_controls_tab(
+			'tab_background_hover',
 			[
-				'label' => __( 'Border', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Group_Control_Background::get_type(),
 			[
-				'name' => 'border',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+				'name' => 'background_hover',
+				'types' => [ 'none', 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
 			]
 		);
 
-		$this->add_control(
-			'border_radius',
-			[
-				'label' => __( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-			]
-		);
+		$this->end_controls_tab();
 
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'box_shadow',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated',
-			]
-		);
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 
@@ -103,6 +96,15 @@ class Element_Column extends Element_Base {
 				'condition' => [
 					'background_background' => [ 'classic', 'gradient', 'video' ],
 				],
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_background_overlay' );
+
+		$this->start_controls_tab(
+			'tab_background_overlay_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -141,31 +143,12 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->end_controls_section();
+		$this->end_controls_tab();
 
-		// Section Hover
-		$this->start_controls_section(
-			'_section_hover',
+		$this->start_controls_tab(
+			'tab_background_overlay_hover',
 			[
-				'label' => __( 'Element Hover', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background_hover',
-				'types' => [ 'none', 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
-			]
-		);
-
-		$this->add_control(
-			'background_overlay_hover_title',
-			[
-				'label' => __( 'Background Overlay', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -198,6 +181,54 @@ class Element_Column extends Element_Base {
 				'condition' => [
 					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
 				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_border',
+			[
+				'label' => __( 'Border', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_border' );
+
+		$this->start_controls_tab(
+			'tab_border_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'border',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_border_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -234,6 +265,22 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition-duration: {{SIZE}}s;',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
