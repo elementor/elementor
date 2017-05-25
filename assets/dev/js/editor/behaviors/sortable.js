@@ -104,8 +104,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 			} );
 
 			ui.placeholder.height( itemHeight );
-
-			// ui.placeholder.addClass( 'elementor-column elementor-col-' + model.getSetting( 'size' ) );
 		}
 
 		elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:start' );
