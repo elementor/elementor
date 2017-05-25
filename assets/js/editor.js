@@ -7941,7 +7941,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 				self.ui.input.val( self.ui.input.wpColorPicker( 'color' ) ).trigger( 'input' );
 			},
 			clear: function() {
-				this.setValue( '' );
+				self.setValue( '' );
 			}
 		} ).wpColorPicker( 'instance' )
 			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
