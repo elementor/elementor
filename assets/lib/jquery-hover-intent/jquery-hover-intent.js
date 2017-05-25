@@ -93,12 +93,12 @@
 
 		h.remove = function() {
 			el.removeEventListener( 'mouseover', dispatchOver );
-			el.removeEventListener( 'mouseout', dispatchOut );
+			el.removeEventListener( 'mouseleave', dispatchOut );
 		};
 
 		el.addEventListener( 'mouseover', dispatchOver );
 
-		el.addEventListener( 'mouseout', dispatchOut );
+		el.addEventListener( 'mouseleave', dispatchOut );
 
 		return h;
 	};
