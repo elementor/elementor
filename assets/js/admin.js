@@ -129,6 +129,13 @@
 							} ).show();
 					} );
 			} );
+
+			$( '.elementor_css_print_method select' ).on( 'change', function() {
+				var $descriptions = $( '.elementor-css-print-method-description' );
+
+				$descriptions.hide();
+				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
+			} ).trigger( 'change' );
 		},
 
 		init: function() {
