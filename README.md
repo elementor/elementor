@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.7  
-**Stable tag:** 1.4.7  
+**Stable tag:** 1.4.8  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -184,6 +184,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.4.8 - 28.05.2017 ###
+* New! - Added new option: Set the CSS Print Method as Internal Embedding or External Files
+* Tweak! - CSS `autoprefixer` now supports last 5 versions of browsers
+* Tweak! - Nested all Swiper style under `elementor` class
+* Fix! - Open the first section when switching tabs not working
+* Fix! - Video widget cover image not displayed properly when lightbox on ([#1763](https://github.com/pojome/elementor/issues/1763))
 
 ### 1.4.7 - 18.05.2017 ###
 * Tweak! - Added WP favicon support on Editor mode
