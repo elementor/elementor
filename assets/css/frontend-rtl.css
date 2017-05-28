@@ -167,11 +167,6 @@
     position: absolute; }
   .elementor .elementor-invisible {
     visibility: hidden; }
-  .elementor .elementor-section,
-  .elementor .elementor-background-overlay,
-  .elementor .elementor-element-populated,
-  .elementor .elementor-widget-container {
-    transition-property: background, border, border-radius, box-shadow; }
 
 .elementor-align-center {
   text-align: center; }

@@ -159,6 +159,24 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'_background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
@@ -250,7 +268,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
-			'_hover_transition',
+			'_border_hover_transition',
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -259,13 +277,12 @@ class Widget_Common extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0.1,
 						'max' => 3,
 						'step' => 0.1,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'transition-duration: {{SIZE}}s;',
+					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
 				],
 			]
 		);

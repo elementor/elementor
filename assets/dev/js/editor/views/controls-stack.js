@@ -3,6 +3,10 @@ var ControlsStack;
 ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
+	activeTab: null,
+
+	activeSection: null,
+
 	templateHelpers: function() {
 		return {
 			elementData: elementor.getElementData( this.model )
@@ -32,10 +36,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
 		}
 	},
-
-	activeTab: null,
-
-	activeSection: null,
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
@@ -93,7 +93,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[0] ) {
-			this.activateSection( activeSection );
+			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
 		}
 	},
 

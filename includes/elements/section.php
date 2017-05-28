@@ -395,6 +395,24 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
@@ -498,6 +516,24 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'background_overlay_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
@@ -588,7 +624,7 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'hover_transition',
+			'border_hover_transition',
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -597,13 +633,13 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0.1,
 						'max' => 3,
 						'step' => 0.1,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}, {{WRAPPER}} > .elementor-background-overlay' => 'transition-duration: {{SIZE}}s;',
+					'{{WRAPPER}}' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s',
 				],
 			]
 		);
