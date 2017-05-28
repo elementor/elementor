@@ -95,16 +95,13 @@ abstract class Settings_Page {
 
 					$field['field_args']['id'] = $full_field_id;
 
-					if ( ! isset( $field['field_args']['class'] ) ) {
-						$field['field_args']['class'] = '';
-					}
-
-					$field['field_args']['class'] .= ' ' . $full_field_id;
-
+					$field_classes = [ $full_field_id ];
 
 					if ( ! empty( $field['class'] ) ) {
-						$field['field_args']['class'] .= ' ' . $field['class'];
+						$field_classes[] = $field['field_args']['class'];
 					}
+
+					$field['field_args']['class'] = implode( ' ', $field_classes );
 
 					add_settings_field(
 						$full_field_id,
