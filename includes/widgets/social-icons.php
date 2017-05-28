@@ -270,6 +270,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'name' => 'image_border', // We know this mistake - TODO: 'icon_border' (for hover control condition also)
 				'selector' => '{{WRAPPER}} .elementor-social-icon',
+				'separator' => 'before',
 			]
 		);
 
