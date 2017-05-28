@@ -185,6 +185,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.4.8 - 28.05.2017 ###
+* New! - Added new option: Set the CSS Print Method as Internal Embedding or External Files
+* Tweak! - CSS `autoprefixer` now supports last 5 versions of browsers
+* Tweak! - Nested all Swiper style under `elementor` class
+* Fix! - Open the first section when switching tabs not working
+* Fix! - Video widget cover image for small images ([#1763](https://github.com/pojome/elementor/issues/1763))
+
 ### 1.4.7 - 18.05.2017 ###
 * Tweak! - Added WP favicon support on Editor mode
 * Fix! - Do not return empty `<img>` tag when not found image source on Image Size group control
