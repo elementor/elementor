@@ -15,10 +15,10 @@ EditorView = ControlsStack.extend( {
 		};
 	},
 
-	activateSection: function( sectionName ) {
-		ControlsStack.prototype.activateSection.apply( this, arguments );
+	openActiveSection: function() {
+		ControlsStack.prototype.openActiveSection.apply( this, arguments );
 
-		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
+		elementor.channels.editor.trigger( 'section:activated', this.activeSection, this );
 	},
 
 	isVisibleSectionControl: function( sectionControlModel ) {

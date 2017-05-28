@@ -2610,10 +2610,10 @@ EditorView = ControlsStack.extend( {
 		};
 	},
 
-	activateSection: function( sectionName ) {
-		ControlsStack.prototype.activateSection.apply( this, arguments );
+	openActiveSection: function() {
+		ControlsStack.prototype.openActiveSection.apply( this, arguments );
 
-		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
+		elementor.channels.editor.trigger( 'section:activated', this.activeSection, this );
 	},
 
 	isVisibleSectionControl: function( sectionControlModel ) {
@@ -7468,6 +7468,10 @@ var ControlsStack;
 ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
+	activeTab: null,
+
+	activeSection: null,
+
 	templateHelpers: function() {
 		return {
 			elementData: elementor.getElementData( this.model )
@@ -7497,10 +7501,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
 		}
 	},
-
-	activeTab: null,
-
-	activeSection: null,
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
@@ -7558,7 +7558,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[0] ) {
-			this.activateSection( activeSection );
+			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
 		}
 	},
 
