@@ -65,12 +65,9 @@ AddSectionView = Marionette.ItemView.extend( {
 		self.$el.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			onDragEnter: function( side ) {
-				self.$el.attr( 'data-side', side );
-			},
-			onDragLeave: function() {
-				self.$el.removeAttr( 'data-side' );
-			},
+			placeholder: false,
+			currentElementClass: 'elementor-html5dnd-current-element',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function() {
 				self.addSection().addElementFromPanel();
 			}
