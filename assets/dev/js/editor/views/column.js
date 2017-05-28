@@ -9,6 +9,8 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
+	percentsPopup: null,
+
 	behaviors: {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -39,7 +41,6 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnTitle = '.column-title';
 		ui.columnInner = '> .elementor-column-wrap';
 
 		return ui;
@@ -58,6 +59,14 @@ ColumnView = BaseElementView.extend( {
 		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
 
+	initPercentsPopup: function() {
+		this.percentsPopup = elementorFrontend.getScopeWindow().elementorPreview.dialogsManager.createWidget( 'simple', {
+			classes: {
+				globalPrefix: 'elementor-column-percents-popup'
+			}
+		} );
+	},
+
 	isDroppingAllowed: function() {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			elType = elementView.model.get( 'elType' );
@@ -69,6 +78,12 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
+	getPercentsForDisplay: function() {
+		var inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
+
+		return inlineSize.toFixed( 1 ) + '%';
+	},
+
 	changeSizeUI: function() {
 		var self = this,
 			columnSize = self.model.getSetting( '_column_size' );
@@ -76,10 +91,7 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
-			var inlineSize = +self.model.getSetting( '_inline_size' ) || self.getPercentSize(),
-				columnSizeTitle = inlineSize.toFixed( 1 ) + '%';
-
-			self.ui.columnTitle.html( columnSizeTitle );
+			self.percentsPopup.setMessage( self.getPercentsForDisplay() );
 		} );
 	},
 
@@ -123,6 +135,8 @@ ColumnView = BaseElementView.extend( {
 
 		self.changeChildContainerClasses();
 
+		self.initPercentsPopup();
+
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
@@ -130,21 +144,9 @@ ColumnView = BaseElementView.extend( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
-			onDragEnter: function() {
-				self.$el.addClass( 'elementor-dragging-on-child' );
-			},
-			onDragging: function( side, event ) {
-				event.stopPropagation();
-
-				if ( this.dataset.side !== side ) {
-					Backbone.$( this ).attr( 'data-side', side );
-				}
-			},
-			onDragLeave: function() {
-				self.$el.removeClass( 'elementor-dragging-on-child' );
-
-				Backbone.$( this ).removeAttr( 'data-side' );
-			},
+			currentElementClass: 'elementor-html5dnd-current-element',
+			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
