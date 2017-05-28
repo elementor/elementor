@@ -1,9 +1,10 @@
 //
 // Editor
 //
-@import '../helpers/variables';
-@import '../helpers/mixins';
-@import '_compatibility';
+@import "../helpers/variables";
+@import "../helpers/mixins";
+@import "animations";
+@import "compatibility";
 
 // Hidden WP Admin Bar
 html.elementor-html {
@@ -15,6 +16,11 @@ html.elementor-html {
 }
 
 .elementor-editor-active {
+
+	.elementor-inner {
+		margin-top: 23px;
+	}
+
 	.elementor.elementor-edit-mode {
 
 		.elementor-element-empty {
@@ -25,18 +31,18 @@ html.elementor-html {
 		}
 
 		.elementor-empty-view {
-			display: table;
-			width: 100%;
-			height: 100%;
 			position: relative;
+			height: 40px;
 			z-index: $first-layer;
 		}
 
 		.elementor-first-add {
-			display: table-cell;
-			vertical-align: middle;
 			text-align: center;
 			border: 1px dashed #d5dadf;
+			display: flex;
+			height: 100%;
+			align-items: center;
+			justify-content: center;
 
 			.elementor-icon {
 				font-size: 19px;
@@ -84,117 +90,88 @@ html.elementor-html {
 				}
 			}
 
-			&:not(.elementor-state-hover) {
+			&:not(:hover) {
 
 				&:not(.elementor-element-editable) {
 
-					.elementor-editor-element-add {
-						display: none;
-					}
-
 					> .elementor-element-overlay {
 
-						.elementor-editor-element-settings-list {
+						.elementor-editor-element-settings {
 							display: none;
 						}
 					}
 				}
-
-				&:not(.ui-resizable-resizing) {
-
-					> .elementor-element-overlay {
-
-						.column-title {
-							display: none;
-						}
-					}
-				}
-			}
-
-			@media (max-width: $screen-md-max) {
-
-				> .elementor-element-overlay {
-
-					.column-title {
-						display: none;
-					}
-				}
-			}
-
-			&[data-side] {
-				animation: increase-border .6s;
-				animation-timing-function: ease-out;
 			}
 
 			&[data-side="top"], &[data-side="bottom"] + .elementor-element {
-				border-top: 4px solid $editor-info;
+
+				&:before {
+					content: '';
+					background-color: $editor-info;
+					transition-timing-function: ease-out;
+					opacity: .9;
+					height: $widget-placeholder-size;
+					animation: placeholder-widget 500ms;
+					display: block;
+				}
 			}
 
 			&[data-side="bottom"]:last-child {
-				border-bottom: 4px solid $editor-info;
+
+				&:after {
+					content: '';
+					background-color: $editor-info;
+					transition-timing-function: ease-out;
+					opacity: .9;
+					height: $widget-placeholder-size;
+					animation: placeholder-widget 500ms;
+					display: block;
+				}
 			}
 		}
 
 		// Section
 		.elementor-section {
 
-			&:last-child {
+			> .elementor-element-overlay {
+				left: 0;
+				bottom: 0;
 
-				.elementor-editor-element-add {
-					display: none;
+				&:after {
+					position: absolute;
+					left: 2px;
+					right: 2px;
+					top: 2px;
+					bottom: 2px;
+					outline: 2px solid $editor-info;
+					animation: section-outline .75s;
 				}
 			}
 
-			&:not(.elementor-section-height-full) {
+			&:hover,
+			&.elementor-element-editable {
 
-				.elementor-column-wrap {
+				> .elementor-element-overlay {
 
-					&.elementor-element-empty {
-
-						@media (min-width: $screen-md-min) {
-
-							&, .elementor-widget-wrap {
-								position: absolute;
-								width: 100%;
-								height: 100%;
-								top: 0;
-							}
-						}
+					&:after {
+						content: '';
 					}
 				}
 			}
+		}
 
-			.elementor-editor-element-add {
-				position: absolute;
-				bottom: 0;
-				left: 50%;
-				z-index: $editor-layer;
-				transform: translateX(-50%) translateY(100%);
-				color: #fff;
-				background-color: #3b97e3;
-				height: 23px;
-				width: 26px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				cursor: pointer;
-			}
+		.elementor-top-section {
 
-			> .elementor-element-overlay {
+			> .elementor-container {
 
-				&:after {
-					outline: 2px solid #3b97e3;
+				> .elementor-row {
+					min-height: 80px;
 				}
 			}
 		}
 
-		// Inner Section
-		.elementor-inner-section {
-			margin-top: 24px;
-		}
-
 		// General - Overlay Settings
-		.elementor-editor-element-settings-list {
+		.elementor-editor-element-settings {
 			position: absolute;
 			overflow: hidden;
 			display: flex;
@@ -215,7 +192,7 @@ html.elementor-html {
 				&.elementor-active {
 
 					~ .elementor-editor-element-setting {
-						@include border-start-property(width, 1px)
+						@include margin-start(0)
 					}
 				}
 
@@ -229,24 +206,27 @@ html.elementor-html {
 			}
 		}
 
-		.elementor-editor-section-settings-list {
-			bottom: 100%;
+		.elementor-editor-section-settings {
+			top: 0;
 			@include start(50%);
-			transform: translateY(-1px) translateX(-50%);
-			background-color: #3b97e3;
+			background-color: $editor-info;
+			border-radius: 6px 6px 0 0;
+			transform: translateX(-50%) translateY(-100%);
 
 			.elementor-editor-element-setting {
+				box-sizing: content-box;
 
 				&:hover {
-					background-color: darken(#3b97e3, 10%);
+					background-color: darken($editor-info, 10%);
 				}
-			}
 
-			+ .elementor-editor-element-add {
-				position: absolute;
-				bottom: 0;
-				left: 50%;
-				transform: translateX(-50%);
+				&:first-child {
+					@include padding-start(6px);
+				}
+
+				&:last-child {
+					@include padding-end(6px);
+				}
 			}
 		}
 
@@ -259,26 +239,17 @@ html.elementor-html {
 			margin: 0;
 			font-size: 10px;
 			color: #fff;
-			width: 25px;
-			border-style: solid;
-			border-width: 0;
+			width: 22px;
 			transition: margin .3s, width .3s, font .3s;
 		}
 
-		.elementor-editor-element-remove {
-
-			.fa {
-				color: $editor-danger;
-			}
-		}
-
 		// Column - Overlay Settings
-		.elementor-editor-column-settings-list {
-			float: $start;
-			background-color: $editor-darkest;
+		.elementor-editor-column-settings {
+			top: 0;
+			@include start(0);
 
 			.elementor-editor-element-setting {
-				@include border-start-property(color, $editor-darker);
+				background-color: $editor-darkest;
 
 				&:hover {
 					background-color: $editor-darker;
@@ -287,8 +258,6 @@ html.elementor-html {
 		}
 
 		.elementor-editor-element-trigger {
-			padding: 8.5px;
-			width: initial;
 
 			@media(min-width: $screen-lg-min) {
 				cursor: move;
@@ -329,8 +298,8 @@ html.elementor-html {
 				&.elementor-active {
 
 					~ .elementor-editor-element-setting {
-						@include border-end-property(width, 1px);
-						@include border-start-property(width, 0);
+						@include margin-end(1px);
+						@include margin-start(0);
 					}
 				}
 			}
@@ -371,18 +340,32 @@ html.elementor-html {
 			}
 		}
 
-		// Row
-		.elementor-row {
-			min-height: 100px; // Min Height for Section
-		}
-
 		// Column
 		.elementor-column {
 
 			> .elementor-element-overlay {
+				left: 0;
+				bottom: 0;
 
 				&:after {
+					position: absolute;
+					left: 0;
+					right: 0;
+					top: 0;
+					bottom: 0;
 					outline: 1px dashed $gray-darker;
+				}
+			}
+
+			&:hover,
+			&.elementor-element-editable {
+
+				> .elementor-element-overlay {
+					border: 1px solid $white;
+
+					&:after {
+						content: '';
+					}
 				}
 			}
 
@@ -395,19 +378,6 @@ html.elementor-html {
 						display: none;
 					}
 				}
-			}
-
-			.column-title {
-				position: absolute;
-				bottom: 100%;
-				@include end(0);
-				margin-bottom: 5px;
-				color: #999;
-				font-family: Arial, Helvetica, sans-serif;
-				font-weight: normal;
-				line-height: 1;
-				font-size: 12px;
-				font-style: italic;
 			}
 
 			> .ui-resizable-e, > .ui-resizable-w {
@@ -431,39 +401,6 @@ html.elementor-html {
 				}
 			}
 		}
-
-		.elementor-column, .elementor-section {
-			> .elementor-element-overlay {
-				left: 0;
-				bottom: 0;
-
-				&:after {
-					position: absolute;
-					left: 0;
-					right: 0;
-					top: 0;
-					bottom: 0;
-					width: 100%;
-					height: 100%;
-				}
-			}
-
-			&.elementor-state-hover,
-			&.elementor-element-editable {
-
-				> .elementor-element-overlay {
-					border: 1px solid $white;
-
-					&:after {
-						content: '';
-					}
-				}
-			}
-		}
-	}
-
-	.elementor-inner {
-		margin-top: 23px;
 	}
 
 	.elementor-column-wrap {
@@ -493,9 +430,9 @@ html.elementor-html {
 			outline: 1px solid $editor-info;
 		}
 
-		&:not(.elementor-element-editable):not(:hover) {
+		&:not(:hover) {
 
-			.elementor-editor-element-settings-list {
+			.elementor-editor-element-settings {
 				display: none;
 			}
 		}
@@ -510,47 +447,6 @@ html.elementor-html {
 
 	.handle {
 		display: none; //TEMP
-	}
-
-	.elementor-sortable-placeholder {
-		background: $editor-info;
-		transition-timing-function: ease-out;
-		opacity: .9;
-
-		$horizontal-placeholder-size: 40px;
-		$vertical-placeholder-size: 10px;
-
-		@keyframes placeholder-height {
-			0% {
-				height: 0;
-				opacity: 0;
-			}
-			100% {
-				height: $horizontal-placeholder-size;
-				opacity: .9;
-			}
-		}
-
-		@keyframes placeholder-width {
-			0% {
-				width: 0;
-				opacity: 0;
-			}
-			100% {
-				width: $vertical-placeholder-size;
-				opacity: .9;
-			}
-		}
-
-		&:not(.elementor-column) {
-			height: $horizontal-placeholder-size;
-			animation: placeholder-height 500ms;
-		}
-
-		&.elementor-column {
-			width: $vertical-placeholder-size;
-			animation: placeholder-width 500ms;
-		}
 	}
 
 	.elementor-sortable-helper {
@@ -582,29 +478,56 @@ html.elementor-html {
 			height: 40px;
 		}
 	}
+}
 
-	.elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
-	.elementor-first-add[data-side] {
+// Drag/sort placeholder
 
-		&:after {
-			content: '';
-			height: 4px;
-			display: block;
-			background-color: $editor-info;
-		}
+.elementor-sortable-placeholder {
+	background-color: $editor-info;
+	animation-timing-function: ease-out;
+	animation-duration: 500ms;
+	opacity: .9;
 
-		.elementor-icon {
-			display: none;
-		}
+	&.elementor-section-placeholder {
+		height: $section-placeholder-size;
+		animation-name: placeholder-section;
 	}
 
-	.elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] {
+	&.elementor-column-placeholder {
+		width: $column-placeholder-size;
+		animation-name: placeholder-column;
+	}
 
-		.elementor-inner-column {
+	&.elementor-widget-placeholder {
+		height: $widget-placeholder-size;
+		animation-name: placeholder-widget;
+	}
+}
 
-			.elementor-sortable-placeholder {
-				display: none;
-			}
+.elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
+.elementor-first-add.elementor-html5dnd-current-element {
+
+	&:after {
+		content: '';
+		background-color: $editor-info;
+		transition-timing-function: ease-out;
+		opacity: .9;
+		height: $widget-placeholder-size;
+		animation: placeholder-widget 500ms;
+		width: 100%;
+	}
+
+	.elementor-icon {
+		display: none;
+	}
+}
+
+.elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] {
+
+	.elementor-inner-column {
+
+		.elementor-sortable-placeholder {
+			display: none;
 		}
 	}
 }
@@ -615,11 +538,11 @@ html.elementor-html {
 	max-width: 1140px;
 	position: relative;
 
-	&:not([data-side]) {
+	&:not(.elementor-dragging-on-child) {
 		border: 2px dashed $editor-lightest;
 	}
 
-	&[data-side] {
+	&.elementor-dragging-on-child {
 		border: 3px dashed $editor-info;
 	}
 
@@ -676,15 +599,15 @@ html.elementor-html {
 			box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
 		}
 	}
-}
 
-.elementor-add-section-button {
-	background-color: $editor-accent;
-}
+	.elementor-add-section-button {
+		background-color: $editor-accent;
+	}
 
-.elementor-add-template-button {
-	background-color: $editor-dark;
-	@include margin-start(25px);
+	.elementor-add-template-button {
+		background-color: $editor-dark;
+		@include margin-start(25px);
+	}
 }
 
 .elementor-add-section-drag-title {
@@ -764,11 +687,52 @@ html.elementor-html {
 	margin: 10px auto;
 }
 
+.elementor-column-percents-popup-widget {
+	position: absolute;
+	color: #fff;
+	font-size: 11px;
+	background-color: $editor-darkest;
+	height: 17px;
+	width: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1;
+
+	&:after {
+		content: '';
+		position: absolute;
+		width:0;
+		height:0;
+		border: 8.5px solid transparent;
+		top: 0;
+	}
+
+	&[data-side="left"] {
+		border-radius: 3px 0 0 3px;
+
+		&:after {
+			left: 100%;
+			border-left-color: $editor-darkest;
+			border-right-width: 0;
+		}
+	}
+
+	&[data-side="right"] {
+		border-radius: 0 3px 3px 0;
+
+		&:after {
+			right: 100%;
+			border-right-color: $editor-darkest;
+			border-left-width: 0;
+		}
+	}
+}
+
 // Preview Mode
 .elementor-editor-preview {
 
 	.elementor-element-overlay,
-	.column-title,
 	.elementor-empty,
 	.elementor-add-section,
 	.elementor-element-empty,
