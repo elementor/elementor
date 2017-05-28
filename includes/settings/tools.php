@@ -116,7 +116,7 @@ class Tools extends Settings_Page {
 								          __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
 								          '</div>' .
 								          '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-								          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts.', 'elementor' ) .
+								          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
 								          '</div>',
 								],
 							],

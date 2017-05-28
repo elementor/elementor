@@ -5527,11 +5527,17 @@ module.exports = new Introduction();
 		var self = this,
 			settings = {},
 			elementsCache = {},
+			currentElement,
+			currentSide,
 			defaultSettings = {
 				element: '',
 				items: '>',
 				horizontalSensitivity: '10%',
 				axis: [ 'vertical', 'horizontal' ],
+				placeholder: true,
+				currentElementClass: 'html5dnd-current-element',
+				placeholderClass: 'html5dnd-placeholder',
+				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
 				isDroppingAllowed: null,
 				onDragEnter: null,
@@ -5546,6 +5552,8 @@ module.exports = new Introduction();
 
 		var initElementsCache = function() {
 			elementsCache.$element = $( settings.element );
+
+			elementsCache.$placeholder = $( '<div>', { 'class': settings.placeholderClass } );
 		};
 
 		var hasHorizontalDetection = function() {
@@ -5574,7 +5582,7 @@ module.exports = new Introduction();
 				return false;
 			}
 
-			sensitivity = sensitivity[ 0 ];
+			sensitivity = sensitivity[0];
 
 			isPercentValue = /%$/.test( settings.horizontalSensitivity );
 
@@ -5591,47 +5599,50 @@ module.exports = new Introduction();
 			return false;
 		};
 
-		var getSide = function( element, event ) {
-			var $element,
-				thisHeight,
-				thisWidth,
-				side;
+		var setSide = function( event ) {
+			var $element = $( currentElement ),
+				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
+				elementWidth = $element.outerWidth();
 
 			event = event.originalEvent;
 
-			$element = $( element );
-			thisHeight = $element.outerHeight();
-			thisWidth = $element.outerWidth();
-
-			if ( side = checkHorizontal( event.offsetX, thisWidth ) ) {
-				return side;
+			if ( currentSide = checkHorizontal( event.offsetX, elementWidth ) ) {
+				return;
 			}
 
 			if ( ! hasVerticalDetection() ) {
-				return false;
+				currentSide = null;
+
+				return;
 			}
 
-			if ( event.offsetY > thisHeight / 2 ) {
-				side = 'bottom';
-			} else {
-				side = 'top';
-			}
+			var elementPosition = currentElement.getBoundingClientRect();
 
-			return side;
+			currentSide = event.clientY > elementPosition.top + elementHeight / 2 ? 'bottom' : 'top';
 		};
 
-		var isDroppingAllowed = function( element, side, event ) {
+		var insertPlaceholder = function() {
+			if ( ! settings.placeholder ) {
+				return;
+			}
+
+			var insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+
+			elementsCache.$placeholder[ insertMethod ]( currentElement );
+		};
+
+		var isDroppingAllowed = function( event ) {
 			var dataTransferTypes,
 				draggableGroups,
 				isGroupMatch,
 				isDroppingAllowed;
 
 			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
-
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
+
 				isGroupMatch = false;
 
-				dataTransferTypes = Array.prototype.slice.apply( dataTransferTypes ); // Convert to array, since Firefox hold him as DOMStringList
+				dataTransferTypes = Array.prototype.slice.apply( dataTransferTypes ); // Convert to array, since Firefox hold it as DOMStringList
 
 				dataTransferTypes.forEach( function( type ) {
 					try {
@@ -5645,6 +5656,7 @@ module.exports = new Introduction();
 
 							if ( -1 !== draggableGroups.groups.indexOf( groupName ) ) {
 								isGroupMatch = true;
+
 								return false; // stops the forEach from extra loops
 							}
 						} );
@@ -5659,7 +5671,7 @@ module.exports = new Introduction();
 
 			if ( $.isFunction( settings.isDroppingAllowed ) ) {
 
-				isDroppingAllowed = settings.isDroppingAllowed.call( element, side, event, self );
+				isDroppingAllowed = settings.isDroppingAllowed.call( currentElement, currentSide, event, self );
 
 				if ( ! isDroppingAllowed ) {
 					return false;
@@ -5670,79 +5682,95 @@ module.exports = new Introduction();
 		};
 
 		var onDragEnter = function( event ) {
-			if ( event.target !== this ) {
+			event.stopPropagation();
+
+			if ( currentElement ) {
 				return;
 			}
 
-			// Avoid internal elements event firing
-			$( this ).children().each( function() {
-				var currentPointerEvents = this.style.pointerEvents;
+			currentElement = this;
 
-				if ( 'none' === currentPointerEvents ) {
+			elementsCache.$element.parents().each( function() {
+				var droppableInstance = $( this ).data( 'html5Droppable' );
+
+				if ( ! droppableInstance ) {
 					return;
 				}
 
-				$( this )
-					.data( 'backup-pointer-events', currentPointerEvents )
-					.css( 'pointer-events', 'none' );
+				droppableInstance.doDragLeave();
 			} );
 
-			var side = getSide( this, event );
+			setSide( event );
 
-			if ( ! isDroppingAllowed( this, side, event ) ) {
+			if ( ! isDroppingAllowed( event ) ) {
 				return;
 			}
 
+			insertPlaceholder();
+
+			elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
+
+			$( currentElement ).addClass( settings.currentElementClass );
+
 			if ( $.isFunction( settings.onDragEnter ) ) {
-				settings.onDragEnter.call( this, side, event, self );
+				settings.onDragEnter.call( currentElement, currentSide, event, self );
 			}
 		};
 
 		var onDragOver = function( event ) {
-			var side = getSide( this, event );
+			event.stopPropagation();
 
-			if ( ! isDroppingAllowed( this, side, event ) ) {
+			if ( ! currentElement ) {
+				onDragEnter.call( this, event );
+			}
+
+			var oldSide = currentSide;
+
+			setSide( event );
+
+			if ( ! isDroppingAllowed( event ) ) {
 				return;
 			}
 
 			event.preventDefault();
 
+			if ( oldSide !== currentSide ) {
+				insertPlaceholder();
+			}
+
 			if ( $.isFunction( settings.onDragging ) ) {
-				settings.onDragging.call( this, side, event, self );
+				settings.onDragging.call( this, currentSide, event, self );
 			}
 		};
 
-		var onDrop = function( event ) {
-			var side = getSide( this, event );
+		var onDragLeave = function( event ) {
+			var elementPosition = this.getBoundingClientRect();
 
-			if ( ! isDroppingAllowed( this, side, event ) ) {
+			if ( 'dragleave' === event.type && ! (
+				event.clientX < elementPosition.left ||
+				event.clientX >= elementPosition.right ||
+				event.clientY < elementPosition.top ||
+				event.clientY >= elementPosition.bottom
+			) ) {
+				return;
+			}
+
+			$( currentElement ).removeClass( settings.currentElementClass );
+
+			self.doDragLeave();
+		};
+
+		var onDrop = function( event ) {
+			setSide( event );
+
+			if ( ! isDroppingAllowed( event ) ) {
 				return;
 			}
 
 			event.preventDefault();
 
 			if ( $.isFunction( settings.onDropping ) ) {
-				settings.onDropping.call( this, side, event, self );
-			}
-		};
-
-		var onDragLeave = function( event ) {
-			// Avoid internal elements event firing
-			$( this ).children().each( function() {
-				var $this = $( this ),
-					backupPointerEvents = $this.data( 'backup-pointer-events' );
-
-				if ( undefined === backupPointerEvents ) {
-					return;
-				}
-
-				$this
-					.removeData( 'backup-pointer-events' )
-					.css( 'pointer-events', backupPointerEvents );
-			} );
-
-			if ( $.isFunction( settings.onDragLeave ) ) {
-				settings.onDragLeave.call( this, event, self );
+				settings.onDropping.call( this, currentSide, event, self );
 			}
 		};
 
@@ -5760,6 +5788,20 @@ module.exports = new Introduction();
 			initElementsCache();
 
 			attachEvents();
+		};
+
+		this.doDragLeave = function() {
+			if ( settings.placeholder ) {
+				elementsCache.$placeholder.remove();
+			}
+
+			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
+
+			if ( $.isFunction( settings.onDragLeave ) ) {
+				settings.onDragLeave.call( currentElement, event, self );
+			}
+
+			currentElement = currentSide = null;
 		};
 
 		this.destroy = function() {
@@ -6570,12 +6612,9 @@ AddSectionView = Marionette.ItemView.extend( {
 		self.$el.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			onDragEnter: function( side ) {
-				self.$el.attr( 'data-side', side );
-			},
-			onDragLeave: function() {
-				self.$el.removeAttr( 'data-side' );
-			},
+			placeholder: false,
+			currentElementClass: 'elementor-html5dnd-current-element',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function() {
 				self.addSection().addElementFromPanel();
 			}
@@ -7519,7 +7558,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+			this.activateSection( activeSection );
 		}
 	},
 
