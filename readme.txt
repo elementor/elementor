@@ -188,7 +188,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak! - CSS `autoprefixer` now supports last 5 versions of browsers
 * Tweak! - Nested all Swiper style under `elementor` class
 * Fix! - Open the first section when switching tabs not working
-* Fix! - Video widget cover image for small images ([#1763](https://github.com/pojome/elementor/issues/1763))
+* Fix! - Video widget cover image not displayed properly when lightbox on ([#1763](https://github.com/pojome/elementor/issues/1763))
 
 = 1.4.7 - 18.05.2017 =
 * Tweak! - Added WP favicon support on Editor mode
