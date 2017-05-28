@@ -197,6 +197,7 @@ class Widget_Testimonial extends Widget_Base {
 				'condition' => [
 					'testimonial_image[url]!' => '',
 				],
+				'separator' => 'before',
 			]
 		);
 

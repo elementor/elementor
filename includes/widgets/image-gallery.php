@@ -151,6 +151,7 @@ class Widget_Image_Gallery extends Widget_Base {
 				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
 				'selector' => '{{WRAPPER}} .gallery-item img',
+				'separator' => 'before',
 			]
 		);
 

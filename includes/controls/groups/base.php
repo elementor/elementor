@@ -15,6 +15,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$filtered_fields = $this->prepare_fields( $filtered_fields );
 
+		if ( isset( $this->args['separator'] ) ) {
+			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];
+		}
+
 		foreach ( $filtered_fields as $field_id => $field_args ) {
 			// Add the global group args to the control
 			$field_args = $this->add_group_args_to_field( $field_id, $field_args );
