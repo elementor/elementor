@@ -156,10 +156,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var newIndex = ui.item.parent().children().index( ui.item ),
-			newModel = new this.view.collection.model( model.toJSON( { copyHtmlCache: true } ) );
+		var newIndex = ui.item.parent().children().index( ui.item );
 
-		this.view.addChildModel( newModel, { at: newIndex } );
+		this.view.addChildElement( model.toJSON( { copyHtmlCache: true } ), { at: newIndex } );
 
 		elementor.channels.data.trigger( draggedElType + ':drag:end' );
 
@@ -185,14 +184,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortStop: function( event, ui ) {
 		event.stopPropagation();
 
-		var $childElement = ui.item,
-			collection = this.view.collection,
-			model = collection.get( $childElement.attr( 'data-model-cid' ) ),
-			newIndex = $childElement.parent().children().index( $childElement );
-
 		if ( this.getChildViewContainer()[0] === ui.item.parent()[0] ) {
-			if ( null === ui.sender && model ) {
-				var oldIndex = collection.indexOf( model );
+			var model = elementor.channels.data.request( 'dragging:model' );
+
+			if ( null === ui.sender ) {
+				var $childElement = ui.item,
+					collection = this.view.collection,
+					newIndex = $childElement.parent().children().index( $childElement ),
+					oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
 					var child = this.view.children.findByModelCid( model.cid );
@@ -201,7 +200,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 					collection.remove( model );
 
-					this.view.addChildModel( model, { at: newIndex } );
+					this.view.addChildElement( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
 				}
