@@ -5,10 +5,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		handles: elementor.config.is_rtl ? 'w' : 'e'
 	},
 
-	ui: {
-		columnTitle: '.column-title'
-	},
-
 	events: {
 		resizestart: 'onResizeStart',
 		resizestop: 'onResizeStop',
@@ -66,7 +62,8 @@ ResizableBehavior = Marionette.Behavior.extend( {
 
 		this.view.$el.data( 'originalWidth', this.view.el.getBoundingClientRect().width );
 
-		this.view.triggerMethod( 'request:resize:start' );
+
+		this.view.triggerMethod( 'request:resize:start', event );
 	},
 
 	onResizeStop: function( event ) {
@@ -78,7 +75,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 	onResize: function( event, ui ) {
 		event.stopPropagation();
 
-		this.view.triggerMethod( 'request:resize', ui );
+		this.view.triggerMethod( 'request:resize', ui, event );
 	},
 
 	getChildViewContainer: function() {

@@ -649,7 +649,6 @@ class Element_Column extends Element_Base {
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
-			<div class="column-title"></div>
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
 				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><i class="fa fa-columns"></i></li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
