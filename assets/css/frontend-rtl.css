@@ -75,21 +75,6 @@
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.dialog-popup-message {
-  height: 155px;
-  width: 155px;
-  background-color: #fff;
-  border-radius: 10px; }
-
-.elementor-dialog-message {
-  padding: 15px; }
-  .elementor-dialog-message .fa {
-    font-size: 85px;
-    padding: 10px; }
-
-.elementor-dialog-message-text {
-  text-transform: uppercase; }
-
 .dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
@@ -1310,7 +1295,8 @@
     opacity: 0.9;
     text-shadow: 3px 2px 30px rgba(0, 0, 0, 0.6); }
   .elementor-widget-video .elementor-custom-embed-image-overlay img {
-    display: block; }
+    display: block;
+    width: 100%; }
 
 .elementor-widget-video .elementor-custom-embed-play {
   position: absolute;
