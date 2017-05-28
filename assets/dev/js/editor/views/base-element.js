@@ -116,9 +116,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 	addChildElement: function( itemData, options ) {
 		options = options || {};
 
-		var myChildType = this.getChildType();
+		var myChildType = this.getChildType(),
+			elType = itemData.get ? itemData.get( 'elType' ) : itemData.elType;
 
-		if ( -1 === myChildType.indexOf( itemData.elType ) ) {
+		if ( -1 === myChildType.indexOf( elType ) ) {
 			delete options.at;
 
 			return this.children.last().addChildElement( itemData, options );
