@@ -1118,7 +1118,10 @@ class Element_Section extends Element_Base {
 				<?php endif;
 			endif;
 
-			if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
+			if (
+				in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
+				in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] )
+			) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif;
 
