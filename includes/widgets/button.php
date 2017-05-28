@@ -288,6 +288,7 @@ class Widget_Button extends Widget_Base {
 				'placeholder' => '1px',
 				'default' => '1px',
 				'selector' => '{{WRAPPER}} .elementor-button',
+				'separator' => 'before',
 			]
 		);
 

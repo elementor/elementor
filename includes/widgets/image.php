@@ -185,6 +185,7 @@ class Widget_Image extends Widget_Base {
 				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
 				'selector' => '{{WRAPPER}} .elementor-image img',
+				'separator' => 'before',
 			]
 		);
 
