@@ -187,6 +187,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_border',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
+				'separator' => 'none',
 			]
 		);
 
@@ -224,6 +225,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_border_hover',
 				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+				'separator' => 'none',
 			]
 		);
 
