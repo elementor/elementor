@@ -387,12 +387,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.runReadyTrigger();
 
-		self.$el.hoverIntent( function() {
-			self.$el.addClass( 'elementor-state-hover' );
-		}, function() {
-			self.$el.removeClass( 'elementor-state-hover' );
-		}, { timeout: 500 } );
-
 		if ( self.toggleEditTools ) {
 			self.ui.settingsList.hoverIntent( function() {
 				self.ui.triggerButton.addClass( 'elementor-active' );
