@@ -526,6 +526,7 @@ class Element_Section extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
+				'separator' => 'none',
 			]
 		);
 
@@ -562,6 +563,7 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover',
+				'separator' => 'none',
 			]
 		);
 
