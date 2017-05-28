@@ -15,6 +15,10 @@ class Element_Section extends Element_Base {
 				'title' => __( 'Duplicate', 'elementor' ),
 				'icon' => 'files-o',
 			],
+			'add' => [
+				'title' => __( 'Add', 'elementor' ),
+				'icon' => 'plus',
+			],
 			'save' => [
 				'title' => __( 'Save', 'elementor' ),
 				'icon' => 'floppy-o',
@@ -1060,13 +1064,19 @@ class Element_Section extends Element_Base {
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings-list  elementor-editor-section-settings-list">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><i class="fa fa-bars"></i></li>
+			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><i class="fa fa-cog"></i></li>
 				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<?php if ( 'add' === $edit_tool_name ) : ?>
+						<# if ( ! isInner ) { #>
+					<?php endif; ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
 						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
+					<?php if ( 'add' === $edit_tool_name ) : ?>
+						<# } #>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			</ul>
 		</div>
@@ -1086,11 +1096,6 @@ class Element_Section extends Element_Base {
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<div class="elementor-row"></div>
 		</div>
-		<# if ( ! isInner ) { #>
-		<div class="elementor-editor-element-add">
-			<i class="fa fa-plus"></i>
-		</div>
-		<# } #>
 		<?php
 	}
 
