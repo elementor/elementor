@@ -103,6 +103,23 @@ class Tools extends Settings_Page {
 									'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
 								],
 							],
+							'css_print_method' => [
+								'label' => __( 'CSS Print Method', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_css_print_method',
+									'type' => 'select',
+									'options' => [
+										'external' => __( 'External File', 'elementor' ),
+										'internal' => __( 'Internal Embedding', 'elementor' ),
+									],
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
+								          __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
+								          '</div>' .
+								          '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
+								          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts.', 'elementor' ) .
+								          '</div>',
+								],
+							],
 							'reset_api_data' => [
 								'label' => __( 'Sync Library', 'elementor' ),
 								'field_args' => [
@@ -154,8 +171,8 @@ class Tools extends Settings_Page {
 					],
 				],
 			],
-			'rollback' => [
-				'label' => __( 'Rollback', 'elementor' ),
+			'versions' => [
+				'label' => __( 'Versions', 'elementor' ),
 				'sections' => [
 					'rollback' => [
 						'label' => __( 'Rollback to Previous Version', 'elementor' ),

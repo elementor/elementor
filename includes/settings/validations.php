@@ -15,4 +15,10 @@ class Settings_Validations {
 
 		return $input;
 	}
+
+	public static function clear_cache( $input ) {
+		Plugin::$instance->posts_css_manager->clear_cache();
+
+		return $input;
+	}
 }

@@ -170,6 +170,13 @@
 					}
 				} ).show();
 			} );
+
+			$( '.elementor_css_print_method select' ).on( 'change', function() {
+				var $descriptions = $( '.elementor-css-print-method-description' );
+
+				$descriptions.hide();
+				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
+			} ).trigger( 'change' );
 		},
 
 		init: function() {
@@ -284,19 +291,12 @@ MaintenanceModeModule = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		elements.$modeSelect = jQuery( selectors.modeSelect );
-
 		elements.$maintenanceModeTable = elements.$modeSelect.parents( selectors.maintenanceModeTable );
-
 		elements.$excludeModeSelect = elements.$maintenanceModeTable.find( selectors.excludeModeSelect );
-
 		elements.$excludeRolesArea = elements.$maintenanceModeTable.find( selectors.excludeRolesArea );
-
 		elements.$templateSelect = elements.$maintenanceModeTable.find( selectors.templateSelect );
-
 		elements.$editTemplateButton = elements.$maintenanceModeTable.find( selectors.editTemplateButton );
-
 		elements.$maintenanceModeDescriptions = elements.$maintenanceModeTable.find( selectors.maintenanceModeDescriptions );
-
 		elements.$maintenanceModeError = elements.$maintenanceModeTable.find( selectors.maintenanceModeError );
 
 		return elements;
