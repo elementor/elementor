@@ -33,7 +33,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
 			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
 			saveButton: '> .elementor-element-overlay .elementor-editor-element-save',
-			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings-list'
+			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-add'
 		};
 	},
 

@@ -7,6 +7,8 @@ SectionView = BaseElementView.extend( {
 
 	addSectionView: null,
 
+	toggleEditTools: false,
+
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
@@ -36,14 +38,6 @@ SectionView = BaseElementView.extend( {
 	errors: {
 		columnWidthTooLarge: 'New column width is too large',
 		columnWidthTooSmall: 'New column width is too small'
-	},
-
-	ui: function() {
-		var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-		ui.addButton = '> .elementor-editor-element-add';
-
-		return ui;
 	},
 
 	events: function() {
@@ -87,7 +81,7 @@ SectionView = BaseElementView.extend( {
 
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
-			handle: '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
 			items: '> .elementor-column'
 		};
 	},
@@ -187,12 +181,14 @@ SectionView = BaseElementView.extend( {
 
 		var myIndex = self.model.collection.indexOf( self.model ),
 			addSectionView = new AddSectionView( {
-				atIndex: myIndex + 1
+				atIndex: myIndex
 			} );
 
 		addSectionView.render();
 
-		self.$el.after( addSectionView.$el );
+		self.$el.before( addSectionView.$el );
+
+		addSectionView.$el.hide().slideDown();
 
 		self.addSectionView = addSectionView;
 

@@ -19,7 +19,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-element-overlay .elementor-editor-section-settings-list .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-section-settings .elementor-editor-element-trigger',
 			items: '> .elementor-section'
 		};
 	},
