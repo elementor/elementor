@@ -145,7 +145,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'text',
 									'std' => 'Sans-serif',
-									'classes' => [ 'medium-text' ],
+									'class' => 'medium-text',
 									'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 								],
 							],
@@ -155,7 +155,7 @@ class Settings extends Settings_Page {
 									'type' => 'text',
 									'placeholder' => '1140',
 									'sub_desc' => 'px',
-									'classes' => [ 'medium-text' ],
+									'class' => 'medium-text',
 									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 								],
 							],
@@ -164,7 +164,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'text',
 									'placeholder' => 'body',
-									'classes' => [ 'medium-text' ],
+									'class' => 'medium-text',
 									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 								],
 							],
@@ -173,7 +173,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'text',
 									'placeholder' => 'h1.entry-title',
-									'classes' => [ 'medium-text' ],
+									'class' => 'medium-text',
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 								],
 							],

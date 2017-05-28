@@ -6,7 +6,7 @@ MaintenanceModeModule = ViewModule.extend( {
 		return {
 			selectors: {
 				modeSelect: '.elementor_maintenance_mode_mode select',
-				maintenanceModeTable: 'table',
+				maintenanceModeTable: '#tab-maintenance_mode table',
 				maintenanceModeDescriptions: '.elementor-maintenance-mode-description',
 				excludeModeSelect: '.elementor_maintenance_mode_exclude_mode select',
 				excludeRolesArea: '.elementor_maintenance_mode_exclude_roles',
