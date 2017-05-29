@@ -91,7 +91,7 @@ html.elementor-html {
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-empty-view {
   position: relative;
-  height: 40px;
+  height: 100%;
   z-index: 1; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-first-add {
