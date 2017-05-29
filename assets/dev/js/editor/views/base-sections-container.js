@@ -1,7 +1,8 @@
 var SectionView = require( 'elementor-views/section' ),
+	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseSectionsContainerView;
 
-BaseSectionsContainerView = Marionette.CompositeView.extend( {
+BaseSectionsContainerView = BaseContainer.extend( {
 	childView: SectionView,
 
 	behaviors: {
@@ -37,10 +38,6 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
-	},
-
-	addChildModel: function( model, options ) {
-		return this.collection.add( model, options, true );
 	},
 
 	addSection: function( properties, options ) {
