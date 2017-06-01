@@ -470,7 +470,7 @@ class Frontend {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], 9 );
 
 		// Hack to avoid enqueue post css wail it's a `the_excerpt` call
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
