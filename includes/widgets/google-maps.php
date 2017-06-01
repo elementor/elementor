@@ -109,11 +109,13 @@ class Widget_Google_Maps extends Widget_Base {
 		if ( 0 === absint( $settings['zoom']['size'] ) )
 			$settings['zoom']['size'] = 10;
 
-		printf(
+		$map_html = sprintf(
 			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near"></iframe></div>',
 			urlencode( $settings['address'] ),
 			absint( $settings['zoom']['size'] )
 		);
+
+		echo apply_filters( 'elementor/widgets/google-maps/render', $map_html, $instance );
 	}
 
 	protected function _content_template() {}
