@@ -133,7 +133,12 @@ BaseElementView = BaseContainer.extend( {
 			_.extend( itemData, customData );
 		}
 
-		this.addChildElement( itemData, options );
+		var newView = this.addChildElement( itemData, options );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {
