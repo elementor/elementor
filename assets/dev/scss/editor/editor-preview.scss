@@ -211,6 +211,16 @@ html.elementor-html {
 					}
 				}
 			}
+
+			.elementor-editor-element-remove {
+
+				&:hover {
+
+					.fa {
+						color: $editor-danger;
+					}
+				}
+			}
 		}
 
 		.elementor-editor-section-settings {
@@ -283,20 +293,6 @@ html.elementor-html {
 
 				&:hover {
 					background-color: darken($editor-info, 10%);
-				}
-			}
-
-			.elementor-editor-element-remove {
-
-				.fa {
-					color: #ffffff;
-				}
-
-				&:hover {
-
-					.fa {
-						color: $editor-danger;
-					}
 				}
 			}
 
