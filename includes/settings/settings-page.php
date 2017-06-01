@@ -30,6 +30,7 @@ abstract class Settings_Page {
 		$this->ensure_tabs();
 
 		if ( isset( $this->tabs[ $tab_id ] ) ) {
+			// Don't override an existing tab
 			return;
 		}
 
@@ -44,10 +45,12 @@ abstract class Settings_Page {
 		$this->ensure_tabs();
 
 		if ( ! isset( $this->tabs[ $tab_id ] ) ) {
-			return;
+			// If the requested tab doesn't exists, use the first tab
+			$tab_id = key( $this->tabs );
 		}
 
 		if ( isset( $this->tabs[ $tab_id ]['sections'][ $section_id ] ) ) {
+			// Don't override an existing section
 			return;
 		}
 
@@ -61,7 +64,18 @@ abstract class Settings_Page {
 	public final function add_field( $tab_id, $section_id, $field_id, array $field_args ) {
 		$this->ensure_tabs();
 
+		if ( ! isset( $this->tabs[ $tab_id ] ) ) {
+			// If the requested tab doesn't exists, use the first tab
+			$tab_id = key( $this->tabs );
+		}
+
+		if ( ! isset( $this->tabs[ $tab_id ]['sections'][ $section_id ] ) ) {
+			// If the requested section doesn't exists, use the first section
+			$section_id = key( $this->tabs[ $tab_id ]['sections'] );
+		}
+
 		if ( isset( $this->tabs[ $tab_id ]['sections'][ $section_id ]['fields'][ $field_id ] ) ) {
+			// Don't override an existing field
 			return;
 		}
 
