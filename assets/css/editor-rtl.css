@@ -2219,11 +2219,13 @@ body.elementor-editor-preview #elementor-mode-switcher {
     background-image: linear-gradient(to bottom, #f3f3f3, #fff);
     border-bottom: 3px solid #9b0a46; }
 
-#elementor-template-library-header-items-area > * {
-  float: left; }
-
-#elementor-template-library-header-tools > * {
-  float: left; }
+#elementor-template-library-header-items-area {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row-reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse; }
 
 .elementor-template-library-header-item {
   position: relative;
@@ -2234,28 +2236,35 @@ body.elementor-editor-preview #elementor-mode-switcher {
   transition: color .5s; }
   .elementor-template-library-header-item:not(:hover) {
     color: #a4afb7; }
-  .elementor-template-library-header-item > * {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translateX(-50%) translateY(-50%);
-        -ms-transform: translateX(-50%) translateY(-50%);
-            transform: translateX(-50%) translateY(-50%); }
   .elementor-template-library-header-item > i {
     font-size: 18px; }
 
 #elementor-template-library-header-close-modal, #elementor-template-library-header-save {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   width: 56px; }
 
-#elementor-template-library-header-preview > * {
-  float: left; }
-
 #elementor-template-library-header-preview-insert-wrapper {
-  width: 100px;
-  cursor: default; }
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: default;
+  padding: 0 10px; }
   #elementor-template-library-header-preview-insert-wrapper .elementor-button {
-    width: 80%;
-    padding: 8px 0; }
+    padding: 8px 14px; }
 
 #elementor-template-library-header-preview-back {
   padding: 16.5px 0 15px 16.5px;
