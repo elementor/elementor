@@ -6744,10 +6744,6 @@ module.exports = Marionette.CompositeView.extend( {
 		var newModel = this.addChildModel( itemData, options ),
 			newView = this.children.findByModel( newModel );
 
-		if ( 'section' === newView.getElementType() && newView.isInner() ) {
-			newView.addEmptyColumn();
-		}
-
 		newView.edit();
 
 		return newView;
@@ -6890,7 +6886,12 @@ BaseElementView = BaseContainer.extend( {
 			_.extend( itemData, customData );
 		}
 
-		this.addChildElement( itemData, options );
+		var newView = this.addChildElement( itemData, options );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {

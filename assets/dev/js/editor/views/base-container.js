@@ -19,10 +19,6 @@ module.exports = Marionette.CompositeView.extend( {
 		var newModel = this.addChildModel( itemData, options ),
 			newView = this.children.findByModel( newModel );
 
-		if ( 'section' === newView.getElementType() && newView.isInner() ) {
-			newView.addEmptyColumn();
-		}
-
 		newView.edit();
 
 		return newView;
