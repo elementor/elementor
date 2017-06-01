@@ -282,7 +282,7 @@ html.elementor-html {
 		}
 
 		// Widget - Overlay Settings
-		.elementor-editor-widget-settings-list {
+		.elementor-editor-widget-settings {
 			z-index: $second-layer;
 			top: 1px;
 			@include end(1px);

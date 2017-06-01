@@ -144,7 +144,7 @@ abstract class Widget_Base extends Element_Base {
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-widget-settings-list">
+			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
 				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Widget', 'elementor' ); ?>">
 					<i class="fa fa-pencil"></i>
 				</li>
