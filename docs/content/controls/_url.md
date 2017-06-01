@@ -34,9 +34,9 @@ echo '<a href="' . $url . '" ' . $target .'>Visit Website</a>';
 **JS** *(Under `_content_template()` method)*
 ```html
 <# // JavaScript code 
-var target = settings.website_url.is_external ? 'target="_blank"' : '';
+var target = settings.website_link.is_external ? 'target="_blank"' : '';
 #>
-<a href="{{ settings.website_url.url }}" {{ target }}>Visit Website</a>
+<a href="{{ settings.website_link.url }}" {{ target }}>Visit Website</a>
 ```
 
 ## Arguments
