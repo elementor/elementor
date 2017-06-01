@@ -9,9 +9,12 @@ A url field with a `show_external` option that shows a button that allows the us
 $this->add_control(
   'website_link',
   [
-     'label'   => __( 'Website URL', 'your-plugin' ),
-     'type'    => Controls_Manager::URL,
-     'default' => 'http://',
+     'label' => __( 'Website URL', 'your-plugin' ),
+     'type' => Controls_Manager::URL,
+     'default' => [
+        'url' => 'http://',
+        'is_external' => '',
+     ],
      'show_external' => true, // Show the 'open in new tab' button.
   ]
 );
@@ -31,9 +34,9 @@ echo '<a href="' . $url . '" ' . $target .'>Visit Website</a>';
 **JS** *(Under `_content_template()` method)*
 ```html
 <# // JavaScript code 
-var target = settings.website_url.is_external ? 'target="_blank"' : '';
+var target = settings.website_link.is_external ? 'target="_blank"' : '';
 #>
-<a href="{{ settings.website_url.url }}" {{ target }}>Visit Website</a>
+<a href="{{ settings.website_link.url }}" {{ target }}>Visit Website</a>
 ```
 
 ## Arguments

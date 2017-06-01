@@ -83,9 +83,10 @@ class Source_Remote extends Source_Base {
 		}
 
 		// TODO: since 1.5.0 to content container named `content` instead of `data`
-		$data['content'] = $this->replace_elements_ids( $data['data'] );
-
-		unset( $data['data'] );
+		if ( ! empty( $data['data'] ) ) {
+			$data['content'] = $this->replace_elements_ids( $data['data'] );
+			unset( $data['data'] );
+		}
 
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
 
