@@ -170,6 +170,13 @@ html.elementor-html {
 			}
 		}
 
+		.elementor-inner-section {
+
+			&:first-child {
+				margin-top: 15px;
+			}
+		}
+
 		// General - Overlay Settings
 		.elementor-editor-element-settings {
 			position: absolute;
