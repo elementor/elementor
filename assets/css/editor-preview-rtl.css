@@ -185,6 +185,9 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-top-section > .elementor-container > .elementor-row {
   min-height: 80px; }
 
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-inner-section:first-child {
+  margin-top: 15px; }
+
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings {
   position: absolute;
   overflow: hidden;
@@ -207,6 +210,8 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
     width: 0;
     font-size: 0; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-remove:hover .fa {
+    color: #f00; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings {
   top: 0;
@@ -255,22 +260,18 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
     cursor: move; } }
 
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list {
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings {
   z-index: 2;
   top: 1px;
   left: 1px;
   -webkit-flex-direction: row-reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-setting {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting {
     background-color: #71d7f7; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-setting:hover {
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
       background-color: #41c9f4; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-remove .fa {
-    color: #ffffff; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-remove:hover .fa {
-    color: #f00; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings-list .elementor-editor-element-trigger.elementor-active ~ .elementor-editor-element-setting {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-trigger.elementor-active ~ .elementor-editor-element-setting {
     margin-left: 1px;
     margin-right: 0; }
 
