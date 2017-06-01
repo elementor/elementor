@@ -5,9 +5,9 @@ build/
 log/
 vendor/
 composer.lock
-.DS_Store
 .project
 Thumbs.db
+*.DS_Store
 
 *.log
 *.map
