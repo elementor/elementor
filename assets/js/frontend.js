@@ -432,14 +432,14 @@ module.exports = function( $scope, $ ) {
 		defaultOptions = {
 			responsive: [
 				{
-					breakpoint: 767,
+					breakpoint: 769,
 					settings: {
 						slidesToShow: tabletSlides,
 						slidesToScroll: tabletSlides
 					}
 				},
 				{
-					breakpoint: 480,
+					breakpoint: 481,
 					settings: {
 						slidesToShow: 1,
 						slidesToScroll: 1
