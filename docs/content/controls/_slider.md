@@ -57,7 +57,7 @@ echo '<div style="width: ' . $width['size'] . $width['unit'] '"> ... </div>';
 Argument       | Required   | Type         | Default                      | Description
 ------------   | :--------: | :------:     | ---------------------------- | ---------------------------------------------
 `label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-`type`         | yes        | *`string`*   | `Controls_Manager::NUMBER`   | The type of the control
+`type`         | yes        | *`string`*   | `Controls_Manager::SLIDER`   | The type of the control
 `default`      | no         | *`string`*   |                              | The default value of the control
 `range`        | no         | *`array`*    |                              | An associative array of arrays - each size unit can have an array with `min`, `max` and `step` settings
 `size_units`   | no         | *`array`*    |                              | An array of all available size units
