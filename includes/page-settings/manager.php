@@ -45,7 +45,20 @@ class Manager {
 	public static function save_page_settings( $post_id, $settings ) {
 		$page = self::get_page( $post_id, $settings );
 
-		update_post_meta( $post_id, self::META_KEY, $page->get_controls_settings() );
+		$controls_settings = $page->get_controls_settings();
+
+		$special_settings = [
+			'id',
+			'post_title',
+			'post_status',
+			'template',
+		];
+
+		foreach ( $special_settings as $special_setting ) {
+			unset( $controls_settings[ $special_setting ] );
+		}
+
+		update_post_meta( $post_id, self::META_KEY, $controls_settings );
 
 		$css_file = new Post_CSS_File( $post_id );
 
