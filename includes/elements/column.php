@@ -685,35 +685,15 @@ class Element_Column extends Element_Base {
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
-			<div class="column-title"></div>
-			<div class="elementor-editor-element-settings elementor-editor-column-settings">
-				<ul class="elementor-editor-element-settings-list elementor-editor-column-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
-						<a href="#" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><?php _e( 'Column', 'elementor' ); ?></a>
+			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><i class="fa fa-columns"></i></li>
+				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
-					<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-						<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
-							<a href="#" title="<?php echo $edit_tool['title']; ?>">
-								<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-								<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
-							</a>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-				<ul class="elementor-editor-element-settings-list  elementor-editor-section-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-trigger">
-						<a href="#" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><?php _e( 'Section', 'elementor' ); ?></a>
-					</li>
-					<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-						<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
-							<a href="#" title="<?php echo $edit_tool['title']; ?>">
-								<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-								<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
-							</a>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			</div>
+				<?php endforeach; ?>
+			</ul>
 		</div>
 		<?php
 	}

@@ -1,7 +1,8 @@
 var SectionView = require( 'elementor-views/section' ),
+	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseSectionsContainerView;
 
-BaseSectionsContainerView = Marionette.CompositeView.extend( {
+BaseSectionsContainerView = BaseContainer.extend( {
 	childView: SectionView,
 
 	behaviors: {
@@ -19,7 +20,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-container > .elementor-row > .elementor-column > .elementor-element-overlay .elementor-editor-section-settings-list .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-section-settings .elementor-editor-element-trigger',
 			items: '> .elementor-section'
 		};
 	},
@@ -39,11 +40,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
 	},
 
-	addChildModel: function( model, options ) {
-		return this.collection.add( model, options, true );
-	},
-
-	addSection: function( properties ) {
+	addSection: function( properties, options ) {
 		var newSection = {
 			id: elementor.helpers.getUniqueID(),
 			elType: 'section',
@@ -55,7 +52,7 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 			_.extend( newSection, properties );
 		}
 
-		var newModel = this.addChildModel( newSection );
+		var newModel = this.addChildModel( newSection, options );
 
 		return this.children.findByModelCid( newModel.cid );
 	},

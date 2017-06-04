@@ -274,7 +274,7 @@ HandlerModule = ViewModule.extend( {
 		var self = this;
 
 		if ( self.onElementChange ) {
-			var uniqueGroup = self.getModelCID() + self.$element.attr( 'data-element_type' ),
+			var uniqueHandlerID = self.getModelCID() + self.$element.attr( 'data-element_type' ) + self.getConstructorID(),
 				elementName = self.getElementName(),
 				eventName = 'change';
 
@@ -282,10 +282,10 @@ HandlerModule = ViewModule.extend( {
 				eventName += ':' + elementName;
 			}
 
-			elementorFrontend.addListenerOnce( uniqueGroup, eventName, function( controlView, elementView ) {
-				var currentUniqueGroup = elementView.model.cid + elementView.$el.attr( 'data-element_type' );
+			elementorFrontend.addListenerOnce( uniqueHandlerID, eventName, function( controlView, elementView ) {
+				var elementViewHandlerID = elementView.model.cid + elementView.$el.attr( 'data-element_type' ) + self.getConstructorID();
 
-				if ( currentUniqueGroup !== uniqueGroup ) {
+				if ( elementViewHandlerID !== uniqueHandlerID ) {
 					return;
 				}
 
@@ -1774,6 +1774,8 @@ Module.prototype.getDefaultSettings = function() {
 	return {};
 };
 
+Module.extendsCount = 0;
+
 Module.extend = function( properties ) {
 	var $ = jQuery,
 		parent = this;
@@ -1787,6 +1789,19 @@ Module.extend = function( properties ) {
 	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
 
 	child.prototype.constructor = child;
+
+	/*
+	 * Constructor ID is used to set an unique ID
+     * to every extend of the Module.
+     *
+	 * It's useful in some cases such as unique
+	 * listener for frontend h
+	 */
+	var constructorID = ++Module.extendsCount;
+
+	child.prototype.getConstructorID = function() {
+		return constructorID;
+	};
 
 	child.__super__ = parent.prototype;
 

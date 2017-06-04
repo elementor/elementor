@@ -1,12 +1,15 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-editor-utils/validator' ),
+	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
-BaseElementView = Marionette.CompositeView.extend( {
+BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
 	controlsCSSParser: null,
+
+	toggleEditTools: true,
 
 	className: function() {
 		return this.getElementUniqueID();
@@ -27,9 +30,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
-			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
-			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+			triggerButton: '> .elementor-element-overlay .elementor-editor-element-trigger',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
+			saveButton: '> .elementor-element-overlay .elementor-editor-element-save',
+			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-add'
 		};
 	},
 
@@ -37,7 +43,8 @@ BaseElementView = Marionette.CompositeView.extend( {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
 			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'onClickDuplicate'
+			'click @ui.duplicateButton': 'onClickDuplicate',
+			'click @ui.triggerButton': 'onClickEdit'
 		};
 	},
 
@@ -94,11 +101,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
-		this.on( 'render', function() {
-			this.renderUI();
-			this.runReadyTrigger();
-		} );
-
 		this.initRemoveDialog();
 
 		this.initControlsCSSParser();
@@ -106,33 +108,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	edit: function() {
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
-	},
-
-	addChildModel: function( model, options ) {
-		return this.collection.add( model, options, true );
-	},
-
-	addChildElement: function( itemData, options ) {
-		options = options || {};
-
-		var myChildType = this.getChildType();
-
-		if ( -1 === myChildType.indexOf( itemData.elType ) ) {
-			delete options.at;
-
-			return this.children.last().addChildElement( itemData, options );
-		}
-
-		var newModel = this.addChildModel( itemData, options ),
-			newView = this.children.findByModel( newModel );
-
-		if ( 'section' === newView.getElementType() && newView.isInner() ) {
-			newView.addEmptyColumn();
-		}
-
-		newView.edit();
-
-		return newView;
 	},
 
 	addElementFromPanel: function( options ) {
@@ -158,7 +133,12 @@ BaseElementView = Marionette.CompositeView.extend( {
 			_.extend( itemData, customData );
 		}
 
-		this.addChildElement( itemData, options );
+		var newView = this.addChildElement( itemData, options );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {
@@ -378,6 +358,22 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}
 	},
 
+	onRender: function() {
+		var self = this;
+
+		self.renderUI();
+
+		self.runReadyTrigger();
+
+		if ( self.toggleEditTools ) {
+			self.ui.settingsList.hoverIntent( function() {
+				self.ui.triggerButton.addClass( 'elementor-active' );
+			}, function() {
+				self.ui.triggerButton.removeClass( 'elementor-active' );
+			}, { timeout: 500 } );
+		}
+	},
+
 	onCollectionChanged: function() {
 		elementor.setFlagEditorChange( true );
 	},
@@ -424,8 +420,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		var model = this.model;
 
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView( model );
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView( model );
+			}
 		} );
 	},
 

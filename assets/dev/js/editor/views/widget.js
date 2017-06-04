@@ -39,6 +39,12 @@ WidgetView = BaseElementView.extend( {
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
 			editModel.renderRemoteServer();
 		}
+
+		var onRenderMethod = this.onRender;
+
+		this.onRender = function() {
+			_.defer( _.bind( onRenderMethod, this ) );
+		};
 	},
 
 	render: function() {
@@ -97,11 +103,13 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var htmlContent = this.getHTMLContent( html ),
-			el = this.$el[0];
+		var self = this,
+			htmlContent = self.getHTMLContent( html );
 
 		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery( el ).html( htmlContent );
+			elementorFrontend.getScopeWindow().jQuery( self.el ).html( htmlContent );
+
+			self.bindUIElements(); // Build again the UI elements since the content attached just now
 		} );
 
 		return this;
@@ -116,8 +124,11 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-        var self = this,
-	        editModel = self.getEditModel(),
+        var self = this;
+
+		BaseElementView.prototype.onRender.apply( self, arguments );
+
+	    var editModel = self.getEditModel(),
 	        skinType = editModel.getSetting( '_skin' ) || 'default';
 
         self.$el
@@ -128,15 +139,13 @@ WidgetView = BaseElementView.extend( {
             .remove();
 
 		// TODO: Find better way to detect if all images are loaded
-		_.defer( function() {
-			self.$el.imagesLoaded().always( function() {
-				setTimeout( function() {
-					if ( 1 > self.$el.height() ) {
-						self.handleEmptyWidget();
-					}
-				}, 200 );
-				// Is element empty?
-			} );
+		self.$el.imagesLoaded().always( function() {
+			setTimeout( function() {
+				if ( 1 > self.$el.height() ) {
+					self.handleEmptyWidget();
+				}
+			}, 200 );
+			// Is element empty?
 		} );
 	}
 } );
