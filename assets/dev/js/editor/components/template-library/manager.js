@@ -8,6 +8,7 @@ TemplateLibraryManager = function() {
 		deleteDialog,
 		errorDialog,
 		layout,
+		startIntent = {},
 		templateTypes = {},
 		templatesCollection;
 
@@ -93,7 +94,7 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data.content );
+				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
 				if ( options.withPageSettings ) {
 					elementor.pageSettings.model.set( data.page_settings );
@@ -209,7 +210,9 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.startModal = function( onModalReady ) {
+	this.startModal = function( customStartIntent ) {
+		startIntent = customStartIntent || {};
+
 		self.getModal().show();
 
 		self.setTemplatesSource( 'remote' );
@@ -221,8 +224,8 @@ TemplateLibraryManager = function() {
 		layout.showLoadingView();
 
 		self.requestRemoteTemplates( function() {
-			if ( onModalReady ) {
-				onModalReady();
+			if ( startIntent.onReady ) {
+				startIntent.onReady();
 			}
 		} );
 	};
@@ -246,7 +249,9 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showTemplatesModal = function() {
-		self.startModal( self.showTemplates );
+		self.startModal( {
+			onReady: self.showTemplates
+		} );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {

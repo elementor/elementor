@@ -9,6 +9,8 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
+	percentsPopup: null,
+
 	behaviors: {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -39,29 +41,13 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.duplicateButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger';
-		ui.addButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add';
-		ui.columnTitle = '.column-title';
 		ui.columnInner = '> .elementor-column-wrap';
-		ui.listTriggers = '> .elementor-element-overlay .elementor-editor-element-trigger';
 
 		return ui;
 	},
 
 	triggers: {
 		'click @ui.addButton': 'click:new'
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
-
-		return events;
 	},
 
 	initialize: function() {
@@ -71,6 +57,14 @@ ColumnView = BaseElementView.extend( {
 
 		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
 		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
+	},
+
+	initPercentsPopup: function() {
+		this.percentsPopup = elementorFrontend.getScopeWindow().elementorPreview.dialogsManager.createWidget( 'simple', {
+			classes: {
+				globalPrefix: 'elementor-column-percents-popup'
+			}
+		} );
 	},
 
 	isDroppingAllowed: function() {
@@ -84,6 +78,12 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
+	getPercentsForDisplay: function() {
+		var inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
+
+		return inlineSize.toFixed( 1 ) + '%';
+	},
+
 	changeSizeUI: function() {
 		var self = this,
 			columnSize = self.model.getSetting( '_column_size' );
@@ -91,10 +91,7 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
-			var inlineSize = +self.model.getSetting( '_inline_size' ) || self.getPercentSize(),
-				columnSizeTitle = inlineSize.toFixed( 1 ) + '%';
-
-			self.ui.columnTitle.html( columnSizeTitle );
+			self.percentsPopup.setMessage( self.getPercentsForDisplay() );
 		} );
 	},
 
@@ -134,7 +131,12 @@ ColumnView = BaseElementView.extend( {
 	onRender: function() {
 		var self = this;
 
+		BaseElementView.prototype.onRender.apply( self, arguments );
+
 		self.changeChildContainerClasses();
+
+		self.initPercentsPopup();
+
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
@@ -142,21 +144,9 @@ ColumnView = BaseElementView.extend( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
-			onDragEnter: function() {
-				self.$el.addClass( 'elementor-dragging-on-child' );
-			},
-			onDragging: function( side, event ) {
-				event.stopPropagation();
-
-				if ( this.dataset.side !== side ) {
-					Backbone.$( this ).attr( 'data-side', side );
-				}
-			},
-			onDragLeave: function() {
-				self.$el.removeClass( 'elementor-dragging-on-child' );
-
-				Backbone.$( this ).removeAttr( 'data-side' );
-			},
+			currentElementClass: 'elementor-html5dnd-current-element',
+			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
@@ -178,19 +168,6 @@ ColumnView = BaseElementView.extend( {
 
 		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
 			this.changeSizeUI();
-		}
-	},
-
-	onClickTrigger: function( event ) {
-		event.preventDefault();
-
-		var $trigger = this.$( event.currentTarget ),
-			isTriggerActive = $trigger.hasClass( 'elementor-active' );
-
-		this.ui.listTriggers.removeClass( 'elementor-active' );
-
-		if ( ! isTriggerActive ) {
-			$trigger.addClass( 'elementor-active' );
 		}
 	},
 

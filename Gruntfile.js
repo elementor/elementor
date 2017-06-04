@@ -138,7 +138,8 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
-					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
+					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ],
+					'assets/js/preview.js': [ 'assets/dev/js/preview/preview.js' ]
 				},
 				options: pkgInfo.browserify
 			}
@@ -153,7 +154,8 @@ module.exports = function( grunt ) {
 					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
 					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
 					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
-					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
+					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ],
+					'assets/js/preview.js.map': [ 'assets/js/preview.js' ]
 				}
 			}
 		},
@@ -174,6 +176,9 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
+					],
+					'assets/js/preview.min.js': [
+						'assets/js/preview.js'
 					]
 				}
 			}

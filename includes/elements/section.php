@@ -15,6 +15,10 @@ class Element_Section extends Element_Base {
 				'title' => __( 'Duplicate', 'elementor' ),
 				'icon' => 'files-o',
 			],
+			'add' => [
+				'title' => __( 'Add', 'elementor' ),
+				'icon' => 'plus',
+			],
 			'save' => [
 				'title' => __( 'Save', 'elementor' ),
 				'icon' => 'floppy-o',
@@ -1095,7 +1099,23 @@ class Element_Section extends Element_Base {
 
 	protected function _render_settings() {
 		?>
-		<div class="elementor-element-overlay"></div>
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><i class="fa fa-cog"></i></li>
+				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<?php if ( 'add' === $edit_tool_name ) : ?>
+						<# if ( ! isInner ) { #>
+					<?php endif; ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+					</li>
+					<?php if ( 'add' === $edit_tool_name ) : ?>
+						<# } #>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</ul>
+		</div>
 		<?php
 	}
 
@@ -1134,7 +1154,10 @@ class Element_Section extends Element_Base {
 				<?php endif;
 			endif;
 
-			if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
+			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
+		                              in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+
+			if ( $has_background_overlay ) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif;
 

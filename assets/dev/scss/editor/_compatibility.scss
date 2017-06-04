@@ -19,7 +19,7 @@ body.elementor-editor-active {
 	// Hack for Zerif Pro theme
 	.elementor-element-overlay {
 
-		.elementor-editor-element-settings-list {
+		.elementor-editor-element-settings {
 			clear: unset;
 		}
 	}
@@ -33,7 +33,7 @@ body.elementor-editor-active {
 	}
 
 	// Fixes Make theme issue
-	.elementor-editor-element-settings-list {
+	.elementor-editor-element-settings {
 		word-break: normal;
 	}
 

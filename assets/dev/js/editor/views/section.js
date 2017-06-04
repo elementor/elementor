@@ -1,8 +1,13 @@
 var BaseElementView = require( 'elementor-views/base-element' ),
+	AddSectionView = require( 'elementor-views/add-section/inline' ),
 	SectionView;
 
 SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
+
+	addSectionView: null,
+
+	toggleEditTools: false,
 
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
@@ -35,21 +40,10 @@ SectionView = BaseElementView.extend( {
 		columnWidthTooSmall: 'New column width is too small'
 	},
 
-	ui: function() {
-		var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-		ui.duplicateButton = '.elementor-editor-section-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '.elementor-editor-section-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '.elementor-editor-section-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '.elementor-editor-section-settings-list .elementor-editor-element-trigger';
-
-		return ui;
-	},
-
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
+		events[ 'click @ui.addButton' ] = 'onClickAdd';
 
 		return events;
 	},
@@ -87,7 +81,7 @@ SectionView = BaseElementView.extend( {
 
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
-			handle: '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
 			items: '> .elementor-column'
 		};
 	},
@@ -166,12 +160,98 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
+	showChildrenPercentsPopup: function( columnView, nextColumnView, event ) {
+		columnView.percentsPopup.show();
+
+		columnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'left' );
+
+		columnView.percentsPopup.setSettings( 'position', {
+			my: 'right-15 center',
+			at: 'left center',
+			of: event
+		} );
+
+		columnView.percentsPopup.refreshPosition();
+
+		nextColumnView.percentsPopup.show();
+
+		nextColumnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'right' );
+
+		nextColumnView.percentsPopup.setSettings( 'position', {
+			my: 'left+15 center',
+			at: 'right center',
+			of: event
+		} );
+
+		nextColumnView.percentsPopup.refreshPosition();
+	},
+
+	refreshChildrenPercentsPopup: function( columnView, nextColumnView, event ) {
+		columnView.percentsPopup.setSettings( 'position', {
+			of: event
+		} );
+
+		columnView.percentsPopup.refreshPosition();
+
+		nextColumnView.percentsPopup.setSettings( 'position', {
+			of: event
+		} );
+
+		nextColumnView.percentsPopup.refreshPosition();
+	},
+
+	hideChildrenPercentsPopup: function( columnView, nextColumnView ) {
+		columnView.percentsPopup.hide();
+
+		nextColumnView.percentsPopup.hide();
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
 
 	onRender: function() {
+		BaseElementView.prototype.onRender.apply( this, arguments );
+
 		this._checkIsFull();
+	},
+
+	onClickAdd: function() {
+		var self = this;
+
+		if ( self.addSectionView && ! self.addSectionView.isDestroyed ) {
+			self.addSectionView.fadeToDeath();
+
+			return;
+		}
+
+		var myIndex = self.model.collection.indexOf( self.model ),
+			addSectionView = new AddSectionView( {
+				atIndex: myIndex
+			} );
+
+		addSectionView.render();
+
+		self.$el.before( addSectionView.$el );
+
+		addSectionView.$el.hide();
+
+		// Delaying the slide down for slow-render browsers (such as FF)
+		setTimeout( function() {
+			addSectionView.$el.slideDown();
+		} );
+
+		self.addSectionView = addSectionView;
+
+		var timeout = setTimeout( function() {
+			self.addSectionView.fadeToDeath();
+		}, 2000 );
+
+		self.addSectionView.$el.on( 'mouseenter', function() {
+			clearTimeout( timeout );
+
+			self.addSectionView.$el.off( 'mouseenter' );
+		} );
 	},
 
 	onAddChild: function() {
@@ -192,33 +272,37 @@ SectionView = BaseElementView.extend( {
 		this.resetLayout();
 	},
 
-	onChildviewRequestResizeStart: function( childView ) {
-		var nextChildView = this.getNextColumn( childView );
+	onChildviewRequestResizeStart: function( columnView, event ) {
+		var nextColumnView = this.getNextColumn( columnView );
 
-		if ( ! nextChildView ) {
+		if ( ! nextColumnView ) {
 			return;
 		}
 
-		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+		this.showChildrenPercentsPopup( columnView, nextColumnView, event );
+
+		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
 		elementor.helpers.disableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResizeStop: function( childView ) {
-		var nextChildView = this.getNextColumn( childView );
+	onChildviewRequestResizeStop: function( columnView ) {
+		var nextColumnView = this.getNextColumn( columnView );
 
-		if ( ! nextChildView ) {
+		if ( ! nextColumnView ) {
 			return;
 		}
 
-		var $iframes = childView.$el.find( 'iframe' ).add( nextChildView.$el.find( 'iframe' ) );
+		this.hideChildrenPercentsPopup( columnView, nextColumnView );
+
+		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
 		elementor.helpers.enableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResize: function( childView, ui ) {
+	onChildviewRequestResize: function( columnView, ui, event ) {
 		// Get current column details
-		var currentSize = +childView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( childView.$el, childView.$el.data( 'originalWidth' ) );
+		var currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
 
 		ui.element.css( {
 			width: '',
@@ -228,12 +312,14 @@ SectionView = BaseElementView.extend( {
 		var newSize = this.getColumnPercentSize( ui.element, ui.size.width );
 
 		try {
-			this.resizeChild( childView, currentSize, newSize );
+			this.resizeChild( columnView, currentSize, newSize );
 		} catch ( e ) {
 			return;
 		}
 
-		childView.model.setSetting( '_inline_size', newSize );
+		this.refreshChildrenPercentsPopup( columnView, this.getNextColumn( columnView ), event );
+
+		columnView.model.setSetting( '_inline_size', newSize );
 	},
 
 	resizeChild: function( childView, currentSize, newSize ) {

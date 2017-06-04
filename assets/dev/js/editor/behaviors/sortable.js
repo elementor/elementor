@@ -58,7 +58,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			defaultSortableOptions = {
 				connectWith: $childViewContainer.selector,
 				cursor: 'move',
-				placeholder: 'elementor-sortable-placeholder',
+				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
 					top: 20,
 					left: 25
@@ -92,9 +92,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		} );
 
 		if ( 'column' === this.options.elChildType ) {
-			// the following code is just for touch
-			ui.placeholder.addClass( 'elementor-column' );
-
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
 				itemHeight = 0;
@@ -107,19 +104,19 @@ SortableBehavior = Marionette.Behavior.extend( {
 			} );
 
 			ui.placeholder.height( itemHeight );
-
-			// ui.placeholder.addClass( 'elementor-column elementor-col-' + model.getSetting( 'size' ) );
 		}
 
 		elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:start' );
 
-		elementor.channels.data.reply( 'cache:' + model.cid, model );
+		elementor.channels.data
+			.reply( 'dragging:model', model )
+			.reply( 'dragging:parent:view', this.view );
 	},
 
-	onSortOver: function( event, ui ) {
+	onSortOver: function( event ) {
 		event.stopPropagation();
 
-		var model = elementor.channels.data.request( 'cache:' + ui.item.data( 'model-cid' ) );
+		var model = elementor.channels.data.request( 'dragging:model' );
 
 		Backbone.$( event.target )
 			.addClass( 'elementor-draggable-over' )
@@ -149,7 +146,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var model = elementor.channels.data.request( 'cache:' + ui.item.data( 'model-cid' ) ),
+		var model = elementor.channels.data.request( 'dragging:model' ),
 			draggedElType = model.get( 'elType' ),
 			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
 			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
@@ -159,20 +156,26 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var newIndex = ui.item.parent().children().index( ui.item ),
-			newModel = new this.view.collection.model( model.toJSON( { copyHtmlCache: true } ) );
+		var newIndex = ui.item.parent().children().index( ui.item );
 
-		this.view.addChildModel( newModel, { at: newIndex } );
+		this.view.addChildElement( model.toJSON( { copyHtmlCache: true } ), { at: newIndex } );
 
 		elementor.channels.data.trigger( draggedElType + ':drag:end' );
 
+		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
+
+		senderSection.isManualRemoving = true;
+
 		model.destroy();
+
+		senderSection.isManualRemoving = false;
 	},
 
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
 		var model = this.view.collection.get( ui.item.attr( 'data-model-cid' ) );
+
 		if ( model ) {
 			elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:end' );
 		}
@@ -181,14 +184,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortStop: function( event, ui ) {
 		event.stopPropagation();
 
-		var $childElement = ui.item,
-			collection = this.view.collection,
-			model = collection.get( $childElement.attr( 'data-model-cid' ) ),
-			newIndex = $childElement.parent().children().index( $childElement );
-
 		if ( this.getChildViewContainer()[0] === ui.item.parent()[0] ) {
-			if ( null === ui.sender && model ) {
-				var oldIndex = collection.indexOf( model );
+			var model = elementor.channels.data.request( 'dragging:model' );
+
+			if ( null === ui.sender ) {
+				var $childElement = ui.item,
+					collection = this.view.collection,
+					newIndex = $childElement.parent().children().index( $childElement ),
+					oldIndex = collection.indexOf( model );
 
 				if ( oldIndex !== newIndex ) {
 					var child = this.view.children.findByModelCid( model.cid );
@@ -197,7 +200,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 					collection.remove( model );
 
-					this.view.addChildModel( model, { at: newIndex } );
+					this.view.addChildElement( model, { at: newIndex } );
 
 					elementor.setFlagEditorChange( true );
 				}

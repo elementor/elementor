@@ -75,21 +75,6 @@
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.dialog-popup-message {
-  height: 155px;
-  width: 155px;
-  background-color: #fff;
-  border-radius: 10px; }
-
-.elementor-dialog-message {
-  padding: 15px; }
-  .elementor-dialog-message .fa {
-    font-size: 85px;
-    padding: 10px; }
-
-.elementor-dialog-message-text {
-  text-transform: uppercase; }
-
 .dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
@@ -316,6 +301,21 @@ body {
 #elementor-fatal-error-dialog .dialog-widget-header {
   font-size: 13px;
   color: #6d7882; }
+
+#elementor-saved-popup .dialog-message {
+  height: 155px;
+  width: 155px;
+  background-color: #fff;
+  border-radius: 10px; }
+
+#elementor-saved-popup .elementor-dialog-message {
+  padding: 15px; }
+  #elementor-saved-popup .elementor-dialog-message .fa {
+    font-size: 85px;
+    padding: 10px; }
+
+#elementor-saved-popup .elementor-dialog-message-text {
+  text-transform: uppercase; }
 
 .elementor-hidden {
   display: none; }
