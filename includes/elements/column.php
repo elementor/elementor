@@ -37,6 +37,127 @@ class Element_Column extends Element_Base {
 	}
 
 	protected function _register_controls() {
+		// Section Layout
+		$this->start_controls_section(
+			'layout',
+			[
+				'label' => __( 'Layout', 'elementor' ),
+				'tab' => Controls_Manager::TAB_LAYOUT,
+			]
+		);
+
+		$this->add_control(
+			'_inline_size',
+			[
+				'label' => __( 'Column Size', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 10,
+				'max' => 90,
+				'selectors' => [
+					'(tablet+){{WRAPPER}}' => 'width: {{VALUE}}%',
+				],
+			]
+		);
+
+		$this->add_control(
+			'content_position',
+			[
+				'label' => __( 'Content Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'top' => __( 'Top', 'elementor' ),
+					'center' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'selectors_dictionary' => [
+					'top' => 'flex-start',
+					'bottom' => 'flex-end',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
+				],
+			]
+		);
+
+		$possible_tags = [
+			'div',
+			'article',
+			'aside',
+			'nav',
+		];
+
+		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'div',
+				'options' => array_combine( $possible_tags, $possible_tags ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		// Section Responsive
+		$this->start_controls_section(
+			'section_responsive',
+			[
+				'label' => __( 'Responsive', 'elementor' ),
+				'tab' => Controls_Manager::TAB_LAYOUT,
+			]
+		);
+
+		$this->add_control(
+			'screen_sm',
+			[
+				'label' => __( 'Mobile Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'screen_sm_width',
+			[
+				'label' => __( 'Column Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'10' => '10%',
+					'11' => '11%',
+					'12' => '12%',
+					'14' => '14%',
+					'16' => '16%',
+					'20' => '20%',
+					'25' => '25%',
+					'30' => '30%',
+					'33' => '33%',
+					'40' => '40%',
+					'50' => '50%',
+					'60' => '60%',
+					'66' => '66%',
+					'70' => '70%',
+					'75' => '75%',
+					'80' => '80%',
+					'83' => '83%',
+					'90' => '90%',
+					'100' => '100%',
+				],
+				'default' => '100',
+				'condition' => [
+					'screen_sm' => [ 'custom' ],
+				],
+				'prefix_class' => 'elementor-sm-',
+			]
+		);
+
+		$this->end_controls_section();
+
 		$this->start_controls_section(
 			'section_style',
 			[
@@ -337,166 +458,6 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Layout
-		$this->start_controls_section(
-			'layout',
-			[
-				'label' => __( 'Layout', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'_inline_size',
-			[
-				'label' => __( 'Column Size', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'min' => 10,
-				'max' => 90,
-				'selectors' => [
-					'(tablet+){{WRAPPER}}' => 'width: {{VALUE}}%',
-				],
-			]
-		);
-
-		$this->add_control(
-			'content_position',
-			[
-				'label' => __( 'Content Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'top' => __( 'Top', 'elementor' ),
-					'center' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'top' => 'flex-start',
-					'bottom' => 'flex-end',
-				],
-				'selectors' => [
-					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
-				],
-			]
-		);
-
-		$possible_tags = [
-			'div',
-			'article',
-			'aside',
-			'nav',
-		];
-
-		$this->add_control(
-			'html_tag',
-			[
-				'label' => __( 'HTML Tag', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'div',
-				'options' => array_combine( $possible_tags, $possible_tags ),
-			]
-		);
-
-		$this->end_controls_section();
-
-		// Section Typography
-		$this->start_controls_section(
-			'section_typo',
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				]
-			);
-		}
-
-		$this->add_control(
-			'heading_color',
-			[
-				'label' => __( 'Heading Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
-				],
-				'separator' => 'none',
-			]
-		);
-
-		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link',
-			[
-				'label' => __( 'Link Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link_hover',
-			[
-				'label' => __( 'Link Hover Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_align',
-			[
-				'label' => __( 'Text Align', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-
 		// Section Advanced
 		$this->start_controls_section(
 			'section_advanced',
@@ -602,80 +563,100 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Responsive
+		// Section Typography
 		$this->start_controls_section(
-			'section_responsive',
+			'section_typo',
 			[
-				'label' => __( 'Responsive', 'elementor' ),
+				'label' => __( 'Typography', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
-		$responsive_points = [
-			'screen_sm' => [
-				'title' => __( 'Mobile Width', 'elementor' ),
-				'class_prefix' => 'elementor-sm-',
-				'classes' => '',
-				'description' => '',
-			],
-			'screen_xs' => [
-				'title' => __( 'Mobile Portrait', 'elementor' ),
-				'class_prefix' => 'elementor-xs-',
-				'classes' => 'elementor-control-deprecated',
-				'description' => __( 'Deprecated: Mobile Portrait control is no longer supported. Please use the Mobile Width instead.', 'elementor' ),
-			],
-		];
-
-		foreach ( $responsive_points as $point_name => $point_data ) {
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
 			$this->add_control(
-				$point_name,
+				'colors_warning',
 				[
-					'label' => $point_data['title'],
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => [
-						'default' => __( 'Default', 'elementor' ),
-						'custom' => __( 'Custom', 'elementor' ),
-					],
-					'description' => $point_data['description'],
-					'classes' => $point_data['classes'],
-				]
-			);
-
-			$this->add_control(
-				$point_name . '_width',
-				[
-					'label' => __( 'Column Width', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'options' => [
-						'10' => '10%',
-						'11' => '11%',
-						'12' => '12%',
-						'14' => '14%',
-						'16' => '16%',
-						'20' => '20%',
-						'25' => '25%',
-						'30' => '30%',
-						'33' => '33%',
-						'40' => '40%',
-						'50' => '50%',
-						'60' => '60%',
-						'66' => '66%',
-						'70' => '70%',
-						'75' => '75%',
-						'80' => '80%',
-						'83' => '83%',
-						'90' => '90%',
-						'100' => '100%',
-					],
-					'default' => '100',
-					'condition' => [
-						$point_name => [ 'custom' ],
-					],
-					'prefix_class' => $point_data['class_prefix'],
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 				]
 			);
 		}
+
+		$this->add_control(
+			'heading_color',
+			[
+				'label' => __( 'Heading Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+				'separator' => 'none',
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link',
+			[
+				'label' => __( 'Link Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link_hover',
+			[
+				'label' => __( 'Link Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_align',
+			[
+				'label' => __( 'Text Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 

@@ -347,6 +347,88 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Responsive
+		$this->start_controls_section(
+			'_section_responsive',
+			[
+				'label' => __( 'Responsive', 'elementor' ),
+				'tab' => Controls_Manager::TAB_LAYOUT,
+			]
+		);
+
+		$this->add_control(
+			'reverse_order_mobile',
+			[
+				'label' => __( 'Reverse Columns', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => __( 'Yes', 'elementor' ),
+				'label_off' => __( 'No', 'elementor' ),
+				'return_value' => 'reverse-mobile',
+				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'heading_visibility',
+			[
+				'label' => __( 'Visibility', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-descriptor',
+			]
+		);
+
+		$this->add_control(
+			'hide_desktop',
+			[
+				'label' => __( 'Hide On Desktop', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => __( 'Hide', 'elementor' ),
+				'label_off' => __( 'Show', 'elementor' ),
+				'return_value' => 'hidden-desktop',
+			]
+		);
+
+		$this->add_control(
+			'hide_tablet',
+			[
+				'label' => __( 'Hide On Tablet', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => __( 'Hide', 'elementor' ),
+				'label_off' => __( 'Show', 'elementor' ),
+				'return_value' => 'hidden-tablet',
+			]
+		);
+
+		$this->add_control(
+			'hide_mobile',
+			[
+				'label' => __( 'Hide On Mobile', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => __( 'Hide', 'elementor' ),
+				'label_off' => __( 'Show', 'elementor' ),
+				'return_value' => 'hidden-phone',
+			]
+		);
+
+		$this->end_controls_section();
+
 		// Section background
 		$this->start_controls_section(
 			'section_background',
@@ -805,102 +887,6 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Typography
-		$this->start_controls_section(
-			'section_typo',
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				]
-			);
-		}
-
-		$this->add_control(
-			'heading_color',
-			[
-				'label' => __( 'Heading Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
-				'separator' => 'none',
-			]
-		);
-
-		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link',
-			[
-				'label' => __( 'Link Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link_hover',
-			[
-				'label' => __( 'Link Hover Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_align',
-			[
-				'label' => __( 'Text Align', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-
 		// Section Advanced
 		$this->start_controls_section(
 			'section_advanced',
@@ -1012,83 +998,97 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Responsive
+		// Section Typography
 		$this->start_controls_section(
-			'_section_responsive',
+			'section_typo',
 			[
-				'label' => __( 'Responsive', 'elementor' ),
+				'label' => __( 'Typography', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+			$this->add_control(
+				'colors_warning',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		}
+
 		$this->add_control(
-			'reverse_order_mobile',
+			'heading_color',
 			[
-				'label' => __( 'Reverse Columns', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
+				'label' => __( 'Heading Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
-				'return_value' => 'reverse-mobile',
-				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+				'separator' => 'none',
 			]
 		);
 
 		$this->add_control(
-			'heading_visibility',
+			'color_text',
 			[
-				'label' => __( 'Visibility', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'responsive_description',
-			[
-				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-descriptor',
-			]
-		);
-
-		$this->add_control(
-			'hide_desktop',
-			[
-				'label' => __( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Hide', 'elementor' ),
-				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-desktop',
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
 			]
 		);
 
 		$this->add_control(
-			'hide_tablet',
+			'color_link',
 			[
-				'label' => __( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
+				'label' => __( 'Link Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Hide', 'elementor' ),
-				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-tablet',
+				'selectors' => [
+					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+				],
 			]
 		);
 
 		$this->add_control(
-			'hide_mobile',
+			'color_link_hover',
 			[
-				'label' => __( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
+				'label' => __( 'Link Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Hide', 'elementor' ),
-				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-phone',
+				'selectors' => [
+					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_align',
+			[
+				'label' => __( 'Text Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
+				],
 			]
 		);
 

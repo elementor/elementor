@@ -508,7 +508,7 @@ Module.extend = function( properties ) {
      * to every extend of the Module.
      *
 	 * It's useful in some cases such as unique
-	 * listener for frontend h
+	 * listener for frontend handlers.
 	 */
 	var constructorID = ++Module.extendsCount;
 
