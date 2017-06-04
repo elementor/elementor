@@ -163,6 +163,13 @@ Module.extend = function( properties ) {
 
 	child.prototype.constructor = child;
 
+	/*
+	 * Constructor ID is used to set an unique ID
+     * to every extend of the Module.
+     *
+	 * It's useful in some cases such as unique
+	 * listener for frontend handlers.
+	 */
 	var constructorID = ++Module.extendsCount;
 
 	child.prototype.getConstructorID = function() {
