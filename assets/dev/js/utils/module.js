@@ -143,10 +143,6 @@ var Module = function() {
 
 Module.prototype.__construct = function() {};
 
-Module.prototype.getConstructorID = function() {
-	return this._constructorID;
-};
-
 Module.prototype.getDefaultSettings = function() {
 	return {};
 };
