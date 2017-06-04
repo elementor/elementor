@@ -234,7 +234,12 @@ SectionView = BaseElementView.extend( {
 
 		self.$el.before( addSectionView.$el );
 
-		addSectionView.$el.hide().slideDown();
+		addSectionView.$el.hide();
+
+		// Delaying the slide down for slow-render browsers (such as FF)
+		setTimeout( function() {
+			addSectionView.$el.slideDown();
+		} );
 
 		self.addSectionView = addSectionView;
 
