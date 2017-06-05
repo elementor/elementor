@@ -364,7 +364,9 @@ html.elementor-html {
   background-color: #fff;
   text-align: center;
   color: #556068;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: -webkit-grabbing;
+  cursor: grabbing; }
   .elementor-editor-active .elementor-sortable-helper .icon {
     font-size: 28px;
     padding-top: 15px;
