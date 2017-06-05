@@ -12,10 +12,9 @@ class Settings extends Settings_Page {
 	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
 
 	const TAB_GENERAL = 'general';
-
 	const TAB_STYLE = 'style';
-
 	const TAB_INTEGRATIONS = 'integrations';
+	const TAB_ADVANCED = 'advanced';
 
 	public function register_admin_menu() {
 		add_menu_page(
@@ -100,6 +99,22 @@ class Settings extends Settings_Page {
 								],
 								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
 							],
+							'disable_color_schemes' => [
+								'label' => __( 'Disable Global Colors', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
+								],
+							],
+							'disable_typography_schemes' => [
+								'label' => __( 'Disable Global Fonts', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
+								],
+							],
 						],
 					],
 					'usage' => [
@@ -124,22 +139,6 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'style' => [
 						'fields' => [
-							'disable_color_schemes' => [
-								'label' => __( 'Disable Global Colors', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
-								],
-							],
-							'disable_typography_schemes' => [
-								'label' => __( 'Disable Global Fonts', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
-								],
-							],
 							'default_generic_fonts' => [
 								'label' => __( 'Default Generic Fonts', 'elementor' ),
 								'field_args' => [
@@ -184,6 +183,43 @@ class Settings extends Settings_Page {
 			self::TAB_INTEGRATIONS => [
 				'label' => __( 'Integrations', 'elementor' ),
 				'sections' => [],
+			],
+			self::TAB_ADVANCED => [
+				'label' => __( 'Advanced', 'elementor' ),
+				'sections' => [
+					'advanced' => [
+						'fields' => [
+							'css_print_method' => [
+								'label' => __( 'CSS Print Method', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_css_print_method',
+									'type' => 'select',
+									'options' => [
+										'external' => __( 'External File', 'elementor' ),
+										'internal' => __( 'Internal Embedding', 'elementor' ),
+									],
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
+									          __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
+									          '</div>' .
+									          '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
+									          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
+									          '</div>',
+								],
+							],
+							'editor_break_lines' => [
+								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'' => __( 'Disable', 'elementor' ),
+										1 => __( 'Enable', 'elementor' ),
+									],
+									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
+								],
+							],
+						],
+					],
+				],
 			],
 		];
 	}
