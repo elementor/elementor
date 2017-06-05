@@ -328,7 +328,7 @@ class Frontend {
 
 	public function apply_builder_in_content( $content ) {
 		// Remove the filter itself in order to allow other `the_content` in the elements
-		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
 		if ( ! $this->_is_frontend_mode )
 			return $content;
@@ -341,7 +341,7 @@ class Frontend {
 		}
 
 		// Add the filter again for other `the_content` calls
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
 		return $content;
 	}
