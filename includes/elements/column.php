@@ -11,7 +11,7 @@ class Element_Column extends Element_Base {
 		return [
 			'duplicate' => [
 				'title' => __( 'Duplicate', 'elementor' ),
-				'icon' => 'files-o',
+				'icon' => 'clone',
 			],
 			'add' => [
 				'title' => __( 'Add', 'elementor' ),

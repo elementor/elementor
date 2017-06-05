@@ -15,7 +15,7 @@ abstract class Widget_Base extends Element_Base {
 		return [
 			'duplicate' => [
 				'title' => __( 'Duplicate', 'elementor' ),
-				'icon' => 'files-o',
+				'icon' => 'clone',
 			],
 			'remove' => [
 				'title' => __( 'Remove', 'elementor' ),
