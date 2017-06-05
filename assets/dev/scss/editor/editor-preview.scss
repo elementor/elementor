@@ -277,7 +277,6 @@ html.elementor-html {
 		.elementor-editor-element-trigger {
 
 			@media(min-width: $screen-lg-min) {
-				cursor: move;
 			}
 		}
 
@@ -305,6 +304,7 @@ html.elementor-html {
 						@include margin-start(0);
 					}
 				}
+				cursor: grab;
 			}
 		}
 
