@@ -279,7 +279,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		var $childViewContainer = this.getChildViewContainer(),
 			defaultSortableOptions = {
 				connectWith: $childViewContainer.selector,
-				cursor: 'move',
 				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
 					top: 20,
