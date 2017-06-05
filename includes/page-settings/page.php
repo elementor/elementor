@@ -126,7 +126,6 @@ class Page extends Controls_Stack {
 			[
 				'name' => 'background',
 				'label' => __( 'Background', 'elementor' ),
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'fields_options' => [
 					'__all' => [
 						'export' => '__return_true',

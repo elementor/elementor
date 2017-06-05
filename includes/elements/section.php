@@ -451,7 +451,7 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'none', 'classic', 'gradient', 'video' ],
+				'types' => [ 'classic', 'gradient', 'video' ],
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -476,7 +476,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_hover',
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}}:hover',
 			]
 		);
@@ -530,7 +529,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
 				'condition' => [
 					'background_background' => [ 'none', 'classic', 'gradient', 'video' ],
@@ -574,7 +572,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}}:hover > .elementor-background-overlay',
 			]
 		);

@@ -23,10 +23,6 @@ class Group_Control_Background extends Group_Control_Base {
 
 	private static function init_background_types() {
 		return [
-			'none' => [
-				'title' => _x( 'None', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-ban',
-			],
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
 				'icon' => 'fa fa-paint-brush',
@@ -295,7 +291,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 	protected function get_child_default_args() {
 		return [
-			'types' => [ 'none', 'classic' ],
+			'types' => [ 'classic', 'gradient' ],
 		];
 	}
 
