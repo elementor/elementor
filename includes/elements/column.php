@@ -365,7 +365,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'border',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
-				'separator' => 'none',
 			]
 		);
 
@@ -403,7 +402,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
-				'separator' => 'none',
 			]
 		);
 
