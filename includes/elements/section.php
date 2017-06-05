@@ -928,7 +928,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				'prefix_class' => 'elementor-invisible animated ',
+				'prefix_class' => 'animated ',
 				'label_block' => true,
 				'frontend_available' => true,
 			]

@@ -303,6 +303,11 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
 		}
 
+		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
+			// Hide the element until the animation begins
+			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+		}
+
 		if ( ! empty( $settings['_element_id'] ) ) {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
