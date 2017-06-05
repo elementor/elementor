@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Frontend {
 
+	const THE_CONTENT_FILTER_PRIORITY = 9;
+
 	private $google_fonts = [];
 	private $registered_fonts = [];
 	private $google_early_access_fonts = [];
@@ -123,7 +125,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'3.1.2',
+			'3.2.1',
 			true
 		);
 
@@ -326,7 +328,7 @@ class Frontend {
 
 	public function apply_builder_in_content( $content ) {
 		// Remove the filter itself in order to allow other `the_content` in the elements
-		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
 		if ( ! $this->_is_frontend_mode )
 			return $content;
@@ -339,7 +341,7 @@ class Frontend {
 		}
 
 		// Add the filter again for other `the_content` calls
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ] );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
 		return $content;
 	}
@@ -470,7 +472,7 @@ class Frontend {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], 9 );
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
 		// Hack to avoid enqueue post css wail it's a `the_excerpt` call
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );

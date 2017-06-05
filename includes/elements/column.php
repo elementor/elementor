@@ -11,7 +11,7 @@ class Element_Column extends Element_Base {
 		return [
 			'duplicate' => [
 				'title' => __( 'Duplicate', 'elementor' ),
-				'icon' => 'files-o',
+				'icon' => 'clone',
 			],
 			'add' => [
 				'title' => __( 'Add', 'elementor' ),
@@ -179,7 +179,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
@@ -197,7 +196,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_hover',
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
 			]
 		);
@@ -251,7 +249,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 				'condition' => [
 					'background_background' => [ 'classic', 'gradient' ],
@@ -295,7 +292,6 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
@@ -369,7 +365,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'border',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
-				'separator' => 'none',
 			]
 		);
 
@@ -407,7 +402,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
-				'separator' => 'none',
 			]
 		);
 
@@ -498,7 +492,7 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				'prefix_class' => 'elementor-invisible animated ',
+				'prefix_class' => 'animated ',
 				'label_block' => true,
 				'frontend_available' => true,
 			]

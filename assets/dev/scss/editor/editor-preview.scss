@@ -208,6 +208,7 @@ html.elementor-html {
 					~ .elementor-editor-element-setting {
 						width: 0;
 						font-size: 0;
+						padding: 0;
 					}
 				}
 			}
@@ -223,30 +224,6 @@ html.elementor-html {
 			}
 		}
 
-		.elementor-editor-section-settings {
-			top: 0;
-			@include start(50%);
-			background-color: $editor-info;
-			border-radius: 6px 6px 0 0;
-			transform: translateX(-50%) translateY(-100%);
-
-			.elementor-editor-element-setting {
-				box-sizing: content-box;
-
-				&:hover {
-					background-color: darken($editor-info, 10%);
-				}
-
-				&:first-child {
-					@include padding-start(6px);
-				}
-
-				&:last-child {
-					@include padding-end(6px);
-				}
-			}
-		}
-
 		.elementor-editor-element-setting {
 			cursor: pointer;
 			display: flex;
@@ -258,18 +235,88 @@ html.elementor-html {
 			color: #fff;
 			width: 22px;
 			transition: margin .3s, width .3s, font .3s;
+			box-sizing: content-box;
+		}
+
+		.elementor-editor-section-settings {
+			top: 0;
+			@include start(50%);
+			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
+			border-radius: 6px 6px 0 0;
+			transform: translateX(-50%) translateY(-100%);
+
+			.elementor-editor-element-setting {
+
+				&:hover {
+					background-color: darken($editor-info, 20%);
+				}
+
+				&:first-child {
+					@include padding-start(6px);
+
+					&:not(.elementor-active) {
+						@include padding-end(6px);
+					}
+				}
+
+				&:last-child {
+					@include padding-end(6px);
+				}
+			}
 		}
 
 		// Column - Overlay Settings
 		.elementor-editor-column-settings {
-			top: 0;
-			@include start(0);
+			top: -1px;
+			@include start(-1px);
+			border-radius: 0 0 6px 0;
+			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
 
 			.elementor-editor-element-setting {
-				background-color: $editor-darkest;
 
 				&:hover {
-					background-color: $editor-darker;
+					background-color: $editor-darkest;
+				}
+
+				&:first-child {
+					@include padding-start(2px);
+
+					&:not(.elementor-active) {
+						@include padding-end(2px);
+					}
+				}
+
+				&:last-child {
+					@include padding-end(2px);
+				}
+			}
+		}
+
+		// Widget - Overlay Settings
+		.elementor-editor-widget-settings {
+			z-index: $second-layer;
+			top: -1px;
+			@include end(-1px);
+			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+			border-radius: 0 0 0 6px;
+			flex-direction: row-reverse;
+
+			.elementor-editor-element-setting {
+
+				&:hover {
+					background-color: darken($editor-info, 20%);
+				}
+
+				&:first-child {
+					@include padding-end(2px);
+
+					&:not(.elementor-active) {
+						@include padding-start(2px);
+					}
+				}
+
+				&:last-child {
+					@include padding-start(2px);
 				}
 			}
 		}
@@ -277,34 +324,7 @@ html.elementor-html {
 		.elementor-editor-element-trigger {
 
 			@media(min-width: $screen-lg-min) {
-				cursor: move;
-			}
-		}
-
-		// Widget - Overlay Settings
-		.elementor-editor-widget-settings {
-			z-index: $second-layer;
-			top: 1px;
-			@include end(1px);
-			flex-direction: row-reverse;
-
-			.elementor-editor-element-setting {
-				background-color: $editor-info;
-
-				&:hover {
-					background-color: darken($editor-info, 10%);
-				}
-			}
-
-			.elementor-editor-element-trigger {
-
-				&.elementor-active {
-
-					~ .elementor-editor-element-setting {
-						@include margin-end(1px);
-						@include margin-start(0);
-					}
-				}
+				cursor: grab;
 			}
 		}
 
@@ -356,7 +376,7 @@ html.elementor-html {
 					right: 0;
 					top: 0;
 					bottom: 0;
-					outline: 1px dashed $gray-darker;
+					outline: 1px dashed $editor-dark;
 				}
 			}
 
@@ -459,6 +479,7 @@ html.elementor-html {
 		text-align: center;
 		color: $editor-darker;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+		cursor: grabbing;
 
 		.icon {
 			font-size: 28px;

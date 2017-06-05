@@ -20,7 +20,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'3.0.2',
+			'3.2.1',
 			true
 		);
 

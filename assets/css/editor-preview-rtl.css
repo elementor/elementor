@@ -209,26 +209,10 @@ html.elementor-html {
     margin-right: 0; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-trigger:not(.elementor-active) ~ .elementor-editor-element-setting {
     width: 0;
-    font-size: 0; }
+    font-size: 0;
+    padding: 0; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings .elementor-editor-element-remove:hover .fa {
     color: #f00; }
-
-.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings {
-  top: 0;
-  right: 50%;
-  background-color: #71d7f7;
-  border-radius: 6px 6px 0 0;
-  -webkit-transform: translateX(-50%) translateY(-100%);
-      -ms-transform: translateX(-50%) translateY(-100%);
-          transform: translateX(-50%) translateY(-100%); }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting {
-    box-sizing: content-box; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:hover {
-      background-color: #41c9f4; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child {
-      padding-right: 6px; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:last-child {
-      padding-left: 6px; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting {
   cursor: pointer;
@@ -246,34 +230,62 @@ html.elementor-html {
   font-size: 10px;
   color: #fff;
   width: 22px;
-  transition: margin .3s, width .3s, font .3s; }
+  transition: margin .3s, width .3s, font .3s;
+  box-sizing: content-box; }
+
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings {
+  top: 0;
+  right: 50%;
+  background-image: linear-gradient(to bottom, #41c9f4, #71d7f7);
+  border-radius: 6px 6px 0 0;
+  -webkit-transform: translateX(-50%) translateY(-100%);
+      -ms-transform: translateX(-50%) translateY(-100%);
+          transform: translateX(-50%) translateY(-100%); }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:hover {
+    background-color: #10bcf2; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child {
+    padding-right: 6px; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
+      padding-left: 6px; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:last-child {
+    padding-left: 6px; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings {
-  top: 0;
-  right: 0; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting {
+  top: -1px;
+  right: -1px;
+  border-radius: 0 0 6px 0;
+  background-image: linear-gradient(to bottom, #6d7882, #556068); }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:hover {
     background-color: #495157; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:hover {
-      background-color: #556068; }
-
-@media (min-width: 1025px) {
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
-    cursor: move; } }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:first-child {
+    padding-right: 2px; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
+      padding-left: 2px; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:last-child {
+    padding-left: 2px; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings {
   z-index: 2;
-  top: 1px;
-  left: 1px;
+  top: -1px;
+  left: -1px;
+  background-image: linear-gradient(to top, #41c9f4, #71d7f7);
+  border-radius: 0 0 0 6px;
   -webkit-flex-direction: row-reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting {
-    background-color: #71d7f7; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
-      background-color: #41c9f4; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-trigger.elementor-active ~ .elementor-editor-element-setting {
-    margin-left: 1px;
-    margin-right: 0; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
+    background-color: #10bcf2; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:first-child {
+    padding-left: 2px; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
+      padding-right: 2px; }
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:last-child {
+    padding-right: 2px; }
+
+@media (min-width: 1025px) {
+  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
+    cursor: -webkit-grab;
+    cursor: grab; } }
 
 @media (max-width: 1024px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-trigger) {
@@ -297,7 +309,7 @@ html.elementor-html {
     right: 0;
     top: 0;
     bottom: 0;
-    outline: 1px dashed #373a3c; }
+    outline: 1px dashed #6d7882; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-column:hover > .elementor-element-overlay, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column.elementor-element-editable > .elementor-element-overlay {
   border: 1px solid #ffffff; }
@@ -352,7 +364,9 @@ html.elementor-html {
   background-color: #fff;
   text-align: center;
   color: #556068;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: -webkit-grabbing;
+  cursor: grabbing; }
   .elementor-editor-active .elementor-sortable-helper .icon {
     font-size: 28px;
     padding-top: 15px;

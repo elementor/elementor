@@ -13,7 +13,7 @@ class Element_Section extends Element_Base {
 		return [
 			'duplicate' => [
 				'title' => __( 'Duplicate', 'elementor' ),
-				'icon' => 'files-o',
+				'icon' => 'clone',
 			],
 			'add' => [
 				'title' => __( 'Add', 'elementor' ),
@@ -451,7 +451,7 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'none', 'classic', 'gradient', 'video' ],
+				'types' => [ 'classic', 'gradient', 'video' ],
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -476,7 +476,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_hover',
-				'types' => [ 'none', 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}}:hover',
 			]
 		);
@@ -530,7 +529,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
 				'condition' => [
 					'background_background' => [ 'none', 'classic', 'gradient', 'video' ],
@@ -574,7 +572,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}}:hover > .elementor-background-overlay',
 			]
 		);
@@ -648,7 +645,6 @@ class Element_Section extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'separator' => 'none',
 			]
 		);
 
@@ -685,7 +681,6 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover',
-				'separator' => 'none',
 			]
 		);
 
@@ -933,7 +928,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				'prefix_class' => 'elementor-invisible animated ',
+				'prefix_class' => 'animated ',
 				'label_block' => true,
 				'frontend_available' => true,
 			]

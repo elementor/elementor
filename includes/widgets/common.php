@@ -52,7 +52,7 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				'prefix_class' => 'elementor-invisible animated ',
+				'prefix_class' => 'animated ',
 				'label_block' => true,
 				'frontend_available' => true,
 			]
@@ -205,7 +205,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_border',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
-				'separator' => 'none',
 			]
 		);
 
@@ -243,7 +242,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_border_hover',
 				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
-				'separator' => 'none',
 			]
 		);
 
