@@ -17,23 +17,27 @@ class Manager {
 			wp_send_json_error( 'You must set the post ID' );
 		}
 
+		$data = json_decode( stripslashes( $_POST['data'] ), true );
+
 		$post = get_post( $_POST['id'] );
 
 		if ( empty( $post ) ) {
 			wp_send_json_error( 'Invalid Post' );
 		}
 
-		$post->post_title = $_POST['post_title'];
+		$post->post_title = $data['post_title'];
 
-		$post->post_status = $_POST['post_status'];
+		if ( isset( $data['post_status'] ) ) {
+			$post->post_status = $data['post_status'];
+		}
 
 		$saved = wp_update_post( $post );
 
-		if ( Manager::is_cpt_custom_templates_supported() ) {
-			update_post_meta( $post->ID, '_wp_page_template', $_POST['template'] );
+		if ( isset( $data['template'] ) && Manager::is_cpt_custom_templates_supported() ) {
+			update_post_meta( $post->ID, '_wp_page_template', $data['template'] );
 		}
 
-		self::save_page_settings( $post->ID, $_POST );
+		self::save_page_settings( $post->ID, $data );
 
 		if ( $saved ) {
 			wp_send_json_success();
@@ -43,10 +47,6 @@ class Manager {
 	}
 
 	public static function save_page_settings( $post_id, $settings ) {
-		$page = self::get_page( $post_id, $settings );
-
-		$controls_settings = $page->get_controls_settings();
-
 		$special_settings = [
 			'id',
 			'post_title',
@@ -55,7 +55,9 @@ class Manager {
 		];
 
 		foreach ( $special_settings as $special_setting ) {
-			unset( $controls_settings[ $special_setting ] );
+			if ( isset( $settings[ $special_setting ] ) ) {
+				unset( $settings[ $special_setting ] );
+			}
 		}
 
 		update_post_meta( $post_id, self::META_KEY, $controls_settings );
