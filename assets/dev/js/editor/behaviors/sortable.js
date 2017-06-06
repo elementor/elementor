@@ -195,13 +195,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	getChildViewContainer: function() {
-		if ( 'function' === typeof this.view.getChildViewContainer ) {
-			// CompositeView
-			return this.view.getChildViewContainer( this.view );
-		} else {
-			// CollectionView
-			return this.$el;
-		}
+		return this.view.getChildViewContainer( this.view );
 	}
 } );
 
