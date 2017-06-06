@@ -5971,14 +5971,16 @@ module.exports = ViewModule.extend( {
 			return;
 		}
 
-		var settings = self.model.toJSON();
-
-		settings.id = elementor.config.post_id;
+		var settings = self.model.toJSON( { removeDefault: true } ),
+			data = {
+				id: elementor.config.post_id,
+				data: JSON.stringify( settings )
+			};
 
 		NProgress.start();
 
 		elementor.ajax.send( 'save_page_settings', {
-			data: settings,
+			data: data,
 			success: function() {
 				NProgress.done();
 
@@ -7843,6 +7845,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
 			return $input.prop( 'checked' ) ? inputValue : '';
+		}
+
+		if ( 'number' === inputType && _.isFinite( inputValue ) ) {
+			return +inputValue;
 		}
 
 		// Temp fix for jQuery (< 3.0) that return null instead of empty array
