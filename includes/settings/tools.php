@@ -160,6 +160,23 @@ class Tools extends Settings_Page {
 							],
 						],
 					],
+					'beta' => [
+						'label' => __( 'Beta Versions', 'elementor' ),
+						'fields' => [
+							'beta' => [
+								'label' => __( 'Beta Versions', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'default' => 'no',
+									'options' => [
+										'no' => __( 'Disable', '' ),
+										'yes' => __( 'Enable', '' ),
+									],
+									'desc' => __( 'Opt-in to receive update notification for new beta versions of Elementor & E-Pro. Beta version updates do not install automatically, you still have the option to ignore update notifications.', 'elementor' ),
+								],
+							],
+						],
+					],
 				],
 			],
 		];
