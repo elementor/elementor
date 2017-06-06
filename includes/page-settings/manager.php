@@ -60,7 +60,11 @@ class Manager {
 			}
 		}
 
-		update_post_meta( $post_id, self::META_KEY, $controls_settings );
+		if ( $settings ) {
+			update_post_meta( $post_id, self::META_KEY, $settings );
+		} else {
+			delete_post_meta( $post_id, self::META_KEY );
+		}
 
 		$css_file = new Post_CSS_File( $post_id );
 
