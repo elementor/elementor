@@ -70,14 +70,16 @@ module.exports = ViewModule.extend( {
 			return;
 		}
 
-		var settings = self.model.toJSON();
-
-		settings.id = elementor.config.post_id;
+		var settings = self.model.toJSON( { removeDefault: true } ),
+			data = {
+				id: elementor.config.post_id,
+				data: JSON.stringify( settings )
+			};
 
 		NProgress.start();
 
 		elementor.ajax.send( 'save_page_settings', {
-			data: settings,
+			data: data,
 			success: function() {
 				NProgress.done();
 

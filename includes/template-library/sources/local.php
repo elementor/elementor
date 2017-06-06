@@ -242,11 +242,11 @@ class Source_Local extends Source_Base {
 			'page_settings' => 'page' === $template_type,
 		], 'raw' );
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`
-		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
-
 		if ( empty( $template_data['content'] ) )
 			return new \WP_Error( '404', 'The template does not exist' );
+
+		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
 		// TODO: More fields to export?
 		$export_data = [

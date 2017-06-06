@@ -169,8 +169,8 @@ class Tools extends Settings_Page {
 									'type' => 'select',
 									'default' => 'no',
 									'options' => [
-										'no' => __( 'Disable', '' ),
-										'yes' => __( 'Enable', '' ),
+										'no' => __( 'Disable', 'elementor' ),
+										'yes' => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'Opt-in to receive update notification for new beta versions of Elementor & E-Pro. Beta version updates do not install automatically, you still have the option to ignore update notifications.', 'elementor' ),
 								],
