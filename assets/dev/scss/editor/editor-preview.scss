@@ -251,16 +251,19 @@ html.elementor-html {
 					background-color: darken($editor-info, 20%);
 				}
 
-				&:first-child {
-					@include padding-start(6px);
+				@media (min-width: $screen-lg-min) {
 
-					&:not(.elementor-active) {
+					&:first-child {
+						@include padding-start(6px);
+
+						&:not(.elementor-active) {
+							@include padding-end(6px);
+						}
+					}
+
+					&:last-child {
 						@include padding-end(6px);
 					}
-				}
-
-				&:last-child {
-					@include padding-end(6px);
 				}
 			}
 		}
@@ -278,16 +281,19 @@ html.elementor-html {
 					background-color: $editor-darkest;
 				}
 
-				&:first-child {
-					@include padding-start(2px);
+				@media (min-width: $screen-lg-min) {
 
-					&:not(.elementor-active) {
+					&:first-child {
+						@include padding-start(2px);
+
+						&:not(.elementor-active) {
+							@include padding-end(2px);
+						}
+					}
+
+					&:last-child {
 						@include padding-end(2px);
 					}
-				}
-
-				&:last-child {
-					@include padding-end(2px);
 				}
 			}
 		}
@@ -307,16 +313,19 @@ html.elementor-html {
 					background-color: darken($editor-info, 20%);
 				}
 
-				&:first-child {
-					@include padding-end(2px);
+				@media (min-width: $screen-lg-min) {
 
-					&:not(.elementor-active) {
+					&:first-child {
+						@include padding-end(2px);
+
+						&:not(.elementor-active) {
+							@include padding-start(2px);
+						}
+					}
+
+					&:last-child {
 						@include padding-start(2px);
 					}
-				}
-
-				&:last-child {
-					@include padding-start(2px);
 				}
 			}
 		}
