@@ -248,22 +248,20 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onClickAdd: function() {
-		var self = this;
-
-		if ( self.addSectionView && ! self.addSectionView.isDestroyed ) {
-			self.addSectionView.fadeToDeath();
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.fadeToDeath();
 
 			return;
 		}
 
-		var myIndex = self.model.collection.indexOf( self.model ),
+		var myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
 				atIndex: myIndex
 			} );
 
 		addSectionView.render();
 
-		self.$el.before( addSectionView.$el );
+		this.$el.before( addSectionView.$el );
 
 		addSectionView.$el.hide();
 
