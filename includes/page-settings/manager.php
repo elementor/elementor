@@ -58,10 +58,11 @@ class Manager {
 	}
 
 	public static function template_include( $template ) {
-		if ( self::TEMPLATE_CANVAS === get_post_meta( get_the_ID(), '_wp_page_template', true ) ) {
-			$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
+		if ( is_singular() ) {
+			if ( self::TEMPLATE_CANVAS === get_post_meta( get_the_ID(), '_wp_page_template', true ) ) {
+				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
+			}
 		}
-
 		return $template;
 	}
 
