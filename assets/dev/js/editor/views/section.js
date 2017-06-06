@@ -82,7 +82,9 @@ SectionView = BaseElementView.extend( {
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
 			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
-			items: '> .elementor-column'
+			items: '> .elementor-column',
+			forcePlaceholderSize: true,
+			tolerance: 'pointer'
 		};
 	},
 
