@@ -243,12 +243,13 @@ html.elementor-html {
           transform: translateX(-50%) translateY(-100%); }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:hover {
     background-color: #10bcf2; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child {
-    padding-left: 6px; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
-      padding-right: 6px; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:last-child {
-    padding-right: 6px; }
+  @media (min-width: 1025px) {
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child {
+      padding-left: 6px; }
+      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
+        padding-right: 6px; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:last-child {
+      padding-right: 6px; } }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings {
   top: -1px;
@@ -257,12 +258,13 @@ html.elementor-html {
   background-image: linear-gradient(to bottom, #6d7882, #556068); }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:hover {
     background-color: #495157; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:first-child {
-    padding-left: 2px; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
-      padding-right: 2px; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:last-child {
-    padding-right: 2px; }
+  @media (min-width: 1025px) {
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:first-child {
+      padding-left: 2px; }
+      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
+        padding-right: 2px; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-column-settings .elementor-editor-element-setting:last-child {
+      padding-right: 2px; } }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings {
   z-index: 2;
@@ -275,12 +277,13 @@ html.elementor-html {
           flex-direction: row-reverse; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
     background-color: #10bcf2; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:first-child {
-    padding-right: 2px; }
-    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
-      padding-left: 2px; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:last-child {
-    padding-left: 2px; }
+  @media (min-width: 1025px) {
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:first-child {
+      padding-right: 2px; }
+      .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:first-child:not(.elementor-active) {
+        padding-left: 2px; }
+    .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:last-child {
+      padding-left: 2px; } }
 
 @media (min-width: 1025px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
