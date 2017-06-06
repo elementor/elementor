@@ -355,9 +355,6 @@ html.elementor-html {
 .elementor-editor-active .elementor-widget:not(:hover) .elementor-editor-element-settings {
   display: none; }
 
-.elementor-editor-active .elementor-column.elementor-dragging div.elementor-column-wrap {
-  min-height: 50px; }
-
 .elementor-editor-active .handle {
   display: none; }
 
@@ -386,25 +383,37 @@ html.elementor-html {
     vertical-align: middle;
     height: 40px; }
 
-.elementor-sortable-placeholder {
+.elementor-sortable-placeholder:not(.elementor-column-placeholder) {
   background-color: #71d7f7;
   -webkit-animation-timing-function: ease-out;
           animation-timing-function: ease-out;
   -webkit-animation-duration: 500ms;
           animation-duration: 500ms;
   opacity: .9; }
-  .elementor-sortable-placeholder.elementor-section-placeholder {
-    height: 40px;
-    -webkit-animation-name: placeholder-section;
-            animation-name: placeholder-section; }
-  .elementor-sortable-placeholder.elementor-column-placeholder {
-    width: 10px;
-    -webkit-animation-name: placeholder-column;
-            animation-name: placeholder-column; }
-  .elementor-sortable-placeholder.elementor-widget-placeholder {
-    height: 10px;
-    -webkit-animation-name: placeholder-widget;
-            animation-name: placeholder-widget; }
+
+.elementor-section-placeholder {
+  height: 40px;
+  -webkit-animation-name: placeholder-section;
+          animation-name: placeholder-section; }
+
+.elementor-column-placeholder {
+  position: relative; }
+  .elementor-column-placeholder:before, .elementor-column-placeholder:after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    right: 10px;
+    left: 10px; }
+  .elementor-column-placeholder:before {
+    border: 1px solid #6d7882; }
+  .elementor-column-placeholder:after {
+    border: 1px dashed #fff; }
+
+.elementor-widget-placeholder {
+  height: 10px;
+  -webkit-animation-name: placeholder-widget;
+          animation-name: placeholder-widget; }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add:after,
 .elementor-first-add.elementor-html5dnd-current-element:after {
