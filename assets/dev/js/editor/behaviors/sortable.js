@@ -152,14 +152,13 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		if ( draggedIsInnerSection && targetIsInnerColumn ) {
 			Backbone.$( ui.sender ).sortable( 'cancel' );
+
 			return;
 		}
 
 		var newIndex = ui.item.parent().children().index( ui.item );
 
 		this.view.addChildElement( model.toJSON( { copyHtmlCache: true } ), { at: newIndex } );
-
-		elementor.channels.data.trigger( draggedElType + ':drag:end' );
 
 		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
 

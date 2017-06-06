@@ -54,9 +54,6 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
-
-		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
-		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
 
 	initPercentsPopup: function() {
@@ -169,14 +166,6 @@ ColumnView = BaseElementView.extend( {
 		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
 			this.changeSizeUI();
 		}
-	},
-
-	onWidgetDragStart: function() {
-		this.$el.addClass( 'elementor-dragging' );
-	},
-
-	onWidgetDragEnd: function() {
-		this.$el.removeClass( 'elementor-dragging' );
 	},
 
 	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
