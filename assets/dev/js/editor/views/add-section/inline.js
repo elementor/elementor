@@ -47,5 +47,11 @@ module.exports = BaseAddSectionView.extend( {
 		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply( this, arguments );
 
 		this.destroy();
+	},
+
+	onDropping: function() {
+		BaseAddSectionView.prototype.onDropping.apply( this, arguments );
+
+		this.destroy();
 	}
 } );
