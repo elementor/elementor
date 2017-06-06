@@ -72,13 +72,15 @@ class Manager {
 	}
 
 	public static function get_export_page_settings( Page $page ) {
-		return $page->filter_controls_settings( function( $value, $control ) {
+		$export_settings = $page->filter_controls_settings( function( $value, $control ) {
 			if ( empty( $control['export'] ) ) {
 				return null;
 			}
 
 			return $control['export']( $value ) ? $value : null;
 		} );
+
+		return $page->get_non_default_settings( $export_settings );
 	}
 
 	public static function template_include( $template ) {
