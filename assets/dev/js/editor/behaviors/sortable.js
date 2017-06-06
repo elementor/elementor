@@ -173,39 +173,21 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		var model = this.view.collection.get( ui.item.attr( 'data-model-cid' ) );
-
-		if ( model ) {
-			elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:end' );
-		}
-	},
-
-	onSortStop: function( event, ui ) {
-		event.stopPropagation();
-
 		if ( this.getChildViewContainer()[0] === ui.item.parent()[0] ) {
-			var model = elementor.channels.data.request( 'dragging:model' );
+			var model = elementor.channels.data.request( 'dragging:model' ),
+				$childElement = ui.item,
+				collection = this.view.collection,
+				newIndex = $childElement.parent().children().index( $childElement );
 
-			if ( null === ui.sender ) {
-				var $childElement = ui.item,
-					collection = this.view.collection,
-					newIndex = $childElement.parent().children().index( $childElement ),
-					oldIndex = collection.indexOf( model );
+			var child = this.view.children.findByModelCid( model.cid );
 
-				if ( oldIndex !== newIndex ) {
-					var child = this.view.children.findByModelCid( model.cid );
+			child._isRendering = true;
 
-					child._isRendering = true;
+			collection.remove( model );
 
-					collection.remove( model );
+			this.view.addChildElement( model, { at: newIndex } );
 
-					this.view.addChildElement( model, { at: newIndex } );
-
-					elementor.setFlagEditorChange( true );
-				}
-
-				elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:end' );
-			}
+			elementor.setFlagEditorChange( true );
 		}
 	},
 
