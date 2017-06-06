@@ -33,16 +33,6 @@ module.exports = BaseAddSectionView.extend( {
 		} );
 	},
 
-	onRender: function() {
-		var self = this;
-
-		BaseAddSectionView.prototype.onRender.apply( self, arguments );
-
-		self.$el.hoverIntent( null, function() {
-			self.fadeToDeath();
-		}, { timeout: 1500 } );
-	},
-
 	onCloseButtonClick: function() {
 		this.fadeToDeath();
 	},

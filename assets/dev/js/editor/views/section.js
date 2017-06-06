@@ -241,17 +241,7 @@ SectionView = BaseElementView.extend( {
 			addSectionView.$el.slideDown();
 		} );
 
-		self.addSectionView = addSectionView;
-
-		var timeout = setTimeout( function() {
-			self.addSectionView.fadeToDeath();
-		}, 2000 );
-
-		self.addSectionView.$el.on( 'mouseenter', function() {
-			clearTimeout( timeout );
-
-			self.addSectionView.$el.off( 'mouseenter' );
-		} );
+		this.addSectionView = addSectionView;
 	},
 
 	onAddChild: function() {
