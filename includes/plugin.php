@@ -217,6 +217,7 @@ class Plugin {
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
+			require( ELEMENTOR_PATH . 'includes/beta-testers.php' );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
@@ -250,6 +251,7 @@ class Plugin {
 		if ( is_admin() ) {
 			$this->admin = new Admin();
 			$this->tools = new Tools();
+			$this->beta_testers = new Beta_Testers();
 		}
 
 		$this->maintenance_mode = new Maintenance_Mode();
