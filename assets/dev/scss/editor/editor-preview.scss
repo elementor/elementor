@@ -509,25 +509,44 @@ html.elementor-html {
 // Drag/sort placeholder
 
 .elementor-sortable-placeholder {
-	background-color: $editor-info;
-	animation-timing-function: ease-out;
-	animation-duration: 500ms;
-	opacity: .9;
 
-	&.elementor-section-placeholder {
-		height: $section-placeholder-size;
-		animation-name: placeholder-section;
+	&:not(.elementor-column-placeholder) {
+		background-color: $editor-info;
+		animation-timing-function: ease-out;
+		animation-duration: 500ms;
+		opacity: .9;
+	}
+}
+
+.elementor-section-placeholder {
+	height: $section-placeholder-size;
+	animation-name: placeholder-section;
+}
+
+.elementor-column-placeholder {
+	position: relative;
+
+	&:before, &:after {
+		content: '';
+		position: absolute;
+		top: 10px;
+		bottom: 10px;
+		right: 10px;
+		left: 10px;
 	}
 
-	&.elementor-column-placeholder {
-		width: $column-placeholder-size;
-		animation-name: placeholder-column;
+	&:before {
+		border: 1px solid $editor-dark;
 	}
 
-	&.elementor-widget-placeholder {
-		height: $widget-placeholder-size;
-		animation-name: placeholder-widget;
+	&:after {
+		border: 1px dashed #fff;
 	}
+}
+
+.elementor-widget-placeholder {
+	height: $widget-placeholder-size;
+	animation-name: placeholder-widget;
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
