@@ -34,10 +34,26 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 
 	public function get_sliders() {
 		return [
-			[ 'label' => __( 'Blur', 'elementor' ), 'type' => 'blur', 'min' => 0, 'max' => 100 ],
-			[ 'label' => __( 'Spread', 'elementor' ), 'type' => 'spread', 'min' => -100, 'max' => 100 ],
-			[ 'label' => __( 'Horizontal', 'elementor' ), 'type' => 'horizontal', 'min' => -100, 'max' => 100 ],
-			[ 'label' => __( 'Vertical', 'elementor' ), 'type' => 'vertical', 'min' => -100, 'max' => 100 ],
+			'blur' => [
+				'label' => __( 'Blur', 'elementor' ),
+				'min' => 0,
+				'max' => 100,
+			],
+			'spread' => [
+				'label' => __( 'Spread', 'elementor' ),
+				'min' => -100,
+				'max' => 100,
+			],
+			'horizontal' => [
+				'label' => __( 'Horizontal', 'elementor' ),
+				'min' => -100,
+				'max' => 100,
+			],
+			'vertical' => [
+				'label' => __( 'Vertical', 'elementor' ),
+				'min' => -100,
+				'max' => 100,
+			],
 		];
 	}
 
@@ -67,7 +83,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 			<div class="elementor-box-shadow-slider">
 				<label class="elementor-control-title"><?php echo $slider['label']; ?></label>
 				<div class="elementor-control-input-wrapper">
-					<div class="elementor-slider" data-input="<?php echo $slider['type']; ?>"></div>
+					<div class="elementor-slider" data-input="<?php echo $slider_name; ?>"></div>
 					<div class="elementor-slider-input">
 						<input type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" data-setting="<?php echo $slider['type']; ?>"/>
 					</div>
