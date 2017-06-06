@@ -206,6 +206,12 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.percentsPopup.hide();
 	},
 
+	destroyAddSectionView: function() {
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.destroy();
+		}
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -331,10 +337,13 @@ SectionView = BaseElementView.extend( {
 		if ( newSize < minColumnSize ) {
 			throw new RangeError( this.errors.columnWidthTooSmall );
 		}
+	onDestroy: function() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
 
 		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
 
 		return true;
+		this.destroyAddSectionView();
 	}
 } );
 
