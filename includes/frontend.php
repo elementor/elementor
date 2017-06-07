@@ -105,7 +105,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'3.4.1',
+			'3.4.2',
 			true
 		);
 
