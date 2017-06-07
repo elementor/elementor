@@ -25,6 +25,14 @@ class Page extends Controls_Stack {
 		return 'page-settings-' . $this->post->ID;
 	}
 
+	public function on_export( $element_data ) {
+		if ( ! empty( $element_data['settings']['template'] ) && Manager::TEMPLATE_CANVAS !== $element_data['settings']['template'] ) {
+			unset( $element_data['settings']['template'] );
+		}
+
+		return $element_data;
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_page_settings',

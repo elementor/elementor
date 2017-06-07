@@ -2,10 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
-use Elementor\Controls_Manager;
-use Elementor\Element_Base;
-use Elementor\Plugin;
-use Elementor\Utils;
+use Elementor\PageSettings\Page;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -90,6 +87,15 @@ class Source_Remote extends Source_Base {
 
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
+
+		if ( ! empty( $args['page_settings'] ) && ! empty( $data['page_settings'] ) ) {
+			$page = new Page( [
+				'settings' => $data['page_settings'],
+			] );
+
+			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
+			$data['page_settings'] = $page_settings_data['settings'];
+		}
 
 		return $data;
 	}

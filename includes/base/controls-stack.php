@@ -272,28 +272,6 @@ abstract class Controls_Stack {
 		}, [] );
 	}
 
-	public function get_non_default_settings( array $settings = [], array $controls = [] ) {
-		return $this->filter_controls_settings( function ( $value, $control ) {
-			$default = $control['default'];
-
-			if ( $value && is_array( $value ) ) {
-				if ( count( $value ) !== count( $default ) ) {
-					return $value ;
-				}
-
-				foreach ( $value as $property_key => $property_value ) {
-					if ( $property_value !== $default[ $property_key ] ) {
-						return $value;
-					}
-				}
-			} elseif ( $value !== $default ) {
-				return $value;
-			}
-
-			return null;
-		}, $settings, $controls );
-	}
-
 	public function is_control_visible( $control, $values = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();

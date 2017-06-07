@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\DB;
 use Elementor\PageSettings\Manager as PageSettingsManager;
+use Elementor\PageSettings\Page;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -166,7 +167,6 @@ class Source_Local extends Source_Base {
 		}
 
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
-
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
 		return $template_id;
@@ -224,7 +224,8 @@ class Source_Local extends Source_Base {
 		];
 
 		if ( ! empty( $args['page_settings'] ) ) {
-			$data['page_settings'] = PageSettingsManager::get_export_page_settings( PageSettingsManager::get_page( $args['template_id'] ) );
+			$page = PageSettingsManager::get_page( $args['template_id'] );
+			$data['page_settings'] = $page->get_data( 'settings' );
 		}
 
 		return $data;
@@ -239,7 +240,7 @@ class Source_Local extends Source_Base {
 
 		$template_data = $this->get_data( [
 			'template_id' => $template_id,
-			'page_settings' => 'page' === $template_type,
+			//'page_settings' => 'page' === $template_type,
 		], 'raw' );
 
 		if ( empty( $template_data['content'] ) )
@@ -247,6 +248,14 @@ class Source_Local extends Source_Base {
 
 		// TODO: since 1.5.0 to content container named `content` instead of `data`
 		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
+
+		if ( 'page' === $template_type ) {
+			$page = PageSettingsManager::get_page( $template_id );
+			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
+			if ( ! empty( $page_settings_data['settings'] ) ) {
+				$template_data['page_settings'] = $page_settings_data['settings'];
+			}
+		}
 
 		// TODO: More fields to export?
 		$export_data = [
@@ -288,21 +297,38 @@ class Source_Local extends Source_Base {
 
 		$data = json_decode( file_get_contents( $import_file ), true );
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`
-		$content = $data['data'];
+		if ( ! empty( $data ) ) {
+			// TODO: since 1.5.0 to content container named `content` instead of `data`
+			if ( ! empty( $data['data'] ) ) {
+				$content = $data['data'];
+			} else {
+				$content = $data['content'];
+			}
+		}
 
-		$is_invalid_file = empty( $data ) || empty( $content ) || ! is_array( $content );
-
+		$is_invalid_file = empty( $content ) || ! is_array( $content );
 		if ( $is_invalid_file )
 			return new \WP_Error( 'file_error', 'Invalid File' );
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
 
+		$page_settings = [];
+		if ( ! empty( $data['page_settings'] ) ) {
+			$page = new Page( [
+				'settings' => $data['page_settings'],
+			] );
+
+			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
+			if ( ! empty( $page_settings_data['settings'] ) ) {
+				$page_settings = $page_settings_data['settings'];
+			}
+		}
+
 		$template_id = $this->save_item( [
 			'content' => $content,
 			'title' => $data['title'],
 			'type' => $data['type'],
-			'page_settings' => $data['page_settings'],
+			'page_settings' => $page_settings,
 		] );
 
 		if ( is_wp_error( $template_id ) )

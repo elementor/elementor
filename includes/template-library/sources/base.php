@@ -46,25 +46,37 @@ abstract class Source_Base {
 				return null;
 			}
 
-			if ( method_exists( $element, $method ) ) {
-				// TODO: Use the internal element data without parameters
-				$element_data = $element->{$method}( $element->get_data() );
-			}
-
-			foreach ( $element->get_controls() as $control ) {
-				$control_class = Plugin::$instance->controls_manager->get_control( $control['type'] );
-
-				// If the control isn't exist, like a plugin that creates the control but deactivated
-				if ( ! $control_class ) {
-					return $element_data;
-				}
-
-				if ( method_exists( $control_class, $method ) ) {
-					$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ) );
-				}
-			}
-
-			return $element_data;
+			return $this->process_element_export_import_content( $element, $method );
 		} );
+	}
+
+	/**
+	 * @param \Elementor\Controls_Stack $element
+	 * @param string $method
+	 *
+	 * @return array
+	 */
+	protected function process_element_export_import_content( $element, $method ) {
+		$element_data = $element->get_data();
+
+		if ( method_exists( $element, $method ) ) {
+			// TODO: Use the internal element data without parameters
+			$element_data = $element->{$method}( $element_data );
+		}
+
+		foreach ( $element->get_controls() as $control ) {
+			$control_class = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			// If the control isn't exist, like a plugin that creates the control but deactivated
+			if ( ! $control_class ) {
+				return $element_data;
+			}
+
+			if ( method_exists( $control_class, $method ) ) {
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ) );
+			}
+		}
+
+		return $element_data;
 	}
 }

@@ -60,7 +60,7 @@ class Manager {
 			}
 		}
 
-		if ( $settings ) {
+		if ( ! empty( $settings ) ) {
 			update_post_meta( $post_id, self::META_KEY, $settings );
 		} else {
 			delete_post_meta( $post_id, self::META_KEY );
