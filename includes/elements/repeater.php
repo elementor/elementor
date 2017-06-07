@@ -27,6 +27,10 @@ class Repeater extends Element_Base {
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
 	}
 
+	public function get_fields() {
+		return array_values( $this->get_controls() );
+	}
+
 	protected function _get_default_child_type( array $element_data ) {
 		return false;
 	}
