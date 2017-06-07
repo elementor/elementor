@@ -82,7 +82,9 @@ SectionView = BaseElementView.extend( {
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
 			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
-			items: '> .elementor-column'
+			items: '> .elementor-column',
+			forcePlaceholderSize: true,
+			tolerance: 'pointer'
 		};
 	},
 
@@ -206,6 +208,37 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.percentsPopup.hide();
 	},
 
+	resizeChild: function( childView, currentSize, newSize ) {
+		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
+
+		if ( ! nextChildView ) {
+			throw new ReferenceError( 'There is not any next column' );
+		}
+
+		var minColumnSize = 10,
+			$nextElement = nextChildView.$el,
+			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
+			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
+
+		if ( nextElementNewSize < minColumnSize ) {
+			throw new RangeError( this.errors.columnWidthTooLarge );
+		}
+
+		if ( newSize < minColumnSize ) {
+			throw new RangeError( this.errors.columnWidthTooSmall );
+		}
+
+		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
+
+		return true;
+	},
+
+	destroyAddSectionView: function() {
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.destroy();
+		}
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -217,22 +250,20 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onClickAdd: function() {
-		var self = this;
-
-		if ( self.addSectionView && ! self.addSectionView.isDestroyed ) {
-			self.addSectionView.fadeToDeath();
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.fadeToDeath();
 
 			return;
 		}
 
-		var myIndex = self.model.collection.indexOf( self.model ),
+		var myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
 				atIndex: myIndex
 			} );
 
 		addSectionView.render();
 
-		self.$el.before( addSectionView.$el );
+		this.$el.before( addSectionView.$el );
 
 		addSectionView.$el.hide();
 
@@ -241,17 +272,7 @@ SectionView = BaseElementView.extend( {
 			addSectionView.$el.slideDown();
 		} );
 
-		self.addSectionView = addSectionView;
-
-		var timeout = setTimeout( function() {
-			self.addSectionView.fadeToDeath();
-		}, 2000 );
-
-		self.addSectionView.$el.on( 'mouseenter', function() {
-			clearTimeout( timeout );
-
-			self.addSectionView.$el.off( 'mouseenter' );
-		} );
+		this.addSectionView = addSectionView;
 	},
 
 	onAddChild: function() {
@@ -322,29 +343,10 @@ SectionView = BaseElementView.extend( {
 		columnView.model.setSetting( '_inline_size', newSize );
 	},
 
-	resizeChild: function( childView, currentSize, newSize ) {
-		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
+	onDestroy: function() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
 
-		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
-		}
-
-		var minColumnSize = 10,
-			$nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
-
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
-
-		return true;
+		this.destroyAddSectionView();
 	}
 } );
 

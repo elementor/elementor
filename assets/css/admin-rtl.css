@@ -95,6 +95,9 @@
     height: 100%;
     width: 100%; }
 
+.elementor-hidden {
+  display: none; }
+
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
 
@@ -122,9 +125,6 @@ body.elementor-editor-inactive .elementor-switch-mode-on {
   display: none; }
 
 body.elementor-editor-inactive #elementor-editor {
-  display: none; }
-
-.elementor-hidden {
   display: none; }
 
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {

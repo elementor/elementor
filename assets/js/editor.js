@@ -191,12 +191,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 
 		this.view.$el.data( 'originalWidth', this.view.el.getBoundingClientRect().width );
 
-		var panel = elementor.getPanelView();
-
-		if ( 'elements' !== panel.getCurrentPageName() ) {
-			panel.setPage( 'elements' );
-		}
-
 		this.view.triggerMethod( 'request:resize:start', event );
 	},
 
@@ -374,14 +368,13 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		if ( draggedIsInnerSection && targetIsInnerColumn ) {
 			Backbone.$( ui.sender ).sortable( 'cancel' );
+
 			return;
 		}
 
 		var newIndex = ui.item.parent().children().index( ui.item );
 
 		this.view.addChildElement( model.toJSON( { copyHtmlCache: true } ), { at: newIndex } );
-
-		elementor.channels.data.trigger( draggedElType + ':drag:end' );
 
 		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
 
@@ -395,39 +388,21 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		var model = this.view.collection.get( ui.item.attr( 'data-model-cid' ) );
-
-		if ( model ) {
-			elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:end' );
-		}
-	},
-
-	onSortStop: function( event, ui ) {
-		event.stopPropagation();
-
 		if ( this.getChildViewContainer()[0] === ui.item.parent()[0] ) {
-			var model = elementor.channels.data.request( 'dragging:model' );
+			var model = elementor.channels.data.request( 'dragging:model' ),
+				$childElement = ui.item,
+				collection = this.view.collection,
+				newIndex = $childElement.parent().children().index( $childElement );
 
-			if ( null === ui.sender ) {
-				var $childElement = ui.item,
-					collection = this.view.collection,
-					newIndex = $childElement.parent().children().index( $childElement ),
-					oldIndex = collection.indexOf( model );
+			var child = this.view.children.findByModelCid( model.cid );
 
-				if ( oldIndex !== newIndex ) {
-					var child = this.view.children.findByModelCid( model.cid );
+			child._isRendering = true;
 
-					child._isRendering = true;
+			collection.remove( model );
 
-					collection.remove( model );
+			this.view.addChildElement( model, { at: newIndex } );
 
-					this.view.addChildElement( model, { at: newIndex } );
-
-					elementor.setFlagEditorChange( true );
-				}
-
-				elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:end' );
-			}
+			elementor.setFlagEditorChange( true );
 		}
 	},
 
@@ -436,13 +411,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	getChildViewContainer: function() {
-		if ( 'function' === typeof this.view.getChildViewContainer ) {
-			// CompositeView
-			return this.view.getChildViewContainer( this.view );
-		} else {
-			// CollectionView
-			return this.$el;
-		}
+		return this.view.getChildViewContainer( this.view );
 	}
 } );
 
@@ -5637,7 +5606,11 @@ module.exports = new Introduction();
 				isGroupMatch,
 				isDroppingAllowed;
 
-			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
+			if ( settings.groups ) {
+				if ( ! hasFullDataTransferSupport( event ) ) {
+					return false;
+				}
+
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
 
 				isGroupMatch = false;
@@ -6609,17 +6582,13 @@ AddSectionView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
-
-		self.$el.html5Droppable( {
+		this.$el.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: function() {
-				self.addSection().addElementFromPanel();
-			}
+			onDropping: _.bind( this.onDropping, this )
 		} );
 	},
 
@@ -6644,6 +6613,10 @@ AddSectionView = Marionette.ItemView.extend( {
 
 		newSection.setStructure( selectedStructure );
 		newSection.redefineLayout();
+	},
+
+	onDropping: function() {
+		this.addSection().addElementFromPanel();
 	}
 } );
 
@@ -6696,16 +6669,6 @@ module.exports = BaseAddSectionView.extend( {
 		} );
 	},
 
-	onRender: function() {
-		var self = this;
-
-		BaseAddSectionView.prototype.onRender.apply( self, arguments );
-
-		self.$el.hoverIntent( null, function() {
-			self.fadeToDeath();
-		}, { timeout: 1500 } );
-	},
-
 	onCloseButtonClick: function() {
 		this.fadeToDeath();
 	},
@@ -6718,6 +6681,12 @@ module.exports = BaseAddSectionView.extend( {
 
 	onAddTemplateButtonClick: function() {
 		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply( this, arguments );
+
+		this.destroy();
+	},
+
+	onDropping: function() {
+		BaseAddSectionView.prototype.onDropping.apply( this, arguments );
 
 		this.destroy();
 	}
@@ -7320,9 +7289,6 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
-
-		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
-		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
 	},
 
 	initPercentsPopup: function() {
@@ -7435,14 +7401,6 @@ ColumnView = BaseElementView.extend( {
 		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
 			this.changeSizeUI();
 		}
-	},
-
-	onWidgetDragStart: function() {
-		this.$el.addClass( 'elementor-dragging' );
-	},
-
-	onWidgetDragEnd: function() {
-		this.$el.removeClass( 'elementor-dragging' );
 	},
 
 	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
@@ -9662,7 +9620,9 @@ SectionView = BaseElementView.extend( {
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
 			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
-			items: '> .elementor-column'
+			items: '> .elementor-column',
+			forcePlaceholderSize: true,
+			tolerance: 'pointer'
 		};
 	},
 
@@ -9786,6 +9746,37 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.percentsPopup.hide();
 	},
 
+	resizeChild: function( childView, currentSize, newSize ) {
+		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
+
+		if ( ! nextChildView ) {
+			throw new ReferenceError( 'There is not any next column' );
+		}
+
+		var minColumnSize = 10,
+			$nextElement = nextChildView.$el,
+			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
+			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
+
+		if ( nextElementNewSize < minColumnSize ) {
+			throw new RangeError( this.errors.columnWidthTooLarge );
+		}
+
+		if ( newSize < minColumnSize ) {
+			throw new RangeError( this.errors.columnWidthTooSmall );
+		}
+
+		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
+
+		return true;
+	},
+
+	destroyAddSectionView: function() {
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.destroy();
+		}
+	},
+
 	onBeforeRender: function() {
 		this._checkIsEmpty();
 	},
@@ -9797,22 +9788,20 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onClickAdd: function() {
-		var self = this;
-
-		if ( self.addSectionView && ! self.addSectionView.isDestroyed ) {
-			self.addSectionView.fadeToDeath();
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.fadeToDeath();
 
 			return;
 		}
 
-		var myIndex = self.model.collection.indexOf( self.model ),
+		var myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
 				atIndex: myIndex
 			} );
 
 		addSectionView.render();
 
-		self.$el.before( addSectionView.$el );
+		this.$el.before( addSectionView.$el );
 
 		addSectionView.$el.hide();
 
@@ -9821,17 +9810,7 @@ SectionView = BaseElementView.extend( {
 			addSectionView.$el.slideDown();
 		} );
 
-		self.addSectionView = addSectionView;
-
-		var timeout = setTimeout( function() {
-			self.addSectionView.fadeToDeath();
-		}, 2000 );
-
-		self.addSectionView.$el.on( 'mouseenter', function() {
-			clearTimeout( timeout );
-
-			self.addSectionView.$el.off( 'mouseenter' );
-		} );
+		this.addSectionView = addSectionView;
 	},
 
 	onAddChild: function() {
@@ -9902,29 +9881,10 @@ SectionView = BaseElementView.extend( {
 		columnView.model.setSetting( '_inline_size', newSize );
 	},
 
-	resizeChild: function( childView, currentSize, newSize ) {
-		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
+	onDestroy: function() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
 
-		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
-		}
-
-		var minColumnSize = 10,
-			$nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
-
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
-
-		return true;
+		this.destroyAddSectionView();
 	}
 } );
 

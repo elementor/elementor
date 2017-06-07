@@ -198,7 +198,11 @@
 				isGroupMatch,
 				isDroppingAllowed;
 
-			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
+			if ( settings.groups ) {
+				if ( ! hasFullDataTransferSupport( event ) ) {
+					return false;
+				}
+
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
 
 				isGroupMatch = false;

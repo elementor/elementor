@@ -140,6 +140,42 @@
 	}
 }
 
+.elementor-custom-embed-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+
+	i {
+		font-size: 100px;
+		color: #fff;
+		opacity: 0.7;
+		text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
+		transition: all .5s;
+	}
+
+	&:not(.elementor-playing) {
+
+		i {
+
+			&:before {
+				content: "\f01d";
+			}
+		}
+	}
+
+	&.elementor-playing {
+
+		i {
+			animation: fa-spin 2s infinite linear;
+
+			&:before {
+				content: "\f1ce";
+			}
+		}
+	}
+}
+
 // Alignment for Tablet
 @media (max-width: $screen-md-max) {
 
