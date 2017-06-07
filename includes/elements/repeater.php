@@ -5,10 +5,10 @@ class Repeater extends Element_Base {
 
 	private static $counter = 0;
 
-	public function __construct() {
+	public function __construct( array $data = [], array $args = null ) {
 		self::$counter++;
 
-		parent::__construct();
+		parent::__construct( $data, $args );
 	}
 
 	public function get_name() {
