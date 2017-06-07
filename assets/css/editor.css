@@ -96,6 +96,9 @@
     height: 100%;
     width: 100%; }
 
+.elementor-hidden {
+  display: none; }
+
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,
@@ -316,9 +319,6 @@ body {
 
 #elementor-saved-popup .elementor-dialog-message-text {
   text-transform: uppercase; }
-
-.elementor-hidden {
-  display: none; }
 
 .elementor-button {
   outline: none;
@@ -1275,7 +1275,8 @@ select {
     text-transform: uppercase; }
   .elementor-panel .elementor-control-type-media .elementor-control-media-image {
     height: 100%;
-    background-size: cover; }
+    background-size: cover;
+    background-position: center; }
   .elementor-panel .elementor-control-type-dimensions .elementor-control-dimensions {
     overflow: hidden; }
   .elementor-panel .elementor-control-type-dimensions li {
