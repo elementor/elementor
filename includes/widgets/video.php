@@ -496,7 +496,7 @@ class Widget_Video extends Widget_Base {
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
-							<i class="fa fa-play-circle"></i>
+							<i class="fa"></i>
 						</div>
 					<?php endif; ?>
 				</div>

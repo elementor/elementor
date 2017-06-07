@@ -38,6 +38,7 @@ VideoModule = HandlerModule.extend( {
 				type: 'video',
 				url: this.elements.$videoFrame.attr( 'src' ),
 				modalOptions: {
+					id: 'elementor-video-modal-' + this.getID(),
 					videoAspectRatio: elementSettings.aspect_ratio,
 					entranceAnimation: elementSettings.lightbox_content_animation,
 					position: {
@@ -47,11 +48,7 @@ VideoModule = HandlerModule.extend( {
 				}
 			};
 
-			var lightBox = this.getLightBox();
-
-			lightBox.getModal().setID( 'elementor-video-modal-' + this.getID() );
-
-			lightBox.showModal( options );
+			this.getLightBox().showModal( options );
 		} else {
 			this.elements.$imageOverlay.remove();
 

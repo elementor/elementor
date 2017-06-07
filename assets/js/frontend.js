@@ -1011,6 +1011,7 @@ VideoModule = HandlerModule.extend( {
 				type: 'video',
 				url: this.elements.$videoFrame.attr( 'src' ),
 				modalOptions: {
+					id: 'elementor-video-modal-' + this.getID(),
 					videoAspectRatio: elementSettings.aspect_ratio,
 					entranceAnimation: elementSettings.lightbox_content_animation,
 					position: {
@@ -1020,11 +1021,7 @@ VideoModule = HandlerModule.extend( {
 				}
 			};
 
-			var lightBox = this.getLightBox();
-
-			lightBox.getModal().setID( 'elementor-video-modal-' + this.getID() );
-
-			lightBox.showModal( options );
+			this.getLightBox().showModal( options );
 		} else {
 			this.elements.$imageOverlay.remove();
 
@@ -1196,6 +1193,7 @@ LightboxModule = ViewModule.extend( {
 				aspectRatio: 'elementor-aspect-ratio-%s'
 			},
 			modalOptions: {
+				id: 'elementor-lightbox-modal',
 				entranceAnimation: null,
 				videoAspectRatio: null,
 				position: {
@@ -1225,6 +1223,10 @@ LightboxModule = ViewModule.extend( {
 				within: elementorFrontend.getScopeWindow()
 			}
 		} );
+
+		modal.on( 'hide', function() {
+			modal.setMessage( '' );
+		} );
 	},
 
 	showModal: function( options ) {
@@ -1232,12 +1234,41 @@ LightboxModule = ViewModule.extend( {
 
 		this.setSettings( 'modalOptions', jQuery.extend( defaultOptions, options.modalOptions ) );
 
-		if ( 'video' === options.type ) {
-			this.playVideo( options.url );
+		var modal = this.getModal();
+
+		modal.setID( this.getSettings( 'modalOptions.id' ) );
+
+		modal.onShow = null;
+
+		modal.onHide = null;
+
+		switch ( options.type ) {
+			case 'image':
+				this.setImageContent( options.url );
+
+				break;
+			case 'video':
+				this.setVideoContent( options.url );
+
+				break;
+			default:
+				this.setHTMLContent( options.html );
 		}
+
+		modal.show();
 	},
 
-	playVideo: function( videoEmbedURL ) {
+	setHTMLContent: function( html ) {
+		this.getModal().setMessage( html );
+	},
+
+	setImageContent: function( imageURL ) {
+		var $image = jQuery( '<img>', { src: imageURL } );
+
+		this.getModal().setMessage( $image );
+	},
+
+	setVideoContent: function( videoEmbedURL ) {
 		videoEmbedURL = videoEmbedURL.replace( '&autoplay=0', '' ) + '&autoplay=1';
 
 		var self = this,
@@ -1261,12 +1292,10 @@ LightboxModule = ViewModule.extend( {
 		modal.onHide = function() {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
 
-			$videoFrame.remove();
-
 			modal.getElements( 'widgetContent' ).removeClass( 'animated' );
-		};
 
-		modal.show();
+			modal.getElements( 'message' ).removeClass( 'elementor-video-wrapper' );
+		};
 	},
 
 	setVideoAspectRatio: function( aspectRatio ) {

@@ -33,16 +33,6 @@ module.exports = BaseAddSectionView.extend( {
 		} );
 	},
 
-	onRender: function() {
-		var self = this;
-
-		BaseAddSectionView.prototype.onRender.apply( self, arguments );
-
-		self.$el.hoverIntent( null, function() {
-			self.fadeToDeath();
-		}, { timeout: 1500 } );
-	},
-
 	onCloseButtonClick: function() {
 		this.fadeToDeath();
 	},
@@ -55,6 +45,12 @@ module.exports = BaseAddSectionView.extend( {
 
 	onAddTemplateButtonClick: function() {
 		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply( this, arguments );
+
+		this.destroy();
+	},
+
+	onDropping: function() {
+		BaseAddSectionView.prototype.onDropping.apply( this, arguments );
 
 		this.destroy();
 	}

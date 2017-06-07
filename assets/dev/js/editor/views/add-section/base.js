@@ -60,17 +60,13 @@ AddSectionView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
-
-		self.$el.html5Droppable( {
+		this.$el.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: function() {
-				self.addSection().addElementFromPanel();
-			}
+			onDropping: _.bind( this.onDropping, this )
 		} );
 	},
 
@@ -95,6 +91,10 @@ AddSectionView = Marionette.ItemView.extend( {
 
 		newSection.setStructure( selectedStructure );
 		newSection.redefineLayout();
+	},
+
+	onDropping: function() {
+		this.addSection().addElementFromPanel();
 	}
 } );
 

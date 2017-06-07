@@ -62,12 +62,6 @@ ResizableBehavior = Marionette.Behavior.extend( {
 
 		this.view.$el.data( 'originalWidth', this.view.el.getBoundingClientRect().width );
 
-		var panel = elementor.getPanelView();
-
-		if ( 'elements' !== panel.getCurrentPageName() ) {
-			panel.setPage( 'elements' );
-		}
-
 		this.view.triggerMethod( 'request:resize:start', event );
 	},
 

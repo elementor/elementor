@@ -5,10 +5,10 @@ class Repeater extends Element_Base {
 
 	private static $counter = 0;
 
-	public function __construct() {
+	public function __construct( array $data = [], array $args = null ) {
 		self::$counter++;
 
-		parent::__construct();
+		parent::__construct( $data, $args );
 	}
 
 	public function get_name() {
@@ -25,6 +25,10 @@ class Repeater extends Element_Base {
 		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $overwrite );
+	}
+
+	public function get_fields() {
+		return array_values( $this->get_controls() );
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
