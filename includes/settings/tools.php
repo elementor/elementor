@@ -161,10 +161,16 @@ class Tools extends Settings_Page {
 						],
 					],
 					'beta' => [
-						'label' => __( 'Beta Versions', 'elementor' ),
+						'label' => __( 'Become a Beta Tester', 'elementor' ),
+						'callback' => function() {
+							$intro_text = sprintf( __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ), ELEMENTOR_VERSION );
+							$intro_text = '<p>' . $intro_text . '</p>';
+
+							echo $intro_text;
+						},
 						'fields' => [
 							'beta' => [
-								'label' => __( 'Beta Versions', 'elementor' ),
+								'label' => __( 'Beta Tester', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'default' => 'no',
@@ -172,7 +178,7 @@ class Tools extends Settings_Page {
 										'no' => __( 'Disable', 'elementor' ),
 										'yes' => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Opt-in to receive update notification for new beta versions of Elementor & E-Pro. Beta version updates do not install automatically, you still have the option to ignore update notifications.', 'elementor' ),
+									'desc' => __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ),
 								],
 							],
 						],
