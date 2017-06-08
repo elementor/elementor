@@ -137,6 +137,8 @@
     position: absolute;
     overflow: hidden;
     z-index: 0; }
+  .elementor .elementor-background-video-embed {
+    max-width: none; }
   .elementor .elementor-background-video {
     position: absolute;
     max-width: none;

@@ -9700,15 +9700,15 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
-	showChildrenPercentsPopup: function( columnView, nextColumnView, event ) {
+	showChildrenPercentsPopup: function( columnView, nextColumnView ) {
 		columnView.percentsPopup.show();
 
 		columnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'left' );
 
 		columnView.percentsPopup.setSettings( 'position', {
 			my: 'right-15 center',
-			at: 'left center',
-			of: event
+			at: 'right center',
+			of: columnView.$el
 		} );
 
 		columnView.percentsPopup.refreshPosition();
@@ -9719,23 +9719,15 @@ SectionView = BaseElementView.extend( {
 
 		nextColumnView.percentsPopup.setSettings( 'position', {
 			my: 'left+15 center',
-			at: 'right center',
-			of: event
+			at: 'left center',
+			of: nextColumnView.$el
 		} );
 
 		nextColumnView.percentsPopup.refreshPosition();
 	},
 
-	refreshChildrenPercentsPopup: function( columnView, nextColumnView, event ) {
-		columnView.percentsPopup.setSettings( 'position', {
-			of: event
-		} );
-
+	refreshChildrenPercentsPopup: function( columnView, nextColumnView ) {
 		columnView.percentsPopup.refreshPosition();
-
-		nextColumnView.percentsPopup.setSettings( 'position', {
-			of: event
-		} );
 
 		nextColumnView.percentsPopup.refreshPosition();
 	},
