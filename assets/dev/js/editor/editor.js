@@ -176,8 +176,6 @@ App = Marionette.Application.extend( {
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
-
-		this.initElements();
 	},
 
 	initFrontend: function() {
@@ -253,6 +251,7 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
+		this.initElements();
 
 		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
