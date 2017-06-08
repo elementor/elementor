@@ -181,7 +181,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initFrontend: function() {
-		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
+		window.elementorFrontend = this.$preview[0].contentWindow.elementorFrontend;
 
 		elementorFrontend.init();
 
@@ -251,7 +251,8 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
-		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.$previewContents = this.$preview.contents();
 
@@ -321,7 +322,7 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
+			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
 		} );
 
 		this.enqueueTypographyFonts();

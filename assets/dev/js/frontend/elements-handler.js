@@ -36,7 +36,7 @@ ElementsHandler = function( $ ) {
 
 		if ( elementorFrontend.isEditMode() ) {
 			// Elements outside from the Preview
-			$elements = elementorFrontend.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			$elements = jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
 		} else {
 			$elements = $( '.elementor-element' );
 		}
