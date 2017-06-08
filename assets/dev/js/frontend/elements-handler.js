@@ -75,6 +75,9 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
+		// Initializing the `$scope` as frontend jQuery instance
+		$scope = jQuery( $scope );
+
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
 		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
