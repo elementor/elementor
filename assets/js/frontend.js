@@ -1112,7 +1112,7 @@ module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
 
 		return {
-			scrollDuration: 1000,
+			scrollDuration: 500,
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
@@ -1127,7 +1127,7 @@ module.exports = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		return {
-			window: elementorFrontend.getScopeWindow(),
+			$window: $( elementorFrontend.getScopeWindow() ),
 			$scrollable: $( selectors.scrollable ),
 			$wpAdminBar: $( selectors.wpAdminBar )
 		};
@@ -1139,7 +1139,7 @@ module.exports = ViewModule.extend( {
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
-			location = this.elements.window.location,
+			location = this.elements.$window[0].location,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
@@ -1162,7 +1162,7 @@ module.exports = ViewModule.extend( {
 
 		this.elements.$scrollable.animate( {
 			scrollTop: scrollTop
-		}, this.getSettings( 'scrollDuration' ) );
+		}, this.getSettings( 'scrollDuration' ), 'linear' );
 	},
 
 	onInit: function() {
