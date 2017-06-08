@@ -61,6 +61,10 @@
 		z-index: $ground-layer;
 	}
 
+	.elementor-background-video-embed {
+		max-width: none;
+	}
+
 	.elementor-background-video {
 		position: absolute;
 		max-width: none;
