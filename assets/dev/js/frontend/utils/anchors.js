@@ -4,7 +4,7 @@ module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
 
 		return {
-			scrollDuration: 1000,
+			scrollDuration: 500,
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
@@ -54,7 +54,7 @@ module.exports = ViewModule.extend( {
 
 		this.elements.$scrollable.animate( {
 			scrollTop: scrollTop
-		}, this.getSettings( 'scrollDuration' ) );
+		}, this.getSettings( 'scrollDuration' ), 'linear' );
 	},
 
 	onInit: function() {
