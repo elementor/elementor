@@ -191,7 +191,7 @@ class Frontend {
 		$post = get_post();
 
 		$elementor_frontend_config = [
-			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
+			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
 			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
 			'is_rtl' => is_rtl(),
 			'post' => [
@@ -213,7 +213,7 @@ class Frontend {
 
 		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
 
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
 				'keys' => $elements_frontend_keys,

@@ -168,12 +168,6 @@ class Editor {
 			true
 		);
 
-		// Enqueue frontend scripts too
-		$plugin->frontend->register_scripts();
-		$plugin->frontend->enqueue_scripts();
-
-		$plugin->widgets_manager->enqueue_widgets_scripts();
-
 		wp_register_script(
 			'backbone-marionette',
 			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
@@ -269,6 +263,16 @@ class Editor {
 		);
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.2.1',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -285,6 +289,7 @@ class Editor {
 				'heartbeat',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
+				'elementor-dialog',
 				'ace',
 				'jquery-hover-intent',
 			],
