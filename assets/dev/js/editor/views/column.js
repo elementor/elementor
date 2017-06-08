@@ -57,7 +57,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	initPercentsPopup: function() {
-		this.percentsPopup = elementorFrontend.getScopeWindow().elementorPreview.dialogsManager.createWidget( 'simple', {
+		this.percentsPopup = elementorFrontend.getElements( 'window' ).elementorPreview.dialogsManager.createWidget( 'simple', {
 			classes: {
 				globalPrefix: 'elementor-column-percents-popup'
 			}
