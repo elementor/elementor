@@ -185,6 +185,8 @@ App = Marionette.Application.extend( {
 
 		elementorFrontend.init();
 
+		elementorFrontend.getElements( 'window' ).elementor = this;
+
 		elementorFrontend.elementsHandler.initHandlers();
 	},
 
