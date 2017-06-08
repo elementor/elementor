@@ -242,7 +242,7 @@ html.elementor-html {
 			top: 0;
 			@include start(50%);
 			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
-			border-radius: 6px 6px 0 0;
+			border-radius: 3px 3px 0 0;
 			transform: translateX(-50%) translateY(-100%);
 
 			.elementor-editor-element-setting {
@@ -254,15 +254,15 @@ html.elementor-html {
 				@media (min-width: $screen-lg-min) {
 
 					&:first-child {
-						@include padding-start(6px);
+						@include padding-start(1px);
 
 						&:not(.elementor-active) {
-							@include padding-end(6px);
+							@include padding-end(1px);
 						}
 					}
 
 					&:last-child {
-						@include padding-end(6px);
+						@include padding-end(1px);
 					}
 				}
 			}
@@ -272,7 +272,7 @@ html.elementor-html {
 		.elementor-editor-column-settings {
 			top: -1px;
 			@include start(-1px);
-			border-radius: 0 0 6px 0;
+			border-radius: getValueByDirection(0 0 3px 0, 0 3px 0 0);
 			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
 
 			.elementor-editor-element-setting {
@@ -284,15 +284,15 @@ html.elementor-html {
 				@media (min-width: $screen-lg-min) {
 
 					&:first-child {
-						@include padding-start(2px);
+						@include padding-start(1px);
 
 						&:not(.elementor-active) {
-							@include padding-end(2px);
+							@include padding-end(1px);
 						}
 					}
 
 					&:last-child {
-						@include padding-end(2px);
+						@include padding-end(1px);
 					}
 				}
 			}
@@ -304,7 +304,7 @@ html.elementor-html {
 			top: -1px;
 			@include end(-1px);
 			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-			border-radius: 0 0 0 6px;
+			border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
 			flex-direction: row-reverse;
 
 			.elementor-editor-element-setting {
@@ -316,15 +316,15 @@ html.elementor-html {
 				@media (min-width: $screen-lg-min) {
 
 					&:first-child {
-						@include padding-end(2px);
+						@include padding-end(1px);
 
 						&:not(.elementor-active) {
-							@include padding-start(2px);
+							@include padding-start(1px);
 						}
 					}
 
 					&:last-child {
-						@include padding-start(2px);
+						@include padding-start(1px);
 					}
 				}
 			}
