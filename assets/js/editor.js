@@ -1888,14 +1888,14 @@ App = Marionette.Application.extend( {
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
-
-		this.initElements();
 	},
 
 	initFrontend: function() {
-		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
+		window.elementorFrontend = this.$preview[0].contentWindow.elementorFrontend;
 
 		elementorFrontend.init();
+
+		elementorFrontend.getElements( 'window' ).elementor = this;
 
 		elementorFrontend.elementsHandler.initHandlers();
 	},
@@ -1963,7 +1963,9 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
-		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+		this.initElements();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.$previewContents = this.$preview.contents();
 
@@ -2033,7 +2035,7 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
+			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
 		} );
 
 		this.enqueueTypographyFonts();
@@ -7292,7 +7294,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	initPercentsPopup: function() {
-		this.percentsPopup = elementorFrontend.getScopeWindow().elementorPreview.dialogsManager.createWidget( 'simple', {
+		this.percentsPopup = elementorFrontend.getElements( 'window' ).elementorPreview.dialogsManager.createWidget( 'simple', {
 			classes: {
 				globalPrefix: 'elementor-column-percents-popup'
 			}
@@ -9992,7 +9994,7 @@ WidgetView = BaseElementView.extend( {
 			htmlContent = self.getHTMLContent( html );
 
 		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery( self.el ).html( htmlContent );
+			elementorFrontend.getElements( 'window' ).jQuery( self.el ).html( htmlContent );
 
 			self.bindUIElements(); // Build again the UI elements since the content attached just now
 		} );

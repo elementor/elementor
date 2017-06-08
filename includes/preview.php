@@ -103,7 +103,13 @@ class Preview {
 	private function enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_register_script(
+		// Enqueue frontend scripts too
+		Plugin::$instance->frontend->register_scripts();
+		Plugin::$instance->frontend->enqueue_scripts();
+
+		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
+
+		wp_enqueue_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
