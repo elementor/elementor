@@ -158,6 +158,16 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 								],
 							],
+							'space_between_widgets' => [
+								'label' => __( 'Space Between Widgets', 'elementor' ),
+								'field_args' => [
+									'type' => 'text',
+									'placeholder' => '20',
+									'sub_desc' => 'px',
+									'class' => 'medium-text',
+									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
+								],
+							],
 							'stretched_section_container' => [
 								'label' => __( 'Stretched Section Fit To', 'elementor' ),
 								'field_args' => [

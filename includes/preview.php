@@ -63,13 +63,25 @@ class Preview {
 	}
 
 	public function print_custom_css() {
+		$stylesheet = new Stylesheet();
+
 		$container_width = absint( get_option( 'elementor_container_width' ) );
 
-		if ( empty( $container_width ) ) {
-			return;
+		if ( $container_width ) {
+			$stylesheet->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', [ 'max-width' => $container_width . 'px' ] );
 		}
 
-		?><style>.elementor-section.elementor-section-boxed > .elementor-container{max-width: <?php echo esc_html( $container_width ); ?>px}</style><?php
+		$space_between_widgets = get_option( 'elementor_space_between_widgets' );
+
+		if ( $space_between_widgets ) {
+			$stylesheet->add_rules( '.elementor-widget:not(:last-child)', [ 'margin-bottom' => $space_between_widgets . 'px' ] );
+		}
+
+		$style_text = $stylesheet->__toString();
+
+		if ( $style_text ) {
+			echo '<style id="elementor-preview-custom-css">' . $style_text . '</style>';
+		}
 	}
 
 	/**
