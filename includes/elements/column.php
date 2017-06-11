@@ -598,7 +598,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'z_index',
 			[
-				'label' => __( 'z-index', 'elementor' ),
+				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
