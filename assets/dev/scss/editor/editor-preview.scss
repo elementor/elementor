@@ -56,7 +56,7 @@ html.elementor-html {
 			> .elementor-element-overlay {
 				position: absolute;
 				top: 0;
-				right: 0;
+				@include end(0);
 				letter-spacing: 0; // Hack for front-end style themes
 				z-index: $element-overlay;
 				pointer-events: none;
@@ -134,7 +134,7 @@ html.elementor-html {
 		.elementor-section {
 
 			> .elementor-element-overlay {
-				left: 0;
+				@include start(0);
 				bottom: 0;
 
 				&:after {
@@ -243,7 +243,7 @@ html.elementor-html {
 			@include start(50%);
 			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
 			border-radius: 3px 3px 0 0;
-			transform: translateX(-50%) translateY(-100%);
+			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
 
 			.elementor-editor-element-setting {
 
@@ -376,7 +376,7 @@ html.elementor-html {
 		.elementor-column {
 
 			> .elementor-element-overlay {
-				left: 0;
+				@include start(0);
 				bottom: 0;
 
 				&:after {
