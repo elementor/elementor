@@ -112,8 +112,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'elementor' ),
-				'label_on' => __( 'Yes', 'elementor' ),
 				'condition' => [
 					'video_type' => 'youtube',
 				],
@@ -167,8 +165,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'elementor' ),
-				'label_on' => __( 'Yes', 'elementor' ),
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
@@ -180,8 +176,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Loop', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'elementor' ),
-				'label_on' => __( 'Yes', 'elementor' ),
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
