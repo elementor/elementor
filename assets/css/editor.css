@@ -836,8 +836,7 @@ select {
   .elementor-panel .elementor-element {
     border-radius: 3px;
     background-color: #fff;
-    cursor: -webkit-grab;
-    cursor: grab; }
+    cursor: move; }
     .elementor-panel .elementor-element:hover {
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
       .elementor-panel .elementor-element:hover .icon, .elementor-panel .elementor-element:hover .title {
