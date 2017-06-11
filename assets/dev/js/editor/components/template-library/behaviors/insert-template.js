@@ -10,7 +10,12 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	onInsertButtonClick: function() {
-		InsertTemplateHandler.showImportDialog( this.view.model );
+		if ( this.view.model.get( 'hasPageSettings' ) ) {
+			InsertTemplateHandler.showImportDialog( this.view.model );
+			return;
+		}
+
+		elementor.templates.importTemplate( this.view.model );
 	}
 }, {
 	dialog: null,

@@ -14,6 +14,7 @@ class Frontend {
 	private $_is_frontend_mode = false;
 	private $_has_elementor_in_page = false;
 	private $_is_excerpt = false;
+	private $content_removed_filters =[];
 
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -327,17 +328,21 @@ class Frontend {
 	}
 
 	public function apply_builder_in_content( $content ) {
+		$this->restore_content_filters();
+
+		if ( ! $this->_is_frontend_mode || $this->_is_excerpt ) {
+			return $content;
+		}
+
 		// Remove the filter itself in order to allow other `the_content` in the elements
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
-
-		if ( ! $this->_is_frontend_mode )
-			return $content;
 
 		$post_id = get_the_ID();
 		$builder_content = $this->get_builder_content( $post_id );
 
 		if ( ! empty( $builder_content ) ) {
 			$content = $builder_content;
+			$this->remove_content_filters();
 		}
 
 		// Add the filter again for other `the_content` calls
@@ -417,10 +422,12 @@ class Frontend {
 			return '';
 		}
 
+		$editor = Plugin::$instance->editor;
+
 		// Avoid recursion
 		if ( get_the_ID() === (int) $post_id ) {
 			$content = '';
-			if ( Plugin::$instance->editor->is_edit_mode() ) {
+			if ( $editor->is_edit_mode() ) {
 				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
 			}
 
@@ -428,24 +435,15 @@ class Frontend {
 		}
 
 		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		Plugin::$instance->editor->set_edit_mode( false );
+		$is_edit_mode = $editor->is_edit_mode();
+		$editor->set_edit_mode( false );
 
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		if ( isset( $GLOBALS['post'] ) ) {
-			$global_post = $GLOBALS['post'];
-		}
-
-		$GLOBALS['post'] = get_post( $post_id );
+		Plugin::$instance->db->switch_to_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
 
-		// Restore global post
-		if ( isset( $global_post ) ) {
-			$GLOBALS['post'] = $global_post;
-		} else {
-			unset( $GLOBALS['post'] );
-		}
+		Plugin::$instance->db->restore_current_post();
 
 		// Restore edit mode state
 		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );
@@ -463,6 +461,31 @@ class Frontend {
 		return $excerpt;
 	}
 
+	/**
+	 * Remove WordPress default filters that conflicted with Elementor
+	 */
+	public function remove_content_filters() {
+		$filters = [
+			'wpautop',
+			'shortcode_unautop',
+		];
+
+		foreach ( $filters as $filter ) {
+			// Check if another plugin/theme do not already removed the filter
+			if ( has_filter( 'the_content', $filter ) ) {
+				remove_filter( 'the_content', $filter );
+				$this->content_removed_filters[] = $filter;
+			}
+		}
+	}
+
+	private function restore_content_filters() {
+		foreach ( $this->content_removed_filters as $filter ) {
+			add_filter( 'the_content', $filter );
+		}
+		$this->content_removed_filters = [];
+	}
+
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests
 		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
@@ -474,7 +497,7 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
-		// Hack to avoid enqueue post css wail it's a `the_excerpt` call
+		// Hack to avoid enqueue post css while it's a `the_excerpt` call
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
 	}

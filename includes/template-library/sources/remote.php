@@ -52,6 +52,7 @@ class Source_Remote extends Source_Base {
 			'categories' => [],
 			'keywords' => [],
 			'isPro' => ( '1' === $template_data['is_pro'] ),
+			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
 			'url' => $template_data['url'],
 		];
 	}

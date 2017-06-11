@@ -56,7 +56,7 @@ html.elementor-html {
 			> .elementor-element-overlay {
 				position: absolute;
 				top: 0;
-				right: 0;
+				@include end(0);
 				letter-spacing: 0; // Hack for front-end style themes
 				z-index: $element-overlay;
 				pointer-events: none;
@@ -134,7 +134,7 @@ html.elementor-html {
 		.elementor-section {
 
 			> .elementor-element-overlay {
-				left: 0;
+				@include start(0);
 				bottom: 0;
 
 				&:after {
@@ -243,7 +243,7 @@ html.elementor-html {
 			@include start(50%);
 			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
 			border-radius: 3px 3px 0 0;
-			transform: translateX(-50%) translateY(-100%);
+			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
 
 			.elementor-editor-element-setting {
 
@@ -333,7 +333,7 @@ html.elementor-html {
 		.elementor-editor-element-trigger {
 
 			@media(min-width: $screen-lg-min) {
-				cursor: grab;
+				cursor: move;
 			}
 		}
 
@@ -376,7 +376,7 @@ html.elementor-html {
 		.elementor-column {
 
 			> .elementor-element-overlay {
-				left: 0;
+				@include start(0);
 				bottom: 0;
 
 				&:after {
@@ -413,7 +413,7 @@ html.elementor-html {
 			}
 
 			> .ui-resizable-e, > .ui-resizable-w {
-				cursor: ew-resize;
+				cursor: col-resize;
 				width: 7px;
 				position: absolute;
 				@include end(-5px);
@@ -481,7 +481,7 @@ html.elementor-html {
 		text-align: center;
 		color: $editor-darker;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-		cursor: grabbing;
+		cursor: move;
 
 		.icon {
 			font-size: 28px;
@@ -732,17 +732,19 @@ html.elementor-html {
 	margin: 10px auto;
 }
 
-.elementor-column-percents-popup-widget {
+.elementor-column-percents-tooltip {
 	position: absolute;
+	display: none;
+	top: 50%;
+	transform: translateY(-50%);
 	color: #fff;
 	font-size: 10px;
-	background-color: $editor-darkest;
-	height: 17px;
+	background-color: $editor-darker;
 	width: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	padding: 3.5px 0;
+	text-align: center;
 	z-index: 1;
+	line-height: 1;
 
 	&:after {
 		content: '';
@@ -755,20 +757,22 @@ html.elementor-html {
 
 	&[data-side="left"] {
 		border-radius: 3px 0 0 3px;
+		right: 15px;
 
 		&:after {
 			left: 100%;
-			border-left-color: $editor-darkest;
+			border-left-color: $editor-darker;
 			border-right-width: 0;
 		}
 	}
 
 	&[data-side="right"] {
 		border-radius: 0 3px 3px 0;
+		left: 15px;
 
 		&:after {
 			right: 100%;
-			border-right-color: $editor-darkest;
+			border-right-color: $editor-darker;
 			border-left-width: 0;
 		}
 	}
