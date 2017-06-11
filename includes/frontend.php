@@ -338,6 +338,7 @@ class Frontend {
 
 		if ( ! empty( $builder_content ) ) {
 			$content = $builder_content;
+			$this->remove_default_content_filters();
 		}
 
 		// Add the filter again for other `the_content` calls
@@ -463,6 +464,17 @@ class Frontend {
 		return $excerpt;
 	}
 
+	/**
+	 * Remove WordPress default filters that conflicted with Elementor
+	 */
+	public function remove_default_content_filters() {
+		remove_filter( 'the_content', 'wptexturize' );
+		remove_filter( 'the_content', 'wpautop' );
+		remove_filter( 'the_content', 'shortcode_unautop' );
+		remove_filter( 'the_content', 'prepend_attachment' );
+		remove_filter( 'the_content', 'wp_make_content_images_responsive' );
+	}
+
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests
 		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
@@ -474,7 +486,7 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
-		// Hack to avoid enqueue post css wail it's a `the_excerpt` call
+		// Hack to avoid enqueue post css while it's a `the_excerpt` call
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
 	}
