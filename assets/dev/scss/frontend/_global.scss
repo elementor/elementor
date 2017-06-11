@@ -31,8 +31,8 @@
 		box-shadow: none;
 	}
 
-	figure {
-		margin: 0;
+	.elementor-widget:not(.elementor-widget-text-editor) figure {
+			margin: 0;
 	}
 
 	// Responsive Embed

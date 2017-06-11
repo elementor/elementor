@@ -30,7 +30,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 				return;
 			}
 
-			var isMultipleControl = _.isObject( control.default_value );
+			// Check if the value is a plain object ( and not an array )
+			var isMultipleControl = jQuery.isPlainObject( control.default_value );
 
 			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );

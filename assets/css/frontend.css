@@ -117,7 +117,7 @@
     border: none;
     border-radius: 0;
     box-shadow: none; }
-  .elementor figure {
+  .elementor .elementor-widget:not(.elementor-widget-text-editor) figure {
     margin: 0; }
   .elementor embed,
   .elementor iframe,
