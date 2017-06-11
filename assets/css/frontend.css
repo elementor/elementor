@@ -1597,6 +1597,34 @@ body.elementor-page .elementor-widget-menu-anchor {
   .elementor-widget-text-editor .elementor-drop-cap-letter {
     display: inline-block; }
 
+.swiper-container .swiper-slide {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  background: no-repeat center;
+  background-size: cover; }
+
+.swiper-container .elementor-lightbox-content-source {
+  display: none; }
+
+.elementor-thumbs-swiper {
+  height: 150px;
+  padding: 10px;
+  background-color: #000; }
+  .elementor-thumbs-swiper .swiper-slide {
+    width: 25%;
+    margin-right: 10px;
+    cursor: pointer; }
+    .elementor-thumbs-swiper .swiper-slide:not(.swiper-slide-active) {
+      opacity: .4; }
+
+[id^=elementor-carousel-lightbox] .dialog-message img {
+  max-width: 100%; }
+
+[id^=elementor-carousel-lightbox] .dialog-message .swiper-slide {
+  height: 0;
+  padding-bottom: 56.25%; }
+
 .slick-slider {
   position: relative;
   display: block;

@@ -1,0 +1,43 @@
+.swiper-container {
+
+	.swiper-slide {
+		display: flex;
+		background: no-repeat center;
+		background-size: cover;
+	}
+
+	.elementor-lightbox-content-source {
+		display: none;
+	}
+}
+
+.elementor-thumbs-swiper {
+	height: 150px;
+	padding: 10px;
+	background-color: #000;
+
+	.swiper-slide {
+		width: 25%;
+		margin-right: 10px;
+		cursor: pointer;
+
+		&:not(.swiper-slide-active) {
+			opacity: .4;
+		}
+	}
+}
+
+[id^=elementor-carousel-lightbox] {
+
+	.dialog-message {
+
+		img {
+			max-width: 100%;
+		}
+
+		.swiper-slide {
+			height: 0;
+			padding-bottom: 56.25%;
+		}
+	}
+}
