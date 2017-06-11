@@ -34,6 +34,10 @@ class User {
 		if ( ! current_user_can( $edit_cap, $post_id ) )
 			return false;
 
+		if ( get_option( 'page_for_posts' ) === $post_id ) {
+			return false;
+		}
+
 		$user = wp_get_current_user();
 		$exclude_roles = get_option( 'elementor_exclude_user_roles', [] );
 

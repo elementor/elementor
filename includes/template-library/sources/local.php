@@ -190,6 +190,8 @@ class Source_Local extends Source_Base {
 
 		$user = get_user_by( 'id', $post->post_author );
 
+		$page_settings = get_post_meta( $post->ID, PageSettingsManager::META_KEY, true );
+
 		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
@@ -198,6 +200,7 @@ class Source_Local extends Source_Base {
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
 			'author' => $user->display_name,
+			'hasPageSettings' => ! empty( $page_settings ),
 			'categories' => [],
 			'keywords' => [],
 			'export_link' => $this->_get_export_link( $template_id ),
