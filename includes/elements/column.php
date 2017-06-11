@@ -452,6 +452,103 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
+		// Section Typography
+		$this->start_controls_section(
+			'section_typo',
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+			$this->add_control(
+				'colors_warning',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		}
+
+		$this->add_control(
+			'heading_color',
+			[
+				'label' => __( 'Heading Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+				'separator' => 'none',
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link',
+			[
+				'label' => __( 'Link Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link_hover',
+			[
+				'label' => __( 'Link Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_align',
+			[
+				'label' => __( 'Text Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 		// Section Advanced
 		$this->start_controls_section(
 			'section_advanced',
@@ -552,103 +649,6 @@ class Element_Column extends Element_Base {
 				'prefix_class' => '',
 				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-			]
-		);
-
-		$this->end_controls_section();
-
-		// Section Typography
-		$this->start_controls_section(
-			'section_typo',
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				]
-			);
-		}
-
-		$this->add_control(
-			'heading_color',
-			[
-				'label' => __( 'Heading Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
-				],
-				'separator' => 'none',
-			]
-		);
-
-		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link',
-			[
-				'label' => __( 'Link Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link_hover',
-			[
-				'label' => __( 'Link Hover Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_align',
-			[
-				'label' => __( 'Text Align', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
-				],
 			]
 		);
 

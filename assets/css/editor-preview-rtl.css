@@ -115,7 +115,7 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element > .elementor-element-overlay {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   letter-spacing: 0;
   z-index: 9998;
   pointer-events: none; }
@@ -167,7 +167,7 @@ html.elementor-html {
   display: block; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay {
-  left: 0;
+  right: 0;
   bottom: 0; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-section > .elementor-element-overlay:after {
     position: absolute;
@@ -238,9 +238,9 @@ html.elementor-html {
   right: 50%;
   background-image: linear-gradient(to bottom, #41c9f4, #71d7f7);
   border-radius: 3px 3px 0 0;
-  -webkit-transform: translateX(-50%) translateY(-100%);
-      -ms-transform: translateX(-50%) translateY(-100%);
-          transform: translateX(-50%) translateY(-100%); }
+  -webkit-transform: translateX(50%) translateY(-100%);
+      -ms-transform: translateX(50%) translateY(-100%);
+          transform: translateX(50%) translateY(-100%); }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-section-settings .elementor-editor-element-setting:hover {
     background-color: #10bcf2; }
   @media (min-width: 1025px) {
@@ -287,8 +287,7 @@ html.elementor-html {
 
 @media (min-width: 1025px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-trigger {
-    cursor: -webkit-grab;
-    cursor: grab; } }
+    cursor: move; } }
 
 @media (max-width: 1024px) {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting:not(.elementor-editor-element-trigger) {
@@ -304,7 +303,7 @@ html.elementor-html {
   border: 1px solid #f00; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .elementor-element-overlay {
-  left: 0;
+  right: 0;
   bottom: 0; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .elementor-element-overlay:after {
     position: absolute;
@@ -325,7 +324,7 @@ html.elementor-html {
     display: none; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-w {
-  cursor: ew-resize;
+  cursor: col-resize;
   width: 7px;
   position: absolute;
   left: -5px;
@@ -365,8 +364,7 @@ html.elementor-html {
   text-align: center;
   color: #556068;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  cursor: -webkit-grabbing;
-  cursor: grabbing; }
+  cursor: move; }
   .elementor-editor-active .elementor-sortable-helper .icon {
     font-size: 28px;
     padding-top: 15px;
@@ -538,7 +536,7 @@ html.elementor-html {
   position: absolute;
   color: #fff;
   font-size: 10px;
-  background-color: #495157;
+  background-color: #556068;
   height: 17px;
   width: 40px;
   display: -webkit-flex;
