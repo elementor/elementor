@@ -14,6 +14,7 @@ class Frontend {
 	private $_is_frontend_mode = false;
 	private $_has_elementor_in_page = false;
 	private $_is_excerpt = false;
+	private $content_removed_filters =[];
 
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -327,6 +328,8 @@ class Frontend {
 	}
 
 	public function apply_builder_in_content( $content ) {
+		$this->restore_content_filters();
+
 		if ( ! $this->_is_frontend_mode || $this->_is_excerpt ) {
 			return $content;
 		}
@@ -334,13 +337,12 @@ class Frontend {
 		// Remove the filter itself in order to allow other `the_content` in the elements
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
-
 		$post_id = get_the_ID();
 		$builder_content = $this->get_builder_content( $post_id );
 
 		if ( ! empty( $builder_content ) ) {
 			$content = $builder_content;
-			$this->remove_default_content_filters();
+			$this->remove_content_filters();
 		}
 
 		// Add the filter again for other `the_content` calls
@@ -462,12 +464,26 @@ class Frontend {
 	/**
 	 * Remove WordPress default filters that conflicted with Elementor
 	 */
-	public function remove_default_content_filters() {
-		remove_filter( 'the_content', 'wptexturize' );
-		remove_filter( 'the_content', 'wpautop' );
-		remove_filter( 'the_content', 'shortcode_unautop' );
-		remove_filter( 'the_content', 'prepend_attachment' );
-		remove_filter( 'the_content', 'wp_make_content_images_responsive' );
+	public function remove_content_filters() {
+		$filters = [
+			'wpautop',
+			'shortcode_unautop',
+		];
+
+		foreach ( $filters as $filter ) {
+			// Check if another plugin/theme do not already removed the filter
+			if ( has_filter( 'the_content', $filter ) ) {
+				remove_filter( 'the_content', $filter );
+				$this->content_removed_filters[] = $filter;
+			}
+		}
+	}
+
+	private function restore_content_filters() {
+		foreach ( $this->content_removed_filters as $filter ) {
+			add_filter( 'the_content', $filter );
+		}
+		$this->content_removed_filters = [];
 	}
 
 	public function __construct() {
