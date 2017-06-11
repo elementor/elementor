@@ -413,7 +413,7 @@ html.elementor-html {
 			}
 
 			> .ui-resizable-e, > .ui-resizable-w {
-				cursor: ew-resize;
+				cursor: col-resize;
 				width: 7px;
 				position: absolute;
 				@include end(-5px);
