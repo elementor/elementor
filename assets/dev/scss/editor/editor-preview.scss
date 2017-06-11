@@ -56,7 +56,7 @@ html.elementor-html {
 			> .elementor-element-overlay {
 				position: absolute;
 				top: 0;
-				right: 0;
+				@include end(0);
 				letter-spacing: 0; // Hack for front-end style themes
 				z-index: $element-overlay;
 				pointer-events: none;
@@ -134,7 +134,7 @@ html.elementor-html {
 		.elementor-section {
 
 			> .elementor-element-overlay {
-				left: 0;
+				@include start(0);
 				bottom: 0;
 
 				&:after {
@@ -243,7 +243,7 @@ html.elementor-html {
 			@include start(50%);
 			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
 			border-radius: 3px 3px 0 0;
-			transform: translateX(-50%) translateY(-100%);
+			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
 
 			.elementor-editor-element-setting {
 
@@ -333,7 +333,7 @@ html.elementor-html {
 		.elementor-editor-element-trigger {
 
 			@media(min-width: $screen-lg-min) {
-				cursor: grab;
+				cursor: move;
 			}
 		}
 
@@ -376,7 +376,7 @@ html.elementor-html {
 		.elementor-column {
 
 			> .elementor-element-overlay {
-				left: 0;
+				@include start(0);
 				bottom: 0;
 
 				&:after {
@@ -413,7 +413,7 @@ html.elementor-html {
 			}
 
 			> .ui-resizable-e, > .ui-resizable-w {
-				cursor: ew-resize;
+				cursor: col-resize;
 				width: 7px;
 				position: absolute;
 				@include end(-5px);
@@ -481,7 +481,7 @@ html.elementor-html {
 		text-align: center;
 		color: $editor-darker;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-		cursor: grabbing;
+		cursor: move;
 
 		.icon {
 			font-size: 28px;
@@ -736,7 +736,7 @@ html.elementor-html {
 	position: absolute;
 	color: #fff;
 	font-size: 10px;
-	background-color: $editor-darkest;
+	background-color: $editor-darker;
 	height: 17px;
 	width: 40px;
 	display: flex;
