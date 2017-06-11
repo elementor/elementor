@@ -19,12 +19,7 @@ class Preview {
 		// Disable the WP admin bar in preview mode.
 		add_filter( 'show_admin_bar', '__return_false' );
 
-		add_action( 'wp_enqueue_scripts', function() {
-			$this->enqueue_styles();
-
-			$this->enqueue_scripts();
-		} );
-
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'wp_head', [ $this, 'print_custom_css' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
@@ -78,9 +73,12 @@ class Preview {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	private function enqueue_styles() {
+	public function enqueue_styles() {
 		// Hold-on all jQuery plugins after all HTML markup render
 		wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
+
+		// Make sure jQuery embed in preview window
+		wp_enqueue_script( 'jquery' );
 
 		Plugin::$instance->frontend->enqueue_styles();
 
@@ -98,30 +96,6 @@ class Preview {
 		wp_enqueue_style( 'editor-preview' );
 
 		do_action( 'elementor/preview/enqueue_styles' );
-	}
-
-	private function enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'3.2.1',
-			true
-		);
-
-		wp_enqueue_script(
-			'elementor-preview',
-			ELEMENTOR_ASSETS_URL . 'js/preview' . $suffix . '.js',
-			[
-				'elementor-dialog',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 
 	/**

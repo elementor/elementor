@@ -732,17 +732,19 @@ html.elementor-html {
 	margin: 10px auto;
 }
 
-.elementor-column-percents-popup-widget {
+.elementor-column-percents-tooltip {
 	position: absolute;
+	display: none;
+	top: 50%;
+	transform: translateY(-50%);
 	color: #fff;
 	font-size: 10px;
 	background-color: $editor-darker;
-	height: 17px;
 	width: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	padding: 3.5px 0;
+	text-align: center;
 	z-index: 1;
+	line-height: 1;
 
 	&:after {
 		content: '';
@@ -755,20 +757,22 @@ html.elementor-html {
 
 	&[data-side="left"] {
 		border-radius: 3px 0 0 3px;
+		right: 15px;
 
 		&:after {
 			left: 100%;
-			border-left-color: $editor-darkest;
+			border-left-color: $editor-darker;
 			border-right-width: 0;
 		}
 	}
 
 	&[data-side="right"] {
 		border-radius: 0 3px 3px 0;
+		left: 15px;
 
 		&:after {
 			right: 100%;
-			border-right-color: $editor-darkest;
+			border-right-color: $editor-darker;
 			border-left-width: 0;
 		}
 	}

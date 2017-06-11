@@ -7246,8 +7246,6 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
-	percentsPopup: null,
-
 	behaviors: {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -7280,6 +7278,8 @@ ColumnView = BaseElementView.extend( {
 
 		ui.columnInner = '> .elementor-column-wrap';
 
+		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
+
 		return ui;
 	},
 
@@ -7291,14 +7291,6 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
-	},
-
-	initPercentsPopup: function() {
-		this.percentsPopup = elementorFrontend.getScopeWindow().elementorPreview.dialogsManager.createWidget( 'simple', {
-			classes: {
-				globalPrefix: 'elementor-column-percents-popup'
-			}
-		} );
 	},
 
 	isDroppingAllowed: function() {
@@ -7325,7 +7317,7 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
-			self.percentsPopup.setMessage( self.getPercentsForDisplay() );
+			self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
 		} );
 	},
 
@@ -7368,8 +7360,6 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
 		self.changeChildContainerClasses();
-
-		self.initPercentsPopup();
 
 		self.changeSizeUI();
 
@@ -9706,42 +9696,20 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
-	showChildrenPercentsPopup: function( columnView, nextColumnView ) {
-		columnView.percentsPopup.show();
+	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
+		columnView.ui.percentsTooltip.show();
 
-		columnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'left' );
+		columnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'right' : 'left' );
 
-		columnView.percentsPopup.setSettings( 'position', {
-			my: 'right-15 center',
-			at: 'right center',
-			of: columnView.$el
-		} );
+		nextColumnView.ui.percentsTooltip.show();
 
-		columnView.percentsPopup.refreshPosition();
-
-		nextColumnView.percentsPopup.show();
-
-		nextColumnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'right' );
-
-		nextColumnView.percentsPopup.setSettings( 'position', {
-			my: 'left+15 center',
-			at: 'left center',
-			of: nextColumnView.$el
-		} );
-
-		nextColumnView.percentsPopup.refreshPosition();
+		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'left' : 'right' );
 	},
 
-	refreshChildrenPercentsPopup: function( columnView, nextColumnView ) {
-		columnView.percentsPopup.refreshPosition();
+	hideChildrenPercentsTooltip: function( columnView, nextColumnView ) {
+		columnView.ui.percentsTooltip.hide();
 
-		nextColumnView.percentsPopup.refreshPosition();
-	},
-
-	hideChildrenPercentsPopup: function( columnView, nextColumnView ) {
-		columnView.percentsPopup.hide();
-
-		nextColumnView.percentsPopup.hide();
+		nextColumnView.ui.percentsTooltip.hide();
 	},
 
 	resizeChild: function( childView, currentSize, newSize ) {
@@ -9829,14 +9797,14 @@ SectionView = BaseElementView.extend( {
 		this.resetLayout();
 	},
 
-	onChildviewRequestResizeStart: function( columnView, event ) {
+	onChildviewRequestResizeStart: function( columnView ) {
 		var nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
 			return;
 		}
 
-		this.showChildrenPercentsPopup( columnView, nextColumnView, event );
+		this.showChildrenPercentsTooltip( columnView, nextColumnView );
 
 		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
@@ -9850,7 +9818,7 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		this.hideChildrenPercentsPopup( columnView, nextColumnView );
+		this.hideChildrenPercentsTooltip( columnView, nextColumnView );
 
 		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
@@ -9873,8 +9841,6 @@ SectionView = BaseElementView.extend( {
 		} catch ( e ) {
 			return;
 		}
-
-		this.refreshChildrenPercentsPopup( columnView, this.getNextColumn( columnView ), event );
 
 		columnView.model.setSetting( '_inline_size', newSize );
 	},

@@ -584,6 +584,17 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
+			'z_index',
+			[
+				'label' => __( 'z-index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
@@ -669,6 +680,7 @@ class Element_Column extends Element_Base {
 					</li>
 				<?php endforeach; ?>
 			</ul>
+			<div class="elementor-column-percents-tooltip"></div>
 		</div>
 		<?php
 	}
