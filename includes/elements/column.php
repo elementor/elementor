@@ -81,6 +81,17 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'space_between_widgets',
+			[
+				'label' => __( 'Widgets space' ),
+				'type' => Controls_Manager::NUMBER,
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget' => 'margin-bottom: {{VALUE}}px',
+				],
+			]
+		);
+
 		$possible_tags = [
 			'div',
 			'article',
