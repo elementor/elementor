@@ -86,6 +86,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Widgets space' ),
 				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 20,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget' => 'margin-bottom: {{VALUE}}px',
 				],
