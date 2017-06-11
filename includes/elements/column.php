@@ -600,6 +600,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
