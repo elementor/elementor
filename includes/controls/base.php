@@ -71,6 +71,16 @@ abstract class Base_Control {
 	}
 
 	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @since    1.5.0
+	 */
+	final public function set_settings( $key, $value ) {
+		$this->_settings[ $key ] = $value;
+	}
+
+	/**
 	 * @return void
 	 *
 	 * @since 1.0.0
