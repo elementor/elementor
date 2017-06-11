@@ -669,6 +669,7 @@ class Element_Column extends Element_Base {
 					</li>
 				<?php endforeach; ?>
 			</ul>
+			<div class="elementor-column-percents-tooltip"></div>
 		</div>
 		<?php
 	}
