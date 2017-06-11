@@ -89,8 +89,6 @@ class Manager {
 			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
 			if ( self::TEMPLATE_CANVAS === $page_template ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
-			} elseif ( self::TEMPLATE_HEADER_FOOTER === $page_template ) {
-				$template = ELEMENTOR_PATH . '/includes/page-templates/header_footer.php';
 			}
 		}
 
