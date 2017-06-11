@@ -937,6 +937,17 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'z-index',
+			[
+				'label' => __( 'z-index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),

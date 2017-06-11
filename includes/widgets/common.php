@@ -47,6 +47,17 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
+			'_z-index',
+			[
+				'label' => __( 'z-index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
