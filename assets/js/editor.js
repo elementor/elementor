@@ -1898,6 +1898,8 @@ App = Marionette.Application.extend( {
 		elementorFrontend.getElements( 'window' ).elementor = this;
 
 		elementorFrontend.elementsHandler.initHandlers();
+
+		this.trigger( 'frontend:init' );
 	},
 
 	initClearPageDialog: function() {
