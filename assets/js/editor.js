@@ -827,7 +827,12 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	onInsertButtonClick: function() {
-		InsertTemplateHandler.showImportDialog( this.view.model );
+		if ( this.view.model.get( 'hasPageSettings' ) ) {
+			InsertTemplateHandler.showImportDialog( this.view.model );
+			return;
+		}
+
+		elementor.templates.importTemplate( this.view.model );
 	}
 }, {
 	dialog: null,
@@ -3782,7 +3787,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 				return;
 			}
 
-			var isMultipleControl = _.isObject( control.default_value );
+			// Check if the value is a plain object ( and not an array )
+			var isMultipleControl = jQuery.isPlainObject( control.default_value );
 
 			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
@@ -5606,11 +5612,7 @@ module.exports = new Introduction();
 				isGroupMatch,
 				isDroppingAllowed;
 
-			if ( settings.groups ) {
-				if ( ! hasFullDataTransferSupport( event ) ) {
-					return false;
-				}
-
+			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
 
 				isGroupMatch = false;
@@ -9416,11 +9418,9 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change undo redo SetContent', function() {
-					editor.save();
-
-					self.setValue( editor.getContent() );
-				} );
+				// Save the bind callback to allow overwrite it externally
+				self.saveEditor = _.bind( self.saveEditor, self, editor );
+				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};
 
@@ -9429,6 +9429,12 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		if ( ! elementor.config.tinymceHasCustomConfig ) {
 			self.rearrangeButtons();
 		}
+	},
+
+	saveEditor: function( editor ) {
+		editor.save();
+
+		this.setValue( editor.getContent() );
 	},
 
 	attachElContent: function() {
