@@ -400,7 +400,8 @@ abstract class Controls_Stack {
 	}
 
 	final public function set_settings( $key, $value = null ) {
-		if ( null === $value ) {
+		// strict check if override all settings
+		if ( is_array( $key ) ) {
 			$this->_settings = $key;
 		} else {
 			$this->_settings[ $key ] = $value;
@@ -462,6 +463,9 @@ abstract class Controls_Stack {
 		$this->_settings = $this->_get_parsed_settings();
 	}
 
+	/**
+	 * @param array $data - Required for a normal instance, It's optional only for internal `type instance`
+	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			$this->_init( $data );

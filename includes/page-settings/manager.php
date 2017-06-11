@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Manager {
 
 	const TEMPLATE_CANVAS = 'elementor_canvas';
+	const TEMPLATE_HEADER_FOOTER = 'elementor_header_footer';
 
 	const META_KEY = '_elementor_page_settings';
 
@@ -85,16 +86,19 @@ class Manager {
 
 	public static function template_include( $template ) {
 		if ( is_singular() ) {
-			if ( self::TEMPLATE_CANVAS === get_post_meta( get_the_ID(), '_wp_page_template', true ) ) {
+			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+			if ( self::TEMPLATE_CANVAS === $page_template ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
 		}
+
 		return $template;
 	}
 
 	public static function add_page_templates( $post_templates ) {
 		$post_templates = [
 				self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
+				self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Header', 'elementor' ) . '-' . __( 'Footer', 'elementor' ),
 		] + $post_templates;
 
 		return $post_templates;
