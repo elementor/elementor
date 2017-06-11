@@ -49,8 +49,9 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_z_index',
 			[
-				'label' => __( 'z-index', 'elementor' ),
+				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
