@@ -327,11 +327,13 @@ class Frontend {
 	}
 
 	public function apply_builder_in_content( $content ) {
+		if ( ! $this->_is_frontend_mode || $this->_is_excerpt ) {
+			return $content;
+		}
+
 		// Remove the filter itself in order to allow other `the_content` in the elements
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
-		if ( ! $this->_is_frontend_mode )
-			return $content;
 
 		$post_id = get_the_ID();
 		$builder_content = $this->get_builder_content( $post_id );
