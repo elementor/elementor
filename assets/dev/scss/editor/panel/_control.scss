@@ -426,7 +426,6 @@
 	.elementor-control-media-image {
 		height: 100%;
 		background-size: cover;
-		background-position: center;
 	}
 }
 // Dimensions Control
@@ -581,7 +580,7 @@
 		}
 	}
 
-	input {
+	.elementor-input {
 		direction: ltr; // Force ltr also in RTL languages
 
 		&:not(:focus) {

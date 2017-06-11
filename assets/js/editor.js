@@ -827,7 +827,12 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	onInsertButtonClick: function() {
-		InsertTemplateHandler.showImportDialog( this.view.model );
+		if ( this.view.model.get( 'hasPageSettings' ) ) {
+			InsertTemplateHandler.showImportDialog( this.view.model );
+			return;
+		}
+
+		elementor.templates.importTemplate( this.view.model );
 	}
 }, {
 	dialog: null,
@@ -3786,7 +3791,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 				return;
 			}
 
-			var isMultipleControl = _.isObject( control.default_value );
+			// Check if the value is a plain object ( and not an array )
+			var isMultipleControl = jQuery.isPlainObject( control.default_value );
 
 			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
@@ -5610,11 +5616,7 @@ module.exports = new Introduction();
 				isGroupMatch,
 				isDroppingAllowed;
 
-			if ( settings.groups ) {
-				if ( ! hasFullDataTransferSupport( event ) ) {
-					return false;
-				}
-
+			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
 
 				isGroupMatch = false;
@@ -7248,8 +7250,6 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
-	percentsPopup: null,
-
 	behaviors: {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -7282,6 +7282,8 @@ ColumnView = BaseElementView.extend( {
 
 		ui.columnInner = '> .elementor-column-wrap';
 
+		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
+
 		return ui;
 	},
 
@@ -7293,14 +7295,6 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
-	},
-
-	initPercentsPopup: function() {
-		this.percentsPopup = elementorFrontend.getElements( 'window' ).elementorPreview.dialogsManager.createWidget( 'simple', {
-			classes: {
-				globalPrefix: 'elementor-column-percents-popup'
-			}
-		} );
 	},
 
 	isDroppingAllowed: function() {
@@ -7327,7 +7321,7 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
-			self.percentsPopup.setMessage( self.getPercentsForDisplay() );
+			self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
 		} );
 	},
 
@@ -7370,8 +7364,6 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
 		self.changeChildContainerClasses();
-
-		self.initPercentsPopup();
 
 		self.changeSizeUI();
 
@@ -9420,11 +9412,9 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change undo redo SetContent', function() {
-					editor.save();
-
-					self.setValue( editor.getContent() );
-				} );
+				// Save the bind callback to allow overwrite it externally
+				self.saveEditor = _.bind( self.saveEditor, self, editor );
+				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};
 
@@ -9433,6 +9423,12 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		if ( ! elementor.config.tinymceHasCustomConfig ) {
 			self.rearrangeButtons();
 		}
+	},
+
+	saveEditor: function( editor ) {
+		editor.save();
+
+		this.setValue( editor.getContent() );
 	},
 
 	attachElContent: function() {
@@ -9704,42 +9700,20 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
-	showChildrenPercentsPopup: function( columnView, nextColumnView ) {
-		columnView.percentsPopup.show();
+	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
+		columnView.ui.percentsTooltip.show();
 
-		columnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'left' );
+		columnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'right' : 'left' );
 
-		columnView.percentsPopup.setSettings( 'position', {
-			my: 'right-15 center',
-			at: 'right center',
-			of: columnView.$el
-		} );
+		nextColumnView.ui.percentsTooltip.show();
 
-		columnView.percentsPopup.refreshPosition();
-
-		nextColumnView.percentsPopup.show();
-
-		nextColumnView.percentsPopup.getElements( 'widget' ).attr( 'data-side', 'right' );
-
-		nextColumnView.percentsPopup.setSettings( 'position', {
-			my: 'left+15 center',
-			at: 'left center',
-			of: nextColumnView.$el
-		} );
-
-		nextColumnView.percentsPopup.refreshPosition();
+		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'left' : 'right' );
 	},
 
-	refreshChildrenPercentsPopup: function( columnView, nextColumnView ) {
-		columnView.percentsPopup.refreshPosition();
+	hideChildrenPercentsTooltip: function( columnView, nextColumnView ) {
+		columnView.ui.percentsTooltip.hide();
 
-		nextColumnView.percentsPopup.refreshPosition();
-	},
-
-	hideChildrenPercentsPopup: function( columnView, nextColumnView ) {
-		columnView.percentsPopup.hide();
-
-		nextColumnView.percentsPopup.hide();
+		nextColumnView.ui.percentsTooltip.hide();
 	},
 
 	resizeChild: function( childView, currentSize, newSize ) {
@@ -9827,14 +9801,14 @@ SectionView = BaseElementView.extend( {
 		this.resetLayout();
 	},
 
-	onChildviewRequestResizeStart: function( columnView, event ) {
+	onChildviewRequestResizeStart: function( columnView ) {
 		var nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
 			return;
 		}
 
-		this.showChildrenPercentsPopup( columnView, nextColumnView, event );
+		this.showChildrenPercentsTooltip( columnView, nextColumnView );
 
 		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
@@ -9848,7 +9822,7 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		this.hideChildrenPercentsPopup( columnView, nextColumnView );
+		this.hideChildrenPercentsTooltip( columnView, nextColumnView );
 
 		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
@@ -9871,8 +9845,6 @@ SectionView = BaseElementView.extend( {
 		} catch ( e ) {
 			return;
 		}
-
-		this.refreshChildrenPercentsPopup( columnView, this.getNextColumn( columnView ), event );
 
 		columnView.model.setSetting( '_inline_size', newSize );
 	},
