@@ -147,6 +147,8 @@ class Editor {
 		global $wp_styles, $wp_scripts;
 
 		$post_id = get_the_ID();
+		setup_postdata( $post_id );
+
 		$plugin = Plugin::$instance;
 
 		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
