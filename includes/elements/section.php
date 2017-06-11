@@ -937,7 +937,7 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'z-index',
+			'z_index',
 			[
 				'label' => __( 'z-index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
