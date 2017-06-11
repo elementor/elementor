@@ -31,6 +31,10 @@
 		box-shadow: none;
 	}
 
+	.elementor-widget:not(.elementor-widget-text-editor) figure {
+			margin: 0;
+	}
+
 	// Responsive Embed
 	embed,
 	iframe,
