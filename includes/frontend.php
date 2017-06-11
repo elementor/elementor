@@ -418,10 +418,12 @@ class Frontend {
 			return '';
 		}
 
+		$editor = Plugin::$instance->editor;
+
 		// Avoid recursion
 		if ( get_the_ID() === (int) $post_id ) {
 			$content = '';
-			if ( Plugin::$instance->editor->is_edit_mode() ) {
+			if ( $editor->is_edit_mode() ) {
 				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
 			}
 
@@ -429,24 +431,15 @@ class Frontend {
 		}
 
 		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		Plugin::$instance->editor->set_edit_mode( false );
+		$is_edit_mode = $editor->is_edit_mode();
+		$editor->set_edit_mode( false );
 
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		if ( isset( $GLOBALS['post'] ) ) {
-			$global_post = $GLOBALS['post'];
-		}
-
-		$GLOBALS['post'] = get_post( $post_id );
+		Plugin::$instance->db->switch_to_post( $post_id );
 
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
 
-		// Restore global post
-		if ( isset( $global_post ) ) {
-			$GLOBALS['post'] = $global_post;
-		} else {
-			unset( $GLOBALS['post'] );
-		}
+		Plugin::$instance->db->restore_current_post();
 
 		// Restore edit mode state
 		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );
