@@ -377,7 +377,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'lightbox_color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-video-modal-{{ID}}' => 'background-color: {{VALUE}};',
