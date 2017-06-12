@@ -9347,6 +9347,9 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 			},
 			success: _.bind( function( data ) {
 				this.ui.form.html( data );
+				var event = new jQuery.Event( 'widget-added' );
+				wp.textWidgets.handleWidgetAdded( event, this.ui.form );
+				wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
 			}, this )
 		} );
 	}
