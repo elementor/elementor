@@ -1570,6 +1570,8 @@ select {
     padding: 0 10px 15px; }
   .elementor-panel .elementor-control-type-wp_widget .widget-inside {
     display: block; }
+  .elementor-panel .elementor-control-type-wp_widget .quicktags-toolbar input {
+    width: auto; }
   .elementor-panel .elementor-control-type-tabs {
     font-size: 0.8em;
     color: #a4afb7;
