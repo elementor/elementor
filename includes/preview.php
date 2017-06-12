@@ -68,7 +68,7 @@ class Preview {
 
 		$space_between_widgets = get_option( 'elementor_space_between_widgets' );
 
-		if ( $space_between_widgets ) {
+		if ( is_numeric( $space_between_widgets ) ) {
 			$stylesheet->add_rules( '.elementor-widget:not(:last-child)', [ 'margin-bottom' => $space_between_widgets . 'px' ] );
 		}
 
