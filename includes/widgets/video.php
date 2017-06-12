@@ -405,7 +405,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'#elementor-video-modal-{{ID}} .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+					'(desktop+)#elementor-video-modal-{{ID}} .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
