@@ -389,13 +389,14 @@ class Widget_Button extends Widget_Base {
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
 		?>
-	<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
-		<?php if ( ! empty( $settings['icon'] ) ) : ?>
+		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
+			<?php if ( ! empty( $settings['icon'] ) ) : ?>
 			<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-							<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
-						</span>
-		<?php endif; ?>
-		<span class="elementor-button-text"><?php echo $settings['text']; ?></span>
+				<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
+			</span>
+			<?php endif; ?>
+			<span class="elementor-button-text"><?php echo $settings['text']; ?></span>
+		</span>
 		<?php
 	}
 }
