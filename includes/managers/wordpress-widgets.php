@@ -3,9 +3,13 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Wordpress_Widgets_Manager {
+class WordPress_Widgets_Manager {
 
 	public function __construct() {
+		if ( version_compare( get_bloginfo( 'version' ), '4.8', '<' ) ) {
+			return;
+		}
+
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'before_enqueue_scripts' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'footer' ] );
 	}
