@@ -86,6 +86,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Widgets space' ),
 				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 20,
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget' => 'margin-bottom: {{VALUE}}px',
 				],
@@ -564,7 +565,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_advanced',
 			[
-				'label' => __( 'Advanced', 'elementor' ),
+				'label' => __( 'Element Style', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
@@ -597,8 +598,9 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'z_index',
 			[
-				'label' => __( 'z-index', 'elementor' ),
+				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],

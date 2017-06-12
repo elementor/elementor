@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Manager {
 
 	const TEMPLATE_CANVAS = 'elementor_canvas';
-	const TEMPLATE_HEADER_FOOTER = 'elementor_header_footer';
 
 	const META_KEY = '_elementor_page_settings';
 
@@ -98,7 +97,6 @@ class Manager {
 	public static function add_page_templates( $post_templates ) {
 		$post_templates = [
 				self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
-				self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Header', 'elementor' ) . '-' . __( 'Footer', 'elementor' ),
 		] + $post_templates;
 
 		return $post_templates;
