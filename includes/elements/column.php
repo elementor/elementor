@@ -84,7 +84,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'space_between_widgets',
 			[
-				'label' => __( 'Widgets space' ),
+				'label' => __( 'Widgets Space' ),
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
