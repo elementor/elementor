@@ -116,7 +116,7 @@ class Plugin {
 	public $posts_css_manager;
 
 	/**
-	 * @var Wordpress_Widgets_Manager
+	 * @var WordPress_Widgets_Manager
 	 */
 	public $wordpress_widgets_manager;
 
@@ -255,7 +255,7 @@ class Plugin {
 
 		$this->templates_manager = new TemplateLibrary\Manager();
 
-		$this->wordpress_widgets_manager = new Wordpress_Widgets_Manager();
+		$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 
 		if ( is_admin() ) {
 			$this->admin = new Admin();
