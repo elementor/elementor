@@ -107,6 +107,11 @@ class Plugin {
 	public $posts_css_manager;
 
 	/**
+	 * @var WordPress_Widgets_Manager
+	 */
+	public $wordpress_widgets_manager;
+
+	/**
 	 * @deprecated
 	 *
 	 * @return string
@@ -203,6 +208,8 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
 		include( ELEMENTOR_PATH . 'includes/maintenance-mode.php' );
 
+		include( ELEMENTOR_PATH . 'includes/managers/wordpress-widgets.php' );
+
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
 
@@ -236,6 +243,8 @@ class Plugin {
 		$this->templates_manager = new TemplateLibrary\Manager();
 
 		$this->maintenance_mode = new Maintenance_Mode();
+
+		$this->wordpress_widgets_manager = new Wordpress_Widgets_Manager();
 
 		if ( is_admin() ) {
 			new Admin();
