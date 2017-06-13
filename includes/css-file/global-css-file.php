@@ -102,5 +102,11 @@ class Global_CSS_File extends CSS_File {
 		if ( ! empty( $container_width ) ) {
 			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
 		}
+
+		$space_between_widgets = get_option( 'elementor_space_between_widgets' );
+
+		if ( is_numeric( $space_between_widgets ) ) {
+			$this->stylesheet_obj->add_rules( '.elementor-widget:not(:last-child)', [ 'margin-bottom' => $space_between_widgets . 'px' ] );
+		}
 	}
 }

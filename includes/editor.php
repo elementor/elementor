@@ -528,6 +528,8 @@ class Editor {
 		foreach ( $this->_editor_templates as $editor_template ) {
 			include $editor_template;
 		}
+
+		do_action( 'elementor/editor/footer' );
 	}
 
 	/**

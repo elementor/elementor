@@ -178,8 +178,13 @@
 
 .elementor-lightbox-modal .dialog-widget-content {
   background: none;
-  box-shadow: none;
-  width: 50%; }
+  box-shadow: none; }
+  @media (max-width: 767px) {
+    .elementor-lightbox-modal .dialog-widget-content {
+      width: 100%; } }
+  @media (min-width: 1025px) {
+    .elementor-lightbox-modal .dialog-widget-content {
+      width: 50%; } }
 
 .elementor-lightbox-modal .dialog-close-button {
   top: 12px;
