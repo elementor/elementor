@@ -969,6 +969,20 @@
 	padding: 0 10px 15px;
 }
 
+// WP Widgets
+.elementor-control-type-wp_widget {
+	.widget-inside {
+		// Overwrite WP Default
+		display: block;
+	}
+
+	.quicktags-toolbar {
+		input {
+			width: auto;
+		}
+	}
+}
+
 // Tabs Control
 @import "controls/tabs";
 
