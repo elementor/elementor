@@ -9016,6 +9016,12 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 			},
 			success: _.bind( function( data ) {
 				this.ui.form.html( data );
+				// WP >= 4.8
+				if ( wp.textWidgets ) {
+					var event = new jQuery.Event( 'widget-added' );
+					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
+					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
+				}
 			}, this )
 		} );
 	}
