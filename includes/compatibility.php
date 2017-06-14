@@ -15,6 +15,8 @@ class Compatibility {
 	}
 
 	public static function init() {
+		self::register_class_aliases();
+
 		// Hotfix for NextGEN Gallery plugin
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
 			add_filter( 'elementor/utils/get_edit_link', function( $edit_link ) {
@@ -110,6 +112,16 @@ class Compatibility {
 		}
 
 		return $post_meta;
+	}
+
+	private static function register_class_aliases() {
+		$class_aliases = [
+			'Elementor\Base_Data_Control' => 'Elementor\Control_Base', // Since 1.5.0
+		];
+
+		foreach ( $class_aliases as $class_name => $alias_name ) {
+			class_alias( $class_name, $alias_name );
+		}
 	}
 }
 
