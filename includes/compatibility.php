@@ -116,7 +116,7 @@ class Compatibility {
 
 	private static function register_class_aliases() {
 		$class_aliases = [
-			'Elementor\Base_Data_Control' => 'Elementor\Control_Base',
+			'Elementor\Base_Data_Control' => 'Elementor\Control_Base', // Since 1.5.0
 		];
 
 		foreach ( $class_aliases as $class_name => $alias_name ) {
