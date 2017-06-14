@@ -580,17 +580,13 @@
 		}
 	}
 
-	.elementor-input {
+	input[type=url] {
 		direction: ltr; // Force ltr also in RTL languages
 
 		&:not(:focus) {
 
 			+ .elementor-control-url-more {
 				border-color: $editor-lightest;
-
-				&.active {
-					background-color: $editor-lightest;
-				}
 			}
 		}
 
@@ -598,10 +594,6 @@
 
 			+ .elementor-control-url-more {
 				border-color: $editor-light;
-
-				&.active {
-					background-color: $editor-light;
-				}
 			}
 		}
 	}
@@ -983,6 +975,20 @@
 // Code Editor
 .elementor-control-type-code {
 	padding: 0 10px 15px;
+}
+
+// WP Widgets
+.elementor-control-type-wp_widget {
+	.widget-inside {
+		// Overwrite WP Default
+		display: block;
+	}
+
+	.quicktags-toolbar {
+		input {
+			width: auto;
+		}
+	}
 }
 
 // Tabs Control
