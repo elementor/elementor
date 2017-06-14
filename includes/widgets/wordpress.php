@@ -48,8 +48,15 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	public function get_form() {
+		$instance = $this->get_widget_instance();
+
 		ob_start();
-		$this->get_widget_instance()->form( $this->get_settings( 'wp' ) );
+		echo '<div class="widget-inside media-widget-control"><div class="form wp-core-ui">';
+		echo '<input type="hidden" class="id_base" value="' . $instance->id_base . '" />';
+		echo '<input type="hidden" class="widget-id" value="widget-' . $this->get_id() . '" />';
+		echo '<div class="widget-content">';
+		$instance->form( $this->get_settings( 'wp' ) );
+		echo '</div></div></div>';
 		return ob_get_clean();
 	}
 
