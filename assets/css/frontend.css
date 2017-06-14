@@ -1602,15 +1602,22 @@ body.elementor-page .elementor-widget-menu-anchor {
   .elementor-widget-text-editor .elementor-drop-cap-letter {
     display: inline-block; }
 
-.swiper-container .swiper-slide {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  background: no-repeat center;
-  background-size: cover; }
+.elementor-widget-media-carousel .swiper-container-horizontal > .swiper-pagination-bullets {
+  bottom: 35px; }
+
+.elementor-widget-media-carousel .swiper-button-prev, .elementor-widget-media-carousel .swiper-button-next {
+  top: calc(50% - 30px / 2); }
 
 .swiper-container .elementor-lightbox-content-source {
   display: none; }
+
+.elementor-media-carousel-image {
+  background: no-repeat center;
+  background-size: cover;
+  height: calc(100% - 30px);
+  position: relative; }
+  .elementor-media-carousel-image-caption {
+    margin-top: 10px; }
 
 .elementor-thumbs-swiper {
   height: 150px;
@@ -1622,6 +1629,34 @@ body.elementor-page .elementor-widget-menu-anchor {
     cursor: pointer; }
     .elementor-thumbs-swiper .swiper-slide:not(.swiper-slide-active) {
       opacity: .4; }
+
+.elementor-swiper-button {
+  position: absolute;
+  top: calc(50% - 30px / 2);
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
+  z-index: 1;
+  color: #fff;
+  cursor: pointer; }
+  .elementor-swiper-button-prev {
+    left: 10px; }
+  .elementor-swiper-button-next {
+    right: 10px; }
+
+.elementor-main-swiper .swiper-pagination-fraction,
+.elementor-main-swiper .swiper-pagination-custom,
+.elementor-main-swiper .swiper-container-horizontal > .swiper-pagination-bullets {
+  bottom: calc(30px + 5px);
+  color: #fff; }
+
+[id^=elementor-carousel-lightbox] .elementor-media-carousel-image {
+  position: absolute;
+  width: 100%;
+  height: 100%; }
+
+[id^=elementor-carousel-lightbox] .elementor-media-carousel-image-caption {
+  display: none; }
 
 [id^=elementor-carousel-lightbox] .dialog-message img {
   max-width: 100%; }
@@ -1843,6 +1878,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 
 /**
  * Swiper 3.4.2
+ */
+/**
+ * This is the original swiper file
+ * please DO NOT edit it
  */
 .swiper-container {
   margin-left: auto;

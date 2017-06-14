@@ -527,6 +527,9 @@ MediaCarousel = HandlerModule.extend( {
 			classes: {
 				playing: 'elementor-playing',
 				hidden: 'elementor-hidden'
+			},
+			attributes: {
+				dataSlideIndex: 'swiper-slide-index'
 			}
 		};
 	},
@@ -547,7 +550,7 @@ MediaCarousel = HandlerModule.extend( {
 	},
 
 	bindEvents: function() {
-		this.elements.$mainSwiperSlides.on( 'click', this.openLightBox );
+		this.elements.$mainSwiper.on( 'click', this.getSettings( 'selectors.swiperSlide' ), this.openLightBox );
 	},
 
 	getLightBox: function() {
@@ -555,6 +558,10 @@ MediaCarousel = HandlerModule.extend( {
 	},
 
 	openLightBox: function( event ) {
+		if ( jQuery( event.target ).closest( 'a' ).length ) {
+			return;
+		}
+
 		var $swiperTemplate = this.elements.$mainSwiperTemplate.clone(),
 			lightBox = this.getLightBox();
 
@@ -568,8 +575,8 @@ MediaCarousel = HandlerModule.extend( {
 
 		this.swipers.lightbox = new Swiper( $swiperTemplate, {
 				pagination: '.swiper-pagination',
-				nextButton: '.swiper-button-next',
-				prevButton: '.swiper-button-prev',
+				nextButton: '.elementor-swiper-button-next',
+				prevButton: '.elementor-swiper-button-prev',
 				paginationClickable: true,
 				autoHeight: true,
 				grabCursor: true,
@@ -592,8 +599,8 @@ MediaCarousel = HandlerModule.extend( {
 		return this.getSwiper( swiperName ).slides.filter( this.getSettings( 'selectors.' + slideState + 'Slide' ) );
 	},
 
-	getSlideIndex: function( slide, swiperName ) {
-		return this.getSwiper( swiperName ).slides.index( slide );
+	getSlideIndex: function( slide ) {
+		return jQuery( slide ).data( this.getSettings( 'attributes.dataSlideIndex' ) );
 	},
 
 	playSlideVideo: function() {
@@ -633,64 +640,49 @@ MediaCarousel = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		var elementSettings = this.getElementSettings(),
-			slidesPerView = +elementSettings.slides_per_view || 3,
-			isSingleSlide = 1 === slidesPerView,
-			initialSlide = Math.floor( ( this.elements.$mainSwiperSlides.length - 1 ) / 2 );
+			slidesCount = this.elements.$mainSwiperSlides.length,
+			slidesPerView = Math.min( slidesCount, +elementSettings.slides_per_view || 3 ),
+			initialSlide = Math.floor( ( slidesCount - 1 ) / 2 );
+
+		var tabletSlidesPerView = +elementSettings.slides_per_view_tablet;
+
+		if ( ! tabletSlidesPerView ) {
+			if ( 'coverflow' === elementSettings.effect ) {
+				tabletSlidesPerView = 3;
+			} else {
+				tabletSlidesPerView = Math.min( slidesCount, 2 );
+			}
+		}
 
 		var mainSwiperOptions = {
 			pagination: '.swiper-pagination',
-			nextButton: '.swiper-button-next',
-			prevButton: '.swiper-button-prev',
+			nextButton: '.elementor-swiper-button-next',
+			prevButton: '.elementor-swiper-button-prev',
 			paginationClickable: true,
 			grabCursor: true,
 			initialSlide: initialSlide,
 			slidesPerView: slidesPerView,
 			spaceBetween: 20,
-			paginationType: elementSettings.pagination_type,
+			paginationType: elementSettings.pagination,
 			autoplay: elementSettings.autoplay_speed,
 			autoplayDisableOnInteraction: !! elementSettings.pause_on_interaction,
-			loop: elementSettings.loop,
+			loop: true,
 			speed: elementSettings.speed,
 			centeredSlides: !! elementSettings.thumbnails,
+			effect: elementSettings.effect,
 			breakpoints: {
 				768: {
-					slidesPerView: +elementSettings.slides_per_view_tablet || ( isSingleSlide ? 1 : 2 ),
+					slidesPerView: tabletSlidesPerView,
 					spaceBetween: 20
 				},
 				480: {
 					slidesPerView: +elementSettings.slides_per_view_mobile || 1,
 					spaceBetween: 10
 				}
-			}/*,
-			autoplay: 3500,
-			slidesPerView: 4,
-			spaceBetween: 40,
-			slidesPerView: 'auto',
-			coverflow: {
-				rotate: 50,
-				stretch: 0,
-				depth: 100,
-				modifier: 1,
-				slideShadows: true
-			}*/
+			}
 		};
 
-		var mainSwiper = this.swipers.main = new Swiper( this.elements.$mainSwiper, mainSwiperOptions );
-
-		if ( elementSettings.thumbnails ) {
-			var thumbsSwiperOptions = {
-				centeredSlides: true,
-				slidesPerView: 'auto',
-				slideToClickedSlide: true,
-				initialSlide: initialSlide
-			};
-
-			var thumbsSwiper = this.swipers.thumbs = new Swiper( this.elements.$thumbsSwiper, thumbsSwiperOptions );
-
-			mainSwiper.params.control = thumbsSwiper;
-
-			thumbsSwiper.params.control = mainSwiper;
-		}
+		this.swipers.main = new Swiper( this.elements.$mainSwiper, mainSwiperOptions );
 	},
 
 	onElementChange: function( propertyName ) {
