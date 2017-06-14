@@ -1,13 +1,31 @@
-.swiper-container {
+$caption-space: 30px;
 
-	.swiper-slide {
-		display: flex;
-		background: no-repeat center;
-		background-size: cover;
+.elementor-widget-media-carousel {
+
+	.swiper-container-horizontal > .swiper-pagination-bullets { // Hard selector
+		bottom: 35px;
 	}
+
+	.swiper-button-prev, .swiper-button-next {
+		top: calc(50% - #{$caption-space} / 2);
+	}
+}
+
+.swiper-container {
 
 	.elementor-lightbox-content-source {
 		display: none;
+	}
+}
+
+.elementor-media-carousel-image {
+	background: no-repeat center;
+	background-size: cover;
+	height: calc(100% - #{$caption-space});
+	position: relative;
+
+	&-caption {
+		margin-top: 10px;
 	}
 }
 
@@ -27,7 +45,43 @@
 	}
 }
 
+.elementor-swiper-button {
+	position: absolute;
+	top: calc(50% - #{$caption-space} / 2);
+	transform: translateY(-50%);
+	z-index: 1;
+	color: #fff;
+	cursor: pointer;
+
+	&-prev {
+		left: 10px;
+	}
+
+	&-next {
+		right: 10px;
+	}
+}
+
+.elementor-main-swiper {
+	.swiper-pagination-fraction,
+	.swiper-pagination-custom,
+	.swiper-container-horizontal > .swiper-pagination-bullets {
+		bottom: calc(#{$caption-space} + 5px);
+		color: #fff;
+	}
+}
+
 [id^=elementor-carousel-lightbox] {
+
+	.elementor-media-carousel-image {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+
+	.elementor-media-carousel-image-caption {
+		display: none;
+	}
 
 	.dialog-message {
 

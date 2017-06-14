@@ -10,7 +10,7 @@ class Widget_Media_Carousel extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Media Carousel', '' );
+		return __( 'Media Carousel', 'elementor' );
 	}
 
 	public function get_script_depends() {
@@ -25,7 +25,7 @@ class Widget_Media_Carousel extends Widget_Base {
 		$this->start_controls_section(
 			'section_slides',
 			[
-				'label' => 'Slides',
+				'label' => __( 'Slides', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -33,35 +33,97 @@ class Widget_Media_Carousel extends Widget_Base {
 		$repeater = new Repeater();
 
 		$repeater->add_control(
+			'type',
+			[
+				'type' => Controls_Manager::CHOOSE,
+				'label' => __( 'Type', 'elementor' ),
+				'default' => 'image',
+				'options' => [
+					'image' => [
+						'title' => __( 'Image', 'elementor' ),
+						'icon' => __( 'fa fa-image', 'elementor' ),
+					],
+					'video' => [
+						'title' => __( 'Video', 'elementor' ),
+						'icon' => __( 'fa fa-video-camera', 'elementor' ),
+					],
+				],
+				'label_block' => false,
+				'toggle' => false,
+			]
+		);
+
+		$repeater->add_control(
 			'image',
 			[
-				'label' => 'Image',
+				'label' => __( 'Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+			]
+		);
+
+		$repeater->add_control(
+			'image_link_to_type',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'None', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
+				],
+				'condition' => [
+					'type' => 'image',
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'image_link_to',
+			[
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'condition' => [
+					'type' => 'image',
+					'image_link_to_type' => 'custom',
+				],
+				'separator' => 'none',
+				'show_label' => false,
 			]
 		);
 
 		$repeater->add_control(
 			'video',
 			[
-				'label' => 'Video',
+				'label' => __( 'Video Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'Insert video link', 'elementor' ),
+				'placeholder' => __( 'Enter your video link', 'elementor' ),
+				'description' => __( 'Insert YouTube or Vimeo link', 'elementor' ),
 				'show_external' => false,
+				'condition' => [
+					'type' => 'video',
+				],
 			]
 		);
 
 		$repeater->add_control(
-			'text',
+			'caption_type',
 			[
-				'label' => 'Text',
-				'type' => Controls_Manager::TEXT,
+				'label' => __( 'Caption Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'None', 'elementor' ),
+					'title' => __( 'Title', 'elementor' ),
+					'caption' => __( 'Caption', 'elementor' ),
+					'description' => __( 'Description', 'elementor' ),
+				],
 			]
 		);
 
 		$this->add_control(
 			'slides',
 			[
-				'label' => 'Slides',
+				'label' => __( 'Slides', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_fields(),
 			]
@@ -72,19 +134,24 @@ class Widget_Media_Carousel extends Widget_Base {
 		$this->start_controls_section(
 			'section_carousel',
 			[
-				'label' => __( 'Carousel' ),
+				'label' => __( 'Carousel', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
-			'carousel_type',
+			'effect',
 			[
 				'type' => Controls_Manager::SELECT,
-				'label' => __( 'Carousel Type' ),
-				'default' => 'classic',
+				'label' => __( 'Effect', 'elementor' ),
+				'default' => 'slide',
 				'options' => [
-					'classic' => __( 'Classic' ),
+					'slide' => __( 'Slide', 'elementor' ),
+					'fade' => __( 'Fade', 'elementor' ),
+					'flip' => __( 'Flip', 'elementor' ),
+					'cube' => __( 'Cube', 'elementor' ),
+					'coverflow' => __( 'Coverflow', 'elementor' ),
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -95,33 +162,60 @@ class Widget_Media_Carousel extends Widget_Base {
 		$this->add_responsive_control(
 			'slides_per_view',
 			[
+				'type' => Controls_Manager::SELECT,
 				'label' => __( 'Slides Per View', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
 				'options' => [ '' => __( 'Default', 'elementor' ) ] + $slides_per_view,
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'pagination_type',
-			[
-				'label' => __( 'Pagination Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'bullets',
-				'options' => [
-					'bullets' => __( 'Bullets', 'elementor' ),
-					'fraction' => __( 'Fraction', 'elementor' ),
-					'progress' => __( 'Progress', 'elementor' ),
+				'condition' => [
+					'effect' => 'slide',
 				],
 				'frontend_available' => true,
 			]
 		);
 
 		$this->add_control(
-			'thumbnails',
+			'height',
+			[
+				'type' => Controls_Manager::SLIDER,
+				'label' => __( 'Height', 'elementor' ),
+				'default' => [
+					'size' => 230,
+				],
+				'range' => [
+					'px' => [
+						'min' => 20,
+						'max' => 1000,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-main-swiper' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'show_arrows',
 			[
 				'type' => Controls_Manager::SWITCHER,
-				'label' => __( 'Thumbnails', 'elementor' ),
+				'label' => __( 'Navigation Arrows', 'elementor' ),
+				'default' => 'yes',
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'pagination',
+			[
+				'label' => __( 'Pagination', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'bullets',
+				'options' => [
+					'' => __( 'None', 'elementor' ),
+					'bullets' => __( 'Bullets', 'elementor' ),
+					'fraction' => __( 'Fraction', 'elementor' ),
+					'progress' => __( 'Progress', 'elementor' ),
+				],
 				'frontend_available' => true,
 			]
 		);
@@ -178,73 +272,139 @@ class Widget_Media_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'loop',
-			[
-				'label' => __( 'Loop', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => 'yes',
-				'frontend_available' => true,
-			]
-		);
-
-		/*$this->add_control(
-			'effect',
-			[
-				'label' => __( 'Effect', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'slide',
-				'options' => [
-					'slide' => __( 'Slide', 'elementor' ),
-					'fade' => __( 'Fade', 'elementor' ),
-				],
-				'condition' => [
-					'slides_to_show' => '1',
-				],
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'direction',
-			[
-				'label' => __( 'Direction', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'ltr',
-				'options' => [
-					'ltr' => __( 'Left', 'elementor' ),
-					'rtl' => __( 'Right', 'elementor' ),
-				],
-				'frontend_available' => true,
-			]
-		);*/
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_style',
+			'section_navigation',
 			[
-				'label' => 'Carousel',
+				'label' => __( 'Navigation', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
-			'carousel_height',
+			'navigation_size',
 			[
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 200,
+					'size' => 20,
 				],
 				'range' => [
 					'px' => [
-						'min' => 20,
-						'max' => 1000,
+						'min' => 10,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-main-swiper' => 'height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-swiper-button' => 'font-size: {{SIZE}}{{UNIT}}',
 				],
+			]
+		);
+
+		$this->add_control(
+			'navigation_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-swiper-button' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_pagination',
+			[
+				'label' => __( 'Pagination', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'pagination_size',
+			[
+				'label' => __( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} .swiper-pagination-bullet' => 'height: {{SIZE}}{{UNIT}}; width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .swiper-container-horizontal .swiper-pagination-progress' => 'height: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .swiper-pagination-fraction' => 'font-size: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'pagination_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .swiper-pagination-bullet-active, {{WRAPPER}} .swiper-pagination-progressbar' => 'background-color: {{VALUE}}',
+					'{{WRAPPER}} .swiper-pagination-fraction' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_caption',
+			[
+				'label' => __( 'Caption', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'caption_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'fa fa-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'fa fa-align-justify',
+					],
+				],
+				'default' => 'center',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-media-carousel-image-caption' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'caption_text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-media-carousel-image-caption' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'caption_typography',
+				'label' => __( 'Typography', 'elementor' ),
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'selector' => '{{WRAPPER}} .elementor-media-carousel-image-caption',
 			]
 		);
 
@@ -253,7 +413,7 @@ class Widget_Media_Carousel extends Widget_Base {
 		$this->start_controls_section(
 			'section_lightbox_style',
 			[
-				'label' => 'Lightbox',
+				'label' => __( 'Lightbox', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -292,20 +452,56 @@ class Widget_Media_Carousel extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function get_image_caption( $slide ) {
+		$caption_type = $slide['caption_type'];
+
+		if ( empty( $caption_type ) ) {
+			return '';
+		}
+
+		$attachment_post = get_post( $slide['image']['id'] );
+
+		if ( 'caption' === $caption_type ) {
+			return $attachment_post->post_excerpt;
+		}
+
+		if ( 'title' === $caption_type ) {
+			return $attachment_post->post_title;
+		}
+
+		return $attachment_post->post_content;
+	}
+
+	private function get_image_link_to( $slide ) {
+		if ( ! $slide['image_link_to_type'] ) {
+			return '';
+		}
+
+		if ( 'custom' === $slide['image_link_to_type'] ) {
+			return $slide['image_link_to']['url'];
+		}
+
+		return $slide['image']['url'];
+	}
+
 	protected function render() {
 		$settings = $this->get_active_settings();
 		?>
 		<div class="elementor-main-swiper swiper-container">
 			<div class="swiper-wrapper">
-				<?php foreach ( $settings['slides'] as $index => $image ) {
-					$element_key = 'image' . $index;
+				<?php foreach ( $settings['slides'] as $index => $slide ) {
+					$element_key = 'slide-' . $index;
 
 					$this->add_render_attribute( $element_key, [
 						'class' => 'swiper-slide',
-						'style' => 'background-image: url(' . $image['image']['url'] . ')',
 					] );
 
-					if ( $image['video']['url'] ) {
+					$this->add_render_attribute( $element_key . '-image', [
+						'class' => 'elementor-media-carousel-image',
+						'style' => 'background-image: url(' . $slide['image']['url'] . ')',
+					] );
+
+					if ( $slide['video']['url'] ) {
 						$embed_url_params = [
 							'autoplay' => 1,
 							'rel' => 0,
@@ -313,33 +509,54 @@ class Widget_Media_Carousel extends Widget_Base {
 							'showinfo' => 0,
 						];
 
-						$this->add_render_attribute( $element_key, 'data-video-url', Embed::get_embed_url( $image['video']['url'], $embed_url_params ) );
+						$this->add_render_attribute( $element_key, 'data-video-url', Embed::get_embed_url( $slide['video']['url'], $embed_url_params ) );
 					}
 					?>
 					<div <?php echo $this->get_render_attribute_string( $element_key ); ?>>
-						<div class="elementor-media-carousel-image-title"><?php echo $image['text']; ?></div>
-						<?php if ( $image['video']['url'] ) { ?>
-							<div class="elementor-custom-embed-play">
-								<i class="fa"></i>
-							</div>
-						<?php } ?>
+						<?php
+						$image_link_to = $this->get_image_link_to( $slide );
+
+						if ( $image_link_to ) {
+							$this->add_render_attribute( $element_key . '_link', 'href', $image_link_to );
+
+							if ( 'custom' === $slide['image_link_to_type'] ) {
+								if ( $slide['image_link_to']['is_external'] ) {
+									$this->add_render_attribute( $element_key . '_link', 'target', '_blank' );
+								}
+
+								if ( $slide['image_link_to']['nofollow'] ) {
+									$this->add_render_attribute( $element_key . '_link', 'nofollow', '' );
+								}
+							}
+
+							echo '<a ' . $this->get_render_attribute_string( $element_key . '_link' ) . '>';
+						} ?>
+						<div <?php echo $this->get_render_attribute_string( $element_key . '-image' ); ?>>
+							<?php if ( 'video' === $slide['type'] ) { ?>
+								<div class="elementor-custom-embed-play">
+									<i class="fa"></i>
+								</div>
+							<?php } ?>
+						</div>
+						<div class="elementor-media-carousel-image-caption"><?php echo $this->get_image_caption( $slide ); ?></div>
+						<?php
+						if ( $image_link_to ) {
+							echo '</a>';
+						} ?>
 					</div>
 				<?php } ?>
 			</div>
-			<div class="swiper-pagination"></div>
-			<div class="swiper-button-prev"></div>
-			<div class="swiper-button-next"></div>
-		</div>
-		<?php if ( $settings['thumbnails'] ) { ?>
-			<div class="elementor-thumbs-swiper swiper-container">
-				<div class="swiper-wrapper">
-					<?php foreach ( $settings['slides'] as $image ) { ?>
-						<div class="swiper-slide" style="background-image: url('<?php echo $image['image']['url']; ?>')">
-							<div class="elementor-media-carousel-image-title"><?php echo $image['text']; ?></div>
-						</div>
-					<?php } ?>
+			<?php if ( $settings['pagination'] ) { ?>
+				<div class="swiper-pagination"></div>
+			<?php } ?>
+			<?php if ( $settings['show_arrows'] ) { ?>
+				<div class="elementor-swiper-button elementor-swiper-button-prev">
+					<i class="fa fa-chevron-left"></i>
 				</div>
-			</div>
-		<?php } ?>
+				<div class="elementor-swiper-button elementor-swiper-button-next">
+					<i class="fa fa-chevron-right"></i>
+				</div>
+			<?php } ?>
+		</div>
 	<?php }
 }
