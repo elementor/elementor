@@ -61,7 +61,7 @@ class Control_Media extends Control_Base_Multiple {
 
 		wp_register_script(
 			'image-edit',
-			admin_url( '/js/image-edit' . $suffix . '.js' ),
+			'/wp-admin/js/image-edit' . $suffix . '.js',
 			[
 				'jquery',
 				'json2',
