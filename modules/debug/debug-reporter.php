@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Debug;
+namespace Elementor\Modules\Debug;
 
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 

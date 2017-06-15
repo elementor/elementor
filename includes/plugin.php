@@ -120,6 +120,54 @@ class Plugin {
 	 */
 	public $wordpress_widgets_manager;
 
+	private $classes = [
+		'Elementor\Admin' => '/includes/admin.php',
+		'Elementor\Api' => '/includes/api.php',
+		'Elementor\Beta_Testers' => '/includes/beta-testers.php',
+		'Elementor\Compatibility' => '/includes/compatibility.php',
+		'Elementor\Conditions' => '/includes/conditions.php',
+		'Elementor\Controls_Manager' => '/includes/managers/controls.php',
+		'Elementor\Controls_Stack' => '/includes/base/controls-stack.php',
+		'Elementor\CSS_File' => '/includes/css-file/css-file.php',
+		'Elementor\DB' => '/includes/db.php',
+		'Elementor\Editor' => '/includes/editor.php',
+		'Elementor\Elements_Manager' => '/includes/managers/elements.php',
+		'Elementor\Embed' => '/includes/embed.php',
+		'Elementor\Fonts' => '/includes/fonts.php',
+		'Elementor\Frontend' => '/includes/frontend.php',
+		'Elementor\Global_CSS_File' => '/includes/css-file/global-css-file.php',
+		'Elementor\Heartbeat' => '/includes/heartbeat.php',
+		'Elementor\Images_Manager' => '/includes/managers/image.php',
+		'Elementor\Maintenance' => '/includes/maintenance.php',
+		'Elementor\Maintenance_Mode' => '/includes/maintenance-mode.php',
+		'Elementor\PageSettings\Manager' => '/includes/page-settings/manager.php',
+		'Elementor\Post_CSS_File' => '/includes/css-file/post-css-file.php',
+		'Elementor\Posts_CSS_Manager' => '/includes/managers/css-files.php',
+		'Elementor\Preview' => '/includes/preview.php',
+		'Elementor\Responsive' => '/includes/responsive.php',
+		'Elementor\Revisions_Manager' => '/includes/managers/revisions.php',
+		'Elementor\Rollback' => '/includes/rollback.php',
+		'Elementor\Schemes_Manager' => '/includes/managers/schemes.php',
+		'Elementor\Settings' => '/includes/settings/settings.php',
+		'Elementor\Settings_Page' => '/includes/settings/settings-page.php',
+		'Elementor\Shapes' => '/includes/shapes.php',
+		'Elementor\Skins_Manager' => '/includes/managers/skins.php',
+		'Elementor\Stylesheet' => '/includes/stylesheet.php',
+		'Elementor\System_Info\Main' => '/includes/settings/system-info/main.php',
+		'Elementor\TemplateLibrary\Manager' => '/includes/template-library/manager.php',
+		'Elementor\Tools' => '/includes/settings/tools.php',
+		'Elementor\Tracker' => '/includes/tracker.php',
+		'Elementor\Upgrades' => '/includes/upgrades.php',
+		'Elementor\User' => '/includes/user.php',
+		'Elementor\Utils' => '/includes/utils.php',
+		'Elementor\Widgets_Manager' => '/includes/managers/widgets.php',
+		'Elementor\WordPress_Widgets_Manager' => '/includes/managers/wordpress-widgets.php',
+	];
+
+	private $classes_renames = [
+		'Elementor\Debug\Debug' => 'Elementor\Modules\Debug\Debug',
+	];
+
 	/**
 	 * @deprecated
 	 *
@@ -178,57 +226,8 @@ class Plugin {
 	}
 
 	private function _includes() {
-		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
-		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
-		include( ELEMENTOR_PATH . 'includes/api.php' );
-		include( ELEMENTOR_PATH . 'includes/utils.php' );
-		include( ELEMENTOR_PATH . 'includes/user.php' );
-		include( ELEMENTOR_PATH . 'includes/fonts.php' );
-		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
-
-		include( ELEMENTOR_PATH . 'includes/db.php' );
-		include( ELEMENTOR_PATH . 'includes/base/controls-stack.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/settings-page.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
-		include( ELEMENTOR_PATH . 'includes/editor.php' );
-		include( ELEMENTOR_PATH . 'includes/embed.php' );
-		include( ELEMENTOR_PATH . 'includes/preview.php' );
-		include( ELEMENTOR_PATH . 'includes/frontend.php' );
-		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
-		include( ELEMENTOR_PATH . 'includes/responsive.php' );
-		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
-		require( ELEMENTOR_PATH . 'includes/rollback.php' );
-
-		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
-		include( ELEMENTOR_PATH . 'includes/tracker.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
-
-		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
-		include( ELEMENTOR_PATH . 'includes/page-settings/manager.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/conditions.php' );
-		include( ELEMENTOR_PATH . 'includes/shapes.php' );
-		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
-		include( ELEMENTOR_PATH . 'includes/maintenance-mode.php' );
-
-		include( ELEMENTOR_PATH . 'includes/managers/wordpress-widgets.php' );
-
-		if ( is_admin() ) {
-			include( ELEMENTOR_PATH . 'includes/admin.php' );
-			require( ELEMENTOR_PATH . 'includes/beta-testers.php' );
-
-			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
-			}
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			new Images_Manager();
 		}
 	}
 
@@ -274,10 +273,45 @@ class Plugin {
 		}
 	}
 
+	public function autoload( $class ) {
+		if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) ) {
+			return;
+		}
+
+		// Backward Compatibility: Save old class name for set an alias after the new class is loaded
+		if ( isset( $this->classes_renames[ $class ] ) ) {
+			$old_class = $class;
+			$class = $this->classes_renames[ $class ];
+		}
+
+		if ( isset( $this->classes[ $class ] ) ) {
+			$filename = ELEMENTOR_PATH . $this->classes[ $class ];
+		} else {
+			$filename = strtolower(
+				preg_replace(
+					[ '/^' . __NAMESPACE__ . '\\\/', '/([a-z])([A-Z])/', '/_/', '/\\\/' ],
+					[ '', '$1-$2', '-', DIRECTORY_SEPARATOR ],
+					$class
+				)
+			);
+			$filename = ELEMENTOR_PATH . $filename . '.php';
+		}
+
+		if ( is_readable( $filename ) ) {
+			require $filename;
+		}
+
+		if ( isset( $old_class ) && isset( $this->classes_renames[ $old_class ] ) ) {
+			class_alias( $class, $old_class );
+		}
+	}
+
 	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
+		spl_autoload_register( [ $this, 'autoload' ] );
+
 		add_action( 'init', [ $this, 'init' ], 0 );
 
 		$this->_includes();
