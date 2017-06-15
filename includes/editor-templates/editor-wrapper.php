@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><?php echo __( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
 	<?php wp_head(); ?>
+	<script>
+		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
+	</script>
 </head>
 <body class="elementor-editor-active">
 <div id="elementor-editor-wrapper">
