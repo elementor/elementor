@@ -213,7 +213,7 @@ class Controls_Manager {
 		foreach ( $this->get_controls() as $name => $control ) {
 			$controls_data[ $name ] = $control->get_settings();
 
-			if ( $control instanceof Base_Data_control ) {
+			if ( $control instanceof Base_Data_Control ) {
 				$controls_data[ $name ]['default_value'] = $control->get_default_value();
 			}
 		}
@@ -296,7 +296,7 @@ class Controls_Manager {
 			return false;
 		}
 
-		if ( $control_type_instance instanceof Base_Data_control ) {
+		if ( $control_type_instance instanceof Base_Data_Control ) {
 			$control_default_value = $control_type_instance->get_default_value();
 
 			if ( is_array( $control_default_value ) ) {
