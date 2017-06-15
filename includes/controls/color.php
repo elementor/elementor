@@ -21,8 +21,8 @@ class Control_Color extends Base_Data_Control {
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_register_script( 'iris', admin_url( '/js/iris.min.js' ), [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker' . $suffix . '.js' ), [ 'iris' ], false, true );
+		wp_register_script( 'iris', '/wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
+		wp_register_script( 'wp-color-picker', '/wp-admin/js/color-picker' . $suffix . '.js', [ 'iris' ], false, true );
 
 		wp_localize_script(
 			'wp-color-picker',
