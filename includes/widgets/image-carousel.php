@@ -562,7 +562,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				}
 
 				if ( ! empty( $link['nofollow'] ) ) {
-					$this->add_render_attribute( $link_key, 'nofollow', '' );
+					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 				}
 
 				$image_html = '<a ' . $this->get_render_attribute_string( $link_key ) . '>' . $image_html . '</a>';
