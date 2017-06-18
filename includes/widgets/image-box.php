@@ -380,7 +380,7 @@ class Widget_Image_Box extends Widget_Base {
 				}
 
 				if ( ! empty( $settings['link']['nofollow'] ) ) {
-					$this->add_render_attribute( 'link', 'nofollow', '' );
+					$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 				}
 
 				$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';

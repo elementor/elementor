@@ -343,7 +343,7 @@ class Widget_Button extends Widget_Base {
 			}
 
 			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'button', 'nofollow', '' );
+				$this->add_render_attribute( 'button', 'rel', 'nofollow' );
 			}
 		}
 

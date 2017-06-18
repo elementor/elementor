@@ -298,7 +298,7 @@ class Widget_Icon extends Widget_Base {
 			}
 
 			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'icon-wrapper', 'nofollow', '' );
+				$this->add_render_attribute( 'icon-wrapper', 'rel', 'nofollow' );
 			}
 		}
 
