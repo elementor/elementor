@@ -501,7 +501,7 @@ class Widget_Icon_Box extends Widget_Base {
 			}
 
 			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'link', 'nofollow', '' );
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 			}
 		}
 
