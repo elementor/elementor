@@ -257,8 +257,6 @@ class Plugin {
 
 		$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 
-		$this->wordpress_widgets_manager = new Wordpress_Widgets_Manager();
-
 		if ( is_admin() ) {
 			$this->admin = new Admin();
 			$this->tools = new Tools();
