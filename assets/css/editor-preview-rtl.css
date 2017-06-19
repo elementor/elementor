@@ -90,8 +90,11 @@ html.elementor-html {
   display: none; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-empty-view {
-  position: relative;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 1; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-first-add {
@@ -340,7 +343,7 @@ html.elementor-html {
 
 @media (min-width: 768px) {
   .elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
-    padding: 10px; } }
+    margin: 10px; } }
 
 .elementor-editor-active .elementor-widget.elementor-loading {
   opacity: .3; }
