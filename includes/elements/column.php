@@ -60,68 +60,6 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
-			'content_position',
-			[
-				'label' => __( 'Content Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'top' => __( 'Top', 'elementor' ),
-					'center' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'top' => 'flex-start',
-					'bottom' => 'flex-end',
-				],
-				'selectors' => [
-					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'space_between_widgets',
-			[
-				'label' => __( 'Widgets Space (px)', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'placeholder' => 20,
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget' => 'margin-bottom: {{VALUE}}px',
-				],
-			]
-		);
-
-		$possible_tags = [
-			'div',
-			'article',
-			'aside',
-			'nav',
-		];
-
-		$this->add_control(
-			'html_tag',
-			[
-				'label' => __( 'HTML Tag', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'div',
-				'options' => array_combine( $possible_tags, $possible_tags ),
-			]
-		);
-
-		$this->end_controls_section();
-
-		// Section Responsive
-		$this->start_controls_section(
-			'section_responsive',
-			[
-				'label' => __( 'Responsive', 'elementor' ),
-				'tab' => Controls_Manager::TAB_LAYOUT,
-			]
-		);
-
-		$this->add_control(
 			'screen_sm',
 			[
 				'label' => __( 'Mobile Width', 'elementor' ),
@@ -131,6 +69,7 @@ class Element_Column extends Element_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -165,6 +104,58 @@ class Element_Column extends Element_Base {
 					'screen_sm' => [ 'custom' ],
 				],
 				'prefix_class' => 'elementor-sm-',
+			]
+		);
+
+		$this->add_control(
+			'content_position',
+			[
+				'label' => __( 'Content Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'top' => __( 'Top', 'elementor' ),
+					'center' => __( 'Middle', 'elementor' ),
+					'bottom' => __( 'Bottom', 'elementor' ),
+				],
+				'selectors_dictionary' => [
+					'top' => 'flex-start',
+					'bottom' => 'flex-end',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'space_between_widgets',
+			[
+				'label' => __( 'Widgets Space (px)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 20,
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget' => 'margin-bottom: {{VALUE}}px',
+				],
+			]
+		);
+
+		$possible_tags = [
+			'div',
+			'article',
+			'aside',
+			'nav',
+		];
+
+		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'div',
+				'options' => array_combine( $possible_tags, $possible_tags ),
 			]
 		);
 
