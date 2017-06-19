@@ -49,7 +49,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'_inline_size',
 			[
-				'label' => __( 'Column Size (%)', 'elementor' ),
+				'label' => __( 'Column Width (%)', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 10,
 				'max' => 90,
