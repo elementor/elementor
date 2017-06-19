@@ -313,16 +313,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'structure',
-			[
-				'label' => __( 'Structure', 'elementor' ),
-				'type' => Controls_Manager::STRUCTURE,
-				'default' => '10',
-				'render_type' => 'none',
-			]
-		);
-
 		$possible_tags = [
 			'section',
 			'header',
@@ -340,6 +330,16 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'section',
 				'options' => array_combine( $possible_tags, $possible_tags ),
+			]
+		);
+
+		$this->add_control(
+			'structure',
+			[
+				'label' => __( 'Structure', 'elementor' ),
+				'type' => Controls_Manager::STRUCTURE,
+				'default' => '10',
+				'render_type' => 'none',
 			]
 		);
 
