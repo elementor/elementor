@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-abstract class Base_Data_control extends Base_Control {
+abstract class Base_Data_Control extends Base_Control {
 
 	public function get_default_value() {
 		return '';

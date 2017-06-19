@@ -302,7 +302,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( ! empty( $link['nofollow'] ) ) {
-				$this->add_render_attribute( 'link', 'nofollow', '' );
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>

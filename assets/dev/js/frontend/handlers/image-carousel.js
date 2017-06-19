@@ -27,10 +27,10 @@ ImageCarouselHandler = HandlerModule.extend( {
 
 		var slickOptions = {
 			slidesToShow: slidesToShow,
-			autoplay: !! elementSettings.autoplay,
+			autoplay: 'yes' === elementSettings.autoplay,
 			autoplaySpeed: elementSettings.autoplay_speed,
-			infinite: !! elementSettings.infinite,
-			pauseOnHover: !! elementSettings.pause_on_hover,
+			infinite: 'yes' === elementSettings.infinite,
+			pauseOnHover: 'yes' ===  elementSettings.pause_on_hover,
 			speed: elementSettings.speed,
 			arrows: 'dots' !== elementSettings.navigation,
 			dots: 'arrows' !== elementSettings.navigation,
