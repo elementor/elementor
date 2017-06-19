@@ -31,8 +31,11 @@ html.elementor-html {
 		}
 
 		.elementor-empty-view {
-			position: relative;
-			height: 100%;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
 			z-index: $first-layer;
 		}
 
@@ -442,7 +445,7 @@ html.elementor-html {
 			.elementor-widget-wrap {
 
 				@media (min-width: $screen-md-min) {
-					padding: 10px;
+					margin: 10px;
 				}
 			}
 		}
