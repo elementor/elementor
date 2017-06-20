@@ -124,27 +124,13 @@ html.elementor-html {
   pointer-events: none; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-widget-empty {
-  height: 50px;
-  background: #ffffff; }
-  .elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-widget-empty:after {
-    position: absolute;
-    content: '';
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-color: rgba(230, 233, 236, 0.8); }
+  background-c: rgba(213, 218, 223, 0.8); }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-widget-empty .elementor-widget-empty-icon {
-    position: absolute;
-    height: 25px;
-    width: 25px;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    margin: auto;
-    color: #818a91;
-    font-size: 22px; }
+    color: #c2cbd2;
+    font-size: 22px;
+    display: block;
+    text-align: center;
+    padding: 10px 0; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element:not(:hover):not(.elementor-element-editable) > .elementor-element-overlay .elementor-editor-element-settings {
   display: none; }
