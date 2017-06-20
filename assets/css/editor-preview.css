@@ -177,6 +177,9 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-inner-section:first-child {
   margin-top: 15px; }
 
+.elementor-editor-active .elementor.elementor-edit-mode .elementor-inner-section > .elementor-container > .elementor-row {
+  min-height: 40px; }
+
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-settings {
   position: absolute;
   overflow: hidden;
