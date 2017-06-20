@@ -124,7 +124,7 @@ html.elementor-html {
   pointer-events: none; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-widget-empty {
-  background-c: rgba(213, 218, 223, 0.8); }
+  background-color: rgba(213, 218, 223, 0.8); }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-widget-empty .elementor-widget-empty-icon {
     color: #c2cbd2;
     font-size: 22px;
