@@ -74,54 +74,6 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_control(
-			'screen_sm',
-			[
-				'label' => __( 'Mobile Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'screen_sm_width',
-			[
-				'label' => __( 'Column Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'10' => '10%',
-					'11' => '11%',
-					'12' => '12%',
-					'14' => '14%',
-					'16' => '16%',
-					'20' => '20%',
-					'25' => '25%',
-					'30' => '30%',
-					'33' => '33%',
-					'40' => '40%',
-					'50' => '50%',
-					'60' => '60%',
-					'66' => '66%',
-					'70' => '70%',
-					'75' => '75%',
-					'80' => '80%',
-					'83' => '83%',
-					'90' => '90%',
-					'100' => '100%',
-				],
-				'default' => '100',
-				'condition' => [
-					'screen_sm' => [ 'custom' ],
-				],
-				'prefix_class' => 'elementor-sm-',
-			]
-		);
-
-		$this->add_control(
 			'content_position',
 			[
 				'label' => __( 'Content Position', 'elementor' ),
@@ -140,7 +92,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -679,6 +630,65 @@ class Element_Column extends Element_Base {
 				'prefix_class' => '',
 				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_responsive',
+			[
+				'label' => __( 'Responsive', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'screen_sm',
+			[
+				'label' => __( 'Mobile Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'classes' => 'elementor-control-deprecated',
+				'description' => __( 'Deprecated: Mobile Width control is no longer supported. Please use the Column Width control in the layout tab instead.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'screen_sm_width',
+			[
+				'label' => __( 'Column Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'10' => '10%',
+					'11' => '11%',
+					'12' => '12%',
+					'14' => '14%',
+					'16' => '16%',
+					'20' => '20%',
+					'25' => '25%',
+					'30' => '30%',
+					'33' => '33%',
+					'40' => '40%',
+					'50' => '50%',
+					'60' => '60%',
+					'66' => '66%',
+					'70' => '70%',
+					'75' => '75%',
+					'80' => '80%',
+					'83' => '83%',
+					'90' => '90%',
+					'100' => '100%',
+				],
+				'default' => '100',
+				'condition' => [
+					'screen_sm' => [ 'custom' ],
+				],
+				'prefix_class' => 'elementor-sm-',
 			]
 		);
 
