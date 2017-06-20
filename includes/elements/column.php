@@ -8,17 +8,19 @@ class Element_Column extends Element_Base {
 	protected static $_edit_tools;
 
 	protected static function get_default_edit_tools() {
+		$column_label = __( 'Column', 'elementor' );
+
 		return [
 			'duplicate' => [
-				'title' => __( 'Duplicate', 'elementor' ),
+				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
 				'icon' => 'clone',
 			],
 			'add' => [
-				'title' => __( 'Add', 'elementor' ),
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
 				'icon' => 'plus',
 			],
 			'remove' => [
-				'title' => __( 'Remove', 'elementor' ),
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
 				'icon' => 'times',
 			],
 		];
@@ -46,64 +48,30 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_inline_size',
 			[
 				'label' => __( 'Column Width', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::NUMBER,
 				'min' => 10,
 				'max' => 90,
+				'device_args' => [
+					Controls_Stack::RESPONSIVE_TABLET => [
+						'nullable' => true,
+						'max' => 100,
+					],
+					Controls_Stack::RESPONSIVE_MOBILE => [
+						'nullable' => true,
+						'max' => 100,
+					],
+				],
+				'min_affected_device' => [
+					Controls_Stack::RESPONSIVE_DESKTOP => Controls_Stack::RESPONSIVE_TABLET,
+					Controls_Stack::RESPONSIVE_TABLET => Controls_Stack::RESPONSIVE_TABLET,
+				],
 				'selectors' => [
-					'(tablet+){{WRAPPER}}' => 'width: {{VALUE}}%',
+					'{{WRAPPER}}' => 'width: {{VALUE}}%',
 				],
-			]
-		);
-
-		$this->add_control(
-			'screen_sm',
-			[
-				'label' => __( 'Mobile Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'screen_sm_width',
-			[
-				'label' => __( 'Column Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'10' => '10%',
-					'11' => '11%',
-					'12' => '12%',
-					'14' => '14%',
-					'16' => '16%',
-					'20' => '20%',
-					'25' => '25%',
-					'30' => '30%',
-					'33' => '33%',
-					'40' => '40%',
-					'50' => '50%',
-					'60' => '60%',
-					'66' => '66%',
-					'70' => '70%',
-					'75' => '75%',
-					'80' => '80%',
-					'83' => '83%',
-					'90' => '90%',
-					'100' => '100%',
-				],
-				'default' => '100',
-				'condition' => [
-					'screen_sm' => [ 'custom' ],
-				],
-				'prefix_class' => 'elementor-sm-',
 			]
 		);
 
@@ -126,7 +94,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -670,6 +637,65 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'section_responsive',
+			[
+				'label' => __( 'Responsive', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'screen_sm',
+			[
+				'label' => __( 'Mobile Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'classes' => 'elementor-control-deprecated',
+				'description' => __( 'Deprecated: Mobile Width control is no longer supported. Please use the Column Width control in the Layout tab instead.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'screen_sm_width',
+			[
+				'label' => __( 'Column Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'10' => '10%',
+					'11' => '11%',
+					'12' => '12%',
+					'14' => '14%',
+					'16' => '16%',
+					'20' => '20%',
+					'25' => '25%',
+					'30' => '30%',
+					'33' => '33%',
+					'40' => '40%',
+					'50' => '50%',
+					'60' => '60%',
+					'66' => '66%',
+					'70' => '70%',
+					'75' => '75%',
+					'80' => '80%',
+					'83' => '83%',
+					'90' => '90%',
+					'100' => '100%',
+				],
+				'default' => '100',
+				'condition' => [
+					'screen_sm' => [ 'custom' ],
+				],
+				'prefix_class' => 'elementor-sm-',
+			]
+		);
+
+		$this->end_controls_section();
+
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
@@ -677,7 +703,7 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><i class="fa fa-columns"></i></li>
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?>"><i class="fa fa-columns"></i></li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>

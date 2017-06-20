@@ -7712,9 +7712,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! _.isEmpty( responsive ) ) {
-			_.each( responsive, function( device ) {
-				classes += ' elementor-control-responsive-' + device;
-			} );
+			classes += ' elementor-control-responsive-' + responsive.max;
 		}
 
 		return classes;
@@ -8746,6 +8744,10 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 			validValue = inputValue,
 			min = self.model.get( 'min' ),
 			max = self.model.get( 'max' );
+
+		if ( ! _.isFinite( inputValue ) && self.model.get( 'nullable' ) ) {
+			return inputValue;
+		}
 
 		if ( _.isFinite( min ) && inputValue < min ) {
 			validValue = min;
