@@ -46,15 +46,29 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_inline_size',
 			[
 				'label' => __( 'Column Width', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::NUMBER,
 				'min' => 10,
 				'max' => 90,
+				'device_args' => [
+					Controls_Stack::RESPONSIVE_TABLET => [
+						'nullable' => true,
+						'max' => 100,
+					],
+					Controls_Stack::RESPONSIVE_MOBILE => [
+						'nullable' => true,
+						'max' => 100,
+					],
+				],
+				'min_affected_device' => [
+					Controls_Stack::RESPONSIVE_DESKTOP => Controls_Stack::RESPONSIVE_TABLET,
+					Controls_Stack::RESPONSIVE_TABLET => Controls_Stack::RESPONSIVE_TABLET,
+				],
 				'selectors' => [
-					'(tablet+){{WRAPPER}}' => 'width: {{VALUE}}%',
+					'{{WRAPPER}}' => 'width: {{VALUE}}%',
 				],
 			]
 		);
