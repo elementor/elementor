@@ -11,6 +11,10 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 			min = self.model.get( 'min' ),
 			max = self.model.get( 'max' );
 
+		if ( ! _.isFinite( inputValue ) && self.model.get( 'nullable' ) ) {
+			return inputValue;
+		}
+
 		if ( _.isFinite( min ) && inputValue < min ) {
 			validValue = min;
 		}

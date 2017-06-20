@@ -1089,16 +1089,17 @@ select {
     line-height: 1.5; }
     .elementor-panel .elementor-control-wp p {
       margin: 15px 0; }
-  .elementor-panel .elementor-label-block > .elementor-control-content > .elementor-control-field {
+  .elementor-panel .elementor-control-field {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-flex-wrap: wrap;
-        -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
+  .elementor-panel .elementor-label-block > .elementor-control-content > .elementor-control-field {
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap; }
     .elementor-panel .elementor-label-block > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
       -webkit-flex-basis: 100%;
           -ms-flex-preferred-size: 100%;
@@ -1106,14 +1107,13 @@ select {
       margin-top: 10px; }
   .elementor-panel .elementor-label-block.elementor-control-hidden-label > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
     margin-top: 0; }
-  .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field {
-    display: table;
-    width: 100%; }
-    .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field > * {
-      display: table-cell;
-      vertical-align: middle; }
-    .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field > .elementor-control-title {
-      width: 45%; }
+  .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field > .elementor-control-title {
+    width: 45%;
+    -webkit-flex-shrink: 0;
+        -ms-flex-negative: 0;
+            flex-shrink: 0; }
+  .elementor-panel .elementor-label-inline > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+    width: 55%; }
   .elementor-panel .elementor-control-field-description {
     margin-top: 10px; }
   .elementor-panel .elementor-required {
@@ -1186,7 +1186,7 @@ select {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    margin-left: 5px; }
+    margin: 0 5px; }
   .elementor-panel .elementor-responsive-switcher {
     display: inline-block;
     border-radius: 50%;

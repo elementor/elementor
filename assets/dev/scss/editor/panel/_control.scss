@@ -122,14 +122,17 @@
 	}
 }
 
+.elementor-control-field {
+	display: flex;
+	align-items: center;
+}
+
 .elementor-label-block {
 
 	> .elementor-control-content {
 
 		> .elementor-control-field {
-			display: flex;
 			flex-wrap: wrap;
-			align-items: center;
 
 			> .elementor-control-input-wrapper {
 				flex-basis: 100%;
@@ -157,16 +160,14 @@
 	> .elementor-control-content {
 
 		> .elementor-control-field {
-			display: table;
-			width: 100%;
-
-			> * {
-				display: table-cell;
-				vertical-align: middle;
-			}
 
 			> .elementor-control-title {
 				width: 45%;
+				flex-shrink: 0;
+			}
+
+			> .elementor-control-input-wrapper {
+				width: 55%;
 			}
 		}
 	}
@@ -272,7 +273,7 @@
 
 .elementor-control-responsive-switchers {
 	display: flex;
-	@include margin-start(5px);
+	margin: 0 5px;
 }
 
 .elementor-responsive-switcher {
