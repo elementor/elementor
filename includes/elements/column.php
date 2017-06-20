@@ -654,7 +654,7 @@ class Element_Column extends Element_Base {
 					'custom' => __( 'Custom', 'elementor' ),
 				],
 				'classes' => 'elementor-control-deprecated',
-				'description' => __( 'Deprecated: Mobile Width control is no longer supported. Please use the Column Width control in the layout tab instead.', 'elementor' ),
+				'description' => __( 'Deprecated: Mobile Width control is no longer supported. Please use the Column Width control in the Layout tab instead.', 'elementor' ),
 			]
 		);
 
