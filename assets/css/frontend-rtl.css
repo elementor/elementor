@@ -319,9 +319,8 @@
   width: 100%;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: flex;
-  /* In dragging mode it's causing a columns fall */ }
-  @media (max-width: 767px) {
+  display: flex; }
+  @media (max-width: 1024px) {
     .elementor-row {
       -webkit-flex-wrap: wrap;
           -ms-flex-wrap: wrap;
