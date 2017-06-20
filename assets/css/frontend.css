@@ -319,9 +319,8 @@
   width: 100%;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: flex;
-  /* In dragging mode it's causing a columns fall */ }
-  @media (max-width: 767px) {
+  display: flex; }
+  @media (max-width: 1024px) {
     .elementor-row {
       -webkit-flex-wrap: wrap;
           -ms-flex-wrap: wrap;
@@ -1649,7 +1648,7 @@ body.elementor-page .elementor-widget-menu-anchor {
   height: 100%;
   min-height: 1px;
   display: none; }
-  [dir="rtl"] .slick-slide {
+  .elementor-slick-slider[dir="rtl"] .slick-slide {
     float: right; }
   .slick-slide img {
     display: block; }

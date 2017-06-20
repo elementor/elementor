@@ -325,6 +325,7 @@ class Editor {
 		$page_settings_instance = PageSettingsManager::get_page( $post_id );
 
 		$config = [
+			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
