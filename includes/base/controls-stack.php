@@ -196,6 +196,14 @@ abstract class Controls_Stack {
 
 			$control_args['responsive'] = [ 'max' => $device_name ];
 
+			if ( isset( $control_args['min_affected_device'] ) ) {
+				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {
+					$control_args['responsive']['min'] = $control_args['min_affected_device'][ $device_name ];
+				}
+
+				unset( $control_args['min_affected_device'] );
+			}
+
 			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
 			}
