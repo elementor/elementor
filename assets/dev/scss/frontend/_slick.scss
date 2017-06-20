@@ -59,6 +59,7 @@
 	float: left;
 	height: 100%;
 	min-height: 1px;
+	display: none;
 
 	.elementor-slick-slider[dir="rtl"] & {
 		float: right;
@@ -71,8 +72,6 @@
 	&.slick-loading img {
 		display: none;
 	}
-
-	display: none;
 
 	&.dragging img {
 		pointer-events: none;
