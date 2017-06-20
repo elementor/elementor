@@ -59,12 +59,15 @@
 	float: left;
 	height: 100%;
 	min-height: 1px;
-	[dir="rtl"] & {
+
+	.elementor-slick-slider[dir="rtl"] & {
 		float: right;
 	}
+
 	img {
 		display: block;
 	}
+
 	&.slick-loading img {
 		display: none;
 	}
