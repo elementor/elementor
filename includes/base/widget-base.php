@@ -12,13 +12,15 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected static function get_default_edit_tools() {
+		$widget_label = __( 'Widget', 'elementor' );
+
 		return [
 			'duplicate' => [
-				'title' => __( 'Duplicate', 'elementor' ),
+				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
-				'title' => __( 'Remove', 'elementor' ),
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'times',
 			],
 		];
@@ -145,7 +147,7 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Widget', 'elementor' ); ?>">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
 					<i class="fa fa-pencil"></i>
 				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>

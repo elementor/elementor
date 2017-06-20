@@ -7428,17 +7428,25 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
-		var errors = [];
+		var errors = [],
+			columnSize = this.model.getSetting( '_column_size' );
+
+		// If there's only one column
+		if ( 100 === columnSize ) {
+			errors.push( 'Could not resize one column' );
+
+			return errors;
+		}
 
 		if ( ! oldValue ) {
-			oldValue = this.model.getSetting( '_column_size' );
+			oldValue = columnSize;
 		}
 
 		try {
 			this._parent.resizeChild( this, +oldValue, +newValue );
 		} catch ( e ) {
 			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
-				errors.push( 'Could not do a resize' );
+				errors.push( e.message );
 			}
 		}
 
@@ -7736,9 +7744,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! _.isEmpty( responsive ) ) {
-			_.each( responsive, function( device ) {
-				classes += ' elementor-control-responsive-' + device;
-			} );
+			classes += ' elementor-control-responsive-' + responsive.max;
 		}
 
 		return classes;
@@ -8770,6 +8776,10 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 			validValue = inputValue,
 			min = self.model.get( 'min' ),
 			max = self.model.get( 'max' );
+
+		if ( ! _.isFinite( inputValue ) && self.model.get( 'nullable' ) ) {
+			return inputValue;
+		}
 
 		if ( _.isFinite( min ) && inputValue < min ) {
 			validValue = min;
