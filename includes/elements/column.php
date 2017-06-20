@@ -8,17 +8,19 @@ class Element_Column extends Element_Base {
 	protected static $_edit_tools;
 
 	protected static function get_default_edit_tools() {
+		$column_label = __( 'Column', 'elementor' );
+
 		return [
 			'duplicate' => [
-				'title' => __( 'Duplicate', 'elementor' ),
+				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
 				'icon' => 'clone',
 			],
 			'add' => [
-				'title' => __( 'Add', 'elementor' ),
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
 				'icon' => 'plus',
 			],
 			'remove' => [
-				'title' => __( 'Remove', 'elementor' ),
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
 				'icon' => 'times',
 			],
 		];
@@ -701,7 +703,7 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php _e( 'Drag Column', 'elementor' ); ?>"><i class="fa fa-columns"></i></li>
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?>"><i class="fa fa-columns"></i></li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
