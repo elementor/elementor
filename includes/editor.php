@@ -340,7 +340,7 @@ class Editor {
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
-			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post() ) ),
+			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
 			'page_settings' => [
 				'controls' => $page_settings_instance->get_controls(),
 				'tabs' => $page_settings_instance->get_tabs_controls(),
