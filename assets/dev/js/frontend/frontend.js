@@ -10,17 +10,20 @@
 
 	var ElementorFrontend = function() {
 		var self = this,
-			dialogsManager,
-			scopeWindow = window;
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
 		this.Module = Module;
 
 		var initElements = function() {
-			elements.$document = $( self.getScopeWindow().document );
+			elements.$document = $( document );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.window = window;
+
+			elements.$window = $( window );
 		};
 
 		var initOnReadyComponents = function() {
@@ -38,17 +41,9 @@
 
 			initElements();
 
-			$( window ).trigger( 'elementor/frontend/init' );
+			elements.$window.trigger( 'elementor/frontend/init' );
 
 			initOnReadyComponents();
-		};
-
-		this.getScopeWindow = function() {
-			return scopeWindow;
-		};
-
-		this.setScopeWindow = function( window ) {
-			scopeWindow = window;
 		};
 
 		this.getElements = function( element ) {
@@ -118,7 +113,7 @@
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = $( self.getScopeWindow() );
+				to = self.getElements( '$window' );
 			}
 
 			if ( ! self.isEditMode() ) {

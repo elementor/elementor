@@ -6,12 +6,6 @@ LightboxModule = ViewModule.extend( {
 
 	oldAnimation: null,
 
-	getDefaultElements: function() {
-		return {
-			$lightBoxContainer: jQuery( elementorFrontend.getScopeWindow().document.body )
-		};
-	},
-
 	getDefaultSettings: function() {
 		return {
 			classes: {
@@ -42,11 +36,7 @@ LightboxModule = ViewModule.extend( {
 
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox-modal',
-			container: self.elements.$lightBoxContainer,
-			closeButton: true,
-			position: {
-				within: elementorFrontend.getScopeWindow()
-			}
+			closeButton: true
 		} );
 
 		modal.on( 'hide', function() {
