@@ -98,7 +98,7 @@ class Editor {
 
 		// Ajax request as Editor mode
 		$actions = [
-			'elementor_edit',
+			'elementor',
 			'elementor_render_widget',
 
 			// Templates
@@ -543,6 +543,6 @@ class Editor {
 	}
 
 	public function __construct() {
-		add_action( 'admin_action_elementor_edit', [ $this, 'init' ] );
+		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 	}
 }
