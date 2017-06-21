@@ -14,7 +14,7 @@ class Utils {
 	}
 
 	public static function get_edit_link( $post_id = 0 ) {
-		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor_edit' ], admin_url( 'post.php' ) );
+		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
 		return apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 	}
 
