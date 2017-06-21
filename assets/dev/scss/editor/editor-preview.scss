@@ -66,30 +66,14 @@ html.elementor-html {
 			}
 
 			&.elementor-widget-empty {
-				height: 50px;
-				background: $white;
-
-				&:after {
-					position: absolute;
-					content: '';
-					left: 0;
-					right: 0;
-					top: 0;
-					bottom: 0;
-					background-color: fade-out($editor-background, .2);
-				}
+				background-color: fade_out($editor-lightest, .2);
 
 				.elementor-widget-empty-icon {
-					position: absolute;
-					height: 25px;
-					width: 25px;
-					top: 0;
-					bottom: 0;
-					right: 0;
-					left: 0;
-					margin: auto;
-					color: $gray;
+					color: $editor-lighter;
 					font-size: 22px;
+					display: block;
+					text-align: center;
+					padding: 10px 0;
 				}
 			}
 
@@ -177,6 +161,13 @@ html.elementor-html {
 
 			&:first-child {
 				margin-top: 15px;
+			}
+
+			> .elementor-container {
+
+				> .elementor-row {
+					min-height: 40px;
+				}
 			}
 		}
 
