@@ -51,6 +51,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
 				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
@@ -91,7 +92,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_animation_delay',
 			[
-				'label' => __( 'Animation Delay (s)', 'elementor' ),
+				'label' => __( 'Animation Delay', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => '',
 				'min' => 0.1,

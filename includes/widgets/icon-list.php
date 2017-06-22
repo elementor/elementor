@@ -355,7 +355,7 @@ class Widget_Icon_List extends Widget_Base {
 						}
 
 						if ( $item['link']['nofollow'] ) {
-							$this->add_render_attribute( $link_key, 'nofollow', '' );
+							$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 						}
 
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) .  '>';

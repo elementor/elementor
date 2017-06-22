@@ -180,6 +180,14 @@ abstract class Controls_Stack {
 		foreach ( $devices as $device_name ) {
 			$control_args = $args;
 
+			if ( isset( $control_args['device_args'] ) ) {
+				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
+					$control_args = array_merge( $control_args, $control_args['device_args'][ $device_name ] );
+				}
+
+				unset( $control_args['device_args'] );
+			}
+
 			if ( ! empty( $args['prefix_class'] ) ) {
 				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
 
@@ -187,6 +195,14 @@ abstract class Controls_Stack {
 			}
 
 			$control_args['responsive'] = [ 'max' => $device_name ];
+
+			if ( isset( $control_args['min_affected_device'] ) ) {
+				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {
+					$control_args['responsive']['min'] = $control_args['min_affected_device'][ $device_name ];
+				}
+
+				unset( $control_args['min_affected_device'] );
+			}
 
 			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
