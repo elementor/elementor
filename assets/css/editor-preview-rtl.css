@@ -84,7 +84,7 @@ html.elementor-html {
   position: relative; }
 
 .elementor-editor-active .elementor-inner {
-  margin-top: 23px; }
+  margin-top: 26px; }
 
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-element-empty .elementor-sortable-placeholder {
   display: none; }
@@ -186,7 +186,7 @@ html.elementor-html {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: 23px;
+  height: 26px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -219,9 +219,9 @@ html.elementor-html {
           justify-content: center;
   padding: 0;
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   color: #fff;
-  width: 22px;
+  width: 25px;
   transition: margin .3s, width .3s, font .3s;
   box-sizing: content-box; }
 
