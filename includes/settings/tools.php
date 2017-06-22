@@ -139,7 +139,7 @@ class Tools extends Settings_Page {
 				],
 			],
 			'versions' => [
-				'label' => __( 'Versions', 'elementor' ),
+				'label' => __( 'Version Control', 'elementor' ),
 				'sections' => [
 					'rollback' => [
 						'label' => __( 'Rollback to Previous Version', 'elementor' ),
