@@ -15,6 +15,8 @@ class Source_Local extends Source_Base {
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	const TYPE_META_KEY = '_elementor_template_type';
+	
+	const UPLOAD_DIR = 'elementor/tmp';
 
 	private static $_template_types = [ 'page', 'section' ];
 
@@ -259,6 +261,104 @@ class Source_Local extends Source_Base {
 
 		die;
 	}
+	
+	public function export_multiple_templates( array $item_ids ) {
+		if ( ! is_array( $item_ids ) ) {
+			return new \WP_Error( '404', 'No array passed to export_templates class method' );
+		}
+		
+		$files = array();
+		
+		$wp_upload_dir = wp_upload_dir( null, false );
+		
+		$temp_path = $wp_upload_dir[ 'basedir' ] . '/' . self::UPLOAD_DIR;
+		
+		/*
+		 * Create temp path if it doesn't exist
+		 */
+		if ( ! file_exists( $temp_path ) ) {
+			mkdir( $temp_path, 0755, true );
+		}
+		
+		/*
+		 * Create all json files
+		 */
+		foreach ( $item_ids as $item_id ) {
+			$template_data = $this->get_content( $item_id, 'raw' );
+			
+			$template_data = $this->process_export_import_data( $template_data, 'on_export' );
+			
+			if ( empty( $template_data ) ) {
+				return new \WP_Error( '404', 'The template does not exist' );
+			}
+			
+			$export_data = [
+				'version' => DB::DB_VERSION,
+				'title'   => get_the_title( $item_id ),
+				'type'    => self::get_template_type( $item_id ),
+				'data'    => $template_data,
+			];
+			
+			$filename          = 'elementor-' . $item_id . '-' . date( 'Y-m-d' ) . '.json';
+			$template_contents = wp_json_encode( $export_data );
+			
+			$complete_path = $temp_path . '/' . $filename;
+			
+			if (
+				file_put_contents( $complete_path, $template_contents ) === false
+			) {
+				return new \WP_Error( '404', 'Cannot create file ' . $filename );
+			}
+			
+			$files[] = [
+				'path' => $complete_path,
+				'name' => $filename,
+			];
+		}
+		
+		/*
+		 * Create temporary .zip file
+		 */
+		$zip_archive_filename = 'elementor-multiple-export-' . date( 'Y-m-d' ) . '.zip';
+		
+		$zip_archive = new \ZipArchive();
+		
+		$zip_complete_path = $temp_path . '/' . $zip_archive_filename;
+		
+		if ( file_exists( $zip_complete_path ) ) {
+			$zip_archive->open( $zip_complete_path, \ZipArchive::OVERWRITE );
+		} else {
+			$zip_archive->open( $zip_complete_path, \ZipArchive::CREATE );
+		}
+		
+		
+		foreach ( $files as $file ) {
+			$zip_archive->addFile( $file[ 'path' ], $file[ 'name' ] );
+		}
+		
+		$zip_archive->close();
+		
+		/*
+		 * Remove .json files
+		 */
+		foreach ( $files as $file ) {
+			unlink( $file[ 'path' ] );
+		}
+		
+		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Disposition: attachment; filename=' . $zip_archive_filename );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . filesize( $zip_complete_path ) );
+		
+		@ob_end_flush();
+		@readfile( $zip_complete_path );
+		
+		unlink($zip_complete_path);
+		
+		die;
+	}
 
 	public function import_template() {
 		$import_file = $_FILES['file']['tmp_name'];
@@ -377,6 +477,20 @@ class Source_Local extends Source_Base {
 		$query->query_vars['meta_key'] = self::TYPE_META_KEY;
 		$query->query_vars['meta_value'] = self::$_template_types;
 	}
+	
+	public function admin_add_bulk_action_to_elementor_library( $actions ) {
+		$actions[ 'elementor_export_multiple_templates' ] = __( 'Export Elementor templates', 'elementor' );
+		
+		return $actions;
+	}
+	
+	public function admin_export_multiple_templates_from_elementor_library( $redirect_to, $doaction, $post_ids ) {
+		if ( $doaction == 'elementor_export_multiple_templates' ) {
+			$this->export_multiple_templates( $post_ids );
+		}
+		
+		return $redirect_to;
+	}
 
 	private function _add_actions() {
 		if ( is_admin() ) {
@@ -385,7 +499,19 @@ class Source_Local extends Source_Base {
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
+			
+			// template library bulk actions
+			add_filter( 'bulk_actions-edit-elementor_library', [
+				$this,
+				'admin_add_bulk_action_to_elementor_library',
+			] );
+			
+			add_filter( 'handle_bulk_actions-edit-elementor_library', [
+				$this,
+				'admin_export_multiple_templates_from_elementor_library',
+			], 10, 3 );
 		}
+
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 	}
