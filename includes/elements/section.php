@@ -10,21 +10,23 @@ class Element_Section extends Element_Base {
 	private static $presets = [];
 
 	protected static function get_default_edit_tools() {
+		$section_label = __( 'Section', 'elementor' );
+
 		return [
 			'duplicate' => [
-				'title' => __( 'Duplicate', 'elementor' ),
+				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
 				'icon' => 'clone',
 			],
 			'add' => [
-				'title' => __( 'Add', 'elementor' ),
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
 				'icon' => 'plus',
 			],
 			'save' => [
-				'title' => __( 'Save', 'elementor' ),
+				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
 				'icon' => 'floppy-o',
 			],
 			'remove' => [
-				'title' => __( 'Remove', 'elementor' ),
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
 				'icon' => 'times',
 			],
 		];
@@ -315,16 +317,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'structure',
-			[
-				'label' => __( 'Structure', 'elementor' ),
-				'type' => Controls_Manager::STRUCTURE,
-				'default' => '10',
-				'render_type' => 'none',
-			]
-		);
-
 		$possible_tags = [
 			'section',
 			'header',
@@ -342,6 +334,16 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'section',
 				'options' => array_combine( $possible_tags, $possible_tags ),
+			]
+		);
+
+		$this->add_control(
+			'structure',
+			[
+				'label' => __( 'Structure', 'elementor' ),
+				'type' => Controls_Manager::STRUCTURE,
+				'default' => '10',
+				'render_type' => 'none',
 			]
 		);
 
@@ -941,6 +943,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
 				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
@@ -1108,7 +1111,7 @@ class Element_Section extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php _e( 'Drag Section', 'elementor' ); ?>"><i class="fa fa-bars"></i></li>
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>"><i class="fa fa-bars"></i></li>
 				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>

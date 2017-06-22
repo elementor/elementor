@@ -145,8 +145,10 @@
 			self.cache.$settingsTabs.on( {
 				click: function( event ) {
 					event.preventDefault();
+
+					event.currentTarget.focus(); // Safari does not focus the tab automatically
 				},
-				focus: function() {
+				focus: function() { // Using focus event to enable navigation by tab key
 					var hrefWithoutHash = location.href.replace( /#.*/, '' );
 
 					history.pushState( {}, '', hrefWithoutHash + this.hash );
