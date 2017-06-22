@@ -54,6 +54,7 @@ class Control_Structure extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'separator' => 'none',
+			'label_block' => true,
 		];
 	}
 }

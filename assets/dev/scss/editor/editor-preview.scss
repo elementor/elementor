@@ -162,6 +162,13 @@ html.elementor-html {
 			&:first-child {
 				margin-top: 15px;
 			}
+
+			> .elementor-container {
+
+				> .elementor-row {
+					min-height: 40px;
+				}
+			}
 		}
 
 		// General - Overlay Settings
