@@ -361,29 +361,98 @@ class Source_Local extends Source_Base {
 	}
 
 	public function import_template() {
-		$import_file = $_FILES['file']['tmp_name'];
-
-		if ( empty( $import_file ) )
+		$import_file = $_FILES[ 'file' ][ 'tmp_name' ];
+		
+		if ( empty( $import_file ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
-
-		$content = json_decode( file_get_contents( $import_file ), true );
-		$is_invalid_file = empty( $content ) || empty( $content['data'] ) || ! is_array( $content['data'] );
-
-		if ( $is_invalid_file )
+		}
+		
+		$items = array();
+		
+		/*
+		 * Check if file is a json or a .zip archive.
+		 * If i can open it as a .zip, i'll extract the archive, read the json files and delete the extracted folder
+		 * else if json_decode returns a valid array, i'll use the json,
+		 * else i'll launch an error
+		 */
+		
+		if ( ( ( $zip = new \ZipArchive() )->open( $import_file ) ) === true ) {
+			
+			$wp_upload_dir = wp_upload_dir( null, false );
+			//TODO: check if there's collision on this folder between 2 different users trying to upload at the same time
+			$temp_path = $wp_upload_dir[ 'basedir' ] . '/' . self::UPLOAD_DIR . '/' . uniqid();
+			
+			$zip->extractTo( $temp_path );
+			$zip->close();
+			
+			$error = false;
+			
+			foreach ( array_diff( scandir( $temp_path ), array( '.', '..' ) ) as $file ) {
+				$content = json_decode( file_get_contents( $temp_path . '/' . $file ), true );
+				if (
+					empty( $content ) ||
+					empty( $content[ 'data' ] ) ||
+					! is_array( $content[ 'data' ] )
+				) {
+					$error = true;
+					break;
+				}
+				
+				$content_data = $this->process_export_import_data( $content[ 'data' ], 'on_import' );
+				
+				$item_id = $this->save_item( [
+					'data'  => $content_data,
+					'title' => $content[ 'title' ],
+					'type'  => $content[ 'type' ],
+				] );
+				
+				if ( is_wp_error( $item_id ) ) {
+					return $item_id;
+				}
+				
+				$items[] = $this->get_item( $item_id );
+			}
+			
+			//clean up the temp directory, also if there was an error
+			foreach ( array_diff( scandir( $temp_path ), array( '.', '..' ) ) as $file ) {
+				unlink( $temp_path . '/' . $file );
+			}
+			rmdir( $temp_path );
+			
+			if ( $error ) {
+				return new \WP_Error( 'file_error', 'Invalid JSON Files inside the .zip archive' );
+			}
+			
+			return $items;
+		} else if (
+			! empty( ( $content = json_decode( file_get_contents( $import_file ), true ) ) ) &&
+			! empty( $content[ 'data' ] ) &&
+			is_array( $content[ 'data' ] )
+		) {
+			$content_data = $this->process_export_import_data( $content[ 'data' ], 'on_import' );
+			
+			$item_id = $this->save_item( [
+				'data'  => $content_data,
+				'title' => $content[ 'title' ],
+				'type'  => $content[ 'type' ],
+			] );
+			
+			if ( is_wp_error( $item_id ) ) {
+				return $item_id;
+			}
+			
+			$items[] = $this->get_item( $item_id );
+		} else {
 			return new \WP_Error( 'file_error', 'Invalid File' );
-
-		$content_data = $this->process_export_import_data( $content['data'], 'on_import' );
-
-		$item_id = $this->save_item( [
-			'data' => $content_data,
-			'title' => $content['title'],
-			'type' => $content['type'],
-		] );
-
-		if ( is_wp_error( $item_id ) )
-			return $item_id;
-
-		return $this->get_item( $item_id );
+		}
+		
+		/*
+		 * The return statement is never used on top methods calls,
+		 * so i change it to return an array of items in any case
+		 */
+		
+		// return $this->get_item( $item_id );
+		return $items;
 	}
 
 	public function post_row_actions( $actions, \WP_Post $post ) {
@@ -404,13 +473,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php _e( 'Import Template', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger"
+			   class="page-title-action"><?php _e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file, and add it to the list of templates available in your library.', 'elementor' ); ?></div>
-				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<form id="elementor-import-template-form" method="post"
+					  action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<fieldset id="elementor-import-template-form-inputs">
-						<input type="file" name="file" accept="application/json" required>
+						<input type="file" name="file" accept=".json, .zip" required>
 						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
