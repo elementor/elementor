@@ -82,10 +82,11 @@ class Settings {
 			[
 				'id' => $field_id,
 				'type' => 'checkbox',
+				'std' => apply_filters('elementor_disable_color_schemes', 'yes'),
 				'value' => 'yes',
 				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
 			]
-		);
+		); 
 
 		register_setting( self::PAGE_ID, $field_id );
 
@@ -99,10 +100,11 @@ class Settings {
 			[
 				'id' => $field_id,
 				'type' => 'checkbox',
+				'std' => apply_filters('elementor_disable_typography_schemes', 'yes'),
 				'value' => 'yes',
 				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 			]
-		);
+		); 
 
 		register_setting( self::PAGE_ID, $field_id );
 
@@ -120,7 +122,7 @@ class Settings {
 				'classes' => [ 'medium-text' ],
 				'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 			]
-		);
+		); 
 
 		register_setting( self::PAGE_ID, $field_id );
 
