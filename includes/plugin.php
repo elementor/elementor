@@ -120,54 +120,6 @@ class Plugin {
 	 */
 	public $wordpress_widgets_manager;
 
-	private $classes = [
-		'Elementor\Admin' => '/includes/admin.php',
-		'Elementor\Api' => '/includes/api.php',
-		'Elementor\Beta_Testers' => '/includes/beta-testers.php',
-		'Elementor\Compatibility' => '/includes/compatibility.php',
-		'Elementor\Conditions' => '/includes/conditions.php',
-		'Elementor\Controls_Manager' => '/includes/managers/controls.php',
-		'Elementor\Controls_Stack' => '/includes/base/controls-stack.php',
-		'Elementor\CSS_File' => '/includes/css-file/css-file.php',
-		'Elementor\DB' => '/includes/db.php',
-		'Elementor\Editor' => '/includes/editor.php',
-		'Elementor\Elements_Manager' => '/includes/managers/elements.php',
-		'Elementor\Embed' => '/includes/embed.php',
-		'Elementor\Fonts' => '/includes/fonts.php',
-		'Elementor\Frontend' => '/includes/frontend.php',
-		'Elementor\Global_CSS_File' => '/includes/css-file/global-css-file.php',
-		'Elementor\Heartbeat' => '/includes/heartbeat.php',
-		'Elementor\Images_Manager' => '/includes/managers/image.php',
-		'Elementor\Maintenance' => '/includes/maintenance.php',
-		'Elementor\Maintenance_Mode' => '/includes/maintenance-mode.php',
-		'Elementor\PageSettings\Manager' => '/includes/page-settings/manager.php',
-		'Elementor\Post_CSS_File' => '/includes/css-file/post-css-file.php',
-		'Elementor\Posts_CSS_Manager' => '/includes/managers/css-files.php',
-		'Elementor\Preview' => '/includes/preview.php',
-		'Elementor\Responsive' => '/includes/responsive.php',
-		'Elementor\Revisions_Manager' => '/includes/managers/revisions.php',
-		'Elementor\Rollback' => '/includes/rollback.php',
-		'Elementor\Schemes_Manager' => '/includes/managers/schemes.php',
-		'Elementor\Settings' => '/includes/settings/settings.php',
-		'Elementor\Settings_Page' => '/includes/settings/settings-page.php',
-		'Elementor\Shapes' => '/includes/shapes.php',
-		'Elementor\Skins_Manager' => '/includes/managers/skins.php',
-		'Elementor\Stylesheet' => '/includes/stylesheet.php',
-		'Elementor\System_Info\Main' => '/includes/settings/system-info/main.php',
-		'Elementor\TemplateLibrary\Manager' => '/includes/template-library/manager.php',
-		'Elementor\Tools' => '/includes/settings/tools.php',
-		'Elementor\Tracker' => '/includes/tracker.php',
-		'Elementor\Upgrades' => '/includes/upgrades.php',
-		'Elementor\User' => '/includes/user.php',
-		'Elementor\Utils' => '/includes/utils.php',
-		'Elementor\Widgets_Manager' => '/includes/managers/widgets.php',
-		'Elementor\WordPress_Widgets_Manager' => '/includes/managers/wordpress-widgets.php',
-	];
-
-	private $classes_renames = [
-		'Elementor\Debug\Debug' => 'Elementor\Modules\Debug\Debug',
-	];
-
 	/**
 	 * @deprecated
 	 *
@@ -225,13 +177,9 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
-	private function _includes() {
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			new Images_Manager();
-		}
-	}
-
 	private function init_components() {
+		Compatibility::register_actions();
+
 		$this->db = new DB();
 
 		$this->controls_manager = new Controls_Manager();
@@ -262,6 +210,10 @@ class Plugin {
 			$this->beta_testers = new Beta_Testers();
 		}
 
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			new Images_Manager();
+		}
+
 		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
@@ -273,48 +225,19 @@ class Plugin {
 		}
 	}
 
-	public function autoload( $class ) {
-		if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) ) {
-			return;
-		}
+	private function register_autoloader() {
+		require ELEMENTOR_PATH . '/includes/autoloader.php';
 
-		// Backward Compatibility: Save old class name for set an alias after the new class is loaded
-		if ( isset( $this->classes_renames[ $class ] ) ) {
-			$old_class = $class;
-			$class = $this->classes_renames[ $class ];
-		}
-
-		if ( isset( $this->classes[ $class ] ) ) {
-			$filename = ELEMENTOR_PATH . $this->classes[ $class ];
-		} else {
-			$filename = strtolower(
-				preg_replace(
-					[ '/^' . __NAMESPACE__ . '\\\/', '/([a-z])([A-Z])/', '/_/', '/\\\/' ],
-					[ '', '$1-$2', '-', DIRECTORY_SEPARATOR ],
-					$class
-				)
-			);
-			$filename = ELEMENTOR_PATH . $filename . '.php';
-		}
-
-		if ( is_readable( $filename ) ) {
-			require $filename;
-		}
-
-		if ( isset( $old_class ) && isset( $this->classes_renames[ $old_class ] ) ) {
-			class_alias( $class, $old_class );
-		}
+		Autoloader::run();
 	}
 
 	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
-		spl_autoload_register( [ $this, 'autoload' ] );
+		$this->register_autoloader();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-
-		$this->_includes();
 	}
 }
 
