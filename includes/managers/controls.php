@@ -83,7 +83,7 @@ class Controls_Manager {
 	/**
 	 * @since 1.0.0
 	 */
-	public function register_controls() {
+	private function register_controls() {
 		$this->_controls = [];
 
 		$available_controls = [
