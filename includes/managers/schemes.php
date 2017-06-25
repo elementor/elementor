@@ -19,19 +19,10 @@ class Schemes_Manager {
 	];
 
 	public function register_scheme( $scheme_class ) {
-		if ( ! class_exists( $scheme_class ) ) {
-			return new \WP_Error( 'scheme_class_name_not_exists' );
-		}
-
+		/** @var Scheme_Base $scheme_instance */
 		$scheme_instance = new $scheme_class();
 
-		if ( ! $scheme_instance instanceof Scheme_Base ) {
-			return new \WP_Error( 'wrong_instance_scheme' );
-		}
-
 		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
-
-		return true;
 	}
 
 	public function unregister_scheme( $id ) {
