@@ -183,6 +183,9 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.4.10 - 25.06.2017 =
+* Fix! – CSS `autoprefixer` for minified files (last 5 versions of browsers support)
+
 = 1.4.9 - 19.06.2017 =
 * Tweak! - Compatibility with the new WordPress 4.8 widgets (Rich Text, Image, Video and Audio)
 * Tweak! - Disable Elementor editor in the default Blog page
