@@ -506,63 +506,63 @@ class Widget_Media_Carousel extends Widget_Base {
 		?>
 		<div class="elementor-main-swiper swiper-container">
 			<div class="swiper-wrapper">
-				<?php foreach ( $settings['slides'] as $index => $slide ) {
-					$element_key = 'slide-' . $index;
+					<?php foreach ( $settings['slides'] as $index => $slide ) {
+						$element_key = 'slide-' . $index;
 
-					$this->add_render_attribute( $element_key, [
-						'class' => 'swiper-slide',
-					] );
+						$this->add_render_attribute( $element_key, [
+							'class' => 'swiper-slide',
+						] );
 
-					$this->add_render_attribute( $element_key . '-image', [
-						'class' => 'elementor-media-carousel-image',
-						'style' => 'background-image: url(' . $slide['image']['url'] . ')',
-					] );
+						$this->add_render_attribute( $element_key . '-image', [
+							'class' => 'elementor-media-carousel-image',
+							'style' => 'background-image: url(' . $slide['image']['url'] . ')',
+						] );
 
-					if ( $slide['video']['url'] ) {
-						$embed_url_params = [
-							'autoplay' => 1,
-							'rel' => 0,
-							'controls' => 0,
-							'showinfo' => 0,
-						];
+						if ( $slide['video']['url'] ) {
+							$embed_url_params = [
+								'autoplay' => 1,
+								'rel' => 0,
+								'controls' => 0,
+								'showinfo' => 0,
+							];
 
-						$this->add_render_attribute( $element_key, 'data-video-url', Embed::get_embed_url( $slide['video']['url'], $embed_url_params ) );
-					}
-					?>
-					<div <?php echo $this->get_render_attribute_string( $element_key ); ?>>
-						<?php
-						$image_link_to = $this->get_image_link_to( $slide );
+							$this->add_render_attribute( $element_key, 'data-video-url', Embed::get_embed_url( $slide['video']['url'], $embed_url_params ) );
+						}
+						?>
+						<div <?php echo $this->get_render_attribute_string( $element_key ); ?>>
+							<?php
+							$image_link_to = $this->get_image_link_to( $slide );
 
-						if ( $image_link_to ) {
-							$this->add_render_attribute( $element_key . '_link', 'href', $image_link_to );
+							if ( $image_link_to ) {
+								$this->add_render_attribute( $element_key . '_link', 'href', $image_link_to );
 
-							if ( 'custom' === $slide['image_link_to_type'] ) {
-								if ( $slide['image_link_to']['is_external'] ) {
-									$this->add_render_attribute( $element_key . '_link', 'target', '_blank' );
+								if ( 'custom' === $slide['image_link_to_type'] ) {
+									if ( $slide['image_link_to']['is_external'] ) {
+										$this->add_render_attribute( $element_key . '_link', 'target', '_blank' );
+									}
+
+									if ( $slide['image_link_to']['nofollow'] ) {
+										$this->add_render_attribute( $element_key . '_link', 'nofollow', '' );
+									}
 								}
 
-								if ( $slide['image_link_to']['nofollow'] ) {
-									$this->add_render_attribute( $element_key . '_link', 'nofollow', '' );
-								}
-							}
-
-							echo '<a ' . $this->get_render_attribute_string( $element_key . '_link' ) . '>';
-						} ?>
-						<div <?php echo $this->get_render_attribute_string( $element_key . '-image' ); ?>>
-							<?php if ( 'video' === $slide['type'] ) { ?>
-								<div class="elementor-custom-embed-play">
-									<i class="fa"></i>
-								</div>
-							<?php } ?>
+								echo '<a ' . $this->get_render_attribute_string( $element_key . '_link' ) . '>';
+							} ?>
+							<div <?php echo $this->get_render_attribute_string( $element_key . '-image' ); ?>>
+								<?php if ( 'video' === $slide['type'] ) { ?>
+									<div class="elementor-custom-embed-play">
+										<i class="fa"></i>
+									</div>
+								<?php } ?>
+							</div>
+							<div class="elementor-media-carousel-image-caption"><?php echo $this->get_image_caption( $slide ); ?></div>
+							<?php
+							if ( $image_link_to ) {
+								echo '</a>';
+							} ?>
 						</div>
-						<div class="elementor-media-carousel-image-caption"><?php echo $this->get_image_caption( $slide ); ?></div>
-						<?php
-						if ( $image_link_to ) {
-							echo '</a>';
-						} ?>
-					</div>
-				<?php } ?>
-			</div>
+					<?php } ?>
+				</div>
 			<?php if ( $settings['pagination'] ) { ?>
 				<div class="swiper-pagination"></div>
 			<?php } ?>
