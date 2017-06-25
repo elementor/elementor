@@ -55,9 +55,6 @@ class Settings extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		include( ELEMENTOR_PATH . 'includes/settings/controls.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/validations.php' );
-
 		add_action( 'admin_init', [ $this, 'go_elementor_pro' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );

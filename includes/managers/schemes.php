@@ -141,14 +141,8 @@ class Schemes_Manager {
 	}
 
 	private function register_default_schemes() {
-		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
-
-		include( ELEMENTOR_PATH . 'includes/schemes/base.php' );
-
-		foreach ( self::$_schemes_types as $schemes_type ) {
-			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
-
-			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( str_replace( '-', '_', $schemes_type ) ) );
+		foreach ( self::$_schemes_types as $schemes_class ) {
+			$this->register_scheme( __NAMESPACE__ . '\\' . $schemes_class );
 		}
 	}
 
