@@ -18,7 +18,15 @@ class Editor {
 	];
 
 	public function init() {
-		if ( is_admin() || ! $this->is_edit_mode() ) {
+		if ( empty( $_REQUEST['post'] ) ) {
+			return;
+		}
+
+		$post_id = $_REQUEST['post'];
+
+		Plugin::$instance->db->switch_to_post( $post_id );
+
+		if ( ! $this->is_edit_mode( $post_id ) ) {
 			return;
 		}
 
@@ -48,8 +56,6 @@ class Editor {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 999999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
-		$post_id = get_the_ID();
-
 		// Change mode to Builder
 		Plugin::$instance->db->set_is_elementor_page( $post_id );
 
@@ -72,12 +78,12 @@ class Editor {
 		die;
 	}
 
-	public function is_edit_mode() {
+	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
 		}
 
-		if ( ! User::is_current_user_can_edit() ) {
+		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			return false;
 		}
 
@@ -85,13 +91,9 @@ class Editor {
 			return true;
 		}
 
-		// In some Apache configurations, in the Home page, the $_GET['elementor'] is not set
-		if ( '/?elementor' === $_SERVER['REQUEST_URI'] ) {
-			return true;
-		}
-
 		// Ajax request as Editor mode
 		$actions = [
+			'elementor',
 			'elementor_render_widget',
 
 			// Templates
@@ -171,12 +173,6 @@ class Editor {
 			'4.0.2',
 			true
 		);
-
-		// Enqueue frontend scripts too
-		$plugin->frontend->register_scripts();
-		$plugin->frontend->enqueue_scripts();
-
-		$plugin->widgets_manager->enqueue_widgets_scripts();
 
 		wp_register_script(
 			'backbone-marionette',
@@ -273,6 +269,16 @@ class Editor {
 		);
 
 		wp_register_script(
+			'elementor-dialog',
+			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
+			[
+				'jquery-ui-position',
+			],
+			'3.2.1',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -289,6 +295,7 @@ class Editor {
 				'heartbeat',
 				'jquery-select2',
 				'jquery-simple-dtpicker',
+				'elementor-dialog',
 				'ace',
 				'jquery-hover-intent',
 			],
@@ -322,7 +329,7 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
-			'preview_link' => add_query_arg( 'elementor-preview', '', remove_query_arg( 'elementor' ) ),
+			'preview_link' => add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -333,7 +340,7 @@ class Editor {
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
-			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post() ) ),
+			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
 			'page_settings' => [
 				'controls' => $page_settings_instance->get_controls(),
 				'tabs' => $page_settings_instance->get_tabs_controls(),
@@ -536,6 +543,6 @@ class Editor {
 	}
 
 	public function __construct() {
-		add_action( 'template_redirect', [ $this, 'init' ] );
+		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 	}
 }

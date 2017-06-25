@@ -37,7 +37,7 @@ ElementsHandler = function( $ ) {
 
 		if ( elementorFrontend.isEditMode() ) {
 			// Elements outside from the Preview
-			$elements = elementorFrontend.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			$elements = jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
 		} else {
 			$elements = $( '.elementor-element' );
 		}
@@ -76,6 +76,9 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
+		// Initializing the `$scope` as frontend jQuery instance
+		$scope = jQuery( $scope );
+
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
 		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
@@ -105,17 +108,20 @@ module.exports = ElementsHandler;
 
 	var ElementorFrontend = function() {
 		var self = this,
-			dialogsManager,
-			scopeWindow = window;
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
 		this.Module = Module;
 
 		var initElements = function() {
-			elements.$document = $( self.getScopeWindow().document );
+			elements.$document = $( document );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.window = window;
+
+			elements.$window = $( window );
 		};
 
 		var initOnReadyComponents = function() {
@@ -133,17 +139,9 @@ module.exports = ElementsHandler;
 
 			initElements();
 
-			$( window ).trigger( 'elementor/frontend/init' );
+			elements.$window.trigger( 'elementor/frontend/init' );
 
 			initOnReadyComponents();
-		};
-
-		this.getScopeWindow = function() {
-			return scopeWindow;
-		};
-
-		this.setScopeWindow = function( window ) {
-			scopeWindow = window;
 		};
 
 		this.getElements = function( element ) {
@@ -213,7 +211,7 @@ module.exports = ElementsHandler;
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = $( self.getScopeWindow() );
+				to = self.getElements( '$window' );
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -307,16 +305,18 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings,
+		var elementSettings = {},
 			modelCID = this.getModelCID();
 
 		if ( elementorFrontend.isEditMode() && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				activeControls = settings.getActiveControls(),
-				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( activeValues, settingsKeys );
+			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+				}
+			} );
 		} else {
 			elementSettings = this.$element.data( 'settings' ) || {};
 		}
@@ -593,7 +593,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			}
 		} );
 
-		jQuery( elementorFrontend.getScopeWindow() ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -667,7 +667,7 @@ var StretchedSection = function( $section, $ ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.outerWidth(),
+		var containerWidth = elements.$window.outerWidth(),
 			sectionWidth = $section.outerWidth(),
 			sectionOffset = $section.offset().left,
 			correctOffset = sectionOffset;
@@ -701,9 +701,8 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var initElements = function() {
-		elements.scopeWindow = elementorFrontend.getScopeWindow();
-		elements.$scopeWindow = $( elements.scopeWindow );
-		elements.$sectionContainer = $( elements.scopeWindow.document ).find( settings.sectionContainerSelector );
+		elements.$window = elementorFrontend.getElements( '$window' );
+		elements.$sectionContainer = elementorFrontend.getElements( '$document' ).find( settings.sectionContainerSelector );
 	};
 
 	var bindEvents = function() {
@@ -1127,7 +1126,6 @@ module.exports = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		return {
-			$window: $( elementorFrontend.getScopeWindow() ),
 			$scrollable: $( selectors.scrollable ),
 			$wpAdminBar: $( selectors.wpAdminBar )
 		};
@@ -1139,7 +1137,6 @@ module.exports = ViewModule.extend( {
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
-			location = this.elements.$window[0].location,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
@@ -1181,12 +1178,6 @@ LightboxModule = ViewModule.extend( {
 
 	oldAnimation: null,
 
-	getDefaultElements: function() {
-		return {
-			$lightBoxContainer: jQuery( elementorFrontend.getScopeWindow().document.body )
-		};
-	},
-
 	getDefaultSettings: function() {
 		return {
 			classes: {
@@ -1217,11 +1208,7 @@ LightboxModule = ViewModule.extend( {
 
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox-modal',
-			container: self.elements.$lightBoxContainer,
-			closeButton: true,
-			position: {
-				within: elementorFrontend.getScopeWindow()
-			}
+			closeButton: true
 		} );
 
 		modal.on( 'hide', function() {

@@ -51,16 +51,18 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings,
+		var elementSettings = {},
 			modelCID = this.getModelCID();
 
 		if ( elementorFrontend.isEditMode() && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				activeControls = settings.getActiveControls(),
-				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( activeValues, settingsKeys );
+			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+				}
+			} );
 		} else {
 			elementSettings = this.$element.data( 'settings' ) || {};
 		}

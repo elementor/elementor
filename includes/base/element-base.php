@@ -224,7 +224,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	public function print_element() {
-		$this->enqueue_scripts();
+		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+			$this->enqueue_scripts();
+		}
 
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
