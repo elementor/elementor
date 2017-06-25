@@ -13,9 +13,9 @@ class Schemes_Manager {
 	private static $_enabled_schemes;
 
 	private static $_schemes_types = [
-		'color',
-		'typography',
-		'color-picker',
+		'color' => 'Scheme_Color',
+		'typography' => 'Scheme_Typography',
+		'color-picker' => 'Scheme_Color_Picker',
 	];
 
 	public function register_scheme( $scheme_class ) {
@@ -120,7 +120,7 @@ class Schemes_Manager {
 		if ( null === self::$_enabled_schemes ) {
 			$enabled_schemes = [];
 
-			foreach ( self::$_schemes_types as $schemes_type ) {
+			foreach ( self::$_schemes_types as $schemes_type => $scheme_class ) {
 				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
 					continue;
 				}
