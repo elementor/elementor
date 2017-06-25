@@ -177,62 +177,9 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
-	private function _includes() {
-		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
-		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
-		include( ELEMENTOR_PATH . 'includes/api.php' );
-		include( ELEMENTOR_PATH . 'includes/utils.php' );
-		include( ELEMENTOR_PATH . 'includes/user.php' );
-		include( ELEMENTOR_PATH . 'includes/fonts.php' );
-		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
-
-		include( ELEMENTOR_PATH . 'includes/db.php' );
-		include( ELEMENTOR_PATH . 'includes/base/controls-stack.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/settings-page.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
-		include( ELEMENTOR_PATH . 'includes/editor.php' );
-		include( ELEMENTOR_PATH . 'includes/embed.php' );
-		include( ELEMENTOR_PATH . 'includes/preview.php' );
-		include( ELEMENTOR_PATH . 'includes/frontend.php' );
-		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
-		include( ELEMENTOR_PATH . 'includes/responsive.php' );
-		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
-		require( ELEMENTOR_PATH . 'includes/rollback.php' );
-
-		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
-		include( ELEMENTOR_PATH . 'includes/tracker.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
-
-		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
-		include( ELEMENTOR_PATH . 'includes/page-settings/manager.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/conditions.php' );
-		include( ELEMENTOR_PATH . 'includes/shapes.php' );
-		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
-		include( ELEMENTOR_PATH . 'includes/maintenance-mode.php' );
-
-		include( ELEMENTOR_PATH . 'includes/managers/wordpress-widgets.php' );
-
-		if ( is_admin() ) {
-			include( ELEMENTOR_PATH . 'includes/admin.php' );
-			require( ELEMENTOR_PATH . 'includes/beta-testers.php' );
-
-			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
-			}
-		}
-	}
-
 	private function init_components() {
+		Compatibility::register_actions();
+
 		$this->db = new DB();
 
 		$this->controls_manager = new Controls_Manager();
@@ -263,6 +210,10 @@ class Plugin {
 			$this->beta_testers = new Beta_Testers();
 		}
 
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			new Images_Manager();
+		}
+
 		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
@@ -274,13 +225,19 @@ class Plugin {
 		}
 	}
 
+	private function register_autoloader() {
+		require ELEMENTOR_PATH . '/includes/autoloader.php';
+
+		Autoloader::run();
+	}
+
 	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'init' ], 0 );
+		$this->register_autoloader();
 
-		$this->_includes();
+		add_action( 'init', [ $this, 'init' ], 0 );
 	}
 }
 
