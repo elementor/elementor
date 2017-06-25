@@ -126,6 +126,23 @@ class Widget_Media_Carousel extends Widget_Base {
 				'label' => __( 'Slides', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_fields(),
+				'default' => [
+					[
+						'image' => [
+							'url' => Utils::get_placeholder_image_src(),
+						],
+					],
+					[
+						'image' => [
+							'url' => Utils::get_placeholder_image_src(),
+						],
+					],
+					[
+						'image' => [
+							'url' => Utils::get_placeholder_image_src(),
+						],
+					],
+				],
 			]
 		);
 
