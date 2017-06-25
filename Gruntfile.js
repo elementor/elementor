@@ -241,6 +241,9 @@ module.exports = function( grunt ) {
 			minify: {
 				options: {
 					processors: [
+						require( 'autoprefixer' )( {
+							browsers: 'last 5 versions'
+						} ),
 						require( 'cssnano' )()
 					]
 				},

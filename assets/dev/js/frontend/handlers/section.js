@@ -76,7 +76,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			}
 		} );
 
-		jQuery( elementorFrontend.getScopeWindow() ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -150,7 +150,7 @@ var StretchedSection = function( $section, $ ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.outerWidth(),
+		var containerWidth = elements.$window.outerWidth(),
 			sectionWidth = $section.outerWidth(),
 			sectionOffset = $section.offset().left,
 			correctOffset = sectionOffset;
@@ -184,9 +184,8 @@ var StretchedSection = function( $section, $ ) {
 	};
 
 	var initElements = function() {
-		elements.scopeWindow = elementorFrontend.getScopeWindow();
-		elements.$scopeWindow = $( elements.scopeWindow );
-		elements.$sectionContainer = $( elements.scopeWindow.document ).find( settings.sectionContainerSelector );
+		elements.$window = elementorFrontend.getElements( '$window' );
+		elements.$sectionContainer = elementorFrontend.getElements( '$document' ).find( settings.sectionContainerSelector );
 	};
 
 	var bindEvents = function() {
