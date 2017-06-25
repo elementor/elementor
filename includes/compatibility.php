@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\TemplateLibrary\Source_Local;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Compatibility {
@@ -37,13 +39,13 @@ class Compatibility {
 
 		// Exclude our Library from sitemap.xml in Yoast SEO plugin
 		add_filter( 'wpseo_sitemaps_supported_post_types', function( $post_types ) {
-			unset( $post_types[ TemplateLibrary\Source_Local::CPT ] );
+			unset( $post_types[ Source_Local::CPT ] );
 
 			return $post_types;
 		} );
 
 		add_filter( 'wpseo_sitemap_exclude_post_type', function( $retval, $post_type ) {
-			if ( TemplateLibrary\Source_Local::CPT === $post_type ) {
+			if ( Source_Local::CPT === $post_type ) {
 				$retval = true;
 			}
 
