@@ -73,7 +73,8 @@ MediaCarousel = HandlerModule.extend( {
 				grabCursor: true,
 				initialSlide: this.getSlideIndex( event.currentTarget ),
 				onSlideChangeEnd: this.onSlideChange,
-				runCallbacksOnInit: false
+				runCallbacksOnInit: false,
+				loop: true
 			}
 		);
 
