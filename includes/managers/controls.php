@@ -138,12 +138,6 @@ class Controls_Manager {
 		}
 
 		// Group Controls
-		require( ELEMENTOR_PATH . 'includes/controls/groups/background.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/border.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/typography.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/image-size.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/box-shadow.php' );
-
 		$this->_control_groups['background'] = new Group_Control_Background();
 		$this->_control_groups['border']     = new Group_Control_Border();
 		$this->_control_groups['typography'] = new Group_Control_Typography();
@@ -427,22 +421,5 @@ class Controls_Manager {
 		);
 
 		$element->end_controls_section();
-	}
-
-	private function require_files() {
-		// TODO: Move includes in later version (v1.2.x)
-		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-data.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-ui.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
-
-		// Group Controls
-		require( ELEMENTOR_PATH . 'includes/interfaces/group-control.php' );
-		require( ELEMENTOR_PATH . 'includes/controls/groups/base.php' );
-	}
-
-	public function __construct() {
-		$this->require_files();
 	}
 }

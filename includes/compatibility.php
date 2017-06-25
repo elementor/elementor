@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\TemplateLibrary\Source_Local;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Compatibility {
@@ -15,8 +17,6 @@ class Compatibility {
 	}
 
 	public static function init() {
-		self::register_class_aliases();
-
 		// Hotfix for NextGEN Gallery plugin
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
 			add_filter( 'elementor/utils/get_edit_link', function( $edit_link ) {
@@ -39,13 +39,13 @@ class Compatibility {
 
 		// Exclude our Library from sitemap.xml in Yoast SEO plugin
 		add_filter( 'wpseo_sitemaps_supported_post_types', function( $post_types ) {
-			unset( $post_types[ TemplateLibrary\Source_Local::CPT ] );
+			unset( $post_types[ Source_Local::CPT ] );
 
 			return $post_types;
 		} );
 
 		add_filter( 'wpseo_sitemap_exclude_post_type', function( $retval, $post_type ) {
-			if ( TemplateLibrary\Source_Local::CPT === $post_type ) {
+			if ( Source_Local::CPT === $post_type ) {
 				$retval = true;
 			}
 
@@ -113,16 +113,4 @@ class Compatibility {
 
 		return $post_meta;
 	}
-
-	private static function register_class_aliases() {
-		$class_aliases = [
-			'Elementor\Base_Data_Control' => 'Elementor\Control_Base', // Since 1.5.0
-		];
-
-		foreach ( $class_aliases as $class_name => $alias_name ) {
-			class_alias( $class_name, $alias_name );
-		}
-	}
 }
-
-Compatibility::register_actions();

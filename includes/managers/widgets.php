@@ -39,6 +39,7 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
+			'media-carousel',
 		];
 
 		$this->_widget_types = [];
@@ -60,8 +61,6 @@ class Widgets_Manager {
 
 	private function _register_wp_widgets() {
 		global $wp_widget_factory;
-
-		include( ELEMENTOR_PATH . 'includes/widgets/wordpress.php' );
 
 		// Skip Pojo widgets
 		$pojo_allowed_widgets = [

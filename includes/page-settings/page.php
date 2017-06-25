@@ -64,8 +64,6 @@ class Page extends Controls_Stack {
 			[
 				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'elementor' ),
-				'label_on' => __( 'Yes', 'elementor' ),
 				'description' => sprintf( __( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ), Settings::get_url() ),
 				'selectors' => [
 					'{{WRAPPER}} ' . $page_title_selector => 'display: none',

@@ -17,7 +17,8 @@ ElementsHandler = function( $ ) {
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
 		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' )
+		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' ),
+		'media-carousel.default': require( 'elementor-frontend/handlers/media-carousel' )
 	};
 
 	var addGlobalHandlers = function() {
