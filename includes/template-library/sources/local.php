@@ -377,6 +377,61 @@ class Source_Local extends Source_Base {
 		$query->query_vars['meta_key'] = self::TYPE_META_KEY;
 		$query->query_vars['meta_value'] = self::$_template_types;
 	}
+	
+	public function admin_add_bulk_action_to_elementor_enabled_cpt( $actions ) {
+		$actions[ 'elementor_save_multiple_templates' ] = __( 'Save Elementor templates into Library', 'elementor' );
+		
+		return $actions;
+	}
+	
+	public function admin_export_multiple_templates_from_elementor_library( $redirect_to, $doaction, $post_ids ) {
+		if ( $doaction == 'elementor_export_multiple_templates' ) {
+			$this->export_multiple_templates( $post_ids );
+		}
+		
+		return $redirect_to;
+	}
+	
+	public function admin_save_multiple_templates_from_cpt_page( $redirect_to, $doaction, $post_ids ) {
+		if ( $doaction == 'elementor_save_multiple_templates' ) {
+			// TODO: better fronend error handling
+			foreach ( $post_ids as $post_id ) {
+				if ( 'builder' === Plugin::$instance->db->get_edit_mode( $post_id ) ) {
+					$post = get_post( $post_id );
+				 
+					$post_type        = get_post_type( $post_id );
+					$post_type_object = get_post_type_object( $post_type );
+					$post_type_labels = get_post_type_labels( $post_type_object );
+					
+					//search for hierarchical post to set names correctly
+					$post_title  = $post->post_title;
+					$post_parent_id = $post->post_parent;
+					while ( $post_parent_id != 0 ) {
+						$post_parent = get_post($post_parent_id);
+						$post_title = $post_parent->post_title . ' - ' . $post_title;
+						$post_parent_id = $post_parent->post_parent;
+					}
+					
+					$args = [
+						'source' => 'local',
+						'type'   => 'page',
+						'title'  => $post_type_labels->singular_name . ' - ' . $post_title,
+						'data'   => Plugin::instance()->db->get_builder( $post_id ),
+					];
+					
+					$item = $this->save_item( $args );
+					
+					if ( is_wp_error( $item ) ) {
+						echo $item;
+						break;
+					}
+				}
+			}
+			
+		}
+		
+		return $redirect_to;
+	}
 
 	private function _add_actions() {
 		if ( is_admin() ) {
@@ -388,6 +443,23 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+		
+		// cpt bulk actions (only ones selected in settings page)
+		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
+		if ( is_array( $cpt_support ) && count( $cpt_support ) ) {
+			foreach ( $cpt_support as $single_cpt ) {
+				
+				add_filter( "bulk_actions-edit-{$single_cpt}", [
+					$this,
+					'admin_add_bulk_action_to_elementor_enabled_cpt',
+				] );
+				
+				add_filter( "handle_bulk_actions-edit-{$single_cpt}", [
+					$this,
+					'admin_save_multiple_templates_from_cpt_page',
+				], 10, 3 );
+			}
+		}
 	}
 
 	public function __construct() {
