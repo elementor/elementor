@@ -121,6 +121,11 @@ class Plugin {
 	public $wordpress_widgets_manager;
 
 	/**
+	 * @var Beta_Testers
+	 */
+	public $beta_testers;
+
+	/**
 	 * @deprecated
 	 *
 	 * @return string
