@@ -2,6 +2,7 @@
 namespace Elementor\Editor\Settings\Base;
 
 use Elementor\CSS_File;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -40,6 +41,20 @@ abstract class Manager implements ManagerInterface {
 		);
 	}
 
+	public static function on_elementor_init() {
+		Plugin::$instance->editor->add_editor_template( self::get_editor_template() );
+	}
+
+	public static function run() {
+		if ( Utils::is_ajax() ) {
+			add_action( 'wp_ajax_elementor_save_' . static::get_name() . '_settings', [ get_called_class(), 'ajax_save_settings' ] );
+		}
+
+		add_action( 'elementor/init', [ get_called_class(), 'on_elementor_init' ] );
+
+		add_action( 'elementor/' . static::get_css_file_name() . '-css-file/parse', [ get_called_class(), 'add_settings_css_rules' ] );
+	}
+
 	protected static function get_model_class() {
 		$called_class_parts = explode( '\\', get_called_class() );
 
@@ -50,11 +65,29 @@ abstract class Manager implements ManagerInterface {
 		return implode( '\\', $called_class_parts );
 	}
 
-	public static function run() {
-		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_' . static::get_name() . '_settings', [ get_called_class(), 'ajax_save_settings' ] );
-		}
+	protected static function print_editor_template_content( $name ) {
+		?>
+		<div class="elementor-panel-navigation">
+			<# _.each( elementor.config.settings.<?php echo $name; ?>.tabs, function( tabTitle, tabSlug ) { #>
+				<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+					<a href="#">{{{ tabTitle }}}</a>
+				</div>
+				<# } ); #>
+		</div>
+		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<?php
+	}
 
-		add_action( 'elementor/' . static::get_css_file_name() . '-css-file/parse', [ get_called_class(), 'add_settings_css_rules' ] );
+	private static function get_editor_template() {
+		$name = static::get_name();
+
+		ob_start();
+		?>
+		<script type="text/template" id="tmpl-elementor-panel-<?php echo $name; ?>-settings">
+			<?php self::print_editor_template_content( $name ); ?>
+		</script>
+		<?php
+
+		return ob_get_clean();
 	}
 }
