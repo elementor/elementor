@@ -63,6 +63,20 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		] );
 	},
 
+	addItem: function( itemData, before ) {
+		var options = {};
+
+		if ( before ) {
+			var beforeItem = this.collection.findWhere( { name: before } );
+
+			if ( beforeItem ) {
+				options.at = this.collection.indexOf( beforeItem );
+			}
+		}
+
+		this.collection.add( itemData, options );
+	},
+
 	onChildviewClick: function( childView ) {
 		var menuItemType = childView.model.get( 'type' );
 
