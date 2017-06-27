@@ -50,7 +50,7 @@ abstract class Manager implements ManagerInterface {
 		return implode( '\\', $called_class_parts );
 	}
 
-	public function __construct() {
+	public static function run() {
 		if ( Utils::is_ajax() ) {
 			add_action( 'wp_ajax_elementor_save_' . static::get_name() . '_settings', [ get_called_class(), 'ajax_save_settings' ] );
 		}
