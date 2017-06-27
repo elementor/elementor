@@ -132,6 +132,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.getHeaderView().setTitle( title || pageData.title );
 
 		this.currentPageName = page;
+
+		this
+			.trigger( 'set:page', this.currentPageView )
+			.trigger( 'set:page:' + page, this.currentPageView );
 	},
 
 	openEditor: function( model, view ) {
