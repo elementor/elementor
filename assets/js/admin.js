@@ -431,6 +431,12 @@ var Module = function() {
 		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
 	};
 
+	this.forceMethodImplementation = function( methodArguments ) {
+		var functionName = methodArguments.callee.name;
+
+		throw new ReferenceError( 'The method ' + functionName + ' must to be implemented in the inheritor child.' );
+	};
+
 	this.on = function( eventName, callback ) {
 		if ( ! events[ eventName ] ) {
 			events[ eventName ] = [];
