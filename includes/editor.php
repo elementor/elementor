@@ -511,6 +511,9 @@ class Editor {
 		do_action( 'elementor/editor/wp_head' );
 	}
 
+	/**
+	 * @param string $template_path - Can be either a link to template file or template HTML content
+	 */
 	public function add_editor_template( $template_path ) {
 		$this->_editor_templates[] = $template_path;
 	}
@@ -525,7 +528,11 @@ class Editor {
 		$plugin->schemes_manager->print_schemes_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			include $editor_template;
+			if ( stream_resolve_include_path( $editor_template ) ) {
+				include $editor_template;
+			} else {
+				echo $editor_template;
+			}
 		}
 
 		do_action( 'elementor/editor/footer' );
