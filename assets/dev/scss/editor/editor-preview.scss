@@ -434,6 +434,7 @@ html.elementor-html {
 		&.elementor-element-empty {
 
 			.elementor-widget-wrap {
+				min-height: 60px; // In case of section with not-default content position
 
 				@media (min-width: $screen-md-min) {
 					margin: 10px;

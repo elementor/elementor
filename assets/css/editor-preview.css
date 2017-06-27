@@ -330,9 +330,11 @@ html.elementor-html {
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-e, .elementor-editor-active .elementor.elementor-edit-mode .elementor-column > .ui-resizable-w {
     display: none !important; } }
 
-@media (min-width: 768px) {
-  .elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
-    margin: 10px; } }
+.elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
+  min-height: 60px; }
+  @media (min-width: 768px) {
+    .elementor-editor-active .elementor-column-wrap.elementor-element-empty .elementor-widget-wrap {
+      margin: 10px; } }
 
 .elementor-editor-active .elementor-widget.elementor-loading {
   opacity: .3; }
