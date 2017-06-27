@@ -60,7 +60,7 @@ class Manager extends BaseManager {
 		}
 	}
 
-	public static function save_settings( $post_id, $settings ) {
+	public static function save_settings( $post_id, array $settings ) {
 		$special_settings = [
 			'id',
 			'post_title',
@@ -119,8 +119,8 @@ class Manager extends BaseManager {
 		}
 	}
 
-	public function __construct() {
-		parent::__construct();
+	public static function run() {
+		parent::run();
 
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
@@ -152,5 +152,12 @@ class Manager extends BaseManager {
 		}
 
 		return self::get_model( $css_file->get_post_id() );
+	}
+
+	/**
+	 * @return Model
+	 */
+	public static function get_model_for_config() {
+		return self::get_model( get_the_ID() );
 	}
 }

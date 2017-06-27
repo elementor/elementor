@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Editor\Settings\Manager as SettingsManager;
 use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -341,16 +342,7 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
-			'settings' => [
-				'page' => [
-					'name' => PageSettingsManager::get_name(),
-					'panelPageSettings' => $page_settings_instance->get_panel_page_settings(),
-					'cssWrapperSelector' => $page_settings_instance->get_css_wrapper_selector(),
-					'controls' => $page_settings_instance->get_controls(),
-					'tabs' => $page_settings_instance->get_tabs_controls(),
-					'settings' => $page_settings_instance->get_settings(),
-				],
-			],
+			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
