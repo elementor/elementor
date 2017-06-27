@@ -40,6 +40,8 @@ abstract class CSS_File {
 	 */
 	protected $stylesheet_obj;
 
+	abstract public function get_name();
+
 	/**
 	 * CSS_File constructor.
 	 */

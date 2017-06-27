@@ -27,6 +27,10 @@ class Post_CSS_File extends CSS_File {
 		parent::__construct();
 	}
 
+	public function get_name() {
+		return 'post';
+	}
+
 	/**
 	 * @return int
 	 */
