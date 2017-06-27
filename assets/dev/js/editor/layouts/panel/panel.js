@@ -26,6 +26,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	currentPageName: null,
 
+	currentPageView: null,
+
 	_isScrollbarInitialized: false,
 
 	initialize: function() {
@@ -103,7 +105,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	getCurrentPageView: function() {
-		return this.getChildView( 'content' );
+		return this.currentPageView;
 	},
 
 	setPage: function( page, title, viewOptions ) {
@@ -123,7 +125,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			View = pageData.getView();
 		}
 
-		this.showChildView( 'content', new View( viewOptions ) );
+		this.currentPageView = new View( viewOptions );
+
+		this.showChildView( 'content', this.currentPageView );
 
 		this.getHeaderView().setTitle( title || pageData.title );
 
