@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Editor\Settings\Page;
 
+use Elementor\CSS_File;
 use Elementor\Editor\Settings\Base\Manager as BaseManager;
+use Elementor\Editor\Settings\Base\Model;
 use Elementor\Post_CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -133,5 +135,22 @@ class Manager extends BaseManager {
 
 	public static function get_name() {
 		return 'page';
+	}
+
+	public static function get_css_file_name() {
+		return 'post';
+	}
+
+	/**
+	 * @param CSS_File $css_file
+	 *
+	 * @return Model
+	 */
+	public static function get_model_for_css_file( CSS_File $css_file ) {
+		if ( ! $css_file instanceof Post_CSS_File ) {
+			return null;
+		}
+
+		return self::get_model( $css_file->get_post_id() );
 	}
 }
