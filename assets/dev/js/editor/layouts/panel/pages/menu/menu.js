@@ -9,30 +9,35 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initialize: function() {
 		this.collection = new Backbone.Collection( [
             {
+            	name: 'global-colors',
                 icon: 'fa fa-paint-brush',
                 title: elementor.translate( 'global_colors' ),
 				type: 'page',
                 pageName: 'colorScheme'
             },
             {
+	            name: 'global-fonts',
                 icon: 'fa fa-font',
                 title: elementor.translate( 'global_fonts' ),
 				type: 'page',
                 pageName: 'typographyScheme'
             },
 			{
+				name: 'color-picker',
 				icon: 'fa fa-eyedropper',
 				title: elementor.translate( 'color_picker' ),
 				type: 'page',
 				pageName: 'colorPickerScheme'
 			},
 			{
+				name: 'revision-history',
 				icon: 'fa fa-history',
 				title: elementor.translate( 'revision_history' ),
 				type: 'page',
 				pageName: 'revisionsPage'
 			},
             {
+	            name: 'clear-page',
                 icon: 'fa fa-eraser',
                 title: elementor.translate( 'clear_page' ),
                 callback: function() {
@@ -40,6 +45,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
                 }
             },
 			{
+				name: 'elementor-settings',
 				icon: 'eicon-elementor',
 				title: elementor.translate( 'elementor_settings' ),
 				type: 'link',
@@ -47,6 +53,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				newTab: true
 			},
 			{
+				name: 'about-elementor',
 				icon: 'fa fa-info-circle',
 				title: elementor.translate( 'about_elementor' ),
 				type: 'link',
