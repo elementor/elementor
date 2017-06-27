@@ -82,6 +82,13 @@ class Autoloader {
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 	}
 
+	/**
+	 * @return array
+	 */
+	public static function get_classes_aliases() {
+		return self::$classes_aliases;
+	}
+
 	private static function load_class( $relative_class_name ) {
 		if ( isset( self::$classes_map[ $relative_class_name ] ) ) {
 			$filename = ELEMENTOR_PATH . '/' . self::$classes_map[ $relative_class_name ];
