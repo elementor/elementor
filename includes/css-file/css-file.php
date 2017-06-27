@@ -241,6 +241,35 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @param Controls_Stack $controls_stack
+	 * @param array          $controls
+	 * @param array          $values
+	 * @param array          $placeholders
+	 * @param array          $replacements
+	 */
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
+		foreach ( $controls as $control ) {
+			if ( ! empty( $control['style_fields'] ) ) {
+				foreach ( $values[ $control['name'] ] as $field_value ) {
+					$this->add_controls_stack_style_rules(
+						$controls_stack,
+						$control['style_fields'],
+						$field_value,
+						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
+						array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
+					);
+				}
+			}
+
+			if ( empty( $control['selectors'] ) ) {
+				continue;
+			}
+
+			$this->add_control_style_rules( $control, $values, $controls_stack->get_controls(), $placeholders, $replacements );
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	abstract protected function load_meta();
@@ -283,6 +312,39 @@ abstract class CSS_File {
 		return false;
 	}
 
+	/**
+	 * @param array $control
+	 * @param array $values
+	 * @param array $controls_stack
+	 * @param array $placeholders
+	 * @param array $replacements
+	 */
+	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
+		$this->add_control_rules( $control, $controls_stack, function( $control ) use ( $values ) {
+			return $this->get_style_control_value( $control, $values );
+		}, $placeholders, $replacements );
+	}
+
+	/**
+	 * @param array $control
+	 * @param array $values
+	 *
+	 * @return mixed
+	 */
+	private function get_style_control_value( array $control, array $values ) {
+		$value = $values[ $control['name'] ];
+
+		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
+			$value = $control['selectors_dictionary'][ $value ];
+		}
+
+		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
+			return null;
+		}
+
+		return $value;
+	}
+
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
@@ -306,6 +368,8 @@ abstract class CSS_File {
 
 	private function parse_css() {
 		$this->render_css();
+
+		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
 
 		$this->css = $this->stylesheet_obj->__toString();
 	}
