@@ -1,14 +1,14 @@
 <?php
-namespace Elementor\PageSettings;
+namespace Elementor\Editor\Settings\Page;
 
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
+use Elementor\Editor\Settings\Base\Model as BaseModel;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Page extends Controls_Stack {
+class Model extends BaseModel {
 
 	/**
 	 * @var \WP_Post
@@ -23,6 +23,20 @@ class Page extends Controls_Stack {
 
 	public function get_name() {
 		return 'page-settings-' . $this->post->ID;
+	}
+
+	public function get_css_wrapper_selector() {
+		return 'body.elementor-page-' . $this->get_id();
+	}
+
+	public function get_panel_page_settings() {
+		return [
+			'title' => __( 'Page Settings', 'elementor' ),
+			'menu' => [
+				'icon' => 'fa fa-cog',
+				'beforeItem' => 'revision-history',
+			],
+		];
 	}
 
 	public function on_export( $element_data ) {

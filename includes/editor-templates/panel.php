@@ -256,7 +256,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-page-settings">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
+		<# _.each( elementor.config.settings.page.tabs, function( tabTitle, tabSlug ) { #>
 			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>

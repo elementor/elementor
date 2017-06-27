@@ -1,18 +1,30 @@
 <?php
-namespace Elementor\PageSettings;
+namespace Elementor\Editor\Settings\Page;
 
+use Elementor\Editor\Settings\Base\Manager as BaseManager;
 use Elementor\Post_CSS_File;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Manager {
+class Manager extends BaseManager {
 
 	const TEMPLATE_CANVAS = 'elementor_canvas';
 
 	const META_KEY = '_elementor_page_settings';
 
-	public static function ajax_save_page_settings() {
+	/**
+	 * @deprecated since 1.6.0
+	 *
+	 * @param string|int $id
+	 * @param array      $settings
+	 *
+	 * @return mixed
+	 */
+	public static function get_page( $id, $settings = [] ) {
+		return self::get_model( $id, $settings );
+	}
+
+	public static function ajax_save_settings() {
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the post ID' );
 		}
@@ -33,11 +45,11 @@ class Manager {
 
 		$saved = wp_update_post( $post );
 
-		if ( isset( $data['template'] ) && Manager::is_cpt_custom_templates_supported() ) {
+		if ( isset( $data['template'] ) && self::is_cpt_custom_templates_supported() ) {
 			update_post_meta( $post->ID, '_wp_page_template', $data['template'] );
 		}
 
-		self::save_page_settings( $post->ID, $data );
+		self::save_settings( $post->ID, $data );
 
 		if ( $saved ) {
 			wp_send_json_success();
@@ -46,7 +58,7 @@ class Manager {
 		}
 	}
 
-	public static function save_page_settings( $post_id, $settings ) {
+	public static function save_settings( $post_id, $settings ) {
 		$special_settings = [
 			'id',
 			'post_title',
@@ -74,6 +86,7 @@ class Manager {
 	public static function template_include( $template ) {
 		if ( is_singular() ) {
 			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+
 			if ( self::TEMPLATE_CANVAS === $page_template ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
@@ -96,17 +109,6 @@ class Manager {
 		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 
-	public static function get_page( $post_id, $settings = [] ) {
-		if ( ! $settings ) {
-			$settings = self::get_saved_settings( $post_id );
-		}
-
-		return new Page( [
-			'id' => $post_id,
-			'settings' => $settings,
-		] );
-	}
-
 	public static function init() {
 		$post_types = get_post_types_by_support( 'elementor' );
 
@@ -116,20 +118,20 @@ class Manager {
 	}
 
 	public function __construct() {
-		require 'page.php';
-
-		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_page_settings', [ __CLASS__, 'ajax_save_page_settings' ] );
-		}
+		parent::__construct();
 
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
 		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
 	}
 
-	private static function get_saved_settings( $post_id ) {
-		$settings = get_post_meta( $post_id, Manager::META_KEY, true );
+	public static function get_saved_settings( $post_id ) {
+		$settings = get_post_meta( $post_id, self::META_KEY, true );
 
 		return $settings ? $settings : [];
+	}
+
+	public static function get_name() {
+		return 'page';
 	}
 }
