@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\PageSettings\Manager as PageSettingsManager;
+use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -322,7 +322,7 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$page_settings_instance = PageSettingsManager::get_page( $post_id );
+		$page_settings_instance = PageSettingsManager::get_model( $post_id );
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,
@@ -341,10 +341,15 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
-			'page_settings' => [
-				'controls' => $page_settings_instance->get_controls(),
-				'tabs' => $page_settings_instance->get_tabs_controls(),
-				'settings' => $page_settings_instance->get_settings(),
+			'settings' => [
+				'page' => [
+					'name' => PageSettingsManager::get_name(),
+					'panelPageSettings' => $page_settings_instance->get_panel_page_settings(),
+					'cssWrapperSelector' => $page_settings_instance->get_css_wrapper_selector(),
+					'controls' => $page_settings_instance->get_controls(),
+					'tabs' => $page_settings_instance->get_tabs_controls(),
+					'settings' => $page_settings_instance->get_settings(),
+				],
 			],
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
@@ -408,7 +413,6 @@ class Editor {
 				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'preview' => __( 'Preview', 'elementor' ),
-				'page_settings' => __( 'Page Settings', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
 				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),

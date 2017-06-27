@@ -9,42 +9,33 @@ module.exports = ViewModule.extend( {
 
 	hasChange: false,
 
-	changeCallbacks: {
-		post_title: function( newValue ) {
-			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
-
-			$title.text( newValue );
-		},
-
-		template: function() {
-			this.save( function() {
-				elementor.reloadPreview();
-
-				elementor.once( 'preview:loaded', function() {
-					elementor.getPanelView().setPage( 'settingsPage' );
-				} );
-			} );
-		}
-	},
+	changeCallbacks: {},
 
 	addChangeCallback: function( attribute, callback ) {
 		this.changeCallbacks[ attribute ] = callback;
 	},
 
-	getDefaultSettings: function() {
-		return {
-			savedSettings: elementor.config.page_settings.settings
-		};
-	},
-
 	bindEvents: function() {
-		elementor.on( 'preview:loaded', this.updateStylesheet );
+		elementor.on( 'preview:loaded', this.onElementorPreviewLoaded );
 
 		this.model.on( 'change', this.onModelChange );
 	},
 
+	addPanelPage: function() {
+		var name = this.getSettings( 'name' );
+
+		elementor.getPanelView().addPage( name + '-settings', {
+			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
+			title: this.getSettings( 'panelPageSettings.title' ),
+			options: {
+				model: this.model,
+				name: name
+			}
+		} );
+	},
+
 	renderStyles: function() {
-		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /\{\{WRAPPER}}/g ], [ 'body.elementor-page-' + elementor.config.post_id ] );
+		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 	},
 
 	updateStylesheet: function() {
@@ -54,8 +45,8 @@ module.exports = ViewModule.extend( {
 	},
 
 	initModel: function() {
-		this.model = new SettingsModel( this.getSettings( 'savedSettings' ), {
-			controls: elementor.config.page_settings.controls
+		this.model = new SettingsModel( this.getSettings( 'settings' ), {
+			controls: this.getSettings( 'controls' )
 		} );
 	},
 
@@ -78,12 +69,12 @@ module.exports = ViewModule.extend( {
 
 		NProgress.start();
 
-		elementor.ajax.send( 'save_page_settings', {
+		elementor.ajax.send( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
 				NProgress.done();
 
-				self.setSettings( 'savedSettings', settings );
+				self.setSettings( 'settings', settings );
 
 				self.hasChange = false;
 
@@ -123,5 +114,25 @@ module.exports = ViewModule.extend( {
 		self.updateStylesheet();
 
 		self.debounceSave();
+	},
+
+	onElementorPreviewLoaded: function() {
+		this.updateStylesheet();
+
+		this.addPanelPage();
+
+		elementor.getPanelView().on( 'set:page:menu', this.onElementorPanelMenuOpen );
+	},
+
+	onElementorPanelMenuOpen: function( menuView ) {
+		var menuSettings = this.getSettings( 'panelPageSettings.menu' ),
+			menuItemOptions = {
+				icon: menuSettings.icon,
+				title: this.getSettings( 'panelPageSettings.title' ),
+				type: 'page',
+				pageName: this.getSettings( 'name' ) + '-settings'
+			};
+
+		menuView.addItem( menuItemOptions, menuSettings.beforeItem );
 	}
 } );

@@ -98,7 +98,7 @@ class Manager {
 		$args['content'] = json_decode( stripslashes( $args['content'] ), true );
 
 		if ( 'page' === $args['type'] ) {
-			$page = PageSettingsManager::get_page( $args['post_id'] );
+			$page = PageSettingsManager::get_model( $args['post_id'] );
 			$args['page_settings'] = $page->get_data( 'settings' );
 		}
 

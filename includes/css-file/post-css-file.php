@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\PageSettings\Manager as PageSettingsManager;
+use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -186,14 +186,14 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	private function add_page_settings_rules() {
-		$page_settings_instance = PageSettingsManager::get_page( $this->post_id );
+		$page_settings_instance = PageSettingsManager::get_model( $this->post_id );
 
 		$this->add_element_style_rules(
 			$page_settings_instance,
 			$page_settings_instance->get_style_controls(),
 			$page_settings_instance->get_settings(),
 			[ '{{WRAPPER}}' ],
-			[ 'body.elementor-page-' . $this->post_id ]
+			[ $page_settings_instance->get_css_wrapper_selector() ]
 		);
 	}
 }

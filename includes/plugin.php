@@ -2,7 +2,7 @@
 namespace Elementor;
 
 use Elementor\Debug\Debug;
-use Elementor\PageSettings\Manager as PageSettingsManager;
+use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

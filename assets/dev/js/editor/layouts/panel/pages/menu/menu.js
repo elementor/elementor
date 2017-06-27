@@ -32,12 +32,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
 				pageName: 'revisionsPage'
 			},
-			{
-				icon: 'fa fa-cog',
-				title: elementor.translate( 'page_settings' ),
-				type: 'page',
-				pageName: 'settingsPage'
-			},
             {
                 icon: 'fa fa-eraser',
                 title: elementor.translate( 'clear_page' ),
