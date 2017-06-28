@@ -320,6 +320,10 @@ body {
 #elementor-saved-popup .elementor-dialog-message-text {
   text-transform: uppercase; }
 
+.elementor-dialog-note {
+  margin: 15px 0 10px;
+  color: #a4afb7; }
+
 .elementor-button {
   outline: none;
   border: none;
