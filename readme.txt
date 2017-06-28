@@ -217,7 +217,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - Content flashes before entrance animation ([#1672](https://github.com/pojome/elementor/issues/1672))
 * Fix! - Added `latin-ext` subset in Font control for Czech language ([#1630](https://github.com/pojome/elementor/issues/1630))
 * Fix! - Restore to post version without Elementor in Revision History
-* Fix! - Removed margin:0 setting from figure inside text editor widget
+* Fix! - Removed `margin: 0` setting from figure inside text editor widget
 * Fix! - Content flashes before entrance animation ([#1672](https://github.com/pojome/elementor/issues/1672))
 * Fix! - Bug Image Carousel widget in RTL direction
 * Fix! - `show_label` affected inner label in the repeater control ([#1707](https://github.com/pojome/elementor/issues/1707))
