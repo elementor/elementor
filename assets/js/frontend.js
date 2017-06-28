@@ -569,7 +569,10 @@ var BackgroundVideo = HandlerModule.extend( {
 	},
 
 	prepareYTVideo: function( YT, videoID ) {
-		var self = this;
+		var self = this,
+			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
+
+		$backgroundVideoContainer.addClass( 'elementor-invisible' );
 
 		self.player = new YT.Player( self.elements.$backgroundVideoEmbed[ 0 ], {
 			videoId: videoID,
@@ -582,8 +585,13 @@ var BackgroundVideo = HandlerModule.extend( {
 					self.player.playVideo();
 				},
 				onStateChange: function( event ) {
-					if ( event.data === YT.PlayerState.ENDED ) {
-						self.player.seekTo( 0 );
+					switch ( event.data ) {
+						case YT.PlayerState.PLAYING:
+							$backgroundVideoContainer.removeClass( 'elementor-invisible' );
+
+							break;
+						case YT.PlayerState.ENDED:
+							self.player.seekTo( 0 );
 					}
 				}
 			},
