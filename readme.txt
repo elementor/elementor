@@ -188,19 +188,19 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * New! - Added responsive mode for Column Width control, including Tablet! ([#418](https://github.com/pojome/elementor/issues/418))
 * New! - Added option to set the column width trough the panel ([#847](https://github.com/pojome/elementor/issues/847))
 * New! - Added Element Hover for Background, BG Overlay, Border & Box Shadow
-* New! - Added nofollow option for all link controls ([Topic](https://wordpress.org/support/topic/elementor-nofollow-links-is-there-a-way-to-specify-links-nofollow-attribute/), [#953](https://github.com/pojome/elementor/issues/953), [#1695](https://github.com/pojome/elementor/issues/1695))
+* New! - Added `nofollow` option for all link controls ([Topic](https://wordpress.org/support/topic/elementor-nofollow-links-is-there-a-way-to-specify-links-nofollow-attribute/), [#953](https://github.com/pojome/elementor/issues/953), [#1695](https://github.com/pojome/elementor/issues/1695))
 * New! - Added HTML Tag for Section & Column ([#1619](https://github.com/pojome/elementor/issues/1619))
 * New! - Added Inset option for Box shadow control ([#1623](https://github.com/pojome/elementor/issues/1623))
 * New! - Added option to rollback to a previous version of Elementor & Pro
 * New! - Added option to get update notifications for beta versions of Elementor & Pro
 * New! - Added Space Between Widgets option under global settings and per column ([#1221](https://github.com/pojome/elementor/issues/1221))
-* New! - Added Z-Index option for all elements and removed original default z-index from widgets-wrap ([#1743](https://github.com/pojome/elementor/issues/1743))
+* New! - Added Z-Index option for all elements and removed original default `z-index` from `widgets-wrap` ([#1743](https://github.com/pojome/elementor/issues/1743))
 * New! - Import template get the page settings also if available
 * Tweak! - Added Tabs UI for admin setting pages
 * Tweak! - Added Layout tab for column for better workflow
 * Tweak! - Elementor not active when WP version doesn't meet minimum requirements
 * Tweak! - Added Animation Delay to Entrance Animation for all elements ([#558](https://github.com/pojome/elementor/issues/558))
-* Tweak! - Improved panel accessibility by adding for to the labels
+* Tweak! - Improved panel accessibility by adding `for` to the labels
 * Tweak! - Added responsive control for min-height in Section ([#630](https://github.com/pojome/elementor/issues/630))
 * Tweak! - Added responsive control for image size in Image / Image Box widgets
 * Tweak! - Added PX unit & responsive control for border width in Divider widget
@@ -209,18 +209,18 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added responsive control for slides to show control in Image Carousel
 * Tweak! - Added responsive control for border radius in Image widget
 * Tweak! - Changed video embed method for better performance and fix loading bug
-* Tweak! - Change the_content priority for better integration with 3rd party plugins (e.g WooCommerce Membership)
+* Tweak! - Changed `the_content` priority for better integration with 3rd party plugins (e.g WooCommerce Membership)
 * Tweak! - Added WP filter to get available image sizes
 * Tweak! - Updated Swiper library to 3.4.2
 * Tweak! - Limit up to 100 revisions to display in the panel for better performance
 * Fix! - YouTube link detection regex for some situations
 * Fix! - Content flashes before entrance animation ([#1672](https://github.com/pojome/elementor/issues/1672))
-* Fix! - Added latin-ext subset in Font control for Czech language ([#1630](https://github.com/pojome/elementor/issues/1630))
+* Fix! - Added `latin-ext` subset in Font control for Czech language ([#1630](https://github.com/pojome/elementor/issues/1630))
 * Fix! - Restore to post version without Elementor in Revision History
 * Fix! - Removed margin:0 setting from figure inside text editor widget
 * Fix! - Content flashes before entrance animation ([#1672](https://github.com/pojome/elementor/issues/1672))
 * Fix! - Bug Image Carousel widget in RTL direction
-* Fix! - show_label affected inner label in the repeater control ([#1707](https://github.com/pojome/elementor/issues/1707))
+* Fix! - `show_label` affected inner label in the repeater control ([#1707](https://github.com/pojome/elementor/issues/1707))
 
 = 1.4.10 - 25.06.2017 =
 * Fix! – CSS `autoprefixer` for minified files (last 5 versions of browsers support)
