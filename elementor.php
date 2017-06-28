@@ -23,7 +23,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 define( 'ELEMENTOR_VERSION', '1.4.10' );
-define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '1.3.5' );
+define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '1.4.10' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
