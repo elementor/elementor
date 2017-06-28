@@ -852,14 +852,10 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	initDialog: function() {
-		var message = elementor.translate( 'import_template_dialog_message' );
-
-		message += '<div class="elementor-dialog-note">' + elementor.translate( 'import_template_dialog_message_attention' ) + '</div>';
-
 		InsertTemplateHandler.dialog = elementor.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-insert-template-settings-dialog',
 			headerMessage: elementor.translate( 'import_template_dialog_header' ),
-			message: message,
+			message: elementor.translate( 'import_template_dialog_message' ) + '<br>' + elementor.translate( 'import_template_dialog_message_attention' ),
 			strings: {
 				confirm: elementor.translate( 'yes' ),
 				cancel: elementor.translate( 'no' )
