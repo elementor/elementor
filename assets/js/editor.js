@@ -4495,7 +4495,7 @@ ControlsCSSParser = ViewModule.extend( {
 		var self = this;
 
 		_.each( controls, function( control ) {
-			if ( control.styleFields ) {
+			if ( control.styleFields && control.styleFields.length ) {
 				values[ control.name ].each( function( itemModel ) {
 					self.addStyleRules(
 						control.styleFields,
@@ -5089,7 +5089,7 @@ var HotKeys = function( $ ) {
 			deleteElement: {
 				isWorthHandling: function( event ) {
 					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input' );
+						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
 
 					return isEditorOpen && ! isInputTarget;
 				},
@@ -6797,6 +6797,12 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
+	},
+
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
@@ -6970,9 +6976,11 @@ BaseElementView = BaseContainer.extend( {
 		}, this ) );
 	},
 
-	renderStyles: function() {
-		var self = this,
-			settings = self.getEditModel().get( 'settings' );
+	renderStyles: function( settings ) {
+		var self = this;
+		if ( ! settings ) {
+			settings = this.getEditModel().get( 'settings' );
+		}
 
 		self.controlsCSSParser.stylesheet.empty();
 
@@ -7033,6 +7041,19 @@ BaseElementView = BaseContainer.extend( {
 		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
 		this.$el.attr( 'id', customElementID );
+	},
+
+	getModelForRender: function() {
+		return elementor.hooks.applyFilters( 'element/templateHelpers/editModel', this.getEditModel(), this );
+	},
+
+	renderUIOnly: function() {
+		var editModel = this.getModelForRender();
+
+		this.renderStyles( editModel.get( 'settings' ) );
+		this.renderCustomClasses();
+		this.renderCustomElementID();
+		this.enqueueFonts();
 	},
 
 	renderUI: function() {
@@ -7098,7 +7119,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( ! isContentChanged ) {
-				this.renderUI();
+				this.renderUIOnly();
 				return;
 			}
 		}
@@ -7728,6 +7749,12 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			controlTitle: '.elementor-control-title',
 			responsiveSwitchers: '.elementor-responsive-switcher'
 		};
+	},
+
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
 	},
 
 	className: function() {
@@ -9605,7 +9632,8 @@ SectionView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 
-	behaviors: {
+	behaviors: function() {
+		var behaviors = {
 		Sortable: {
 			behaviorClass: require( 'elementor-behaviors/sortable' ),
 			elChildType: 'column'
@@ -9616,6 +9644,9 @@ SectionView = BaseElementView.extend( {
 		HandleAddMode: {
 			behaviorClass: require( 'elementor-behaviors/duplicate' )
 		}
+		};
+
+		return elementor.hooks.applyFilters( 'elements/section//behaviors', behaviors, this );
 	},
 
 	errors: {
