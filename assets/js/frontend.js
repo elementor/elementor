@@ -421,7 +421,7 @@ GlobalHandler = HandlerModule.extend( {
 		var waypoint = elementorFrontend.waypoint( self.$element, function() {
 			self.animate();
 
-			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API
+			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
 				waypoint[0].destroy();
 			}
 		}, { offset: '90%' } );
@@ -574,7 +574,7 @@ var BackgroundVideo = HandlerModule.extend( {
 		var self = this,
 			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
 
-		$backgroundVideoContainer.addClass( 'elementor-invisible' );
+		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
 		self.player = new YT.Player( self.elements.$backgroundVideoEmbed[ 0 ], {
 			videoId: videoID,
@@ -589,7 +589,7 @@ var BackgroundVideo = HandlerModule.extend( {
 				onStateChange: function( event ) {
 					switch ( event.data ) {
 						case YT.PlayerState.PLAYING:
-							$backgroundVideoContainer.removeClass( 'elementor-invisible' );
+							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 
 							break;
 						case YT.PlayerState.ENDED:
