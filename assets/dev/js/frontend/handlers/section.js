@@ -55,7 +55,7 @@ var BackgroundVideo = HandlerModule.extend( {
 		var self = this,
 			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
 
-		$backgroundVideoContainer.addClass( 'elementor-invisible' );
+		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
 		self.player = new YT.Player( self.elements.$backgroundVideoEmbed[ 0 ], {
 			videoId: videoID,
@@ -70,7 +70,7 @@ var BackgroundVideo = HandlerModule.extend( {
 				onStateChange: function( event ) {
 					switch ( event.data ) {
 						case YT.PlayerState.PLAYING:
-							$backgroundVideoContainer.removeClass( 'elementor-invisible' );
+							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 
 							break;
 						case YT.PlayerState.ENDED:
