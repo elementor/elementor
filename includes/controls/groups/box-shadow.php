@@ -30,7 +30,9 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 			'condition' => [
 				'box_shadow_type!' => '',
 			],
-			'render_type' => 'ui',
+			'selectors' => [
+				'{{SELECTOR}}' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{box_shadow_position.VALUE}};',
+			],
 		];
 
 		$controls['box_shadow_position'] = [
@@ -44,9 +46,7 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 				'box_shadow_type!' => '',
 			],
 			'default' => ' ',
-			'selectors' => [
-				'{{SELECTOR}}' => 'box-shadow: {{box_shadow.HORIZONTAL}}px {{box_shadow.VERTICAL}}px {{box_shadow.BLUR}}px {{box_shadow.SPREAD}}px {{box_shadow.COLOR}} {{VALUE}};',
-			],
+			'render_type' => 'ui',
 		];
 
 		return $controls;
