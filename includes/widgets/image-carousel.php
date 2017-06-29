@@ -596,7 +596,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			$this->add_render_attribute( 'carousel', 'class', 'slick-dots-' . $settings['dots_position'] );
 		}
 
-		if ( $settings['image_stretch'] ) {
+		if ( 'yes' === $settings['image_stretch'] ) {
 			$this->add_render_attribute( 'carousel', 'class', 'slick-image-stretch' );
 		}
 
