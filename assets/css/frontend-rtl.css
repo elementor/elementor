@@ -20,7 +20,7 @@
 
 .dialog-message {
   font-size: 12px;
-  line-height: 1.4; }
+  line-height: 1.5; }
 
 .dialog-buttons-wrapper {
   border-top: 1px solid #e6e9ec;
@@ -1814,6 +1814,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 
 /**
  * Swiper 3.4.2
+ */
+/**
+ * This is the original swiper file
+ * please DO NOT edit it
  */
 .swiper-container {
   margin-left: auto;
