@@ -408,6 +408,7 @@ class Editor {
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
 				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
+				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
 			],
