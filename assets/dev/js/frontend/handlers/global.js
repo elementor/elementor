@@ -11,8 +11,6 @@ GlobalHandler = HandlerModule.extend( {
 			elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
-		animationDelay *= 1000;
-
 		$element.removeClass( animation );
 
 		setTimeout( function() {

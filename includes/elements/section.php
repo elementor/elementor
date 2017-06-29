@@ -984,11 +984,11 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'animation_delay',
 			[
-				'label' => __( 'Animation Delay', 'elementor' ),
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::NUMBER,
 				'default' => '',
 				'min' => 0,
-				'step' => 0.1,
+				'step' => 100,
 				'condition' => [
 					'animation!' => '',
 				],
