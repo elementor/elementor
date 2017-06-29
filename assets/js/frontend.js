@@ -242,7 +242,7 @@ module.exports = ElementsHandler;
 				return callback.apply( element, arguments );
 			};
 
-			$element.elementorWaypoint( correctCallback, options );
+			return $element.elementorWaypoint( correctCallback, options );
 		};
 	};
 
@@ -418,8 +418,12 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		elementorFrontend.waypoint( self.$element, function() {
+		var waypoint = elementorFrontend.waypoint( self.$element, function() {
 			self.animate();
+
+			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API
+				waypoint[0].destroy();
+			}
 		}, { offset: '90%' } );
 	},
 	onElementChange: function( propertyName ) {
