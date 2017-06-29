@@ -92,4 +92,12 @@ class Utils {
 			return apply_filters_ref_array( $tag, $args );
 		}
 	}
+
+	public static function set_global_authordata() {
+		global $authordata;
+		if ( ! isset( $authordata->ID ) ) {
+			$post = get_post();
+			$authordata = get_userdata( $post->post_author );
+		}
+	}
 }
