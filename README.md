@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
-**Stable tag:** 1.5.0  
+**Stable tag:** 1.5.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -186,12 +186,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 1.5.1 - 29.06.2017 ###
-Tweak! - Show the fallback image until video playback starts ([#1901](https://github.com/pojome/elementor/issues/1901))
-Tweak! - Set Animation delay value in milliseconds
-Fix! - Buttons size for different languages ([Topic](https://wordpress.org/support/topic/cosmetic-for-french-interface/))
-Fix! - Destroy the Waypoint after one running ([#1906](https://github.com/pojome/elementor/issues/1906))
-Fix! - Image stretch condition in Image Carousel widget
-Fix! - Restore value builder for rollback compatibility ([#1911](https://github.com/pojome/elementor/issues/1911))
+* Tweak! - Show the fallback image until video playback starts ([#1901](https://github.com/pojome/elementor/issues/1901))
+* Tweak! - Set Animation delay value in milliseconds
+* Fix! - Buttons size for different languages ([Topic](https://wordpress.org/support/topic/cosmetic-for-french-interface/))
+* Fix! - Destroy the Waypoint after one running ([#1906](https://github.com/pojome/elementor/issues/1906))
+* Fix! - Image stretch condition in Image Carousel widget
+* Fix! - Restore value builder for rollback compatibility ([#1911](https://github.com/pojome/elementor/issues/1911))
 
 ### 1.5.0 - 28.06.2017 ###
 * New! - A big UI makeover to the editor for the 1st birthday of Elementor ([#493](https://github.com/pojome/elementor/issues/493), [#335](https://github.com/pojome/elementor/issues/335), [#692](https://github.com/pojome/elementor/issues/692))
