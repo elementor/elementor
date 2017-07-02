@@ -183,6 +183,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.5.2 - 02.07.2017 =
+* Fix! - Library dialog not loading in different languages
+* Fix! - Removed duplicate data from editor loading
+* Fix! - Navigation condition in Image Carousel widget ([#1920](https://github.com/pojome/elementor/issues/1920))
+
 = 1.5.1 - 29.06.2017 =
 * Tweak! - Show the fallback image until video playback starts ([#1901](https://github.com/pojome/elementor/issues/1901))
 * Tweak! - Set Animation delay value in milliseconds
