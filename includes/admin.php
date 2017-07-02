@@ -50,10 +50,6 @@ class Admin {
 
 			$this->enqueue_feedback_dialog_scripts();
 		}
-
-		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
-			wp_enqueue_script( 'elementor-dialog' );
-		}
 	}
 
 	/**
