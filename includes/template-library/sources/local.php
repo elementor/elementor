@@ -310,18 +310,22 @@ class Source_Local extends Source_Base {
 		}
 
 		$is_invalid_file = empty( $content ) || ! is_array( $content );
+
 		if ( $is_invalid_file )
 			return new \WP_Error( 'file_error', 'Invalid File' );
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
 
 		$page_settings = [];
+
 		if ( ! empty( $data['page_settings'] ) ) {
 			$page = new Model( [
+				'id' => 0,
 				'settings' => $data['page_settings'],
 			] );
 
 			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
+
 			if ( ! empty( $page_settings_data['settings'] ) ) {
 				$page_settings = $page_settings_data['settings'];
 			}

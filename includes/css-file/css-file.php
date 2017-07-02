@@ -139,6 +139,10 @@ abstract class CSS_File {
 					$value_to_insert = $value;
 
 					if ( ! empty( $matches[1] ) ) {
+						if ( ! isset( $controls_stack[ $matches[1] ] ) ) {
+							return '';
+						}
+
 						$parser_control = $controls_stack[ $matches[1] ];
 
 						$value_to_insert = call_user_func( $value_callback, $parser_control );
