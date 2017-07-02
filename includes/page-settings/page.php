@@ -18,6 +18,10 @@ class Page extends Controls_Stack {
 	public function __construct( array $data = [] ) {
 		$this->post = get_post( $data['id'] );
 
+		if ( ! $this->post ) {
+			$this->post = new \WP_Post( (object) [] );
+		}
+
 		parent::__construct( $data );
 	}
 
