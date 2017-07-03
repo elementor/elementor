@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\PageSettings\Manager as PageSettingsManager;
+use Elementor\Editor\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -322,8 +322,6 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$page_settings_instance = PageSettingsManager::get_page( $post_id );
-
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
@@ -341,11 +339,7 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
-			'page_settings' => [
-				'controls' => $page_settings_instance->get_controls(),
-				'tabs' => $page_settings_instance->get_tabs_controls(),
-				'settings' => $page_settings_instance->get_settings(),
-			],
+			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
@@ -408,7 +402,6 @@ class Editor {
 				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'preview' => __( 'Preview', 'elementor' ),
-				'page_settings' => __( 'Page Settings', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
 				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
@@ -516,6 +509,9 @@ class Editor {
 		do_action( 'elementor/editor/wp_head' );
 	}
 
+	/**
+	 * @param string $template_path - Can be either a link to template file or template HTML content
+	 */
 	public function add_editor_template( $template_path ) {
 		$this->_editor_templates[] = $template_path;
 	}
@@ -530,7 +526,11 @@ class Editor {
 		$plugin->schemes_manager->print_schemes_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			include $editor_template;
+			if ( stream_resolve_include_path( $editor_template ) ) {
+				include $editor_template;
+			} else {
+				echo $editor_template;
+			}
 		}
 
 		do_action( 'elementor/editor/footer' );

@@ -2,7 +2,8 @@
 namespace Elementor;
 
 use Elementor\Debug\Debug;
-use Elementor\PageSettings\Manager as PageSettingsManager;
+use Elementor\Editor\Settings\Manager as SettingsManager;
+use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -121,6 +122,11 @@ class Plugin {
 	public $wordpress_widgets_manager;
 
 	/**
+	 * @var Beta_Testers
+	 */
+	public $beta_testers;
+
+	/**
 	 * @deprecated
 	 *
 	 * @return string
@@ -177,62 +183,9 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
-	private function _includes() {
-		include( ELEMENTOR_PATH . 'includes/maintenance.php' );
-		include( ELEMENTOR_PATH . 'includes/upgrades.php' );
-		include( ELEMENTOR_PATH . 'includes/api.php' );
-		include( ELEMENTOR_PATH . 'includes/utils.php' );
-		include( ELEMENTOR_PATH . 'includes/user.php' );
-		include( ELEMENTOR_PATH . 'includes/fonts.php' );
-		include( ELEMENTOR_PATH . 'includes/compatibility.php' );
-
-		include( ELEMENTOR_PATH . 'includes/db.php' );
-		include( ELEMENTOR_PATH . 'includes/base/controls-stack.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/controls.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/schemes.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/settings-page.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
-		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
-		include( ELEMENTOR_PATH . 'includes/editor.php' );
-		include( ELEMENTOR_PATH . 'includes/embed.php' );
-		include( ELEMENTOR_PATH . 'includes/preview.php' );
-		include( ELEMENTOR_PATH . 'includes/frontend.php' );
-		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
-		include( ELEMENTOR_PATH . 'includes/responsive.php' );
-		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
-		require( ELEMENTOR_PATH . 'includes/rollback.php' );
-
-		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
-		include( ELEMENTOR_PATH . 'includes/tracker.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/manager.php' );
-
-		include( ELEMENTOR_PATH . 'includes/managers/css-files.php' );
-		include( ELEMENTOR_PATH . 'includes/managers/revisions.php' );
-		include( ELEMENTOR_PATH . 'includes/page-settings/manager.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/post-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/css-file/global-css-file.php' );
-		include( ELEMENTOR_PATH . 'includes/conditions.php' );
-		include( ELEMENTOR_PATH . 'includes/shapes.php' );
-		include( ELEMENTOR_PATH . 'includes/debug/debug.php' );
-		include( ELEMENTOR_PATH . 'includes/maintenance-mode.php' );
-
-		include( ELEMENTOR_PATH . 'includes/managers/wordpress-widgets.php' );
-
-		if ( is_admin() ) {
-			include( ELEMENTOR_PATH . 'includes/admin.php' );
-			require( ELEMENTOR_PATH . 'includes/beta-testers.php' );
-
-			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
-			}
-		}
-	}
-
 	private function init_components() {
+		Compatibility::register_actions();
+
 		$this->db = new DB();
 
 		$this->controls_manager = new Controls_Manager();
@@ -242,7 +195,8 @@ class Plugin {
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
 		$this->revisions_manager = new Revisions_Manager();
-		$this->page_settings_manager = new PageSettingsManager();
+
+		SettingsManager::run();
 
 		$this->settings = new Settings();
 		$this->editor = new Editor();
@@ -263,6 +217,10 @@ class Plugin {
 			$this->beta_testers = new Beta_Testers();
 		}
 
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			new Images_Manager();
+		}
+
 		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
@@ -274,13 +232,19 @@ class Plugin {
 		}
 	}
 
+	private function register_autoloader() {
+		require ELEMENTOR_PATH . '/includes/autoloader.php';
+
+		Autoloader::run();
+	}
+
 	/**
 	 * Plugin constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'init' ], 0 );
+		$this->register_autoloader();
 
-		$this->_includes();
+		add_action( 'init', [ $this, 'init' ], 0 );
 	}
 }
 
