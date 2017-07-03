@@ -136,7 +136,10 @@
     left: 0;
     position: absolute;
     overflow: hidden;
-    z-index: 0; }
+    z-index: 0;
+    transition: opacity 1s; }
+    .elementor .elementor-background-video-container.elementor-loading {
+      opacity: 0; }
   .elementor .elementor-background-video-embed {
     max-width: none; }
   .elementor .elementor-background-video {

@@ -624,8 +624,8 @@ html.elementor-html {
 		line-height: 1;
 		text-transform: uppercase;
 		height: 40px;
-		width: 170px;
-		padding: 0;
+		min-width: 170px;
+		padding: 0 20px;
 		border: none;
 		border-radius: 3px;
 		cursor: pointer;

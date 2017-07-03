@@ -142,7 +142,7 @@
 				return callback.apply( element, arguments );
 			};
 
-			$element.elementorWaypoint( correctCallback, options );
+			return $element.elementorWaypoint( correctCallback, options );
 		};
 	};
 

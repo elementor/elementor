@@ -240,7 +240,7 @@ module.exports = ElementsHandler;
 				return callback.apply( element, arguments );
 			};
 
-			$element.elementorWaypoint( correctCallback, options );
+			return $element.elementorWaypoint( correctCallback, options );
 		};
 	};
 
@@ -398,8 +398,6 @@ GlobalHandler = HandlerModule.extend( {
 			elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
-		animationDelay *= 1000;
-
 		$element.removeClass( animation );
 
 		setTimeout( function() {
@@ -420,8 +418,12 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		elementorFrontend.waypoint( self.$element, function() {
+		var waypoint = elementorFrontend.waypoint( self.$element, function() {
 			self.animate();
+
+			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
+				waypoint[0].destroy();
+			}
 		}, { offset: '90%' } );
 	},
 	onElementChange: function( propertyName ) {
@@ -470,8 +472,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 			infinite: 'yes' === elementSettings.infinite,
 			pauseOnHover: 'yes' ===  elementSettings.pause_on_hover,
 			speed: elementSettings.speed,
-			arrows: 'dots' !== elementSettings.navigation,
-			dots: 'arrows' !== elementSettings.navigation,
+			arrows: -1 !== [ 'arrows', 'both' ].indexOf( elementSettings.navigation ),
+			dots: -1 !== [ 'dots', 'both' ].indexOf( elementSettings.navigation ),
 			rtl: 'rtl' === elementSettings.direction,
 			responsive: [
 				{
@@ -569,7 +571,10 @@ var BackgroundVideo = HandlerModule.extend( {
 	},
 
 	prepareYTVideo: function( YT, videoID ) {
-		var self = this;
+		var self = this,
+			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
+
+		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
 		self.player = new YT.Player( self.elements.$backgroundVideoEmbed[ 0 ], {
 			videoId: videoID,
@@ -582,8 +587,13 @@ var BackgroundVideo = HandlerModule.extend( {
 					self.player.playVideo();
 				},
 				onStateChange: function( event ) {
-					if ( event.data === YT.PlayerState.ENDED ) {
-						self.player.seekTo( 0 );
+					switch ( event.data ) {
+						case YT.PlayerState.PLAYING:
+							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
+
+							break;
+						case YT.PlayerState.ENDED:
+							self.player.seekTo( 0 );
 					}
 				}
 			},
