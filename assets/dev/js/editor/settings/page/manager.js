@@ -13,9 +13,15 @@ module.exports = BaseSettings.extend( {
 				elementor.reloadPreview();
 
 				elementor.once( 'preview:loaded', function() {
-					elementor.getPanelView().setPage( 'settingsPage' );
+					elementor.getPanelView().setPage( 'page_settings' );
 				} );
 			} );
 		}
+	},
+
+	getDataToSave: function( data ) {
+		data.id = elementor.config.post_id;
+
+		return data;
 	}
 } );

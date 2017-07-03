@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Post_CSS_File extends CSS_File {

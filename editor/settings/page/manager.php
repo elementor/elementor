@@ -3,7 +3,8 @@ namespace Elementor\Editor\Settings\Page;
 
 use Elementor\CSS_File;
 use Elementor\Editor\Settings\Base\Manager as BaseManager;
-use Elementor\Editor\Settings\Base\Model;
+use \Elementor\Editor\Settings\Manager as SettingsManager;
+use Elementor\Editor\Settings\Base\Model as BaseModel;
 use Elementor\Post_CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -14,87 +15,23 @@ class Manager extends BaseManager {
 
 	const META_KEY = '_elementor_page_settings';
 
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'init', [ $this, 'init' ] );
+
+		add_filter( 'template_include', [ $this, 'template_include' ] );
+	}
+
 	/**
 	 * @deprecated since 1.6.0
 	 *
-	 * @param string|int $id
-	 * @param array      $settings
+	 * @param int $id
 	 *
-	 * @return mixed
+	 * @return BaseModel
 	 */
-	public static function get_page( $id, $settings = [] ) {
-		return self::get_model( $id, $settings );
-	}
-
-	public static function ajax_save_settings() {
-		if ( empty( $_POST['id'] ) ) {
-			wp_send_json_error( 'You must set the post ID' );
-		}
-
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
-
-		$post = get_post( $_POST['id'] );
-
-		if ( empty( $post ) ) {
-			wp_send_json_error( 'Invalid Post' );
-		}
-
-		$post->post_title = $data['post_title'];
-
-		if ( isset( $data['post_status'] ) ) {
-			$post->post_status = $data['post_status'];
-		}
-
-		$saved = wp_update_post( $post );
-
-		if ( isset( $data['template'] ) && self::is_cpt_custom_templates_supported() ) {
-			update_post_meta( $post->ID, '_wp_page_template', $data['template'] );
-		}
-
-		self::save_settings( $post->ID, $data );
-
-		if ( $saved ) {
-			wp_send_json_success();
-		} else {
-			wp_send_json_error();
-		}
-	}
-
-	public static function save_settings( $post_id, array $settings ) {
-		$special_settings = [
-			'id',
-			'post_title',
-			'post_status',
-			'template',
-		];
-
-		foreach ( $special_settings as $special_setting ) {
-			if ( isset( $settings[ $special_setting ] ) ) {
-				unset( $settings[ $special_setting ] );
-			}
-		}
-
-		if ( ! empty( $settings ) ) {
-			update_post_meta( $post_id, self::META_KEY, $settings );
-		} else {
-			delete_post_meta( $post_id, self::META_KEY );
-		}
-
-		$css_file = new Post_CSS_File( $post_id );
-
-		$css_file->update();
-	}
-
-	public static function template_include( $template ) {
-		if ( is_singular() ) {
-			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
-
-			if ( self::TEMPLATE_CANVAS === $page_template ) {
-				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
-			}
-		}
-
-		return $template;
+	public static function get_page( $id ) {
+		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
 	}
 
 	public static function add_page_templates( $post_templates ) {
@@ -111,7 +48,19 @@ class Manager extends BaseManager {
 		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 
-	public static function init() {
+	public function template_include( $template ) {
+		if ( is_singular() ) {
+			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+
+			if ( self::TEMPLATE_CANVAS === $page_template ) {
+				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
+			}
+		}
+
+		return $template;
+	}
+
+	public function init() {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
@@ -119,45 +68,78 @@ class Manager extends BaseManager {
 		}
 	}
 
-	public static function run() {
-		parent::run();
-
-		add_action( 'init', [ __CLASS__, 'init' ] );
-
-		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
+	public function get_name() {
+		return 'page';
 	}
 
-	public static function get_saved_settings( $post_id ) {
-		$settings = get_post_meta( $post_id, self::META_KEY, true );
+	/**
+	 * @return BaseModel
+	 */
+	public function get_model_for_config() {
+		return $this->get_model( get_the_ID() );
+	}
+
+	protected function ajax_before_save_settings( array $data, $id ) {
+		$post = get_post( $id );
+
+		if ( empty( $post ) ) {
+			wp_send_json_error( 'Invalid Post' );
+		}
+
+		$post->post_title = $data['post_title'];
+
+		if ( isset( $data['post_status'] ) ) {
+			$post->post_status = $data['post_status'];
+		}
+
+		wp_update_post( $post );
+
+		if ( isset( $data['template'] ) && self::is_cpt_custom_templates_supported() ) {
+			update_post_meta( $post->ID, '_wp_page_template', $data['template'] );
+		}
+	}
+
+	protected function save_settings_to_db( array $settings, $id ) {
+		if ( ! empty( $settings ) ) {
+			update_post_meta( $id, self::META_KEY, $settings );
+		} else {
+			delete_post_meta( $id, self::META_KEY );
+		}
+	}
+
+	protected function get_css_file_for_update( $id ) {
+		return new Post_CSS_File( $id );
+	}
+
+	protected function get_saved_settings( $id ) {
+		$settings = get_post_meta( $id, self::META_KEY, true );
 
 		return $settings ? $settings : [];
 	}
 
-	public static function get_name() {
-		return 'page';
-	}
-
-	public static function get_css_file_name() {
+	protected function get_css_file_name() {
 		return 'post';
 	}
 
 	/**
 	 * @param CSS_File $css_file
 	 *
-	 * @return Model
+	 * @return BaseModel
 	 */
-	public static function get_model_for_css_file( CSS_File $css_file ) {
+	protected function get_model_for_css_file( CSS_File $css_file ) {
 		if ( ! $css_file instanceof Post_CSS_File ) {
 			return null;
 		}
 
-		return self::get_model( $css_file->get_post_id() );
+		return $this->get_model( $css_file->get_post_id() );
 	}
 
-	/**
-	 * @return Model
-	 */
-	public static function get_model_for_config() {
-		return self::get_model( get_the_ID() );
+	protected function get_special_settings_names() {
+		return [
+			'id',
+			'post_title',
+			'post_status',
+			'template',
+		];
 	}
 }

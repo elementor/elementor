@@ -24,7 +24,7 @@ module.exports = ViewModule.extend( {
 	addPanelPage: function() {
 		var name = this.getSettings( 'name' );
 
-		elementor.getPanelView().addPage( name + '-settings', {
+		elementor.getPanelView().addPage( name + '_settings', {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
 			title: this.getSettings( 'panelPageSettings.title' ),
 			options: {
@@ -51,7 +51,11 @@ module.exports = ViewModule.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSS = new ControlsCSSParser();
+		this.controlsCSS = new ControlsCSSParser( { id: this.getSettings( 'name' ) } );
+	},
+
+	getDataToSave: function( data ) {
+		return data;
 	},
 
 	save: function( callback ) {
@@ -61,11 +65,10 @@ module.exports = ViewModule.extend( {
 			return;
 		}
 
-		var settings = self.model.toJSON( { removeDefault: true } ),
-			data = {
-				id: elementor.config.post_id,
+		var settings = this.model.toJSON( { removeDefault: true } ),
+			data = this.getDataToSave( {
 				data: JSON.stringify( settings )
-			};
+			} );
 
 		NProgress.start();
 
@@ -130,7 +133,7 @@ module.exports = ViewModule.extend( {
 				icon: menuSettings.icon,
 				title: this.getSettings( 'panelPageSettings.title' ),
 				type: 'page',
-				pageName: this.getSettings( 'name' ) + '-settings'
+				pageName: this.getSettings( 'name' ) + '_settings'
 			};
 
 		menuView.addItem( menuItemOptions, menuSettings.beforeItem );
