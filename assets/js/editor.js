@@ -9920,6 +9920,8 @@ WidgetView = BaseElementView.extend( {
 
 		var onRenderMethod = this.onRender;
 
+		this.render = _.throttle( this.render, 1000 );
+
 		this.onRender = function() {
 			_.defer( _.bind( onRenderMethod, this ) );
 		};
