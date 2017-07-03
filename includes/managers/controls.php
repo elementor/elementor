@@ -313,9 +313,6 @@ class Controls_Manager {
 			$control_data['tab'] = $default_args['tab'];
 		}
 
-		// Add the default settings from control instance
-		$control_data = array_merge( $control_type_instance->get_settings(), $control_data );
-
 		$this->_controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $available_tabs[ $control_data['tab'] ];
 
 		$this->_controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;

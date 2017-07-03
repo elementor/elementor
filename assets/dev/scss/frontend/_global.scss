@@ -59,6 +59,11 @@
 		position: absolute;
 		overflow: hidden;
 		z-index: $ground-layer;
+		transition: opacity 1s;
+
+		&.elementor-loading {
+			opacity: 0;
+		}
 	}
 
 	.elementor-background-video-embed {

@@ -205,6 +205,9 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
