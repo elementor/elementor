@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Editor\Settings\Manager as SettingsManager;
-use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -322,8 +321,6 @@ class Editor {
 		if ( empty( $page_title_selector ) ) {
 			$page_title_selector = 'h1.entry-title';
 		}
-
-		$page_settings_instance = PageSettingsManager::get_model( $post_id );
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,

@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Editor\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
-use Elementor\PageSettings\Manager as PageSettingsManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -98,7 +98,8 @@ class Manager {
 		$args['content'] = json_decode( stripslashes( $args['content'] ), true );
 
 		if ( 'page' === $args['type'] ) {
-			$page = PageSettingsManager::get_model( $args['post_id'] );
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+
 			$args['page_settings'] = $page->get_data( 'settings' );
 		}
 

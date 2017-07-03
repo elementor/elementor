@@ -9,20 +9,32 @@ class Manager {
 	 */
 	private static $settings_managers = [];
 
-	private static $default_settings_managers_names = [ 'page' ];
+	private static $default_settings_managers_names = [ 'page', 'general' ];
 
-	public static function add_settings_manager( $manager_class ) {
-		/**
-		 * @var Base\Manager $manager_class
-		 */
-		$manager_class::run();
+	public static function add_settings_manager( Base\Manager $manager ) {
+		self::$settings_managers[ $manager->get_name() ] = $manager;
+	}
 
-		self::$settings_managers[ $manager_class::get_name() ] = $manager_class;
+	/**
+	 * @return Base\Manager|Base\Manager[]
+	 */
+	public static function get_settings_managers( $manager_name = null ) {
+		if ( $manager_name ) {
+			if ( isset( self::$settings_managers[ $manager_name ] ) ) {
+				return self::$settings_managers[ $manager_name ];
+			}
+
+			return null;
+		}
+
+		return self::$settings_managers;
 	}
 
 	private static function register_default_settings_managers() {
 		foreach ( self::$default_settings_managers_names as $manager_name ) {
-			self::add_settings_manager( __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager' );
+			$manager_class = __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
+
+			self::add_settings_manager( new $manager_class() );
 		}
 	}
 
@@ -30,10 +42,10 @@ class Manager {
 		$config = [];
 
 		foreach ( self::$settings_managers as $name => $manager ) {
-			$settings_model = $manager::get_model_for_config();
+			$settings_model = $manager->get_model_for_config();
 
 			$config[ $name ] = [
-				'name' => $manager::get_name(),
+				'name' => $manager->get_name(),
 				'panelPageSettings' => $settings_model->get_panel_page_settings(),
 				'cssWrapperSelector' => $settings_model->get_css_wrapper_selector(),
 				'controls' => $settings_model->get_controls(),
