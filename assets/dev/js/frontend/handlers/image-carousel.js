@@ -32,8 +32,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 			infinite: 'yes' === elementSettings.infinite,
 			pauseOnHover: 'yes' ===  elementSettings.pause_on_hover,
 			speed: elementSettings.speed,
-			arrows: 'dots' !== elementSettings.navigation,
-			dots: 'arrows' !== elementSettings.navigation,
+			arrows: -1 !== [ 'arrows', 'both' ].indexOf( elementSettings.navigation ),
+			dots: -1 !== [ 'dots', 'both' ].indexOf( elementSettings.navigation ),
 			rtl: 'rtl' === elementSettings.direction,
 			responsive: [
 				{

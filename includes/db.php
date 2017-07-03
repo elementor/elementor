@@ -187,7 +187,8 @@ class DB {
 	 */
 	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
 		if ( $is_elementor ) {
-			update_post_meta( $post_id, '_elementor_edit_mode', true );
+			// Use the string `builder` and not a boolean for rollback compatibility
+			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 		} else {
 			delete_post_meta( $post_id, '_elementor_edit_mode' );
 		}
