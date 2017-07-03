@@ -4799,6 +4799,10 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				if ( controlName ) {
 					parserControl = _.findWhere( controlsStack, { name: controlName } );
 
+					if ( ! parserControl ) {
+						return '';
+					}
+
 					valueToInsert = valueCallback( parserControl );
 				}
 
@@ -10049,6 +10053,8 @@ WidgetView = BaseElementView.extend( {
 		}
 
 		var onRenderMethod = this.onRender;
+
+		this.render = _.throttle( this.render, 1000 );
 
 		this.onRender = function() {
 			_.defer( _.bind( onRenderMethod, this ) );
