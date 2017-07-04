@@ -321,13 +321,13 @@ class Controls_Manager {
 			return false;
 		}
 
-		$available_tabs = self::get_tabs();
+		$tabs = self::get_tabs();
 
-		if ( ! isset( $available_tabs[ $control_data['tab'] ] ) ) {
+		if ( ! isset( $tabs[ $control_data['tab'] ] ) ) {
 			$control_data['tab'] = $default_args['tab'];
 		}
 
-		$this->controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $available_tabs[ $control_data['tab'] ];
+		$this->controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $tabs[ $control_data['tab'] ];
 
 		$this->controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
 
