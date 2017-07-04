@@ -34,12 +34,10 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
-	renderStyles: function() {
-		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
-	},
-
 	updateStylesheet: function() {
-		this.renderStyles();
+		this.controlsCSS.stylesheet.empty();
+
+		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
 		this.controlsCSS.addStyleToDocument();
 	},
