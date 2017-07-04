@@ -207,16 +207,16 @@ class Frontend {
 			],
 		];
 
-		$elements_manager = Plugin::$instance->elements_manager;
-
-		$elements_frontend_keys = [
-			'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
-			'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
-		];
-
-		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
-
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$elements_manager = Plugin::$instance->elements_manager;
+
+			$elements_frontend_keys = [
+				'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
+				'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
+			];
+
+			$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
+
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
 				'keys' => $elements_frontend_keys,
