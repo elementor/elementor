@@ -6,6 +6,10 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
+	onGeneralSettingsChange: null,
+
+	onPageSettingsChange: null,
+
 	__construct: function( settings ) {
 		this.$element  = settings.$element;
 
@@ -48,6 +52,16 @@ HandlerModule = ViewModule.extend( {
 				self.onElementChange( controlView.model.get( 'name' ),  controlView, elementView );
 			}, elementor.channels.editor );
 		}
+
+		[ 'page', 'general' ].forEach( function( settingsType ) {
+			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
+
+			if ( self[ listenerMethodName ] ) {
+				elementorFrontend.addListenerOnce( uniqueHandlerID, 'change:' + settingsType, function( controlName, controlView ) {
+					self[ listenerMethodName ]( controlName,  controlView );
+				}, elementor.channels.settings );
+			}
+		} );
 	},
 
 	getElementName: function() {
