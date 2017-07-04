@@ -188,6 +188,12 @@ class Tools extends Settings_Page {
 		];
 	}
 
+	public function display_settings_page() {
+		wp_enqueue_script( 'elementor-dialog' );
+
+		parent::display_settings_page();
+	}
+
 	protected function get_page_title() {
 		return __( 'Tools', 'elementor' );
 	}

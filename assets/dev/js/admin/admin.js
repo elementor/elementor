@@ -163,7 +163,12 @@
 					dialogsManager = new DialogsManager.Instance();
 
 				dialogsManager.createWidget( 'confirm', {
-					message: ElementorAdminConfig.rollback_confirm,
+					headerMessage: ElementorAdminConfig.i18n.rollback_to_previous_version,
+					message: ElementorAdminConfig.i18n.rollback_confirm,
+					strings: {
+						confirm: ElementorAdminConfig.i18n.yes,
+						cancel: ElementorAdminConfig.i18n.cancel
+					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
 

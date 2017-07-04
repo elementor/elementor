@@ -11,8 +11,6 @@ GlobalHandler = HandlerModule.extend( {
 			elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
-		animationDelay *= 1000;
-
 		$element.removeClass( animation );
 
 		setTimeout( function() {
@@ -33,8 +31,12 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		elementorFrontend.waypoint( self.$element, function() {
+		var waypoint = elementorFrontend.waypoint( self.$element, function() {
 			self.animate();
+
+			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
+				waypoint[0].destroy();
+			}
 		}, { offset: '90%' } );
 	},
 	onElementChange: function( propertyName ) {

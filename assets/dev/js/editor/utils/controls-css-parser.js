@@ -105,6 +105,10 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				if ( controlName ) {
 					parserControl = _.findWhere( controlsStack, { name: controlName } );
 
+					if ( ! parserControl ) {
+						return '';
+					}
+
 					valueToInsert = valueCallback( parserControl );
 				}
 
