@@ -39,7 +39,12 @@ class Admin {
 			'ElementorAdminConfig',
 			[
 				'home_url' => home_url(),
-				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
+				'i18n' => [
+					'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
+					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'cancel' => __( 'Cancel', 'elementor' ),
+				],
 			]
 		);
 
@@ -49,10 +54,6 @@ class Admin {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
-		}
-
-		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
-			wp_enqueue_script( 'elementor-dialog' );
 		}
 	}
 

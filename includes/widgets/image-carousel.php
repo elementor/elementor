@@ -588,15 +588,17 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$this->add_render_attribute( 'carousel', 'class', 'elementor-image-carousel' );
 
-		if ( 'dots' !== $settings['navigation'] ) {
-			$this->add_render_attribute( 'carousel', 'class', 'slick-arrows-' . $settings['arrows_position'] );
+		if ( 'none' !== $settings['navigation'] ) {
+			if ( 'dots' !== $settings['navigation'] ) {
+				$this->add_render_attribute( 'carousel', 'class', 'slick-arrows-' . $settings['arrows_position'] );
+			}
+
+			if ( 'arrows' !== $settings['navigation'] ) {
+				$this->add_render_attribute( 'carousel', 'class', 'slick-dots-' . $settings['dots_position'] );
+			}
 		}
 
-		if ( 'arrows' !== $settings['navigation'] ) {
-			$this->add_render_attribute( 'carousel', 'class', 'slick-dots-' . $settings['dots_position'] );
-		}
-
-		if ( $settings['image_stretch'] ) {
+		if ( 'yes' === $settings['image_stretch'] ) {
 			$this->add_render_attribute( 'carousel', 'class', 'slick-image-stretch' );
 		}
 
