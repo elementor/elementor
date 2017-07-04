@@ -74,6 +74,10 @@ class Model extends BaseModel {
 
 		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_page_title_selector' );
 
+		if ( ! $page_title_selector ) {
+			$page_title_selector = 'h1.entry-title';
+		}
+
 		$this->add_control(
 			'hide_title',
 			[

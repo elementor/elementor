@@ -53,6 +53,7 @@ class Model extends BaseModel {
 							'label' => __( 'Widgets Space', 'elementor' ) . ' (px)',
 							'type' => Controls_Manager::NUMBER,
 							'min' => 0,
+							'placeholder' => '20',
 							'description' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 							'selectors' => [
 								'.elementor-widget:not(:last-child)' => 'margin-bottom: {{VALUE}}px',
@@ -64,11 +65,12 @@ class Model extends BaseModel {
 							'placeholder' => 'body',
 							'description' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 							'label_block' => true,
+							'frontend_available' => true,
 						],
 						'elementor_page_title_selector' => [
 							'label' => __( 'Page Title Selector', 'elementor' ),
 							'type' => Controls_Manager::TEXT,
-							'default' => 'h1.entry-title',
+							'placeholder' => 'h1.entry-title',
 							'description' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 							'label_block' => true,
 						],
