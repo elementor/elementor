@@ -274,18 +274,6 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->_is_type_instance;
 	}
 
-	final public function get_frontend_settings_keys() {
-		$controls = [];
-
-		foreach ( $this->get_controls() as $control ) {
-			if ( ! empty( $control['frontend_available'] ) ) {
-				$controls[] = $control['name'];
-			}
-		}
-
-		return $controls;
-	}
-
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 

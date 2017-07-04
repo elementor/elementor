@@ -248,6 +248,18 @@ abstract class Controls_Stack {
 		return $this->_config;
 	}
 
+	final public function get_frontend_settings_keys() {
+		$controls = [];
+
+		foreach ( $this->get_controls() as $control ) {
+			if ( ! empty( $control['frontend_available'] ) ) {
+				$controls[] = $control['name'];
+			}
+		}
+
+		return $controls;
+	}
+
 	public function get_data( $item = null ) {
 		return self::_get_items( $this->_data, $item );
 	}
