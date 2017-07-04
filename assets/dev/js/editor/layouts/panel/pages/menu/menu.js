@@ -9,7 +9,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initialize: function() {
 		this.collection = new Backbone.Collection( [
             {
-            	name: 'global-colors',
+				name: 'global-colors',
                 icon: 'fa fa-paint-brush',
                 title: elementor.translate( 'global_colors' ),
 				type: 'page',
