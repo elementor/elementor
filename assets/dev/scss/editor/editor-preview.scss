@@ -233,7 +233,7 @@ html.elementor-html {
 		}
 
 		.elementor-editor-section-settings {
-			top: 0;
+			top: 1px;
 			@include start(50%);
 			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
 			border-radius: 3px 3px 0 0;
