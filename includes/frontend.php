@@ -195,7 +195,7 @@ class Frontend {
 
 		$elementor_frontend_config = [
 			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
-			'stretchedSectionContainer' => SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_stretched_section_container' ),
+			'settings' => SettingsManager::get_settings_frontend_config(),
 			'is_rtl' => is_rtl(),
 			'post' => [
 				'id' => $post->ID,

@@ -57,6 +57,18 @@ class Manager {
 		return $config;
 	}
 
+	public static function get_settings_frontend_config() {
+		$config = [];
+
+		foreach ( self::$settings_managers as $name => $manager ) {
+			$settings_model = $manager->get_model_for_config();
+
+			$config[ $name ] = $settings_model->get_frontend_settings();
+		}
+
+		return $config;
+	}
+
 	public static function run() {
 		self::register_default_settings_managers();
 	}
