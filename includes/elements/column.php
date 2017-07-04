@@ -116,13 +116,14 @@ class Element_Column extends Element_Base {
 			'nav',
 		];
 
+		$options = [ '' => __( 'Default', '' ) ] + array_combine( $possible_tags, $possible_tags );
+
 		$this->add_control(
 			'html_tag',
 			[
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'div',
-				'options' => array_combine( $possible_tags, $possible_tags ),
+				'options' => $options,
 			]
 		);
 
@@ -727,7 +728,7 @@ class Element_Column extends Element_Base {
 
 	public function before_render() {
 		?>
-		<<?php echo $this->get_settings( 'html_tag' ) . ' ' .  $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $this->get_html_tag() . ' ' .  $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
 			<?php if ( in_array( $this->get_settings( 'background_overlay_background' ), [ 'classic', 'gradient' ] ) ) : ?>
 				<div class="elementor-background-overlay"></div>
@@ -740,7 +741,7 @@ class Element_Column extends Element_Base {
 		?>
 				</div>
 			</div>
-		</<?php echo $this->get_settings( 'html_tag' ); ?>>
+		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
 
@@ -768,5 +769,15 @@ class Element_Column extends Element_Base {
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+	}
+
+	private function get_html_tag() {
+		$html_tag = $this->get_settings( 'html_tag' );
+
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'div';
+		}
+
+		return $html_tag;
 	}
 }
