@@ -134,6 +134,16 @@ module.exports = ElementsHandler;
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var getSiteSettings = function( settingType, settingName ) {
+			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
+
+			if ( settingName ) {
+				return settingsObject[ settingName ];
+			}
+
+			return settingsObject;
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
@@ -158,6 +168,14 @@ module.exports = ElementsHandler;
 			}
 
 			return dialogsManager;
+		};
+
+		this.getPageSettings = function( settingName ) {
+			return getSiteSettings( 'page', settingName );
+		};
+
+		this.getGeneralSettings = function( settingName ) {
+			return getSiteSettings( 'general', settingName );
 		};
 
 		this.isEditMode = function() {
@@ -260,6 +278,10 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
+	onGeneralSettingsChange: null,
+
+	onPageSettingsChange: null,
+
 	__construct: function( settings ) {
 		this.$element  = settings.$element;
 
@@ -302,6 +324,16 @@ HandlerModule = ViewModule.extend( {
 				self.onElementChange( controlView.model.get( 'name' ),  controlView, elementView );
 			}, elementor.channels.editor );
 		}
+
+		[ 'page', 'general' ].forEach( function( settingsType ) {
+			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
+
+			if ( self[ listenerMethodName ] ) {
+				elementorFrontend.addListenerOnce( uniqueHandlerID, 'change:' + settingsType, function( controlName, controlView ) {
+					self[ listenerMethodName ]( controlName,  controlView );
+				}, elementor.channels.settings );
+			}
+		} );
 	},
 
 	getElementName: function() {
@@ -669,20 +701,6 @@ var BackgroundVideo = HandlerModule.extend( {
 
 var StretchedSection = HandlerModule.extend( {
 
-	getDefaultSettings: function() {
-		return {
-			selectors: {
-				sectionContainer: elementorFrontend.config.stretchedSectionContainer
-			}
-		};
-	},
-
-	getDefaultElements: function() {
-		return {
-			$sectionContainer: elementorFrontend.getElements( '$document' ).find( this.getSettings( 'selectors.sectionContainer' ) )
-		};
-	},
-
 	bindEvents: function() {
 		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
 	},
@@ -705,15 +723,28 @@ var StretchedSection = HandlerModule.extend( {
 			return;
 		}
 
-		var containerWidth = elementorFrontend.getElements( '$window' ).outerWidth(),
+		var $sectionContainer,
+			hasSpecialContainer = false;
+
+		try {
+			$sectionContainer = jQuery( elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) );
+
+			if ( $sectionContainer.length ) {
+				hasSpecialContainer = true;
+			}
+		} catch ( e ) {}
+
+		if ( ! hasSpecialContainer ) {
+			$sectionContainer = elementorFrontend.getElements( '$window' );
+		}
+
+		var containerWidth = $sectionContainer.outerWidth(),
 			sectionWidth = this.$element.outerWidth(),
 			sectionOffset = this.$element.offset().left,
 			correctOffset = sectionOffset;
 
-		if ( this.elements.$sectionContainer.length ) {
-			var containerOffset = this.elements.$sectionContainer.offset().left;
-
-			containerWidth = this.elements.$sectionContainer.outerWidth();
+		if ( hasSpecialContainer ) {
+			var containerOffset = $sectionContainer.offset().left;
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -737,6 +768,12 @@ var StretchedSection = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		this.stretchSection();
+	},
+
+	onGeneralSettingsChange: function( propertyName ) {
+		if ( 'elementor_stretched_section_container' === propertyName ) {
+			this.stretchSection();
+		}
 	}
 } );
 
