@@ -58,14 +58,17 @@
   100% {
     opacity: 1; } }
 
-body.elementor-editor-active.layout-section .entry-content {
+body.elementor-editor-active .elementor.elementor-edit-mode.layout-section .entry-content {
   overflow: visible; }
 
-body.elementor-editor-active .article {
+body.elementor-editor-active .elementor.elementor-edit-mode .article {
   overflow: visible; }
 
-body.elementor-editor-active .elementor-element-overlay .elementor-editor-element-settings {
+body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element-overlay .elementor-editor-element-settings {
   clear: unset; }
+
+body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element.elementor-section {
+  overflow: visible; }
 
 #elementor .animated {
   -webkit-animation-fill-mode: none !important;
