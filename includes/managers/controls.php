@@ -63,21 +63,35 @@ class Controls_Manager {
 
 	private static $tabs;
 
-	private static function _get_available_tabs_controls() {
-		if ( ! self::$_available_tabs_controls ) {
-			self::$_available_tabs_controls = [
-				self::TAB_CONTENT => __( 'Content', 'elementor' ),
-				self::TAB_STYLE => __( 'Style', 'elementor' ),
-				self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
-				self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
-				self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
-				self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
-			];
+	private static function init_tabs() {
+		self::$tabs = [
+			self::TAB_CONTENT => __( 'Content', 'elementor' ),
+			self::TAB_STYLE => __( 'Style', 'elementor' ),
+			self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
+			self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
+			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
+			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
+		];
+	}
 
-			self::$_available_tabs_controls = apply_filters( 'elementor/controls/get_available_tabs_controls', self::$_available_tabs_controls );
+	public static function get_tabs() {
+		if ( ! self::$tabs ) {
+			self::init_tabs();
 		}
 
-		return self::$_available_tabs_controls;
+		return self::$tabs;
+	}
+
+	public static function add_tab( $tab_name, $tab_title ) {
+		if ( ! self::$tabs ) {
+			self::init_tabs();
+		}
+
+		if ( isset( self::$tabs[ $tab_name ] ) ) {
+			return;
+		}
+
+		self::$tabs[ $tab_name ] = $tab_title;
 	}
 
 	/**
@@ -307,7 +321,7 @@ class Controls_Manager {
 			return false;
 		}
 
-		$available_tabs = self::_get_available_tabs_controls();
+		$available_tabs = self::get_tabs();
 
 		if ( ! isset( $available_tabs[ $control_data['tab'] ] ) ) {
 			$control_data['tab'] = $default_args['tab'];
