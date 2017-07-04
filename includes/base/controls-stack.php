@@ -266,6 +266,18 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	public function get_frontend_settings() {
+		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
+
+		foreach ( $frontend_settings as $key => $setting ) {
+			if ( in_array( $setting, [ null, '' ], true ) ) {
+				unset( $frontend_settings[ $key ] );
+			}
+		}
+
+		return $frontend_settings;
+	}
+
 	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
 		if ( ! $settings ) {
 			$settings = $this->get_settings();
