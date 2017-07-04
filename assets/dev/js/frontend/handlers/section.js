@@ -205,6 +205,12 @@ var StretchedSection = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		this.stretchSection();
+	},
+
+	onGeneralSettingsChange: function( propertyName ) {
+		if ( 'elementor_stretched_section_container' === propertyName ) {
+			this.stretchSection();
+		}
 	}
 } );
 
