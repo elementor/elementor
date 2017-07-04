@@ -36,6 +36,16 @@
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var getSiteSettings = function( settingType, settingName ) {
+			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
+
+			if ( settingName ) {
+				return settingsObject[ settingName ];
+			}
+
+			return settingsObject;
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
@@ -60,6 +70,14 @@
 			}
 
 			return dialogsManager;
+		};
+
+		this.getPageSettings = function( settingName ) {
+			return getSiteSettings( 'page', settingName );
+		};
+
+		this.getGeneralSettings = function( settingName ) {
+			return getSiteSettings( 'general', settingName );
 		};
 
 		this.isEditMode = function() {
