@@ -236,17 +236,12 @@ class Manager {
 	}
 
 	private function register_default_sources() {
-		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
-
 		$sources = [
 			'local',
 			'remote',
 		];
 
 		foreach ( $sources as $source_filename ) {
-			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
-
 			$class_name = ucwords( $source_filename );
 			$class_name = str_replace( '-', '_', $class_name );
 
