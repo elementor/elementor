@@ -123,6 +123,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/admin',
 							src: '**/*.js',
 							expose: 'elementor-admin'
+						},
+						{
+							cwd: 'modules',
+							src: '**/*.js',
+							expose: 'modules'
 						}
 					] );
 				}
@@ -261,14 +266,16 @@ module.exports = function( grunt ) {
 		watch:  {
 			styles: {
 				files: [
-					'assets/dev/scss/**/*.scss'
+					'assets/dev/scss/**/*.scss',
+					'modules/**/*.scss'
 				],
 				tasks: [ 'styles' ]
 			},
 
 			scripts: {
 				files: [
-					'assets/dev/js/**/*.js'
+					'assets/dev/js/**/*.js',
+					'modules/**/*.js'
 				],
 				tasks: [ 'scripts' ]
 			}
