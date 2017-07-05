@@ -126,7 +126,8 @@
     max-width: 100%;
     width: 100%;
     margin: 0;
-    line-height: 1; }
+    line-height: 1;
+    border: none; }
   .elementor .elementor-custom-embed {
     line-height: 0; }
   .elementor .elementor-background-video-container {
