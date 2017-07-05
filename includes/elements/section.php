@@ -715,6 +715,12 @@ class Element_Section extends Element_Base {
 					'default' => [
 						'unit' => '%',
 					],
+					'tablet_default' => [
+						'unit' => '%',
+					],
+					'mobile_default' => [
+						'unit' => '%',
+					],
 					'range' => [
 						'%' => [
 							'min' => 100,
