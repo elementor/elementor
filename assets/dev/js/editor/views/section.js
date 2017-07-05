@@ -36,7 +36,7 @@ SectionView = BaseElementView.extend( {
 		}
 		};
 
-		return elementor.hooks.applyFilters( 'elements/section//behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
 
 	errors: {
