@@ -116,7 +116,7 @@ class Element_Column extends Element_Base {
 			'nav',
 		];
 
-		$options = [ '' => __( 'Default', '' ) ] + array_combine( $possible_tags, $possible_tags );
+		$options = [ '' => __( 'Default', 'elementor' ) ] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
