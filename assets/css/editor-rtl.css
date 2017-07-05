@@ -1993,6 +1993,25 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-revision-current-preview {
   background-color: #e6e9ec; }
 
+.elementor-history-item {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px solid #d5dadf;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  cursor: pointer; }
+  .elementor-history-item:hover {
+    background-color: rgba(230, 233, 236, 0.3); }
+  .elementor-history-item-applied {
+    opacity: 0.4; }
+  .elementor-history-item-current {
+    background: #d4d4d4;
+    cursor: inherit; }
+
 #elementor-preview {
   background-color: #333;
   position: absolute;
