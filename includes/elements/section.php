@@ -327,7 +327,7 @@ class Element_Section extends Element_Base {
 			'div',
 		];
 
-		$options = [ '' => __( 'Default', '' ) ] + array_combine( $possible_tags, $possible_tags );
+		$options = [ '' => __( 'Default', 'elementor' ) ] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
