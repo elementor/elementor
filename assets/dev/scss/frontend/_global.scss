@@ -68,6 +68,9 @@
 
 	.elementor-background-video-embed {
 		max-width: none;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
 	}
 
 	.elementor-background-video {
