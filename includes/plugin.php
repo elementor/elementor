@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\PageSettings\Manager as PageSettingsManager;
 
@@ -121,6 +122,12 @@ class Plugin {
 	public $wordpress_widgets_manager;
 
 	/**
+	 * @var Modules_Manager
+	 */
+	private $modules_manager;
+
+
+	/**
 	 * @deprecated
 	 *
 	 * @return string
@@ -215,6 +222,8 @@ class Plugin {
 		}
 
 		$this->maintenance_mode = new Maintenance_Mode();
+
+		$this->modules_manager = new Modules_Manager();
 	}
 
 	private function add_cpt_support() {
