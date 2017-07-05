@@ -1010,16 +1010,6 @@ select {
     width: 100%; }
     .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab {
       display: table-cell; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-content a:before {
-        content: '\f040'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-style a:before {
-        content: '\f042'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-advanced a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-settings a:before {
-        content: '\f013'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-responsive a:before {
-        content: '\f10a'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
-        content: '\f0db'; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.active {
         background-image: linear-gradient(to bottom, #f3f3f3, #fff);
         border-bottom: 3px solid #9b0a46; }
@@ -1034,6 +1024,16 @@ select {
           font-size: 16px;
           display: block;
           margin-bottom: 6px; }
+  .elementor-panel .elementor-tab-control-content a:before {
+    content: '\f040'; }
+  .elementor-panel .elementor-tab-control-style a:before {
+    content: '\f042'; }
+  .elementor-panel .elementor-tab-control-advanced a:before, .elementor-panel .elementor-tab-control-settings a:before, .elementor-panel .elementor-tab-control-general_style a:before {
+    content: '\f013'; }
+  .elementor-panel .elementor-tab-control-responsive a:before {
+    content: '\f10a'; }
+  .elementor-panel .elementor-tab-control-layout a:before, .elementor-panel .elementor-tab-control-column a:before {
+    content: '\f0db'; }
   .elementor-panel .elementor-control {
     background-color: #fff;
     position: relative;
