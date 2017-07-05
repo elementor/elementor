@@ -7,19 +7,19 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	childView: PanelMenuItemView,
 
 	initialize: function() {
-		this.collection = new Backbone.Collection( [
-            {
-                icon: 'fa fa-paint-brush',
-                title: elementor.translate( 'global_colors' ),
+		var menu =  [
+			{
+				icon: 'fa fa-paint-brush',
+				title: elementor.translate( 'global_colors' ),
 				type: 'page',
-                pageName: 'colorScheme'
-            },
-            {
-                icon: 'fa fa-font',
-                title: elementor.translate( 'global_fonts' ),
+				pageName: 'colorScheme'
+			},
+			{
+				icon: 'fa fa-font',
+				title: elementor.translate( 'global_fonts' ),
 				type: 'page',
-                pageName: 'typographyScheme'
-            },
+				pageName: 'typographyScheme'
+			},
 			{
 				icon: 'fa fa-eyedropper',
 				title: elementor.translate( 'color_picker' ),
@@ -38,13 +38,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
 				pageName: 'settingsPage'
 			},
-            {
-                icon: 'fa fa-eraser',
-                title: elementor.translate( 'clear_page' ),
-                callback: function() {
-                    elementor.clearPage();
-                }
-            },
+			{
+				icon: 'fa fa-eraser',
+				title: elementor.translate( 'clear_page' ),
+				callback: function() {
+					elementor.clearPage();
+				}
+			},
 			{
 				icon: 'eicon-elementor',
 				title: elementor.translate( 'elementor_settings' ),
@@ -59,7 +59,11 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				link: elementor.config.elementor_site,
 				newTab: true
 			}
-		] );
+		];
+
+		menu = elementor.hooks.applyFilters( 'panel/menu/items', menu );
+
+		this.collection = new Backbone.Collection( menu );
 	},
 
 	onChildviewClick: function( childView ) {

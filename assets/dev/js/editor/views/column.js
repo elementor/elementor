@@ -9,20 +9,24 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
-	behaviors: {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'widget'
-		},
-		Resizable: {
-			behaviorClass: require( 'elementor-behaviors/resizable' )
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAddMode: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+	behaviors: function() {
+		var behaviors = {
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'widget'
+			},
+			Resizable: {
+				behaviorClass: require( 'elementor-behaviors/resizable' )
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
+		};
+
+		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
 
 	className: function() {
@@ -80,7 +84,7 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
-			self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
 		} );
 	},
 
