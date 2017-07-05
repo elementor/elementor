@@ -1742,6 +1742,7 @@ App = Marionette.Application.extend( {
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
 	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
+	history:  require( 'modules/history/assets/js/manager' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -2319,7 +2320,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"elementor-editor-utils/ajax":64,"elementor-editor-utils/conditions":65,"elementor-editor-utils/debug":67,"elementor-editor-utils/heartbeat":68,"elementor-editor-utils/helpers":69,"elementor-editor-utils/hot-keys":70,"elementor-editor-utils/images-manager":71,"elementor-editor-utils/introduction":72,"elementor-editor-utils/page-settings":75,"elementor-editor-utils/presets-factory":76,"elementor-editor-utils/schemes":77,"elementor-layouts/panel/panel":58,"elementor-models/element":61,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/hooks":118,"elementor-views/controls/base":90,"elementor-views/controls/base-multiple":88,"elementor-views/controls/box-shadow":91,"elementor-views/controls/choose":92,"elementor-views/controls/code":93,"elementor-views/controls/color":94,"elementor-views/controls/date-time":95,"elementor-views/controls/dimensions":96,"elementor-views/controls/font":97,"elementor-views/controls/gallery":98,"elementor-views/controls/icon":99,"elementor-views/controls/image-dimensions":100,"elementor-views/controls/media":101,"elementor-views/controls/number":102,"elementor-views/controls/order":103,"elementor-views/controls/repeater":105,"elementor-views/controls/section":106,"elementor-views/controls/select2":107,"elementor-views/controls/slider":108,"elementor-views/controls/structure":109,"elementor-views/controls/switcher":110,"elementor-views/controls/tab":111,"elementor-views/controls/wp_widget":112,"elementor-views/controls/wysiwyg":113,"elementor-views/preview":115,"elementor-views/widget":117}],33:[function(require,module,exports){
+},{"elementor-editor-utils/ajax":64,"elementor-editor-utils/conditions":65,"elementor-editor-utils/debug":67,"elementor-editor-utils/heartbeat":68,"elementor-editor-utils/helpers":69,"elementor-editor-utils/hot-keys":70,"elementor-editor-utils/images-manager":71,"elementor-editor-utils/introduction":72,"elementor-editor-utils/page-settings":75,"elementor-editor-utils/presets-factory":76,"elementor-editor-utils/schemes":77,"elementor-layouts/panel/panel":58,"elementor-models/element":61,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/hooks":118,"elementor-views/controls/base":90,"elementor-views/controls/base-multiple":88,"elementor-views/controls/box-shadow":91,"elementor-views/controls/choose":92,"elementor-views/controls/code":93,"elementor-views/controls/color":94,"elementor-views/controls/date-time":95,"elementor-views/controls/dimensions":96,"elementor-views/controls/font":97,"elementor-views/controls/gallery":98,"elementor-views/controls/icon":99,"elementor-views/controls/image-dimensions":100,"elementor-views/controls/media":101,"elementor-views/controls/number":102,"elementor-views/controls/order":103,"elementor-views/controls/repeater":105,"elementor-views/controls/section":106,"elementor-views/controls/select2":107,"elementor-views/controls/slider":108,"elementor-views/controls/structure":109,"elementor-views/controls/switcher":110,"elementor-views/controls/tab":111,"elementor-views/controls/wp_widget":112,"elementor-views/controls/wysiwyg":113,"elementor-views/preview":115,"elementor-views/widget":117,"modules/history/assets/js/manager":123}],33:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -7773,6 +7774,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
 	},
 
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
 	className: function() {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
@@ -9650,16 +9655,16 @@ SectionView = BaseElementView.extend( {
 
 	behaviors: function() {
 		var behaviors = {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'column'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAddMode: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'column'
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
 		};
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
@@ -9682,6 +9687,8 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
+
+		this.listenTo( this.getEditModel().get( 'settings' ), 'change', this.onChange );
 	},
 
 	addEmptyColumn: function() {
@@ -9718,6 +9725,12 @@ SectionView = BaseElementView.extend( {
 		};
 	},
 
+	onChange: function( settingsModel ) {
+		if ( settingsModel.changed.structure ) {
+			this.redefineLayout();
+		}
+	},
+
 	getColumnPercentSize: function( element, size ) {
 		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
@@ -9738,8 +9751,6 @@ SectionView = BaseElementView.extend( {
 		}
 
 		this.model.setSetting( 'structure', structure );
-
-		this.redefineLayout();
 	},
 
 	redefineLayout: function() {
@@ -9840,7 +9851,9 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onBeforeRender: function() {
-		this._checkIsEmpty();
+		if ( ! this.model.get( 'editSettings' ).get( 'dontFillEmpty' ) ) {
+			this._checkIsEmpty();
+		}
 	},
 
 	onRender: function() {
@@ -10578,5 +10591,585 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":119}]},{},[73,74,32])
+},{"./module":119}],121:[function(require,module,exports){
+module.exports = Marionette.Behavior.extend( {
+	initialize: function() {
+		_.defer( _.bind( this.onStart, this ) );
+	},
+
+	onStart: function() {
+		if ( this.view.collection ) {
+			this.view.collection.on( 'update', this.saveCollectionHistory, this );
+		}
+	},
+
+	saveCollectionHistory: function( collection, event ) {
+		var historyItem,
+			model;
+
+		if ( event.add ) {
+			model = event.changes.added[0];
+
+			historyItem = {
+				type: 'add',
+				elementType: model.get( 'elType' ),
+				elementID: model.get( 'id' ),
+				title: elementor.history.getModelLabel( model ) + ' Added',
+				history: {
+					behavior: this,
+					collection: collection,
+					event: event,
+					model: model
+				}
+			};
+
+			elementor.history.addItem( historyItem );
+		} else {
+			model = event.changes.removed[0];
+			// Remove listeners and etc
+			model.destroy();
+
+			historyItem = {
+				type: 'remove',
+				elementType: model.get( 'elType' ),
+				elementID: model.get( 'id' ),
+				title: elementor.history.getModelLabel( model ) + ' Removed',
+				history: {
+					behavior: this,
+					collection: collection,
+					event: event,
+					model: model
+				}
+			};
+
+			elementor.history.addItem( historyItem );
+		}
+	},
+
+	add: function( model, toView, position ) {
+		if ( 'section' === model.get( 'elType' ) ) {
+			model.get( 'editSettings' ).set( 'dontFillEmpty', true );
+		}
+
+		toView.addChildModel( model, { at: position, silent: 0 } );
+	},
+
+	remove: function( model, fromCollection ) {
+		fromCollection.remove( model, { silent: 0 } );
+	},
+
+	restore: function( historyItem, isRedo ) {
+		var	type = historyItem.get( 'type' ),
+			history = historyItem.get( 'history' ),
+			didAction = false,
+			behavior;
+
+		// Find the new behavior and work with him
+		if ( history.behavior.view.model ) {
+			var modelID = history.behavior.view.model.get( 'id' ),
+				view = elementor.history.findView( modelID );
+			if ( view ) {
+				behavior = view._behaviors[ Object.keys( view.behaviors ).indexOf( 'CollectionHistory' ) ];
+			}
+		}
+
+		// Container or new Elements - Doesn't have a new behavior
+		if ( ! behavior ) {
+			behavior = history.behavior;
+		}
+
+		// Stop listen to undo actions
+		behavior.view.collection.off( 'update', behavior.saveCollectionHistory );
+
+		switch ( type ) {
+			case 'add':
+				if ( isRedo ) {
+					this.add( history.model, behavior.view, history.event.index );
+				} else {
+					this.remove( history.model, behavior.view.collection );
+				}
+
+				didAction = true;
+				break;
+			case 'remove':
+				if ( isRedo ) {
+					this.remove( history.model, behavior.view.collection );
+				} else {
+					this.add( history.model, behavior.view, history.event.index );
+				}
+
+				didAction = true;
+				break;
+		}
+
+		// Listen again
+		behavior.view.collection.on( 'update', behavior.saveCollectionHistory, history.behavior );
+
+		return didAction;
+	}
+} );
+
+
+},{}],122:[function(require,module,exports){
+module.exports = Marionette.Behavior.extend( {
+	initialize: function() {
+		_.defer( _.bind( this.onStart, this ) );
+	},
+
+	onStart: function() {
+		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
+	},
+
+	saveHistory: function( model ) {
+		var changed = Object.keys( model.changed );
+		if ( ! changed.length || ! model.controls[ changed[0] ] ) {
+			return;
+		}
+
+		var changedAttributes = {};
+
+		_.each( changed, function( controlName ) {
+			changedAttributes[ controlName ] = {
+				old: model.previous( controlName ),
+				'new': model.get( controlName )
+			};
+		} );
+
+		var historyItem = {
+			type: 'change',
+			elementType: 'control',
+			status: 'not_applied',
+			title: elementor.history.getModelLabel( model ) + ' Edited',
+			history: {
+				behavior: this,
+				changed: changedAttributes,
+			}
+		};
+
+		if ( 1 === changed.length && model.controls[ changed[0] ] ) {
+			historyItem.title = elementor.history.getModelLabel( model ) + ':' + model.controls[ changed[0] ].label + ' Changed';
+		}
+
+		elementor.history.addItem( historyItem );
+	},
+
+	restore: function( historyItem, isRedo ) {
+		var	type = historyItem.get( 'type' ),
+			history = historyItem.get( 'history' ),
+			modelID = history.behavior.view.model.get( 'id' ),
+			view = elementor.history.findView( modelID ),
+			model = view.getEditModel ? view.getEditModel() : view.model,
+			settings = model.get( 'settings' ),
+			behavior = view._behaviors[ Object.keys( view.behaviors ).indexOf( 'ElementHistory' ) ];
+
+		// Stop listen to restore actions
+		behavior.stopListening( model, 'change', behavior.saveHistory );
+
+		_.each( history.changed, function( values, key ) {
+			if ( isRedo ) {
+				model.set( key, values['new'] );
+			} else {
+				model.set( key, values.old );
+			}
+		} );
+
+		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
+
+		// Listen again
+		behavior.listenTo( model, 'change', behavior.saveHistory );
+	}
+} );
+
+
+},{}],123:[function(require,module,exports){
+var HistoryPageView = require( './panel-page' ),
+	Manager = function() {
+	var self = this;
+
+	var addPanelPage = function() {
+		elementor.getPanelView().addPage( 'historyPage', {
+			view: HistoryPageView,
+			title: elementor.translate( 'history' ),
+			options: {
+				collection: self.items
+			}
+		} );
+	};
+
+	var addHotKeys = function() {
+		var H_KEY = 72,
+			Z_KEY = 90;
+
+		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
+			isWorthHandling: function() {
+				return elementor.history.items.length;
+			},
+			handle: function( event ) {
+				elementor.history.navigate( Z_KEY === event.which && event.shiftKey );
+			}
+		} );
+
+		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
+			isWorthHandling: function( event ) {
+				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
+			},
+			handle: function() {
+				elementor.getPanelView().setPage( 'historyPage' );
+			}
+		} );
+	};
+
+	var normalizeItemTitle = function( item ) {
+		var subItems = item.get( 'items' );
+
+		// Check if it's a move action that in fact it's two action remove + add or between section it's add + remove
+		if ( 2 === subItems.length ) {
+			var firstItemType = subItems.at( 0 ).get( 'type' ),
+				secondItemType = subItems.at( 1 ).get( 'type' );
+
+			if ( ( 'add' === firstItemType && 'remove' === secondItemType ) || ( 'remove' === firstItemType && 'add' === secondItemType ) ) {
+				var model = subItems.at( 0 ).get( 'history' ).model,
+					modelLabel = elementor.history.getModelLabel( model );
+				item.set( 'title', modelLabel + ' Moved' );
+				return item;
+			}
+		}
+
+		// Check if it's a remove of a complete cection / column
+		if ( 1 < subItems.length ) {
+			var lastItem = subItems.first(),
+				elementType = lastItem.get( 'elementType' );
+			if ( 'remove' === lastItem.get( 'type' ) && ( 'section' === elementType || 'column' === elementType ) ) {
+				var model = lastItem.get( 'history' ).model,
+					modelLabel = elementor.history.getModelLabel( model );
+				item.set( 'title', modelLabel + ' Removed' );
+				return item;
+			}
+		}
+
+		return item;
+	};
+
+	var HistoryCollection = Backbone.Collection.extend( {
+		model: Backbone.Model.extend( {
+			type: '', // add/delete/move/change
+			elementType: '', // section/column/widget/control
+			elementID: '',
+			title: '', // Widget Heading moved
+			status: 'not_applied',
+			history: {
+			}
+		} )
+	} );
+
+	var addBehaviors = function( behaviors ) {
+			behaviors.ElementHistory = {
+				behaviorClass: require( 'modules/history/assets/js/element-behavior' )
+			};
+
+			behaviors.CollectionHistory = {
+				behaviorClass: require( 'modules/history/assets/js/collection-behavior' )
+			};
+
+			return behaviors;
+		};
+
+	var addCollectionBehavior = function( behaviors ) {
+		behaviors.CollectionHistory = {
+			behaviorClass: require( 'modules/history/assets/js/collection-behavior' )
+		};
+
+		return behaviors;
+	};
+
+	var addMenu = function( items ) {
+		var itemsPartA = items.slice( 0, 3 ),
+			itemsPartB = items.slice( 3, items.length );
+
+		items = itemsPartA.concat( [ {
+			icon: 'fa fa-history',
+			title: elementor.translate( 'history' ),
+			type: 'page',
+			pageName: 'historyPage'
+		} ], itemsPartB );
+		return items;
+	};
+
+	var init = function() {
+		addHotKeys();
+
+		elementor.on( 'preview:loaded', addPanelPage );
+		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
+		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
+		elementor.hooks.addFilter( 'elements/column/behaviors', addBehaviors );
+		elementor.hooks.addFilter( 'elements/column/behaviors', addCollectionBehavior );
+		elementor.hooks.addFilter( 'panel/menu/items', addMenu );
+	};
+
+	this.items = new HistoryCollection();
+
+	this.addItem = function( itemData ) {
+		if ( ! this.items.length ) {
+			this.items.add( {
+				status: 'not_applied',
+				title: 'Editing Started'
+			} );
+		}
+
+
+		// Remove old applied items from top of list
+		while ( this.items.length && 'applied' === this.items.first().get( 'status' ) ) {
+			this.items.shift();
+		}
+
+		var time = Math.round( new Date().getTime() / 1000 ),
+			currentItem = this.items.findWhere( {
+				time: time
+			} );
+
+		if ( ! currentItem ) {
+			currentItem = new Backbone.Model();
+			currentItem.set( 'time', time );
+			currentItem.set( 'items', new Backbone.Collection() );
+			currentItem.set( 'title', itemData.title );
+			currentItem.set( 'status', 'not_applied' );
+		}
+
+		currentItem.get( 'items' ).add( itemData, { at: 0 } );
+
+		currentItem = normalizeItemTitle( currentItem );
+
+		this.items.add( currentItem, { at: 0 } );
+
+		var panel = elementor.getPanelView();
+
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().render();
+		}
+	};
+
+	this.navigate = function( isRedo ) {
+		var currentItem = this.items.find( function( model ) {
+				return 'not_applied' ===  model.get( 'status' );
+			} ),
+			currentItemIndex = this.items.indexOf( currentItem ),
+			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex;
+
+		if ( ! isRedo && ! currentItem ) {
+			return;
+		}
+
+		if ( requiredIndex < 0 ) {
+			requiredIndex = this.items.length - 1;
+		}
+
+		if ( requiredIndex >= this.items.length ) {
+			requiredIndex = 0;
+		}
+
+		this.items.at( requiredIndex ).get( 'items' ).each( function( subItem ) {
+			subItem.get( 'history' ).behavior.restore( subItem, isRedo );
+		} );
+
+		var panel = elementor.getPanelView();
+
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().render();
+		}
+	};
+
+	this.getModelLabel = function( model ) {
+		switch ( model.get( 'elType' ) ) {
+			case 'section':
+				return 'Section';
+			case 'column':
+				return 'Column';
+			case 'widget':
+				return model.get( 'widgetType' );
+		}
+	};
+
+	this.findView = function( modelID, views ) {
+		var self = this,
+			founded = false;
+
+		if ( ! views ) {
+			views = elementor.sections.currentView.children;
+		}
+
+		_.each( views._views, function( view ) {
+			if ( founded ) {
+				return;
+			}
+			// Widget global used getEditModel
+			var model = view.getEditModel ? view.getEditModel() : view.model;
+			if ( modelID === model.get( 'id' ) ) {
+				founded = view;
+			} else if ( view.children && view.children.length ) {
+				founded = self.findView( modelID, view.children );
+			}
+		} );
+
+		return founded;
+	};
+
+	jQuery( window ).on( 'elementor:init', init );
+};
+
+module.exports = new Manager();
+
+},{"./panel-page":124,"modules/history/assets/js/collection-behavior":121,"modules/history/assets/js/element-behavior":122}],124:[function(require,module,exports){
+module.exports = Marionette.CompositeView.extend( {
+	id: 'elementor-panel-history',
+
+	template: '#tmpl-elementor-panel-history',
+
+	childView: Marionette.ItemView.extend( {
+		template: '#tmpl-elementor-panel-history-item',
+		ui: {
+			item: '.elementor-history-item'
+		},
+		triggers: {
+			'click @ui.item': 'item:click'
+		}
+	} ),
+
+	childViewContainer: '#elementor-history-list',
+
+	currentItem: null,
+
+	ui: {
+		clear: '.elementor-panel-scheme-discard .elementor-button',
+		reset: '.elementor-history-reset',
+	},
+
+	events: {
+		'click @ui.clear': 'onClearClick',
+		'click @ui.reset': 'onResetClick'
+	},
+
+	initialize: function() {
+		this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged );
+	},
+
+	onClearClick: function() {
+		elementor.history.items.reset();
+	},
+
+	onCollectionChanged: function() {
+		if ( ! this.collection.length ) {
+			var HistoryEmptyView = Marionette.ItemView.extend( {
+				template: '#tmpl-elementor-panel-history-no-items',
+				id: 'elementor-panel-history-no-items',
+				className: 'elementor-panel-nerd-box'
+			} );
+			elementor.getPanelView().getRegion( 'content' ).show( new HistoryEmptyView() );
+		}
+	},
+
+	onRender: function() {
+		var self = this;
+
+		_.defer( function() {
+			// Render empty page if needed
+			self.collection.trigger( 'reset' );
+
+			// Set current item - the first not applied item
+			if ( self.children.length ) {
+				var currentItem = self.collection.find( function( model ) {
+						return 'not_applied' ===  model.get( 'status' );
+					} ),
+					currentView = self.children.findByModel( currentItem );
+
+				self.updateCurrentItem( currentView.$el );
+			}
+		} );
+	},
+
+	updateCurrentItem: function( element ) {
+		var currentItemClass = 'elementor-history-item-current';
+
+		if ( this.currentItem ) {
+			this.currentItem.removeClass( currentItemClass );
+		}
+
+		this.currentItem = element;
+
+		this.currentItem.addClass( currentItemClass );
+	},
+
+	onResetClick: function() {
+		var childView;
+
+		// Handle Undo
+		for ( var stepNum = 0; stepNum < this.children.length; stepNum++ ) {
+			childView = this.children.findByIndex( stepNum );
+
+			if ( 'not_applied' === childView.model.get( 'status' ) ) {
+
+				childView.model.get( 'items' ).each( function( subItem ) {
+					subItem.get( 'history' ).behavior.restore( subItem );
+				} );
+
+				if ( ! childView.isDestroyed ) {
+					childView.render();
+				}
+			}
+		}
+
+		this.updateCurrentItem( this.ui.reset );
+	},
+
+	onChildviewItemClick: function( childView, event ) {
+		if ( childView.$el === this.currentItem ) {
+			return;
+		}
+
+		var collection = event.model.collection,
+			itemIndex = collection.findIndex( event.model ),
+			item,
+			stepNum;
+
+		// Handle Undo
+		if ( 'not_applied' === childView.model.get( 'status' ) ) {
+			for ( stepNum = 0; stepNum < itemIndex; stepNum++ ) {
+				item = collection.at( stepNum );
+
+				if ( 'not_applied' === item.get( 'status' ) ) {
+					item.get( 'items' ).each( function( subItem ) {
+						subItem.get( 'history' ).behavior.restore( subItem );
+					} );
+
+					item.set( 'status', 'applied' );
+
+					if ( ! childView.isDestroyed ) {
+						childView._parent.children.findByModel( item ).render();
+					}
+				}
+			}
+		} else {
+			// Handle Redo
+			for ( stepNum = collection.length - 1; stepNum >= itemIndex; stepNum-- ) {
+				item = collection.at( stepNum );
+
+				if ( 'applied' === item.get( 'status' ) ) {
+					var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
+					_( reversedSubItems ).each( function( subItem ) {
+						subItem.get( 'history' ).behavior.restore( subItem, true );
+					} );
+
+					item.set( 'status', 'not_applied' );
+
+					if ( ! childView.isDestroyed ) {
+						childView._parent.children.findByModel( item ).render();
+					}
+				}
+			}
+		}
+
+		this.updateCurrentItem( childView.$el );
+	}
+} );
+
+},{}]},{},[73,74,32])
 //# sourceMappingURL=editor.js.map

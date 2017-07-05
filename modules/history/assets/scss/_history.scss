@@ -1,0 +1,24 @@
+.elementor-history- {
+
+	&item {
+		display: flex;
+		align-items: center;
+		border: 1px solid $editor-lightest;
+		padding: 10px 15px;
+		margin-bottom: 10px;
+		cursor: pointer;
+
+		&:hover {
+			background-color: fade_out($editor-background, 0.7) ;
+		}
+
+		&-applied {
+			opacity: 0.4;
+		}
+
+		&-current {
+			background: #d4d4d4;
+			cursor: inherit;
+		}
+	}
+}

@@ -24,16 +24,16 @@ SectionView = BaseElementView.extend( {
 
 	behaviors: function() {
 		var behaviors = {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'column'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAddMode: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'column'
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
 		};
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
@@ -56,6 +56,8 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
+
+		this.listenTo( this.getEditModel().get( 'settings' ), 'change', this.onChange );
 	},
 
 	addEmptyColumn: function() {
@@ -92,6 +94,12 @@ SectionView = BaseElementView.extend( {
 		};
 	},
 
+	onChange: function( settingsModel ) {
+		if ( settingsModel.changed.structure ) {
+			this.redefineLayout();
+		}
+	},
+
 	getColumnPercentSize: function( element, size ) {
 		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
@@ -112,8 +120,6 @@ SectionView = BaseElementView.extend( {
 		}
 
 		this.model.setSetting( 'structure', structure );
-
-		this.redefineLayout();
 	},
 
 	redefineLayout: function() {
@@ -214,7 +220,9 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onBeforeRender: function() {
-		this._checkIsEmpty();
+		if ( ! this.model.get( 'editSettings' ).get( 'dontFillEmpty' ) ) {
+			this._checkIsEmpty();
+		}
 	},
 
 	onRender: function() {
