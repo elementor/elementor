@@ -256,7 +256,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'custom_height_inner',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -325,13 +325,14 @@ class Element_Section extends Element_Base {
 			'div',
 		];
 
+		$options = [ '' => __( 'Default', 'elementor' ) ] + array_combine( $possible_tags, $possible_tags );
+
 		$this->add_control(
 			'html_tag',
 			[
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'section',
-				'options' => array_combine( $possible_tags, $possible_tags ),
+				'options' => $options,
 			]
 		);
 
@@ -638,7 +639,7 @@ class Element_Section extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
-					'{{WRAPPER}} > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
 				],
 			]
 		);
@@ -710,6 +711,12 @@ class Element_Section extends Element_Base {
 					'type' => Controls_Manager::SLIDER,
 					'units' => [ '%' ],
 					'default' => [
+						'unit' => '%',
+					],
+					'tablet_default' => [
+						'unit' => '%',
+					],
+					'mobile_default' => [
 						'unit' => '%',
 					],
 					'range' => [
@@ -1138,7 +1145,7 @@ class Element_Section extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings();
 		?>
-		<<?php echo $settings['html_tag'] . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -1177,7 +1184,7 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
-		</<?php echo $this->get_settings( 'html_tag' ); ?>>
+		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
 
@@ -1196,6 +1203,16 @@ class Element_Section extends Element_Base {
 
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'column' );
+	}
+
+	private function get_html_tag() {
+		$html_tag = $this->get_settings( 'html_tag' );
+
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'section';
+		}
+
+		return $html_tag;
 	}
 
 	private function print_shape_divider( $side ) {

@@ -7445,7 +7445,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	tagName: function() {
-		return this.model.getSetting( 'html_tag' );
+		return this.model.getSetting( 'html_tag' ) || 'div';
 	},
 
 	ui: function() {
@@ -9742,7 +9742,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	tagName: function() {
-		return this.model.getSetting( 'html_tag' );
+		return this.model.getSetting( 'html_tag' ) || 'section';
 	},
 
 	childViewContainer: '> .elementor-container > .elementor-row',
