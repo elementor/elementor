@@ -180,7 +180,7 @@ LightboxModule = ViewModule.extend( {
 		}
 
 		if ( 'elementor_lightbox_content_position' in model.changed ) {
-			var position = elementorFrontend.getGeneralSettings( 'elementor_lightbox_content_position' );
+			var position = model.changed.elementor_lightbox_content_position;
 
 			this.setSettings( 'modalOptions.position', {
 				my: position,
@@ -191,6 +191,8 @@ LightboxModule = ViewModule.extend( {
 		}
 
 		if ( 'elementor_lightbox_content_animation' in model.changed ) {
+			this.setSettings( 'modalOptions.entranceAnimation', model.changed.elementor_lightbox_content_animation );
+
 			this.setEntranceAnimation();
 		}
 	}
