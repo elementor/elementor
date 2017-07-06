@@ -1661,6 +1661,10 @@ select {
     overflow: hidden; }
   .elementor-panel .elementor-control-type-box_shadow .elementor-box-shadow-slider {
     margin-top: 10px; }
+  .elementor-panel .elementor-control-type-switcher.elementor-label-inline > .elementor-control-content .elementor-control-field .elementor-control-title {
+    width: 70%; }
+  .elementor-panel .elementor-control-type-switcher.elementor-label-inline > .elementor-control-content .elementor-control-field .elementor-control-input-wrapper {
+    width: 20%; }
   .elementor-panel .elementor-control-type-switcher .elementor-control-input-wrapper {
     text-align: right; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch {
@@ -1673,10 +1677,7 @@ select {
     border-radius: 18px;
     cursor: pointer; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0; }
+    display: none; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-label {
     position: relative;
     display: block;
