@@ -1,11 +1,11 @@
 <?php
-namespace Elementor\Editor\Settings\Page;
+namespace Elementor\Core\Settings\Page;
 
 use Elementor\Controls_Manager;
-use Elementor\Editor\Settings\Base\Model as BaseModel;
+use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
-use Elementor\Editor\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

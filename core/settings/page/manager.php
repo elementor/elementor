@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Editor\Settings\Page;
+namespace Elementor\Core\Settings\Page;
 
 use Elementor\CSS_File;
-use Elementor\Editor\Settings\Base\Manager as BaseManager;
-use \Elementor\Editor\Settings\Manager as SettingsManager;
-use Elementor\Editor\Settings\Base\Model as BaseModel;
+use Elementor\Core\Settings\Base\Manager as BaseManager;
+use \Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Post_CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

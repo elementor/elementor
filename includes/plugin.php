@@ -2,8 +2,8 @@
 namespace Elementor;
 
 use Elementor\Debug\Debug;
-use Elementor\Editor\Settings\Manager as SettingsManager;
-use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
