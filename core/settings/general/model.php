@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\Editor\Settings\General;
+namespace Elementor\Core\Settings\General;
 
 use Elementor\Controls_Manager;
-use Elementor\Editor\Settings\Base\Model as BaseModel;
+use Elementor\Core\Settings\Base\Model as BaseModel;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

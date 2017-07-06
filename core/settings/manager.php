@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Editor\Settings;
+namespace Elementor\Core\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
