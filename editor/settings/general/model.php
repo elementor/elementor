@@ -95,6 +95,8 @@ class Model extends BaseModel {
 				foreach ( $section_data['controls'] as $control_name => $control_data ) {
 					$this->add_control( $control_name, $control_data );
 				}
+
+				$this->end_controls_section();
 			}
 		}
 	}
