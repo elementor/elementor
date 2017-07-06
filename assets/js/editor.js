@@ -7396,7 +7396,9 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
+			if ( self.ui.percentsTooltip ) {
 				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+			}
 		} );
 	},
 
@@ -10677,7 +10679,7 @@ module.exports = Marionette.Behavior.extend( {
 			var modelID = history.behavior.view.model.get( 'id' ),
 				view = elementor.history.findView( modelID );
 			if ( view ) {
-				behavior = view._behaviors[ Object.keys( view.behaviors ).indexOf( 'CollectionHistory' ) ];
+				behavior = view.getBehavior( 'CollectionHistory' );
 			}
 		}
 
@@ -10768,23 +10770,23 @@ module.exports = Marionette.Behavior.extend( {
 			view = elementor.history.findView( modelID ),
 			model = view.getEditModel ? view.getEditModel() : view.model,
 			settings = model.get( 'settings' ),
-			behavior = view._behaviors[ Object.keys( view.behaviors ).indexOf( 'ElementHistory' ) ];
+			behavior = view.getBehavior( 'ElementHistory' );
 
 		// Stop listen to restore actions
-		behavior.stopListening( model, 'change', behavior.saveHistory );
+		behavior.stopListening( settings, 'change', behavior.saveHistory );
 
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				model.set( key, values['new'] );
+				settings.set( key, values['new'] );
 			} else {
-				model.set( key, values.old );
+				settings.set( key, values.old );
 			}
 		} );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
 
 		// Listen again
-		behavior.listenTo( model, 'change', behavior.saveHistory );
+		behavior.listenTo( settings, 'change', behavior.saveHistory );
 	}
 } );
 
@@ -10908,9 +10910,9 @@ var HistoryPageView = require( './panel-page' ),
 
 		elementor.on( 'preview:loaded', addPanelPage );
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/column/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/column/behaviors', addCollectionBehavior );
+		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
+		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 		elementor.hooks.addFilter( 'panel/menu/items', addMenu );
 	};
 
@@ -10923,7 +10925,6 @@ var HistoryPageView = require( './panel-page' ),
 				title: 'Editing Started'
 			} );
 		}
-
 
 		// Remove old applied items from top of list
 		while ( this.items.length && 'applied' === this.items.first().get( 'status' ) ) {
@@ -10961,28 +10962,60 @@ var HistoryPageView = require( './panel-page' ),
 				return 'not_applied' ===  model.get( 'status' );
 			} ),
 			currentItemIndex = this.items.indexOf( currentItem ),
-			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex;
+			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
 
-		if ( ! isRedo && ! currentItem ) {
+		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0  || requiredIndex >= this.items.length ) {
 			return;
 		}
 
-		if ( requiredIndex < 0 ) {
-			requiredIndex = this.items.length - 1;
-		}
-
-		if ( requiredIndex >= this.items.length ) {
-			requiredIndex = 0;
-		}
-
-		this.items.at( requiredIndex ).get( 'items' ).each( function( subItem ) {
-			subItem.get( 'history' ).behavior.restore( subItem, isRedo );
-		} );
+		this.doItem( requiredIndex );
 
 		var panel = elementor.getPanelView();
 
 		if ( 'historyPage' === panel.getCurrentPageName() ) {
 			panel.getCurrentPageView().render();
+		}
+	};
+
+	this.doItem = function( index ) {
+		var item = this.items.at( index );
+
+		// Handle Undo
+		if ( 'not_applied' === item.get( 'status' ) ) {
+			this.undoItem( index );
+		} else {
+			this.redoItem( index );
+		}
+	};
+
+	this.undoItem = function( index ) {
+		var item;
+
+		for ( var stepNum = 0; stepNum < index; stepNum++ ) {
+			item = this.items.at( stepNum );
+
+			if ( 'not_applied' === item.get( 'status' ) ) {
+				item.get( 'items' ).each( function( subItem ) {
+					subItem.get( 'history' ).behavior.restore( subItem );
+				} );
+				item.set( 'status', 'applied' );
+			}
+		}
+	};
+
+	this.redoItem = function( index ) {
+		var item;
+		for ( var stepNum = this.items.length - 1; stepNum >= index; stepNum-- ) {
+			item = this.items.at( stepNum );
+
+			if ( 'applied' === item.get( 'status' ) ) {
+				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
+				_( reversedSubItems ).each( function( subItem ) {
+					subItem.get( 'history' ).behavior.restore( subItem, true );
+				} );
+
+				item.set( 'status', 'not_applied' );
+			}
 		}
 	};
 
@@ -11110,23 +11143,12 @@ module.exports = Marionette.CompositeView.extend( {
 		var childView;
 
 		// Handle Undo
-		for ( var stepNum = 0; stepNum < this.children.length; stepNum++ ) {
-			childView = this.children.findByIndex( stepNum );
-
-			if ( 'not_applied' === childView.model.get( 'status' ) ) {
-
-				childView.model.get( 'items' ).each( function( subItem ) {
-					subItem.get( 'history' ).behavior.restore( subItem );
-				} );
-
-				if ( ! childView.isDestroyed ) {
-					childView.render();
-				}
-			}
-		}
+		this.undoItem( this.children.length );
 
 		this.updateCurrentItem( this.ui.reset );
 	},
+
+
 
 	onChildviewItemClick: function( childView, event ) {
 		if ( childView.$el === this.currentItem ) {
@@ -11134,48 +11156,13 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		var collection = event.model.collection,
-			itemIndex = collection.findIndex( event.model ),
-			item,
-			stepNum;
+			itemIndex = collection.findIndex( event.model );
 
-		// Handle Undo
-		if ( 'not_applied' === childView.model.get( 'status' ) ) {
-			for ( stepNum = 0; stepNum < itemIndex; stepNum++ ) {
-				item = collection.at( stepNum );
-
-				if ( 'not_applied' === item.get( 'status' ) ) {
-					item.get( 'items' ).each( function( subItem ) {
-						subItem.get( 'history' ).behavior.restore( subItem );
-					} );
-
-					item.set( 'status', 'applied' );
-
-					if ( ! childView.isDestroyed ) {
-						childView._parent.children.findByModel( item ).render();
-					}
-				}
-			}
-		} else {
-			// Handle Redo
-			for ( stepNum = collection.length - 1; stepNum >= itemIndex; stepNum-- ) {
-				item = collection.at( stepNum );
-
-				if ( 'applied' === item.get( 'status' ) ) {
-					var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
-					_( reversedSubItems ).each( function( subItem ) {
-						subItem.get( 'history' ).behavior.restore( subItem, true );
-					} );
-
-					item.set( 'status', 'not_applied' );
-
-					if ( ! childView.isDestroyed ) {
-						childView._parent.children.findByModel( item ).render();
-					}
-				}
-			}
-		}
+		elementor.history.doItem( itemIndex );
 
 		this.updateCurrentItem( childView.$el );
+
+		this.render();
 	}
 } );
 
