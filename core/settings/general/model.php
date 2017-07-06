@@ -34,14 +34,14 @@ class Model extends BaseModel {
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
 						'elementor_default_generic_fonts' => [
-							'label' => __( 'Default Generic Fonts', '' ),
+							'label' => __( 'Default Generic Fonts', 'elementor' ),
 							'type' => Controls_Manager::TEXT,
 							'default' => 'Sans-serif',
 							'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 							'label_block' => true,
 						],
 						'elementor_container_width' => [
-							'label' => __( 'Content Width', '' ) . ' (px)',
+							'label' => __( 'Content Width', 'elementor' ) . ' (px)',
 							'type' => Controls_Manager::NUMBER,
 							'min' => 0,
 							'description' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
@@ -78,18 +78,18 @@ class Model extends BaseModel {
 				],
 			],
 			Manager::PANEL_TAB_LIGHTBOX => [
-				'lightbox' => [
-					'label' => __( 'Lightbox', '' ),
+				'style' => [
+					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
 						'elementor_lightbox_color' => [
-							'label' => __( 'Color', '' ),
+							'label' => __( 'Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
 								'.elementor-lightbox-modal' => 'background-color: {{VALUE}}',
 							],
 						],
 						'elementor_lightbox_width' => [
-							'label' => __( 'Width', '' ),
+							'label' => __( 'Width', 'elementor' ),
 							'type' => Controls_Manager::SLIDER,
 							'units' => [ '%' ],
 							'default' => [

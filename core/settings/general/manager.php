@@ -112,8 +112,8 @@ class Manager extends BaseManager {
 	}
 
 	private function add_panel_tabs() {
-		Controls_Manager::add_tab( self::PANEL_TAB_GENERAL_STYLE, __( 'General Style', '' ) );
+		Controls_Manager::add_tab( self::PANEL_TAB_GENERAL_STYLE, __( 'General Style', 'elementor' ) );
 
-		Controls_Manager::add_tab( self::PANEL_TAB_LIGHTBOX, __( 'Lightbox', '' ) );
+		Controls_Manager::add_tab( self::PANEL_TAB_LIGHTBOX, __( 'Lightbox', 'elementor' ) );
 	}
 }
