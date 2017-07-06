@@ -50,7 +50,7 @@ module.exports = Marionette.Behavior.extend( {
 			behavior = view.getBehavior( 'ElementHistory' );
 
 		// Stop listen to restore actions
-		behavior.stopListening( settings, 'change', behavior.saveHistory );
+		behavior.stopListening( settings, 'change', this.saveHistory );
 
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
@@ -63,7 +63,7 @@ module.exports = Marionette.Behavior.extend( {
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
 
 		// Listen again
-		behavior.listenTo( settings, 'change', behavior.saveHistory );
+		behavior.listenTo( settings, 'change', this.saveHistory );
 	}
 } );
 

@@ -12,16 +12,49 @@ var HistoryPageView = require( './panel-page' ),
 		} );
 	};
 
+	var addMenu = function( items ) {
+		var itemsPartA = items.slice( 0, 3 ),
+			itemsPartB = items.slice( 3, items.length );
+
+		items = itemsPartA.concat( [ {
+			icon: 'fa fa-history',
+			title: elementor.translate( 'history' ),
+			type: 'page',
+			pageName: 'historyPage'
+		} ], itemsPartB );
+		return items;
+	};
+
+	var navigate = function( isRedo ) {
+		var currentItem = self.items.find( function( model ) {
+				return 'not_applied' ===  model.get( 'status' );
+			} ),
+			currentItemIndex = self.items.indexOf( currentItem ),
+			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
+
+		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0  || requiredIndex >= self.items.length ) {
+			return;
+		}
+
+		self.doItem( requiredIndex );
+
+		var panel = elementor.getPanelView();
+
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().render();
+		}
+	};
+
 	var addHotKeys = function() {
 		var H_KEY = 72,
 			Z_KEY = 90;
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: function() {
-				return elementor.history.items.length;
+				return self.items.length;
 			},
 			handle: function( event ) {
-				elementor.history.navigate( Z_KEY === event.which && event.shiftKey );
+				navigate( Z_KEY === event.which && event.shiftKey );
 			}
 		} );
 
@@ -36,35 +69,35 @@ var HistoryPageView = require( './panel-page' ),
 	};
 
 	var normalizeItemTitle = function( item ) {
-		var subItems = item.get( 'items' );
+	var subItems = item.get( 'items' );
 
-		// Check if it's a move action that in fact it's two action remove + add or between section it's add + remove
-		if ( 2 === subItems.length ) {
-			var firstItemType = subItems.at( 0 ).get( 'type' ),
-				secondItemType = subItems.at( 1 ).get( 'type' );
+	// Check if it's a move action that in fact it's two action remove + add or between section it's add + remove
+	if ( 2 === subItems.length ) {
+		var firstItemType = subItems.at( 0 ).get( 'type' ),
+			secondItemType = subItems.at( 1 ).get( 'type' );
 
-			if ( ( 'add' === firstItemType && 'remove' === secondItemType ) || ( 'remove' === firstItemType && 'add' === secondItemType ) ) {
-				var model = subItems.at( 0 ).get( 'history' ).model,
-					modelLabel = elementor.history.getModelLabel( model );
-				item.set( 'title', modelLabel + ' Moved' );
-				return item;
-			}
+		if ( ( 'add' === firstItemType && 'remove' === secondItemType ) || ( 'remove' === firstItemType && 'add' === secondItemType ) ) {
+			var model = subItems.at( 0 ).get( 'history' ).model,
+				modelLabel = elementor.history.getModelLabel( model );
+			item.set( 'title', modelLabel + ' Moved' );
+			return item;
 		}
+	}
 
-		// Check if it's a remove of a complete cection / column
-		if ( 1 < subItems.length ) {
-			var lastItem = subItems.first(),
-				elementType = lastItem.get( 'elementType' );
-			if ( 'remove' === lastItem.get( 'type' ) && ( 'section' === elementType || 'column' === elementType ) ) {
-				var model = lastItem.get( 'history' ).model,
-					modelLabel = elementor.history.getModelLabel( model );
-				item.set( 'title', modelLabel + ' Removed' );
-				return item;
-			}
+	// Check if it's a remove of a complete cection / column
+	if ( 1 < subItems.length ) {
+		var lastItem = subItems.first(),
+			elementType = lastItem.get( 'elementType' );
+		if ( 'remove' === lastItem.get( 'type' ) && ( 'section' === elementType || 'column' === elementType ) ) {
+			var model = lastItem.get( 'history' ).model,
+				modelLabel = elementor.history.getModelLabel( model );
+			item.set( 'title', modelLabel + ' Removed' );
+			return item;
 		}
+	}
 
-		return item;
-	};
+	return item;
+};
 
 	var HistoryCollection = Backbone.Collection.extend( {
 		model: Backbone.Model.extend( {
@@ -98,19 +131,6 @@ var HistoryPageView = require( './panel-page' ),
 		return behaviors;
 	};
 
-	var addMenu = function( items ) {
-		var itemsPartA = items.slice( 0, 3 ),
-			itemsPartB = items.slice( 3, items.length );
-
-		items = itemsPartA.concat( [ {
-			icon: 'fa fa-history',
-			title: elementor.translate( 'history' ),
-			type: 'page',
-			pageName: 'historyPage'
-		} ], itemsPartB );
-		return items;
-	};
-
 	var init = function() {
 		addHotKeys();
 
@@ -120,9 +140,23 @@ var HistoryPageView = require( './panel-page' ),
 		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 		elementor.hooks.addFilter( 'panel/menu/items', addMenu );
+
+		elementor.channels.data.on( 'drag:start', self.startItem );
+		elementor.channels.data.on( 'drag:end', self.endItem );
+
 	};
 
 	this.items = new HistoryCollection();
+
+		this.startItemTitle = '';
+
+	this.startItem = function( model ) {
+		self.startItemTitle = model.get( 'elType' ) + ' Moved';
+	};
+
+	this.endItem = function() {
+		delete self.startItemTitle;
+	};
 
 	this.addItem = function( itemData ) {
 		if ( ! this.items.length ) {
@@ -146,7 +180,7 @@ var HistoryPageView = require( './panel-page' ),
 			currentItem = new Backbone.Model();
 			currentItem.set( 'time', time );
 			currentItem.set( 'items', new Backbone.Collection() );
-			currentItem.set( 'title', itemData.title );
+			currentItem.set( 'title', self.startItemTitle ? self.startItemTitle : itemData.title );
 			currentItem.set( 'status', 'not_applied' );
 		}
 
@@ -155,26 +189,6 @@ var HistoryPageView = require( './panel-page' ),
 		currentItem = normalizeItemTitle( currentItem );
 
 		this.items.add( currentItem, { at: 0 } );
-
-		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().render();
-		}
-	};
-
-	this.navigate = function( isRedo ) {
-		var currentItem = this.items.find( function( model ) {
-				return 'not_applied' ===  model.get( 'status' );
-			} ),
-			currentItemIndex = this.items.indexOf( currentItem ),
-			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
-
-		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0  || requiredIndex >= this.items.length ) {
-			return;
-		}
-
-		this.doItem( requiredIndex );
 
 		var panel = elementor.getPanelView();
 

@@ -105,6 +105,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			ui.placeholder.height( itemHeight );
 		}
 
+		elementor.channels.data.trigger( 'drag:start', model );
 		elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:start' );
 
 		elementor.channels.data
@@ -135,6 +136,13 @@ SortableBehavior = Marionette.Behavior.extend( {
 			.removeAttr( 'data-dragged-element data-dragged-is-inner' );
 
 		this.$el.removeClass( 'elementor-dragging-on-child' );
+	},
+
+	onSortStop: function( event, ui ) {
+		var model = this.view.collection.get( {
+			cid: ui.item.data( 'model-cid' )
+		} );
+		elementor.channels.data.trigger( 'drag:end', model );
 	},
 
 	onSortReceive: function( event, ui ) {
