@@ -93,9 +93,14 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	setImageContent: function( imageURL ) {
-		var $image = jQuery( '<img>', { src: imageURL } );
+		var self = this,
+			$image = jQuery( '<img>', { src: imageURL } );
 
-		this.getModal().setMessage( $image );
+		$image.on( 'load', function() {
+			self.getModal().refreshPosition();
+		} );
+
+		self.getModal().setMessage( $image );
 	},
 
 	setVideoContent: function( videoEmbedURL ) {
