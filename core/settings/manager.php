@@ -46,7 +46,7 @@ class Manager {
 
 			$config[ $name ] = [
 				'name' => $manager->get_name(),
-				'panelPageSettings' => $settings_model->get_panel_page_settings(),
+				'panelPage' => $settings_model->get_panel_page_settings(),
 				'cssWrapperSelector' => $settings_model->get_css_wrapper_selector(),
 				'controls' => $settings_model->get_controls(),
 				'tabs' => $settings_model->get_tabs_controls(),
