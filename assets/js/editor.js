@@ -1752,9 +1752,13 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	// Exporting modules that can be used from outside
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
+		panel: {
+			Menu: require( 'elementor-panel/pages/menu/menu' )
+		},
 		controls: {
 			Base: require( 'elementor-views/controls/base' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
@@ -2329,7 +2333,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"elementor-editor-utils/ajax":68,"elementor-editor-utils/conditions":69,"elementor-editor-utils/debug":71,"elementor-editor-utils/heartbeat":72,"elementor-editor-utils/helpers":73,"elementor-editor-utils/hot-keys":74,"elementor-editor-utils/images-manager":75,"elementor-editor-utils/introduction":76,"elementor-editor-utils/presets-factory":79,"elementor-editor-utils/schemes":80,"elementor-editor/settings/settings":67,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/hooks":121,"elementor-views/controls/base":93,"elementor-views/controls/base-multiple":91,"elementor-views/controls/box-shadow":94,"elementor-views/controls/choose":95,"elementor-views/controls/code":96,"elementor-views/controls/color":97,"elementor-views/controls/date-time":98,"elementor-views/controls/dimensions":99,"elementor-views/controls/font":100,"elementor-views/controls/gallery":101,"elementor-views/controls/icon":102,"elementor-views/controls/image-dimensions":103,"elementor-views/controls/media":104,"elementor-views/controls/number":105,"elementor-views/controls/order":106,"elementor-views/controls/repeater":108,"elementor-views/controls/section":109,"elementor-views/controls/select2":110,"elementor-views/controls/slider":111,"elementor-views/controls/structure":112,"elementor-views/controls/switcher":113,"elementor-views/controls/tab":114,"elementor-views/controls/wp_widget":115,"elementor-views/controls/wysiwyg":116,"elementor-views/preview":118,"elementor-views/widget":120}],33:[function(require,module,exports){
+},{"elementor-editor-utils/ajax":68,"elementor-editor-utils/conditions":69,"elementor-editor-utils/debug":71,"elementor-editor-utils/heartbeat":72,"elementor-editor-utils/helpers":73,"elementor-editor-utils/hot-keys":74,"elementor-editor-utils/images-manager":75,"elementor-editor-utils/introduction":76,"elementor-editor-utils/presets-factory":79,"elementor-editor-utils/schemes":80,"elementor-editor/settings/settings":67,"elementor-layouts/panel/panel":57,"elementor-models/element":60,"elementor-panel/pages/elements/views/elements":44,"elementor-panel/pages/menu/menu":47,"elementor-revisions/manager":8,"elementor-templates/manager":14,"elementor-utils/hooks":121,"elementor-views/controls/base":93,"elementor-views/controls/base-multiple":91,"elementor-views/controls/box-shadow":94,"elementor-views/controls/choose":95,"elementor-views/controls/code":96,"elementor-views/controls/color":97,"elementor-views/controls/date-time":98,"elementor-views/controls/dimensions":99,"elementor-views/controls/font":100,"elementor-views/controls/gallery":101,"elementor-views/controls/icon":102,"elementor-views/controls/image-dimensions":103,"elementor-views/controls/media":104,"elementor-views/controls/number":105,"elementor-views/controls/order":106,"elementor-views/controls/repeater":108,"elementor-views/controls/section":109,"elementor-views/controls/select2":110,"elementor-views/controls/slider":111,"elementor-views/controls/structure":112,"elementor-views/controls/switcher":113,"elementor-views/controls/tab":114,"elementor-views/controls/wp_widget":115,"elementor-views/controls/wysiwyg":116,"elementor-views/preview":118,"elementor-views/widget":120}],33:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -3097,74 +3101,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	childView: PanelMenuItemView,
 
 	initialize: function() {
-		this.collection = new Backbone.Collection( [
-            {
-				name: 'global-colors',
-                icon: 'fa fa-paint-brush',
-                title: elementor.translate( 'global_colors' ),
-				type: 'page',
-                pageName: 'colorScheme'
-            },
-            {
-	            name: 'global-fonts',
-                icon: 'fa fa-font',
-                title: elementor.translate( 'global_fonts' ),
-				type: 'page',
-                pageName: 'typographyScheme'
-            },
-			{
-				name: 'color-picker',
-				icon: 'fa fa-eyedropper',
-				title: elementor.translate( 'color_picker' ),
-				type: 'page',
-				pageName: 'colorPickerScheme'
-			},
-			{
-				name: 'revision-history',
-				icon: 'fa fa-history',
-				title: elementor.translate( 'revision_history' ),
-				type: 'page',
-				pageName: 'revisionsPage'
-			},
-            {
-	            name: 'clear-page',
-                icon: 'fa fa-eraser',
-                title: elementor.translate( 'clear_page' ),
-                callback: function() {
-                    elementor.clearPage();
-                }
-            },
-			{
-				name: 'elementor-settings',
-				icon: 'eicon-elementor',
-				title: elementor.translate( 'elementor_settings' ),
-				type: 'link',
-				link: elementor.config.settings_page_link,
-				newTab: true
-			},
-			{
-				name: 'about-elementor',
-				icon: 'fa fa-info-circle',
-				title: elementor.translate( 'about_elementor' ),
-				type: 'link',
-				link: elementor.config.elementor_site,
-				newTab: true
-			}
-		] );
-	},
-
-	addItem: function( itemData, before ) {
-		var options = {};
-
-		if ( before ) {
-			var beforeItem = this.collection.findWhere( { name: before } );
-
-			if ( beforeItem ) {
-				options.at = this.collection.indexOf( beforeItem );
-			}
-		}
-
-		this.collection.add( itemData, options );
+		this.collection = PanelMenuPageView.getItems();
 	},
 
 	onChildviewClick: function( childView ) {
@@ -3197,6 +3134,88 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 					callback.call( childView );
 				}
 		}
+	}
+}, {
+	items: null,
+
+	initItems: function() {
+		this.items = new Backbone.Collection( [
+			{
+				name: 'global-colors',
+				icon: 'fa fa-paint-brush',
+				title: elementor.translate( 'global_colors' ),
+				type: 'page',
+				pageName: 'colorScheme'
+			},
+			{
+				name: 'global-fonts',
+				icon: 'fa fa-font',
+				title: elementor.translate( 'global_fonts' ),
+				type: 'page',
+				pageName: 'typographyScheme'
+			},
+			{
+				name: 'color-picker',
+				icon: 'fa fa-eyedropper',
+				title: elementor.translate( 'color_picker' ),
+				type: 'page',
+				pageName: 'colorPickerScheme'
+			},
+			{
+				name: 'revision-history',
+				icon: 'fa fa-history',
+				title: elementor.translate( 'revision_history' ),
+				type: 'page',
+				pageName: 'revisionsPage'
+			},
+			{
+				name: 'clear-page',
+				icon: 'fa fa-eraser',
+				title: elementor.translate( 'clear_page' ),
+				callback: function() {
+					elementor.clearPage();
+				}
+			},
+			{
+				name: 'elementor-settings',
+				icon: 'eicon-elementor',
+				title: elementor.translate( 'elementor_settings' ),
+				type: 'link',
+				link: elementor.config.settings_page_link,
+				newTab: true
+			},
+			{
+				name: 'about-elementor',
+				icon: 'fa fa-info-circle',
+				title: elementor.translate( 'about_elementor' ),
+				type: 'link',
+				link: elementor.config.elementor_site,
+				newTab: true
+			}
+		] );
+	},
+
+	getItems: function() {
+		if ( ! this.items ) {
+			this.initItems();
+		}
+
+		return this.items;
+	},
+
+	addItem: function( itemData, before ) {
+		var items = this.getItems(),
+			options = {};
+
+		if ( before ) {
+			var beforeItem = items.findWhere( { name: before } );
+
+			if ( beforeItem ) {
+				options.at = items.indexOf( beforeItem );
+			}
+		}
+
+		items.add( itemData, options );
 	}
 } );
 
@@ -3620,7 +3639,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				view: require( 'elementor-panel/pages/editor' )
 			},
 			menu: {
-				view: require( 'elementor-panel/pages/menu/menu' ),
+				view: elementor.modules.panel.Menu,
 				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 			},
 			colorScheme: {
@@ -3793,7 +3812,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 module.exports = PanelLayoutView;
 
-},{"elementor-layouts/edit-mode":33,"elementor-layouts/panel/footer":34,"elementor-layouts/panel/header":35,"elementor-panel/pages/editor":36,"elementor-panel/pages/elements/elements":39,"elementor-panel/pages/menu/menu":47,"elementor-panel/pages/schemes/color-picker":50,"elementor-panel/pages/schemes/colors":51,"elementor-panel/pages/schemes/disabled":52,"elementor-panel/pages/schemes/typography":56}],58:[function(require,module,exports){
+},{"elementor-layouts/edit-mode":33,"elementor-layouts/panel/footer":34,"elementor-layouts/panel/header":35,"elementor-panel/pages/editor":36,"elementor-panel/pages/elements/elements":39,"elementor-panel/pages/schemes/color-picker":50,"elementor-panel/pages/schemes/colors":51,"elementor-panel/pages/schemes/disabled":52,"elementor-panel/pages/schemes/typography":56}],58:[function(require,module,exports){
 var BaseSettingsModel;
 
 BaseSettingsModel = Backbone.Model.extend( {
@@ -4357,7 +4376,7 @@ module.exports = ViewModule.extend( {
 
 		elementor.getPanelView().addPage( name + '_settings', {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
-			title: this.getSettings( 'panelPageSettings.title' ),
+			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
 				name: name
@@ -4420,10 +4439,24 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
+	addPanelMenuItem: function() {
+		var menuSettings = this.getSettings( 'panelPage.menu' ),
+			menuItemOptions = {
+				icon: menuSettings.icon,
+				title: this.getSettings( 'panelPage.title' ),
+				type: 'page',
+				pageName: this.getSettings( 'name' ) + '_settings'
+			};
+
+		elementor.modules.panel.Menu.addItem( menuItemOptions, menuSettings.beforeItem );
+	},
+
 	onInit: function() {
 		this.initModel();
 
 		this.initControlsCSSParser();
+
+		this.addPanelMenuItem();
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 
@@ -4452,20 +4485,6 @@ module.exports = ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		elementor.getPanelView().on( 'set:page:menu', this.onElementorPanelMenuOpen );
-	},
-
-	onElementorPanelMenuOpen: function( menuView ) {
-		var menuSettings = this.getSettings( 'panelPageSettings.menu' ),
-			menuItemOptions = {
-				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPageSettings.title' ),
-				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings'
-			};
-
-		menuView.addItem( menuItemOptions, menuSettings.beforeItem );
 	}
 } );
 
