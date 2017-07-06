@@ -84,7 +84,9 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
+			if ( self.ui.percentsTooltip ) {
 				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+			}
 		} );
 	},
 

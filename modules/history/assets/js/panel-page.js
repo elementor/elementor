@@ -81,23 +81,12 @@ module.exports = Marionette.CompositeView.extend( {
 		var childView;
 
 		// Handle Undo
-		for ( var stepNum = 0; stepNum < this.children.length; stepNum++ ) {
-			childView = this.children.findByIndex( stepNum );
-
-			if ( 'not_applied' === childView.model.get( 'status' ) ) {
-
-				childView.model.get( 'items' ).each( function( subItem ) {
-					subItem.get( 'history' ).behavior.restore( subItem );
-				} );
-
-				if ( ! childView.isDestroyed ) {
-					childView.render();
-				}
-			}
-		}
+		this.undoItem( this.children.length );
 
 		this.updateCurrentItem( this.ui.reset );
 	},
+
+
 
 	onChildviewItemClick: function( childView, event ) {
 		if ( childView.$el === this.currentItem ) {
@@ -105,47 +94,12 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		var collection = event.model.collection,
-			itemIndex = collection.findIndex( event.model ),
-			item,
-			stepNum;
+			itemIndex = collection.findIndex( event.model );
 
-		// Handle Undo
-		if ( 'not_applied' === childView.model.get( 'status' ) ) {
-			for ( stepNum = 0; stepNum < itemIndex; stepNum++ ) {
-				item = collection.at( stepNum );
-
-				if ( 'not_applied' === item.get( 'status' ) ) {
-					item.get( 'items' ).each( function( subItem ) {
-						subItem.get( 'history' ).behavior.restore( subItem );
-					} );
-
-					item.set( 'status', 'applied' );
-
-					if ( ! childView.isDestroyed ) {
-						childView._parent.children.findByModel( item ).render();
-					}
-				}
-			}
-		} else {
-			// Handle Redo
-			for ( stepNum = collection.length - 1; stepNum >= itemIndex; stepNum-- ) {
-				item = collection.at( stepNum );
-
-				if ( 'applied' === item.get( 'status' ) ) {
-					var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
-					_( reversedSubItems ).each( function( subItem ) {
-						subItem.get( 'history' ).behavior.restore( subItem, true );
-					} );
-
-					item.set( 'status', 'not_applied' );
-
-					if ( ! childView.isDestroyed ) {
-						childView._parent.children.findByModel( item ).render();
-					}
-				}
-			}
-		}
+		elementor.history.doItem( itemIndex );
 
 		this.updateCurrentItem( childView.$el );
+
+		this.render();
 	}
 } );

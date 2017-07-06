@@ -75,7 +75,7 @@ module.exports = Marionette.Behavior.extend( {
 			var modelID = history.behavior.view.model.get( 'id' ),
 				view = elementor.history.findView( modelID );
 			if ( view ) {
-				behavior = view._behaviors[ Object.keys( view.behaviors ).indexOf( 'CollectionHistory' ) ];
+				behavior = view.getBehavior( 'CollectionHistory' );
 			}
 		}
 

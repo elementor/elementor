@@ -47,23 +47,23 @@ module.exports = Marionette.Behavior.extend( {
 			view = elementor.history.findView( modelID ),
 			model = view.getEditModel ? view.getEditModel() : view.model,
 			settings = model.get( 'settings' ),
-			behavior = view._behaviors[ Object.keys( view.behaviors ).indexOf( 'ElementHistory' ) ];
+			behavior = view.getBehavior( 'ElementHistory' );
 
 		// Stop listen to restore actions
-		behavior.stopListening( model, 'change', behavior.saveHistory );
+		behavior.stopListening( settings, 'change', behavior.saveHistory );
 
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				model.set( key, values['new'] );
+				settings.set( key, values['new'] );
 			} else {
-				model.set( key, values.old );
+				settings.set( key, values.old );
 			}
 		} );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
 
 		// Listen again
-		behavior.listenTo( model, 'change', behavior.saveHistory );
+		behavior.listenTo( settings, 'change', behavior.saveHistory );
 	}
 } );
 
