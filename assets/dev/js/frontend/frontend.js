@@ -16,6 +16,21 @@
 
 		this.Module = Module;
 
+		var openImageInLightbox = function() {
+			var $image = $( this ).find( 'img' );
+
+			if ( ! $image.length ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			self.utils.lightbox.showModal( {
+				type: 'image',
+				url: $image.attr( 'src' )
+			} );
+		};
+
 		var initElements = function() {
 			elements.$document = $( document );
 
@@ -24,6 +39,10 @@
 			elements.window = window;
 
 			elements.$window = $( window );
+
+			elements.$imagesLinks = $( 'a' ).filter( function() {
+				return /\.(png|jpe?g|gif|svg)$/i.test( this.href );
+			} );
 		};
 
 		var initOnReadyComponents = function() {
@@ -34,6 +53,10 @@
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
+		};
+
+		var bindEvents = function() {
+			elements.$imagesLinks.on( 'click', openImageInLightbox );
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
@@ -50,6 +73,8 @@
 			self.hooks = new EventManager();
 
 			initElements();
+
+			bindEvents();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
