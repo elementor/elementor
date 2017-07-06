@@ -31,7 +31,8 @@ App = Marionette.Application.extend( {
 		panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
-		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
+		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
+		settings: Backbone.Radio.channel( 'ELEMENTOR:settings' )
 	},
 
 	modules: {
@@ -130,19 +131,27 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			PageSettings = require( 'elementor-editor-utils/page-settings' );
+			Settings = require( 'elementor-editor/settings/settings' );
 
 		this.hooks = new EventManager();
 
-		this.pageSettings = new PageSettings();
+		this.settings = new Settings();
+
+		/**
+		 * @deprecated - use `this.settings.page` instead
+		 */
+		this.pageSettings = this.settings.page;
 
 		this.templates.init();
 
 		this.initDialogsManager();
 
 		this.heartbeat.init();
+
 		this.ajax.init();
+
 		this.revisions.init();
+
 		this.hotKeys.init();
 	},
 

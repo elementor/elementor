@@ -60,6 +60,11 @@ module.exports = function( grunt ) {
 				preBundleCB: function( bundle ) {
 					bundle.plugin( remapify, [
 						{
+							cwd: 'assets/dev/js/editor',
+							src: '**/*.js',
+							expose: 'elementor-editor'
+						},
+						{
 							cwd: 'assets/dev/js/editor/behaviors',
 							src: '**/*.js',
 							expose: 'elementor-behaviors'

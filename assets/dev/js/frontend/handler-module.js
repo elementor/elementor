@@ -14,12 +14,24 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	getUniqueHandlerID: function( cid, $element ) {
+		if ( ! cid ) {
+			cid = this.getModelCID();
+		}
+
+		if ( ! $element ) {
+			$element = this.$element;
+		}
+
+		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+	},
+
 	addEditorListener: function() {
-		var self = this;
+		var self = this,
+			uniqueHandlerID = self.getUniqueHandlerID();
 
 		if ( self.onElementChange ) {
-			var uniqueHandlerID = self.getModelCID() + self.$element.attr( 'data-element_type' ) + self.getConstructorID(),
-				elementName = self.getElementName(),
+			var elementName = self.getElementName(),
 				eventName = 'change';
 
 			if ( 'global' !== elementName ) {
@@ -27,7 +39,7 @@ HandlerModule = ViewModule.extend( {
 			}
 
 			elementorFrontend.addListenerOnce( uniqueHandlerID, eventName, function( controlView, elementView ) {
-				var elementViewHandlerID = elementView.model.cid + elementView.$el.attr( 'data-element_type' ) + self.getConstructorID();
+				var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
 
 				if ( elementViewHandlerID !== uniqueHandlerID ) {
 					return;
