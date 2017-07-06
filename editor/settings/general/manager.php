@@ -65,8 +65,20 @@ class Manager extends BaseManager {
 	 * @return void
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
-		foreach ( $settings as $setting_name => $setting_value ) {
-			update_option( $setting_name, $setting_value );
+		$model_controls = Model::get_controls_list();
+
+		foreach ( $model_controls as $tab_name => $sections ) {
+
+			foreach ( $sections as $section_name => $section_data ) {
+
+				foreach ( $section_data['controls'] as $control_name => $control_data ) {
+					if ( isset( $settings[ $control_name ] ) ) {
+						update_option( $control_name, $settings[ $control_name ] );
+					} else {
+						delete_option( $control_name );
+					}
+				}
+			}
 		}
 	}
 
