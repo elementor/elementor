@@ -1749,8 +1749,7 @@ App = Marionette.Application.extend( {
 		panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
-		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
-		settings: Backbone.Radio.channel( 'ELEMENTOR:settings' )
+		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
 	modules: {
@@ -1906,11 +1905,13 @@ App = Marionette.Application.extend( {
 	},
 
 	initFrontend: function() {
-		window.elementorFrontend = this.$preview[0].contentWindow.elementorFrontend;
+		var frontendWindow = this.$preview[0].contentWindow;
+
+		window.elementorFrontend = frontendWindow.elementorFrontend;
+
+		frontendWindow.elementor = this;
 
 		elementorFrontend.init();
-
-		elementorFrontend.getElements( 'window' ).elementor = this;
 
 		elementorFrontend.elementsHandler.initHandlers();
 
@@ -4492,15 +4493,6 @@ module.exports = ControlsStack.extend( {
 
 	initialize: function() {
 		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	onChildviewSettingsChange: function( childView ) {
-		var settingsType = this.getOption( 'name' ),
-			controlName = childView.model.get( 'name' );
-
-		elementor.channels.settings
-			.trigger( 'change:' + settingsType, controlName, childView )
-			.trigger( 'change:' + settingsType + ':' + controlName, childView );
 	}
 } );
 
