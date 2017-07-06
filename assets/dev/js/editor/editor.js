@@ -187,11 +187,13 @@ App = Marionette.Application.extend( {
 	},
 
 	initFrontend: function() {
-		window.elementorFrontend = this.$preview[0].contentWindow.elementorFrontend;
+		var frontendWindow = this.$preview[0].contentWindow;
+
+		window.elementorFrontend = frontendWindow.elementorFrontend;
+
+		frontendWindow.elementor = this;
 
 		elementorFrontend.init();
-
-		elementorFrontend.getElements( 'window' ).elementor = this;
 
 		elementorFrontend.elementsHandler.initHandlers();
 
