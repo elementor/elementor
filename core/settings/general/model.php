@@ -78,7 +78,7 @@ class Model extends BaseModel {
 				],
 			],
 			Manager::PANEL_TAB_LIGHTBOX => [
-				'style' => [
+				'lightbox_style' => [
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
 						'elementor_lightbox_color' => [
@@ -118,6 +118,17 @@ class Model extends BaseModel {
 							'label' => __( 'Entrance Animation', 'elementor' ),
 							'type' => Controls_Manager::ANIMATION,
 							'label_block' => true,
+							'frontend_available' => true,
+						],
+					],
+				],
+				'lightbox_settings' => [
+					'label' => __( 'Settings', 'elementor' ),
+					'controls' => [
+						'elementor_open_images_in_lightbox' => [
+							'label' => __( 'Open Images In Lightbox', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
 							'frontend_available' => true,
 						],
 					],
