@@ -63,7 +63,7 @@ LightboxModule = ViewModule.extend( {
 
 			setTimeout( function() {
 				self.setEntranceAnimation();
-			}, 1 );
+			}, 10 );
 		};
 
 		modal.onHide = function() {
