@@ -16,18 +16,12 @@
 
 		this.Module = Module;
 
-		var openImageInLightbox = function() {
-			var $image = $( this ).find( 'img' );
-
-			if ( ! $image.length ) {
-				return;
-			}
-
+		var openImageInLightbox = function( event ) {
 			event.preventDefault();
 
 			self.utils.lightbox.showModal( {
 				type: 'image',
-				url: $image.attr( 'src' )
+				url: this.href
 			} );
 		};
 
@@ -40,8 +34,16 @@
 
 			elements.$window = $( window );
 
+			var openInLightBox = self.getGeneralSettings( 'elementor_open_images_in_lightbox' );
+
 			elements.$imagesLinks = $( 'a' ).filter( function() {
-				return /\.(png|jpe?g|gif|svg)$/i.test( this.href );
+				if ( ! /\.(png|jpe?g|gif|svg)$/i.test( this.href ) ) {
+					return false;
+				}
+
+				var currentLinkOpenInLightbox = $( this ).data( 'open_in_lightbox' );
+
+				return 'yes' === currentLinkOpenInLightbox || openInLightBox && 'no' !== currentLinkOpenInLightbox;
 			} );
 		};
 
@@ -56,9 +58,7 @@
 		};
 
 		var bindEvents = function() {
-			if ( elementorFrontend.getGeneralSettings( 'elementor_open_images_in_lightbox' ) ) {
-				elements.$imagesLinks.on( 'click', openImageInLightbox );
-			}
+			elements.$imagesLinks.on( 'click', openImageInLightbox );
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
