@@ -116,13 +116,14 @@ class Element_Column extends Element_Base {
 			'nav',
 		];
 
+		$options = [ '' => __( 'Default', 'elementor' ) ] + array_combine( $possible_tags, $possible_tags );
+
 		$this->add_control(
 			'html_tag',
 			[
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'div',
-				'options' => array_combine( $possible_tags, $possible_tags ),
+				'options' => $options,
 			]
 		);
 
@@ -411,7 +412,7 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
-					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
 				],
 			]
 		);
@@ -726,10 +727,14 @@ class Element_Column extends Element_Base {
 	}
 
 	public function before_render() {
+		$settings = $this->get_settings();
+
+		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
+		                          in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
 		?>
-		<<?php echo $this->get_settings( 'html_tag' ) . ' ' .  $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $this->get_html_tag() . ' ' .  $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
-			<?php if ( in_array( $this->get_settings( 'background_overlay_background' ), [ 'classic', 'gradient' ] ) ) : ?>
+			<?php if ( $has_background_overlay ) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif; ?>
 		<div class="elementor-widget-wrap">
@@ -740,7 +745,7 @@ class Element_Column extends Element_Base {
 		?>
 				</div>
 			</div>
-		</<?php echo $this->get_settings( 'html_tag' ); ?>>
+		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
 
@@ -768,5 +773,15 @@ class Element_Column extends Element_Base {
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+	}
+
+	private function get_html_tag() {
+		$html_tag = $this->get_settings( 'html_tag' );
+
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'div';
+		}
+
+		return $html_tag;
 	}
 }
