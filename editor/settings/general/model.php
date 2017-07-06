@@ -29,7 +29,7 @@ class Model extends BaseModel {
 	public static function get_controls_list() {
 
 		return [
-			Controls_Manager::TAB_STYLE => [
+			Manager::PANEL_TAB_GENERAL_STYLE => [
 				'style' => [
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
