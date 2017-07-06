@@ -207,8 +207,8 @@ var StretchedSection = HandlerModule.extend( {
 		this.stretchSection();
 	},
 
-	onGeneralSettingsChange: function( propertyName ) {
-		if ( 'elementor_stretched_section_container' === propertyName ) {
+	onGeneralSettingsChange: function( changed ) {
+		if ( 'elementor_stretched_section_container' in changed ) {
 			this.stretchSection();
 		}
 	}
