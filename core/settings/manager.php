@@ -9,7 +9,7 @@ class Manager {
 	 */
 	private static $settings_managers = [];
 
-	private static $default_settings_managers_names = [ 'page', 'general' ];
+	private static $builtin_settings_managers_names = [ 'page', 'general' ];
 
 	public static function add_settings_manager( Base\Manager $manager ) {
 		self::$settings_managers[ $manager->get_name() ] = $manager;
@@ -31,7 +31,7 @@ class Manager {
 	}
 
 	private static function register_default_settings_managers() {
-		foreach ( self::$default_settings_managers_names as $manager_name ) {
+		foreach ( self::$builtin_settings_managers_names as $manager_name ) {
 			$manager_class = __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
 
 			self::add_settings_manager( new $manager_class() );
