@@ -31,8 +31,7 @@ App = Marionette.Application.extend( {
 		panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
-		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
-		settings: Backbone.Radio.channel( 'ELEMENTOR:settings' )
+		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
 	modules: {

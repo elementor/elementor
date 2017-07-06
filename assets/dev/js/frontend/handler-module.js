@@ -57,9 +57,9 @@ HandlerModule = ViewModule.extend( {
 			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
 
 			if ( self[ listenerMethodName ] ) {
-				elementorFrontend.addListenerOnce( uniqueHandlerID, 'change:' + settingsType, function( controlName, controlView ) {
-					self[ listenerMethodName ]( controlName,  controlView );
-				}, elementor.channels.settings );
+				elementorFrontend.addListenerOnce( uniqueHandlerID, 'change', function( model ) {
+					self[ listenerMethodName ]( model.changed );
+				}, elementor.settings[ settingsType ].model );
 			}
 		} );
 	},
