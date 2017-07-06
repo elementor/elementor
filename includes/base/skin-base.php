@@ -56,6 +56,7 @@ abstract class Skin_Base {
 	}
 
 	public function update_control( $id, $args ) {
+		$args['condition']['_skin'] = $this->get_id();
 		$this->parent->update_control( $this->get_control_id( $id ), $args );
 	}
 
