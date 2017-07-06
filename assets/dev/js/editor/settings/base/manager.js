@@ -89,10 +89,24 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
+	addPanelMenuItem: function() {
+		var menuSettings = this.getSettings( 'panelPage.menu' ),
+			menuItemOptions = {
+				icon: menuSettings.icon,
+				title: this.getSettings( 'panelPage.title' ),
+				type: 'page',
+				pageName: this.getSettings( 'name' ) + '_settings'
+			};
+
+		elementor.modules.panel.Menu.addItem( menuItemOptions, menuSettings.beforeItem );
+	},
+
 	onInit: function() {
 		this.initModel();
 
 		this.initControlsCSSParser();
+
+		this.addPanelMenuItem();
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 
@@ -121,19 +135,5 @@ module.exports = ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		elementor.getPanelView().on( 'set:page:menu', this.onElementorPanelMenuOpen );
-	},
-
-	onElementorPanelMenuOpen: function( menuView ) {
-		var menuSettings = this.getSettings( 'panelPage.menu' ),
-			menuItemOptions = {
-				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPage.title' ),
-				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings'
-			};
-
-		menuView.addItem( menuItemOptions, menuSettings.beforeItem );
 	}
 } );
