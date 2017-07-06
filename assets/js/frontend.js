@@ -154,7 +154,9 @@ module.exports = ElementsHandler;
 		};
 
 		var bindEvents = function() {
-			elements.$imagesLinks.on( 'click', openImageInLightbox );
+			if ( elementorFrontend.getGeneralSettings( 'elementor_open_images_in_lightbox' ) ) {
+				elements.$imagesLinks.on( 'click', openImageInLightbox );
+			}
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
