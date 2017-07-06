@@ -45,6 +45,10 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
 	},
 
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',

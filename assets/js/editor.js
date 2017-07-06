@@ -6739,6 +6739,10 @@ module.exports = BaseAddSectionView.extend( {
 },{"elementor-views/add-section/base":80}],83:[function(require,module,exports){
 module.exports = Marionette.CompositeView.extend( {
 
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
 	addChildModel: function( model, options ) {
 		return this.collection.add( model, options, true );
 	},
@@ -6810,6 +6814,10 @@ BaseElementView = BaseContainer.extend( {
 		var behaviors = {};
 
 		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
+	},
+
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
 	events: function() {
