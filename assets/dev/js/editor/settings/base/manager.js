@@ -26,7 +26,7 @@ module.exports = ViewModule.extend( {
 
 		elementor.getPanelView().addPage( name + '_settings', {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
-			title: this.getSettings( 'panelPageSettings.title' ),
+			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
 				name: name
@@ -126,10 +126,10 @@ module.exports = ViewModule.extend( {
 	},
 
 	onElementorPanelMenuOpen: function( menuView ) {
-		var menuSettings = this.getSettings( 'panelPageSettings.menu' ),
+		var menuSettings = this.getSettings( 'panelPage.menu' ),
 			menuItemOptions = {
 				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPageSettings.title' ),
+				title: this.getSettings( 'panelPage.title' ),
 				type: 'page',
 				pageName: this.getSettings( 'name' ) + '_settings'
 			};
