@@ -114,6 +114,21 @@ module.exports = ElementsHandler;
 
 		this.Module = Module;
 
+		var openImageInLightbox = function() {
+			var $image = $( this ).find( 'img' );
+
+			if ( ! $image.length ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			self.utils.lightbox.showModal( {
+				type: 'image',
+				url: $image.attr( 'src' )
+			} );
+		};
+
 		var initElements = function() {
 			elements.$document = $( document );
 
@@ -122,6 +137,10 @@ module.exports = ElementsHandler;
 			elements.window = window;
 
 			elements.$window = $( window );
+
+			elements.$imagesLinks = $( 'a' ).filter( function() {
+				return /\.(png|jpe?g|gif|svg)$/i.test( this.href );
+			} );
 		};
 
 		var initOnReadyComponents = function() {
@@ -132,6 +151,10 @@ module.exports = ElementsHandler;
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
+		};
+
+		var bindEvents = function() {
+			elements.$imagesLinks.on( 'click', openImageInLightbox );
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
@@ -148,6 +171,8 @@ module.exports = ElementsHandler;
 			self.hooks = new EventManager();
 
 			initElements();
+
+			bindEvents();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
@@ -1299,7 +1324,7 @@ LightboxModule = ViewModule.extend( {
 
 			setTimeout( function() {
 				self.setEntranceAnimation();
-			}, 1 );
+			}, 10 );
 		};
 
 		modal.onHide = function() {
@@ -1329,9 +1354,14 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	setImageContent: function( imageURL ) {
-		var $image = jQuery( '<img>', { src: imageURL } );
+		var self = this,
+			$image = jQuery( '<img>', { src: imageURL } );
 
-		this.getModal().setMessage( $image );
+		$image.on( 'load', function() {
+			self.getModal().refreshPosition();
+		} );
+
+		self.getModal().setMessage( $image );
 	},
 
 	setVideoContent: function( videoEmbedURL ) {
