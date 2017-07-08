@@ -37,7 +37,7 @@ ElementsHandler = function( $ ) {
 
 		if ( elementorFrontend.isEditMode() ) {
 			// Elements outside from the Preview
-			$elements = elementorFrontend.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			$elements = jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
 		} else {
 			$elements = $( '.elementor-element' );
 		}
@@ -76,6 +76,9 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
+		// Initializing the `$scope` as frontend jQuery instance
+		$scope = jQuery( $scope );
+
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
 		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
@@ -105,17 +108,20 @@ module.exports = ElementsHandler;
 
 	var ElementorFrontend = function() {
 		var self = this,
-			dialogsManager,
-			scopeWindow = window;
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
 		this.Module = Module;
 
 		var initElements = function() {
-			elements.$document = $( self.getScopeWindow().document );
+			elements.$document = $( document );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.window = window;
+
+			elements.$window = $( window );
 		};
 
 		var initOnReadyComponents = function() {
@@ -133,17 +139,9 @@ module.exports = ElementsHandler;
 
 			initElements();
 
-			$( window ).trigger( 'elementor/frontend/init' );
+			elements.$window.trigger( 'elementor/frontend/init' );
 
 			initOnReadyComponents();
-		};
-
-		this.getScopeWindow = function() {
-			return scopeWindow;
-		};
-
-		this.setScopeWindow = function( window ) {
-			scopeWindow = window;
 		};
 
 		this.getElements = function( element ) {
@@ -213,7 +211,7 @@ module.exports = ElementsHandler;
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = $( self.getScopeWindow() );
+				to = self.getElements( '$window' );
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -270,12 +268,24 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	getUniqueHandlerID: function( cid, $element ) {
+		if ( ! cid ) {
+			cid = this.getModelCID();
+		}
+
+		if ( ! $element ) {
+			$element = this.$element;
+		}
+
+		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+	},
+
 	addEditorListener: function() {
-		var self = this;
+		var self = this,
+			uniqueHandlerID = self.getUniqueHandlerID();
 
 		if ( self.onElementChange ) {
-			var uniqueHandlerID = self.getModelCID() + self.$element.attr( 'data-element_type' ) + self.getConstructorID(),
-				elementName = self.getElementName(),
+			var elementName = self.getElementName(),
 				eventName = 'change';
 
 			if ( 'global' !== elementName ) {
@@ -283,7 +293,7 @@ HandlerModule = ViewModule.extend( {
 			}
 
 			elementorFrontend.addListenerOnce( uniqueHandlerID, eventName, function( controlView, elementView ) {
-				var elementViewHandlerID = elementView.model.cid + elementView.$el.attr( 'data-element_type' ) + self.getConstructorID();
+				var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
 
 				if ( elementViewHandlerID !== uniqueHandlerID ) {
 					return;
@@ -307,16 +317,18 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings,
+		var elementSettings = {},
 			modelCID = this.getModelCID();
 
 		if ( elementorFrontend.isEditMode() && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				activeControls = settings.getActiveControls(),
-				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( activeValues, settingsKeys );
+			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+				}
+			} );
 		} else {
 			elementSettings = this.$element.data( 'settings' ) || {};
 		}
@@ -603,7 +615,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			}
 		} );
 
-		jQuery( elementorFrontend.getScopeWindow() ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -655,37 +667,53 @@ var BackgroundVideo = HandlerModule.extend( {
 	}
 } );
 
-var StretchedSection = function( $section, $ ) {
-	var elements = {},
-		settings = {};
+var StretchedSection = HandlerModule.extend( {
 
-	var stretchSection = function() {
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				sectionContainer: elementorFrontend.config.stretchedSectionContainer
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		return {
+			$sectionContainer: elementorFrontend.getElements( '$document' ).find( this.getSettings( 'selectors.sectionContainer' ) )
+		};
+	},
+
+	bindEvents: function() {
+		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
+	},
+
+	stretchSection: function() {
 		// Clear any previously existing css associated with this script
-		var direction = settings.is_rtl ? 'right' : 'left',
+		var direction = elementorFrontend.config.is_rtl ? 'right' : 'left',
 			resetCss = {},
-            isStretched = $section.hasClass( 'elementor-section-stretched' );
+			isStretched = this.$element.hasClass( 'elementor-section-stretched' );
 
 		if ( elementorFrontend.isEditMode() || isStretched ) {
 			resetCss.width = 'auto';
 
 			resetCss[ direction ] = 0;
 
-			$section.css( resetCss );
+			this.$element.css( resetCss );
 		}
 
 		if ( ! isStretched ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.outerWidth(),
-			sectionWidth = $section.outerWidth(),
-			sectionOffset = $section.offset().left,
+		var containerWidth = elementorFrontend.getElements( '$window' ).outerWidth(),
+			sectionWidth = this.$element.outerWidth(),
+			sectionOffset = this.$element.offset().left,
 			correctOffset = sectionOffset;
 
-        if ( elements.$sectionContainer.length ) {
-			var containerOffset = elements.$sectionContainer.offset().left;
+		if ( this.elements.$sectionContainer.length ) {
+			var containerOffset = this.elements.$sectionContainer.offset().left;
 
-			containerWidth = elements.$sectionContainer.outerWidth();
+			containerWidth = this.elements.$sectionContainer.outerWidth();
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -694,7 +722,7 @@ var StretchedSection = function( $section, $ ) {
 			}
 		}
 
-		if ( settings.is_rtl ) {
+		if ( elementorFrontend.config.is_rtl ) {
 			correctOffset = containerWidth - ( sectionWidth + correctOffset );
 		}
 
@@ -702,33 +730,15 @@ var StretchedSection = function( $section, $ ) {
 
 		resetCss[ direction ] = -correctOffset + 'px';
 
-		$section.css( resetCss );
-	};
+		this.$element.css( resetCss );
+	},
 
-	var initSettings = function() {
-		settings.sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer;
-		settings.is_rtl = elementorFrontend.config.is_rtl;
-	};
+	onInit: function() {
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
-	var initElements = function() {
-		elements.scopeWindow = elementorFrontend.getScopeWindow();
-		elements.$scopeWindow = $( elements.scopeWindow );
-		elements.$sectionContainer = $( elements.scopeWindow.document ).find( settings.sectionContainerSelector );
-	};
-
-	var bindEvents = function() {
-		elementorFrontend.addListenerOnce( $section.data( 'model-cid' ), 'resize', stretchSection );
-	};
-
-	var init = function() {
-		initSettings();
-		initElements();
-		bindEvents();
-		stretchSection();
-	};
-
-	init();
-};
+		this.stretchSection();
+	}
+} );
 
 var Shapes = HandlerModule.extend( {
 
@@ -814,8 +824,8 @@ var Shapes = HandlerModule.extend( {
 	}
 } );
 
-module.exports = function( $scope, $ ) {
-	new StretchedSection( $scope, $ );
+module.exports = function( $scope ) {
+	new StretchedSection( { $element: $scope } );
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element:  $scope } );
@@ -1137,7 +1147,6 @@ module.exports = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		return {
-			$window: $( elementorFrontend.getScopeWindow() ),
 			$scrollable: $( selectors.scrollable ),
 			$wpAdminBar: $( selectors.wpAdminBar )
 		};
@@ -1149,7 +1158,6 @@ module.exports = ViewModule.extend( {
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
-			location = this.elements.$window[0].location,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
@@ -1191,12 +1199,6 @@ LightboxModule = ViewModule.extend( {
 
 	oldAnimation: null,
 
-	getDefaultElements: function() {
-		return {
-			$lightBoxContainer: jQuery( elementorFrontend.getScopeWindow().document.body )
-		};
-	},
-
 	getDefaultSettings: function() {
 		return {
 			classes: {
@@ -1227,11 +1229,7 @@ LightboxModule = ViewModule.extend( {
 
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox-modal',
-			container: self.elements.$lightBoxContainer,
-			closeButton: true,
-			position: {
-				within: elementorFrontend.getScopeWindow()
-			}
+			closeButton: true
 		} );
 
 		modal.on( 'hide', function() {
@@ -1753,6 +1751,12 @@ var Module = function() {
 		}
 
 		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
+	};
+
+	this.forceMethodImplementation = function( methodArguments ) {
+		var functionName = methodArguments.callee.name;
+
+		throw new ReferenceError( 'The method ' + functionName + ' must to be implemented in the inheritor child.' );
 	};
 
 	this.on = function( eventName, callback ) {

@@ -126,7 +126,8 @@
     max-width: 100%;
     width: 100%;
     margin: 0;
-    line-height: 1; }
+    line-height: 1;
+    border: none; }
   .elementor .elementor-custom-embed {
     line-height: 0; }
   .elementor .elementor-background-video-container {
@@ -141,7 +142,12 @@
     .elementor .elementor-background-video-container.elementor-loading {
       opacity: 0; }
   .elementor .elementor-background-video-embed {
-    max-width: none; }
+    max-width: none;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+            transform: translateY(-50%); }
   .elementor .elementor-background-video {
     position: absolute;
     max-width: none;
@@ -1817,6 +1823,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 
 /**
  * Swiper 3.4.2
+ */
+/**
+ * This is the original swiper file
+ * please DO NOT edit it
  */
 .swiper-container {
   margin-left: auto;

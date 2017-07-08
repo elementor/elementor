@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\PageSettings\Manager as PageSettingsManager;
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Post_CSS_File extends CSS_File {
@@ -25,6 +23,10 @@ class Post_CSS_File extends CSS_File {
 		$this->post_id = $post_id;
 
 		parent::__construct();
+	}
+
+	public function get_name() {
+		return 'post';
 	}
 
 	/**
@@ -58,8 +60,6 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	protected function render_css() {
-		$this->add_page_settings_rules();
-
 		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
 
 		if ( ! empty( $data ) ) {
@@ -73,8 +73,6 @@ class Post_CSS_File extends CSS_File {
 				$this->render_styles( $element );
 			}
 		}
-
-		do_action( 'elementor/post-css-file/parse', $this );
 	}
 
 	public function enqueue() {
@@ -83,6 +81,16 @@ class Post_CSS_File extends CSS_File {
 		}
 
 		parent::enqueue();
+	}
+
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
+		parent::add_controls_stack_style_rules( $controls_stack, $controls, $values, $placeholders, $replacements );
+
+		if ( $controls_stack instanceof Element_Base ) {
+			foreach ( $controls_stack->get_children() as $child_element ) {
+				$this->render_styles( $child_element );
+			}
+		}
 	}
 
 	protected function get_enqueue_dependencies() {
@@ -102,80 +110,12 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	/**
-	 * @param Controls_Stack $controls_stack
-	 * @param array          $controls
-	 * @param array          $values
-	 * @param array          $placeholders
-	 * @param array          $replacements
-	 */
-	private function add_element_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
-		foreach ( $controls as $control ) {
-			if ( ! empty( $control['style_fields'] ) ) {
-				foreach ( $values[ $control['name'] ] as $field_value ) {
-					$this->add_element_style_rules(
-						$controls_stack,
-						$control['style_fields'],
-						$field_value,
-						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
-					);
-				}
-			}
-
-			if ( empty( $control['selectors'] ) ) {
-				continue;
-			}
-
-			$this->add_control_style_rules( $control, $values, $controls_stack->get_controls(), $placeholders, $replacements );
-		}
-
-		if ( $controls_stack instanceof Element_Base ) {
-			foreach ( $controls_stack->get_children() as $child_element ) {
-				$this->render_styles( $child_element );
-			}
-		}
-	}
-
-	/**
-	 * @param array $control
-	 * @param array $values
-	 * @param array $controls_stack
-	 * @param array $placeholders
-	 * @param array $replacements
-	 */
-	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
-		$this->add_control_rules( $control, $controls_stack, function( $control ) use ( $values ) {
-			return $this->get_style_control_value( $control, $values );
-		}, $placeholders, $replacements );
-	}
-
-	/**
-	 * @param array $control
-	 * @param array $values
-	 *
-	 * @return mixed
-	 */
-	private function get_style_control_value( array $control, array $values ) {
-		$value = $values[ $control['name'] ];
-
-		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
-			$value = $control['selectors_dictionary'][ $value ];
-		}
-
-		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
-			return null;
-		}
-
-		return $value;
-	}
-
-	/**
 	 * @param Element_Base $element
 	 */
 	private function render_styles( Element_Base $element ) {
 		$element_settings = $element->get_settings();
 
-		$this->add_element_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
+		$this->add_controls_stack_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
 		/**
 		 * @deprecated, use `elementor/element/parse_css`
@@ -183,17 +123,5 @@ class Post_CSS_File extends CSS_File {
 		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
 
 		do_action( 'elementor/element/parse_css', $this, $element );
-	}
-
-	private function add_page_settings_rules() {
-		$page_settings_instance = PageSettingsManager::get_page( $this->post_id );
-
-		$this->add_element_style_rules(
-			$page_settings_instance,
-			$page_settings_instance->get_style_controls(),
-			$page_settings_instance->get_settings(),
-			[ '{{WRAPPER}}' ],
-			[ 'body.elementor-page-' . $this->post_id ]
-		);
 	}
 }

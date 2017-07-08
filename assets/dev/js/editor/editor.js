@@ -31,7 +31,8 @@ App = Marionette.Application.extend( {
 		panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
-		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
+		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
+		settings: Backbone.Radio.channel( 'ELEMENTOR:settings' )
 	},
 
 	modules: {
@@ -130,19 +131,27 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			PageSettings = require( 'elementor-editor-utils/page-settings' );
+			Settings = require( 'elementor-editor/settings/settings' );
 
 		this.hooks = new EventManager();
 
-		this.pageSettings = new PageSettings();
+		this.settings = new Settings();
+
+		/**
+		 * @deprecated - use `this.settings.page` instead
+		 */
+		this.pageSettings = this.settings.page;
 
 		this.templates.init();
 
 		this.initDialogsManager();
 
 		this.heartbeat.init();
+
 		this.ajax.init();
+
 		this.revisions.init();
+
 		this.hotKeys.init();
 	},
 
@@ -176,16 +185,18 @@ App = Marionette.Application.extend( {
 		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
-
-		this.initElements();
 	},
 
 	initFrontend: function() {
-		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
+		window.elementorFrontend = this.$preview[0].contentWindow.elementorFrontend;
 
 		elementorFrontend.init();
 
+		elementorFrontend.getElements( 'window' ).elementor = this;
+
 		elementorFrontend.elementsHandler.initHandlers();
+
+		this.trigger( 'frontend:init' );
 	},
 
 	initClearPageDialog: function() {
@@ -251,7 +262,9 @@ App = Marionette.Application.extend( {
 
 		this.initFrontend();
 
-		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+		this.initElements();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.$previewContents = this.$preview.contents();
 
@@ -321,7 +334,7 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
+			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
 		} );
 
 		this.enqueueTypographyFonts();
@@ -533,6 +546,34 @@ App = Marionette.Application.extend( {
 		}
 
 		return string;
+	},
+
+	compareVersions: function( versionA, versionB, operator ) {
+		var prepareVersion = function( version ) {
+			version = version + '';
+
+			return version.replace( /[^\d.]+/, '.-1.' );
+		};
+
+		versionA  = prepareVersion( versionA );
+		versionB = prepareVersion( versionB );
+
+		if ( versionA === versionB ) {
+			return ! operator || /^={2,3}$/.test( operator );
+		}
+
+		var versionAParts = versionA.split( '.' ).map( Number ),
+			versionBParts = versionB.split( '.' ).map( Number ),
+			longestVersionParts = Math.max( versionAParts.length, versionBParts.length );
+
+		for ( var i = 0; i < longestVersionParts; i++ ) {
+			var valueA = versionAParts[ i ] || 0,
+				valueB = versionBParts[ i ] || 0;
+
+			if ( valueA !== valueB ) {
+				return this.conditions.compare( valueA, valueB, operator );
+			}
+		}
 	},
 
 	logSite: function() {

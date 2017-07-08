@@ -14,12 +14,24 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	getUniqueHandlerID: function( cid, $element ) {
+		if ( ! cid ) {
+			cid = this.getModelCID();
+		}
+
+		if ( ! $element ) {
+			$element = this.$element;
+		}
+
+		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+	},
+
 	addEditorListener: function() {
-		var self = this;
+		var self = this,
+			uniqueHandlerID = self.getUniqueHandlerID();
 
 		if ( self.onElementChange ) {
-			var uniqueHandlerID = self.getModelCID() + self.$element.attr( 'data-element_type' ) + self.getConstructorID(),
-				elementName = self.getElementName(),
+			var elementName = self.getElementName(),
 				eventName = 'change';
 
 			if ( 'global' !== elementName ) {
@@ -27,7 +39,7 @@ HandlerModule = ViewModule.extend( {
 			}
 
 			elementorFrontend.addListenerOnce( uniqueHandlerID, eventName, function( controlView, elementView ) {
-				var elementViewHandlerID = elementView.model.cid + elementView.$el.attr( 'data-element_type' ) + self.getConstructorID();
+				var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
 
 				if ( elementViewHandlerID !== uniqueHandlerID ) {
 					return;
@@ -51,16 +63,18 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings,
+		var elementSettings = {},
 			modelCID = this.getModelCID();
 
 		if ( elementorFrontend.isEditMode() && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				activeControls = settings.getActiveControls(),
-				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( activeValues, settingsKeys );
+			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+				}
+			} );
 		} else {
 			elementSettings = this.$element.data( 'settings' ) || {};
 		}

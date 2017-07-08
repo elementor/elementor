@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Editor\Settings\Manager as SettingsManager;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Frontend {
@@ -14,7 +16,7 @@ class Frontend {
 	private $_is_frontend_mode = false;
 	private $_has_elementor_in_page = false;
 	private $_is_excerpt = false;
-	private $content_removed_filters =[];
+	private $content_removed_filters = [];
 
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -192,8 +194,8 @@ class Frontend {
 		$post = get_post();
 
 		$elementor_frontend_config = [
-			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
-			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
+			'stretchedSectionContainer' => SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_stretched_section_container' ),
 			'is_rtl' => is_rtl(),
 			'post' => [
 				'id' => $post->ID,
@@ -214,7 +216,7 @@ class Frontend {
 
 		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
 
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
 				'keys' => $elements_frontend_keys,

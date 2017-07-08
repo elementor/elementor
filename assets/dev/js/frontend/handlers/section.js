@@ -84,7 +84,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			}
 		} );
 
-		jQuery( elementorFrontend.getScopeWindow() ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -136,37 +136,53 @@ var BackgroundVideo = HandlerModule.extend( {
 	}
 } );
 
-var StretchedSection = function( $section, $ ) {
-	var elements = {},
-		settings = {};
+var StretchedSection = HandlerModule.extend( {
 
-	var stretchSection = function() {
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				sectionContainer: elementorFrontend.config.stretchedSectionContainer
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		return {
+			$sectionContainer: elementorFrontend.getElements( '$document' ).find( this.getSettings( 'selectors.sectionContainer' ) )
+		};
+	},
+
+	bindEvents: function() {
+		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
+	},
+
+	stretchSection: function() {
 		// Clear any previously existing css associated with this script
-		var direction = settings.is_rtl ? 'right' : 'left',
+		var direction = elementorFrontend.config.is_rtl ? 'right' : 'left',
 			resetCss = {},
-            isStretched = $section.hasClass( 'elementor-section-stretched' );
+			isStretched = this.$element.hasClass( 'elementor-section-stretched' );
 
 		if ( elementorFrontend.isEditMode() || isStretched ) {
 			resetCss.width = 'auto';
 
 			resetCss[ direction ] = 0;
 
-			$section.css( resetCss );
+			this.$element.css( resetCss );
 		}
 
 		if ( ! isStretched ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.outerWidth(),
-			sectionWidth = $section.outerWidth(),
-			sectionOffset = $section.offset().left,
+		var containerWidth = elementorFrontend.getElements( '$window' ).outerWidth(),
+			sectionWidth = this.$element.outerWidth(),
+			sectionOffset = this.$element.offset().left,
 			correctOffset = sectionOffset;
 
-        if ( elements.$sectionContainer.length ) {
-			var containerOffset = elements.$sectionContainer.offset().left;
+		if ( this.elements.$sectionContainer.length ) {
+			var containerOffset = this.elements.$sectionContainer.offset().left;
 
-			containerWidth = elements.$sectionContainer.outerWidth();
+			containerWidth = this.elements.$sectionContainer.outerWidth();
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -175,7 +191,7 @@ var StretchedSection = function( $section, $ ) {
 			}
 		}
 
-		if ( settings.is_rtl ) {
+		if ( elementorFrontend.config.is_rtl ) {
 			correctOffset = containerWidth - ( sectionWidth + correctOffset );
 		}
 
@@ -183,33 +199,15 @@ var StretchedSection = function( $section, $ ) {
 
 		resetCss[ direction ] = -correctOffset + 'px';
 
-		$section.css( resetCss );
-	};
+		this.$element.css( resetCss );
+	},
 
-	var initSettings = function() {
-		settings.sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer;
-		settings.is_rtl = elementorFrontend.config.is_rtl;
-	};
+	onInit: function() {
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
-	var initElements = function() {
-		elements.scopeWindow = elementorFrontend.getScopeWindow();
-		elements.$scopeWindow = $( elements.scopeWindow );
-		elements.$sectionContainer = $( elements.scopeWindow.document ).find( settings.sectionContainerSelector );
-	};
-
-	var bindEvents = function() {
-		elementorFrontend.addListenerOnce( $section.data( 'model-cid' ), 'resize', stretchSection );
-	};
-
-	var init = function() {
-		initSettings();
-		initElements();
-		bindEvents();
-		stretchSection();
-	};
-
-	init();
-};
+		this.stretchSection();
+	}
+} );
 
 var Shapes = HandlerModule.extend( {
 
@@ -295,8 +293,8 @@ var Shapes = HandlerModule.extend( {
 	}
 } );
 
-module.exports = function( $scope, $ ) {
-	new StretchedSection( $scope, $ );
+module.exports = function( $scope ) {
+	new StretchedSection( { $element: $scope } );
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element:  $scope } );
