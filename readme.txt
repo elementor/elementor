@@ -183,6 +183,21 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.5.3 - 09.07.2017 =
+* Tweak! - Google Fonts list updated with 17 new fonts
+* Tweak! - Added responsive control for min-height in Column widget
+* Tweak! - Added default value for HTML Tags
+* Tweak! - Added editor compatibility for some themes
+* Fix! - Added latin-ext subset in Font control for Polish language
+* Fix! - Updated control condition on Skin
+* Fix! - Glitch CSS in video iFrame
+* Fix! - Hover effect opacity transition
+* Fix! - Column background overlay condition in front-end
+* Fix! - Shape divider width units for tablet and mobile ([#1817](https://github.com/pojome/elementor/issues/1817))
+* Fix! - Video Background position center of section ([#1925](https://github.com/pojome/elementor/issues/1925))
+* Fix! - Toggle & Accordion glitch in the editor
+* Fix! - Hide errors for control without selector ([#1923](https://github.com/pojome/elementor/issues/1923))
+
 = 1.5.2 - 02.07.2017 =
 * Fix! - Library dialog not loading in different languages
 * Fix! - Removed duplicate data from editor loading
