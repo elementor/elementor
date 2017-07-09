@@ -1752,7 +1752,7 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
-	// Exporting modules that can be used from outside
+	// Exporting modules that can be used externally
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
