@@ -174,6 +174,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		model._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
 
 		model.trigger( 'change', model,  model._pending );
+
+		delete model.changed;
+		delete model._previousAttributes;
 	},
 
 	onRowControlChange: function( model ) {
