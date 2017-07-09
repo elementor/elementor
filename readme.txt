@@ -188,7 +188,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added responsive control for min-height in Column widget
 * Tweak! - Added default value for HTML Tags
 * Tweak! - Added editor compatibility for some themes
-* Fix! - Added latin-ext subset in Font control for Polish language
+* Fix! - Added `latin-ext` subset in Font control for Polish language
 * Fix! - Updated control condition on Skin
 * Fix! - Glitch CSS in video iFrame
 * Fix! - Hover effect opacity transition
