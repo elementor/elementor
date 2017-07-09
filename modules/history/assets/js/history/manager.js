@@ -1,3 +1,6 @@
+var ElementHistoryBehavior = require( './element-behavior' ),
+	CollectionHistoryBehavior = require( './collection-behavior' );
+
 var	Manager = function() {
 	var self = this;
 
@@ -25,36 +28,13 @@ var	Manager = function() {
 		duplicate: elementor.translate( 'duplicated' )
 	};
 
-	var addHotKeys = function() {
-		var H_KEY = 72,
-			Z_KEY = 90;
-
-		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: function() {
-				return items.length;
-			},
-			handle: function( event ) {
-				navigate( Z_KEY === event.which && event.shiftKey );
-			}
-		} );
-
-		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
-			isWorthHandling: function( event ) {
-				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
-			},
-			handle: function() {
-				elementor.getPanelView().setPage( 'historyPage' );
-			}
-		} );
-	};
-
 	var addBehaviors = function( behaviors ) {
 		behaviors.ElementHistory = {
-			behaviorClass: require( './element-behavior' )
+			behaviorClass: ElementHistoryBehavior
 		};
 
 		behaviors.CollectionHistory = {
-			behaviorClass: require( './collection-behavior' )
+			behaviorClass: CollectionHistoryBehavior
 		};
 
 		return behaviors;
@@ -62,7 +42,7 @@ var	Manager = function() {
 
 	var addCollectionBehavior = function( behaviors ) {
 		behaviors.CollectionHistory = {
-			behaviorClass: require( './collection-behavior' )
+			behaviorClass: CollectionHistoryBehavior
 		};
 
 		return behaviors;
@@ -94,6 +74,29 @@ var	Manager = function() {
 		if ( 'historyPage' === panel.getCurrentPageName() ) {
 			panel.getCurrentPageView().render();
 		}
+	};
+
+	var addHotKeys = function() {
+		var H_KEY = 72,
+			Z_KEY = 90;
+
+		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
+			isWorthHandling: function() {
+				return items.length;
+			},
+			handle: function( event ) {
+				navigate( Z_KEY === event.which && event.shiftKey );
+			}
+		} );
+
+		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
+			isWorthHandling: function( event ) {
+				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
+			},
+			handle: function() {
+				elementor.getPanelView().setPage( 'historyPage' );
+			}
+		} );
 	};
 
 	var init = function() {

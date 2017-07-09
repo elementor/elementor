@@ -30,7 +30,7 @@ module.exports = Marionette.Behavior.extend( {
 			history: {
 				behavior: this,
 				changed: changedAttributes,
-				model: this.view.model
+				model: this.view.model.toJSON()
 			}
 		};
 
@@ -42,9 +42,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	restore: function( historyItem, isRedo ) {
-		var	type = historyItem.get( 'type' ),
-			history = historyItem.get( 'history' ),
-			modelID = history.model.get( 'id' ),
+		var	history = historyItem.get( 'history' ),
+			modelID = history.model.id,
 			view = elementor.history.history.findView( modelID ),
 			model = view.getEditModel ? view.getEditModel() : view.model,
 			settings = model.get( 'settings' ),
