@@ -9,52 +9,66 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	onChildviewBeforeAdd: function( childView ) {
+		elementor.history.history.addItem( {
+			type: 'add',
+			title: elementor.history.history.getModelLabel( childView.collection.models[0] )
+		} );
+	},
+
+	onChildviewBeforeDuplicate: function( childView ) {
+		elementor.history.history.addItem( {
+			type: 'duplicate',
+			title: elementor.history.history.getModelLabel( childView.model )
+		} );
+	},
+
+	onChildviewElementRemoved: function( childView ) {
+		elementor.history.history.addItem( {
+			type: 'remove',
+			title: elementor.history.history.getModelLabel( childView.model )
+		} );
+	},
+
 	saveCollectionHistory: function( collection, event ) {
 		var historyItem,
-			model;
+			model,
+			type;
 
 		if ( event.add ) {
 			model = event.changes.added[0];
-
-			historyItem = {
-				type: 'add',
-				elementType: model.get( 'elType' ),
-				elementID: model.get( 'id' ),
-				title: elementor.history.getModelLabel( model ) + ' Added',
-				history: {
-					behavior: this,
-					collection: collection,
-					event: event,
-					model: model
-				}
-			};
-
-			elementor.history.addItem( historyItem );
+			type = 'add';
 		} else {
 			model = event.changes.removed[0];
-			// Remove listeners and etc
-			model.destroy();
-
-			historyItem = {
-				type: 'remove',
-				elementType: model.get( 'elType' ),
-				elementID: model.get( 'id' ),
-				title: elementor.history.getModelLabel( model ) + ' Removed',
-				history: {
-					behavior: this,
-					collection: collection,
-					event: event,
-					model: model
-				}
-			};
-
-			elementor.history.addItem( historyItem );
+			type = 'remove';
 		}
+
+		var title = elementor.history.history.getModelLabel( model );
+
+		// If it's an unknown model - don't save
+		if ( ! title ) {
+			return;
+		}
+
+		historyItem = {
+			type: type,
+			elementType: model.get( 'elType' ),
+			elementID: model.get( 'id' ),
+			title: title,
+			history: {
+				behavior: this,
+				collection: collection,
+				event: event,
+				model: model.toJSON( { copyHtmlCache: true } )
+			}
+		};
+
+		elementor.history.history.addItem( historyItem );
 	},
 
 	add: function( model, toView, position ) {
-		if ( 'section' === model.get( 'elType' ) ) {
-			model.get( 'editSettings' ).set( 'dontFillEmpty', true );
+		if ( 'section' === model.elType ) {
+			model.dontFillEmpty = true;
 		}
 
 		toView.addChildModel( model, { at: position, silent: 0 } );
@@ -73,7 +87,7 @@ module.exports = Marionette.Behavior.extend( {
 		// Find the new behavior and work with him
 		if ( history.behavior.view.model ) {
 			var modelID = history.behavior.view.model.get( 'id' ),
-				view = elementor.history.findView( modelID );
+				view = elementor.history.history.findView( modelID );
 			if ( view ) {
 				behavior = view.getBehavior( 'CollectionHistory' );
 			}

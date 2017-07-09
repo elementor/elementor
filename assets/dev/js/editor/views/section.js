@@ -220,7 +220,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onBeforeRender: function() {
-		if ( ! this.model.get( 'editSettings' ).get( 'dontFillEmpty' ) ) {
+		if ( ! this.model.get( 'dontFillEmpty' ) ) {
 			this._checkIsEmpty();
 		}
 	},

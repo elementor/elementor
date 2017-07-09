@@ -2006,11 +2006,19 @@ body.elementor-editor-preview #elementor-mode-switcher {
   cursor: pointer; }
   .elementor-history-item:hover {
     background-color: rgba(230, 233, 236, 0.3); }
+    .elementor-history-item:hover .elementor-history-item__icon .fa:before {
+      content: '\f1da'; }
   .elementor-history-item-applied {
-    opacity: 0.4; }
+    color: #a4afb7; }
   .elementor-history-item-current {
-    background: #d4d4d4;
+    background: #e6e9ec;
     cursor: inherit; }
+    .elementor-history-item-current .elementor-history-item__icon .fa:before, .elementor-history-item-current:hover .elementor-history-item__icon .fa:before {
+      content: '\f00c'; }
+  .elementor-history-item__details {
+    width: 95%; }
+  .elementor-history-item .__icon {
+    float: left; }
 
 #elementor-preview {
   background-color: #333;

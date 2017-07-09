@@ -4,7 +4,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onStart: function() {
-		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
+		this.listenTo( this.view.model.get( 'settings' ), 'change', this.saveHistory );
 	},
 
 	saveHistory: function( model ) {
@@ -26,25 +26,26 @@ module.exports = Marionette.Behavior.extend( {
 			type: 'change',
 			elementType: 'control',
 			status: 'not_applied',
-			title: elementor.history.getModelLabel( model ) + ' Edited',
+			title: elementor.history.history.getModelLabel( model ),
 			history: {
 				behavior: this,
 				changed: changedAttributes,
+				model: this.view.model
 			}
 		};
 
 		if ( 1 === changed.length && model.controls[ changed[0] ] ) {
-			historyItem.title = elementor.history.getModelLabel( model ) + ':' + model.controls[ changed[0] ].label + ' Changed';
+			historyItem.subTitle = model.controls[ changed[0] ].label;
 		}
 
-		elementor.history.addItem( historyItem );
+		elementor.history.history.addItem( historyItem );
 	},
 
 	restore: function( historyItem, isRedo ) {
 		var	type = historyItem.get( 'type' ),
 			history = historyItem.get( 'history' ),
-			modelID = history.behavior.view.model.get( 'id' ),
-			view = elementor.history.findView( modelID ),
+			modelID = history.model.get( 'id' ),
+			view = elementor.history.history.findView( modelID ),
 			model = view.getEditModel ? view.getEditModel() : view.model,
 			settings = model.get( 'settings' ),
 			behavior = view.getBehavior( 'ElementHistory' );
@@ -66,4 +67,3 @@ module.exports = Marionette.Behavior.extend( {
 		behavior.listenTo( settings, 'change', this.saveHistory );
 	}
 } );
-

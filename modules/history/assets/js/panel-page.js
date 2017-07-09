@@ -1,105 +1,93 @@
-module.exports = Marionette.CompositeView.extend( {
-	id: 'elementor-panel-history',
+var TabHistoryView = require( './history/panel-tab' ),
+	TabHistoryEmpty = require( './history/empty' ),
+	TabRevisionsView = require( './revisions/panel-tab' ),
+	TabRevisionsEmpty = require( './revisions/empty' );
 
-	template: '#tmpl-elementor-panel-history',
+module.exports = Marionette.LayoutView.extend( {
+	template: '#tmpl-elementor-panel-history-page',
 
-	childView: Marionette.ItemView.extend( {
-		template: '#tmpl-elementor-panel-history-item',
-		ui: {
-			item: '.elementor-history-item'
-		},
-		triggers: {
-			'click @ui.item': 'item:click'
-		}
-	} ),
-
-	childViewContainer: '#elementor-history-list',
-
-	currentItem: null,
+	regions: {
+		content: '#elementor-panel-history-content',
+	},
 
 	ui: {
-		clear: '.elementor-panel-scheme-discard .elementor-button',
-		reset: '.elementor-history-reset',
+		tabs: '.elementor-panel-navigation-tab'
 	},
 
 	events: {
-		'click @ui.clear': 'onClearClick',
-		'click @ui.reset': 'onResetClick'
+		'click @ui.tabs': 'onTabClick'
 	},
+
+	regionViews: {},
 
 	initialize: function() {
-		this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged );
+		this.initRegionViews();
 	},
 
-	onClearClick: function() {
-		elementor.history.items.reset();
+	initRegionViews: function() {
+		var historyItems = elementor.history.history.getItems();
+		var revisionsItems = elementor.history.revisions.getItems();
+		this.regionViews  = {
+			history: {
+				region: this.content,
+				view: function() {
+					if ( historyItems.length ) {
+						return TabHistoryView;
+					}
+
+					return TabHistoryEmpty;
+				},
+				options: {
+					collection: historyItems
+				}
+			},
+			revisions: {
+				region: this.content,
+				view: function() {
+					if ( revisionsItems.length ) {
+						return TabRevisionsView;
+					}
+
+					return TabRevisionsEmpty;
+				},
+
+				options: {
+					collection: revisionsItems
+				}
+			}
+		};
 	},
 
-	onCollectionChanged: function() {
-		if ( ! this.collection.length ) {
-			var HistoryEmptyView = Marionette.ItemView.extend( {
-				template: '#tmpl-elementor-panel-history-no-items',
-				id: 'elementor-panel-history-no-items',
-				className: 'elementor-panel-nerd-box'
-			} );
-			elementor.getPanelView().getRegion( 'content' ).show( new HistoryEmptyView() );
+	activateTab: function( tabName ) {
+		this.ui.tabs
+			.removeClass( 'active' )
+			.filter( '[data-view="' + tabName + '"]' )
+			.addClass( 'active' );
+
+		this.showView( tabName );
+	},
+
+	showView: function( viewName ) {
+		var viewDetails = this.regionViews[ viewName ],
+			options = viewDetails.options || {},
+			View = viewDetails.view;
+
+		if ( 'function' === typeof View ) {
+			View = viewDetails.view();
 		}
+
+		viewDetails.region.show( new View( options ) );
 	},
 
 	onRender: function() {
-		var self = this;
-
-		_.defer( function() {
-			// Render empty page if needed
-			self.collection.trigger( 'reset' );
-
-			// Set current item - the first not applied item
-			if ( self.children.length ) {
-				var currentItem = self.collection.find( function( model ) {
-						return 'not_applied' ===  model.get( 'status' );
-					} ),
-					currentView = self.children.findByModel( currentItem );
-
-				self.updateCurrentItem( currentView.$el );
-			}
-		} );
+		this.showView( 'history' );
 	},
 
-	updateCurrentItem: function( element ) {
-		var currentItemClass = 'elementor-history-item-current';
-
-		if ( this.currentItem ) {
-			this.currentItem.removeClass( currentItemClass );
-		}
-
-		this.currentItem = element;
-
-		this.currentItem.addClass( currentItemClass );
+	onShow: function() {
+		this.showView( 'history' );
 	},
 
-	onResetClick: function() {
-		var childView;
-
-		// Handle Undo
-		this.undoItem( this.children.length );
-
-		this.updateCurrentItem( this.ui.reset );
-	},
-
-
-
-	onChildviewItemClick: function( childView, event ) {
-		if ( childView.$el === this.currentItem ) {
-			return;
-		}
-
-		var collection = event.model.collection,
-			itemIndex = collection.findIndex( event.model );
-
-		elementor.history.doItem( itemIndex );
-
-		this.updateCurrentItem( childView.$el );
-
-		this.render();
+	onTabClick: function( event ) {
+		this.activateTab( event.currentTarget.dataset.view );
 	}
 } );
