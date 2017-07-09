@@ -85,7 +85,7 @@ class Widget_Icon_Box extends Widget_Base {
 			'description_text',
 			[
 				'label' => '',
-				'type' => Controls_Manager::TEXTAREA,
+				'type' => Controls_Manager::WYSIWYG,
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Your Description', 'elementor' ),
 				'title' => __( 'Input icon text here', 'elementor' ),
