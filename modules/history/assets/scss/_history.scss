@@ -10,15 +10,35 @@
 
 		&:hover {
 			background-color: fade_out($editor-background, 0.7) ;
+
+			.elementor-history-item__icon{
+				.fa:before {
+					content:'\f1da';
+				}
+			}
 		}
 
 		&-applied {
-			opacity: 0.4;
+			color: $editor-light;
 		}
 
 		&-current {
-			background: #d4d4d4;
+			background: $editor-background;
 			cursor: inherit;
+
+			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
+				.fa:before {
+					content:'\f00c';
+				}
+			}
 		}
+
+		&__details{
+			width: 95%;
+		}
+
+		.__icon {
+			 float: $end;
+		 }
 	}
 }

@@ -40,6 +40,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		this.listenTo( this.collection, 'change', this.onRowControlChange );
 		this.listenTo( this.collection, 'add remove reset', this.onRowChange, this );
+		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
 	},
 
 	addRow: function( data, options ) {
@@ -150,13 +151,29 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRowChange: function() {
+		this.toggleMinRowsClass();
+	},
+
+	onRowUpdate: function( collection, event ) {
 		var model = this.elementSettingsModel;
+
+		var collectionCloned = collection.clone();
+
+		if ( event.add ) {
+			collectionCloned.remove( event.changes.added[0] );
+		} else {
+			collectionCloned.add( event.changes.removed[0], { at: event.index } );
+		}
 
 		model.changed = {};
 
-		model.trigger( 'change', model, model._pending );
+		model.changed[ this.model.get( 'name' ) ] = collection;
 
-		this.toggleMinRowsClass();
+		model._previousAttributes = {};
+
+		model._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+
+		model.trigger( 'change', model,  model._pending );
 	},
 
 	onRowControlChange: function( model ) {

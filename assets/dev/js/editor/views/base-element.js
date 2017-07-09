@@ -188,6 +188,8 @@ BaseElementView = BaseContainer.extend( {
 					},
 					defaultOption: 'confirm',
 					onConfirm: _.bind( function() {
+						this.trigger( 'element:removed' );
+
 						var parent = this._parent;
 
 						parent.isManualRemoving = true;
@@ -430,6 +432,7 @@ BaseElementView = BaseContainer.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
+		this.trigger( 'before:duplicate' );
 		this.duplicate();
 	},
 

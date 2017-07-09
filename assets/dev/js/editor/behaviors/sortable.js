@@ -164,6 +164,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
+		elementor.channels.data.trigger( 'drag:update', model );
+
 		var newIndex = ui.item.parent().children().index( ui.item );
 
 		this.view.addChildElement( model.toJSON( { copyHtmlCache: true } ), { at: newIndex } );
@@ -185,6 +187,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 				$childElement = ui.item,
 				collection = this.view.collection,
 				newIndex = $childElement.parent().children().index( $childElement );
+
+			elementor.channels.data.trigger( 'drag:update', model );
 
 			var child = this.view.children.findByModelCid( model.cid );
 
