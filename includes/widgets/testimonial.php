@@ -33,7 +33,7 @@ class Widget_Testimonial extends Widget_Base {
 			'testimonial_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
-				'type' => Controls_Manager::TEXTAREA,
+				'type' => Controls_Manager::WYSIWYG,
 				'rows' => '10',
 				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.',
 			]
