@@ -17,16 +17,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentItem: null,
 
-	ui: {
-		clear: '.elementor-panel-scheme-discard .elementor-button',
-		reset: '.elementor-history-reset',
-	},
-
-	events: {
-		'click @ui.clear': 'onClearClick',
-		'click @ui.reset': 'onResetClick'
-	},
-
 	onRender: function() {
 		var self = this;
 
@@ -53,15 +43,6 @@ module.exports = Marionette.CompositeView.extend( {
 		this.currentItem = element;
 
 		this.currentItem.addClass( currentItemClass );
-	},
-
-	onResetClick: function() {
-		var childView;
-
-		// Handle Undo
-		this.undoItem( this.children.length );
-
-		this.updateCurrentItem( this.ui.reset );
 	},
 
 	onChildviewItemClick: function( childView, event ) {
