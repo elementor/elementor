@@ -1,0 +1,46 @@
+.elementor-control-type-gallery {
+
+	&.elementor-gallery-empty {
+
+		.elementor-control-gallery-clear, .elementor-control-gallery-thumbnails {
+			display: none;
+		}
+	}
+
+	.elementor-control-media {
+		//	padding-top: 20px; //temp remove for some space in gallery widget
+	}
+
+	.elementor-control-gallery-thumbnails {
+		overflow: hidden;
+		margin-top: 20px;
+		cursor: pointer;
+	}
+
+	.elementor-control-gallery-thumbnail {
+		width: 40px;
+		height: 40px;
+		background-size: cover;
+		background-position: 50% 50%;
+		float: $start;
+		margin-bottom: 10px;
+
+		&:not(:nth-child(5n)) {
+			@include margin-end(10px);
+		}
+	}
+
+	.elementor-control-gallery-add {
+		width: 100%;
+		height: 30px;
+		color: #fff;
+		background-color: $editor-light;
+		margin-top: 10px;
+		text-transform: uppercase;
+	}
+
+	.elementor-control-gallery-clear {
+		color: $editor-warning;
+		cursor: pointer;
+	}
+}
