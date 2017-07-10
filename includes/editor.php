@@ -87,10 +87,6 @@ class Editor {
 			return false;
 		}
 
-		if ( isset( $_GET['elementor'] ) ) {
-			return true;
-		}
-
 		// Ajax request as Editor mode
 		$actions = [
 			'elementor',
