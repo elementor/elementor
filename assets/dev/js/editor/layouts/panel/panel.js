@@ -26,6 +26,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	currentPageName: null,
 
+	currentPageView: null,
+
 	_isScrollbarInitialized: false,
 
 	initialize: function() {
@@ -53,10 +55,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			},
 			colorPickerScheme: {
 				view: require( 'elementor-panel/pages/schemes/color-picker' )
-			},
-			settingsPage: {
-				view: require( 'elementor-panel/pages/page-settings/page-settings' ),
-				title: elementor.translate( 'page_settings' )
 			}
 		};
 
@@ -107,7 +105,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	getCurrentPageView: function() {
-		return this.getChildView( 'content' );
+		return this.currentPageView;
 	},
 
 	setPage: function( page, title, viewOptions ) {
@@ -127,11 +125,17 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			View = pageData.getView();
 		}
 
-		this.showChildView( 'content', new View( viewOptions ) );
+		this.currentPageView = new View( viewOptions );
+
+		this.showChildView( 'content', this.currentPageView );
 
 		this.getHeaderView().setTitle( title || pageData.title );
 
 		this.currentPageName = page;
+
+		this
+			.trigger( 'set:page', this.currentPageView )
+			.trigger( 'set:page:' + page, this.currentPageView );
 	},
 
 	openEditor: function( model, view ) {

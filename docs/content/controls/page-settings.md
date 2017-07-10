@@ -94,7 +94,7 @@ function handleMenuItemColor ( newValue ) {
 Next, we will connect the function and the control we created:
 
 ```javascript
-elementor.pageSettings.addChangeCallback( 'menu_item_color', handleMenuItemColor );
+elementor.settings.page.addChangeCallback( 'menu_item_color', handleMenuItemColor );
 ```
 
 Now, after every change of the control, the function `handleMenuItemColor` will run when it gets a parameter of the new control value.
