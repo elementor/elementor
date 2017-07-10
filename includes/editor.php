@@ -80,6 +80,21 @@ class Editor {
 		die;
 	}
 
+	public function redirect_to_new_url() {
+		if ( ! isset( $_GET['elementor'] ) ) {
+			return;
+		}
+
+		$post_id = get_the_ID();
+
+		if ( ! User::is_current_user_can_edit( $post_id ) || ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+			return;
+		}
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
+	}
+
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
@@ -543,5 +558,6 @@ class Editor {
 
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
+		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 	}
 }
