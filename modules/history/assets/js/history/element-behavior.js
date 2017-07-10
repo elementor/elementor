@@ -4,7 +4,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onStart: function() {
-		this.listenTo( this.view.model.get( 'settings' ), 'change', this.saveHistory );
+		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
 	},
 
 	saveHistory: function( model ) {
@@ -30,7 +30,7 @@ module.exports = Marionette.Behavior.extend( {
 			history: {
 				behavior: this,
 				changed: changedAttributes,
-				model: this.view.model.toJSON()
+				model: this.view.getEditModel().toJSON()
 			}
 		};
 
