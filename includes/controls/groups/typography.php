@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Editor\Settings\Manager as SettingsManager;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Group_Control_Typography extends Group_Control_Base {
@@ -44,7 +46,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
-		$default_fonts = get_option( 'elementor_default_generic_fonts', 'Sans-serif' );
+		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
