@@ -8816,7 +8816,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
 		this.listenTo( this.collection, 'change', this.onRowControlChange );
-		this.listenTo( this.collection, 'add remove reset', this.onRowChange, this );
 		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
 	},
 
@@ -8927,12 +8926,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onRowChange: function() {
-		this.toggleMinRowsClass();
-	},
-
 	onRowUpdate: function( collection, event ) {
-		var model = this.elementSettingsModel;
+		var settings = this.elementSettingsModel;
 
 		var collectionCloned = collection.clone();
 
@@ -8942,22 +8937,52 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			collectionCloned.add( event.changes.removed[0], { at: event.index } );
 		}
 
-		model.changed = {};
+		settings.changed = {};
 
-		model.changed[ this.model.get( 'name' ) ] = collection;
+		settings.changed[ this.model.get( 'name' ) ] = collection;
 
-		model._previousAttributes = {};
+		settings._previousAttributes = {};
 
-		model._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
 
-		model.trigger( 'change', model,  model._pending );
+		settings.trigger( 'change', settings,  settings._pending );
 
-		delete model.changed;
-		delete model._previousAttributes;
+		delete settings.changed;
+		delete settings._previousAttributes;
+
+		this.toggleMinRowsClass();
 	},
 
 	onRowControlChange: function( model ) {
-		this.elementSettingsModel.trigger( 'change', model, model._pending );
+		var changed = Object.keys( model.changed );
+		if ( ! changed.length ) {
+			return;
+		}
+
+		var collectionCloned = model.collection.clone(),
+			modelIndex = collectionCloned.findIndex( model ),
+			modelCloned = collectionCloned.find( model ),
+			_previousAttributes = modelCloned._previousAttributes;
+		// Replace the referenced model
+		modelCloned = modelCloned.clone();
+
+		// Save it with old values
+		modelCloned.set( _previousAttributes );
+		collectionCloned.remove( model );
+		collectionCloned.add( modelCloned, { at: modelIndex } );
+
+		var element = this._parent.model,
+			settings = element.get( 'settings' );
+
+		settings.changed = {};
+		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
+		settings._previousAttributes = {};
+		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		
+		settings.trigger( 'change', settings );
+
+		delete settings.changed;
+		delete settings._previousAttributes;
 	},
 
 	onButtonAddRowClick: function() {
