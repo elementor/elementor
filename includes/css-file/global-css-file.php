@@ -9,6 +9,10 @@ class Global_CSS_File extends CSS_File {
 
 	const FILE_HANDLER_ID = 'elementor-global';
 
+	public function get_name() {
+		return 'global';
+	}
+
 	/**
 	 * @return array
 	 */

@@ -2,8 +2,9 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\DB;
-use Elementor\PageSettings\Manager as PageSettingsManager;
-use Elementor\PageSettings\Page;
+use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Editor\Settings\Manager as SettingsManager;
+use Elementor\Editor\Settings\Page\Model;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -163,7 +164,7 @@ class Source_Local extends Source_Base {
 		$this->save_item_type( $template_id, $template_data['type'] );
 
 		if ( ! empty( $template_data['page_settings'] ) ) {
-			PageSettingsManager::save_page_settings( $template_id, $template_data['page_settings'] );
+			SettingsManager::get_settings_managers( 'page' )->save_settings( $template_data['page_settings'], $template_id );
 		}
 
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
@@ -227,7 +228,8 @@ class Source_Local extends Source_Base {
 		];
 
 		if ( ! empty( $args['page_settings'] ) ) {
-			$page = PageSettingsManager::get_page( $args['template_id'] );
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['template_id'] );
+
 			$data['page_settings'] = $page->get_data( 'settings' );
 		}
 
@@ -253,8 +255,10 @@ class Source_Local extends Source_Base {
 		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
 		if ( 'page' === $template_type ) {
-			$page = PageSettingsManager::get_page( $template_id );
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
+
 			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
+
 			if ( ! empty( $page_settings_data['settings'] ) ) {
 				$template_data['page_settings'] = $page_settings_data['settings'];
 			}
@@ -319,7 +323,7 @@ class Source_Local extends Source_Base {
 		$page_settings = [];
 
 		if ( ! empty( $data['page_settings'] ) ) {
-			$page = new Page( [
+			$page = new Model( [
 				'id' => 0,
 				'settings' => $data['page_settings'],
 			] );
