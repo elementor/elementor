@@ -97,7 +97,7 @@ TemplateLibraryManager = function() {
 				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
 				if ( options.withPageSettings ) {
-					elementor.pageSettings.model.set( data.page_settings );
+					elementor.settings.page.model.set( data.page_settings );
 				}
 			},
 			error: function( data ) {
