@@ -24,11 +24,13 @@ class Editor {
 
 		$post_id = $_REQUEST['post'];
 
-		Plugin::$instance->db->switch_to_post( $post_id );
-
 		if ( ! $this->is_edit_mode( $post_id ) ) {
 			return;
 		}
+
+		query_posts( [ 'p' => $post_id, 'post_type' => 'any' ] );
+
+		Plugin::$instance->db->switch_to_post( $post_id );
 
 		add_filter( 'show_admin_bar', '__return_false' );
 
