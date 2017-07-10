@@ -8978,7 +8978,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
 		settings._previousAttributes = {};
 		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
-		
+
 		settings.trigger( 'change', settings );
 
 		delete settings.changed;
@@ -9683,7 +9683,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onAddChild: function() {
-		if ( ! this.isBuffering ) {
+		if ( ! this.isBuffering && ! this.model.get( 'dontFillEmpty' ) ) {
 			// Reset the layout just when we have really add/remove element.
 			this.resetLayout();
 		}
@@ -10714,11 +10714,17 @@ var	Manager = function() {
 		elementor.channels.data.on( 'drag:update', self.startMovingItem );
 	};
 
+	this.trackingMode = true;
+
 	this.getItems = function() {
 		return items;
 	};
 
 	this.addItem = function( itemData ) {
+		if ( ! this.trackingMode ) {
+			return;
+		}
+
 		if ( ! items.length ) {
 			items.add( {
 				status: 'not_applied',
@@ -10763,6 +10769,9 @@ var	Manager = function() {
 	};
 
 	this.doItem = function( index ) {
+		// Don't track wile restore the item
+		this.trackingMode = false;
+
 		var item = items.at( index );
 
 		if ( 'not_applied' === item.get( 'status' ) ) {
@@ -10770,6 +10779,8 @@ var	Manager = function() {
 		} else {
 			this.redoItem( index );
 		}
+
+		this.trackingMode = true;
 	};
 
 	this.undoItem = function( index ) {
