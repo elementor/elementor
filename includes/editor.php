@@ -9,13 +9,7 @@ class Editor {
 
 	private $_is_edit_mode;
 
-	private $_editor_templates = [
-		'editor-templates/global.php',
-		'editor-templates/panel.php',
-		'editor-templates/panel-elements.php',
-		'editor-templates/repeater.php',
-		'editor-templates/templates.php',
-	];
+	private $_editor_templates = [];
 
 	public function init() {
 		if ( empty( $_REQUEST['post'] ) ) {
@@ -29,6 +23,8 @@ class Editor {
 		if ( ! $this->is_edit_mode( $post_id ) ) {
 			return;
 		}
+
+		$this->init_editor_templates();
 
 		add_filter( 'show_admin_bar', '__return_false' );
 
@@ -532,7 +528,7 @@ class Editor {
 		$plugin->schemes_manager->print_schemes_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			if ( stream_resolve_include_path( $editor_template ) ) {
+			if ( file_exists( $editor_template ) ) {
 				include $editor_template;
 			} else {
 				echo $editor_template;
@@ -551,5 +547,16 @@ class Editor {
 
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
+	}
+
+	private function init_editor_templates() {
+		// It can be filled from plugins
+		$this->_editor_templates = array_merge( $this->_editor_templates, [
+		 	__DIR__ . '/editor-templates/global.php',
+			__DIR__ . '/editor-templates/panel.php',
+			__DIR__ . '/editor-templates/panel-elements.php',
+			__DIR__ . '/editor-templates/repeater.php',
+			__DIR__ . '/editor-templates/templates.php',
+		] );
 	}
 }
