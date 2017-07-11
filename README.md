@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
-**Stable tag:** 1.5.2  
+**Stable tag:** 1.5.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -185,10 +185,26 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.5.3 - 09.07.2017 ###
+* Tweak! - Google Fonts list updated with 17 new fonts
+* Tweak! - Added responsive control for min-height in Column widget
+* Tweak! - Added default value for HTML Tags
+* Tweak! - Added editor compatibility for some themes
+* Fix! - Added `latin-ext` subset in Font control for Polish language
+* Fix! - Updated control condition on Skin
+* Fix! - Glitch CSS in video iFrame
+* Fix! - Hover effect opacity transition
+* Fix! - Column background overlay condition in front-end
+* Fix! - Shape divider width units for tablet and mobile ([#1817](https://github.com/pojome/elementor/issues/1817))
+* Fix! - Video Background position center of section ([#1925](https://github.com/pojome/elementor/issues/1925))
+* Fix! - Toggle & Accordion glitch in the editor
+* Fix! - Hide errors for control without selector ([#1923](https://github.com/pojome/elementor/issues/1923))
+
 ### 1.5.2 - 02.07.2017 ###
 * Fix! - Library dialog not loading in different languages
 * Fix! - Removed duplicate data from editor loading
 * Fix! - Navigation condition in Image Carousel widget ([#1920](https://github.com/pojome/elementor/issues/1920))
+* Fix! – Added `latin-ext` subset in Font control for Romanian language ([#1915](https://github.com/pojome/elementor/issues/1915))
 
 ### 1.5.1 - 29.06.2017 ###
 * Tweak! - Show the fallback image until video playback starts ([#1901](https://github.com/pojome/elementor/issues/1901))

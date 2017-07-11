@@ -24,11 +24,13 @@ class Editor {
 
 		$post_id = $_REQUEST['post'];
 
-		Plugin::$instance->db->switch_to_post( $post_id );
-
 		if ( ! $this->is_edit_mode( $post_id ) ) {
 			return;
 		}
+
+		query_posts( [ 'p' => $post_id, 'post_type' => 'any' ] );
+
+		Plugin::$instance->db->switch_to_post( $post_id );
 
 		add_filter( 'show_admin_bar', '__return_false' );
 
@@ -78,6 +80,21 @@ class Editor {
 		die;
 	}
 
+	public function redirect_to_new_url() {
+		if ( ! isset( $_GET['elementor'] ) ) {
+			return;
+		}
+
+		$post_id = get_the_ID();
+
+		if ( ! User::is_current_user_can_edit( $post_id ) || ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+			return;
+		}
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
+	}
+
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
@@ -85,10 +102,6 @@ class Editor {
 
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			return false;
-		}
-
-		if ( isset( $_GET['elementor'] ) ) {
-			return true;
 		}
 
 		// Ajax request as Editor mode
@@ -551,5 +564,6 @@ class Editor {
 
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
+		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 	}
 }
