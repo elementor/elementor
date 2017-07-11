@@ -7507,7 +7507,9 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
+			if ( self.ui.percentsTooltip ) {
 				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+			}
 		} );
 	},
 
@@ -9770,16 +9772,16 @@ SectionView = BaseElementView.extend( {
 
 	behaviors: function() {
 		var behaviors = {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'column'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAddMode: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'column'
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
 		};
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
