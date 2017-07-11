@@ -21,7 +21,7 @@ var HotKeys = function( $ ) {
 			deleteElement: {
 				isWorthHandling: function( event ) {
 					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input' );
+						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
 
 					return isEditorOpen && ! isInputTarget;
 				},

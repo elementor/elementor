@@ -29,6 +29,7 @@ define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
 define( 'ELEMENTOR_URL', plugins_url( '/', ELEMENTOR__FILE__ ) );
 define( 'ELEMENTOR_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) );
+define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modules' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
 add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );

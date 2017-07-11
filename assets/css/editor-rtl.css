@@ -1362,11 +1362,11 @@ select {
   .elementor-panel .elementor-control-type-url .elementor-control-url-option {
     padding: 5px;
     font-size: 12px; }
-  .elementor-panel .elementor-control-type-url input[type=url] {
+  .elementor-panel .elementor-control-type-url input[type=url], .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url] {
     direction: ltr; }
-    .elementor-panel .elementor-control-type-url input[type=url]:not(:focus) + .elementor-control-url-more {
+    .elementor-panel .elementor-control-type-url input[type=url]:not(:focus) + .elementor-control-url-more, .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url]:not(:focus) + .elementor-control-url-more {
       border-color: #d5dadf; }
-    .elementor-panel .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more {
+    .elementor-panel .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more, .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url]:focus + .elementor-control-url-more {
       border-color: #a4afb7; }
   .elementor-panel .elementor-control-type-section {
     margin-top: 10px;

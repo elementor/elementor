@@ -3096,21 +3096,21 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	childView: PanelMenuItemView,
 
 	initialize: function() {
-		this.collection = new Backbone.Collection( [
-            {
+		var menu =  [
+			{
             	name: 'global-colors',
-                icon: 'fa fa-paint-brush',
-                title: elementor.translate( 'global_colors' ),
+				icon: 'fa fa-paint-brush',
+				title: elementor.translate( 'global_colors' ),
 				type: 'page',
-                pageName: 'colorScheme'
-            },
-            {
+				pageName: 'colorScheme'
+			},
+			{
 	            name: 'global-fonts',
-                icon: 'fa fa-font',
-                title: elementor.translate( 'global_fonts' ),
+				icon: 'fa fa-font',
+				title: elementor.translate( 'global_fonts' ),
 				type: 'page',
-                pageName: 'typographyScheme'
-            },
+				pageName: 'typographyScheme'
+			},
 			{
 				name: 'color-picker',
 				icon: 'fa fa-eyedropper',
@@ -3125,14 +3125,14 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'page',
 				pageName: 'revisionsPage'
 			},
-            {
+			{
 	            name: 'clear-page',
-                icon: 'fa fa-eraser',
-                title: elementor.translate( 'clear_page' ),
-                callback: function() {
-                    elementor.clearPage();
-                }
-            },
+				icon: 'fa fa-eraser',
+				title: elementor.translate( 'clear_page' ),
+				callback: function() {
+					elementor.clearPage();
+				}
+			},
 			{
 				name: 'elementor-settings',
 				icon: 'eicon-elementor',
@@ -3149,7 +3149,11 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				link: elementor.config.elementor_site,
 				newTab: true
 			}
-		] );
+		];
+
+		menu = elementor.hooks.applyFilters( 'panel/menu/items', menu );
+
+		this.collection = new Backbone.Collection( menu );
 	},
 
 	addItem: function( itemData, before ) {
@@ -4740,7 +4744,7 @@ ControlsCSSParser = ViewModule.extend( {
 		var self = this;
 
 		_.each( controls, function( control ) {
-			if ( control.styleFields ) {
+			if ( control.styleFields && control.styleFields.length ) {
 				values[ control.name ].each( function( itemModel ) {
 					self.addStyleRules(
 						control.styleFields,
@@ -5338,7 +5342,7 @@ var HotKeys = function( $ ) {
 			deleteElement: {
 				isWorthHandling: function( event ) {
 					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input' );
+						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
 
 					return isEditorOpen && ! isInputTarget;
 				},
@@ -6850,6 +6854,10 @@ module.exports = BaseAddSectionView.extend( {
 },{"elementor-views/add-section/base":82}],85:[function(require,module,exports){
 module.exports = Marionette.CompositeView.extend( {
 
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
 	addChildModel: function( model, options ) {
 		return this.collection.add( model, options, true );
 	},
@@ -6915,6 +6923,16 @@ BaseElementView = BaseContainer.extend( {
 			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings',
 			addButton: '> .elementor-element-overlay .elementor-editor-element-add'
 		};
+	},
+
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
+	},
+
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
 	events: function() {
@@ -7090,9 +7108,11 @@ BaseElementView = BaseContainer.extend( {
 		}, this ) );
 	},
 
-	renderStyles: function() {
-		var self = this,
-			settings = self.getEditModel().get( 'settings' );
+	renderStyles: function( settings ) {
+		var self = this;
+		if ( ! settings ) {
+			settings = this.getEditModel().get( 'settings' );
+		}
 
 		self.controlsCSSParser.stylesheet.empty();
 
@@ -7153,6 +7173,19 @@ BaseElementView = BaseContainer.extend( {
 		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
 		this.$el.attr( 'id', customElementID );
+	},
+
+	getModelForRender: function() {
+		return elementor.hooks.applyFilters( 'element/templateHelpers/editModel', this.getEditModel(), this );
+	},
+
+	renderUIOnly: function() {
+		var editModel = this.getModelForRender();
+
+		this.renderStyles( editModel.get( 'settings' ) );
+		this.renderCustomClasses();
+		this.renderCustomElementID();
+		this.enqueueFonts();
 	},
 
 	renderUI: function() {
@@ -7218,7 +7251,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( ! isContentChanged ) {
-				this.renderUI();
+				this.renderUIOnly();
 				return;
 			}
 		}
@@ -7320,17 +7353,21 @@ var SectionView = require( 'elementor-views/section' ),
 BaseSectionsContainerView = BaseContainer.extend( {
 	childView: SectionView,
 
-	behaviors: {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'section'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAdd: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+	behaviors: function() {
+		var behaviors = {
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'column'
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
+		};
+
+		return elementor.hooks.applyFilters( 'elements/base-section-container/behaviors', behaviors, this );
 	},
 
 	getSortableOptions: function() {
@@ -7399,20 +7436,24 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
-	behaviors: {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'widget'
-		},
-		Resizable: {
-			behaviorClass: require( 'elementor-behaviors/resizable' )
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAddMode: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+	behaviors: function() {
+		var behaviors = {
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'widget'
+			},
+			Resizable: {
+				behaviorClass: require( 'elementor-behaviors/resizable' )
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
+		};
+
+		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
 
 	className: function() {
@@ -7470,7 +7511,9 @@ ColumnView = BaseElementView.extend( {
 		self.$el.attr( 'data-col', columnSize );
 
 		_.defer( function() { // Wait for the column size to be applied
-			self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+			if ( self.ui.percentsTooltip ) {
+				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+			}
 		} );
 	},
 
@@ -7848,6 +7891,12 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			controlTitle: '.elementor-control-title',
 			responsiveSwitchers: '.elementor-responsive-switcher'
 		};
+	},
+
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
 	},
 
 	className: function() {
@@ -9725,17 +9774,21 @@ SectionView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 
-	behaviors: {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'column'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAddMode: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+	behaviors: function() {
+		var behaviors = {
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'column'
+			},
+			HandleDuplicate: {
+				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
+			},
+			HandleAddMode: {
+				behaviorClass: require( 'elementor-behaviors/duplicate' )
+			}
+		};
+
+		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
 
 	errors: {
