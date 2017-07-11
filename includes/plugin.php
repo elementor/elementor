@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Editor\Settings\Manager as SettingsManager;
 use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
@@ -122,6 +123,11 @@ class Plugin {
 	public $wordpress_widgets_manager;
 
 	/**
+	 * @var Modules_Manager
+	 */
+	private $modules_manager;
+
+	/**
 	 * @var Beta_Testers
 	 */
 	public $beta_testers;
@@ -185,33 +191,29 @@ class Plugin {
 
 	private function init_components() {
 		Compatibility::register_actions();
+		SettingsManager::run();
 
 		$this->db = new DB();
-
 		$this->controls_manager = new Controls_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
 		$this->posts_css_manager = new Posts_CSS_Manager();
-		$this->revisions_manager = new Revisions_Manager();
-
-		SettingsManager::run();
-
 		$this->settings = new Settings();
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
 		$this->debug = new Debug();
-
-		$this->heartbeat = new Heartbeat();
-		$this->system_info = new System_Info\Main();
-
 		$this->templates_manager = new TemplateLibrary\Manager();
-
-		$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
+		$this->maintenance_mode = new Maintenance_Mode();
+		$this->modules_manager = new Modules_Manager();
 
 		if ( is_admin() ) {
+			$this->revisions_manager = new Revisions_Manager();
+			$this->heartbeat = new Heartbeat();
+			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
+			$this->system_info = new System_Info\Main();
 			$this->admin = new Admin();
 			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
@@ -220,8 +222,6 @@ class Plugin {
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			new Images_Manager();
 		}
-
-		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
 	private function add_cpt_support() {

@@ -424,6 +424,12 @@ class Editor {
 			],
 		];
 
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', [] );
+
+		if ( ! empty( $localized_settings ) ) {
+			$config = array_replace_recursive( $config, $localized_settings );
+		}
+
 		echo '<script type="text/javascript">' . PHP_EOL;
 		echo '/* <![CDATA[ */' . PHP_EOL;
 		$config_json = wp_json_encode( $config );

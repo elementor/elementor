@@ -39,6 +39,16 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
+	},
+
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
@@ -212,9 +222,11 @@ BaseElementView = BaseContainer.extend( {
 		}, this ) );
 	},
 
-	renderStyles: function() {
-		var self = this,
-			settings = self.getEditModel().get( 'settings' );
+	renderStyles: function( settings ) {
+		var self = this;
+		if ( ! settings ) {
+			settings = this.getEditModel().get( 'settings' );
+		}
 
 		self.controlsCSSParser.stylesheet.empty();
 
@@ -275,6 +287,19 @@ BaseElementView = BaseContainer.extend( {
 		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
 		this.$el.attr( 'id', customElementID );
+	},
+
+	getModelForRender: function() {
+		return elementor.hooks.applyFilters( 'element/templateHelpers/editModel', this.getEditModel(), this );
+	},
+
+	renderUIOnly: function() {
+		var editModel = this.getModelForRender();
+
+		this.renderStyles( editModel.get( 'settings' ) );
+		this.renderCustomClasses();
+		this.renderCustomElementID();
+		this.enqueueFonts();
 	},
 
 	renderUI: function() {
@@ -340,7 +365,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( ! isContentChanged ) {
-				this.renderUI();
+				this.renderUIOnly();
 				return;
 			}
 		}
