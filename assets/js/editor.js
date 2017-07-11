@@ -4115,7 +4115,11 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	initEditSettings: function() {
-		this.set( 'editSettings', new Backbone.Model( this.get( 'defaultEditSettings' ) ) );
+		var editSettings = new Backbone.Model( this.get( 'defaultEditSettings' ) );
+
+		this.set( 'editSettings', editSettings );
+
+		elementorFrontend.config.elements.editSettings[ this.cid ] = editSettings;
 	},
 
 	onDestroy: function() {

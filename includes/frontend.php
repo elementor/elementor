@@ -219,6 +219,7 @@ class Frontend {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
+				'editSettings' => (object) [],
 				'keys' => $elements_frontend_keys,
 			];
 		}
