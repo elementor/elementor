@@ -219,6 +219,7 @@ class Frontend {
 
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
+				'editSettings' => (object) [],
 				'keys' => $elements_frontend_keys,
 			];
 		}
