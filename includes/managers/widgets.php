@@ -159,7 +159,9 @@ class Widgets_Manager {
 		}
 
 		// Override the global $post for the render
-		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
+		query_posts( [ 'p' => $_POST['post_id'], 'post_type' => 'any' ] );
+
+		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 
 		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
