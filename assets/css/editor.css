@@ -1229,6 +1229,10 @@ select {
   .elementor-panel .elementor-update-preview-button {
     padding: 8px 15px;
     text-transform: uppercase; }
+  .elementor-panel .elementor-control-text_align .elementor-choices,
+  .elementor-panel .elementor-control-align .elementor-choices,
+  .elementor-panel .elementor-control-position .elementor-choices {
+    direction: ltr; }
   .elementor-panel .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
@@ -1364,10 +1368,6 @@ select {
       border-color: #d5dadf; }
     .elementor-panel .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more {
       border-color: #a4afb7; }
-  .elementor-panel .elementor-control-text_align .elementor-choices,
-  .elementor-panel .elementor-control-align .elementor-choices,
-  .elementor-panel .elementor-control-position .elementor-choices {
-    direction: ltr; }
   .elementor-panel .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
@@ -1375,8 +1375,11 @@ select {
       padding-top: 15px; }
       .elementor-panel .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section):before {
         display: none; }
-  .elementor-panel .elementor-control-type-color .elementor-control-input-wrapper {
-    height: 27px; }
+  .elementor-panel .elementor-control-type-color > .elementor-control-content > .elementor-control-field > .elementor-control-title {
+    width: 70%; }
+  .elementor-panel .elementor-control-type-color > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+    height: 27px;
+    width: 30%; }
   .elementor-panel .elementor-control-type-wysiwyg.elementor-rich-editing-disabled .wp-editor-container {
     margin-top: 10px; }
   .elementor-panel .elementor-control-type-wysiwyg * {
