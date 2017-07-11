@@ -94,6 +94,16 @@ HandlerModule = ViewModule.extend( {
 		}
 
 		return this.getItems( elementSettings, setting );
+	},
+
+	getEditSettings: function( setting ) {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return null;
+		}
+
+		var editSettings = elementorFrontend.config.elements.editSettings[ this.getModelCID() ];
+
+		return this.getItems( editSettings.attributes, setting );
 	}
 } );
 
