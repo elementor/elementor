@@ -98,7 +98,7 @@ HandlerModule = ViewModule.extend( {
 
 	getEditSettings: function( setting ) {
 		if ( ! elementorFrontend.isEditMode() ) {
-			return null;
+			return {};
 		}
 
 		var editSettings = elementorFrontend.config.elements.editSettings[ this.getModelCID() ];
