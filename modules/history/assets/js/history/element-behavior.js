@@ -7,10 +7,59 @@ module.exports = Marionette.Behavior.extend( {
 		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
 	},
 
+	oldValues: [],
+
+	saveTextHistory: function( model, changed, control ) {
+		var changedAttributes = {};
+
+		changedAttributes[ control.name ] = {
+			old: this.oldValues[ control.name ],
+			'new': model.get( control.name )
+		};
+
+		var historyItem = {
+			type: 'change',
+			elementType: 'control',
+			title: elementor.history.history.getModelLabel( model ),
+			subTitle: model.controls[ changed[0] ].label,
+			history: {
+				behavior: this,
+				changed: changedAttributes,
+				model: this.view.getEditModel().toJSON()
+			}
+		};
+
+		elementor.history.history.addItem( historyItem );
+	},
+
 	saveHistory: function( model ) {
-		var changed = Object.keys( model.changed );
+		var self = this,
+			changed = Object.keys( model.changed );
 		if ( ! changed.length || ! model.controls[ changed[0] ] ) {
 			return;
+		}
+
+		if ( 1 === changed.length ) {
+			var control = model.controls[ changed[0] ];
+
+			if ( 'text' === control.type || 'textarea' === control.type ) {
+
+				// Text fields - save only on blur, set the callback once on first change
+				if ( ! this.oldValues[ control.name ] ) {
+					this.oldValues[ control.name ] = model.previous( control.name );
+					var panelView = elementor.getPanelView().getCurrentPageView(),
+						controlModel = panelView.collection.findWhere( { name: control.name } ),
+						view = panelView.children.findByModel( controlModel ),
+						$input = view.$el.find( ':input' );
+
+					$input.on( 'blur', function() {
+						self.saveTextHistory( model, changed, control );
+						delete this.oldValues[ control.name ];
+						$input.off( 'blur' );
+					} );
+				}
+				return;
+			}
 		}
 
 		var changedAttributes = {};
@@ -25,7 +74,6 @@ module.exports = Marionette.Behavior.extend( {
 		var historyItem = {
 			type: 'change',
 			elementType: 'control',
-			status: 'not_applied',
 			title: elementor.history.history.getModelLabel( model ),
 			history: {
 				behavior: this,
@@ -34,7 +82,7 @@ module.exports = Marionette.Behavior.extend( {
 			}
 		};
 
-		if ( 1 === changed.length && model.controls[ changed[0] ] ) {
+		if ( 1 === changed.length ) {
 			historyItem.subTitle = model.controls[ changed[0] ].label;
 		}
 
@@ -44,8 +92,13 @@ module.exports = Marionette.Behavior.extend( {
 	restore: function( historyItem, isRedo ) {
 		var	history = historyItem.get( 'history' ),
 			modelID = history.model.id,
-			view = elementor.history.history.findView( modelID ),
-			model = view.getEditModel ? view.getEditModel() : view.model,
+			view = elementor.history.history.findView( modelID );
+
+		if ( ! view ) {
+			return;
+		}
+
+		var model = view.getEditModel ? view.getEditModel() : view.model,
 			settings = model.get( 'settings' ),
 			behavior = view.getBehavior( 'ElementHistory' );
 
