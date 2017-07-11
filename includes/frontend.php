@@ -282,6 +282,7 @@ class Frontend {
 				'uk' => 'cyrillic',
 				'cs_CZ' => 'latin-ext',
 				'ro_RO' => 'latin-ext',
+				'pl_PL' => 'latin-ext',
 			];
 			$locale = get_locale();
 
