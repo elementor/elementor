@@ -127,7 +127,7 @@ abstract class CSS_File {
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
 
-		if ( null === $value ) {
+		if ( null === $value || empty( $control['selectors'] ) ) {
 			return;
 		}
 

@@ -1229,6 +1229,10 @@ select {
   .elementor-panel .elementor-update-preview-button {
     padding: 8px 15px;
     text-transform: uppercase; }
+  .elementor-panel .elementor-control-text_align .elementor-choices,
+  .elementor-panel .elementor-control-align .elementor-choices,
+  .elementor-panel .elementor-control-position .elementor-choices {
+    direction: ltr; }
   .elementor-panel .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
@@ -1364,10 +1368,6 @@ select {
       border-color: #d5dadf; }
     .elementor-panel .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more, .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url]:focus + .elementor-control-url-more {
       border-color: #a4afb7; }
-  .elementor-panel .elementor-control-text_align .elementor-choices,
-  .elementor-panel .elementor-control-align .elementor-choices,
-  .elementor-panel .elementor-control-position .elementor-choices {
-    direction: ltr; }
   .elementor-panel .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
