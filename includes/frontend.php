@@ -493,7 +493,7 @@ class Frontend {
 
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests
-		if ( ! is_admin() && ! Utils::is_ajax() ) {
+		if ( is_admin() && ! Utils::is_ajax() ) {
 			return;
 		}
 

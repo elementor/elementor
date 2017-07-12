@@ -1377,8 +1377,11 @@ select {
       padding-top: 15px; }
       .elementor-panel .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section):before {
         display: none; }
-  .elementor-panel .elementor-control-type-color .elementor-control-input-wrapper {
-    height: 27px; }
+  .elementor-panel .elementor-control-type-color > .elementor-control-content > .elementor-control-field > .elementor-control-title {
+    width: 70%; }
+  .elementor-panel .elementor-control-type-color > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+    height: 27px;
+    width: 30%; }
   .elementor-panel .elementor-control-type-wysiwyg.elementor-rich-editing-disabled .wp-editor-container {
     margin-top: 10px; }
   .elementor-panel .elementor-control-type-wysiwyg * {
