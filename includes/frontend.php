@@ -470,6 +470,7 @@ class Frontend {
 		$filters = [
 			'wpautop',
 			'shortcode_unautop',
+			'wptexturize',
 		];
 
 		foreach ( $filters as $filter ) {
