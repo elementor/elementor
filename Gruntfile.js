@@ -344,6 +344,12 @@ module.exports = function( grunt ) {
 					'git add --all',
 					'git commit -m "Bump to <%= pkg.version %>"'
 				].join( '&&' )
+			},
+			tests_create_static_index: {
+				command: 'php tests/qunit/php/create-static-index.php'
+			},
+			tests_create_static_preview: {
+				command: 'php tests/qunit/php/create-static-preview.php'
 			}
 		},
 
@@ -394,11 +400,19 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		qunit: {
+			src: 'tests/qunit/index.html'
+		},
+
 		clean: {
 			//Clean up build folder
 			main: [
 				'build'
-			]
+			],
+			qunit: [
+				'tests/qunit/index.html',
+				'tests/qunit/preview.html'
+			],
 		}
 	} );
 
@@ -440,5 +454,12 @@ module.exports = function( grunt ) {
 		'replace',
 		'shell:git_add_all',
 		'release'
+	] );
+
+	grunt.registerTask( 'test', [
+		'shell:tests_create_static_index',
+		'shell:tests_create_static_preview',
+		'qunit',
+		'clean:qunit'
 	] );
 };
