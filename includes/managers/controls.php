@@ -73,7 +73,7 @@ class Controls_Manager {
 			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
 		];
 
-		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0' );
+		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0', '`' . __CLASS__ . '::add_tab( $tab_name, $tab_title )`' );
 	}
 
 	public static function get_tabs() {
