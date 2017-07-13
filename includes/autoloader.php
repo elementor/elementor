@@ -76,7 +76,7 @@ class Autoloader {
 
 	private static $classes_aliases = [
 		'Control_Base' => 'Base_Data_Control',
-		'PageSettings\Manager' => 'Editor\Settings\Page\Manager',
+		'PageSettings\Manager' => 'Core\Settings\Page\Manager',
 	];
 
 	public static function run() {

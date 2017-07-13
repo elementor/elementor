@@ -2,9 +2,9 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\DB;
-use Elementor\Editor\Settings\Page\Manager as PageSettingsManager;
-use Elementor\Editor\Settings\Manager as SettingsManager;
-use Elementor\Editor\Settings\Page\Model;
+use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Model;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;

@@ -31,13 +31,16 @@ App = Marionette.Application.extend( {
 		panelElements: Backbone.Radio.channel( 'ELEMENTOR:panelElements' ),
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
-		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
-		settings: Backbone.Radio.channel( 'ELEMENTOR:settings' )
+		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	// Exporting modules that can be used externally
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
+		panel: {
+			Menu: require( 'elementor-panel/pages/menu/menu' )
+		},
 		controls: {
 			Base: require( 'elementor-views/controls/base' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
@@ -188,11 +191,13 @@ App = Marionette.Application.extend( {
 	},
 
 	initFrontend: function() {
-		window.elementorFrontend = this.$preview[0].contentWindow.elementorFrontend;
+		var frontendWindow = this.$preview[0].contentWindow;
+
+		window.elementorFrontend = frontendWindow.elementorFrontend;
+
+		frontendWindow.elementor = this;
 
 		elementorFrontend.init();
-
-		elementorFrontend.getElements( 'window' ).elementor = this;
 
 		elementorFrontend.elementsHandler.initHandlers();
 
@@ -227,6 +232,31 @@ App = Marionette.Application.extend( {
 
 			return dialog;
 		};
+	},
+
+	preventClicksInsideEditor: function() {
+		this.$previewContents.on( 'click', function( event ) {
+			var $target = Backbone.$( event.target ),
+				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
+				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isTargetInsideDocument = this.contains( $target[0] );
+
+			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
+				return;
+			}
+
+			if ( $target.closest( 'a' ).length ) {
+				event.preventDefault();
+			}
+
+			if ( ! isClickInsideElementor ) {
+				var panelView = elementor.getPanelView();
+
+				if ( 'elements' !== panelView.getCurrentPageName() ) {
+					panelView.setPage( 'elements' );
+				}
+			}
+		} );
 	},
 
 	onStart: function() {
@@ -287,28 +317,7 @@ App = Marionette.Application.extend( {
 
 		this.schemes.printSchemesStyle();
 
-		this.$previewContents.on( 'click', function( event ) {
-			var $target = Backbone.$( event.target ),
-				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
-				isTargetInsideDocument = this.contains( $target[0] );
-
-			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
-				return;
-			}
-
-			if ( $target.closest( 'a' ).length ) {
-				event.preventDefault();
-			}
-
-			if ( ! isClickInsideElementor ) {
-				var panelView = elementor.getPanelView();
-
-				if ( 'elements' !== panelView.getCurrentPageName() ) {
-					panelView.setPage( 'elements' );
-				}
-			}
-		} );
+		this.preventClicksInsideEditor();
 
 		this.addRegions( {
 			sections: iframeRegion,
