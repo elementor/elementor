@@ -32,50 +32,61 @@ module.exports = Marionette.Behavior.extend( {
 
 	saveCollectionHistory: function( collection, event ) {
 		var historyItem,
-			model,
+			models,
+			firstModel,
 			type;
 
 		if ( event.add ) {
-			model = event.changes.added[0];
+			models = event.changes.added;
+			firstModel = models[0];
 			type = 'add';
 		} else {
-			model = event.changes.removed[0];
+			models = event.changes.removed;
+			firstModel = models[0];
 			type = 'remove';
 		}
 
-		var title = elementor.history.history.getModelLabel( model );
+		var title = elementor.history.history.getModelLabel( firstModel );
 
 		// If it's an unknown model - don't save
 		if ( ! title ) {
 			return;
 		}
 
+		var modelsJSON = [];
+
+		_.each( models, function( model ) {
+			modelsJSON.push( model.toJSON( { copyHtmlCache: true } ) );
+		} );
+
 		historyItem = {
 			type: type,
-			elementType: model.get( 'elType' ),
-			elementID: model.get( 'id' ),
+			elementType: firstModel.get( 'elType' ),
+			elementID: firstModel.get( 'id' ),
 			title: title,
 			history: {
 				behavior: this,
 				collection: collection,
 				event: event,
-				model: model.toJSON( { copyHtmlCache: true } )
+				models: modelsJSON
 			}
 		};
 
 		elementor.history.history.addItem( historyItem );
 	},
 
-	add: function( model, toView, position ) {
-		if ( 'section' === model.elType ) {
-			model.dontFillEmpty = true;
+	add: function( models, toView, position ) {
+		if ( 'section' === models[0].elType ) {
+			_.each( models, function( model ) {
+				model.dontFillEmpty = true;
+			} );
 		}
 
-		toView.addChildModel( model, { at: position, silent: 0 } );
+		toView.addChildModel( models, { at: position, silent: 0 } );
 	},
 
-	remove: function( model, fromCollection ) {
-		fromCollection.remove( model, { silent: 0 } );
+	remove: function( models, fromCollection ) {
+		fromCollection.remove( models, { silent: 0 } );
 	},
 
 	restore: function( historyItem, isRedo ) {
@@ -104,18 +115,18 @@ module.exports = Marionette.Behavior.extend( {
 		switch ( type ) {
 			case 'add':
 				if ( isRedo ) {
-					this.add( history.model, behavior.view, history.event.index );
+					this.add( history.models, behavior.view, history.event.index );
 				} else {
-					this.remove( history.model, behavior.view.collection );
+					this.remove( history.models, behavior.view.collection );
 				}
 
 				didAction = true;
 				break;
 			case 'remove':
 				if ( isRedo ) {
-					this.remove( history.model, behavior.view.collection );
+					this.remove( history.models, behavior.view.collection );
 				} else {
-					this.add( history.model, behavior.view, history.event.index );
+					this.add( history.models, behavior.view, history.event.index );
 				}
 
 				didAction = true;
