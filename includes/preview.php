@@ -20,6 +20,7 @@ class Preview {
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_head', [ $this, 'print_custom_css' ] );
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
@@ -108,6 +109,10 @@ class Preview {
 		wp_enqueue_style( 'editor-preview' );
 
 		do_action( 'elementor/preview/enqueue_styles' );
+	}
+
+	public function enqueue_scripts() {
+		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
 	/**
