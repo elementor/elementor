@@ -72,6 +72,8 @@ class Controls_Manager {
 			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
 			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
 		];
+
+		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0' );
 	}
 
 	public static function get_tabs() {
