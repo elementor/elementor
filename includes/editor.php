@@ -78,7 +78,8 @@ class Editor {
 		// Print the panel
 		$this->print_panel_html();
 
-		if ( $die ) {
+		// From the action it's an empty string, from tests its `false`
+		if ( false !== $die ) {
 			die;
 		}
 	}
