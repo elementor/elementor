@@ -10647,7 +10647,6 @@ module.exports = Marionette.Behavior.extend( {
 	}
 } );
 
-
 },{}],119:[function(require,module,exports){
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-history-no-items',
