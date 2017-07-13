@@ -598,6 +598,8 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
+				elementor.channels.data.trigger( 'library:beforeInsertTemplate', templateModel );
+
 				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
 				if ( options.withPageSettings ) {
@@ -10762,6 +10764,7 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data.on( 'drag:update', self.startMovingItem );
+		elementor.channels.data.on( 'library:beforeInsertTemplate', self.startInsertTemplate );
 	};
 
 	this.trackingMode = true;
@@ -10900,6 +10903,14 @@ var	Manager = function() {
 		elementor.history.history.addItem( {
 			type: 'move',
 			title: elementor.history.history.getModelLabel( model )
+		} );
+	};
+
+	this.startInsertTemplate = function( model ) {
+		elementor.history.history.addItem( {
+			type: 'add',
+			title: elementor.translate( 'Template' ),
+			subTitle: model.get( 'title' )
 		} );
 	};
 
