@@ -39,14 +39,20 @@ VideoModule = HandlerModule.extend( {
 				url: this.elements.$videoFrame.attr( 'src' ),
 				modalOptions: {
 					id: 'elementor-video-modal-' + this.getID(),
-					videoAspectRatio: elementSettings.aspect_ratio,
-					entranceAnimation: elementSettings.lightbox_content_animation,
-					position: {
-						my: position,
-						at: position
-					}
+					videoAspectRatio: elementSettings.aspect_ratio
 				}
 			};
+
+			if ( position ) {
+				options.modalOptions.position = {
+					my: position,
+					at: position
+				};
+			}
+
+			if ( elementSettings.lightbox_content_animation ) {
+				options.modalOptions.entranceAnimation = elementSettings.lightbox_content_animation;
+			}
 
 			this.getLightBox().showModal( options );
 		} else {

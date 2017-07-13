@@ -1010,16 +1010,6 @@ select {
     width: 100%; }
     .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab {
       display: table-cell; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-content a:before {
-        content: '\f040'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-style a:before {
-        content: '\f042'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-advanced a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-settings a:before {
-        content: '\f013'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-responsive a:before {
-        content: '\f10a'; }
-      .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-layout a:before, .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-column a:before {
-        content: '\f0db'; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.active {
         background-image: linear-gradient(to bottom, #f3f3f3, #fff);
         border-bottom: 3px solid #9b0a46; }
@@ -1034,6 +1024,18 @@ select {
           font-size: 16px;
           display: block;
           margin-bottom: 6px; }
+  .elementor-panel .elementor-tab-control-content a:before {
+    content: '\f040'; }
+  .elementor-panel .elementor-tab-control-style a:before {
+    content: '\f042'; }
+  .elementor-panel .elementor-tab-control-advanced a:before, .elementor-panel .elementor-tab-control-settings a:before, .elementor-panel .elementor-tab-control-general_style a:before {
+    content: '\f013'; }
+  .elementor-panel .elementor-tab-control-responsive a:before {
+    content: '\f10a'; }
+  .elementor-panel .elementor-tab-control-layout a:before, .elementor-panel .elementor-tab-control-column a:before {
+    content: '\f0db'; }
+  .elementor-panel .elementor-tab-control-lightbox a:before {
+    content: '\f2d2'; }
   .elementor-panel .elementor-control {
     background-color: #fff;
     position: relative;
@@ -1229,6 +1231,10 @@ select {
   .elementor-panel .elementor-update-preview-button {
     padding: 8px 15px;
     text-transform: uppercase; }
+  .elementor-panel .elementor-control-text_align .elementor-choices,
+  .elementor-panel .elementor-control-align .elementor-choices,
+  .elementor-panel .elementor-control-position .elementor-choices {
+    direction: ltr; }
   .elementor-panel .elementor-control-type-media .elementor-control-media {
     padding: 7px;
     border: 1px solid;
@@ -1358,16 +1364,12 @@ select {
   .elementor-panel .elementor-control-type-url .elementor-control-url-option {
     padding: 5px;
     font-size: 12px; }
-  .elementor-panel .elementor-control-type-url input[type=url] {
+  .elementor-panel .elementor-control-type-url input[type=url], .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url] {
     direction: ltr; }
-    .elementor-panel .elementor-control-type-url input[type=url]:not(:focus) + .elementor-control-url-more {
+    .elementor-panel .elementor-control-type-url input[type=url]:not(:focus) + .elementor-control-url-more, .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url]:not(:focus) + .elementor-control-url-more {
       border-color: #d5dadf; }
-    .elementor-panel .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more {
+    .elementor-panel .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more, .elementor-panel .elementor-control-type-url .elementor-input[data-setting=url]:focus + .elementor-control-url-more {
       border-color: #a4afb7; }
-  .elementor-panel .elementor-control-text_align .elementor-choices,
-  .elementor-panel .elementor-control-align .elementor-choices,
-  .elementor-panel .elementor-control-position .elementor-choices {
-    direction: ltr; }
   .elementor-panel .elementor-control-type-section {
     margin-top: 10px;
     padding: 0; }
@@ -1375,8 +1377,11 @@ select {
       padding-top: 15px; }
       .elementor-panel .elementor-control-type-section + .elementor-control:not(.elementor-control-type-section):before {
         display: none; }
-  .elementor-panel .elementor-control-type-color .elementor-control-input-wrapper {
-    height: 27px; }
+  .elementor-panel .elementor-control-type-color > .elementor-control-content > .elementor-control-field > .elementor-control-title {
+    width: 70%; }
+  .elementor-panel .elementor-control-type-color > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+    height: 27px;
+    width: 30%; }
   .elementor-panel .elementor-control-type-wysiwyg.elementor-rich-editing-disabled .wp-editor-container {
     margin-top: 10px; }
   .elementor-panel .elementor-control-type-wysiwyg * {
@@ -1659,6 +1664,10 @@ select {
     overflow: hidden; }
   .elementor-panel .elementor-control-type-box_shadow .elementor-box-shadow-slider {
     margin-top: 10px; }
+  .elementor-panel .elementor-control-type-switcher.elementor-label-inline > .elementor-control-content .elementor-control-field .elementor-control-title {
+    width: 70%; }
+  .elementor-panel .elementor-control-type-switcher.elementor-label-inline > .elementor-control-content .elementor-control-field .elementor-control-input-wrapper {
+    width: 30%; }
   .elementor-panel .elementor-control-type-switcher .elementor-control-input-wrapper {
     text-align: left; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch {
@@ -1671,10 +1680,7 @@ select {
     border-radius: 18px;
     cursor: pointer; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0; }
+    display: none; }
   .elementor-panel .elementor-control-type-switcher .elementor-switch-label {
     position: relative;
     display: block;

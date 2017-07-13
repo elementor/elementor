@@ -1,0 +1,48 @@
+.elementor-control-type-image_dimensions {
+
+	.elementor-control-field-description {
+		margin: 0 0 15px;
+		line-height: 1.4;
+	}
+
+	.elementor-control-input-wrapper {
+		overflow: hidden;
+	}
+
+	.elementor-image-dimensions-field {
+		width: 70px;
+		float: $start;
+
+		input {
+
+			&:focus {
+
+				+ .elementor-image-dimensions-field-description {
+					color: $editor-light;
+				}
+			}
+		}
+	}
+
+	.elementor-image-dimensions-separator {
+		width: 20px;
+		text-align: center;
+		float: $start;
+		padding-top: 4px;
+	}
+
+	.elementor-image-dimensions-field-description {
+		display: block;
+		text-transform: uppercase;
+		margin-top: 5px;
+		color: $editor-lightest;
+		font-size: 9px;
+		text-align: center;
+	}
+
+	.elementor-image-dimensions-apply-button {
+		float: $end;
+		height: 27px;
+		width: 70px;
+	}
+}
