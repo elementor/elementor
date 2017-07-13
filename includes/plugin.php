@@ -211,20 +211,17 @@ class Plugin {
 		$this->modules_manager = new Modules_Manager();
 
 		if ( is_admin() ) {
-			if ( $this->editor->is_edit_mode() ) {
-				$this->revisions_manager = new Revisions_Manager();
-				$this->heartbeat = new Heartbeat();
-				$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
-			} else {
-				$this->system_info = new System_Info\Main();
-				$this->admin = new Admin();
-				$this->tools = new Tools();
-				$this->beta_testers = new Beta_Testers();
-			}
-		}
+			$this->revisions_manager = new Revisions_Manager();
+			$this->heartbeat = new Heartbeat();
+			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
+			$this->system_info = new System_Info\Main();
+			$this->admin = new Admin();
+			$this->tools = new Tools();
+			$this->beta_testers = new Beta_Testers();
 
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			new Images_Manager();
+			if ( Utils::is_ajax() ) {
+				new Images_Manager();
+			}
 		}
 	}
 

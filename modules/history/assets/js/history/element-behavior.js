@@ -45,8 +45,8 @@ module.exports = Marionette.Behavior.extend( {
 			if ( 'text' === control.type || 'textarea' === control.type ) {
 
 				// Text fields - save only on blur, set the callback once on first change
-				if ( ! this.oldValues[ control.name ] ) {
-					this.oldValues[ control.name ] = model.previous( control.name );
+				if ( ! self.oldValues[ control.name ] ) {
+					self.oldValues[ control.name ] = model.previous( control.name );
 					var panelView = elementor.getPanelView().getCurrentPageView(),
 						controlModel = panelView.collection.findWhere( { name: control.name } ),
 						view = panelView.children.findByModel( controlModel ),
@@ -54,7 +54,7 @@ module.exports = Marionette.Behavior.extend( {
 
 					$input.on( 'blur', function() {
 						self.saveTextHistory( model, changed, control );
-						delete this.oldValues[ control.name ];
+						delete self.oldValues[ control.name ];
 						$input.off( 'blur' );
 					} );
 				}
