@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Editor\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 

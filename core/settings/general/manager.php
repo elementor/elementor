@@ -1,14 +1,25 @@
 <?php
-namespace Elementor\Editor\Settings\General;
+namespace Elementor\Core\Settings\General;
 
+use Elementor\Controls_Manager;
 use Elementor\CSS_File;
-use Elementor\Editor\Settings\Base\Manager as BaseManager;
-use Elementor\Editor\Settings\Base\Model as BaseModel;
+use Elementor\Core\Settings\Base\Manager as BaseManager;
+use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Global_CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Manager extends BaseManager {
+
+	const PANEL_TAB_GENERAL_STYLE = 'general_style';
+
+	const PANEL_TAB_LIGHTBOX = 'lightbox';
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->add_panel_tabs();
+	}
 
 	/**
 	 * @return string
@@ -65,8 +76,20 @@ class Manager extends BaseManager {
 	 * @return void
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
-		foreach ( $settings as $setting_name => $setting_value ) {
-			update_option( $setting_name, $setting_value );
+		$model_controls = Model::get_controls_list();
+
+		foreach ( $model_controls as $tab_name => $sections ) {
+
+			foreach ( $sections as $section_name => $section_data ) {
+
+				foreach ( $section_data['controls'] as $control_name => $control_data ) {
+					if ( isset( $settings[ $control_name ] ) ) {
+						update_option( $control_name, $settings[ $control_name ] );
+					} else {
+						delete_option( $control_name );
+					}
+				}
+			}
 		}
 	}
 
@@ -86,5 +109,11 @@ class Manager extends BaseManager {
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return new Global_CSS_File();
+	}
+
+	private function add_panel_tabs() {
+		Controls_Manager::add_tab( self::PANEL_TAB_GENERAL_STYLE, __( 'General Style', 'elementor' ) );
+
+		Controls_Manager::add_tab( self::PANEL_TAB_LIGHTBOX, __( 'Lightbox', 'elementor' ) );
 	}
 }
