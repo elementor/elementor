@@ -11169,7 +11169,7 @@ RevisionsManager = function() {
 				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
 			},
 			handle: function() {
-				elementor.getPanelView().setPage( 'history' );
+				elementor.getPanelView().setPage( 'historyPage' );
 				elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
 
 			}
