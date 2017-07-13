@@ -4,6 +4,8 @@ var ElementHistoryBehavior = require( './element-behavior' ),
 var	Manager = function() {
 	var self = this;
 
+	var currentItemID;
+
 	var HistoryCollection = Backbone.Collection.extend( {
 		model: Backbone.Model.extend( {
 			type: '', // add/delete/move/change
@@ -108,7 +110,10 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data.on( 'drag:update', self.startMovingItem );
-		elementor.channels.data.on( 'library:beforeInsertTemplate', self.startInsertTemplate );
+
+		elementor.channels.data.on( 'library:InsertTemplate:before', self.startInsertTemplate );
+		elementor.channels.data.on( 'library:InsertTemplate:after', self.endItem );
+
 	};
 
 	this.trackingMode = true;
@@ -116,6 +121,14 @@ var	Manager = function() {
 	this.getItems = function() {
 		return items;
 	};
+
+	this.startItem = function( itemData ) {
+		currentItemID = this.addItem( itemData );
+	},
+
+	this.endItem = function() {
+		currentItemID = null;
+	},
 
 	this.addItem = function( itemData ) {
 		if ( ! this.trackingMode ) {
@@ -136,14 +149,15 @@ var	Manager = function() {
 			items.shift();
 		}
 
-		var time = Math.round( new Date().getTime() / 1000 ),
-			currentItem = items.findWhere( {
-				time: time
+		var id = currentItemID ? currentItemID : Math.round( new Date().getTime() / 1000 );
+
+		var	currentItem = items.findWhere( {
+				id: id
 			} );
 
 		if ( ! currentItem ) {
 			currentItem = new Backbone.Model();
-			currentItem.set( 'time', time );
+			currentItem.set( 'id', id );
 			currentItem.set( 'status', 'not_applied' );
 			currentItem.set( 'items', new Backbone.Collection() );
 			currentItem.set( 'title', itemData.title );
@@ -163,6 +177,8 @@ var	Manager = function() {
 		if ( 'historyPage' === panel.getCurrentPageName() ) {
 			panel.getCurrentPageView().render();
 		}
+
+		return id;
 	};
 
 	this.doItem = function( index ) {
@@ -251,7 +267,7 @@ var	Manager = function() {
 	};
 
 	this.startInsertTemplate = function( model ) {
-		elementor.history.history.addItem( {
+		elementor.history.history.startItem( {
 			type: 'add',
 			title: elementor.translate( 'Template' ),
 			subTitle: model.get( 'title' )

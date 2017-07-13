@@ -590,9 +590,11 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.channels.data.trigger( 'library:beforeInsertTemplate', templateModel );
+				elementor.channels.data.trigger( 'library:InsertTemplate:before', templateModel );
 
 				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
+
+				elementor.channels.data.trigger( 'library:InsertTemplate:after', templateModel );
 
 				if ( options.withPageSettings ) {
 					elementor.settings.page.model.set( data.page_settings );
@@ -10418,50 +10420,61 @@ module.exports = Marionette.Behavior.extend( {
 
 	saveCollectionHistory: function( collection, event ) {
 		var historyItem,
-			model,
+			models,
+			firstModel,
 			type;
 
 		if ( event.add ) {
-			model = event.changes.added[0];
+			models = event.changes.added;
+			firstModel = models[0];
 			type = 'add';
 		} else {
-			model = event.changes.removed[0];
+			models = event.changes.removed;
+			firstModel = models[0];
 			type = 'remove';
 		}
 
-		var title = elementor.history.history.getModelLabel( model );
+		var title = elementor.history.history.getModelLabel( firstModel );
 
 		// If it's an unknown model - don't save
 		if ( ! title ) {
 			return;
 		}
 
+		var modelsJSON = [];
+
+		_.each( models, function( model ) {
+			modelsJSON.push( model.toJSON( { copyHtmlCache: true } ) );
+		} );
+
 		historyItem = {
 			type: type,
-			elementType: model.get( 'elType' ),
-			elementID: model.get( 'id' ),
+			elementType: firstModel.get( 'elType' ),
+			elementID: firstModel.get( 'id' ),
 			title: title,
 			history: {
 				behavior: this,
 				collection: collection,
 				event: event,
-				model: model.toJSON( { copyHtmlCache: true } )
+				models: modelsJSON
 			}
 		};
 
 		elementor.history.history.addItem( historyItem );
 	},
 
-	add: function( model, toView, position ) {
-		if ( 'section' === model.elType ) {
-			model.dontFillEmpty = true;
+	add: function( models, toView, position ) {
+		if ( 'section' === models[0].elType ) {
+			_.each( models, function( model ) {
+				model.dontFillEmpty = true;
+			} );
 		}
 
-		toView.addChildModel( model, { at: position, silent: 0 } );
+		toView.addChildModel( models, { at: position, silent: 0 } );
 	},
 
-	remove: function( model, fromCollection ) {
-		fromCollection.remove( model, { silent: 0 } );
+	remove: function( models, fromCollection ) {
+		fromCollection.remove( models, { silent: 0 } );
 	},
 
 	restore: function( historyItem, isRedo ) {
@@ -10490,18 +10503,18 @@ module.exports = Marionette.Behavior.extend( {
 		switch ( type ) {
 			case 'add':
 				if ( isRedo ) {
-					this.add( history.model, behavior.view, history.event.index );
+					this.add( history.models, behavior.view, history.event.index );
 				} else {
-					this.remove( history.model, behavior.view.collection );
+					this.remove( history.models, behavior.view.collection );
 				}
 
 				didAction = true;
 				break;
 			case 'remove':
 				if ( isRedo ) {
-					this.remove( history.model, behavior.view.collection );
+					this.remove( history.models, behavior.view.collection );
 				} else {
-					this.add( history.model, behavior.view, history.event.index );
+					this.add( history.models, behavior.view, history.event.index );
 				}
 
 				didAction = true;
@@ -10653,6 +10666,8 @@ var ElementHistoryBehavior = require( './element-behavior' ),
 var	Manager = function() {
 	var self = this;
 
+	var currentItemID;
+
 	var HistoryCollection = Backbone.Collection.extend( {
 		model: Backbone.Model.extend( {
 			type: '', // add/delete/move/change
@@ -10757,7 +10772,10 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data.on( 'drag:update', self.startMovingItem );
-		elementor.channels.data.on( 'library:beforeInsertTemplate', self.startInsertTemplate );
+
+		elementor.channels.data.on( 'library:InsertTemplate:before', self.startInsertTemplate );
+		elementor.channels.data.on( 'library:InsertTemplate:after', self.endItem );
+
 	};
 
 	this.trackingMode = true;
@@ -10765,6 +10783,14 @@ var	Manager = function() {
 	this.getItems = function() {
 		return items;
 	};
+
+	this.startItem = function( itemData ) {
+		currentItemID = this.addItem( itemData );
+	},
+
+	this.endItem = function() {
+		currentItemID = null;
+	},
 
 	this.addItem = function( itemData ) {
 		if ( ! this.trackingMode ) {
@@ -10785,14 +10811,15 @@ var	Manager = function() {
 			items.shift();
 		}
 
-		var time = Math.round( new Date().getTime() / 1000 ),
-			currentItem = items.findWhere( {
-				time: time
+		var id = currentItemID ? currentItemID : Math.round( new Date().getTime() / 1000 );
+
+		var	currentItem = items.findWhere( {
+				id: id
 			} );
 
 		if ( ! currentItem ) {
 			currentItem = new Backbone.Model();
-			currentItem.set( 'time', time );
+			currentItem.set( 'id', id );
 			currentItem.set( 'status', 'not_applied' );
 			currentItem.set( 'items', new Backbone.Collection() );
 			currentItem.set( 'title', itemData.title );
@@ -10812,6 +10839,8 @@ var	Manager = function() {
 		if ( 'historyPage' === panel.getCurrentPageName() ) {
 			panel.getCurrentPageView().render();
 		}
+
+		return id;
 	};
 
 	this.doItem = function( index ) {
@@ -10900,7 +10929,7 @@ var	Manager = function() {
 	};
 
 	this.startInsertTemplate = function( model ) {
-		elementor.history.history.addItem( {
+		elementor.history.history.startItem( {
 			type: 'add',
 			title: elementor.translate( 'Template' ),
 			subTitle: model.get( 'title' )
