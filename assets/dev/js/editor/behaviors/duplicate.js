@@ -3,8 +3,6 @@ var HandleAddDuplicateBehavior;
 HandleAddDuplicateBehavior = Marionette.Behavior.extend( {
 
 	onChildviewClickNew: function( childView ) {
-		this.view.trigger( 'before:add' );
-
 		var currentIndex = childView.$el.index() + 1;
 
 		this.addChild( { at: currentIndex } );
@@ -18,6 +16,8 @@ HandleAddDuplicateBehavior = Marionette.Behavior.extend( {
 		if ( this.view.isCollectionFilled() ) {
 			return;
 		}
+
+		this.view.trigger( 'before:add' );
 
 		options = options || {};
 
