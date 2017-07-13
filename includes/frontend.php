@@ -219,6 +219,7 @@ class Frontend {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
+				'editSettings' => (object) [],
 				'keys' => $elements_frontend_keys,
 			];
 		}
@@ -492,7 +493,7 @@ class Frontend {
 
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests
-		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+		if ( is_admin() && ! Utils::is_ajax() ) {
 			return;
 		}
 

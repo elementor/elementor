@@ -127,7 +127,6 @@ class Plugin {
 	 */
 	private $modules_manager;
 
-
 	/**
 	 * @var Beta_Testers
 	 */
