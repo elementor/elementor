@@ -137,13 +137,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.$el.removeClass( 'elementor-dragging-on-child' );
 	},
 
-	onSortStop: function( event, ui ) {
-		var model = this.view.collection.get( {
-			cid: ui.item.data( 'model-cid' )
-		} );
-		elementor.channels.data.trigger( 'drag:end', model );
-	},
-
 	onSortReceive: function( event, ui ) {
 		event.stopPropagation();
 
