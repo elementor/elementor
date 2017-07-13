@@ -5135,7 +5135,7 @@ ImagesManager = function() {
 
 	self.onceTriggerChange = _.once( function( model ) {
 		window.setTimeout( function() {
-			model.get( 'settings' ).trigger( 'change' );
+			model.get( 'settings' ).trigger( 'change', model.get( 'settings' ) );
 		}, 700 );
 	} );
 
