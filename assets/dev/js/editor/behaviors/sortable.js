@@ -105,12 +105,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 			ui.placeholder.height( itemHeight );
 		}
 
-		elementor.channels.data.trigger( 'drag:start', model );
-		elementor.channels.data.trigger( model.get( 'elType' ) + ':drag:start' );
-
 		elementor.channels.data
 			.reply( 'dragging:model', model )
-			.reply( 'dragging:parent:view', this.view );
+			.reply( 'dragging:parent:view', this.view )
+			.trigger( 'drag:start', model )
+			.trigger( model.get( 'elType' ) + ':drag:start' );
 	},
 
 	onSortOver: function( event ) {
