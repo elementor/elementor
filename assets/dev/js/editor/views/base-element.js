@@ -326,6 +326,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate: function() {
+		this.trigger( 'before:duplicate' );
+
 		this.trigger( 'request:duplicate' );
 	},
 
@@ -432,7 +434,6 @@ BaseElementView = BaseContainer.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.trigger( 'before:duplicate' );
 		this.duplicate();
 	},
 
