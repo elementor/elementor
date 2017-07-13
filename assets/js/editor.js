@@ -2744,13 +2744,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
-				name: 'revision-history',
-				icon: 'fa fa-history',
-				title: elementor.translate( 'revision_history' ),
-				type: 'page',
-				pageName: 'revisionsPage'
-			},
-			{
 	            name: 'clear-page',
 				icon: 'fa fa-eraser',
 				title: elementor.translate( 'clear_page' ),
