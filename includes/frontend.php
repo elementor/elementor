@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Editor\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -195,7 +195,7 @@ class Frontend {
 
 		$elementor_frontend_config = [
 			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
-			'stretchedSectionContainer' => SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_stretched_section_container' ),
+			'settings' => SettingsManager::get_settings_frontend_config(),
 			'is_rtl' => is_rtl(),
 			'post' => [
 				'id' => $post->ID,
@@ -207,16 +207,16 @@ class Frontend {
 			],
 		];
 
-		$elements_manager = Plugin::$instance->elements_manager;
-
-		$elements_frontend_keys = [
-			'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
-			'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
-		];
-
-		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
-
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$elements_manager = Plugin::$instance->elements_manager;
+
+			$elements_frontend_keys = [
+				'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
+				'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
+			];
+
+			$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
+
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
 				'editSettings' => (object) [],
