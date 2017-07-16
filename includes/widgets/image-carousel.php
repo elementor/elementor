@@ -134,6 +134,23 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'open_in_lightbox',
+			[
+				'label' => __( 'Open In Lightbox', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'link_to' => 'file',
+				],
+			]
+		);
+
+		$this->add_control(
 			'caption_type',
 			[
 				'label' => __( 'Caption', 'elementor' ),
@@ -555,7 +572,10 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( $link ) {
 				$link_key = 'link_' . $index;
 
-				$this->add_render_attribute( $link_key, 'href', $link );
+				$this->add_render_attribute( $link_key, [
+					'href' => $link,
+					'data-open_in_lightbox' => $settings['open_in_lightbox'],
+				] );
 
 				if ( ! empty( $link['is_external'] ) ) {
 					$this->add_render_attribute( $link_key, 'target', '_blank' );
