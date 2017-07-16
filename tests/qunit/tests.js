@@ -1,3 +1,18 @@
+var elementorTests = {};
+
+elementorTests.setPanelSelectedElement = function( category, name ) {
+	elementor.getPanelView().setPage( 'elements' );
+
+	var elementsPanel = elementor.getPanelView().getCurrentPageView().elements.currentView,
+		basicElements = elementsPanel.collection.findWhere( { name: category } ),
+		view = elementsPanel.children.findByModel( basicElements ),
+		headingWidget = view.children.findByModel( view.collection.findWhere( { widgetType: name } ) );
+
+	elementor.channels.panelElements.reply( 'element:selected', headingWidget );
+};
+
+QUnit.module( 'Loading' );
+
 QUnit.test( 'Elementor exist', function( assert ) {
 	assert.ok( elementor, 'Passed!' );
 });
@@ -10,89 +25,81 @@ QUnit.test( 'Frontend CSS loaded', function( assert ) {
 	assert.equal( 1, elementor.$previewContents.find( '#elementor-frontend-css' ).length );
 });
 
-QUnit.test( 'simulateDragDrop', function( assert ) {
-	assert.equal( 1, elementor.$previewContents.find( '#elementor-frontend-css' ).length );
-});
 
+function testPreview() {
 
-function addSimulateDragDrop( $ ) {
-	$.fn.simulateDragDrop = function(options) {
-		return this.each(function() {
-			new $.simulateDragDrop(this, options);
+	QUnit.module( 'Widgets' );
+
+		var firstSectionModel = elementor.sections.currentView.collection.first(),
+			firstSectionView = elementor.sections.currentView.children.findByModel( firstSectionModel ),
+			firstColumnModel = firstSectionModel.get( 'elements' ).first(),
+			firstColumnView = firstSectionView.children.findByModel( firstColumnModel ),
+			elements = [
+			['basic', '' ], // widget columns
+			['basic', 'heading'],
+			['basic', 'image'],
+			// ['basic', 'text-editor'],
+			['basic', 'video'],
+			['basic', 'button'],
+			['basic', 'divider'],
+			['basic', 'spacer'],
+			['basic', 'google_maps'],
+			['basic', 'icon'],
+			['general-elements', 'image-box'],
+			['general-elements', 'icon-box'],
+			['general-elements', 'image-gallery'],
+			['general-elements', 'image-carousel'],
+			['general-elements', 'icon-list'],
+			['general-elements', 'counter'],
+			['general-elements', 'progress'],
+			['general-elements', 'testimonial'],
+			// ['general-elements', 'tabs'],
+			// ['general-elements', 'accordion'],
+			// ['general-elements', 'toggle'],
+			['general-elements', 'social-icons'],
+			['general-elements', 'alert'],
+			['general-elements', 'audio'],
+			['general-elements', 'shortcode'],
+			['general-elements', 'html'],
+			['general-elements', 'menu-anchor'],
+			['general-elements', 'sidebar'],
+
+			['wordpress', 'wp-widget-pages'],
+			['wordpress', 'wp-widget-calendar'],
+			['wordpress', 'wp-widget-archives'],
+			['wordpress', 'wp-widget-media_audio'],
+			['wordpress', 'wp-widget-media_image'],
+			['wordpress', 'wp-widget-media_video'],
+			['wordpress', 'wp-widget-meta'],
+			['wordpress', 'wp-widget-search'],
+			['wordpress', 'wp-widget-text'],
+			['wordpress', 'wp-widget-categories'],
+			['wordpress', 'wp-widget-recent-posts'],
+			['wordpress', 'wp-widget-recent-comments'],
+			['wordpress', 'wp-widget-rss'],
+			['wordpress', 'wp-widget-tag_cloud'],
+			['wordpress', 'wp-widget-nav_menu'],
+			['wordpress', 'wp-widget-elementor-library']
+		];
+
+		_( elements ).each(function( element ) {
+			QUnit.test( 'addElementFromPanel:' + element[0] + ':' + element[1], function( assert ) {
+				elementorTests.setPanelSelectedElement( element[0], element[1] );
+				firstColumnView.addElementFromPanel( { at: 0 } );
+
+				assert.equal( element[1], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
+			} );
 		});
-	};
-	$.simulateDragDrop = function(elem, options) {
-		this.options = options;
-		this.simulateEvent(elem, options);
-	};
-	$.extend($.simulateDragDrop.prototype, {
-		simulateEvent: function(elem, options) {
-			/*Simulating drag start*/
-			var type = "dragstart";
-			var event = this.createEvent(type);
-			this.dispatchEvent(elem, type, event);
 
-			/*Simulating drag over*/
-			type = 'dragover';
-			// var dragOverEvent1 = this.createEvent(type, {});
-			// var $dragOverTarget1 = $(elem);
-			// dragOverEvent1.clientX = $dragOverTarget1.offset().left + $dragOverTarget1.width() / 2;
-			// dragOverEvent1.clientY = $dragOverTarget1.offset().top + $dragOverTarget1.height() / 2;
-			// this.dispatchEvent(elem, type, dragOverEvent1);
+		QUnit.test( 'simulateDragDrop', function( assert ) {
+			pQuery( '[data-id="hphgwx5"]' ).simulate( 'drag-n-drop', {
+				dragTarget: pQuery( '[data-id="tvpmxwz"]' )
+			} );
+			assert.equal( 1, pQuery( '[data-id="tvpmxwz"]' ).find( '[data-id="hphgwx5"]' ).length );
+		} );
+	}
 
-			type = 'dragover';
-			var dragOverEvent2 = this.createEvent(type, {});
-			var $dragOverTarget2 = $(options.dropTarget);
-			dragOverEvent2.clientX = $dragOverTarget2.offset().left + $dragOverTarget2.width() / 2;
-			dragOverEvent2.clientY = $dragOverTarget2.offset().top + $dragOverTarget2.height() / 2;
-			this.dispatchEvent($dragOverTarget2[0], type, dragOverEvent2);
-
-			/*Simulating drop*/
-			type = "drop";
-			var dropEvent = this.createEvent(type, {});
-			dropEvent.dataTransfer = event.dataTransfer;
-			var target;
-			if (options.dropTargetFrame) {
-				target = $(document.querySelector(options.dropTargetFrame).contentDocument.querySelector(options.dropTarget))[0];
-			}
-			else {
-				target = $(options.dropTarget)[0];
-			}
-			this.dispatchEvent(target, type, dropEvent);
-
-			/*Simulating drag end*/
-			type = "dragend";
-			var dragEndEvent = this.createEvent(type, {});
-			dragEndEvent.dataTransfer = event.dataTransfer;
-			this.dispatchEvent(elem, type, dragEndEvent);
-		},
-		createEvent: function(type) {
-			var event = document.createEvent("CustomEvent");
-			event.initCustomEvent(type, true, true, null);
-			event.dataTransfer = {
-				data: {
-				},
-				types: [],
-				setData: function(type, val){
-					this.types.push(type)
-					this.data[type] = val;
-				},
-				getData: function(type){
-					return this.data[type];
-				}
-			};
-			return event;
-		},
-		dispatchEvent: function(elem, type, event) {
-			if(elem.dispatchEvent) {
-				elem.dispatchEvent(event);
-			}else if( elem.fireEvent ) {
-				elem.fireEvent("on"+type, event);
-			}
-		}
-	});
-}
-
-elementor.on('preview:loaded', function(){
-	addSimulateDragDrop(elementorFrontend.getElements('window').jQuery);
-});
+elementor.on( 'preview:loaded', function() {
+	window.pQuery = elementor.$preview[0].contentWindow.jQuery;
+	pQuery( elementor.$preview[0].contentDocument ).ready( testPreview );
+} );
