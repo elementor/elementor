@@ -7,7 +7,45 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	childView: PanelMenuItemView,
 
 	initialize: function() {
-		var menu =  [
+		this.collection = PanelMenuPageView.getItems();
+	},
+
+	onChildviewClick: function( childView ) {
+		var menuItemType = childView.model.get( 'type' );
+
+		switch ( menuItemType ) {
+			case 'page':
+				var pageName = childView.model.get( 'pageName' ),
+					pageTitle = childView.model.get( 'title' );
+
+				elementor.getPanelView().setPage( pageName, pageTitle );
+				break;
+
+			case 'link':
+				var link = childView.model.get( 'link' ),
+					isNewTab = childView.model.get( 'newTab' );
+
+				if ( isNewTab ) {
+					open( link, '_blank' );
+				} else {
+					location.href = childView.model.get( 'link' );
+				}
+
+				break;
+
+			default:
+				var callback = childView.model.get( 'callback' );
+
+				if ( _.isFunction( callback ) ) {
+					callback.call( childView );
+				}
+		}
+	}
+}, {
+	items: null,
+
+	initItems: function() {
+		this.items = new Backbone.Collection( [
 			{
             	name: 'global-colors',
 				icon: 'fa fa-paint-brush',
@@ -53,58 +91,31 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				link: elementor.config.elementor_site,
 				newTab: true
 			}
-		];
+		] );
+	},
 
-		menu = elementor.hooks.applyFilters( 'panel/menu/items', menu );
+	getItems: function() {
+		if ( ! this.items ) {
+			this.initItems();
+		}
 
-		this.collection = new Backbone.Collection( menu );
+		return this.items;
 	},
 
 	addItem: function( itemData, before ) {
-		var options = {};
+		var items = this.getItems(),
+			options = {};
 
 		if ( before ) {
-			var beforeItem = this.collection.findWhere( { name: before } );
+			var beforeItem = items.findWhere( { name: before } );
 
 			if ( beforeItem ) {
-				options.at = this.collection.indexOf( beforeItem );
+				options.at = items.indexOf( beforeItem );
 			}
 		}
 
-		this.collection.add( itemData, options );
-	},
-
-	onChildviewClick: function( childView ) {
-		var menuItemType = childView.model.get( 'type' );
-
-		switch ( menuItemType ) {
-			case 'page':
-				var pageName = childView.model.get( 'pageName' ),
-					pageTitle = childView.model.get( 'title' );
-
-				elementor.getPanelView().setPage( pageName, pageTitle );
-				break;
-
-			case 'link':
-				var link = childView.model.get( 'link' ),
-					isNewTab = childView.model.get( 'newTab' );
-
-				if ( isNewTab ) {
-					open( link, '_blank' );
-				} else {
-					location.href = childView.model.get( 'link' );
+		items.add( itemData, options );
 				}
-
-				break;
-
-			default:
-				var callback = childView.model.get( 'callback' );
-
-				if ( _.isFunction( callback ) ) {
-					callback.call( childView );
-				}
-		}
-	}
 } );
 
 module.exports = PanelMenuPageView;

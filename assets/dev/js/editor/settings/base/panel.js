@@ -21,14 +21,5 @@ module.exports = ControlsStack.extend( {
 
 	initialize: function() {
 		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	onChildviewSettingsChange: function( childView ) {
-		var settingsType = this.getOption( 'name' ),
-			controlName = childView.model.get( 'name' );
-
-		elementor.channels.settings
-			.trigger( 'change:' + settingsType, controlName, childView )
-			.trigger( 'change:' + settingsType + ':' + controlName, childView );
 	}
 } );

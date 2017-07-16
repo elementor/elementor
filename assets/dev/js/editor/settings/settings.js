@@ -3,6 +3,7 @@ var Module = require( 'elementor-utils/module' );
 module.exports = Module.extend( {
 	modules: {
 		base: require( 'elementor-editor/settings/base/manager' ),
+		general: require( 'elementor-editor/settings/general/manager' ),
 		page: require( 'elementor-editor/settings/page/manager' )
 	},
 

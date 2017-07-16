@@ -138,20 +138,6 @@ var BackgroundVideo = HandlerModule.extend( {
 
 var StretchedSection = HandlerModule.extend( {
 
-	getDefaultSettings: function() {
-		return {
-			selectors: {
-				sectionContainer: elementorFrontend.config.stretchedSectionContainer
-			}
-		};
-	},
-
-	getDefaultElements: function() {
-		return {
-			$sectionContainer: elementorFrontend.getElements( '$document' ).find( this.getSettings( 'selectors.sectionContainer' ) )
-		};
-	},
-
 	bindEvents: function() {
 		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
 	},
@@ -174,15 +160,28 @@ var StretchedSection = HandlerModule.extend( {
 			return;
 		}
 
-		var containerWidth = elementorFrontend.getElements( '$window' ).outerWidth(),
+		var $sectionContainer,
+			hasSpecialContainer = false;
+
+		try {
+			$sectionContainer = jQuery( elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) );
+
+			if ( $sectionContainer.length ) {
+				hasSpecialContainer = true;
+			}
+		} catch ( e ) {}
+
+		if ( ! hasSpecialContainer ) {
+			$sectionContainer = elementorFrontend.getElements( '$window' );
+		}
+
+		var containerWidth = $sectionContainer.outerWidth(),
 			sectionWidth = this.$element.outerWidth(),
 			sectionOffset = this.$element.offset().left,
 			correctOffset = sectionOffset;
 
-		if ( this.elements.$sectionContainer.length ) {
-			var containerOffset = this.elements.$sectionContainer.offset().left;
-
-			containerWidth = this.elements.$sectionContainer.outerWidth();
+		if ( hasSpecialContainer ) {
+			var containerOffset = $sectionContainer.offset().left;
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -206,6 +205,12 @@ var StretchedSection = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		this.stretchSection();
+	},
+
+	onGeneralSettingsChange: function( changed ) {
+		if ( 'elementor_stretched_section_container' in changed ) {
+			this.stretchSection();
+		}
 	}
 } );
 
