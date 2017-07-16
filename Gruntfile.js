@@ -412,7 +412,7 @@ module.exports = function( grunt ) {
 			qunit: [
 				'tests/qunit/index.html',
 				'tests/qunit/preview.html'
-			],
+			]
 		}
 	} );
 

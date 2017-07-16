@@ -4874,7 +4874,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 			var regexp = placeholder.source ? placeholder.source : placeholder,
 				placeholderPattern = new RegExp( regexp, 'g' );
 
-selector = selector.replace( placeholderPattern, replacements[ index ] );
+			selector = selector.replace( placeholderPattern, replacements[ index ] );
 		} );
 
 		if ( ! Object.keys( query ).length && control.responsive ) {
