@@ -183,6 +183,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.5.4 - 17.07.2017 =
 * Tweak! - Re-organized SCSS files for the editor panel
 * Tweak! - Added example how to remove some styles from front-end ([#1992](https://github.com/pojome/elementor/issues/1992))
 * Tweak! - Added `do_action( 'elementor/preview/enqueue_scripts' );` for loading scripts in the preview only
