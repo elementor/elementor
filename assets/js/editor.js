@@ -7383,7 +7383,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'column'
+				elChildType: 'section'
 			},
 			HandleDuplicate: {
 				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
