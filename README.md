@@ -185,6 +185,16 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+* Tweak! - Re-organized SCSS files for the editor panel
+* Tweak! - Added example how to remove some styles from front-end ([#1992](https://github.com/pojome/elementor/issues/1992))
+* Tweak! - Added `do_action( 'elementor/preview/enqueue_scripts' );` for loading scripts in the preview only
+* Tweak! - Added `panel/widgets/{WIDGET_TYPE}/controls/wp_widget/loaded` JS action to handle WP widget controls ([#1886](https://github.com/pojome/elementor/issues/1886))
+* Tweak! - Changed Image placeholder
+* Tweak! - Return `checkbox` control as deprecated in v1.5 ([#2003](https://github.com/pojome/elementor/issues/2003))
+* Fix! - Changed carousel breakpoints for better responsiveness (Based on [#1785](https://github.com/pojome/elementor/issues/2003))
+* Fix! - After v1.5 some default unit in mobile editing set as pixel instead of the original default
+* Fix! - Removed `wptexturize` from Elementor content to avoid some plugins wrong texturize
+
 ### 1.5.3 - 09.07.2017 ###
 * Tweak! - Google Fonts list updated with 17 new fonts
 * Tweak! - Added responsive control for min-height in Column widget
