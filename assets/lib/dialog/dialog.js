@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v3.2.1
+ * Dialogs Manager v3.2.2
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -213,6 +213,7 @@
 					my: 'center',
 					at: 'center',
 					of: 'container',
+					enable: true,
 					autoRefresh: false
 				},
 				hide: {
@@ -413,9 +414,13 @@
 
 		this.refreshPosition = function () {
 
+			if (! settings.position.enable) {
+				return;
+			}
+
 			var position = $.extend({}, settings.position);
 
-			if ( elements[position.of] ) {
+			if (elements[position.of]) {
 				position.of = elements[position.of];
 			}
 

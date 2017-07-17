@@ -128,7 +128,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.1',
+			'3.2.2',
 			true
 		);
 
@@ -136,6 +136,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
+				'elementor-dialog',
 				'elementor-waypoints',
 
 			],
