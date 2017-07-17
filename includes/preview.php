@@ -111,7 +111,7 @@ class Preview {
 		do_action( 'elementor/preview/enqueue_styles' );
 	}
 
-	private function enqueue_scripts() {
+	public function enqueue_scripts() {
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
