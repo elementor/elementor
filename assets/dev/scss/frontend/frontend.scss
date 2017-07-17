@@ -6,23 +6,23 @@
 @import "../common/common";
 
 // Core CSS
-@import "_global";
-@import "_grid";
+@import "global";
+@import "grid";
 
 // Utility classes
 @import "../helpers/utilities";
 
 //Forms (Input, Textarea, Select Etc..)
-@import "_forms";
+@import "forms";
 
 // Widgets
-@import "_widgets";
+@import "widgets";
 
 // Slick
-@import "_slick.scss";
+@import "slick";
 
 // Swiper
-@import "_swiper.scss";
+@import "swiper";
 
 // Animate
 @import "animate";
