@@ -5,7 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
-**Stable tag:** 1.5.3  
+**Stable tag:** 1.5.4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -185,6 +185,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.5.4 - 17.07.2017 ###
 * Tweak! - Re-organized SCSS files for the editor panel
 * Tweak! - Added example how to remove some styles from front-end ([#1992](https://github.com/pojome/elementor/issues/1992))
 * Tweak! - Added `do_action( 'elementor/preview/enqueue_scripts' );` for loading scripts in the preview only
