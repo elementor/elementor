@@ -170,6 +170,12 @@ class Widget_Image_Box extends Widget_Base {
 					'size' => 30,
 					'unit' => '%',
 				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
+					'unit' => '%',
+				],
 				'size_units' => [ '%' ],
 				'range' => [
 					'%' => [
