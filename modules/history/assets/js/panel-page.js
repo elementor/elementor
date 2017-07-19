@@ -7,7 +7,7 @@ module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
 
 	regions: {
-		content: '#elementor-panel-history-content',
+		content: '#elementor-panel-history-content'
 	},
 
 	ui: {
