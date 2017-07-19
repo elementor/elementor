@@ -1,25 +1,12 @@
-var ElementHistoryBehavior = require( './element-behavior' ),
+var HistoryCollection = require( './collection' ),
+	HistoryItem = require( './item' ),
+	ElementHistoryBehavior = require( './element-behavior' ),
 	CollectionHistoryBehavior = require( './collection-behavior' );
 
 var	Manager = function() {
-	var self = this;
-
-	var currentItemID;
-
-	var HistoryCollection = Backbone.Collection.extend( {
-		model: Backbone.Model.extend( {
-			type: '', // add/delete/move/change
-			status: 'not_applied',
-			elementType: '', // section/column/widget/control
-			elementID: '',
-			title: '', // Heading
-			subTitle: '',
-			action: '', // Added/Removed
-			history: {}
-		} )
-	} );
-
-	var items = new HistoryCollection();
+	var self = this,
+		currentItemID,
+		items = new HistoryCollection();
 
 	var translations = {
 		add: elementor.translate( 'added' ),
@@ -155,14 +142,10 @@ var	Manager = function() {
 			} );
 
 		if ( ! currentItem ) {
-			currentItem = new Backbone.Model();
-
-			currentItem.set( {
+			currentItem = new HistoryItem( {
 				id: id,
-				status: 'not_applied',
-				items: new Backbone.Collection(),
 				title: itemData.title,
-				subTitle: itemData.subTitle || '',
+				subTitle: itemData.subTitle,
 				action: getActionLabel( itemData )
 			} );
 
