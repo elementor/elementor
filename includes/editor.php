@@ -24,7 +24,7 @@ class Editor {
 
 		$this->init_editor_templates();
 
-		query_posts( [ 'p' => $post_id, 'post_type' => 'any' ] );
+		query_posts( [ 'p' => $post_id, 'post_type' => get_post_type( $post_id ) ] );
 
 		Plugin::$instance->db->switch_to_post( $post_id );
 
@@ -336,7 +336,7 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
-			'preview_link' => add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ),
+			'preview_link' => set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
