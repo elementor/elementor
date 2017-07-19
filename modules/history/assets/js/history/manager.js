@@ -15,8 +15,7 @@ var	Manager = function() {
 			title: '', // Heading
 			subTitle: '',
 			action: '', // Added/Removed
-			history: {
-			}
+			history: {}
 		} )
 	} );
 
@@ -124,11 +123,11 @@ var	Manager = function() {
 
 	this.startItem = function( itemData ) {
 		currentItemID = this.addItem( itemData );
-	},
+	};
 
 	this.endItem = function() {
 		currentItemID = null;
-	},
+	};
 
 	this.addItem = function( itemData ) {
 		if ( ! this.trackingMode ) {
