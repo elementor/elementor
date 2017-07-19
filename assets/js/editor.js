@@ -9258,6 +9258,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
 					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
 				}
+
+				elementor.hooks.doAction( 'panel/widgets/' + this.model.get( 'widget' ) + '/controls/wp_widget/loaded', this );
 			}, this )
 		} );
 	}

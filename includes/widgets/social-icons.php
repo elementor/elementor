@@ -237,6 +237,12 @@ class Widget_Social_Icons extends Widget_Base {
 				'default' => [
 					'unit' => 'em',
 				],
+				'tablet_default' => [
+					'unit' => 'em',
+				],
+				'mobile_default' => [
+					'unit' => 'em',
+				],
 				'range' => [
 					'em' => [
 						'min' => 0,
