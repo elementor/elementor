@@ -21,7 +21,6 @@ class Preview {
 
 		add_action( 'wp_enqueue_scripts', function() {
 			$this->enqueue_styles();
-
 			$this->enqueue_scripts();
 		} );
 
@@ -94,6 +93,8 @@ class Preview {
 		Plugin::$instance->frontend->enqueue_scripts();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
+
+		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
 	/**

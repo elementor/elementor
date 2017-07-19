@@ -50,6 +50,11 @@ class Controls_Manager {
 	const ORDER = 'order';
 
 	/**
+	 * @deprecated since 1.5.4
+	 */
+	const CHECKBOX = 'checkbox';
+
+	/**
 	 * @var Base_Control[]
 	 */
 	private $controls = null;
@@ -139,6 +144,8 @@ class Controls_Manager {
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::ORDER,
+
+			self::CHECKBOX,
 		];
 
 		foreach ( $available_controls as $control_id ) {
