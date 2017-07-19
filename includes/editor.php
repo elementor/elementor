@@ -287,7 +287,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.2',
+			'3.2.3',
 			true
 		);
 

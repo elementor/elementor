@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v3.2.2
+ * Dialogs Manager v3.2.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -490,6 +490,7 @@
 				contentWidth: 'auto',
 				contentHeight: 'auto',
 				closeButton: false,
+				closeButtonClass: 'fa fa-times',
 				position: {
 					element: 'widgetContent',
 					of: 'widget',
@@ -512,7 +513,7 @@
 				return;
 			}
 
-			var $closeButton = this.addElement('closeButton', '<div><i class="fa fa-times"></i></div>');
+			var $closeButton = this.addElement('closeButton', '<div><i class="' + this.getSettings('closeButtonClass') + '"></i></div>');
 
 			$widgetContent.prepend($closeButton);
 		},
