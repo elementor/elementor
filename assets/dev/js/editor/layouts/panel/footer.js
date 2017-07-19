@@ -32,14 +32,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		'click @ui.history': 'onClickHistory'
 	},
 
-	onClickHistory: function() {
-		if ( 'historyPage' === elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'elements' );
-		} else {
-			elementor.getPanelView().setPage( 'historyPage' );
-		}
-	},
-
 	initialize: function() {
 		this._initDialog();
 
@@ -180,6 +172,12 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 				elementor.templates.getLayout().showSaveTemplateView();
 			}
 		} );
+	},
+
+	onClickHistory: function() {
+		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'historyPage' );
+		}
 	},
 
 	onRender: function() {
