@@ -56,8 +56,6 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-
-		this.listenTo( this.getEditModel().get( 'settings' ), 'change', this.onChange );
 	},
 
 	addEmptyColumn: function() {
@@ -94,7 +92,9 @@ SectionView = BaseElementView.extend( {
 		};
 	},
 
-	onChange: function( settingsModel ) {
+	onSettingsChanged: function( settingsModel ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+
 		if ( settingsModel.changed.structure ) {
 			this.redefineLayout();
 		}
