@@ -52,39 +52,55 @@ class Controls_Manager {
 	/**
 	 * @var Base_Control[]
 	 */
-	private $_controls = null;
+	private $controls = null;
 
 	/**
 	 * @var Group_Control_Base[]
 	 */
-	private $_control_groups = [];
+	private $control_groups = [];
 
-	private $_controls_stack = [];
+	private $controls_stack = [];
 
-	private static $_available_tabs_controls;
+	private static $tabs;
 
-	private static function _get_available_tabs_controls() {
-		if ( ! self::$_available_tabs_controls ) {
-			self::$_available_tabs_controls = [
-				self::TAB_CONTENT => __( 'Content', 'elementor' ),
-				self::TAB_STYLE => __( 'Style', 'elementor' ),
-				self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
-				self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
-				self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
-				self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
-			];
+	private static function init_tabs() {
+		self::$tabs = [
+			self::TAB_CONTENT => __( 'Content', 'elementor' ),
+			self::TAB_STYLE => __( 'Style', 'elementor' ),
+			self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
+			self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
+			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
+			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
+		];
 
-			self::$_available_tabs_controls = apply_filters( 'elementor/controls/get_available_tabs_controls', self::$_available_tabs_controls );
+		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0', '`' . __CLASS__ . '::add_tab( $tab_name, $tab_title )`' );
+	}
+
+	public static function get_tabs() {
+		if ( ! self::$tabs ) {
+			self::init_tabs();
 		}
 
-		return self::$_available_tabs_controls;
+		return self::$tabs;
+	}
+
+	public static function add_tab( $tab_name, $tab_title ) {
+		if ( ! self::$tabs ) {
+			self::init_tabs();
+		}
+
+		if ( isset( self::$tabs[ $tab_name ] ) ) {
+			return;
+		}
+
+		self::$tabs[ $tab_name ] = $tab_title;
 	}
 
 	/**
 	 * @since 1.0.0
 	 */
 	private function register_controls() {
-		$this->_controls = [];
+		$this->controls = [];
 
 		$available_controls = [
 			self::TEXT,
@@ -138,11 +154,11 @@ class Controls_Manager {
 		}
 
 		// Group Controls
-		$this->_control_groups['background'] = new Group_Control_Background();
-		$this->_control_groups['border']     = new Group_Control_Border();
-		$this->_control_groups['typography'] = new Group_Control_Typography();
-		$this->_control_groups['image-size'] = new Group_Control_Image_Size();
-		$this->_control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+		$this->control_groups['background'] = new Group_Control_Background();
+		$this->control_groups['border']     = new Group_Control_Border();
+		$this->control_groups['typography'] = new Group_Control_Typography();
+		$this->control_groups['image-size'] = new Group_Control_Image_Size();
+		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
 
 		do_action( 'elementor/controls/controls_registered', $this );
 	}
@@ -154,7 +170,7 @@ class Controls_Manager {
 	 * @param Base_Control $control_instance
 	 */
 	public function register_control( $control_id, Base_Control $control_instance ) {
-		$this->_controls[ $control_id ] = $control_instance;
+		$this->controls[ $control_id ] = $control_instance;
 	}
 
 	/**
@@ -164,11 +180,11 @@ class Controls_Manager {
 	 * @return bool
 	 */
 	public function unregister_control( $control_id ) {
-		if ( ! isset( $this->_controls[ $control_id ] ) ) {
+		if ( ! isset( $this->controls[ $control_id ] ) ) {
 			return false;
 		}
 
-		unset( $this->_controls[ $control_id ] );
+		unset( $this->controls[ $control_id ] );
 
 		return true;
 	}
@@ -178,11 +194,11 @@ class Controls_Manager {
 	 * @return Base_Control[]
 	 */
 	public function get_controls() {
-		if ( null === $this->_controls ) {
+		if ( null === $this->controls ) {
 			$this->register_controls();
 		}
 
-		return $this->_controls;
+		return $this->controls;
 	}
 
 	/**
@@ -234,10 +250,10 @@ class Controls_Manager {
 	 */
 	public function get_control_groups( $id = null ) {
 		if ( $id ) {
-			return isset( $this->_control_groups[ $id ] ) ? $this->_control_groups[ $id ] : null;
+			return isset( $this->control_groups[ $id ] ) ? $this->control_groups[ $id ] : null;
 		}
 
-		return $this->_control_groups;
+		return $this->control_groups;
 	}
 
 	/**
@@ -249,7 +265,7 @@ class Controls_Manager {
 	 * @return Group_Control_Base[]
 	 */
 	public function add_group_control( $id, $instance ) {
-		$this->_control_groups[ $id ] = $instance;
+		$this->control_groups[ $id ] = $instance;
 
 		return $instance;
 	}
@@ -267,7 +283,7 @@ class Controls_Manager {
 	public function open_stack( Controls_Stack $element ) {
 		$stack_id = $element->get_name();
 
-		$this->_controls_stack[ $stack_id ] = [
+		$this->controls_stack[ $stack_id ] = [
 			'tabs' => [],
 			'controls' => [],
 		];
@@ -302,20 +318,20 @@ class Controls_Manager {
 
 		$stack_id = $element->get_name();
 
-		if ( ! $overwrite && isset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+		if ( ! $overwrite && isset( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
 			return false;
 		}
 
-		$available_tabs = self::_get_available_tabs_controls();
+		$tabs = self::get_tabs();
 
-		if ( ! isset( $available_tabs[ $control_data['tab'] ] ) ) {
+		if ( ! isset( $tabs[ $control_data['tab'] ] ) ) {
 			$control_data['tab'] = $default_args['tab'];
 		}
 
-		$this->_controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $available_tabs[ $control_data['tab'] ];
+		$this->controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $tabs[ $control_data['tab'] ];
 
-		$this->_controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
+		$this->controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
 
 		return true;
 	}
@@ -329,11 +345,11 @@ class Controls_Manager {
 			return true;
 		}
 
-		if ( empty( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+		if ( empty( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			return new \WP_Error( 'Cannot remove not-exists control.' );
 		}
 
-		unset( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] );
+		unset( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] );
 
 		return true;
 	}
@@ -345,11 +361,11 @@ class Controls_Manager {
 	 * @return array|\WP_Error
 	 */
 	public function get_control_from_stack( $stack_id, $control_id ) {
-		if ( empty( $this->_controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+		if ( empty( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			return new \WP_Error( 'Cannot get a not-exists control.' );
 		}
 
-		return $this->_controls_stack[ $stack_id ]['controls'][ $control_id ];
+		return $this->controls_stack[ $stack_id ]['controls'][ $control_id ];
 	}
 
 	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data ) {
@@ -366,11 +382,11 @@ class Controls_Manager {
 	public function get_element_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_name();
 
-		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
+		if ( ! isset( $this->controls_stack[ $stack_id ] ) ) {
 			return null;
 		}
 
-		$stack = $this->_controls_stack[ $stack_id ];
+		$stack = $this->controls_stack[ $stack_id ];
 
 		if ( 'widget' === $controls_stack->get_type() && 'common' !== $stack_id ) {
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
