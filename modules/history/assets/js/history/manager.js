@@ -156,12 +156,15 @@ var	Manager = function() {
 
 		if ( ! currentItem ) {
 			currentItem = new Backbone.Model();
-			currentItem.set( 'id', id );
-			currentItem.set( 'status', 'not_applied' );
-			currentItem.set( 'items', new Backbone.Collection() );
-			currentItem.set( 'title', itemData.title );
-			currentItem.set( 'subTitle', itemData.subTitle ? itemData.subTitle : '' );
-			currentItem.set( 'action', getActionLabel( itemData ) );
+
+			currentItem.set( {
+				id: id,
+				status: 'not_applied',
+				items: new Backbone.Collection(),
+				title: itemData.title,
+				subTitle: itemData.subTitle || '',
+				action: getActionLabel( itemData )
+			} );
 
 			self.startItemTitle = '';
 			self.startItemAction = '';
@@ -203,25 +206,30 @@ var	Manager = function() {
 
 			if ( 'not_applied' === item.get( 'status' ) ) {
 				item.get( 'items' ).each( function( subItem ) {
-					if ( subItem.get( 'history' ) ) { /* type duplicate first items hasn't history */
-						subItem.get( 'history' ).behavior.restore( subItem );
+					var history = subItem.get( 'history' );
+
+					if ( history ) { /* type duplicate first items hasn't history */
+						history.behavior.restore( subItem );
 					}
 				} );
+
 				item.set( 'status', 'applied' );
 			}
 		}
 	};
 
 	this.redoItem = function( index ) {
-		var item;
 		for ( var stepNum = items.length - 1; stepNum >= index; stepNum-- ) {
-			item = items.at( stepNum );
+			var item = items.at( stepNum );
 
 			if ( 'applied' === item.get( 'status' ) ) {
 				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
+
 				_( reversedSubItems ).each( function( subItem ) {
-					if ( subItem.get( 'history' ) ) { /* type duplicate first items hasn't history */
-						subItem.get( 'history' ).behavior.restore( subItem, true );
+					var history = subItem.get( 'history' );
+
+					if ( history ) { /* type duplicate first items hasn't history */
+						history.behavior.restore( subItem, true );
 					}
 				} );
 
@@ -248,6 +256,7 @@ var	Manager = function() {
 			}
 			// Widget global used getEditModel
 			var model = view.getEditModel ? view.getEditModel() : view.model;
+
 			if ( modelID === model.get( 'id' ) ) {
 				founded = view;
 			} else if ( view.children && view.children.length ) {
