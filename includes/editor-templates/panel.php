@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		</div>
 	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open" title="<?php esc_attr_e( 'History', 'elementor' ); ?>">
 		<span class="elementor-screen-only"><?php _e( 'History', 'elementor' ); ?></span>
 		<i class="fa fa-history"></i>
 	</div>
