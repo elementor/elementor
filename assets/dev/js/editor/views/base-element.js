@@ -188,7 +188,7 @@ BaseElementView = BaseContainer.extend( {
 					},
 					defaultOption: 'confirm',
 					onConfirm: _.bind( function() {
-						this.trigger( 'element:removed' );
+						this.trigger( 'before:remove' );
 
 						var parent = this._parent;
 

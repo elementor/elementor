@@ -23,7 +23,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
-	onChildviewElementRemoved: function( childView ) {
+	onChildviewBeforeRemove: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'remove',
 			title: elementor.history.history.getModelLabel( childView.model )
