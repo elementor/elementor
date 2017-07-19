@@ -225,21 +225,20 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderStyles: function( settings ) {
-		var self = this;
 		if ( ! settings ) {
 			settings = this.getEditModel().get( 'settings' );
 		}
 
-		self.controlsCSSParser.stylesheet.empty();
+		this.controlsCSSParser.stylesheet.empty();
 
-		self.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
+		this.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, this.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ this.getID(), '#elementor .' + this.getElementUniqueID() ] );
 
-		self.controlsCSSParser.addStyleToDocument();
+		this.controlsCSSParser.addStyleToDocument();
 
 		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
 
 		if ( extraCSS ) {
-			self.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
+			this.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
 		}
 	},
 
