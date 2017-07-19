@@ -26,8 +26,7 @@ RevisionsManager = function() {
 	};
 
 	var addHotKeys = function() {
-		var H_KEY = 72,
-			UP_ARROW_KEY = 38,
+		var UP_ARROW_KEY = 38,
 			DOWN_ARROW_KEY = 40;
 
 		var navigationHandler = {
@@ -50,17 +49,6 @@ RevisionsManager = function() {
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
 		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
-
-		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
-			isWorthHandling: function( event ) {
-				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
-			},
-			handle: function() {
-				elementor.getPanelView().setPage( 'historyPage' );
-				elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
-
-			}
-		} );
 	};
 
 	this.addRevision = function( revisionData ) {
