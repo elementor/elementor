@@ -7326,8 +7326,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
+		if ( ! Backbone.$( event.target ).closest( '.elementor-event-save-default' ).length ) {
+			event.preventDefault();
+
+			event.stopPropagation();
+		}
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
@@ -10220,14 +10223,6 @@ WidgetView = BaseElementView.extend( {
 		} );
 
 		return this;
-	},
-
-	onClickEdit: function( event ) {
-		if ( Backbone.$( event.target ).closest( '.elementor-event-save-default' ).length ) {
-			return;
-		}
-
-		BaseElementView.prototype.onClickEdit.apply( this, arguments );
 	},
 
 	onRender: function() {
