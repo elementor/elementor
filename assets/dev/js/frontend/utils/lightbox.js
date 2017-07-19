@@ -20,14 +20,14 @@ LightboxModule = ViewModule.extend( {
 				playButtonIcon: 'fa',
 				playing: 'elementor-playing',
 				hidden: 'elementor-hidden',
+				invisible: 'elementor-invisible',
 				slideshow: {
 					container: 'swiper-container',
 					slidesWrapper: 'swiper-wrapper',
-					pagination: 'swiper-pagination',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
-					prevButtonIcon: 'fa fa-chevron-left',
-					nextButtonIcon: 'fa fa-chevron-right',
+					prevButtonIcon: 'eicon-chevron-left',
+					nextButtonIcon: 'eicon-chevron-right',
 					slide: 'swiper-slide'
 				}
 			},
@@ -60,7 +60,8 @@ LightboxModule = ViewModule.extend( {
 	initModal: function() {
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox-modal',
-			closeButton: true
+			closeButton: true,
+			closeButtonClass: 'eicon-close'
 		} );
 
 		modal.on( 'hide', function() {
@@ -160,7 +161,6 @@ LightboxModule = ViewModule.extend( {
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { 'class': slideshowClasses.container } ),
 			$slidesWrapper = $( '<div>', { 'class': slideshowClasses.slidesWrapper } ),
-			$pagination = $( '<div>', { 'class': slideshowClasses.pagination } ),
 			$prevButton = $( '<div>', { 'class': slideshowClasses.prevButton } ).html( $( '<i>', { 'class': slideshowClasses.prevButtonIcon } ) ),
 			$nextButton = $( '<div>', { 'class': slideshowClasses.nextButton } ).html( $( '<i>', { 'class': slideshowClasses.nextButtonIcon } ) );
 
@@ -172,9 +172,12 @@ LightboxModule = ViewModule.extend( {
 			}
 
 			var $slide = $( '<div>', { 'class': slideClass } ),
+				$zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
 				$slideImage = $( '<img>', { 'class': classes.image } ).attr( 'src', slide.image );
 
-			$slide.append( $slideImage );
+			$slide.append( $zoomContainer );
+
+			$zoomContainer.append( $slideImage );
 
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
@@ -189,7 +192,6 @@ LightboxModule = ViewModule.extend( {
 
 		$container.append(
 			$slidesWrapper,
-			$pagination,
 			$prevButton,
 			$nextButton
 		);
@@ -204,7 +206,6 @@ LightboxModule = ViewModule.extend( {
 			onShowMethod();
 
 			var swiperOptions = {
-				pagination: $pagination,
 				prevButton: $prevButton,
 				nextButton: $nextButton,
 				paginationClickable: true,
@@ -259,11 +260,11 @@ LightboxModule = ViewModule.extend( {
 
 		var classes = this.getSettings( 'classes' );
 
-		var $videoContainer = jQuery( '<div>', { 'class': classes.videoContainer } ),
+		var $videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
 			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
 			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton ),
-			$slideImage = $activeSlide.children( '.' + classes.image );
+			$slideImage = $activeSlide.find( '.' + classes.image );
 
 		$videoContainer.append( $videoWrapper );
 
@@ -277,6 +278,8 @@ LightboxModule = ViewModule.extend( {
 
 		$videoFrame.on( 'load', function() {
 			$playIcon.add( $slideImage ).addClass( classes.hidden );
+
+			$videoContainer.removeClass( classes.invisible );
 		} );
 	},
 
