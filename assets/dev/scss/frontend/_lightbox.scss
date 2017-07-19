@@ -13,17 +13,24 @@
 			height: 100%;
 		}
 
-		&close-button {
-			top: 40px;
-			right: 40px;
-			z-index: 2;
-		}
-
 		&message {
 
 			&:not(.elementor-video-wrapper) {
 				height: 100%;
 			}
+		}
+	}
+
+	.elementor-swiper-button {
+		font-size: 25px;
+		color: #9a9a9a;
+
+		&-prev {
+			left: 40px;
+		}
+
+		&-next {
+			right: 40px;
 		}
 	}
 
@@ -39,7 +46,7 @@
 		align-items: center;
 		justify-content: center;
 		position: relative;
-		padding: 50px;
+		padding: 80px;
 		box-sizing: border-box;
 		height: 100%;
 		margin: auto;
