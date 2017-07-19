@@ -28,7 +28,7 @@ class Editor {
 			return;
 		}
 
-		query_posts( [ 'p' => $post_id, 'post_type' => 'any' ] );
+		query_posts( [ 'p' => $post_id, 'post_type' => get_post_type( $post_id ) ] );
 
 		Plugin::$instance->db->switch_to_post( $post_id );
 
