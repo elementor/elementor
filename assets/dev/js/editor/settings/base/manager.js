@@ -26,7 +26,7 @@ module.exports = ViewModule.extend( {
 
 		elementor.getPanelView().addPage( name + '_settings', {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
-			title: this.getSettings( 'panelPageSettings.title' ),
+			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
 				name: name
@@ -34,12 +34,10 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
-	renderStyles: function() {
-		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
-	},
-
 	updateStylesheet: function() {
-		this.renderStyles();
+		this.controlsCSS.stylesheet.empty();
+
+		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
 		this.controlsCSS.addStyleToDocument();
 	},
@@ -91,10 +89,24 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
+	addPanelMenuItem: function() {
+		var menuSettings = this.getSettings( 'panelPage.menu' ),
+			menuItemOptions = {
+				icon: menuSettings.icon,
+				title: this.getSettings( 'panelPage.title' ),
+				type: 'page',
+				pageName: this.getSettings( 'name' ) + '_settings'
+			};
+
+		elementor.modules.panel.Menu.addItem( menuItemOptions, menuSettings.beforeItem );
+	},
+
 	onInit: function() {
 		this.initModel();
 
 		this.initControlsCSSParser();
+
+		this.addPanelMenuItem();
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 
@@ -123,19 +135,5 @@ module.exports = ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		elementor.getPanelView().on( 'set:page:menu', this.onElementorPanelMenuOpen );
-	},
-
-	onElementorPanelMenuOpen: function( menuView ) {
-		var menuSettings = this.getSettings( 'panelPageSettings.menu' ),
-			menuItemOptions = {
-				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPageSettings.title' ),
-				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings'
-			};
-
-		menuView.addItem( menuItemOptions, menuSettings.beforeItem );
 	}
 } );

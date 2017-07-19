@@ -16,6 +16,15 @@
 
 		this.Module = Module;
 
+		var openImageInLightbox = function( event ) {
+			event.preventDefault();
+
+			self.utils.lightbox.showModal( {
+				type: 'image',
+				url: this.href
+			} );
+		};
+
 		var initElements = function() {
 			elements.$document = $( document );
 
@@ -24,6 +33,18 @@
 			elements.window = window;
 
 			elements.$window = $( window );
+
+			var openInLightBox = self.getGeneralSettings( 'elementor_open_images_in_lightbox' );
+
+			elements.$imagesLinks = $( 'a' ).filter( function() {
+				if ( ! /\.(png|jpe?g|gif|svg)$/i.test( this.href ) ) {
+					return false;
+				}
+
+				var currentLinkOpenInLightbox = $( this ).data( 'open_in_lightbox' );
+
+				return 'yes' === currentLinkOpenInLightbox || openInLightBox && 'no' !== currentLinkOpenInLightbox;
+			} );
 		};
 
 		var initOnReadyComponents = function() {
@@ -36,10 +57,26 @@
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var bindEvents = function() {
+			elements.$imagesLinks.on( 'click', openImageInLightbox );
+		};
+
+		var getSiteSettings = function( settingType, settingName ) {
+			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
+
+			if ( settingName ) {
+				return settingsObject[ settingName ];
+			}
+
+			return settingsObject;
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
 			initElements();
+
+			bindEvents();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
@@ -60,6 +97,14 @@
 			}
 
 			return dialogsManager;
+		};
+
+		this.getPageSettings = function( settingName ) {
+			return getSiteSettings( 'page', settingName );
+		};
+
+		this.getGeneralSettings = function( settingName ) {
+			return getSiteSettings( 'general', settingName );
 		};
 
 		this.isEditMode = function() {
