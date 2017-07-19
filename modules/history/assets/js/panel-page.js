@@ -86,5 +86,9 @@ module.exports = Marionette.LayoutView.extend( {
 
 	onTabClick: function( event ) {
 		this.activateTab( event.currentTarget.dataset.view );
+	},
+
+	onDestroy: function() {
+		elementor.getPanelView().getFooterView().ui.history.removeClass( 'elementor-open' );
 	}
 } );
