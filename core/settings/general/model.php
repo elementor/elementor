@@ -88,7 +88,18 @@ class Model extends BaseModel {
 								'.elementor-lightbox-modal' => 'background-color: {{VALUE}}',
 							],
 						],
-						'elementor_lightbox_width' => [
+						'elementor_lightbox_content_animation' => [
+							'label' => __( 'Entrance Animation', 'elementor' ),
+							'type' => Controls_Manager::ANIMATION,
+							'label_block' => true,
+							'frontend_available' => true,
+						],
+					],
+				],
+				'lightbox_video' => [
+					'label' => __( 'Video', 'elementor' ),
+					'controls' => [
+						'elementor_lightbox_video_width' => [
 							'label' => __( 'Width', 'elementor' ),
 							'type' => Controls_Manager::SLIDER,
 							'units' => [ '%' ],
@@ -101,24 +112,8 @@ class Model extends BaseModel {
 								],
 							],
 							'selectors' => [
-								'.elementor-lightbox-modal .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+								'.elementor-lightbox-modal .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
-						],
-						'elementor_lightbox_content_position' => [
-							'label' => __( 'Content Position', 'elementor' ),
-							'type' => Controls_Manager::SELECT,
-							'default' => 'center center',
-							'options' => [
-								'center center' => __( 'Center', 'elementor' ),
-								'center top' => __( 'Top', 'elementor' ),
-							],
-							'frontend_available' => true,
-						],
-						'elementor_lightbox_content_animation' => [
-							'label' => __( 'Entrance Animation', 'elementor' ),
-							'type' => Controls_Manager::ANIMATION,
-							'label_block' => true,
-							'frontend_available' => true,
 						],
 					],
 				],

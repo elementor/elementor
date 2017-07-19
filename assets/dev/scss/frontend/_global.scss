@@ -135,31 +135,6 @@
 	}
 }
 
-// Lightbox Modal
-.elementor-lightbox-modal {
-
-	.dialog- {
-
-		&widget-content {
-			background: none;
-			box-shadow: none;
-
-			@media (max-width: $screen-sm-max) {
-				width: 100%;
-			}
-
-			@media (min-width: $screen-lg-min) {
-				width: 50%;
-			}
-		}
-
-		&close-button {
-			top: 12px;
-			right: 0;
-		}
-	}
-}
-
 .elementor-custom-embed-play {
 	position: absolute;
 	top: 50%;
