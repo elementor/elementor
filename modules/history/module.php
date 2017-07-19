@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Modules\History;
 
-use Elementor\Core\Base\Module_Base;
+use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Module extends Module_Base {
+class Module extends BaseModule {
 
 	public function get_name() {
 		return 'history';
