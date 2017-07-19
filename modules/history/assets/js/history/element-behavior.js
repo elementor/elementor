@@ -35,6 +35,7 @@ module.exports = Marionette.Behavior.extend( {
 	saveHistory: function( model ) {
 		var self = this,
 			changed = Object.keys( model.changed );
+
 		if ( ! changed.length || ! model.controls[ changed[0] ] ) {
 			return;
 		}
@@ -47,17 +48,21 @@ module.exports = Marionette.Behavior.extend( {
 				// Text fields - save only on blur, set the callback once on first change
 				if ( ! self.oldValues[ control.name ] ) {
 					self.oldValues[ control.name ] = model.previous( control.name );
+
 					var panelView = elementor.getPanelView().getCurrentPageView(),
 						controlModel = panelView.collection.findWhere( { name: control.name } ),
 						view = panelView.children.findByModel( controlModel ),
 						$input = view.$el.find( ':input' );
 
-					$input.on( 'blur', function() {
+					$input.on( 'blur.history', function() {
 						self.saveTextHistory( model, changed, control );
+
 						delete self.oldValues[ control.name ];
-						$input.off( 'blur' );
+
+						$input.off( 'blur.history' );
 					} );
 				}
+
 				return;
 			}
 		}
