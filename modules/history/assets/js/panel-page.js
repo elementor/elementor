@@ -84,10 +84,6 @@ module.exports = Marionette.LayoutView.extend( {
 		this.showView( 'history' );
 	},
 
-	onShow: function() {
-		this.showView( 'history' );
-	},
-
 	onTabClick: function( event ) {
 		this.activateTab( event.currentTarget.dataset.view );
 	}
