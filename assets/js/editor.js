@@ -7386,7 +7386,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'column'
+				elChildType: 'section'
 			},
 			HandleDuplicate: {
 				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
@@ -9594,6 +9594,8 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
 					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
 				}
+
+				elementor.hooks.doAction( 'panel/widgets/' + this.model.get( 'widget' ) + '/controls/wp_widget/loaded', this );
 			}, this )
 		} );
 	}
