@@ -77,11 +77,12 @@
 .dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
-  top: 16px;
-  right: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: .65; }
+  color: #9a9a9a;
+  font-size: 25px;
+  top: 40px;
+  right: 40px;
+  z-index: 2;
+  line-height: 1; }
   .dialog-lightbox-close-button:hover {
     opacity: 1; }
 
