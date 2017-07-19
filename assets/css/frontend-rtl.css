@@ -185,20 +185,6 @@
 .elementor-align-justify .elementor-button {
   width: 100%; }
 
-.elementor-lightbox-modal .dialog-widget-content {
-  background: none;
-  box-shadow: none; }
-  @media (max-width: 767px) {
-    .elementor-lightbox-modal .dialog-widget-content {
-      width: 100%; } }
-  @media (min-width: 1025px) {
-    .elementor-lightbox-modal .dialog-widget-content {
-      width: 50%; } }
-
-.elementor-lightbox-modal .dialog-close-button {
-  top: 12px;
-  right: 0; }
-
 .elementor-custom-embed-play {
   position: absolute;
   top: 50%;
@@ -1309,9 +1295,6 @@
   .elementor-widget-icon-list .elementor-icon-list-icon i {
     vertical-align: middle; }
 
-.elementor-widget-video .elementor-open-lightbox iframe {
-  display: none; }
-
 .elementor-widget-video .elementor-open-inline .elementor-custom-embed-image-overlay {
   position: absolute;
   top: 0;
@@ -2238,6 +2221,54 @@ button.swiper-pagination-bullet {
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg); } }
 
+.elementor-lightbox-modal .dialog-widget-header {
+  display: none; }
+
+.elementor-lightbox-modal .dialog-widget-content {
+  background: none;
+  box-shadow: none;
+  width: 100%;
+  height: 100%; }
+
+.elementor-lightbox-modal .dialog-close-button {
+  top: 40px;
+  right: 40px;
+  z-index: 2; }
+
+.elementor-lightbox-modal .dialog-message:not(.elementor-video-wrapper) {
+  height: 100%; }
+
+.elementor-lightbox-modal .swiper-container {
+  height: 100%; }
+
+.elementor-lightbox-modal .elementor-lightbox-item {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: relative;
+  padding: 50px;
+  box-sizing: border-box;
+  height: 100%;
+  margin: auto; }
+
+.elementor-lightbox-modal .elementor-lightbox-image {
+  max-height: 100%; }
+
+.elementor-lightbox-modal .elementor-video-container {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
+          transform: translateX(-50%) translateY(-50%); }
+
 .animated {
   -webkit-animation-duration: 1.25s;
           animation-duration: 1.25s; }
@@ -2299,9 +2330,6 @@ button.swiper-pagination-bullet {
             transform-origin: center;
     -webkit-transform: rotateY(0deg);
             transform: rotateY(0deg); }
-
-.elementor-open-lightbox .fluid-width-video-wrapper {
-  display: none; }
 
 .page-template-elementor_canvas.elementor-page:before {
   display: none; }
