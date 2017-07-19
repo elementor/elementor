@@ -116,7 +116,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var $tool = $target.closest( '.elementor-panel-footer-tool' ),
 			isClosedTool = $tool.length && ! $tool.hasClass( 'elementor-open' );
 
-		this.ui.menuButtons.removeClass( 'elementor-open' );
+		this.ui.menuButtons.filter( ':not(.elementor-leave-open)' ).removeClass( 'elementor-open' );
 
 		if ( isClosedTool ) {
 			$tool.addClass( 'elementor-open' );
