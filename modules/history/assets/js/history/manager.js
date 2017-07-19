@@ -108,10 +108,10 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
-		elementor.channels.data.on( 'drag:update', self.startMovingItem );
-
-		elementor.channels.data.on( 'library:InsertTemplate:before', self.startInsertTemplate );
-		elementor.channels.data.on( 'library:InsertTemplate:after', self.endItem );
+		elementor.channels.data
+			.on( 'drag:update', self.startMovingItem )
+			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
+			.on( 'library:InsertTemplate:after', self.endItem );
 
 	};
 
