@@ -1,7 +1,7 @@
 <script type="text/template" id="tmpl-elementor-panel-history-page">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab active" data-view="history"><?php echo __( 'HISTORY', 'elementor' ); ?></div>
-		<div id="elementor-panel-elements-navigation-revisions" class="elementor-panel-navigation-tab" data-view="revisions"><?php echo __( 'REVISIONS', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab active" data-view="history"><?php echo __( 'History', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-revisions" class="elementor-panel-navigation-tab" data-view="revisions"><?php echo __( 'Revisions', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-history-content"></div>
 </script>
