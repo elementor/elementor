@@ -178,6 +178,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onRowControlChange: function( model ) {
 		var changed = Object.keys( model.changed );
+
 		if ( ! changed.length ) {
 			return;
 		}
@@ -186,11 +187,13 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			modelIndex = collectionCloned.findIndex( model ),
 			modelCloned = collectionCloned.find( model ),
 			_previousAttributes = modelCloned._previousAttributes;
+
 		// Replace the referenced model
 		modelCloned = modelCloned.clone();
 
 		// Save it with old values
 		modelCloned.set( _previousAttributes );
+
 		collectionCloned.remove( model );
 		collectionCloned.add( modelCloned, { at: modelIndex } );
 
@@ -199,6 +202,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		settings.changed = {};
 		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
+
 		settings._previousAttributes = {};
 		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
 
