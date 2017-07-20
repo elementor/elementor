@@ -186,7 +186,7 @@
     font-size: 100px;
     color: #fff;
     opacity: 0.7;
-    text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
     transition: all .5s; }
   .elementor-custom-embed-play:not(.elementor-playing) i:before {
     content: "\f01d"; }
@@ -1298,8 +1298,7 @@
   cursor: pointer;
   text-align: center; }
   .elementor-widget-video .elementor-custom-embed-image-overlay:hover .elementor-custom-embed-play i {
-    opacity: 0.9;
-    text-shadow: 3px 2px 30px rgba(0, 0, 0, 0.6); }
+    opacity: 0.9; }
   .elementor-widget-video .elementor-custom-embed-image-overlay img {
     display: block;
     width: 100%; }
