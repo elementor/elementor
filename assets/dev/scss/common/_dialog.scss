@@ -116,19 +116,3 @@
 		}
 	}
 }
-
-// Modal widget
-.dialog-lightbox-close-button {
-	cursor: pointer;
-	position: absolute;
-	color: #9a9a9a;
-	font-size: 25px;
-	top: 40px;
-	right: 40px;
-	z-index: 2;
-	line-height: 1;
-
-	&:hover {
-		opacity: 1;
-	}
-}

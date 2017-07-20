@@ -39,8 +39,8 @@ LightboxModule = ViewModule.extend( {
 				}
 			},
 			modalOptions: {
-				id: 'elementor-lightbox-modal',
-				entranceAnimation: elementorFrontend.getGeneralSettings( 'elementor_lightbox_content_animation' ),
+				id: 'elementor-lightbox',
+				entranceAnimation: 'zoomIn',
 				videoAspectRatio: 169,
 				position: {
 					enable: false
@@ -59,7 +59,7 @@ LightboxModule = ViewModule.extend( {
 
 	initModal: function() {
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
-			className: 'elementor-lightbox-modal',
+			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonClass: 'eicon-close'
 		} );
@@ -286,16 +286,16 @@ LightboxModule = ViewModule.extend( {
 	setEntranceAnimation: function( animation ) {
 		animation = animation || this.getSettings( 'modalOptions.entranceAnimation' );
 
-		var $widgetContent = this.getModal().getElements( 'widgetContent' );
+		var $widgetMessage = this.getModal().getElements( 'message' );
 
 		if ( this.oldAnimation ) {
-			$widgetContent.removeClass( this.oldAnimation );
+			$widgetMessage.removeClass( this.oldAnimation );
 		}
 
 		this.oldAnimation = animation;
 
 		if ( animation ) {
-			$widgetContent.addClass( 'animated ' + animation );
+			$widgetMessage.addClass( 'animated ' + animation );
 		}
 	},
 
