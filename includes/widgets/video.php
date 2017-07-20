@@ -368,6 +368,62 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_play_icon_style',
+			[
+				'label' => __( 'Play Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
+			'play_icon_color',
+			[
+				'label' => __( 'Color', '' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-custom-embed-play i' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'play_icon_size',
+			[
+				'label' => __( 'Size', '' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 10,
+						'max' => 300,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-custom-embed-play i' => 'font-size: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_lightbox_style',
+			[
+				'label' => __( 'Lightbox', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'image_overlay[url]!' => '',
+					'lightbox' => 'yes',
+				],
+			]
+		);
+
 		$this->add_control(
 			'lightbox_color',
 			[
@@ -375,11 +431,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-lightbox-{{ID}}' => 'background-color: {{VALUE}};',
-				],
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay[url]!' => '',
-					'lightbox' => 'yes',
 				],
 			]
 		);
@@ -401,11 +452,6 @@ class Widget_Video extends Widget_Base {
 				'selectors' => [
 					'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay[url]!' => '',
-					'lightbox' => 'yes',
-				],
 			]
 		);
 
@@ -418,11 +464,6 @@ class Widget_Video extends Widget_Base {
 				'options' => [
 					'' => __( 'Center', 'elementor' ),
 					'top' => __( 'Top', 'elementor' ),
-				],
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay[url]!' => '',
-					'lightbox' => 'yes',
 				],
 				'selectors' => [
 					'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
@@ -441,11 +482,6 @@ class Widget_Video extends Widget_Base {
 				'default' => '',
 				'frontend_available' => true,
 				'label_block' => true,
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay[url]!' => '',
-					'lightbox' => 'yes',
-				],
 			]
 		);
 

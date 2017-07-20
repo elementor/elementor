@@ -1,4 +1,4 @@
-.elementor-lightbox-modal {
+.elementor-lightbox {
 
 	.dialog- {
 
@@ -14,9 +14,26 @@
 		}
 
 		&message {
+			animation-duration: .4s; // Open lightbox transition
 
 			&:not(.elementor-video-wrapper) {
 				height: 100%;
+			}
+		}
+
+		&lightbox-close-button {
+			cursor: pointer;
+			position: absolute;
+			color: #9a9a9a;
+			font-size: 25px;
+			top: 35px;
+			right: 35px;
+			padding: 5px;
+			z-index: 2;
+			line-height: 1;
+
+			&:hover {
+				opacity: 1;
 			}
 		}
 	}
