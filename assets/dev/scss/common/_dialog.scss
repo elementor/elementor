@@ -26,7 +26,7 @@
 
 .dialog-message {
 	font-size: 12px;
-	line-height: 1.4;
+	line-height: 1.5;
 }
 
 .dialog-buttons-wrapper {
@@ -115,27 +115,6 @@
 			width: 100%;
 		}
 	}
-}
-
-// Popup widget
-.dialog-popup-message {
-	height: 155px;
-	width: 155px;
-	background-color: #fff;
-	border-radius: 10px;
-}
-
-.elementor-dialog-message {
-	padding: 15px;
-
-	.fa {
-		font-size: 85px;
-		padding: 10px;
-	}
-}
-
-.elementor-dialog-message-text {
-	text-transform: uppercase;
 }
 
 // Modal widget

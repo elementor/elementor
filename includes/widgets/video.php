@@ -377,7 +377,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'lightbox_color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-video-modal-{{ID}}' => 'background-color: {{VALUE}};',
@@ -405,7 +405,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'#elementor-video-modal-{{ID}} .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+					'(desktop+)#elementor-video-modal-{{ID}} .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
@@ -458,16 +458,12 @@ class Widget_Video extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_active_settings();
 
-		add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
-
 		$video_link = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
 		if ( empty( $video_link ) )
 			return;
 
-		$video_html = wp_oembed_get( $video_link, wp_embed_defaults() );
-
-		remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );
+		$video_html = Embed::get_embed_html( $video_link, $this->get_embed_params() );
 
 		if ( ! $video_html ) {
 			echo $video_link;
@@ -500,7 +496,7 @@ class Widget_Video extends Widget_Base {
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
-							<i class="fa fa-play-circle"></i>
+							<i class="fa"></i>
 						</div>
 					<?php endif; ?>
 				</div>
@@ -515,7 +511,7 @@ class Widget_Video extends Widget_Base {
 		echo 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 	}
 
-	public function filter_oembed_result( $html ) {
+	public function get_embed_params() {
 		$settings = $this->get_settings();
 
 		$params = [];
@@ -548,14 +544,7 @@ class Widget_Video extends Widget_Base {
 			$params['color'] = str_replace( '#', '', $settings['vimeo_color'] );
 		}
 
-		if ( ! empty( $params ) ) {
-			preg_match( '/<iframe.*src=\"(.*)\".*><\/iframe>/isU', $html, $matches );
-			$url = esc_url( add_query_arg( $params, $matches[1] ) );
-
-			$html = str_replace( $matches[1], $url, $html );
-		}
-
-		return $html;
+		return $params;
 	}
 
 	protected function get_hosted_params() {

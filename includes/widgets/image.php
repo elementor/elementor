@@ -128,13 +128,19 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'space',
 			[
 				'label' => __( 'Size (%)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 100,
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
 					'unit' => '%',
 				],
 				'size_units' => [ '%' ],
@@ -185,10 +191,11 @@ class Widget_Image extends Widget_Base {
 				'name' => 'image_border',
 				'label' => __( 'Image Border', 'elementor' ),
 				'selector' => '{{WRAPPER}} .elementor-image img',
+				'separator' => 'before',
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -204,6 +211,9 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
@@ -298,6 +308,10 @@ class Widget_Image extends Widget_Base {
 
 			if ( ! empty( $link['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
+			}
+
+			if ( ! empty( $link['nofollow'] ) ) {
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>

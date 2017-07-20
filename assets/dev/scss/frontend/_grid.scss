@@ -123,8 +123,7 @@
 	width: 100%;
 	display: flex;
 
-	/* In dragging mode it's causing a columns fall */
-	@media (max-width: $screen-sm-max) {
+	@media (max-width: $screen-md-max) {
 		flex-wrap: wrap;
 	}
 }
@@ -139,7 +138,6 @@
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
-	z-index: 1;
 }
 
 .elementor-widget {

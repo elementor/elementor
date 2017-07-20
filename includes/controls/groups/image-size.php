@@ -77,7 +77,8 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image_sizes = array_merge( $image_sizes, $_wp_additional_image_sizes );
 		}
 
-		return $image_sizes;
+		/** This filter is documented in wp-admin/includes/media.php */
+		return apply_filters( 'image_size_names_choose', $image_sizes );
 	}
 
 	protected function get_child_default_args() {
@@ -101,7 +102,12 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$image_sizes = [];
 
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
-			$image_sizes[ $size_key ] = ucwords( str_replace( '_', ' ', $size_key ) ) . sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
+			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
+			if ( is_array( $size_attributes ) ) {
+				$control_title .= sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
+			}
+
+			$image_sizes[ $size_key ] = $control_title;
 		}
 
 		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );

@@ -110,6 +110,10 @@ class Stylesheet {
 			foreach ( $style_rules as $rule ) {
 				$property = explode( ':', $rule, 2 );
 
+				if ( count( $property ) < 2 ) {
+					return $this;
+				}
+
 				$ordered_rules[ trim( $property[0] ) ] = trim( $property[1], ' ;' );
 			}
 
@@ -249,7 +253,7 @@ class Stylesheet {
 	private function add_query_hash( $query_hash ) {
 		$this->rules[ $query_hash ] = [];
 
-		uksort( $this->rules, function ( $a, $b ) {
+		uksort( $this->rules, function( $a, $b ) {
 			if ( 'all' === $a ) {
 				return -1;
 			}

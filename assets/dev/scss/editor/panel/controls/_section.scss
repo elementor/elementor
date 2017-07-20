@@ -1,0 +1,15 @@
+.elementor-control-type-section {
+	margin-top: 10px;
+	padding: 0;
+
+	& + .elementor-control {
+
+		&:not(.elementor-control-type-section) {
+			padding-top: 15px;
+
+			&:before {
+				display: none;
+			}
+		}
+	}
+}

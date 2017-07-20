@@ -75,7 +75,7 @@ class Global_CSS_File extends CSS_File {
 			$scheme_controls = $widget->get_scheme_controls();
 
 			foreach ( $scheme_controls as $control ) {
-				$this->add_control_rules( $control, $widget->get_controls(), function ( $control ) use ( $elementor ) {
+				$this->add_control_rules( $control, $widget->get_controls(), function( $control ) use ( $elementor ) {
 					$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
 					if ( empty( $scheme_value ) ) {
@@ -101,6 +101,12 @@ class Global_CSS_File extends CSS_File {
 
 		if ( ! empty( $container_width ) ) {
 			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
+		}
+
+		$space_between_widgets = get_option( 'elementor_space_between_widgets' );
+
+		if ( is_numeric( $space_between_widgets ) ) {
+			$this->stylesheet_obj->add_rules( '.elementor-widget:not(:last-child)', [ 'margin-bottom' => $space_between_widgets . 'px' ] );
 		}
 	}
 }

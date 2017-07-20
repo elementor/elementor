@@ -12,17 +12,15 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected static function get_default_edit_tools() {
+		$widget_label = __( 'Widget', 'elementor' );
+
 		return [
-			'edit' => [
-				'title' => __( 'Edit', 'elementor' ),
-				'icon' => 'pencil',
-			],
 			'duplicate' => [
-				'title' => __( 'Duplicate', 'elementor' ),
-				'icon' => 'files-o',
+				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
+				'icon' => 'clone',
 			],
 			'remove' => [
-				'title' => __( 'Remove', 'elementor' ),
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'times',
 			],
 		];
@@ -147,14 +145,15 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _render_settings() {
 		?>
-		<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( static::get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
-			<ul class="elementor-editor-element-settings-list">
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
+					<i class="fa fa-pencil"></i>
+				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>">
-						<a href="#" title="<?php echo $edit_tool['title']; ?>">
-							<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-							<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
-						</a>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -211,10 +210,6 @@ abstract class Widget_Base extends Element_Base {
 		] );
 
 		$settings = $this->get_settings();
-
-		if ( ! empty( $settings['_animation'] ) ) {
-			$this->add_render_attribute( '_wrapper', 'data-animation', $settings['_animation'] );
-		}
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
 	}

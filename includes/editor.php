@@ -51,7 +51,7 @@ class Editor {
 		$post_id = get_the_ID();
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_edit_mode( $post_id );
+		Plugin::$instance->db->set_is_elementor_page( $post_id );
 
 		// Post Lock
 		if ( ! $this->get_locked_user( $post_id ) ) {
@@ -147,6 +147,10 @@ class Editor {
 		global $wp_styles, $wp_scripts;
 
 		$post_id = get_the_ID();
+
+		// Set the global data like $authordata and etc
+		setup_postdata( $post_id );
+
 		$plugin = Plugin::$instance;
 
 		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
@@ -261,6 +265,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'jquery-hover-intent',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -278,6 +290,7 @@ class Editor {
 				'jquery-select2',
 				'jquery-simple-dtpicker',
 				'ace',
+				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -305,6 +318,7 @@ class Editor {
 		$page_settings_instance = PageSettingsManager::get_page( $post_id );
 
 		$config = [
+			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
@@ -328,12 +342,9 @@ class Editor {
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $post_id,
-			'post_permalink' => get_the_permalink(),
-			'edit_post_link' => get_edit_post_link(),
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'pro_library_url' => 'https://go.elementor.com/pro-library/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'data' => $editor_data,
 			'locked_user' => $locked_user,
@@ -392,6 +403,11 @@ class Editor {
 				'preview' => __( 'Preview', 'elementor' ),
 				'page_settings' => __( 'Page Settings', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
+				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
+				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
+				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
+				'no' => __( 'No', 'elementor' ),
+				'yes' => __( 'Yes', 'elementor' ),
 			],
 		];
 

@@ -20,7 +20,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'3.0.2',
+			'3.2.1',
 			true
 		);
 
@@ -39,6 +39,12 @@ class Admin {
 			'ElementorAdminConfig',
 			[
 				'home_url' => home_url(),
+				'i18n' => [
+					'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
+					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'cancel' => __( 'Cancel', 'elementor' ),
+				],
 			]
 		);
 
@@ -48,10 +54,6 @@ class Admin {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
-		}
-
-		if ( 'elementor_page_elementor-tools' === get_current_screen()->id ) {
-			wp_enqueue_script( 'elementor-dialog' );
 		}
 	}
 
@@ -102,15 +104,10 @@ class Admin {
 			return;
 		}
 
-		$current_mode = Plugin::$instance->db->get_edit_mode( $post->ID );
-		if ( 'builder' !== $current_mode ) {
-			$current_mode = 'editor';
-		}
-
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 		?>
 		<div id="elementor-switch-mode">
-			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $current_mode; ?>" />
+			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo Plugin::$instance->db->is_built_with_elementor( $post->ID ); ?>" />
 			<button id="elementor-switch-mode-button" class="elementor-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
@@ -156,15 +153,7 @@ class Admin {
 			return;
 		}
 
-		// Exit when you don't have $_POST array.
-		if ( empty( $_POST ) ) {
-			return;
-		}
-
-		if ( ! isset( $_POST['_elementor_post_mode'] ) )
-			$_POST['_elementor_post_mode'] = '';
-
-		Plugin::$instance->db->set_edit_mode( $post_id, $_POST['_elementor_post_mode'] );
+		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
 	}
 
 	/**
@@ -177,7 +166,7 @@ class Admin {
 	 * @return array
 	 */
 	public function add_edit_in_dashboard( $actions, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && 'builder' === Plugin::$instance->db->get_edit_mode( $post->ID ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
 				Utils::get_edit_link( $post->ID ),
@@ -193,9 +182,8 @@ class Admin {
 
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
 			$post = get_post();
-			$current_mode = Plugin::$instance->db->get_edit_mode( $post->ID );
 
-			$mode_class = 'builder' === $current_mode ? 'elementor-editor-active' : 'elementor-editor-inactive';
+			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
 
 			$classes .= ' ' . $mode_class;
 		}

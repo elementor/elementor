@@ -68,11 +68,6 @@ ElementsHandler = function( $ ) {
 		return handlers;
 	};
 
-	// TODO: Temp fallback method from 1.2.0
-	this.addExternalListener = function( $scope, event, callback, externalElement ) {
-		elementorFrontend.addListenerOnce( $scope.data( 'model-cid' ), event, callback, externalElement );
-	};
-
 	this.runReadyTrigger = function( $scope ) {
 		var elementType = $scope.attr( 'data-element_type' );
 

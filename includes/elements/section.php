@@ -10,17 +10,23 @@ class Element_Section extends Element_Base {
 	private static $presets = [];
 
 	protected static function get_default_edit_tools() {
+		$section_label = __( 'Section', 'elementor' );
+
 		return [
 			'duplicate' => [
-				'title' => __( 'Duplicate', 'elementor' ),
-				'icon' => 'files-o',
+				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
+				'icon' => 'clone',
+			],
+			'add' => [
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
+				'icon' => 'plus',
 			],
 			'save' => [
-				'title' => __( 'Save', 'elementor' ),
+				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
 				'icon' => 'floppy-o',
 			],
 			'remove' => [
-				'title' => __( 'Remove', 'elementor' ),
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
 				'icon' => 'times',
 			],
 		];
@@ -208,7 +214,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'custom_height',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -252,7 +258,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'custom_height_inner',
 			[
 				'label' => __( 'Minimum Height', 'elementor' ),
@@ -311,6 +317,27 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$possible_tags = [
+			'section',
+			'header',
+			'footer',
+			'aside',
+			'article',
+			'nav',
+			'div',
+		];
+
+		$options = [ '' => __( 'Default', 'elementor' ) ] + array_combine( $possible_tags, $possible_tags );
+
+		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => $options,
+			]
+		);
+
 		$this->add_control(
 			'structure',
 			[
@@ -332,13 +359,69 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'tabs_background' );
+
+		$this->start_controls_tab(
+			'tab_background_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'none', 'classic', 'gradient', 'video' ],
+				'types' => [ 'classic', 'gradient', 'video' ],
+				'fields_options' => [
+					'background' => [
+						'frontend_available' => true,
+					],
+					'video_link' => [
+						'frontend_available' => true,
+					],
+				],
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_background_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_hover',
+				'selector' => '{{WRAPPER}}:hover',
+			]
+		);
+
+		$this->add_control(
+			'background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 
@@ -354,11 +437,19 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'tabs_background_overlay' );
+
+		$this->start_controls_tab(
+			'tab_background_overlay_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
 				'condition' => [
 					'background_background' => [ 'none', 'classic', 'gradient', 'video' ],
@@ -389,6 +480,68 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_background_overlay_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_overlay_hover',
+				'selector' => '{{WRAPPER}}:hover > .elementor-background-overlay',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_hover_opacity',
+			[
+				'label' => __( 'Opacity (%)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => .5,
+				],
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}:hover > .elementor-background-overlay' => 'opacity: {{SIZE}};',
+				],
+				'condition' => [
+					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->end_controls_section();
 
 		// Section border
@@ -397,6 +550,15 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Border', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_border' );
+
+		$this->start_controls_tab(
+			'tab_border_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -425,6 +587,68 @@ class Element_Section extends Element_Base {
 				'name' => 'box_shadow',
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_border_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'border_hover',
+				'selector' => '{{WRAPPER}}:hover',
+			]
+		);
+
+		$this->add_control(
+			'border_radius_hover',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}}:hover, {{WRAPPER}}:hover > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover',
+			]
+		);
+
+		$this->add_control(
+			'border_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 
@@ -489,6 +713,12 @@ class Element_Section extends Element_Base {
 					'type' => Controls_Manager::SLIDER,
 					'units' => [ '%' ],
 					'default' => [
+						'unit' => '%',
+					],
+					'tablet_default' => [
+						'unit' => '%',
+					],
+					'mobile_default' => [
 						'unit' => '%',
 					],
 					'range' => [
@@ -679,7 +909,7 @@ class Element_Section extends Element_Base {
 		$this->start_controls_section(
 			'section_advanced',
 			[
-				'label' => __( 'Advanced', 'elementor' ),
+				'label' => __( 'Element Style', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -716,13 +946,27 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'z_index',
+			[
+				'label' => __( 'Z-Index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'placeholder' => 0,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				//'prefix_class' => 'animated ',
+				'prefix_class' => 'animated ',
 				'label_block' => true,
+				'frontend_available' => true,
 			]
 		);
 
@@ -741,6 +985,22 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'animation!' => '',
 				],
+			]
+		);
+
+		$this->add_control(
+			'animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
@@ -856,35 +1116,34 @@ class Element_Section extends Element_Base {
 
 	protected function _render_settings() {
 		?>
-		<div class="elementor-element-overlay"></div>
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>"><i class="fa fa-bars"></i></li>
+				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<?php if ( 'add' === $edit_tool_name ) : ?>
+						<# if ( ! isInner ) { #>
+					<?php endif; ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+					</li>
+					<?php if ( 'add' === $edit_tool_name ) : ?>
+						<# } #>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</ul>
+		</div>
 		<?php
 	}
 
 	protected function _content_template() {
 		?>
-		<# if ( 'video' === settings.background_background ) {
-			var videoLink = settings.background_video_link;
-	
-			if ( videoLink ) {
-				var videoID = elementor.helpers.getYoutubeIDFromURL( settings.background_video_link ); #>
-	
-				<div class="elementor-background-video-container elementor-hidden-phone">
-					<# if ( videoID ) { #>
-						<div class="elementor-background-video" data-video-id="{{ videoID }}"></div>
-					<# } else { #>
-						<video class="elementor-background-video" src="{{ videoLink }}" autoplay loop muted></video>
-					<# } #>
-				</div>
-			<# }
-	
-			if ( settings.background_video_fallback ) { #>
-				<div class="elementor-background-video-fallback" style="background-image: url({{ settings.background_video_fallback.url }})"></div>
-			<# }
-		}
-
-		if ( -1 !== [ 'classic', 'gradient' ].indexOf( settings.background_overlay_background ) ) { #>
-			<div class="elementor-background-overlay"></div>
-		<# } #>
+		<div class="elementor-background-video-container elementor-hidden-phone">
+			<div class="elementor-background-video-embed"></div>
+			<video class="elementor-background-video-hosted" autoplay loop muted></video>
+		</div>
+		<div class="elementor-background-video-fallback"></div>
+		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
@@ -896,23 +1155,26 @@ class Element_Section extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings();
 		?>
-		<section <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
-					$video_id = Utils::get_youtube_id_from_url( $settings['background_video_link'] );
+					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 					?>
 					<div class="elementor-background-video-container elementor-hidden-phone">
-						<?php if ( $video_id ) : ?>
-							<div class="elementor-background-video" data-video-id="<?php echo $video_id; ?>"></div>
+						<?php if ( $video_properties ) : ?>
+							<div class="elementor-background-video-embed"></div>
 						<?php else : ?>
-							<video class="elementor-background-video elementor-html5-video" src="<?php echo $settings['background_video_link'] ?>" autoplay loop muted></video>
+							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
 				<?php endif;
 			endif;
 
-			if ( in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ) : ?>
+			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
+		                              in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+
+			if ( $has_background_overlay ) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif;
 
@@ -932,7 +1194,7 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
-		</section>
+		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
 
@@ -947,16 +1209,20 @@ class Element_Section extends Element_Base {
 		] );
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
-
-		$animation = $this->get_settings( 'animation' );
-
-		if ( $animation ) {
-			$this->add_render_attribute( '_wrapper', 'data-animation', $animation );
-		}
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'column' );
+	}
+
+	private function get_html_tag() {
+		$html_tag = $this->get_settings( 'html_tag' );
+
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'section';
+		}
+
+		return $html_tag;
 	}
 
 	private function print_shape_divider( $side ) {

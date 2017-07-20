@@ -263,42 +263,7 @@ abstract class Element_Base extends Controls_Stack {
 
 	protected function _content_template() {}
 
-	protected function _render_settings() {
-		?>
-		<div class="elementor-element-overlay">
-			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
-				<ul class="elementor-editor-element-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-add">
-						<a href="#" title="<?php _e( 'Add Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Add', 'elementor' ); ?></span>
-							<i class="fa fa-plus"></i>
-						</a>
-					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-trash-o"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<?php
-	}
+	protected function _render_settings() {}
 
 	/**
 	 * @return boolean
@@ -336,6 +301,11 @@ abstract class Element_Base extends Controls_Stack {
 				continue;
 
 			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+		}
+
+		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
+			// Hide the element until the animation begins
+			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 		}
 
 		if ( ! empty( $settings['_element_id'] ) ) {

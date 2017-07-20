@@ -13,6 +13,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
 
+		self.validators = {};
+
 		if ( ! self.controls ) {
 			return;
 		}
@@ -22,7 +24,14 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		_.each( self.controls, function( field ) {
 			var control = elementor.config.controls[ field.type ],
-				isMultipleControl = _.isObject( control.default_value );
+				isUIControl = -1 !== control.features.indexOf( 'ui' );
+
+			if ( isUIControl ) {
+				return;
+			}
+
+			// Check if the value is a plain object ( and not an array )
+			var isMultipleControl = jQuery.isPlainObject( control.default_value );
 
 			if ( isMultipleControl  ) {
 				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
@@ -148,6 +157,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
 	},
 
+	setExternalChange: function( key, value ) {
+		this.set( key, value );
+
+		this.trigger( 'change:external', key, value )
+			.trigger( 'change:external:' + key, value );
+	},
+
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -174,7 +190,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 						return;
 					}
 
-					if ( 'object' === typeof data[ key ] ) {
+					if ( data[ key ] && 'object' === typeof data[ key ] ) {
 						// First check length difference
 						if ( Object.keys( data[ key ] ).length !== Object.keys( control[ 'default' ] ).length ) {
 							return;

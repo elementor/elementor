@@ -296,6 +296,10 @@ class Widget_Icon extends Widget_Base {
 			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
 			}
+
+			if ( $settings['link']['nofollow'] ) {
+				$this->add_render_attribute( 'icon-wrapper', 'rel', 'nofollow' );
+			}
 		}
 
 		if ( ! empty( $settings['icon'] ) ) {

@@ -14,6 +14,7 @@
   * [Frontend Actions](#frontend-actions)
     + [`elementor/frontend/before_enqueue_scripts`](#elementorfrontendbefore_enqueue_scripts)
     + [`elementor/frontend/after_register_styles`](#elementorfrontendafter_register_styles)
+    + [`elementor/frontend/after_enqueue_styles`](#elementorfrontendafter_enqueue_styles)
     + [`elementor/element/parse_css`](#elementorelementparse_css)
     + [`elementor/frontend/{section|column|widget}/before_render`](#elementorfrontendsectioncolumnwidgetbefore_render)
     + [`elementor/frontend/{section|column|widget}/after_render`](#elementorfrontendsectioncolumnwidgetafter_render)
@@ -204,11 +205,17 @@ After Elementor registers all styles.
 
 #### Arguments
 None
- 
+
+### `elementor/frontend/after_enqueue_styles`
+After the frontend styles enqueuing.
+
+#### Arguments
+None
+
 #### Example
 
  ```php
-add_action( 'elementor/frontend/after_register_styles', function() {
+add_action( 'elementor/frontend/after_enqueue_styles', function() {
     wp_dequeue_style( 'font-awesome' );
 } );
 ```

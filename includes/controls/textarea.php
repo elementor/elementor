@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-class Control_Textarea extends Control_Base {
+class Control_Textarea extends Base_Data_Control {
 
 	public function get_type() {
 		return 'textarea';
@@ -26,11 +26,12 @@ class Control_Textarea extends Control_Base {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<textarea rows="{{ data.rows || 5 }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
+				<textarea id="<?php echo $control_uid; ?>" rows="{{ data.rows || 5 }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

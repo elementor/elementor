@@ -43,21 +43,6 @@
 			width: 100%;
 		}
 	}
-
-	.elementor-custom-embed-play {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-
-		i {
-			font-size: 100px;
-			color: #fff;
-			opacity: 0.7;
-			text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
-			transition: all .5s;
-		}
-	}
 }
 
 .elementor-aspect-ratio- {
@@ -80,23 +65,6 @@
 
 		.elementor-video-wrapper {
 			padding-bottom: 66.6666%;
-		}
-	}
-}
-
-.elementor-widget-video-modal {
-
-	.dialog- {
-
-		&widget-content {
-			background: none;
-			box-shadow: none;
-			width: 50%;
-		}
-
-		&close-button {
-			top: 12px;
-			right: 0;
 		}
 	}
 }

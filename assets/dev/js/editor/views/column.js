@@ -32,17 +32,16 @@ ColumnView = BaseElementView.extend( {
 		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
+	tagName: function() {
+		return this.model.getSetting( 'html_tag' ) || 'div';
+	},
+
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.duplicateButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-duplicate';
-		ui.removeButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-remove';
-		ui.saveButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-save';
-		ui.triggerButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-trigger';
-		ui.addButton = '> .elementor-element-overlay .elementor-editor-column-settings-list .elementor-editor-element-add';
-		ui.columnTitle = '.column-title';
 		ui.columnInner = '> .elementor-column-wrap';
-		ui.listTriggers = '> .elementor-element-overlay .elementor-editor-element-trigger';
+
+		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
 		return ui;
 	},
@@ -51,20 +50,10 @@ ColumnView = BaseElementView.extend( {
 		'click @ui.addButton': 'click:new'
 	},
 
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.listTriggers' ] = 'onClickTrigger';
-		events[ 'click @ui.triggerButton' ] = 'onClickEdit';
-
-		return events;
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( elementor.channels.data, 'widget:drag:start', this.onWidgetDragStart );
-		this.listenTo( elementor.channels.data, 'widget:drag:end', this.onWidgetDragEnd );
+		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
 	},
 
 	isDroppingAllowed: function() {
@@ -78,14 +67,29 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
+	getPercentsForDisplay: function() {
+		var inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
+
+		return inlineSize.toFixed( 1 ) + '%';
+	},
+
 	changeSizeUI: function() {
-		var columnSize = this.model.getSetting( '_column_size' ),
-			inlineSize = this.model.getSetting( '_inline_size' ),
-			columnSizeTitle = parseFloat( inlineSize || columnSize ).toFixed( 1 ) + '%';
+		var self = this,
+			columnSize = self.model.getSetting( '_column_size' );
 
-		this.$el.attr( 'data-col', columnSize );
+		self.$el.attr( 'data-col', columnSize );
 
-		this.ui.columnTitle.html( columnSizeTitle );
+		_.defer( function() { // Wait for the column size to be applied
+			self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+		} );
+	},
+
+	getPercentSize: function( size ) {
+		if ( ! size ) {
+			size = this.el.getBoundingClientRect().width;
+		}
+
+		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
 	},
 
 	getSortableOptions: function() {
@@ -93,13 +97,6 @@ ColumnView = BaseElementView.extend( {
 			connectWith: '.elementor-widget-wrap',
 			items: '> .elementor-element'
 		};
-	},
-
-	// Events
-	onCollectionChanged: function() {
-		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
-
-		this.changeChildContainerClasses();
 	},
 
 	changeChildContainerClasses: function() {
@@ -113,10 +110,20 @@ ColumnView = BaseElementView.extend( {
 		}
 	},
 
+	// Events
+	onCollectionChanged: function() {
+		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
+
+		this.changeChildContainerClasses();
+	},
+
 	onRender: function() {
 		var self = this;
 
+		BaseElementView.prototype.onRender.apply( self, arguments );
+
 		self.changeChildContainerClasses();
+
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
@@ -124,21 +131,9 @@ ColumnView = BaseElementView.extend( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
-			onDragEnter: function() {
-				self.$el.addClass( 'elementor-dragging-on-child' );
-			},
-			onDragging: function( side, event ) {
-				event.stopPropagation();
-
-				if ( this.dataset.side !== side ) {
-					Backbone.$( this ).attr( 'data-side', side );
-				}
-			},
-			onDragLeave: function() {
-				self.$el.removeClass( 'elementor-dragging-on-child' );
-
-				Backbone.$( this ).removeAttr( 'data-side' );
-			},
+			currentElementClass: 'elementor-html5dnd-current-element',
+			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
@@ -153,25 +148,40 @@ ColumnView = BaseElementView.extend( {
 		} );
 	},
 
-	onClickTrigger: function( event ) {
-		event.preventDefault();
+	onSettingsChanged: function( settings ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
 
-		var $trigger = this.$( event.currentTarget ),
-			isTriggerActive = $trigger.hasClass( 'elementor-active' );
+		var changedAttributes = settings.changedAttributes();
 
-		this.ui.listTriggers.removeClass( 'elementor-active' );
-
-		if ( ! isTriggerActive ) {
-			$trigger.addClass( 'elementor-active' );
+		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
+			this.changeSizeUI();
 		}
 	},
 
-	onWidgetDragStart: function() {
-		this.$el.addClass( 'elementor-dragging' );
-	},
+	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
+		var errors = [],
+			columnSize = this.model.getSetting( '_column_size' );
 
-	onWidgetDragEnd: function() {
-		this.$el.removeClass( 'elementor-dragging' );
+		// If there's only one column
+		if ( 100 === columnSize ) {
+			errors.push( 'Could not resize one column' );
+
+			return errors;
+		}
+
+		if ( ! oldValue ) {
+			oldValue = columnSize;
+		}
+
+		try {
+			this._parent.resizeChild( this, +oldValue, +newValue );
+		} catch ( e ) {
+			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
+				errors.push( e.message );
+			}
+		}
+
+		return errors;
 	}
 } );
 

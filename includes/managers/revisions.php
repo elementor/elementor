@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Revisions_Manager {
 
+	const MAX_REVISIONS_TO_DISPLAY = 100;
+
 	private static $authors = [];
 
 	public function __construct() {
@@ -25,7 +27,12 @@ class Revisions_Manager {
 
 		$revisions = [];
 
-		$query_args['meta_key'] = '_elementor_data';
+		$default_query_args = [
+			'posts_per_page' => self::MAX_REVISIONS_TO_DISPLAY,
+			'meta_key' => '_elementor_data',
+		];
+
+		$query_args = array_merge( $default_query_args, $query_args );
 
 		$posts = wp_get_post_revisions( $post->ID, $query_args );
 
@@ -69,7 +76,7 @@ class Revisions_Manager {
 	public static function save_revision( $revision_id ) {
 		$parent_id = wp_is_post_revision( $revision_id );
 
-		if ( ! $parent_id ) {
+		if ( ! $parent_id || ! Plugin::$instance->db->is_built_with_elementor( $parent_id ) ) {
 			return;
 		}
 
@@ -77,9 +84,18 @@ class Revisions_Manager {
 	}
 
 	public static function restore_revision( $parent_id, $revision_id ) {
+		$is_built_with_elementor = Plugin::$instance->db->is_built_with_elementor( $revision_id );
+
+		Plugin::$instance->db->set_is_elementor_page( $parent_id, $is_built_with_elementor );
+
+		if ( ! $is_built_with_elementor ) {
+			return;
+		}
+
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
 		$post_css = new Post_CSS_File( $parent_id );
+
 		$post_css->update();
 	}
 

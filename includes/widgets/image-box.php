@@ -139,7 +139,7 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_space',
 			[
 				'label' => __( 'Image Spacing', 'elementor' ),
@@ -161,13 +161,19 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_size',
 			[
 				'label' => __( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 30,
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
 					'unit' => '%',
 				],
 				'size_units' => [ '%' ],
@@ -373,11 +379,17 @@ class Widget_Image_Box extends Widget_Base {
 			$image_html = '<img ' . $this->get_render_attribute_string( 'image' ) . '>';
 
 			if ( ! empty( $settings['link']['url'] ) ) {
-				$target = '';
-				if ( ! empty( $settings['link']['is_external'] ) ) {
-					$target = ' target="_blank"';
+				$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
+
+				if ( $settings['link']['is_external'] ) {
+					$this->add_render_attribute( 'link', 'target', '_blank' );
 				}
-				$image_html = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $image_html );
+
+				if ( ! empty( $settings['link']['nofollow'] ) ) {
+					$this->add_render_attribute( 'link', 'rel', 'nofollow' );
+				}
+
+				$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
 			}
 
 			$html .= '<figure class="elementor-image-box-img">' . $image_html . '</figure>';
@@ -390,13 +402,7 @@ class Widget_Image_Box extends Widget_Base {
 				$title_html = $settings['title_text'];
 
 				if ( ! empty( $settings['link']['url'] ) ) {
-					$target = '';
-
-					if ( ! empty( $settings['link']['is_external'] ) ) {
-						$target = ' target="_blank"';
-					}
-
-					$title_html = sprintf( '<a href="%s"%s>%s</a>', $settings['link']['url'], $target, $title_html );
+					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $title_html . '</a>';
 				}
 
 				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $settings['title_size'], $title_html );

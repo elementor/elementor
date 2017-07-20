@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-( function( $, window, document ) {
+( function( $ ) {
 	'use strict';
 
 	var ElementorAdminApp = {
@@ -8,6 +8,7 @@
 
 		cacheElements: function() {
 			this.cache = {
+				$window: $( window ),
 				$body: $( 'body' ),
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
@@ -16,16 +17,26 @@
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
-				$importArea: $( '#elementor-import-template-area' )
+				$importArea: $( '#elementor-import-template-area' ),
+				$settingsForm: $( '#elementor-settings-form' ),
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
 			};
+
+			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
+
+			this.cache.$activeSettingsPage = this.cache.$settingsFormPages.filter( '.elementor-active' );
+
+			this.cache.$settingsTabs = this.cache.$settingsTabsWrapper.children();
+
+			this.cache.$activeSettingsTab = this.cache.$settingsTabs.filter( '.nav-tab-active' );
 		},
 
 		toggleStatus: function() {
-			var isBuilderMode = 'builder' === this.getEditMode();
+			var isElementorMode = this.isElementorMode();
 
 			this.cache.$body
-			    .toggleClass( 'elementor-editor-active', isBuilderMode )
-			    .toggleClass( 'elementor-editor-inactive', ! isBuilderMode );
+			    .toggleClass( 'elementor-editor-active', isElementorMode )
+			    .toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
 
 		bindEvents: function() {
@@ -34,10 +45,10 @@
 			self.cache.$switchModeButton.on( 'click', function( event ) {
 				event.preventDefault();
 
-				if ( 'builder' === self.getEditMode() ) {
-					self.cache.$switchModeInput.val( 'editor' );
+				if ( self.isElementorMode() ) {
+					self.cache.$switchModeInput.val( '' );
 				} else {
-					self.cache.$switchModeInput.val( 'builder' );
+					self.cache.$switchModeInput.val( true );
 
 					var $wpTitle = $( '#title' );
 
@@ -50,7 +61,8 @@
 					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
-						$( window ).off( 'beforeunload.edit-post' );
+						self.cache.$window.off( 'beforeunload.edit-post' );
+
 						window.location = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
@@ -130,6 +142,42 @@
 					} );
 			} );
 
+			self.cache.$settingsTabs.on( {
+				click: function( event ) {
+					event.preventDefault();
+
+					event.currentTarget.focus(); // Safari does not focus the tab automatically
+				},
+				focus: function() { // Using focus event to enable navigation by tab key
+					var hrefWithoutHash = location.href.replace( /#.*/, '' );
+
+					history.pushState( {}, '', hrefWithoutHash + this.hash );
+
+					self.goToSettingsTabFromHash();
+				}
+			} );
+
+			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+
+				var $this = $( this ),
+					dialogsManager = new DialogsManager.Instance();
+
+				dialogsManager.createWidget( 'confirm', {
+					headerMessage: ElementorAdminConfig.i18n.rollback_to_previous_version,
+					message: ElementorAdminConfig.i18n.rollback_confirm,
+					strings: {
+						confirm: ElementorAdminConfig.i18n.yes,
+						cancel: ElementorAdminConfig.i18n.cancel
+					},
+					onConfirm: function() {
+						$this.addClass( 'loading' );
+
+						location.href = $this.attr( 'href' );
+					}
+				} ).show();
+			} );
+
 			$( '.elementor_css_print_method select' ).on( 'change', function() {
 				var $descriptions = $( '.elementor-css-print-method-description' );
 
@@ -146,6 +194,8 @@
 			this.initTemplatesImport();
 
 			this.initMaintenanceMode();
+
+			this.goToSettingsTabFromHash();
 		},
 
 		initTemplatesImport: function() {
@@ -174,12 +224,42 @@
 			this.maintenanceMode = new MaintenanceMode();
 		},
 
-		getEditMode: function() {
-			return this.cache.$switchModeInput.val();
+		isElementorMode: function() {
+			return !! this.cache.$switchModeInput.val();
 		},
 
 		animateLoader: function() {
 			this.cache.$goToEditLink.addClass( 'elementor-animate' );
+		},
+
+		goToSettingsTabFromHash: function() {
+			var hash = location.hash.slice( 1 );
+
+			if ( hash ) {
+				this.goToSettingsTab( hash );
+			}
+		},
+
+		goToSettingsTab: function( tabName ) {
+			var $activePage = this.cache.$settingsFormPages.filter( '#' + tabName );
+
+			if ( ! $activePage.length ) {
+				return;
+			}
+
+			this.cache.$activeSettingsPage.removeClass( 'elementor-active' );
+
+			this.cache.$activeSettingsTab.removeClass( 'nav-tab-active' );
+
+			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName );
+
+			$activePage.addClass( 'elementor-active' );
+
+			$activeTab.addClass( 'nav-tab-active' );
+
+			this.cache.$activeSettingsPage = $activePage;
+
+			this.cache.$activeSettingsTab = $activeTab;
 		}
 	};
 
@@ -187,7 +267,8 @@
 		ElementorAdminApp.init();
 	} );
 
-}( jQuery, window, document ) );
+	window.elementorAdmin = ElementorAdminApp;
+}( jQuery ) );
 
 },{"elementor-admin/maintenance-mode":2}],2:[function(require,module,exports){
 var ViewModule = require( 'elementor-utils/view-module' ),
@@ -198,7 +279,7 @@ MaintenanceModeModule = ViewModule.extend( {
 		return {
 			selectors: {
 				modeSelect: '.elementor_maintenance_mode_mode select',
-				maintenanceModeTable: 'table',
+				maintenanceModeTable: '#tab-maintenance_mode table',
 				maintenanceModeDescriptions: '.elementor-maintenance-mode-description',
 				excludeModeSelect: '.elementor_maintenance_mode_exclude_mode select',
 				excludeRolesArea: '.elementor_maintenance_mode_exclude_roles',
@@ -217,19 +298,12 @@ MaintenanceModeModule = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		elements.$modeSelect = jQuery( selectors.modeSelect );
-
 		elements.$maintenanceModeTable = elements.$modeSelect.parents( selectors.maintenanceModeTable );
-
 		elements.$excludeModeSelect = elements.$maintenanceModeTable.find( selectors.excludeModeSelect );
-
 		elements.$excludeRolesArea = elements.$maintenanceModeTable.find( selectors.excludeRolesArea );
-
 		elements.$templateSelect = elements.$maintenanceModeTable.find( selectors.templateSelect );
-
 		elements.$editTemplateButton = elements.$maintenanceModeTable.find( selectors.editTemplateButton );
-
 		elements.$maintenanceModeDescriptions = elements.$maintenanceModeTable.find( selectors.maintenanceModeDescriptions );
-
 		elements.$maintenanceModeError = elements.$maintenanceModeTable.find( selectors.maintenanceModeError );
 
 		return elements;
@@ -420,6 +494,8 @@ Module.prototype.getDefaultSettings = function() {
 	return {};
 };
 
+Module.extendsCount = 0;
+
 Module.extend = function( properties ) {
 	var $ = jQuery,
 		parent = this;
@@ -433,6 +509,19 @@ Module.extend = function( properties ) {
 	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
 
 	child.prototype.constructor = child;
+
+	/*
+	 * Constructor ID is used to set an unique ID
+     * to every extend of the Module.
+     *
+	 * It's useful in some cases such as unique
+	 * listener for frontend handlers.
+	 */
+	var constructorID = ++Module.extendsCount;
+
+	child.prototype.getConstructorID = function() {
+		return constructorID;
+	};
 
 	child.__super__ = parent.prototype;
 

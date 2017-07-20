@@ -39,5 +39,11 @@ module.exports = ViewModule.extend( {
 				self.onYoutubeApiReady( callback );
 			}, 350 );
 		}
+	},
+
+	getYoutubeIDFromURL: function( url ) {
+		var videoIDParts = url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/ );
+
+		return videoIDParts && videoIDParts[1];
 	}
 } );

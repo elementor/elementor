@@ -3,7 +3,7 @@ namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Settings {
+class Settings extends Settings_Page {
 
 	const PAGE_ID = 'elementor';
 
@@ -11,218 +11,10 @@ class Settings {
 
 	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
 
-	public static function get_url() {
-		return admin_url( 'admin.php?page=' . self::PAGE_ID );
-	}
-
-	public function register_settings_fields() {
-		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
-		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
-
-		// Register the main section
-		$main_section = 'elementor_general_section';
-
-		add_settings_section(
-			$main_section,
-			__( 'General Settings', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
-			self::PAGE_ID
-		);
-
-		$field_id = 'elementor_cpt_support';
-		add_settings_field(
-			$field_id,
-			__( 'Post Types', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$main_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox_list_cpt',
-				'std' => [ 'page', 'post' ],
-				'exclude' => [ 'attachment', 'elementor_library' ],
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
-
-		$field_id = 'elementor_exclude_user_roles';
-		add_settings_field(
-			$field_id,
-			__( 'Exclude Roles', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$main_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox_list_roles',
-				'exclude' => [ 'administrator' ],
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id, [ $validations_class_name, 'checkbox_list' ] );
-
-		// Style section
-		$style_section = 'elementor_style_section';
-
-		add_settings_section(
-			$style_section,
-			__( 'Style Settings', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
-			self::PAGE_ID
-		);
-
-		$field_id = 'elementor_disable_color_schemes';
-		add_settings_field(
-			$field_id,
-			__( 'Disable Global Colors', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox',
-				'value' => 'yes',
-				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
-		$field_id = 'elementor_disable_typography_schemes';
-		add_settings_field(
-			$field_id,
-			__( 'Disable Global Fonts', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox',
-				'value' => 'yes',
-				'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
-		$field_id = 'elementor_default_generic_fonts';
-		add_settings_field(
-			$field_id,
-			__( 'Default Generic Fonts', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'std' => 'Sans-serif',
-				'classes' => [ 'medium-text' ],
-				'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
-		$field_id = 'elementor_container_width';
-		add_settings_field(
-			$field_id,
-			__( 'Content Width', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'placeholder' => '1140',
-				'sub_desc' => 'px',
-				'classes' => [ 'medium-text' ],
-				'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
-		$field_id = 'elementor_stretched_section_container';
-		add_settings_field(
-			$field_id,
-			__( 'Stretched Section Fit To', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'placeholder' => 'body',
-				'classes' => [ 'medium-text' ],
-				'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
-		$field_id = 'elementor_page_title_selector';
-		add_settings_field(
-			$field_id,
-			__( 'Page Title Selector', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => $field_id,
-				'type' => 'text',
-				'placeholder' => 'h1.entry-title',
-				'classes' => [ 'medium-text' ],
-				'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id );
-
-		add_settings_field(
-			self::UPDATE_TIME_FIELD,
-			'',
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$style_section,
-			[
-				'id' => self::UPDATE_TIME_FIELD,
-				'type' => 'hidden',
-			]
-		);
-
-		register_setting( self::PAGE_ID, self::UPDATE_TIME_FIELD, [ 'sanitize_callback' => 'time' ] );
-	}
-
-	public function register_improve_elementor_settings() {
-		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
-		$usage_section = 'elementor_usage_section';
-
-		add_settings_section(
-			$usage_section,
-			__( 'Improve Elementor', 'elementor' ),
-			'__return_empty_string', // No need intro text for this section right now
-			self::PAGE_ID
-		);
-
-		$field_id = 'elementor_allow_tracking';
-		add_settings_field(
-			$field_id,
-			__( 'Usage Data Tracking', 'elementor' ),
-			[ $controls_class_name, 'render' ],
-			self::PAGE_ID,
-			$usage_section,
-			[
-				'id' => $field_id,
-				'type' => 'checkbox',
-				'value' => 'yes',
-				'default' => '',
-				'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
-			]
-		);
-
-		register_setting( self::PAGE_ID, $field_id, [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ] );
-	}
+	const TAB_GENERAL = 'general';
+	const TAB_STYLE = 'style';
+	const TAB_INTEGRATIONS = 'integrations';
+	const TAB_ADVANCED = 'advanced';
 
 	public function register_admin_menu() {
 		add_menu_page(
@@ -260,31 +52,189 @@ class Settings {
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
 	}
 
-	public function display_settings_page() {
-		?>
-		<div class="wrap">
-			<h2><?php _e( 'Elementor', 'elementor' ); ?></h2>
-			<form method="post" action="options.php">
-				<?php
-				settings_fields( self::PAGE_ID );
-				do_settings_sections( self::PAGE_ID );
-
-				submit_button();
-				?>
-			</form>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
 	public function __construct() {
+		parent::__construct();
+
 		include( ELEMENTOR_PATH . 'includes/settings/controls.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/validations.php' );
 
-		add_action( 'admin_init', [ $this, 'register_settings_fields' ], 20 );
-		add_action( 'admin_init', [ $this, 'register_improve_elementor_settings' ], 999 ); // Keep it the last settings in page
 		add_action( 'admin_init', [ $this, 'go_elementor_pro' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+	}
+
+	protected function create_tabs() {
+		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+
+		return [
+			self::TAB_GENERAL => [
+				'label' => __( 'General', 'elementor' ),
+				'sections' => [
+					'general' => [
+						'fields' => [
+							self::UPDATE_TIME_FIELD => [
+								'full_field_id' => self::UPDATE_TIME_FIELD,
+								'field_args' => [
+									'type' => 'hidden',
+								],
+								'setting_args' => [
+									'sanitize_callback' => 'time',
+								],
+							],
+							'cpt_support' => [
+								'label' => __( 'Post Types', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox_list_cpt',
+									'std' => [ 'page', 'post' ],
+									'exclude' => [ 'attachment', 'elementor_library' ],
+								],
+								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
+							],
+							'exclude_user_roles' => [
+								'label' => __( 'Exclude Roles', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox_list_roles',
+									'exclude' => [ 'administrator' ],
+								],
+								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
+							],
+							'disable_color_schemes' => [
+								'label' => __( 'Disable Global Colors', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
+								],
+							],
+							'disable_typography_schemes' => [
+								'label' => __( 'Disable Global Fonts', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
+								],
+							],
+						],
+					],
+					'usage' => [
+						'label' => __( 'Improve Elementor', 'elementor' ),
+						'fields' => [
+							'allow_tracking' => [
+								'label' => __( 'Usage Data Tracking', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'default' => '',
+									'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+								],
+								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
+							],
+						],
+					],
+				],
+			],
+			self::TAB_STYLE => [
+				'label' => __( 'Style', 'elementor' ),
+				'sections' => [
+					'style' => [
+						'fields' => [
+							'default_generic_fonts' => [
+								'label' => __( 'Default Generic Fonts', 'elementor' ),
+								'field_args' => [
+									'type' => 'text',
+									'std' => 'Sans-serif',
+									'class' => 'medium-text',
+									'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+								],
+							],
+							'container_width' => [
+								'label' => __( 'Content Width', 'elementor' ),
+								'field_args' => [
+									'type' => 'text',
+									'placeholder' => '1140',
+									'sub_desc' => 'px',
+									'class' => 'medium-text',
+									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+								],
+							],
+							'space_between_widgets' => [
+								'label' => __( 'Space Between Widgets', 'elementor' ),
+								'field_args' => [
+									'type' => 'text',
+									'placeholder' => '20',
+									'sub_desc' => 'px',
+									'class' => 'medium-text',
+									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
+								],
+							],
+							'stretched_section_container' => [
+								'label' => __( 'Stretched Section Fit To', 'elementor' ),
+								'field_args' => [
+									'type' => 'text',
+									'placeholder' => 'body',
+									'class' => 'medium-text',
+									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
+								],
+							],
+							'page_title_selector' => [
+								'label' => __( 'Page Title Selector', 'elementor' ),
+								'field_args' => [
+									'type' => 'text',
+									'placeholder' => 'h1.entry-title',
+									'class' => 'medium-text',
+									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
+								],
+							],
+						],
+					],
+				],
+			],
+			self::TAB_INTEGRATIONS => [
+				'label' => __( 'Integrations', 'elementor' ),
+				'sections' => [],
+			],
+			self::TAB_ADVANCED => [
+				'label' => __( 'Advanced', 'elementor' ),
+				'sections' => [
+					'advanced' => [
+						'fields' => [
+							'css_print_method' => [
+								'label' => __( 'CSS Print Method', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_css_print_method',
+									'type' => 'select',
+									'options' => [
+										'external' => __( 'External File', 'elementor' ),
+										'internal' => __( 'Internal Embedding', 'elementor' ),
+									],
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
+									          __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
+									          '</div>' .
+									          '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
+									          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
+									          '</div>',
+								],
+							],
+							'editor_break_lines' => [
+								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'' => __( 'Disable', 'elementor' ),
+										1 => __( 'Enable', 'elementor' ),
+									],
+									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+	}
+
+	protected function get_page_title() {
+		return __( 'Elementor', 'elementor' );
 	}
 }

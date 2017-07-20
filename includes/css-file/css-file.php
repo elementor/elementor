@@ -125,7 +125,7 @@ abstract class CSS_File {
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
 
-		if ( null === $value ) {
+		if ( null === $value || empty( $control['selectors'] ) ) {
 			return;
 		}
 
@@ -137,6 +137,10 @@ abstract class CSS_File {
 					$value_to_insert = $value;
 
 					if ( ! empty( $matches[1] ) ) {
+						if ( ! isset( $controls_stack[ $matches[1] ] ) ) {
+							return '';
+						}
+
 						$parser_control = $controls_stack[ $matches[1] ];
 
 						$value_to_insert = call_user_func( $value_callback, $parser_control );
@@ -146,6 +150,7 @@ abstract class CSS_File {
 						$this->fonts[] = $value_to_insert;
 					}
 
+					/** @var Base_Data_Control $control_obj */
 					$control_obj = Plugin::$instance->controls_manager->get_control( $parser_control['type'] );
 
 					$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );

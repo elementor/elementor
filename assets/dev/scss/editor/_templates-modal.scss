@@ -97,17 +97,12 @@
 }
 
 #elementor-template-library-header-items-area {
-
-	> * {
-		float: $end;
-	}
+	display: flex;
+	flex-direction: row-reverse;
 }
 
 #elementor-template-library-header-tools {
 
-	> * {
-		float: $end;
-	}
 }
 
 .elementor-template-library-header-item {
@@ -122,36 +117,31 @@
 		color: $editor-light;
 	}
 
-	> * {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-	}
-
 	> i {
 		font-size: 18px;
 	}
 }
 
 #elementor-template-library-header-close-modal, #elementor-template-library-header-save {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 56px;
 }
 
 #elementor-template-library-header-preview {
 
-	> * {
-		float: $end;
-	}
 }
 
 #elementor-template-library-header-preview-insert-wrapper {
-	width: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	cursor: default;
+	padding: 0 10px;
 
 	.elementor-button {
-		width: 80%;
-		padding: 8px 0;
+		padding: 8px 14px;
 	}
 }
 
@@ -258,7 +248,7 @@
 		transition: opacity .5s;
 	}
 
-	.elementor-template-library-template-insert {
+	.elementor-template-library-template-action {
 		font-size: 11px;
 		width: 150px;
 		padding: 11px;
@@ -357,7 +347,7 @@
 		}
 	}
 
-	.elementor-template-library-template-insert {
+	.elementor-template-library-template-action {
 		padding: 8px 18px;
 		margin: 0 20px;
 	}
