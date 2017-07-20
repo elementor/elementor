@@ -37,6 +37,19 @@
 			width: 95%;
 		}
 
+		&__title {
+			font-weight: bold;
+		}
+
+		&__subtitle, &__action {
+			font-weight: lighter;
+		}
+
+		&__action {
+			font-style: italic;
+			text-decoration: underline;
+		}
+
 		.__icon {
 			 float: $end;
 		 }

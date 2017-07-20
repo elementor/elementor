@@ -24,7 +24,9 @@
 <script type="text/template" id="tmpl-elementor-panel-history-item">
 	<div class="elementor-history-item elementor-history-item-{{ status }}">
 		<div class="elementor-history-item__details">
-			<strong>{{{ title }}}</strong>&nbsp;<span>{{{ subTitle }}}</span>&nbsp;<u>{{{ action }}}</u>
+			<span class="elementor-history-item__title">{{{ title }}} </span>
+			<span class="elementor-history-item__subtitle">{{{ subTitle }}} </span>
+			<span class="elementor-history-item__action">{{{ action }}}</span>
 		</div>
 		<div class="elementor-history-item__icon">
 			<span class="fa"></span>

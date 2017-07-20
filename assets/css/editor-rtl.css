@@ -2023,6 +2023,13 @@ body.elementor-editor-preview #elementor-mode-switcher {
       content: '\f00c'; }
   .elementor-history-item__details {
     width: 95%; }
+  .elementor-history-item__title {
+    font-weight: bold; }
+  .elementor-history-item__subtitle, .elementor-history-item__action {
+    font-weight: lighter; }
+  .elementor-history-item__action {
+    font-style: italic;
+    text-decoration: underline; }
   .elementor-history-item .__icon {
     float: left; }
 
