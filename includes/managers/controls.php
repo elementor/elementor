@@ -168,6 +168,7 @@ class Controls_Manager {
 		$this->control_groups['typography'] = new Group_Control_Typography();
 		$this->control_groups['image-size'] = new Group_Control_Image_Size();
 		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
 		do_action( 'elementor/controls/controls_registered', $this );
 	}
