@@ -4,22 +4,21 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A Box Shadow set of controls
+ * A Text Shadow set of controls
  *
  * @param array  $default    {
  * 		@type integer $horizontal Default 0
  * 		@type integer $vertical   Default 0
  * 		@type integer $blur       Default 10
- * 		@type integer $spread     Default 0
  * 		@type string  $color      Shadow color, in rgb|rgba|hex format.
  * }
  *
  * @since 1.0.0
  */
-class Control_Box_Shadow extends Control_Base_Multiple {
+class Control_Text_Shadow extends Control_Base_Multiple {
 
 	public function get_type() {
-		return 'box_shadow';
+		return 'text_shadow';
 	}
 
 	public function get_default_value() {
@@ -27,7 +26,6 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 			'horizontal' => 0,
 			'vertical' => 0,
 			'blur' => 10,
-			'spread' => 0,
 			'color' => 'rgba(0,0,0,0.5)',
 		];
 	}
@@ -37,11 +35,6 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 			'blur' => [
 				'label' => __( 'Blur', 'elementor' ),
 				'min' => 0,
-				'max' => 100,
-			],
-			'spread' => [
-				'label' => __( 'Spread', 'elementor' ),
-				'min' => -100,
 				'max' => 100,
 			],
 			'horizontal' => [
