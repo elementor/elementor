@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                           Default true
  * @since 1.0.0
  */
-class Control_Color extends Control_Base {
+class Control_Color extends Base_Data_Control {
 
 	public function get_type() {
 		return 'color';
@@ -21,8 +21,8 @@ class Control_Color extends Control_Base {
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_register_script( 'iris', admin_url( '/js/iris.min.js' ), [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker' . $suffix . '.js' ), [ 'iris' ], false, true );
+		wp_register_script( 'iris', '/wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
+		wp_register_script( 'wp-color-picker', '/wp-admin/js/color-picker' . $suffix . '.js', [ 'iris' ], false, true );
 
 		wp_localize_script(
 			'wp-color-picker',
@@ -73,7 +73,7 @@ class Control_Color extends Control_Base {
 				<# } #>
 			</label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="{{ name }}" class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
+				<input data-setting="{{ name }}" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
 			</div>
 		</div>
 		<?php

@@ -99,7 +99,6 @@ class Widget_Social_Icons extends Widget_Base {
 						'type' => Controls_Manager::URL,
 						'label_block' => true,
 						'default' => [
-							'url' => '',
 							'is_external' => 'true',
 						],
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
@@ -238,6 +237,12 @@ class Widget_Social_Icons extends Widget_Base {
 				'default' => [
 					'unit' => 'em',
 				],
+				'tablet_default' => [
+					'unit' => 'em',
+				],
+				'mobile_default' => [
+					'unit' => 'em',
+				],
 				'range' => [
 					'em' => [
 						'min' => 0,
@@ -271,6 +276,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'name' => 'image_border', // We know this mistake - TODO: 'icon_border' (for hover control condition also)
 				'selector' => '{{WRAPPER}} .elementor-social-icon',
+				'separator' => 'before',
 			]
 		);
 
@@ -363,14 +369,25 @@ class Widget_Social_Icons extends Widget_Base {
 
 		?>
 		<div class="elementor-social-icons-wrapper">
-			<?php foreach ( $settings['social_icon_list'] as $item ) :
+			<?php foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$social = str_replace( 'fa fa-', '', $item['social'] );
-				$target = $item['link']['is_external'] ? ' target="_blank"' : '';
+
+				$link_key = 'link_' . $index;
+
+				$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
+
+				if ( $item['link']['is_external'] ) {
+					$this->add_render_attribute( $link_key, 'target', '_blank' );
+				}
+
+				if ( $item['link']['nofollow'] ) {
+					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
+				}
 				?>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo esc_attr( $social . $class_animation ); ?>" href="<?php echo esc_attr( $item['link']['url'] ); ?>"<?php echo $target; ?>>
+				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social . $class_animation; ?>" <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 					<i class="<?php echo $item['social']; ?>"></i>
 				</a>
-			<?php endforeach; ?>
+			<?php } ?>
 		</div>
 		<?php
 	}

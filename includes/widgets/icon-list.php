@@ -342,13 +342,23 @@ class Widget_Icon_List extends Widget_Base {
 		$settings = $this->get_settings();
 		?>
 		<ul class="elementor-icon-list-items">
-			<?php foreach ( $settings['icon_list'] as $item ) : ?>
+			<?php foreach ( $settings['icon_list'] as $index => $item ) : ?>
 				<li class="elementor-icon-list-item" >
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
-						$target = $item['link']['is_external'] ? ' target="_blank"' : '';
+						$link_key = 'link_' . $index;
 
-						echo '<a href="' . $item['link']['url'] . '"' . $target . '>';
+						$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
+
+						if ( $item['link']['is_external'] ) {
+							$this->add_render_attribute( $link_key, 'target', '_blank' );
+						}
+
+						if ( $item['link']['nofollow'] ) {
+							$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
+						}
+
+						echo '<a ' . $this->get_render_attribute_string( $link_key ) .  '>';
 					}
 
 					if ( $item['icon'] ) : ?>

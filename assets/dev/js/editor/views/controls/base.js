@@ -28,9 +28,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! _.isEmpty( responsive ) ) {
-			_.each( responsive, function( device ) {
-				classes += ' elementor-control-responsive-' + device;
-			} );
+			classes += ' elementor-control-responsive-' + responsive.max;
 		}
 
 		return classes;
@@ -74,15 +72,12 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		this.model.set( controlSettings );
 
-		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility );
+		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility )
+			.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onSettingsExternalChange );
 	},
 
 	getControlValue: function() {
 		return this.elementSettingsModel.get( this.model.get( 'name' ) );
-	},
-
-	isValidValue: function( value ) {
-		return true;
 	},
 
 	setValue: function( value ) {
@@ -90,29 +85,9 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	setSettingsModel: function( value ) {
-		if ( true !== this.isValidValue( value ) ) {
-			this.triggerMethod( 'settings:error' );
-			return;
-		}
-
 		this.elementSettingsModel.set( this.model.get( 'name' ), value );
 
 		this.triggerMethod( 'settings:change' );
-
-		var elementType = this.elementSettingsModel.get( 'elType' );
-
-		// TODO: The following is a temp fallback from 1.2.0
-		if ( 'widget' === elementType ) {
-			elementType = this.elementSettingsModel.get( 'widgetType' );
-		}
-
-		if ( undefined === elementType ) {
-			return;
-		}
-
-		// Do not use with this action
-		// It's here for tests and maybe later will be publish
-		elementor.hooks.doAction( 'panel/editor/element/' + elementType + '/' + this.model.get( 'name' ) + '/changed' );
 	},
 
 	applySavedValue: function() {
@@ -142,6 +117,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
 			return $input.prop( 'checked' ) ? inputValue : '';
+		}
+
+		if ( 'number' === inputType && _.isFinite( inputValue ) ) {
+			return +inputValue;
 		}
 
 		// Temp fix for jQuery (< 3.0) that return null instead of empty array
@@ -194,7 +173,25 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	onBaseInputChange: function( event ) {
-		this.updateElementModel( event );
+		var input = event.currentTarget,
+			value = this.getInputValue( input ),
+			validators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+
+		if ( validators ) {
+			var oldValue = this.getControlValue();
+
+			var isValidValue = validators.every( function( validator ) {
+				return validator.isValid( value, oldValue );
+			} );
+
+			if ( ! isValidValue ) {
+				this.setInputValue( input, oldValue );
+
+				return;
+			}
+		}
+
+		this.updateElementModel( value, input );
 
 		this.triggerMethod( 'input:change', event );
 	},
@@ -205,6 +202,10 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		elementor.changeDeviceMode( device );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
+	},
+
+	onSettingsExternalChange: function() {
+		this.applySavedValue();
 	},
 
 	renderResponsiveSwitchers: function() {
@@ -227,8 +228,8 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 	onReady: function() {},
 
-	updateElementModel: function( event ) {
-		this.setValue( this.getInputValue( event.currentTarget ) );
+	updateElementModel: function( value ) {
+		this.setValue( value );
 	}
 }, {
 	// Static methods

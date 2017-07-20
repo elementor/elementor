@@ -16,7 +16,6 @@ class Controls_Manager {
 	const NUMBER = 'number';
 	const TEXTAREA = 'textarea';
 	const SELECT = 'select';
-	const CHECKBOX = 'checkbox';
 	const SWITCHER = 'switcher';
 
 	const HIDDEN = 'hidden';
@@ -25,7 +24,6 @@ class Controls_Manager {
 	const SECTION = 'section';
 	const TAB = 'tab';
 	const TABS = 'tabs';
-	const DIVIDER = 'divider';
 
 	const COLOR = 'color';
 	const MEDIA = 'media';
@@ -52,7 +50,12 @@ class Controls_Manager {
 	const ORDER = 'order';
 
 	/**
-	 * @var Control_Base[]
+	 * @deprecated since 1.5.4
+	 */
+	const CHECKBOX = 'checkbox';
+
+	/**
+	 * @var Base_Control[]
 	 */
 	private $_controls = null;
 
@@ -85,7 +88,7 @@ class Controls_Manager {
 	/**
 	 * @since 1.0.0
 	 */
-	public function register_controls() {
+	private function register_controls() {
 		$this->_controls = [];
 
 		$available_controls = [
@@ -93,7 +96,6 @@ class Controls_Manager {
 			self::NUMBER,
 			self::TEXTAREA,
 			self::SELECT,
-			self::CHECKBOX,
 			self::SWITCHER,
 
 			self::HIDDEN,
@@ -102,7 +104,6 @@ class Controls_Manager {
 			self::SECTION,
 			self::TAB,
 			self::TABS,
-			self::DIVIDER,
 
 			self::COLOR,
 			self::MEDIA,
@@ -127,6 +128,8 @@ class Controls_Manager {
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::ORDER,
+
+			self::CHECKBOX,
 		];
 
 		foreach ( $available_controls as $control_id ) {
@@ -161,9 +164,9 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 *
 	 * @param $control_id
-	 * @param Control_Base $control_instance
+	 * @param Base_Control $control_instance
 	 */
-	public function register_control( $control_id, Control_Base $control_instance ) {
+	public function register_control( $control_id, Base_Control $control_instance ) {
 		$this->_controls[ $control_id ] = $control_instance;
 	}
 
@@ -185,7 +188,7 @@ class Controls_Manager {
 
 	/**
 	 * @since 1.0.0
-	 * @return Control_Base[]
+	 * @return Base_Control[]
 	 */
 	public function get_controls() {
 		if ( null === $this->_controls ) {
@@ -199,7 +202,7 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @param $control_id
 	 *
-	 * @return bool|\Elementor\Control_Base
+	 * @return bool|\Elementor\Base_Control
 	 */
 	public function get_control( $control_id ) {
 		$controls = $this->get_controls();
@@ -216,7 +219,10 @@ class Controls_Manager {
 
 		foreach ( $this->get_controls() as $name => $control ) {
 			$controls_data[ $name ] = $control->get_settings();
-			$controls_data[ $name ]['default_value'] = $control->get_default_value();
+
+			if ( $control instanceof Base_Data_Control ) {
+				$controls_data[ $name ]['default_value'] = $control->get_default_value();
+			}
 		}
 
 		return $controls_data;
@@ -297,12 +303,14 @@ class Controls_Manager {
 			return false;
 		}
 
-		$control_default_value = $control_type_instance->get_default_value();
+		if ( $control_type_instance instanceof Base_Data_Control ) {
+			$control_default_value = $control_type_instance->get_default_value();
 
-		if ( is_array( $control_default_value ) ) {
-			$control_data['default'] = isset( $control_data['default'] ) ? array_merge( $control_default_value, $control_data['default'] ) : $control_default_value;
-		} else {
-			$control_data['default'] = isset( $control_data['default'] ) ? $control_data['default'] : $control_default_value;
+			if ( is_array( $control_default_value ) ) {
+				$control_data['default'] = isset( $control_data['default'] ) ? array_merge( $control_default_value, $control_data['default'] ) : $control_default_value;
+			} else {
+				$control_data['default'] = isset( $control_data['default'] ) ? $control_data['default'] : $control_default_value;
+			}
 		}
 
 		$stack_id = $element->get_name();
@@ -368,8 +376,8 @@ class Controls_Manager {
 		return $this->add_control_to_stack( $element, $control_id, $control_data, true );
 	}
 
-	public function get_element_stack( Controls_Stack $element ) {
-		$stack_id = $element->get_name();
+	public function get_element_stack( Controls_Stack $controls_stack ) {
+		$stack_id = $controls_stack->get_name();
 
 		if ( ! isset( $this->_controls_stack[ $stack_id ] ) ) {
 			return null;
@@ -377,7 +385,7 @@ class Controls_Manager {
 
 		$stack = $this->_controls_stack[ $stack_id ];
 
-		if ( 'widget' === $element->get_type() && 'common' !== $stack_id ) {
+		if ( 'widget' === $controls_stack->get_type() && 'common' !== $stack_id ) {
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
@@ -428,6 +436,8 @@ class Controls_Manager {
 	private function require_files() {
 		// TODO: Move includes in later version (v1.2.x)
 		require( ELEMENTOR_PATH . 'includes/controls/base.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-data.php' );
+		require( ELEMENTOR_PATH . 'includes/controls/base-ui.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-multiple.php' );
 		require( ELEMENTOR_PATH . 'includes/controls/base-units.php' );
 

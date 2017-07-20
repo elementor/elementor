@@ -19,7 +19,7 @@
 
 .dialog-message {
   font-size: 12px;
-  line-height: 1.4; }
+  line-height: 1.5; }
 
 .dialog-buttons-wrapper {
   border-top: 1px solid #e6e9ec;
@@ -74,21 +74,6 @@
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.dialog-popup-message {
-  height: 155px;
-  width: 155px;
-  background-color: #fff;
-  border-radius: 10px; }
-
-.elementor-dialog-message {
-  padding: 15px; }
-  .elementor-dialog-message .fa {
-    font-size: 85px;
-    padding: 10px; }
-
-.elementor-dialog-message-text {
-  text-transform: uppercase; }
-
 .dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
@@ -109,6 +94,9 @@
     left: 0;
     height: 100%;
     width: 100%; }
+
+.elementor-hidden {
+  display: none; }
 
 body.elementor-editor-active .elementor-switch-mode-off {
   display: none; }
@@ -137,9 +125,6 @@ body.elementor-editor-inactive .elementor-switch-mode-on {
   display: none; }
 
 body.elementor-editor-inactive #elementor-editor {
-  display: none; }
-
-.elementor-hidden {
   display: none; }
 
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before {
@@ -272,6 +257,14 @@ body.elementor-editor-inactive #elementor-editor {
   content: "\e801";
   font-family: eicon;
   font-size: 17px; }
+
+.elementor-settings-form-page {
+  padding-top: 30px; }
+  .elementor-settings-form-page:not(.elementor-active) {
+    display: none; }
+
+._elementor_settings_update_time {
+  display: none; }
 
 /*= Elementor Message
 ---------------------------------------*/

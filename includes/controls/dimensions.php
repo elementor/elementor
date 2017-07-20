@@ -59,9 +59,11 @@ class Control_Dimensions extends Control_Base_Units {
 			<?php $this->print_units_template(); ?>
 			<div class="elementor-control-input-wrapper">
 				<ul class="elementor-control-dimensions">
-					<?php foreach ( $dimensions as $dimension_key => $dimension_title ) : ?>
+					<?php foreach ( $dimensions as $dimension_key => $dimension_title ) :
+						$control_uid = $this->get_control_uid( $dimension_key );
+						?>
 						<li class="elementor-control-dimension">
-							<input type="number" data-setting="<?php echo esc_attr( $dimension_key ); ?>"
+							<input id="<?php echo $control_uid; ?>" type="number" data-setting="<?php echo esc_attr( $dimension_key ); ?>"
 							       placeholder="<#
 						       if ( _.isObject( data.placeholder ) ) {
 						        if ( ! _.isUndefined( data.placeholder.<?php echo $dimension_key; ?> ) ) {
@@ -74,7 +76,7 @@ class Control_Dimensions extends Control_Base_Units {
 								disabled
 								<# } #>
 									/>
-									<span><?php echo $dimension_title; ?></span>
+							<label for="<?php echo $control_uid; ?>" class="elementor-control-dimension-label"><?php echo $dimension_title; ?></label>
 						</li>
 					<?php endforeach; ?>
 					<li>

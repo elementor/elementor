@@ -5,7 +5,8 @@
 		Module = require( './handler-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 		YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
-		AnchorsModule = require( 'elementor-frontend/utils/anchors' );
+		AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
+		LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
 	var ElementorFrontend = function() {
 		var self = this,
@@ -13,8 +14,6 @@
 			scopeWindow = window;
 
 		this.config = elementorFrontendConfig;
-
-		this.hooks = new EventManager();
 
 		this.Module = Module;
 
@@ -27,18 +26,20 @@
 		var initOnReadyComponents = function() {
 			self.utils = {
 				youtube: new YouTubeModule(),
-				anchors: new AnchorsModule()
+				anchors: new AnchorsModule(),
+				lightbox: new LightboxModule()
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
 		this.init = function() {
+			self.hooks = new EventManager();
+
 			initElements();
 
 			$( window ).trigger( 'elementor/frontend/init' );
 
-			self.hooks.doAction( 'init' );
 			initOnReadyComponents();
 		};
 
@@ -146,7 +147,7 @@
 				return callback.apply( element, arguments );
 			};
 
-			$element.elementorWaypoint( correctCallback, options );
+			return $element.elementorWaypoint( correctCallback, options );
 		};
 	};
 

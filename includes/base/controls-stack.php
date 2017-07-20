@@ -68,9 +68,9 @@ abstract class Controls_Stack {
 	public function get_active_controls() {
 		$controls = $this->get_controls();
 
-		$settings = $this->get_settings();
+		$settings = $this->get_controls_settings();
 
-		$active_controls = array_reduce( array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
+		$active_controls = array_reduce( array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 			$control = $controls[ $control_key ];
 
 			if ( $this->is_control_visible( $control, $settings ) ) {
@@ -83,19 +83,24 @@ abstract class Controls_Stack {
 		return $active_controls;
 	}
 
+	public function get_controls_settings() {
+		return array_intersect_key( $this->get_settings(), $this->get_controls() );
+	}
+
 	public function add_control( $id, array $args, $overwrite = false ) {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			if ( null !== $this->_current_section ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
 					_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . $id, '1.0.0' );
 				}
+
 				$args = array_merge( $args, $this->_current_section );
 
 				if ( null !== $this->_current_tab ) {
 					$args = array_merge( $args, $this->_current_tab );
 				}
 			} elseif ( empty( $args['section'] ) ) {
-				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside a section (use `start_controls_section`).' );
+				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
 			}
 		}
 
@@ -176,6 +181,14 @@ abstract class Controls_Stack {
 		foreach ( $devices as $device_name ) {
 			$control_args = $args;
 
+			if ( isset( $control_args['device_args'] ) ) {
+				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
+					$control_args = array_merge( $control_args, $control_args['device_args'][ $device_name ] );
+				}
+
+				unset( $control_args['device_args'] );
+			}
+
 			if ( ! empty( $args['prefix_class'] ) ) {
 				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
 
@@ -183,6 +196,14 @@ abstract class Controls_Stack {
 			}
 
 			$control_args['responsive'] = [ 'max' => $device_name ];
+
+			if ( isset( $control_args['min_affected_device'] ) ) {
+				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {
+					$control_args['responsive']['min'] = $control_args['min_affected_device'][ $device_name ];
+				}
+
+				unset( $control_args['min_affected_device'] );
+			}
 
 			if ( isset( $control_args[ $device_name . '_default' ] ) ) {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
@@ -244,6 +265,28 @@ abstract class Controls_Stack {
 		$settings_mask = array_fill_keys( array_keys( $settings ), null );
 
 		return array_merge( $settings_mask, $active_settings );
+	}
+
+	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
+		if ( ! $settings ) {
+			$settings = $this->get_settings();
+		}
+
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		return array_reduce( array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
+			if ( isset( $controls[ $setting_key ] ) ) {
+				$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
+
+				if ( null !== $result ) {
+					$filtered_settings[ $setting_key ] = $result;
+				}
+			}
+
+			return $filtered_settings;
+		}, [] );
 	}
 
 	public function is_control_visible( $control, $values = null ) {
@@ -374,7 +417,8 @@ abstract class Controls_Stack {
 	}
 
 	final public function set_settings( $key, $value = null ) {
-		if ( null === $value ) {
+		// strict check if override all settings
+		if ( is_array( $key ) ) {
 			$this->_settings = $key;
 		} else {
 			$this->_settings[ $key ] = $value;
@@ -395,6 +439,10 @@ abstract class Controls_Stack {
 
 		foreach ( $this->get_controls() as $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
 
 			$control = array_merge( $control, $control_obj->get_settings() );
 
@@ -432,6 +480,9 @@ abstract class Controls_Stack {
 		$this->_settings = $this->_get_parsed_settings();
 	}
 
+	/**
+	 * @param array $data - Required for a normal instance, It's optional only for internal `type instance`
+	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			$this->_init( $data );

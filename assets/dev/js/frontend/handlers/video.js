@@ -2,19 +2,12 @@ var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	VideoModule;
 
 VideoModule = HandlerModule.extend( {
-	oldAnimation: null,
-
-	oldAspectRatio: null,
-
 	getDefaultSettings: function() {
 		return {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
 				videoWrapper: '.elementor-wrapper',
 				videoFrame: 'iframe'
-			},
-			classes: {
-				aspectRatio: 'elementor-aspect-ratio-%s'
 			}
 		};
 	},
@@ -23,7 +16,6 @@ VideoModule = HandlerModule.extend( {
 		var selectors = this.getSettings( 'selectors' );
 
 		var elements = {
-			$lightBoxContainer: jQuery( elementorFrontend.getScopeWindow().document.body ),
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
 			$videoWrapper: this.$element.find( selectors.videoWrapper )
 		};
@@ -33,76 +25,34 @@ VideoModule = HandlerModule.extend( {
 		return elements;
 	},
 
-	getLightBoxModal: function() {
-		if ( ! VideoModule.lightBoxModal ) {
-			this.initLightBoxModal();
-		}
-
-		return VideoModule.lightBoxModal;
-	},
-
-	initLightBoxModal: function() {
-		var self = this;
-
-		var lightBoxModal = VideoModule.lightBoxModal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
-			className: 'elementor-widget-video-modal',
-			container: self.elements.$lightBoxContainer,
-			closeButton: true,
-			position: {
-				within: elementorFrontend.getScopeWindow()
-			}
-		} );
-
-		lightBoxModal.refreshPosition = function() {
-			var position = self.getElementSettings( 'lightbox_content_position' );
-
-			lightBoxModal.setSettings( 'position', {
-				my: position,
-				at: position
-			} );
-
-			DialogsManager.getWidgetType( 'lightbox' ).prototype.refreshPosition.apply( lightBoxModal, arguments );
-		};
-
-		lightBoxModal.getElements( 'message' ).addClass( 'elementor-video-wrapper' );
+	getLightBox: function() {
+		return elementorFrontend.utils.lightbox;
 	},
 
 	handleVideo: function() {
-		var self = this,
-			$videoFrame = this.elements.$videoFrame,
-			isLightBoxEnabled = self.getElementSettings( 'lightbox' );
+		if ( this.getElementSettings( 'lightbox' ) ) {
+			var elementSettings = this.getElementSettings(),
+				position = elementSettings.lightbox_content_position;
 
-		self.playVideo();
-
-		if ( isLightBoxEnabled ) {
-			var lightBoxModal = self.getLightBoxModal(),
-				$widgetContent = lightBoxModal.getElements( 'widgetContent' );
-
-			lightBoxModal.onHide = function() {
-				DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( lightBoxModal, arguments );
-
-				$videoFrame.remove();
-
-				$widgetContent.removeClass( 'animated' );
+			var options = {
+				type: 'video',
+				url: this.elements.$videoFrame.attr( 'src' ),
+				modalOptions: {
+					id: 'elementor-video-modal-' + this.getID(),
+					videoAspectRatio: elementSettings.aspect_ratio,
+					entranceAnimation: elementSettings.lightbox_content_animation,
+					position: {
+						my: position,
+						at: position
+					}
+				}
 			};
 
-			lightBoxModal.onShow = function() {
-				DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( lightBoxModal, arguments );
-
-				lightBoxModal.setMessage( $videoFrame );
-
-				self.animateVideo();
-			};
-
-			self.handleAspectRatio();
-
-			$videoFrame.remove();
-
-			lightBoxModal
-				.setID( 'elementor-video-modal-' + self.getID() )
-				.show();
+			this.getLightBox().showModal( options );
 		} else {
 			this.elements.$imageOverlay.remove();
+
+			this.playVideo();
 		}
 	},
 
@@ -114,33 +64,20 @@ VideoModule = HandlerModule.extend( {
 	},
 
 	animateVideo: function() {
-		var animation = this.getElementSettings( 'lightbox_content_animation' ),
-			$widgetContent = this.getLightBoxModal().getElements( 'widgetContent' );
-
-		if ( this.oldAnimation ) {
-			$widgetContent.removeClass( this.oldAnimation );
-		}
-
-		this.oldAnimation = animation;
-
-		if ( animation ) {
-			$widgetContent.addClass( 'animated ' + animation );
-		}
+		this.getLightBox().setEntranceAnimation( this.getElementSettings( 'lightbox_content_animation' ) );
 	},
 
 	handleAspectRatio: function() {
-		var $widgetContent = this.getLightBoxModal().getElements( 'widgetContent' ),
-			oldAspectRatio = this.oldAspectRatio,
-			aspectRatio = this.getElementSettings( 'aspect_ratio' ),
-			aspectRatioClass = this.getSettings( 'classes.aspectRatio' );
+		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	},
 
-		this.oldAspectRatio = aspectRatio;
+	refreshModalPosition: function() {
+		var position = this.getElementSettings( 'lightbox_content_position' );
 
-		if ( oldAspectRatio ) {
-			$widgetContent.removeClass( aspectRatioClass.replace( '%s', oldAspectRatio ) );
-		}
-
-		$widgetContent.addClass( aspectRatioClass.replace( '%s', aspectRatio ) );
+		this.getLightBox().setPosition( {
+			my: position,
+			at: position
+		} );
 	},
 
 	bindEvents: function() {
@@ -154,10 +91,8 @@ VideoModule = HandlerModule.extend( {
 			return;
 		}
 
-		var lightBoxModal = this.getLightBoxModal();
-
 		if ( -1 !== [ 'lightbox_content_width', 'lightbox_content_position' ].indexOf( propertyName ) ) {
-			lightBoxModal.refreshPosition();
+			this.refreshModalPosition();
 
 			return;
 		}
@@ -165,7 +100,7 @@ VideoModule = HandlerModule.extend( {
 		var isLightBoxEnabled = this.getElementSettings( 'lightbox' );
 
 		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
-			lightBoxModal.hide();
+			this.getLightBox().getModal().hide();
 
 			return;
 		}
@@ -173,12 +108,10 @@ VideoModule = HandlerModule.extend( {
 		if ( 'aspect_ratio' === propertyName && isLightBoxEnabled ) {
 			this.handleAspectRatio();
 
-			lightBoxModal.refreshPosition();
+			this.refreshModalPosition();
 		}
 	}
 } );
-
-VideoModule.lightBoxModal = null;
 
 module.exports = function( $scope ) {
 	new VideoModule( { $element: $scope } );

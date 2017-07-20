@@ -182,6 +182,10 @@ class Widget_Heading extends Widget_Base {
 				$this->add_render_attribute( 'url', 'target', '_blank' );
 			}
 
+			if ( ! empty( $settings['link']['nofollow'] ) ) {
+				$this->add_render_attribute( 'url', 'rel', 'nofollow' );
+			}
+
 			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
 		}
 

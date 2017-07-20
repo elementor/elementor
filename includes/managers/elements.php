@@ -150,7 +150,6 @@ class Elements_Manager {
 		] );
 
 		$all_revision_ids = Revisions_Manager::get_revisions( $_POST['post_id'], [
-			'posts_per_page' => -1,
 			'fields' => 'ids',
 		], false );
 

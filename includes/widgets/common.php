@@ -47,13 +47,27 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
+			'_z_index',
+			[
+				'label' => __( 'Z-Index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'placeholder' => 0,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
-				//'prefix_class' => 'animated ',
+				'prefix_class' => 'animated ',
 				'label_block' => true,
+				'frontend_available' => true,
 			]
 		);
 
@@ -72,6 +86,22 @@ class Widget_Common extends Widget_Base {
 				'condition' => [
 					'_animation!' => '',
 				],
+			]
+		);
+
+		$this->add_control(
+			'_animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
@@ -103,8 +133,17 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_background',
 			[
-				'label' => __( 'Background & Border', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->start_controls_tabs( '_tabs_background' );
+
+		$this->start_controls_tab(
+			'_tab_background_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -113,6 +152,64 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'_tab_background_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => '_background_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_control(
+			'_background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_border',
+			[
+				'label' => __( 'Border', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->start_controls_tabs( '_tabs_border' );
+
+		$this->start_controls_tab(
+			'_tab_border_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -143,6 +240,67 @@ class Widget_Common extends Widget_Base {
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'_tab_border_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => '_border_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_control(
+			'_border_radius_hover',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}}:hover > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => '_box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+			]
+		);
+
+		$this->add_control(
+			'_border_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 

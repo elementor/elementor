@@ -27,7 +27,6 @@ class Group_Control_Border extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-style: {{VALUE}};',
 			],
-			'separator' => 'before',
 		];
 
 		$fields['width'] = [

@@ -86,7 +86,7 @@ class Main {
 				</textarea>
 				<script>
 					var textarea = document.getElementById( 'elementor-system-info-raw-code' );
-					var selectRange = function () {
+					var selectRange = function() {
 						textarea.setSelectionRange( 0, textarea.value.length );
 					};
 					textarea.onfocus = textarea.onblur = textarea.onclick = selectRange;

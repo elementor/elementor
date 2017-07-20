@@ -67,6 +67,15 @@ class Plugin {
 	public $settings;
 
 	/**
+	 * @var Admin
+	 */
+	public $admin;
+	/**
+	 * @var Tools
+	 */
+	public $tools;
+
+	/**
 	 * @var Preview
 	 */
 	public $preview;
@@ -184,14 +193,17 @@ class Plugin {
 		include( ELEMENTOR_PATH . 'includes/managers/elements.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/widgets.php' );
 		include( ELEMENTOR_PATH . 'includes/managers/skins.php' );
+		include( ELEMENTOR_PATH . 'includes/settings/settings-page.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/settings.php' );
 		include( ELEMENTOR_PATH . 'includes/settings/tools.php' );
 		include( ELEMENTOR_PATH . 'includes/editor.php' );
+		include( ELEMENTOR_PATH . 'includes/embed.php' );
 		include( ELEMENTOR_PATH . 'includes/preview.php' );
 		include( ELEMENTOR_PATH . 'includes/frontend.php' );
 		include( ELEMENTOR_PATH . 'includes/heartbeat.php' );
 		include( ELEMENTOR_PATH . 'includes/responsive.php' );
 		include( ELEMENTOR_PATH . 'includes/stylesheet.php' );
+		require( ELEMENTOR_PATH . 'includes/rollback.php' );
 
 		include( ELEMENTOR_PATH . 'includes/settings/system-info/main.php' );
 		include( ELEMENTOR_PATH . 'includes/tracker.php' );
@@ -212,6 +224,7 @@ class Plugin {
 
 		if ( is_admin() ) {
 			include( ELEMENTOR_PATH . 'includes/admin.php' );
+			require( ELEMENTOR_PATH . 'includes/beta-testers.php' );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				include( ELEMENTOR_PATH . 'includes/managers/image.php' );
@@ -242,14 +255,15 @@ class Plugin {
 
 		$this->templates_manager = new TemplateLibrary\Manager();
 
-		$this->maintenance_mode = new Maintenance_Mode();
-
-		$this->wordpress_widgets_manager = new Wordpress_Widgets_Manager();
+		$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 
 		if ( is_admin() ) {
-			new Admin();
-			new Tools();
+			$this->admin = new Admin();
+			$this->tools = new Tools();
+			$this->beta_testers = new Beta_Testers();
 		}
+
+		$this->maintenance_mode = new Maintenance_Mode();
 	}
 
 	private function add_cpt_support() {
