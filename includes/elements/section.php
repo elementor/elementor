@@ -23,7 +23,7 @@ class Element_Section extends Element_Base {
 			],
 			'save' => [
 				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
-				'icon' => 'save'
+				'icon' => 'sav',
 			],
 			'remove' => [
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
@@ -41,7 +41,7 @@ class Element_Section extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-section';
+		return 'eicon-columns';
 	}
 
 	public static function get_presets( $columns_count = null, $preset_index = null ) {
@@ -1108,14 +1108,14 @@ class Element_Section extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>"><i class="eicon-section"></i></li>
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>"><i class="fa fa-bars"></i></li>
 				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
 					<?php endif; ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>"></i>
+						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# } #>

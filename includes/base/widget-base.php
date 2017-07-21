@@ -148,7 +148,7 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
 				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
-					<i class="elementor-edit"></i>
+					<i class="eicon-edit"></i>
 				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
