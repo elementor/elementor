@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'eicon';
+  font-family: 'eicons';
   src: url("../fonts/eicons.eot?2.2");
   src: url("../fonts/eicons.eot?2.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.2") format("woff2"), url("../fonts/eicons.woff?2.2") format("woff"), url("../fonts/eicons.ttf?2.2") format("truetype"), url("../fonts/eicons.svg?2.2#eicon") format("svg");
   font-weight: normal;
@@ -8,7 +8,7 @@
 [class^="eicon-"],
 [class*=" eicon-"] {
   display: inline-block;
-  font-family: eicon;
+  font-family: eicons;
   font-size: inherit;
   font-weight: normal;
   font-style: normal;
@@ -445,7 +445,7 @@
   content: '\e941'; }
 
 .eicon-floppy-o:before {
-  content: 'ea101'; }
+  content: '\e001'; }
 
 .eicon-times:before {
-  content: 'ea102'; }
+  content: '\e002'; }
