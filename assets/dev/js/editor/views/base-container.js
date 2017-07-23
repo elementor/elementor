@@ -1,5 +1,9 @@
 module.exports = Marionette.CompositeView.extend( {
 
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
 	addChildModel: function( model, options ) {
 		return this.collection.add( model, options, true );
 	},

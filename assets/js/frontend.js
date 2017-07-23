@@ -37,7 +37,7 @@ ElementsHandler = function( $ ) {
 
 		if ( elementorFrontend.isEditMode() ) {
 			// Elements outside from the Preview
-			$elements = elementorFrontend.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			$elements = jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
 		} else {
 			$elements = $( '.elementor-element' );
 		}
@@ -76,6 +76,9 @@ ElementsHandler = function( $ ) {
 			return;
 		}
 
+		// Initializing the `$scope` as frontend jQuery instance
+		$scope = jQuery( $scope );
+
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
 		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
@@ -105,17 +108,41 @@ module.exports = ElementsHandler;
 
 	var ElementorFrontend = function() {
 		var self = this,
-			dialogsManager,
-			scopeWindow = window;
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
 		this.Module = Module;
 
+		var openImageInLightbox = function( event ) {
+			event.preventDefault();
+
+			self.utils.lightbox.showModal( {
+				type: 'image',
+				url: this.href
+			} );
+		};
+
 		var initElements = function() {
-			elements.$document = $( self.getScopeWindow().document );
+			elements.$document = $( document );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.window = window;
+
+			elements.$window = $( window );
+
+			var openInLightBox = self.getGeneralSettings( 'elementor_open_images_in_lightbox' );
+
+			elements.$imagesLinks = $( 'a' ).filter( function() {
+				if ( ! /\.(png|jpe?g|gif|svg)$/i.test( this.href ) ) {
+					return false;
+				}
+
+				var currentLinkOpenInLightbox = $( this ).data( 'open_in_lightbox' );
+
+				return 'yes' === currentLinkOpenInLightbox || openInLightBox && 'no' !== currentLinkOpenInLightbox;
+			} );
 		};
 
 		var initOnReadyComponents = function() {
@@ -128,22 +155,30 @@ module.exports = ElementsHandler;
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var bindEvents = function() {
+			elements.$imagesLinks.on( 'click', openImageInLightbox );
+		};
+
+		var getSiteSettings = function( settingType, settingName ) {
+			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
+
+			if ( settingName ) {
+				return settingsObject[ settingName ];
+			}
+
+			return settingsObject;
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
 			initElements();
 
-			$( window ).trigger( 'elementor/frontend/init' );
+			bindEvents();
+
+			elements.$window.trigger( 'elementor/frontend/init' );
 
 			initOnReadyComponents();
-		};
-
-		this.getScopeWindow = function() {
-			return scopeWindow;
-		};
-
-		this.setScopeWindow = function( window ) {
-			scopeWindow = window;
 		};
 
 		this.getElements = function( element ) {
@@ -160,6 +195,14 @@ module.exports = ElementsHandler;
 			}
 
 			return dialogsManager;
+		};
+
+		this.getPageSettings = function( settingName ) {
+			return getSiteSettings( 'page', settingName );
+		};
+
+		this.getGeneralSettings = function( settingName ) {
+			return getSiteSettings( 'general', settingName );
 		};
 
 		this.isEditMode = function() {
@@ -213,7 +256,7 @@ module.exports = ElementsHandler;
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = $( self.getScopeWindow() );
+				to = self.getElements( '$window' );
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -262,6 +305,10 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
+	onGeneralSettingsChange: null,
+
+	onPageSettingsChange: null,
+
 	__construct: function( settings ) {
 		this.$element  = settings.$element;
 
@@ -270,12 +317,24 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	getUniqueHandlerID: function( cid, $element ) {
+		if ( ! cid ) {
+			cid = this.getModelCID();
+		}
+
+		if ( ! $element ) {
+			$element = this.$element;
+		}
+
+		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+	},
+
 	addEditorListener: function() {
-		var self = this;
+		var self = this,
+			uniqueHandlerID = self.getUniqueHandlerID();
 
 		if ( self.onElementChange ) {
-			var uniqueHandlerID = self.getModelCID() + self.$element.attr( 'data-element_type' ) + self.getConstructorID(),
-				elementName = self.getElementName(),
+			var elementName = self.getElementName(),
 				eventName = 'change';
 
 			if ( 'global' !== elementName ) {
@@ -283,7 +342,7 @@ HandlerModule = ViewModule.extend( {
 			}
 
 			elementorFrontend.addListenerOnce( uniqueHandlerID, eventName, function( controlView, elementView ) {
-				var elementViewHandlerID = elementView.model.cid + elementView.$el.attr( 'data-element_type' ) + self.getConstructorID();
+				var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
 
 				if ( elementViewHandlerID !== uniqueHandlerID ) {
 					return;
@@ -292,6 +351,16 @@ HandlerModule = ViewModule.extend( {
 				self.onElementChange( controlView.model.get( 'name' ),  controlView, elementView );
 			}, elementor.channels.editor );
 		}
+
+		[ 'page', 'general' ].forEach( function( settingsType ) {
+			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
+
+			if ( self[ listenerMethodName ] ) {
+				elementorFrontend.addListenerOnce( uniqueHandlerID, 'change', function( model ) {
+					self[ listenerMethodName ]( model.changed );
+				}, elementor.settings[ settingsType ].model );
+			}
+		} );
 	},
 
 	getElementName: function() {
@@ -307,21 +376,33 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings,
+		var elementSettings = {},
 			modelCID = this.getModelCID();
 
 		if ( elementorFrontend.isEditMode() && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				activeControls = settings.getActiveControls(),
-				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( activeValues, settingsKeys );
+			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+				}
+			} );
 		} else {
 			elementSettings = this.$element.data( 'settings' ) || {};
 		}
 
 		return this.getItems( elementSettings, setting );
+	},
+
+	getEditSettings: function( setting ) {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return {};
+		}
+
+		var editSettings = elementorFrontend.config.elements.editSettings[ this.getModelCID() ];
+
+		return this.getItems( editSettings.attributes, setting );
 	}
 } );
 
@@ -603,7 +684,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			}
 		} );
 
-		jQuery( elementorFrontend.getScopeWindow() ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -655,37 +736,52 @@ var BackgroundVideo = HandlerModule.extend( {
 	}
 } );
 
-var StretchedSection = function( $section, $ ) {
-	var elements = {},
-		settings = {};
+var StretchedSection = HandlerModule.extend( {
 
-	var stretchSection = function() {
+	bindEvents: function() {
+		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
+	},
+
+	stretchSection: function() {
 		// Clear any previously existing css associated with this script
-		var direction = settings.is_rtl ? 'right' : 'left',
+		var direction = elementorFrontend.config.is_rtl ? 'right' : 'left',
 			resetCss = {},
-            isStretched = $section.hasClass( 'elementor-section-stretched' );
+			isStretched = this.$element.hasClass( 'elementor-section-stretched' );
 
 		if ( elementorFrontend.isEditMode() || isStretched ) {
 			resetCss.width = 'auto';
 
 			resetCss[ direction ] = 0;
 
-			$section.css( resetCss );
+			this.$element.css( resetCss );
 		}
 
 		if ( ! isStretched ) {
 			return;
 		}
 
-		var containerWidth = elements.$scopeWindow.outerWidth(),
-			sectionWidth = $section.outerWidth(),
-			sectionOffset = $section.offset().left,
+		var $sectionContainer,
+			hasSpecialContainer = false;
+
+		try {
+			$sectionContainer = jQuery( elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) );
+
+			if ( $sectionContainer.length ) {
+				hasSpecialContainer = true;
+			}
+		} catch ( e ) {}
+
+		if ( ! hasSpecialContainer ) {
+			$sectionContainer = elementorFrontend.getElements( '$window' );
+		}
+
+		var containerWidth = $sectionContainer.outerWidth(),
+			sectionWidth = this.$element.outerWidth(),
+			sectionOffset = this.$element.offset().left,
 			correctOffset = sectionOffset;
 
-        if ( elements.$sectionContainer.length ) {
-			var containerOffset = elements.$sectionContainer.offset().left;
-
-			containerWidth = elements.$sectionContainer.outerWidth();
+		if ( hasSpecialContainer ) {
+			var containerOffset = $sectionContainer.offset().left;
 
 			if ( sectionOffset > containerOffset ) {
 				correctOffset = sectionOffset - containerOffset;
@@ -694,7 +790,7 @@ var StretchedSection = function( $section, $ ) {
 			}
 		}
 
-		if ( settings.is_rtl ) {
+		if ( elementorFrontend.config.is_rtl ) {
 			correctOffset = containerWidth - ( sectionWidth + correctOffset );
 		}
 
@@ -702,33 +798,21 @@ var StretchedSection = function( $section, $ ) {
 
 		resetCss[ direction ] = -correctOffset + 'px';
 
-		$section.css( resetCss );
-	};
+		this.$element.css( resetCss );
+	},
 
-	var initSettings = function() {
-		settings.sectionContainerSelector = elementorFrontend.config.stretchedSectionContainer;
-		settings.is_rtl = elementorFrontend.config.is_rtl;
-	};
+	onInit: function() {
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
-	var initElements = function() {
-		elements.scopeWindow = elementorFrontend.getScopeWindow();
-		elements.$scopeWindow = $( elements.scopeWindow );
-		elements.$sectionContainer = $( elements.scopeWindow.document ).find( settings.sectionContainerSelector );
-	};
+		this.stretchSection();
+	},
 
-	var bindEvents = function() {
-		elementorFrontend.addListenerOnce( $section.data( 'model-cid' ), 'resize', stretchSection );
-	};
-
-	var init = function() {
-		initSettings();
-		initElements();
-		bindEvents();
-		stretchSection();
-	};
-
-	init();
-};
+	onGeneralSettingsChange: function( changed ) {
+		if ( 'elementor_stretched_section_container' in changed ) {
+			this.stretchSection();
+		}
+	}
+} );
 
 var Shapes = HandlerModule.extend( {
 
@@ -814,8 +898,8 @@ var Shapes = HandlerModule.extend( {
 	}
 } );
 
-module.exports = function( $scope, $ ) {
-	new StretchedSection( $scope, $ );
+module.exports = function( $scope ) {
+	new StretchedSection( { $element: $scope } );
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element:  $scope } );
@@ -1022,14 +1106,20 @@ VideoModule = HandlerModule.extend( {
 				url: this.elements.$videoFrame.attr( 'src' ),
 				modalOptions: {
 					id: 'elementor-video-modal-' + this.getID(),
-					videoAspectRatio: elementSettings.aspect_ratio,
-					entranceAnimation: elementSettings.lightbox_content_animation,
-					position: {
-						my: position,
-						at: position
-					}
+					videoAspectRatio: elementSettings.aspect_ratio
 				}
 			};
+
+			if ( position ) {
+				options.modalOptions.position = {
+					my: position,
+					at: position
+				};
+			}
+
+			if ( elementSettings.lightbox_content_animation ) {
+				options.modalOptions.entranceAnimation = elementSettings.lightbox_content_animation;
+			}
 
 			this.getLightBox().showModal( options );
 		} else {
@@ -1137,7 +1227,6 @@ module.exports = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		return {
-			$window: $( elementorFrontend.getScopeWindow() ),
 			$scrollable: $( selectors.scrollable ),
 			$wpAdminBar: $( selectors.wpAdminBar )
 		};
@@ -1149,7 +1238,6 @@ module.exports = ViewModule.extend( {
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
-			location = this.elements.$window[0].location,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname );
 
@@ -1191,24 +1279,20 @@ LightboxModule = ViewModule.extend( {
 
 	oldAnimation: null,
 
-	getDefaultElements: function() {
-		return {
-			$lightBoxContainer: jQuery( elementorFrontend.getScopeWindow().document.body )
-		};
-	},
-
 	getDefaultSettings: function() {
+		var position = elementorFrontend.getGeneralSettings( 'elementor_lightbox_content_position' );
+
 		return {
 			classes: {
 				aspectRatio: 'elementor-aspect-ratio-%s'
 			},
 			modalOptions: {
 				id: 'elementor-lightbox-modal',
-				entranceAnimation: null,
+				entranceAnimation: elementorFrontend.getGeneralSettings( 'elementor_lightbox_content_animation' ),
 				videoAspectRatio: null,
 				position: {
-					my: 'center',
-					at: 'center'
+					my: position,
+					at: position
 				}
 			}
 		};
@@ -1227,11 +1311,7 @@ LightboxModule = ViewModule.extend( {
 
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox-modal',
-			container: self.elements.$lightBoxContainer,
-			closeButton: true,
-			position: {
-				within: elementorFrontend.getScopeWindow()
-			}
+			closeButton: true
 		} );
 
 		modal.on( 'hide', function() {
@@ -1240,29 +1320,42 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
-		var defaultOptions = this.getDefaultSettings().modalOptions;
+		var self = this,
+			defaultOptions = self.getDefaultSettings().modalOptions;
 
-		this.setSettings( 'modalOptions', jQuery.extend( defaultOptions, options.modalOptions ) );
+		self.setSettings( 'modalOptions', jQuery.extend( defaultOptions, options.modalOptions ) );
 
-		var modal = this.getModal();
+		var modal = self.getModal();
 
-		modal.setID( this.getSettings( 'modalOptions.id' ) );
+		modal.setID( self.getSettings( 'modalOptions.id' ) );
 
-		modal.onShow = null;
+		modal.onShow = function() {
+			DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( modal, arguments );
 
-		modal.onHide = null;
+			self.setPosition();
+
+			setTimeout( function() {
+				self.setEntranceAnimation();
+			}, 10 );
+		};
+
+		modal.onHide = function() {
+			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
+
+			modal.getElements( 'widgetContent' ).removeClass( 'animated' );
+		};
 
 		switch ( options.type ) {
 			case 'image':
-				this.setImageContent( options.url );
+				self.setImageContent( options.url );
 
 				break;
 			case 'video':
-				this.setVideoContent( options.url );
+				self.setVideoContent( options.url );
 
 				break;
 			default:
-				this.setHTMLContent( options.html );
+				self.setHTMLContent( options.html );
 		}
 
 		modal.show();
@@ -1273,36 +1366,32 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	setImageContent: function( imageURL ) {
-		var $image = jQuery( '<img>', { src: imageURL } );
+		var self = this,
+			$image = jQuery( '<img>', { src: imageURL } );
 
-		this.getModal().setMessage( $image );
+		$image.on( 'load', function() {
+			self.getModal().refreshPosition();
+		} );
+
+		self.getModal().setMessage( $image );
 	},
 
 	setVideoContent: function( videoEmbedURL ) {
 		videoEmbedURL = videoEmbedURL.replace( '&autoplay=0', '' ) + '&autoplay=1';
 
-		var self = this,
-			$videoFrame = jQuery( '<iframe>', { src: videoEmbedURL } ),
-			modal = self.getModal();
+		var $videoFrame = jQuery( '<iframe>', { src: videoEmbedURL } ),
+			modal = this.getModal();
 
 		modal.getElements( 'message' ).addClass( 'elementor-video-wrapper' );
 
 		modal.setMessage( $videoFrame );
 
-		self.setVideoAspectRatio();
+		this.setVideoAspectRatio();
 
-		modal.onShow = function() {
-			DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( modal, arguments );
-
-			self.setPosition();
-
-			self.setEntranceAnimation();
-		};
+		var onHideMethod = modal.onHide;
 
 		modal.onHide = function() {
-			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
-
-			modal.getElements( 'widgetContent' ).removeClass( 'animated' );
+			onHideMethod();
 
 			modal.getElements( 'message' ).removeClass( 'elementor-video-wrapper' );
 		};
@@ -1348,6 +1437,37 @@ LightboxModule = ViewModule.extend( {
 		this.getModal()
 			.setSettings( 'position', position )
 			.refreshPosition();
+	},
+
+	onInit: function() {
+		ViewModule.prototype.onInit.apply( this, arguments );
+
+		if ( elementorFrontend.isEditMode() ) {
+			elementor.settings.general.model.on( 'change', this.onGeneralSettingsChange );
+		}
+	},
+
+	onGeneralSettingsChange: function( model ) {
+		if ( 'elementor_lightbox_width' in model.changed ) {
+			this.getModal().refreshPosition();
+		}
+
+		if ( 'elementor_lightbox_content_position' in model.changed ) {
+			var position = model.changed.elementor_lightbox_content_position;
+
+			this.setSettings( 'modalOptions.position', {
+				my: position,
+				at: position
+			} );
+
+			this.setPosition();
+		}
+
+		if ( 'elementor_lightbox_content_animation' in model.changed ) {
+			this.setSettings( 'modalOptions.entranceAnimation', model.changed.elementor_lightbox_content_animation );
+
+			this.setEntranceAnimation();
+		}
 	}
 } );
 
@@ -1753,6 +1873,12 @@ var Module = function() {
 		}
 
 		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
+	};
+
+	this.forceMethodImplementation = function( methodArguments ) {
+		var functionName = methodArguments.callee.name;
+
+		throw new ReferenceError( 'The method ' + functionName + ' must to be implemented in the inheritor child.' );
 	};
 
 	this.on = function( eventName, callback ) {

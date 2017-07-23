@@ -135,8 +135,6 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Stretch Section', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
 				'render_type' => 'template',
@@ -760,8 +758,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Flip', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'No', 'elementor' ),
-					'label_on' => __( 'Yes', 'elementor' ),
 					'condition' => [
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
@@ -776,8 +772,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Invert', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'No', 'elementor' ),
-					'label_on' => __( 'Yes', 'elementor' ),
 					'frontend_available' => true,
 					'condition' => [
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
@@ -791,8 +785,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'No', 'elementor' ),
-					'label_on' => __( 'Yes', 'elementor' ),
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
 					],
@@ -1045,8 +1037,6 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'reverse-mobile',
 				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
 			]

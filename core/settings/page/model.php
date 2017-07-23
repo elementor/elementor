@@ -1,14 +1,15 @@
 <?php
-namespace Elementor\PageSettings;
+namespace Elementor\Core\Settings\Page;
 
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
+use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Page extends Controls_Stack {
+class Model extends BaseModel {
 
 	/**
 	 * @var \WP_Post
@@ -27,6 +28,20 @@ class Page extends Controls_Stack {
 
 	public function get_name() {
 		return 'page-settings-' . $this->post->ID;
+	}
+
+	public function get_css_wrapper_selector() {
+		return 'body.elementor-page-' . $this->get_id();
+	}
+
+	public function get_panel_page_settings() {
+		return [
+			'title' => __( 'Page Settings', 'elementor' ),
+			'menu' => [
+				'icon' => 'fa fa-cog',
+				'beforeItem' => 'revision-history',
+			],
+		];
 	}
 
 	public function on_export( $element_data ) {
@@ -57,9 +72,9 @@ class Page extends Controls_Stack {
 			]
 		);
 
-		$page_title_selector = get_option( 'elementor_page_title_selector' );
+		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_page_title_selector' );
 
-		if ( empty( $page_title_selector ) ) {
+		if ( ! $page_title_selector ) {
 			$page_title_selector = 'h1.entry-title';
 		}
 
