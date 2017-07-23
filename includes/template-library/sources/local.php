@@ -301,7 +301,7 @@ class Source_Local extends Source_Base {
 		/*
 		 * Create temporary .zip file
 		 */
-		$zip_archive_filename = 'elementor-multiple-export-' . date( 'Y-m-d' ) . '.zip';
+		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
 
