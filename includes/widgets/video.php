@@ -531,7 +531,7 @@ class Widget_Video extends Widget_Base {
 					<?php if ( $settings['lightbox'] ) :
 						$this->add_render_attribute( 'image_overlay_link', [
 							'href' => $settings['image_overlay']['url'],
-							'class' => 'elementor-event-save-default',
+							'class' => 'elementor-clickable',
 							'data-elementor-lightbox' => [
 								'type' => 'video',
 								'url' => Embed::get_embed_url( $video_link, $embed_params ),
