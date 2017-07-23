@@ -1662,7 +1662,11 @@ select {
     display: block; }
   .elementor-panel .elementor-control-type-box_shadow .elementor-control-input-wrapper {
     overflow: hidden; }
-  .elementor-panel .elementor-control-type-box_shadow .elementor-box-shadow-slider {
+  .elementor-panel .elementor-control-type-box_shadow .elementor-shadow-slider {
+    margin-top: 10px; }
+  .elementor-panel .elementor-control-type-text_shadow .elementor-control-input-wrapper {
+    overflow: hidden; }
+  .elementor-panel .elementor-control-type-text_shadow .elementor-shadow-slider {
     margin-top: 10px; }
   .elementor-panel .elementor-control-type-switcher.elementor-label-inline > .elementor-control-content .elementor-control-field .elementor-control-title {
     width: 70%; }
