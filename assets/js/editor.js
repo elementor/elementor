@@ -7326,7 +7326,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		if ( ! Backbone.$( event.target ).closest( '.elementor-event-save-default' ).length ) {
+		if ( ! Backbone.$( event.target ).closest( '.elementor-clickable' ).length ) {
 			event.preventDefault();
 
 			event.stopPropagation();
