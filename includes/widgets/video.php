@@ -384,7 +384,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'play_icon_color',
 			[
-				'label' => __( 'Color', '' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'color: {{VALUE}}',
@@ -395,7 +395,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_responsive_control(
 			'play_icon_size',
 			[
-				'label' => __( 'Size', '' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
