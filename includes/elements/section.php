@@ -27,7 +27,7 @@ class Element_Section extends Element_Base {
 			],
 			'remove' => [
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
-				'icon' => 'close',
+				'icon' => 'trash',
 			],
 		];
 	}

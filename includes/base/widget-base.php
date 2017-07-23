@@ -21,7 +21,7 @@ abstract class Widget_Base extends Element_Base {
 			],
 			'remove' => [
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
-				'icon' => 'close',
+				'icon' => 'trash',
 			],
 		];
 	}
