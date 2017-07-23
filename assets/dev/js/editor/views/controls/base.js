@@ -13,6 +13,12 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
+	},
+
 	className: function() {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),

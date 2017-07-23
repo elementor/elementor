@@ -110,6 +110,23 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'open_in_lightbox',
+			[
+				'label' => __( 'Open In Lightbox', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'link_to' => 'file',
+				],
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -304,7 +321,10 @@ class Widget_Image extends Widget_Base {
 		$link = $this->get_link_url( $settings );
 
 		if ( $link ) {
-			$this->add_render_attribute( 'link', 'href', $link['url'] );
+			$this->add_render_attribute( 'link', [
+				'href' => $link['url'],
+				'data-open_in_lightbox' => $settings['open_in_lightbox'],
+			] );
 
 			if ( ! empty( $link['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );

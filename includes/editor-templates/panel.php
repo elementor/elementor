@@ -254,17 +254,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-page-settings">
-	<div class="elementor-panel-navigation">
-		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
-			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<a href="#">{{{ tabTitle }}}</a>
-			</div>
-			<# } ); #>
-	</div>
-	<div id="elementor-panel-page-settings-controls"></div>
-</script>
-
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
 	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
 	<div class="elementor-panel-nerd-box-title"><?php _e( 'No Revisions Saved Yet', 'elementor' ); ?></div>
