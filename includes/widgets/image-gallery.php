@@ -28,7 +28,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	public function add_lightbox_data_to_image_link( $link_html ) {
-		return preg_replace( '/^<a/', '<a class="elementor-event-save-default" data-elementor-lightbox-slideshow="' . $this->get_id() . '"', $link_html );
+		return preg_replace( '/^<a/', '<a class="elementor-clickable" data-elementor-lightbox-slideshow="' . $this->get_id() . '"', $link_html );
 	}
 
 	protected function _register_controls() {
