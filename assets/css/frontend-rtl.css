@@ -1298,7 +1298,7 @@
   cursor: pointer;
   text-align: center; }
   .elementor-widget-video .elementor-custom-embed-image-overlay:hover .elementor-custom-embed-play i {
-    opacity: 0.9; }
+    opacity: 1; }
   .elementor-widget-video .elementor-custom-embed-image-overlay img {
     display: block;
     width: 100%; }
