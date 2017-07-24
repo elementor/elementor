@@ -22,9 +22,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	public function get_script_depends() {
-		return [
-			'jquery-swiper',
-		];
+		return [ 'jquery-swiper' ];
 	}
 
 	public function add_lightbox_data_to_image_link( $link_html ) {
