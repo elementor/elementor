@@ -272,7 +272,7 @@ var	Manager = function() {
 
 	this.startDropElement = function() {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
-		elementor.history.history.startItem( {
+		elementor.history.history.addItem( {
 			type: 'add',
 			title: self.getModelLabel( elementView.model )
 		} );
