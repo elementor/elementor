@@ -143,11 +143,15 @@ BaseElementView = BaseContainer.extend( {
 			_.extend( itemData, customData );
 		}
 
+		elementor.channels.data.trigger( 'element:before:add', itemData );
+
 		var newView = this.addChildElement( itemData, options );
 
 		if ( 'section' === newView.getElementType() && newView.isInner() ) {
 			newView.addEmptyColumn();
 		}
+
+		elementor.channels.data.trigger( 'element:after:add', itemData );
 
 	},
 
@@ -325,8 +329,6 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate: function() {
-		this.trigger( 'before:duplicate' );
-
 		this.trigger( 'request:duplicate' );
 	},
 

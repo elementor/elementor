@@ -156,7 +156,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		elementor.channels.data.trigger( 'drag:update', model );
+		elementor.channels.data.trigger( 'drag:before:update', model );
 
 		var newIndex = ui.item.parent().children().index( ui.item );
 
@@ -169,6 +169,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		model.destroy();
 
 		senderSection.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'drag:after:update', model );
 	},
 
 	onSortUpdate: function( event, ui ) {
@@ -180,7 +182,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 				collection = this.view.collection,
 				newIndex = $childElement.parent().children().index( $childElement );
 
-			elementor.channels.data.trigger( 'drag:update', model );
+			elementor.channels.data.trigger( 'drag:before:update', model );
 
 			var child = this.view.children.findByModelCid( model.cid );
 
@@ -191,6 +193,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 			this.view.addChildElement( model, { at: newIndex } );
 
 			elementor.setFlagEditorChange( true );
+
+			elementor.channels.data.trigger( 'drag:after:update', model );
 		}
 	},
 
