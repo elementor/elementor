@@ -182,6 +182,10 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( is_array( $key ) ) {
 			foreach ( $key as $attribute_key => $attributes ) {
+				if ( is_array( $attributes ) ) {
+					$attributes = wp_json_encode( $attributes );
+				}
+
 				$this->add_render_attribute( $element, $attribute_key, $attributes, $overwrite );
 			}
 

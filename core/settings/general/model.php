@@ -82,14 +82,14 @@ class Model extends BaseModel {
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
 						'elementor_lightbox_color' => [
-							'label' => __( 'Color', 'elementor' ),
+							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox-modal' => 'background-color: {{VALUE}}',
+								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
-						'elementor_lightbox_width' => [
-							'label' => __( 'Width', 'elementor' ),
+						'elementor_lightbox_content_width' => [
+							'label' => __( 'Content Width', 'elementor' ),
 							'type' => Controls_Manager::SLIDER,
 							'units' => [ '%' ],
 							'default' => [
@@ -101,24 +101,8 @@ class Model extends BaseModel {
 								],
 							],
 							'selectors' => [
-								'.elementor-lightbox-modal .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+								'.elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
-						],
-						'elementor_lightbox_content_position' => [
-							'label' => __( 'Content Position', 'elementor' ),
-							'type' => Controls_Manager::SELECT,
-							'default' => 'center center',
-							'options' => [
-								'center center' => __( 'Center', 'elementor' ),
-								'center top' => __( 'Top', 'elementor' ),
-							],
-							'frontend_available' => true,
-						],
-						'elementor_lightbox_content_animation' => [
-							'label' => __( 'Entrance Animation', 'elementor' ),
-							'type' => Controls_Manager::ANIMATION,
-							'label_block' => true,
-							'frontend_available' => true,
 						],
 					],
 				],
