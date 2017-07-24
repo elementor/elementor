@@ -287,7 +287,7 @@ class Source_Local extends Source_Base {
 		 * Create temp path if it doesn't exist
 		 */
 		if ( ! file_exists( $temp_path ) ) {
-			mkdir( $temp_path, 0755, true );
+			wp_mkdir_p( $temp_path );
 		}
 
 		/*
