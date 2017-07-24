@@ -494,6 +494,8 @@ html.elementor-html {
   cursor: pointer;
   line-height: 1;
   color: #d5dadf; }
+  .elementor-add-section-close:hover {
+    color: #6d7882; }
 
 .elementor-select-preset-title {
   font-family: Arial, Helvetica, sans-serif;

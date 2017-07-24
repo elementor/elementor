@@ -48,8 +48,9 @@ class Settings extends Settings_Page {
 	public function admin_menu_change_name() {
 		global $submenu;
 
-		if ( isset( $submenu['elementor'] ) )
+		if ( isset( $submenu['elementor'] ) ) {
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
+		}
 	}
 
 	public function __construct() {

@@ -21,7 +21,7 @@ class Element_Column extends Element_Base {
 			],
 			'remove' => [
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
-				'icon' => 'times',
+				'icon' => 'trash',
 			],
 		];
 	}
@@ -35,7 +35,7 @@ class Element_Column extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-columns';
+		return 'eicon-column';
 	}
 
 	protected function _register_controls() {
@@ -704,11 +704,11 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?>"><i class="fa fa-columns"></i></li>
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?>"><i class="eicon-column"></i></li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+						<i class="eicon-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
 				<?php endforeach; ?>
 			</ul>
