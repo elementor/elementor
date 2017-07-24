@@ -101,13 +101,25 @@ class Source_Local extends Source_Base {
 	}
 
 	public function register_admin_menu() {
-		add_submenu_page(
-			Settings::PAGE_ID,
-			__( 'My Library', 'elementor' ),
-			__( 'My Library', 'elementor' ),
-			'edit_pages',
-			'edit.php?post_type=' . self::CPT
-		);
+		if ( current_user_can( 'manage_options' ) ) {
+			add_submenu_page(
+				Settings::PAGE_ID,
+				__( 'My Library', 'elementor' ),
+				__( 'My Library', 'elementor' ),
+				'edit_pages',
+				'edit.php?post_type=' . self::CPT
+			);
+		} else {
+			add_menu_page(
+				__( 'Elementor', 'elementor' ),
+				__( 'Elementor', 'elementor' ),
+				'edit_pages',
+				'edit.php?post_type=' . self::CPT,
+				'',
+				'',
+				99
+			);
+		}
 	}
 
 	public function get_items( $args = [] ) {

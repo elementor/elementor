@@ -668,6 +668,10 @@ html.elementor-html {
 	cursor: pointer;
 	line-height: 1;
 	color: $editor-lightest;
+
+	&:hover {
+		color: $editor-dark;
+	}
 }
 
 .elementor-select-preset-title {
