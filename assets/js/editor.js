@@ -6413,6 +6413,7 @@ AddSectionView = Marionette.ItemView.extend( {
 	},
 
 	onDropping: function() {
+		elementor.channels.data.trigger( 'section:onDrop' );
 		this.addSection().addElementFromPanel();
 	}
 } );
@@ -10416,23 +10417,20 @@ module.exports = ViewModule;
 
 },{"./module":116}],118:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
-	initialize: function() {
-		_.defer( _.bind( this.onStart, this ) );
-	},
-
-	onStart: function() {
+	onBeforeRender: function() {
 		if ( this.view.collection ) {
 			this.view.collection.on( 'update', this.saveCollectionHistory, this );
 		}
 	},
 
+	// On click 'Add'
 	onChildviewBeforeAdd: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'add',
 			title: elementor.history.history.getModelLabel( childView.collection.models[0] )
 		} );
 	},
-
+	// On click 'Duplicate'
 	onChildviewBeforeDuplicate: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'duplicate',
@@ -10440,6 +10438,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
+	// On click 'Delete'
 	onChildviewBeforeRemove: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'remove',
@@ -10567,11 +10566,7 @@ module.exports = Backbone.Collection.extend( {
 
 },{"./item":122}],120:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
-	initialize: function() {
-		_.defer( _.bind( this.onStart, this ) );
-	},
-
-	onStart: function() {
+	onBeforeRender: function() {
 		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
 	},
 
@@ -10818,6 +10813,7 @@ var	Manager = function() {
 
 		elementor.channels.data
 			.on( 'drag:update', self.startMovingItem )
+			.on( 'section:onDrop', self.startDropElement )
 			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
 			.on( 'library:InsertTemplate:after', self.endItem );
 
@@ -10943,6 +10939,10 @@ var	Manager = function() {
 	};
 
 	this.getModelLabel = function( model ) {
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
 		return elementor.getElementData( model ).title;
 	};
 
@@ -10974,7 +10974,7 @@ var	Manager = function() {
 	this.startMovingItem = function( model ) {
 		elementor.history.history.addItem( {
 			type: 'move',
-			title: elementor.history.history.getModelLabel( model )
+			title: self.getModelLabel( model )
 		} );
 	};
 
@@ -10983,6 +10983,14 @@ var	Manager = function() {
 			type: 'add',
 			title: elementor.translate( 'Template' ),
 			subTitle: model.get( 'title' )
+		} );
+	};
+
+	this.startDropElement = function() {
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+		elementor.history.history.startItem( {
+			type: 'add',
+			title: self.getModelLabel( elementView.model )
 		} );
 	};
 
