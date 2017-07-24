@@ -149,19 +149,10 @@
 		transition: all .5s;
 	}
 
-	//&:not(.elementor-playing) {
-//
-	//	i {
-//
-	//		&:before {
-	//			content: "\f01d";
-	//	//	}
-	//	}
-	//}
-
 	&.elementor-playing {
 
 		i {
+			font-family: 'FontAwesome';
 			animation: fa-spin 2s infinite linear;
 
 			&:before {
