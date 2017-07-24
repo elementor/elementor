@@ -256,6 +256,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added WP filter to get available image sizes
 * Tweak! - Updated Swiper library to 3.4.2
 * Tweak! - Limit up to 100 revisions to display in the panel for better performance
+* Tweak! – Changed all `elementor/element/page-settings` hooks to `elementor/element/page-settings-{ID}`
 * Fix! - YouTube link detection regex for some situations
 * Fix! - Content flashes before entrance animation ([#1672](https://github.com/pojome/elementor/issues/1672))
 * Fix! - Added `latin-ext` subset in Font control for Czech language ([#1630](https://github.com/pojome/elementor/issues/1630))
