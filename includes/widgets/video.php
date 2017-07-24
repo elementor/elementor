@@ -548,7 +548,7 @@ class Widget_Video extends Widget_Base {
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
-							<i class="fa"></i>
+							<i class="eicon-play"></i>
 						</div>
 					<?php endif; ?>
 					<?php if ( $settings['lightbox'] ) : ?>

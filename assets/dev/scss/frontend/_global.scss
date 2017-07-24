@@ -149,15 +149,15 @@
 		transition: all .5s;
 	}
 
-	&:not(.elementor-playing) {
-
-		i {
-
-			&:before {
-				content: "\f01d";
-			}
-		}
-	}
+	//&:not(.elementor-playing) {
+//
+	//	i {
+//
+	//		&:before {
+	//			content: "\f01d";
+	//	//	}
+	//	}
+	//}
 
 	&.elementor-playing {
 
