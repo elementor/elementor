@@ -149,19 +149,10 @@
 		transition: all .5s;
 	}
 
-	&:not(.elementor-playing) {
-
-		i {
-
-			&:before {
-				content: "\f01d";
-			}
-		}
-	}
-
 	&.elementor-playing {
 
 		i {
+			font-family: 'FontAwesome';
 			animation: fa-spin 2s infinite linear;
 
 			&:before {
@@ -250,7 +241,7 @@
 // Admin Bar - Icon (Front-End)
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
 	content: "\e800";
-	font-family: eicon;
+	font-family: eicons;
 	font-size: 12px;
 	margin-top: 5px;
 }
