@@ -58,7 +58,8 @@ body {
 // Dashboard Icon
 #adminmenu {
 
-	#toplevel_page_elementor {
+	#toplevel_page_elementor,
+	#toplevel_page_edit-post_type-elementor_library {
 
 		div.wp-menu-image:before {
 			content: "\e800";
