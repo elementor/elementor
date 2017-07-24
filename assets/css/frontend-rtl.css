@@ -189,6 +189,7 @@
     text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
     transition: all .5s; }
   .elementor-custom-embed-play.elementor-playing i {
+    font-family: 'FontAwesome';
     -webkit-animation: fa-spin 2s infinite linear;
             animation: fa-spin 2s infinite linear; }
     .elementor-custom-embed-play.elementor-playing i:before {
