@@ -74,17 +74,6 @@
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.dialog-lightbox-close-button {
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  left: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: .65; }
-  .dialog-lightbox-close-button:hover {
-    opacity: 1; }
-
 .elementor-video-wrapper {
   position: relative;
   height: 0; }
@@ -127,16 +116,19 @@ body.elementor-editor-inactive .elementor-switch-mode-on {
 body.elementor-editor-inactive #elementor-editor {
   display: none; }
 
-#adminmenu #toplevel_page_elementor div.wp-menu-image:before {
+#adminmenu #toplevel_page_elementor div.wp-menu-image:before,
+#adminmenu #toplevel_page_edit-post_type-elementor_library div.wp-menu-image:before {
   content: "\e800";
   font-family: eicon;
   font-size: 14px;
   margin-top: 3px; }
 
-#adminmenu #toplevel_page_elementor a[href="admin.php?page=go_elementor_pro"] {
+#adminmenu #toplevel_page_elementor a[href="admin.php?page=go_elementor_pro"],
+#adminmenu #toplevel_page_edit-post_type-elementor_library a[href="admin.php?page=go_elementor_pro"] {
   color: #d54e21; }
 
-#adminmenu #toplevel_page_elementor .dashicons.dashicons-star-filled {
+#adminmenu #toplevel_page_elementor .dashicons.dashicons-star-filled,
+#adminmenu #toplevel_page_edit-post_type-elementor_library .dashicons.dashicons-star-filled {
   height: auto; }
 
 .elementor-plugins-gopro {

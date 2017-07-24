@@ -48,8 +48,9 @@ class Settings extends Settings_Page {
 	public function admin_menu_change_name() {
 		global $submenu;
 
-		if ( isset( $submenu['elementor'] ) )
+		if ( isset( $submenu['elementor'] ) ) {
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
+		}
 	}
 
 	public function __construct() {
@@ -181,6 +182,15 @@ class Settings extends Settings_Page {
 									'placeholder' => 'h1.entry-title',
 									'class' => 'medium-text',
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
+								],
+							],
+							'open_images_in_lightbox' => [
+								'label' => __( 'Open Images In Lightbox', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'std' => 'yes',
+									'sub_desc' => __( 'Determine whether to open all images in lightbox or not.', 'elementor' ),
 								],
 							],
 						],

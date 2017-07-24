@@ -45,6 +45,7 @@ class Controls_Manager {
 	const SELECT2 = 'select2';
 	const DATE_TIME = 'date_time';
 	const BOX_SHADOW = 'box_shadow';
+	const TEXT_SHADOW = 'text_shadow';
 	const ANIMATION = 'animation';
 	const HOVER_ANIMATION = 'hover_animation';
 	const ORDER = 'order';
@@ -141,6 +142,7 @@ class Controls_Manager {
 			self::SELECT2,
 			self::DATE_TIME,
 			self::BOX_SHADOW,
+			self::TEXT_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::ORDER,
@@ -166,6 +168,7 @@ class Controls_Manager {
 		$this->control_groups['typography'] = new Group_Control_Typography();
 		$this->control_groups['image-size'] = new Group_Control_Image_Size();
 		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
 		do_action( 'elementor/controls/controls_registered', $this );
 	}
