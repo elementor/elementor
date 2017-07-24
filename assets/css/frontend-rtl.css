@@ -188,9 +188,8 @@
     opacity: 0.7;
     text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
     transition: all .5s; }
-  .elementor-custom-embed-play:not(.elementor-playing) i:before {
-    content: "\f01d"; }
   .elementor-custom-embed-play.elementor-playing i {
+    font-family: 'FontAwesome';
     -webkit-animation: fa-spin 2s infinite linear;
             animation: fa-spin 2s infinite linear; }
     .elementor-custom-embed-play.elementor-playing i:before {
@@ -230,7 +229,7 @@
 
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
   content: "\e800";
-  font-family: eicon;
+  font-family: eicons;
   font-size: 12px;
   margin-top: 5px; }
 
@@ -2228,19 +2227,25 @@ button.swiper-pagination-bullet {
 .elementor-lightbox .dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
-  color: #9a9a9a;
+  color: #ffffff;
   font-size: 25px;
   top: 35px;
   right: 35px;
   padding: 5px;
   z-index: 2;
-  line-height: 1; }
+  line-height: 1;
+  opacity: 0.5;
+  transition: all 0.5s; }
   .elementor-lightbox .dialog-lightbox-close-button:hover {
-    opacity: 1; }
+    opacity: 0.9; }
 
 .elementor-lightbox .elementor-swiper-button {
   font-size: 25px;
-  color: #9a9a9a; }
+  color: #ffffff;
+  opacity: 0.5;
+  transition: all 0.5s; }
+  .elementor-lightbox .elementor-swiper-button:hover {
+    opacity: 0.9; }
   .elementor-lightbox .elementor-swiper-button-prev {
     left: 40px; }
   .elementor-lightbox .elementor-swiper-button-next {

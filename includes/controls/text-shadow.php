@@ -26,7 +26,7 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 			'horizontal' => 0,
 			'vertical' => 0,
 			'blur' => 10,
-			'color' => 'rgba(0,0,0,0.5)',
+			'color' => 'rgba(0,0,0,0.3)',
 		];
 	}
 
