@@ -373,9 +373,8 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-deactivate-feedback-modal .dialog-widget-content {
   width: 550px; }
 
-#elementor-deactivate-feedback-modal .dialog-close-button i:before {
-  content: '\f335';
-  font: 20px dashicons; }
+#elementor-deactivate-feedback-modal .dialog-close-button {
+  transition: all 0.5s; }
 
 #elementor-deactivate-feedback-modal .dialog-widget-header {
   padding: 18px 15px;
