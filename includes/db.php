@@ -302,6 +302,8 @@ class DB {
 				// The elementor JSON needs slashes before saving
 				if ( '_elementor_data' === $meta_key ) {
 					$value = wp_slash( $value );
+				} else {
+					$value = maybe_unserialize( $value );
 				}
 
 				// Don't use `update_post_meta` that can't handle `revision` post type
