@@ -40,7 +40,9 @@ function add_elementor_page_settings_controls( \Elementor\PageSettings\Page $pag
 	);
 }
 
-add_action( 'elementor/element/page-settings/section_page_style/before_section_end', 'add_elementor_page_settings_controls' );
+$post_id = get_the_ID();
+
+add_action( 'elementor/element/page-settings-' . $post_id . '/section_page_style/before_section_end', 'add_elementor_page_settings_controls' );
 ```
 
 With this example, we have created a function that adds a control for the instance of the class `Elementor\PageSettings\Page` that represents all the settings that can be controlled with the Page Settings panel.
