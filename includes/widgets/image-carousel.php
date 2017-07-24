@@ -573,8 +573,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				$link_key = 'link_' . $index;
 
 				$this->add_render_attribute( $link_key, [
-					'href' => $link,
-					'data-open_in_lightbox' => $settings['open_in_lightbox'],
+					'href' => $link['url'],
+					'class' => 'elementor-clickable',
+					'data-open-in-lightbox' => $settings['open_in_lightbox'],
+					'data-elementor-lightbox-slideshow' => $this->get_id(),
+					'data-elementor-lightbox-index' => $index,
 				] );
 
 				if ( ! empty( $link['is_external'] ) ) {
@@ -640,6 +643,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( empty( $instance['link']['url'] ) ) {
 				return false;
 			}
+
 			return $instance['link'];
 		}
 

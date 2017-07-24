@@ -75,17 +75,6 @@
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.dialog-lightbox-close-button {
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  left: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: .65; }
-  .dialog-lightbox-close-button:hover {
-    opacity: 1; }
-
 .elementor-video-wrapper {
   position: relative;
   height: 0; }
@@ -164,8 +153,9 @@
     top: 0;
     left: 0;
     position: absolute; }
-  .elementor .elementor-invisible {
-    visibility: hidden; }
+
+.elementor-invisible {
+  visibility: hidden; }
 
 .elementor-align-center {
   text-align: center; }
@@ -185,20 +175,6 @@
 .elementor-align-justify .elementor-button {
   width: 100%; }
 
-.elementor-lightbox-modal .dialog-widget-content {
-  background: none;
-  box-shadow: none; }
-  @media (max-width: 767px) {
-    .elementor-lightbox-modal .dialog-widget-content {
-      width: 100%; } }
-  @media (min-width: 1025px) {
-    .elementor-lightbox-modal .dialog-widget-content {
-      width: 50%; } }
-
-.elementor-lightbox-modal .dialog-close-button {
-  top: 12px;
-  right: 0; }
-
 .elementor-custom-embed-play {
   position: absolute;
   top: 50%;
@@ -210,7 +186,7 @@
     font-size: 100px;
     color: #fff;
     opacity: 0.7;
-    text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
     transition: all .5s; }
   .elementor-custom-embed-play:not(.elementor-playing) i:before {
     content: "\f01d"; }
@@ -1309,9 +1285,6 @@
   .elementor-widget-icon-list .elementor-icon-list-icon i {
     vertical-align: middle; }
 
-.elementor-widget-video .elementor-open-lightbox iframe {
-  display: none; }
-
 .elementor-widget-video .elementor-open-inline .elementor-custom-embed-image-overlay {
   position: absolute;
   top: 0;
@@ -1325,8 +1298,7 @@
   cursor: pointer;
   text-align: center; }
   .elementor-widget-video .elementor-custom-embed-image-overlay:hover .elementor-custom-embed-play i {
-    opacity: 0.9;
-    text-shadow: 3px 2px 30px rgba(0, 0, 0, 0.6); }
+    opacity: 1; }
   .elementor-widget-video .elementor-custom-embed-image-overlay img {
     display: block;
     width: 100%; }
@@ -2238,6 +2210,73 @@ button.swiper-pagination-bullet {
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg); } }
 
+.elementor-lightbox .dialog-widget-header {
+  display: none; }
+
+.elementor-lightbox .dialog-widget-content {
+  background: none;
+  box-shadow: none;
+  width: 100%;
+  height: 100%; }
+
+.elementor-lightbox .dialog-message {
+  -webkit-animation-duration: .4s;
+          animation-duration: .4s; }
+  .elementor-lightbox .dialog-message:not(.elementor-video-wrapper) {
+    height: 100%; }
+
+.elementor-lightbox .dialog-lightbox-close-button {
+  cursor: pointer;
+  position: absolute;
+  color: #9a9a9a;
+  font-size: 25px;
+  top: 35px;
+  right: 35px;
+  padding: 5px;
+  z-index: 2;
+  line-height: 1; }
+  .elementor-lightbox .dialog-lightbox-close-button:hover {
+    opacity: 1; }
+
+.elementor-lightbox .elementor-swiper-button {
+  font-size: 25px;
+  color: #9a9a9a; }
+  .elementor-lightbox .elementor-swiper-button-prev {
+    left: 40px; }
+  .elementor-lightbox .elementor-swiper-button-next {
+    right: 40px; }
+
+.elementor-lightbox .swiper-container {
+  height: 100%; }
+
+.elementor-lightbox .elementor-lightbox-item {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: relative;
+  padding: 80px;
+  box-sizing: border-box;
+  height: 100%;
+  margin: auto; }
+
+.elementor-lightbox .elementor-lightbox-image {
+  max-height: 100%; }
+
+.elementor-lightbox .elementor-video-container {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
+          transform: translateX(-50%) translateY(-50%); }
+
 .animated {
   -webkit-animation-duration: 1.25s;
           animation-duration: 1.25s; }
@@ -2299,9 +2338,6 @@ button.swiper-pagination-bullet {
             transform-origin: center;
     -webkit-transform: rotateY(0deg);
             transform: rotateY(0deg); }
-
-.elementor-open-lightbox .fluid-width-video-wrapper {
-  display: none; }
 
 .page-template-elementor_canvas.elementor-page:before {
   display: none; }
