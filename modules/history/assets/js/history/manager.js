@@ -96,9 +96,18 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data
-			.on( 'drag:update', self.startMovingItem )
-			.on( 'section:onDrop:before', self.startDropElement )
-			.on( 'section:onDrop:after', self.endItem )
+			.on( 'drag:before:update', self.startMovingItem )
+			.on( 'drag:after:update', self.endItem )
+
+			.on( 'element:before:add', self.startAddElement )
+			.on( 'element:after:add', self.endItem )
+
+			.on( 'element:before:duplicate', self.startDuplicateElement )
+			.on( 'element:after:duplicate', self.endItem )
+
+			.on( 'section:before:drop', self.startDropElement )
+			.on( 'section:after:drop', self.endItem )
+
 			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
 			.on( 'library:InsertTemplate:after', self.endItem );
 
@@ -137,7 +146,7 @@ var	Manager = function() {
 			items.shift();
 		}
 
-		var id = currentItemID ? currentItemID : Math.round( new Date().getTime() / 1000 );
+		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
 				id: id
@@ -257,7 +266,7 @@ var	Manager = function() {
 	};
 
 	this.startMovingItem = function( model ) {
-		elementor.history.history.addItem( {
+		elementor.history.history.startItem( {
 			type: 'move',
 			title: self.getModelLabel( model )
 		} );
@@ -276,6 +285,20 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( elementView.model )
+		} );
+	};
+
+	this.startAddElement = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'add',
+			title: self.getModelLabel( model )
+		} );
+	};
+
+	this.startDuplicateElement = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'duplicate',
+			title: self.getModelLabel( model )
 		} );
 	};
 

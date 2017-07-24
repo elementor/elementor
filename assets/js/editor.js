@@ -18,8 +18,6 @@ HandleAddDuplicateBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		this.view.trigger( 'before:add' );
-
 		options = options || {};
 
 		var newItem = {
@@ -29,7 +27,11 @@ HandleAddDuplicateBehavior = Marionette.Behavior.extend( {
 			elements: []
 		};
 
+		elementor.channels.data.trigger( 'element:before:add', newItem );
+
 		this.view.addChildModel( newItem, options );
+
+		elementor.channels.data.trigger( 'element:after:add', newItem );
 	}
 } );
 
@@ -48,7 +50,11 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
+		elementor.channels.data.trigger( 'element:before:duplicate', newModel );
+
 		this.view.addChildModel( newModel, { at: currentIndex + 1 } );
+
+		elementor.channels.data.trigger( 'element:after:duplicate', newModel );
 	}
 } );
 
@@ -374,7 +380,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		elementor.channels.data.trigger( 'drag:update', model );
+		elementor.channels.data.trigger( 'drag:before:update', model );
 
 		var newIndex = ui.item.parent().children().index( ui.item );
 
@@ -387,6 +393,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		model.destroy();
 
 		senderSection.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'drag:after:update', model );
 	},
 
 	onSortUpdate: function( event, ui ) {
@@ -398,7 +406,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 				collection = this.view.collection,
 				newIndex = $childElement.parent().children().index( $childElement );
 
-			elementor.channels.data.trigger( 'drag:update', model );
+			elementor.channels.data.trigger( 'drag:before:update', model );
 
 			var child = this.view.children.findByModelCid( model.cid );
 
@@ -409,6 +417,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 			this.view.addChildElement( model, { at: newIndex } );
 
 			elementor.setFlagEditorChange( true );
+
+			elementor.channels.data.trigger( 'drag:after:update', model );
 		}
 	},
 
@@ -6406,16 +6416,22 @@ AddSectionView = Marionette.ItemView.extend( {
 			} );
 		}
 
+		elementor.channels.data.trigger( 'element:before:add', {
+			elType: 'section'
+		} );
+
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
 		newSection.redefineLayout();
+
+		elementor.channels.data.trigger( 'element:after:add' );
 	},
 
 	onDropping: function() {
-		elementor.channels.data.trigger( 'section:onDrop:before' );
+		elementor.channels.data.trigger( 'section:before:drop' );
 		this.addSection().addElementFromPanel();
-		elementor.channels.data.trigger( 'section:onDrop:after' );
+		elementor.channels.data.trigger( 'section:after:drop' );
 	}
 } );
 
@@ -6669,11 +6685,15 @@ BaseElementView = BaseContainer.extend( {
 			_.extend( itemData, customData );
 		}
 
+		elementor.channels.data.trigger( 'element:before:add', itemData );
+
 		var newView = this.addChildElement( itemData, options );
 
 		if ( 'section' === newView.getElementType() && newView.isInner() ) {
 			newView.addEmptyColumn();
 		}
+
+		elementor.channels.data.trigger( 'element:after:add', itemData );
 
 	},
 
@@ -6851,8 +6871,6 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate: function() {
-		this.trigger( 'before:duplicate' );
-
 		this.trigger( 'request:duplicate' );
 	},
 
@@ -10424,21 +10442,6 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	// On click 'Add'
-	onChildviewBeforeAdd: function( childView ) {
-		elementor.history.history.addItem( {
-			type: 'add',
-			title: elementor.history.history.getModelLabel( childView.collection.models[0] )
-		} );
-	},
-	// On click 'Duplicate'
-	onChildviewBeforeDuplicate: function( childView ) {
-		elementor.history.history.addItem( {
-			type: 'duplicate',
-			title: elementor.history.history.getModelLabel( childView.model )
-		} );
-	},
-
 	// On click 'Delete'
 	onChildviewBeforeRemove: function( childView ) {
 		elementor.history.history.addItem( {
@@ -10813,9 +10816,18 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data
-			.on( 'drag:update', self.startMovingItem )
-			.on( 'section:onDrop:before', self.startDropElement )
-			.on( 'section:onDrop:after', self.endItem )
+			.on( 'drag:before:update', self.startMovingItem )
+			.on( 'drag:after:update', self.endItem )
+
+			.on( 'element:before:add', self.startAddElement )
+			.on( 'element:after:add', self.endItem )
+
+			.on( 'element:before:duplicate', self.startDuplicateElement )
+			.on( 'element:after:duplicate', self.endItem )
+
+			.on( 'section:before:drop', self.startDropElement )
+			.on( 'section:after:drop', self.endItem )
+
 			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
 			.on( 'library:InsertTemplate:after', self.endItem );
 
@@ -10854,7 +10866,7 @@ var	Manager = function() {
 			items.shift();
 		}
 
-		var id = currentItemID ? currentItemID : Math.round( new Date().getTime() / 1000 );
+		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
 				id: id
@@ -10974,7 +10986,7 @@ var	Manager = function() {
 	};
 
 	this.startMovingItem = function( model ) {
-		elementor.history.history.addItem( {
+		elementor.history.history.startItem( {
 			type: 'move',
 			title: self.getModelLabel( model )
 		} );
@@ -10993,6 +11005,20 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( elementView.model )
+		} );
+	};
+
+	this.startAddElement = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'add',
+			title: self.getModelLabel( model )
+		} );
+	};
+
+	this.startDuplicateElement = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'duplicate',
+			title: self.getModelLabel( model )
 		} );
 	};
 

@@ -87,16 +87,22 @@ AddSectionView = Marionette.ItemView.extend( {
 			} );
 		}
 
+		elementor.channels.data.trigger( 'element:before:add', {
+			elType: 'section'
+		} );
+
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
 		newSection.redefineLayout();
+
+		elementor.channels.data.trigger( 'element:after:add' );
 	},
 
 	onDropping: function() {
-		elementor.channels.data.trigger( 'section:onDrop:before' );
+		elementor.channels.data.trigger( 'section:before:drop' );
 		this.addSection().addElementFromPanel();
-		elementor.channels.data.trigger( 'section:onDrop:after' );
+		elementor.channels.data.trigger( 'section:after:drop' );
 	}
 } );
 

@@ -5,21 +5,6 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	// On click 'Add'
-	onChildviewBeforeAdd: function( childView ) {
-		elementor.history.history.addItem( {
-			type: 'add',
-			title: elementor.history.history.getModelLabel( childView.collection.models[0] )
-		} );
-	},
-	// On click 'Duplicate'
-	onChildviewBeforeDuplicate: function( childView ) {
-		elementor.history.history.addItem( {
-			type: 'duplicate',
-			title: elementor.history.history.getModelLabel( childView.model )
-		} );
-	},
-
 	// On click 'Delete'
 	onChildviewBeforeRemove: function( childView ) {
 		elementor.history.history.addItem( {

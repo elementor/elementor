@@ -17,8 +17,6 @@ HandleAddDuplicateBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		this.view.trigger( 'before:add' );
-
 		options = options || {};
 
 		var newItem = {
@@ -28,7 +26,11 @@ HandleAddDuplicateBehavior = Marionette.Behavior.extend( {
 			elements: []
 		};
 
+		elementor.channels.data.trigger( 'element:before:add', newItem );
+
 		this.view.addChildModel( newItem, options );
+
+		elementor.channels.data.trigger( 'element:after:add', newItem );
 	}
 } );
 
