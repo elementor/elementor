@@ -22,14 +22,7 @@
 	}
 
 	.dialog-close-button {
-
-		i {
-
-			&:before {
-				content: '\f335';
-				font: 20px dashicons;
-			}
-		}
+		transition: $transition-hover;
 	}
 
 	.dialog-widget-header {
