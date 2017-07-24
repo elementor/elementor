@@ -94,8 +94,9 @@ AddSectionView = Marionette.ItemView.extend( {
 	},
 
 	onDropping: function() {
-		elementor.channels.data.trigger( 'section:onDrop' );
+		elementor.channels.data.trigger( 'section:onDrop:before' );
 		this.addSection().addElementFromPanel();
+		elementor.channels.data.trigger( 'section:onDrop:after' );
 	}
 } );
 

@@ -97,7 +97,8 @@ var	Manager = function() {
 
 		elementor.channels.data
 			.on( 'drag:update', self.startMovingItem )
-			.on( 'section:onDrop', self.startDropElement )
+			.on( 'section:onDrop:before', self.startDropElement )
+			.on( 'section:onDrop:after', self.endItem )
 			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
 			.on( 'library:InsertTemplate:after', self.endItem );
 
@@ -272,7 +273,7 @@ var	Manager = function() {
 
 	this.startDropElement = function() {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
-		elementor.history.history.addItem( {
+		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( elementView.model )
 		} );
