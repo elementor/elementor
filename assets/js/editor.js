@@ -1781,6 +1781,7 @@ App = Marionette.Application.extend( {
 			Date_time: require( 'elementor-views/controls/date-time' ),
 			Code: require( 'elementor-views/controls/code' ),
 			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Text_shadow: require( 'elementor-views/controls/box-shadow' ),
 			Structure: require( 'elementor-views/controls/structure' ),
 			Animation: require( 'elementor-views/controls/select2' ),
 			Hover_animation: require( 'elementor-views/controls/select2' ),
@@ -8164,7 +8165,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-slider';
-		ui.colors = '.elementor-box-shadow-color-picker';
+		ui.colors = '.elementor-shadow-color-picker';
 
 		return ui;
 	},
