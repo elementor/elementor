@@ -33,6 +33,7 @@ class Autoloader {
 		'Group_Control_Box_Shadow' => 'includes/controls/groups/box-shadow.php',
 		'Group_Control_Image_Size' => 'includes/controls/groups/image-size.php',
 		'Group_Control_Interface' => 'includes/interfaces/group-control.php',
+		'Group_Control_Text_Shadow' => 'includes/controls/groups/text-shadow.php',
 		'Group_Control_Typography' => 'includes/controls/groups/typography.php',
 		'Heartbeat' => 'includes/heartbeat.php',
 		'Images_Manager' => 'includes/managers/image.php',
