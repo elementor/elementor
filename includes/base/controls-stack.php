@@ -28,11 +28,15 @@ abstract class Controls_Stack {
 	 */
 	protected $_current_tab = null;
 
+	abstract public function get_name();
+
+	public function get_unique_name() {
+		return $this->get_name();
+	}
+
 	public function get_id() {
 		return $this->_id;
 	}
-
-	abstract public function get_name();
 
 	public static function get_type() {
 		return 'stack';
@@ -108,7 +112,7 @@ abstract class Controls_Stack {
 	}
 
 	public function remove_control( $control_id ) {
-		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
+		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
 	}
 
 	public function update_control( $control_id, array $args ) {
