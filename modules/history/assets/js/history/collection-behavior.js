@@ -1,21 +1,18 @@
 module.exports = Marionette.Behavior.extend( {
-	initialize: function() {
-		_.defer( _.bind( this.onStart, this ) );
-	},
-
-	onStart: function() {
+	onBeforeRender: function() {
 		if ( this.view.collection ) {
 			this.view.collection.on( 'update', this.saveCollectionHistory, this );
 		}
 	},
 
+	// On click 'Add'
 	onChildviewBeforeAdd: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'add',
 			title: elementor.history.history.getModelLabel( childView.collection.models[0] )
 		} );
 	},
-
+	// On click 'Duplicate'
 	onChildviewBeforeDuplicate: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'duplicate',
@@ -23,6 +20,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
+	// On click 'Delete'
 	onChildviewBeforeRemove: function( childView ) {
 		elementor.history.history.addItem( {
 			type: 'remove',

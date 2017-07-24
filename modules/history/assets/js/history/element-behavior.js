@@ -1,9 +1,5 @@
 module.exports = Marionette.Behavior.extend( {
-	initialize: function() {
-		_.defer( _.bind( this.onStart, this ) );
-	},
-
-	onStart: function() {
+	onBeforeRender: function() {
 		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
 	},
 

@@ -97,6 +97,7 @@ var	Manager = function() {
 
 		elementor.channels.data
 			.on( 'drag:update', self.startMovingItem )
+			.on( 'section:onDrop', self.startDropElement )
 			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
 			.on( 'library:InsertTemplate:after', self.endItem );
 
@@ -222,6 +223,10 @@ var	Manager = function() {
 	};
 
 	this.getModelLabel = function( model ) {
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
 		return elementor.getElementData( model ).title;
 	};
 
@@ -253,7 +258,7 @@ var	Manager = function() {
 	this.startMovingItem = function( model ) {
 		elementor.history.history.addItem( {
 			type: 'move',
-			title: elementor.history.history.getModelLabel( model )
+			title: self.getModelLabel( model )
 		} );
 	};
 
@@ -262,6 +267,14 @@ var	Manager = function() {
 			type: 'add',
 			title: elementor.translate( 'Template' ),
 			subTitle: model.get( 'title' )
+		} );
+	};
+
+	this.startDropElement = function() {
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+		elementor.history.history.startItem( {
+			type: 'add',
+			title: self.getModelLabel( elementView.model )
 		} );
 	};
 
