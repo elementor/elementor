@@ -44,8 +44,8 @@ Argument       | Required   | Type         | Default                      | Desc
 `label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
 `type`         | yes        | *`string`*   | `Controls_Manager::SWITCHER` | The type of the control
 `default`      | no         | *`string`*   |                              | The default value of the control
-`label_on`     | no         | *`string`*   |                              | The label for the "checked" state
-`label_off`    | no         | *`string`*   |                              | The label for the "unchecked" state
+`label_on`     | no         | *`string`*   | `__( 'Yes', 'elementor' )`   | The label for the "checked" state
+`label_off`    | no         | *`string`*   | `__( 'No', 'elementor' )`    | The label for the "unchecked" state
 `return_value` | yes        | *`string`*   |                              | The value returned when checked.
 `label_block`  | no         | *`bool`*     | `false`                      | Display the label above the control by setting to true
 `description`  | no         | *`string`*   |                              | A description text to display below the control
