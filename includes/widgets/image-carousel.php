@@ -134,9 +134,9 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'open_in_lightbox',
+			'open_lightbox',
 			[
-				'label' => __( 'Open In Lightbox', 'elementor' ),
+				'label' => __( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
@@ -575,7 +575,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				$this->add_render_attribute( $link_key, [
 					'href' => $link['url'],
 					'class' => 'elementor-clickable',
-					'data-open-in-lightbox' => $settings['open_in_lightbox'],
+					'data-open-lightbox' => $settings['open_lightbox'],
 					'data-elementor-lightbox-slideshow' => $this->get_id(),
 					'data-elementor-lightbox-index' => $index,
 				] );
