@@ -21,7 +21,7 @@ class Element_Column extends Element_Base {
 			],
 			'remove' => [
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
-				'icon' => 'trash',
+				'icon' => 'close',
 			],
 		];
 	}

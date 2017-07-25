@@ -40,26 +40,6 @@
 		}
 	}
 
-	.elementor-swiper-button {
-		font-size: 25px;
-		color: #ffffff;
-		opacity: 0.5;
-		transition: $transition-hover;
-
-		&:hover {
-			opacity: 0.9;
-		}
-
-
-		&-prev {
-			left: 40px;
-		}
-
-		&-next {
-			right: 40px;
-		}
-	}
-
 	.swiper- {
 
 		&container {
@@ -84,9 +64,28 @@
 
 	.elementor-video-container {
 		position: absolute;
-		width: 100%;
+		width: 50%;
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
+	}
+
+
+	.elementor-swiper-button {
+		opacity: 0.5;
+		transition: $transition-hover;
+
+		&:hover {
+			opacity: 0.9;
+		}
+
+
+		&-prev {
+			left: 40px;
+		}
+
+		&-next {
+			right: 40px;
+		}
 	}
 }
