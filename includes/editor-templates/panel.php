@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
 	<div id="elementor-panel-footer-exit" class="elementor-panel-footer-tool" title="<?php _e( 'Exit', 'elementor' ); ?>">
-		<i class="eicon-close"></i>
+		<i class="fa fa-times"></i>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<a id="elementor-panel-footer-view-page" class="elementor-panel-footer-sub-menu-item" href="<?php the_permalink(); ?>" target="_blank">
