@@ -34,7 +34,7 @@ class Widget_Video extends Widget_Base {
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
 					'vimeo' => __( 'Vimeo', 'elementor' ),
-					//'hosted' => __( 'HTML5 Video', 'elementor' ),
+					// 'hosted' => __( 'HTML5 Video', 'elementor' ),
 				],
 			]
 		);

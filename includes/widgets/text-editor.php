@@ -84,21 +84,21 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-	    $this->add_control(
-	        'text_color',
-	        [
-	            'label' => __( 'Text Color', 'elementor' ),
-	            'type' => Controls_Manager::COLOR,
-	            'default' => '',
-	            'selectors' => [
-	                '{{WRAPPER}}' => 'color: {{VALUE}};',
-	            ],
-	            'scheme' => [
-		            'type' => Scheme_Color::get_type(),
-		            'value' => Scheme_Color::COLOR_3,
-	            ],
-	        ]
-	    );
+		$this->add_control(
+			'text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
