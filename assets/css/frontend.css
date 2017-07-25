@@ -204,6 +204,21 @@
     .elementor-custom-embed-play.elementor-playing i:before {
       content: "\f1ce"; }
 
+.elementor-swiper-button {
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  font-size: 25px;
+  color: #fff;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+          transform: translateY(-50%); }
+  .elementor-swiper-button-prev {
+    left: 40px; }
+  .elementor-swiper-button-next {
+    right: 40px; }
+
 @media (max-width: 1024px) {
   .elementor-tablet-align-center {
     text-align: center; }
@@ -2350,20 +2365,6 @@ button.swiper-pagination-bullet {
   .elementor-lightbox .dialog-lightbox-close-button:hover {
     opacity: 0.9; }
 
-.elementor-lightbox .elementor-swiper-button {
-  font-size: 25px;
-  color: #ffffff;
-  opacity: 0.5;
-  -webkit-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s; }
-  .elementor-lightbox .elementor-swiper-button:hover {
-    opacity: 0.9; }
-  .elementor-lightbox .elementor-swiper-button-prev {
-    left: 40px; }
-  .elementor-lightbox .elementor-swiper-button-next {
-    right: 40px; }
-
 .elementor-lightbox .swiper-container {
   height: 100%; }
 
@@ -2392,12 +2393,24 @@ button.swiper-pagination-bullet {
 
 .elementor-lightbox .elementor-video-container {
   position: absolute;
-  width: 100%;
+  width: 50%;
   top: 50%;
   left: 50%;
   -webkit-transform: translateX(-50%) translateY(-50%);
       -ms-transform: translateX(-50%) translateY(-50%);
           transform: translateX(-50%) translateY(-50%); }
+
+.elementor-lightbox .elementor-swiper-button {
+  opacity: 0.5;
+  -webkit-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s; }
+  .elementor-lightbox .elementor-swiper-button:hover {
+    opacity: 0.9; }
+  .elementor-lightbox .elementor-swiper-button-prev {
+    left: 40px; }
+  .elementor-lightbox .elementor-swiper-button-next {
+    right: 40px; }
 
 .animated {
   -webkit-animation-duration: 1.25s;
