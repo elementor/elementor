@@ -3,7 +3,7 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Compatibility {
 

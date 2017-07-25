@@ -4,7 +4,7 @@ namespace Elementor\System_Info\Classes;
 use Elementor\Api;
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Server_Reporter extends Base_Reporter {
 

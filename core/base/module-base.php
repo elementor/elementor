@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Core\Base;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Module_Base {
 

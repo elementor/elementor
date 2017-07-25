@@ -4,7 +4,7 @@ namespace Elementor\System_Info;
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 use Elementor\System_Info\Helpers\Model_Helper;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Main {
 
