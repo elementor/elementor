@@ -59,9 +59,12 @@ var	Manager = function() {
 		self.doItem( requiredIndex );
 
 		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
+		// If element exist - render again, maybe the settings has been changed
+		if ( self.findView( panel.getCurrentPageView().model.get( 'id' ) ) ) {
 			panel.getCurrentPageView().render();
+		} else {
+			// If the the element isn't exist - show the history panel
+			elementor.getPanelView().setPage( 'historyPage' );
 		}
 	};
 
@@ -70,8 +73,8 @@ var	Manager = function() {
 			Z_KEY = 90;
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: function() {
-				return items.length;
+			isWorthHandling: function( event ) {
+				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]');
 			},
 			handle: function( event ) {
 				navigate( Z_KEY === event.which && event.shiftKey );
