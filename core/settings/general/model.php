@@ -20,7 +20,7 @@ class Model extends BaseModel {
 		return [
 			'title' => __( 'Global Settings', 'elementor' ),
 			'menu' => [
-				'icon' => 'fa fa-cog',
+				'icon' => 'fa fa-cogs',
 				'beforeItem' => 'revision-history',
 			],
 		];
@@ -81,10 +81,11 @@ class Model extends BaseModel {
 				'lightbox' => [
 					'label' => __( 'Lightbox', 'elementor' ),
 					'controls' => [
-						'elementor_open_images_in_lightbox' => [
+						'elementor_global_image_lightbox' => [
 							'label' => __( 'Image Lightbox', 'elementor' ),
 							'type' => Controls_Manager::SWITCHER,
 							'default' => 'yes',
+							'description' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
 							'frontend_available' => true,
 						],
 						'elementor_lightbox_color' => [
@@ -109,6 +110,7 @@ class Model extends BaseModel {
 							'selectors' => [
 								'.elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
+							'description' => __( 'The content width is relevant for video and other content types and does not affect the image width.', 'elementor' ),
 						],
 					],
 				],
