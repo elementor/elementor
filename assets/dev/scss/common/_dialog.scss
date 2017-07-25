@@ -68,6 +68,18 @@
 	font-weight: 500;
 }
 
+.dialog-close-button {
+	cursor: pointer;
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	font-size: 15px;
+
+	&:not(:hover) {
+		opacity: .4;
+	}
+}
+
 .dialog-options-widget,
 .dialog-confirm-widget {
 
