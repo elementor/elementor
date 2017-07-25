@@ -375,7 +375,7 @@ class Widget_Testimonial extends Widget_Base {
 				<div class="elementor-testimonial-content">
 					{{{ settings.testimonial_content }}}
 				</div>
-		    <# } #>
+			<# } #>
 
 			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">
