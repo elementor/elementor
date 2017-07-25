@@ -1,9 +1,15 @@
 module.exports = Marionette.Behavior.extend( {
-	onBeforeRender: function() {
-		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
-	},
-
 	oldValues: [],
+
+	listenerAttached: false,
+
+	// use beforeRender that runs after the settingsModel is exist
+	onBeforeRender: function() {
+		if ( ! this.listenerAttached ) {
+			this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
+			this.listenerAttached = true;
+		}
+	},
 
 	saveTextHistory: function( model, changed, control ) {
 		var changedAttributes = {};

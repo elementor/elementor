@@ -6,7 +6,8 @@ var HistoryCollection = require( './collection' ),
 var	Manager = function() {
 	var self = this,
 		currentItemID,
-		items = new HistoryCollection();
+		items = new HistoryCollection(),
+		active = true;
 
 	var translations = {
 		add: elementor.translate( 'added' ),
@@ -113,7 +114,13 @@ var	Manager = function() {
 
 	};
 
-	this.trackingMode = true;
+	this.setActive = function( value ) {
+		active = value;
+	};
+
+	this.getActive = function() {
+		return active;
+	};
 
 	this.getItems = function() {
 		return items;
@@ -128,7 +135,7 @@ var	Manager = function() {
 	};
 
 	this.addItem = function( itemData ) {
-		if ( ! this.trackingMode ) {
+		if ( ! this.getActive() ) {
 			return;
 		}
 
@@ -179,7 +186,7 @@ var	Manager = function() {
 
 	this.doItem = function( index ) {
 		// Don't track wile restore the item
-		this.trackingMode = false;
+		this.setActive( false );
 
 		var item = items.at( index );
 
@@ -189,7 +196,7 @@ var	Manager = function() {
 			this.redoItem( index );
 		}
 
-		this.trackingMode = true;
+		this.setActive( true );
 	};
 
 	this.undoItem = function( index ) {

@@ -5178,7 +5178,7 @@ ImagesManager = function() {
 					self.onceTriggerChange( image.model );
 				}
 
-				return ;
+				return;
 			}
 
 			// If it's a new dropped widget
@@ -10436,9 +10436,13 @@ module.exports = ViewModule;
 
 },{"./module":116}],118:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
+	listenerAttached: false,
+
+	// use beforeRender that runs after the collection is exist
 	onBeforeRender: function() {
-		if ( this.view.collection ) {
+		if ( this.view.collection && ! this.listenerAttached ) {
 			this.view.collection.on( 'update', this.saveCollectionHistory, this );
+			this.listenerAttached = true;
 		}
 	},
 
@@ -10570,11 +10574,17 @@ module.exports = Backbone.Collection.extend( {
 
 },{"./item":122}],120:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
-	onBeforeRender: function() {
-		this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
-	},
-
 	oldValues: [],
+
+	listenerAttached: false,
+
+	// use beforeRender that runs after the settingsModel is exist
+	onBeforeRender: function() {
+		if ( ! this.listenerAttached ) {
+			this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', this.saveHistory );
+			this.listenerAttached = true;
+		}
+	},
 
 	saveTextHistory: function( model, changed, control ) {
 		var changedAttributes = {};
@@ -10726,7 +10736,8 @@ var HistoryCollection = require( './collection' ),
 var	Manager = function() {
 	var self = this,
 		currentItemID,
-		items = new HistoryCollection();
+		items = new HistoryCollection(),
+		active = true;
 
 	var translations = {
 		add: elementor.translate( 'added' ),
@@ -10833,7 +10844,13 @@ var	Manager = function() {
 
 	};
 
-	this.trackingMode = true;
+	this.setActive = function( value ) {
+		active = value;
+	};
+
+	this.getActive = function() {
+		return active;
+	};
 
 	this.getItems = function() {
 		return items;
@@ -10848,7 +10865,7 @@ var	Manager = function() {
 	};
 
 	this.addItem = function( itemData ) {
-		if ( ! this.trackingMode ) {
+		if ( ! this.getActive() ) {
 			return;
 		}
 
@@ -10899,7 +10916,7 @@ var	Manager = function() {
 
 	this.doItem = function( index ) {
 		// Don't track wile restore the item
-		this.trackingMode = false;
+		this.setActive( false );
 
 		var item = items.at( index );
 
@@ -10909,7 +10926,7 @@ var	Manager = function() {
 			this.redoItem( index );
 		}
 
-		this.trackingMode = true;
+		this.setActive( true );
 	};
 
 	this.undoItem = function( index ) {

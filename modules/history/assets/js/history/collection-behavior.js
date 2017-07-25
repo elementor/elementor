@@ -1,7 +1,11 @@
 module.exports = Marionette.Behavior.extend( {
+	listenerAttached: false,
+
+	// use beforeRender that runs after the collection is exist
 	onBeforeRender: function() {
-		if ( this.view.collection ) {
+		if ( this.view.collection && ! this.listenerAttached ) {
 			this.view.collection.on( 'update', this.saveCollectionHistory, this );
+			this.listenerAttached = true;
 		}
 	},
 
