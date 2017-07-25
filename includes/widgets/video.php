@@ -162,7 +162,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'yt_mute',
 			[
-				'label' => __( 'Mute Audio', 'elementor' ),
+				'label' => __( 'Mute', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type' => 'youtube',
