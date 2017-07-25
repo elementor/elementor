@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Widget_Video extends Widget_Base {
 
@@ -34,7 +34,7 @@ class Widget_Video extends Widget_Base {
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
 					'vimeo' => __( 'Vimeo', 'elementor' ),
-					//'hosted' => __( 'HTML5 Video', 'elementor' ),
+					// 'hosted' => __( 'HTML5 Video', 'elementor' ),
 				],
 			]
 		);
@@ -551,7 +551,7 @@ class Widget_Video extends Widget_Base {
 						$this->add_render_attribute( 'image_overlay_link', [
 							'href' => $settings['image_overlay']['url'],
 							'class' => 'elementor-clickable',
-							'data-open-in-lightbox' => 'yes',
+							'data-open-lightbox' => 'yes',
 							'data-elementor-lightbox' => [
 								'type' => 'video',
 								'url' => Embed::get_embed_url( $video_link, $embed_params ),

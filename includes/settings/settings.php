@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Settings extends Settings_Page {
 
@@ -184,13 +184,14 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 								],
 							],
-							'open_images_in_lightbox' => [
+							'global_image_lightbox' => [
 								'label' => __( 'Image Lightbox', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'std' => 'yes',
-									'sub_desc' => __( 'Determine whether to open all images in lightbox or not.', 'elementor' ),
+									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
+									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
 								],
 							],
 						],
