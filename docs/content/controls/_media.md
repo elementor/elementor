@@ -1,7 +1,13 @@
 # Media (Image)
 A control that allows the user to select an image from the WordPress media library. 
 
-*Returns:* `array( 'id' => (string), 'url' => (string) )`
+*Returns:* Array
+```php
+[
+    'id' => (string),
+    'url' => (string)
+]
+```
 
 ## Example
 
