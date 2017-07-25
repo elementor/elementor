@@ -159,6 +159,17 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'yt_mute',
+			[
+				'label' => __( 'Mute Audio', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
+
 		// Vimeo
 		$this->add_control(
 			'vimeo_autoplay',
@@ -581,7 +592,7 @@ class Widget_Video extends Widget_Base {
 		$params = [];
 
 		if ( 'youtube' === $settings['video_type'] ) {
-			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
+			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo', 'mute' ];
 
 			foreach ( $youtube_options as $option ) {
 				if ( 'autoplay' === $option && $this->has_image_overlay() )
