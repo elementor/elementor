@@ -50,7 +50,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		this.ui.slider.slider( 'destroy' );
+		if ( this.ui.slider.data( 'uiSlider' ) ) {
+			this.ui.slider.slider( 'destroy' );
+		}
+
 		this.$el.remove();
 	}
 } );
