@@ -45,7 +45,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( 1 === changed.length ) {
 			var control = model.controls[ changed[0] ];
 
-			if ( 'text' === control.type || 'textarea' === control.type ) {
+			if ( 'text' === control.type || 'textarea' === control.type || 'wysiwyg' === control.type ) {
 
 				// Text fields - save only on blur, set the callback once on first change
 				if ( ! self.oldValues[ control.name ] ) {
@@ -54,15 +54,16 @@ module.exports = Marionette.Behavior.extend( {
 					var panelView = elementor.getPanelView().getCurrentPageView(),
 						controlModel = panelView.collection.findWhere( { name: control.name } ),
 						view = panelView.children.findByModel( controlModel ),
-						$input = view.$el.find( ':input' );
+						callback = function() {
+							self.saveTextHistory( model, changed, control );
+							delete self.oldValues[ control.name ];
+					};
 
-					$input.on( 'blur.history', function() {
-						self.saveTextHistory( model, changed, control );
-
-						delete self.oldValues[ control.name ];
-
-						$input.off( 'blur.history' );
-					} );
+					if ( 'wysiwyg' === control.type ) {
+						tinymce.activeEditor.once( 'blur', callback );
+					} else {
+						view.$el.find( ':input' ).one( 'blur', callback );
+					}
 				}
 
 				return;
