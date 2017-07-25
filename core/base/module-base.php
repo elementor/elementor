@@ -2,7 +2,7 @@
 namespace Elementor\Core\Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 abstract class Module_Base {
