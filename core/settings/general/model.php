@@ -78,9 +78,15 @@ class Model extends BaseModel {
 				],
 			],
 			Manager::PANEL_TAB_LIGHTBOX => [
-				'lightbox_style' => [
-					'label' => __( 'Style', 'elementor' ),
+				'lightbox' => [
+					'label' => __( 'Lightbox', 'elementor' ),
 					'controls' => [
+						'elementor_open_images_in_lightbox' => [
+							'label' => __( 'Image Lightbox', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
 						'elementor_lightbox_color' => [
 							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
@@ -103,17 +109,6 @@ class Model extends BaseModel {
 							'selectors' => [
 								'.elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
-						],
-					],
-				],
-				'lightbox_settings' => [
-					'label' => __( 'Settings', 'elementor' ),
-					'controls' => [
-						'elementor_open_images_in_lightbox' => [
-							'label' => __( 'Image Lightbox', 'elementor' ),
-							'type' => Controls_Manager::SWITCHER,
-							'default' => 'yes',
-							'frontend_available' => true,
 						],
 					],
 				],
