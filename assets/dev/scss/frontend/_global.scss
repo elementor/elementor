@@ -162,6 +162,24 @@
 	}
 }
 
+.elementor-swiper-button {
+	position: absolute;
+	z-index: 1;
+	cursor: pointer;
+	font-size: 25px;
+	color: #fff;
+	top: 50%;
+	transform: translateY(-50%);
+
+	&-prev {
+		left: 40px;
+	}
+
+	&-next {
+		right: 40px;
+	}
+}
+
 // Alignment for Tablet
 @media (max-width: $screen-md-max) {
 
