@@ -110,7 +110,7 @@ class Model extends BaseModel {
 					'label' => __( 'Settings', 'elementor' ),
 					'controls' => [
 						'elementor_open_images_in_lightbox' => [
-							'label' => __( 'Open Images In Lightbox', 'elementor' ),
+							'label' => __( 'Image Lightbox', 'elementor' ),
 							'type' => Controls_Manager::SWITCHER,
 							'default' => 'yes',
 							'frontend_available' => true,
