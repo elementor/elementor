@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 abstract class Group_Control_Base implements Group_Control_Interface {
 

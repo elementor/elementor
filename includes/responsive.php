@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Responsive {
 	const BREAKPOINT_OPTION_PREFIX = 'elementor_viewport_';

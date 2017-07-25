@@ -5,7 +5,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Manager {
 

@@ -7,7 +7,7 @@ use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Global_CSS_File;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Manager extends BaseManager {
 

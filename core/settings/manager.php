@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Settings;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Manager {
 	/**

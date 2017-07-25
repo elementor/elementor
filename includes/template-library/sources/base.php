@@ -4,7 +4,7 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Plugin;
 use Elementor\Utils;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 abstract class Source_Base {
 
