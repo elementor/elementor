@@ -9155,7 +9155,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		this.ui.slider.slider( 'destroy' );
+		if ( this.ui.slider.data( 'uiSlider' ) ) {
+			this.ui.slider.slider( 'destroy' );
+		}
+
 		this.$el.remove();
 	}
 } );
@@ -10620,7 +10623,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( 1 === changed.length ) {
 			var control = model.controls[ changed[0] ];
 
-			if ( 'text' === control.type || 'textarea' === control.type ) {
+			if ( 'text' === control.type || 'textarea' === control.type || 'wysiwyg' === control.type ) {
 
 				// Text fields - save only on blur, set the callback once on first change
 				if ( ! self.oldValues[ control.name ] ) {
@@ -10629,15 +10632,16 @@ module.exports = Marionette.Behavior.extend( {
 					var panelView = elementor.getPanelView().getCurrentPageView(),
 						controlModel = panelView.collection.findWhere( { name: control.name } ),
 						view = panelView.children.findByModel( controlModel ),
-						$input = view.$el.find( ':input' );
+						callback = function() {
+							self.saveTextHistory( model, changed, control );
+							delete self.oldValues[ control.name ];
+					};
 
-					$input.on( 'blur.history', function() {
-						self.saveTextHistory( model, changed, control );
-
-						delete self.oldValues[ control.name ];
-
-						$input.off( 'blur.history' );
-					} );
+					if ( 'wysiwyg' === control.type ) {
+						tinymce.activeEditor.once( 'blur', callback );
+					} else {
+						view.$el.find( ':input' ).one( 'blur', callback );
+					}
 				}
 
 				return;
@@ -10789,9 +10793,12 @@ var	Manager = function() {
 		self.doItem( requiredIndex );
 
 		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
+		// If element exist - render again, maybe the settings has been changed
+		if ( self.findView( panel.getCurrentPageView().model.get( 'id' ) ) ) {
 			panel.getCurrentPageView().render();
+		} else {
+			// If the the element isn't exist - show the history panel
+			elementor.getPanelView().setPage( 'historyPage' );
 		}
 	};
 
@@ -10800,8 +10807,8 @@ var	Manager = function() {
 			Z_KEY = 90;
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: function() {
-				return items.length;
+			isWorthHandling: function( event ) {
+				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]');
 			},
 			handle: function( event ) {
 				navigate( Z_KEY === event.which && event.shiftKey );
