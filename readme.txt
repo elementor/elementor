@@ -184,6 +184,10 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.6.0 RC1 - Available For Beta Testing
+* [Read more about v1.6](https://github.com/pojome/elementor/issues/2077)
+* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
+
 = 1.5.5 - 18.07.2017 =
 * Fix! - Page Settings data gets corrupted on revision save ([#2031](https://github.com/pojome/elementor/issues/2031))
 
