@@ -50,7 +50,7 @@ ImagesManager = function() {
 					self.onceTriggerChange( image.model );
 				}
 
-				return ;
+				return;
 			}
 
 			// If it's a new dropped widget
