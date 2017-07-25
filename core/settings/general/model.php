@@ -4,7 +4,7 @@ namespace Elementor\Core\Settings\General;
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Model extends BaseModel {
 

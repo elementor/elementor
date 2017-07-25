@@ -9,7 +9,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Source_Local extends Source_Base {
 

@@ -5,7 +5,7 @@ use Elementor\CSS_File;
 use Elementor\Plugin;
 use Elementor\Utils;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 abstract class Manager {
 
