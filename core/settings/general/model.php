@@ -18,7 +18,7 @@ class Model extends BaseModel {
 
 	public function get_panel_page_settings() {
 		return [
-			'title' => __( 'General Settings', 'elementor' ),
+			'title' => __( 'Global Settings', 'elementor' ),
 			'menu' => [
 				'icon' => 'fa fa-cog',
 				'beforeItem' => 'revision-history',
@@ -29,7 +29,7 @@ class Model extends BaseModel {
 	public static function get_controls_list() {
 
 		return [
-			Manager::PANEL_TAB_GENERAL_STYLE => [
+			Controls_Manager::TAB_STYLE => [
 				'style' => [
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
@@ -78,9 +78,15 @@ class Model extends BaseModel {
 				],
 			],
 			Manager::PANEL_TAB_LIGHTBOX => [
-				'lightbox_style' => [
-					'label' => __( 'Style', 'elementor' ),
+				'lightbox' => [
+					'label' => __( 'Lightbox', 'elementor' ),
 					'controls' => [
+						'elementor_open_images_in_lightbox' => [
+							'label' => __( 'Image Lightbox', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
 						'elementor_lightbox_color' => [
 							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
@@ -103,17 +109,6 @@ class Model extends BaseModel {
 							'selectors' => [
 								'.elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
-						],
-					],
-				],
-				'lightbox_settings' => [
-					'label' => __( 'Settings', 'elementor' ),
-					'controls' => [
-						'elementor_open_images_in_lightbox' => [
-							'label' => __( 'Open Images In Lightbox', 'elementor' ),
-							'type' => Controls_Manager::SWITCHER,
-							'default' => 'yes',
-							'frontend_available' => true,
 						],
 					],
 				],

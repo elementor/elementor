@@ -159,6 +159,17 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'yt_mute',
+			[
+				'label' => __( 'Mute Audio', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
+
 		// Vimeo
 		$this->add_control(
 			'vimeo_autoplay',
@@ -409,6 +420,14 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'play_icon_text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -532,6 +551,7 @@ class Widget_Video extends Widget_Base {
 						$this->add_render_attribute( 'image_overlay_link', [
 							'href' => $settings['image_overlay']['url'],
 							'class' => 'elementor-clickable',
+							'data-open-in-lightbox' => 'yes',
 							'data-elementor-lightbox' => [
 								'type' => 'video',
 								'url' => Embed::get_embed_url( $video_link, $embed_params ),
@@ -572,7 +592,7 @@ class Widget_Video extends Widget_Base {
 		$params = [];
 
 		if ( 'youtube' === $settings['video_type'] ) {
-			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo' ];
+			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo', 'mute' ];
 
 			foreach ( $youtube_options as $option ) {
 				if ( 'autoplay' === $option && $this->has_image_overlay() )

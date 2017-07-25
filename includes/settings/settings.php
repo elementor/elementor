@@ -185,7 +185,7 @@ class Settings extends Settings_Page {
 								],
 							],
 							'open_images_in_lightbox' => [
-								'label' => __( 'Open Images In Lightbox', 'elementor' ),
+								'label' => __( 'Image Lightbox', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
 									'value' => 'yes',
