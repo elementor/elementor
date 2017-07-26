@@ -353,7 +353,7 @@ class Source_Local extends Source_Base {
 		/*
 		 * Check if file is a json or a .zip archive
 		 */
-		if ( $zip->open( $import_file ) === true ) {
+		if ( true === $zip->open( $import_file ) ) {
 			$wp_upload_dir = wp_upload_dir();
 
 			$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR . '/' . uniqid();
