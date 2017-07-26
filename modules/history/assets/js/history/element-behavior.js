@@ -3,6 +3,10 @@ module.exports = Marionette.Behavior.extend( {
 
 	listenerAttached: false,
 
+	initialize: function() {
+		this.lazySaveHistory = _.debounce( _.bind( this.lazySaveHistory, this ), 800 );
+	},
+
 	// use beforeRender that runs after the settingsModel is exist
 	onBeforeRender: function() {
 		if ( ! this.listenerAttached ) {
@@ -11,7 +15,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	saveTextHistory: function( model, changed, control ) {
+	lazySaveHistory: function( model, changed, control ) {
 		var changedAttributes = {};
 
 		changedAttributes[ control.name ] = {
@@ -32,6 +36,8 @@ module.exports = Marionette.Behavior.extend( {
 		};
 
 		elementor.history.history.addItem( historyItem );
+
+		delete this.oldValues[ control.name ];
 	},
 
 	saveHistory: function( model ) {
@@ -45,29 +51,13 @@ module.exports = Marionette.Behavior.extend( {
 		if ( 1 === changed.length ) {
 			var control = model.controls[ changed[0] ];
 
-			if ( 'text' === control.type || 'textarea' === control.type || 'wysiwyg' === control.type ) {
-
-				// Text fields - save only on blur, set the callback once on first change
-				if ( ! self.oldValues[ control.name ] ) {
-					self.oldValues[ control.name ] = model.previous( control.name );
-
-					var panelView = elementor.getPanelView().getCurrentPageView(),
-						controlModel = panelView.collection.findWhere( { name: control.name } ),
-						view = panelView.children.findByModel( controlModel ),
-						callback = function() {
-							self.saveTextHistory( model, changed, control );
-							delete self.oldValues[ control.name ];
-					};
-
-					if ( 'wysiwyg' === control.type ) {
-						tinymce.activeEditor.once( 'blur', callback );
-					} else {
-						view.$el.find( ':input' ).one( 'blur', callback );
-					}
-				}
-
-				return;
+			if ( ! self.oldValues[ control.name ] ) {
+				self.oldValues[ control.name ] = model.previous( control.name );
 			}
+
+			self.lazySaveHistory( model, changed, control );
+
+			return;
 		}
 
 		var changedAttributes = {};
@@ -115,9 +105,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				settings.set( key, values['new'] );
+				settings.setExternalChange( key, values['new'] );
 			} else {
-				settings.set( key, values.old );
+				settings.setExternalChange( key, values.old );
 			}
 		} );
 
