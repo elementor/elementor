@@ -79,6 +79,16 @@ class Compatibility {
 
 			return $tabs;
 		} );
+
+		// Copy elementor data while polylang creates a translation copy
+		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
+	}
+
+	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
+
+		Plugin::$instance->db->copy_elementor_meta( $from, $to );
+
+		return $keys;
 	}
 
 	/**
