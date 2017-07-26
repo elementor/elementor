@@ -348,10 +348,12 @@ class Source_Local extends Source_Base {
 
 		$items = [];
 
+		$zip = new \ZipArchive();
+
 		/*
 		 * Check if file is a json or a .zip archive
 		 */
-		if ( ( $zip = new \ZipArchive() )->open( $import_file ) === true ) {
+		if ( true === $zip->open( $import_file ) ) {
 			$wp_upload_dir = wp_upload_dir();
 
 			$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR . '/' . uniqid();
