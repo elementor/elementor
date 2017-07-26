@@ -8,7 +8,7 @@ The control also accepts a `range` argument that allows you to set the `min`, `m
 ```php
 [
     'size' => (number),
-    'unit' => (string)
+    'unit' => (string),
 ]
 ```
 

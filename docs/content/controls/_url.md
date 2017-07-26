@@ -6,7 +6,7 @@ A url field with a `show_external` option that shows a button that allows the us
 [
     'url' => (string),
     'is_external' => (bool),
-    'nofollow' => (bool)
+    'nofollow' => (bool),
 ]
 ```
 
