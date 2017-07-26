@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Widget_Base extends Element_Base {
 
@@ -114,11 +116,13 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_initial_config() {
 
-		return array_merge( parent::_get_initial_config(), [
-			'widget_type' => $this->get_name(),
-			'keywords' => $this->get_keywords(),
-			'categories' => $this->get_categories(),
-		] );
+		return array_merge(
+			parent::_get_initial_config(), [
+				'widget_type' => $this->get_name(),
+				'keywords' => $this->get_keywords(),
+				'categories' => $this->get_categories(),
+			]
+		);
 	}
 
 	final public function print_template() {
@@ -207,10 +211,12 @@ abstract class Widget_Base extends Element_Base {
 	protected function _add_render_attributes() {
 		parent::_add_render_attributes();
 
-		$this->add_render_attribute( '_wrapper', 'class', [
-			'elementor-widget',
-			'elementor-widget-' . $this->get_name(),
-		] );
+		$this->add_render_attribute(
+			'_wrapper', 'class', [
+				'elementor-widget',
+				'elementor-widget-' . $this->get_name(),
+			]
+		);
 
 		$settings = $this->get_settings();
 
@@ -269,8 +275,9 @@ abstract class Widget_Base extends Element_Base {
 
 	public function get_skin( $skin_id ) {
 		$skins = $this->get_skins();
-		if ( isset( $skins[ $skin_id ] ) )
+		if ( isset( $skins[ $skin_id ] ) ) {
 			return $skins[ $skin_id ];
+		}
 
 		return false;
 	}

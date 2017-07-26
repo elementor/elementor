@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_WordPress extends Widget_Base {
 
@@ -71,7 +73,7 @@ class Widget_WordPress extends Widget_Base {
 				$this->_widget_instance = $wp_widget_factory->widgets[ $this->_widget_name ];
 				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
 			} elseif ( class_exists( $this->_widget_name ) ) {
-				$this->_widget_instance = new $this->_widget_name;
+				$this->_widget_instance = new $this->_widget_name();
 				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
 			}
 		}

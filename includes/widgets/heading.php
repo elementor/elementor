@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Heading extends Widget_Base {
 
@@ -140,8 +142,8 @@ class Widget_Heading extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-				    'type' => Scheme_Color::get_type(),
-				    'value' => Scheme_Color::COLOR_1,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
@@ -172,8 +174,9 @@ class Widget_Heading extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		if ( empty( $settings['title'] ) )
+		if ( empty( $settings['title'] ) ) {
 			return;
+		}
 
 		$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title' );
 

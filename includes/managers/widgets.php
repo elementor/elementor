@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widgets_Manager {
 	/**
@@ -61,7 +63,7 @@ class Widgets_Manager {
 	private function _register_wp_widgets() {
 		global $wp_widget_factory;
 
-		// Skip Pojo widgets
+		// Skip Pojo widgets.
 		$pojo_allowed_widgets = [
 			'Pojo_Widget_Recent_Posts',
 			'Pojo_Widget_Posts_Group',
@@ -76,7 +78,7 @@ class Widgets_Manager {
 			'Pojo_Widget_WC_Product_Categories',
 		];
 
-		// Allow themes/plugins to filter out their widgets
+		// Allow themes/plugins to filter out their widgets.
 		$black_list = apply_filters( 'elementor/widgets/black_list', [] );
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
@@ -91,7 +93,11 @@ class Widgets_Manager {
 
 			$elementor_widget_class = __NAMESPACE__ . '\Widget_WordPress';
 
-			$this->register_widget_type( new $elementor_widget_class( [], [ 'widget_name' => $widget_class ] ) );
+			$this->register_widget_type(
+				new $elementor_widget_class( [], [
+					'widget_name' => $widget_class,
+				] )
+			);
 		}
 	}
 
@@ -158,8 +164,13 @@ class Widgets_Manager {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
-		// Override the global $post for the render
-		query_posts( [ 'p' => $_POST['post_id'], 'post_type' => 'any' ] );
+		// Override the global $post for the render.
+		query_posts(
+			[
+				'p' => $_POST['post_id'],
+				'post_type' => 'any',
+			]
+		);
 
 		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 

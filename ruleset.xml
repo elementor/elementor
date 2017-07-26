@@ -15,5 +15,8 @@
 		<exclude name="Squiz.Commenting.FileComment.Missing" />
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
+		<exclude name="Squiz.Commenting.ClassComment.Missing" />
+		<exclude name="Squiz.Commenting.VariableComment.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 	</rule>
 </ruleset>

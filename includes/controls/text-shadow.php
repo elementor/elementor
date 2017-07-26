@@ -1,16 +1,18 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A Text Shadow set of controls
  *
  * @param array  $default    {
- * 		@type integer $horizontal Default 0
- * 		@type integer $vertical   Default 0
- * 		@type integer $blur       Default 10
- * 		@type string  $color      Shadow color, in rgb|rgba|hex format.
+ *      @type integer $horizontal Default 0
+ *      @type integer $vertical   Default 0
+ *      @type integer $blur       Default 10
+ *      @type string  $color      Shadow color, in rgb|rgba|hex format.
  * }
  *
  * @since 1.0.0
@@ -71,7 +73,8 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 				<input data-setting="color" class="elementor-shadow-color-picker" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
 			</div>
 		</div>
-		<?php foreach ( $this->get_sliders() as $slider_name => $slider ) :
+		<?php
+		foreach ( $this->get_sliders() as $slider_name => $slider ) :
 			$control_uid = $this->get_control_uid( $slider_name );
 			?>
 			<div class="elementor-shadow-slider">

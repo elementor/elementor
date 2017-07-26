@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 ?>
 <!DOCTYPE html>
@@ -32,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 					<div class="elementor-loader-box"></div>
 					<div class="elementor-loader-box"></div>
 				</div>
-				<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ) ?></div>
+				<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
 			</div>
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">

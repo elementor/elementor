@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Utils {
 
@@ -41,22 +43,27 @@ class Utils {
 	 * @return void
 	 */
 	public static function do_not_cache() {
-		if ( ! defined( 'DONOTCACHEPAGE' ) )
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 			define( 'DONOTCACHEPAGE', true );
+		}
 
-		if ( ! defined( 'DONOTCACHEDB' ) )
+		if ( ! defined( 'DONOTCACHEDB' ) ) {
 			define( 'DONOTCACHEDB', true );
+		}
 
-		if ( ! defined( 'DONOTMINIFY' ) )
+		if ( ! defined( 'DONOTMINIFY' ) ) {
 			define( 'DONOTMINIFY', true );
+		}
 
-		if ( ! defined( 'DONOTCDN' ) )
+		if ( ! defined( 'DONOTCDN' ) ) {
 			define( 'DONOTCDN', true );
+		}
 
-		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
 			define( 'DONOTCACHCEOBJECT', true );
+		}
 
-		// Set the headers to prevent caching for the different browsers
+		// Set the headers to prevent caching for the different browsers.
 		nocache_headers();
 	}
 
@@ -64,7 +71,7 @@ class Utils {
 		$current_offset = (float) get_option( 'gmt_offset' );
 		$timezone_string = get_option( 'timezone_string' );
 
-		// Create a UTC+- zone if no timezone string exists
+		// Create a UTC+- zone if no timezone string exists.
 		if ( empty( $timezone_string ) ) {
 			if ( 0 === $current_offset ) {
 				$timezone_string = 'UTC+0';

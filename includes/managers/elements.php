@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Elements_Manager {
 	/**
@@ -18,9 +20,9 @@ class Elements_Manager {
 	}
 
 	/**
-	 * @param array $element_data
+	 * @param array        $element_data
 	 *
-	 * @param array $element_args
+	 * @param array        $element_args
 	 *
 	 * @param Element_Base $element_type
 	 *
@@ -145,13 +147,17 @@ class Elements_Manager {
 
 		$return_data = [];
 
-		$latest_revision = Revisions_Manager::get_revisions( $_POST['post_id'], [
-			'posts_per_page' => 1,
-		] );
+		$latest_revision = Revisions_Manager::get_revisions(
+			$_POST['post_id'], [
+				'posts_per_page' => 1,
+			]
+		);
 
-		$all_revision_ids = Revisions_Manager::get_revisions( $_POST['post_id'], [
-			'fields' => 'ids',
-		], false );
+		$all_revision_ids = Revisions_Manager::get_revisions(
+			$_POST['post_id'], [
+				'fields' => 'ids',
+			], false
+		);
 
 		if ( ! empty( $latest_revision ) ) {
 			$return_data['last_revision'] = $latest_revision[0];

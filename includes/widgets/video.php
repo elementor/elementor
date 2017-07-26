@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Video extends Widget_Base {
 
@@ -106,7 +108,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		// YouTube
+		// YouTube.
 		$this->add_control(
 			'yt_autoplay',
 			[
@@ -170,7 +172,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		// Vimeo
+		// Vimeo.
 		$this->add_control(
 			'vimeo_autoplay',
 			[
@@ -246,63 +248,6 @@ class Widget_Video extends Widget_Base {
 				],
 			]
 		);
-
-		// Self Hosted
-		//$this->add_control(
-		//	'hosted_width',
-		//	[
-		//		'label' => __( 'Width', 'elementor' ),
-		//		'type' => Controls_Manager::NUMBER,
-		//		'default' => '640',
-		//		'condition' => [
-		//			'video_type' => 'hosted',
-		//		],
-		//	]
-		//);
-		//
-		//$this->add_control(
-		//	'hosted_height',
-		//	[
-		//		'label' => __( 'Height', 'elementor' ),
-		//		'type' => Controls_Manager::NUMBER,
-		//		'default' => '360',
-		//		'condition' => [
-		//			'video_type' => 'hosted',
-		//		],
-		//	]
-		//);
-		//
-		//$this->add_control(
-		//	'hosted_autoplay',
-		//	[
-		//		'label' => __( 'Autoplay', 'elementor' ),
-		//		'type' => Controls_Manager::SELECT,
-		//		'options' => [
-		//			'no' => __( 'No', 'elementor' ),
-		//			'yes' => __( 'Yes', 'elementor' ),
-		//		],
-		//		'default' => 'no',
-		//		'condition' => [
-		//			'video_type' => 'hosted',
-		//		],
-		//	]
-		//);
-		//
-		//$this->add_control(
-		//	'hosted_loop',
-		//	[
-		//		'label' => __( 'Loop', 'elementor' ),
-		//		'type' => Controls_Manager::SELECT,
-		//		'options' => [
-		//			'no' => __( 'No', 'elementor' ),
-		//			'yes' => __( 'Yes', 'elementor' ),
-		//		],
-		//		'default' => 'no',
-		//		'condition' => [
-		//			'video_type' => 'hosted',
-		//		],
-		//	]
-		//);
 
 		$this->add_control(
 			'view',
@@ -512,8 +457,9 @@ class Widget_Video extends Widget_Base {
 
 		$video_link = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
-		if ( empty( $video_link ) )
+		if ( empty( $video_link ) ) {
 			return;
+		}
 
 		$embed_params = $this->get_embed_params();
 
@@ -547,7 +493,8 @@ class Widget_Video extends Widget_Base {
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
-					<?php if ( $settings['lightbox'] ) :
+					<?php
+					if ( $settings['lightbox'] ) :
 						$this->add_render_attribute( 'image_overlay_link', [
 							'href' => $settings['image_overlay']['url'],
 							'class' => 'elementor-clickable',
@@ -595,8 +542,9 @@ class Widget_Video extends Widget_Base {
 			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo', 'mute' ];
 
 			foreach ( $youtube_options as $option ) {
-				if ( 'autoplay' === $option && $this->has_image_overlay() )
+				if ( 'autoplay' === $option && $this->has_image_overlay() ) {
 					continue;
+				}
 
 				$value = ( 'yes' === $settings[ 'yt_' . $option ] ) ? '1' : '0';
 				$params[ $option ] = $value;
@@ -609,8 +557,9 @@ class Widget_Video extends Widget_Base {
 			$vimeo_options = [ 'autoplay', 'loop', 'title', 'portrait', 'byline' ];
 
 			foreach ( $vimeo_options as $option ) {
-				if ( 'autoplay' === $option && $this->has_image_overlay() )
+				if ( 'autoplay' === $option && $this->has_image_overlay() ) {
 					continue;
+				}
 
 				$value = ( 'yes' === $settings[ 'vimeo_' . $option ] ) ? '1' : '0';
 				$params[ $option ] = $value;
