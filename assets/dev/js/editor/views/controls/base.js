@@ -216,6 +216,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 	onSettingsExternalChange: function() {
 		this.applySavedValue();
+		this.triggerMethod( 'after:external:change' );
 	},
 
 	renderResponsiveSwitchers: function() {
