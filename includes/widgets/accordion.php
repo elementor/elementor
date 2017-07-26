@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Accordion extends Widget_Base {
 
@@ -241,8 +243,7 @@ class Widget_Accordion extends Widget_Base {
 		$settings = $this->get_settings();
 		?>
 		<div class="elementor-accordion" role="tablist">
-			<?php
-			$counter = 1; ?>
+			<?php $counter = 1; ?>
 			<?php foreach ( $settings['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
 					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>" role="tab">
@@ -255,7 +256,8 @@ class Widget_Accordion extends Widget_Base {
 				</div>
 			<?php
 				$counter++;
-			endforeach; ?>
+			endforeach;
+			?>
 		</div>
 		<?php
 	}

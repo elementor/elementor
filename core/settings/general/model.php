@@ -4,7 +4,9 @@ namespace Elementor\Core\Settings\General;
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Model extends BaseModel {
 
@@ -125,10 +127,12 @@ class Model extends BaseModel {
 
 			foreach ( $sections as $section_name => $section_data ) {
 
-				$this->start_controls_section( $section_name, [
-					'label' => $section_data['label'],
-					'tab' => $tab_name,
-				] );
+				$this->start_controls_section(
+					$section_name, [
+						'label' => $section_data['label'],
+						'tab' => $tab_name,
+					]
+				);
 
 				foreach ( $section_data['controls'] as $control_name => $control_data ) {
 					$this->add_control( $control_name, $control_data );

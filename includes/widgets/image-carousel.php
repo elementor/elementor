@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Image_Carousel extends Widget_Base {
 
@@ -58,7 +60,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Slides to Show', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [ '' => __( 'Default', 'elementor' ) ] + $slides_to_show,
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+				] + $slides_to_show,
 				'frontend_available' => true,
 			]
 		);
@@ -557,8 +561,9 @@ class Widget_Image_Carousel extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		if ( empty( $settings['carousel'] ) )
+		if ( empty( $settings['carousel'] ) ) {
 			return;
+		}
 
 		$slides = [];
 

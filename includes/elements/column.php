@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Element_Column extends Element_Base {
 
@@ -39,7 +41,7 @@ class Element_Column extends Element_Base {
 	}
 
 	protected function _register_controls() {
-		// Section Layout
+		// Section Layout.
 		$this->start_controls_section(
 			'layout',
 			[
@@ -116,7 +118,9 @@ class Element_Column extends Element_Base {
 			'nav',
 		];
 
-		$options = [ '' => __( 'Default', 'elementor' ) ] + array_combine( $possible_tags, $possible_tags );
+		$options = [
+			'' => __( 'Default', 'elementor' ),
+		] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
@@ -195,7 +199,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Column Background Overlay
+		// Section Column Background Overlay.
 		$this->start_controls_section(
 			'section_background_overlay',
 			[
@@ -423,7 +427,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Typography
+		// Section Typography.
 		$this->start_controls_section(
 			'section_typo',
 			[
@@ -520,7 +524,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Advanced
+		// Section Advanced.
 		$this->start_controls_section(
 			'section_advanced',
 			[
@@ -730,10 +734,15 @@ class Element_Column extends Element_Base {
 		$settings = $this->get_settings();
 
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
-		                          in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+
+		$column_wrap_class = 'elementor-column-wrap';
+		if ( $this->get_children() ) {
+			$column_wrap_class .= ' elementor-element-populated';
+		}
 		?>
-		<<?php echo $this->get_html_tag() . ' ' .  $this->get_render_attribute_string( '_wrapper' ); ?>>
-			<div class="elementor-column-wrap<?php if ( $this->get_children() ) echo ' elementor-element-populated'; ?>">
+		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
+			<div class="<?php echo $column_wrap_class; ?>">
 			<?php if ( $has_background_overlay ) : ?>
 				<div class="elementor-background-overlay"></div>
 			<?php endif; ?>
@@ -758,11 +767,13 @@ class Element_Column extends Element_Base {
 
 		$settings = $this->get_settings();
 
-		$this->add_render_attribute( '_wrapper', 'class', [
-			'elementor-column',
-			'elementor-col-' . $settings['_column_size'],
-			'elementor-' . $column_type . '-column',
-		] );
+		$this->add_render_attribute(
+			'_wrapper', 'class', [
+				'elementor-column',
+				'elementor-col-' . $settings['_column_size'],
+				'elementor-' . $column_type . '-column',
+			]
+		);
 
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
 	}

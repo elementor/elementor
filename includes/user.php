@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class User {
 
@@ -14,25 +16,31 @@ class User {
 	}
 
 	public static function is_current_user_can_edit( $post_id = 0 ) {
-		if ( empty( $post_id ) )
+		if ( empty( $post_id ) ) {
 			$post_id = get_the_ID();
+		}
 
-		if ( ! Utils::is_post_type_support( $post_id ) )
+		if ( ! Utils::is_post_type_support( $post_id ) ) {
 			return false;
+		}
 
-		if ( 'trash' === get_post_status( $post_id ) )
+		if ( 'trash' === get_post_status( $post_id ) ) {
 			return false;
+		}
 
 		$post_type_object = get_post_type_object( get_post_type( $post_id ) );
-		if ( empty( $post_type_object ) )
+		if ( empty( $post_type_object ) ) {
 			return false;
+		}
 
-		if ( ! isset( $post_type_object->cap->edit_post ) )
+		if ( ! isset( $post_type_object->cap->edit_post ) ) {
 			return false;
+		}
 
 		$edit_cap = $post_type_object->cap->edit_post;
-		if ( ! current_user_can( $edit_cap, $post_id ) )
+		if ( ! current_user_can( $edit_cap, $post_id ) ) {
 			return false;
+		}
 
 		if ( get_option( 'page_for_posts' ) === $post_id ) {
 			return false;
@@ -42,8 +50,9 @@ class User {
 		$exclude_roles = get_option( 'elementor_exclude_user_roles', [] );
 
 		$compare_roles = array_intersect( $user->roles, $exclude_roles );
-		if ( ! empty( $compare_roles ) )
+		if ( ! empty( $compare_roles ) ) {
 			return false;
+		}
 
 		return true;
 	}
@@ -54,19 +63,22 @@ class User {
 
 	public static function is_user_notice_viewed( $notice_id ) {
 		$notices = self::_get_user_notices();
-		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) )
+		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) ) {
 			return false;
+		}
 
 		return true;
 	}
 
 	public static function ajax_set_admin_notice_viewed() {
-		if ( empty( $_POST['notice_id'] ) )
+		if ( empty( $_POST['notice_id'] ) ) {
 			die;
+		}
 
 		$notices = self::_get_user_notices();
-		if ( empty( $notices ) )
+		if ( empty( $notices ) ) {
 			$notices = [];
+		}
 
 		$notices[ $_POST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
@@ -122,10 +134,10 @@ class User {
 		return [
 			'active' => true,
 			'title' => '<div id="elementor-introduction-title">' .
-			           __( 'Two Minute Tour Of Elementor', 'elementor' ) .
-			           '</div><div id="elementor-introduction-subtitle">' .
-			           __( 'Watch this quick tour that gives you a basic understanding of how to use Elementor.', 'elementor' ) .
-			           '</div>',
+					   __( 'Two Minute Tour Of Elementor', 'elementor' ) .
+					   '</div><div id="elementor-introduction-subtitle">' .
+					   __( 'Watch this quick tour that gives you a basic understanding of how to use Elementor.', 'elementor' ) .
+					   '</div>',
 			'content' => '<div class="elementor-video-wrapper"><iframe src="https://www.youtube.com/embed/6u45V2q1s4k?autoplay=1&rel=0&showinfo=0" frameborder="0" allowfullscreen></iframe></div>',
 			'delay' => 2500,
 			'version' => 1,

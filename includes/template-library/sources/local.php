@@ -9,7 +9,9 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Source_Local extends Source_Base {
 
@@ -232,7 +234,7 @@ class Source_Local extends Source_Base {
 
 		$template_id = $args['template_id'];
 
-		// TODO: Validate the data (in JS too!)
+		// TODO: Validate the data (in JS too!).
 		if ( 'display' === $context ) {
 			$content = $db->get_builder( $template_id );
 		} else {
@@ -265,12 +267,12 @@ class Source_Local extends Source_Base {
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
 
-		// Clear buffering just in case
+		// Clear buffering just in case.
 		@ob_end_clean();
 
 		flush();
 
-		// Output file contents
+		// Output file contents.
 		echo $file_data['content'];
 
 		die;
@@ -343,8 +345,9 @@ class Source_Local extends Source_Base {
 	public function import_template() {
 		$import_file = $_FILES['file']['tmp_name'];
 
-		if ( empty( $import_file ) )
+		if ( empty( $import_file ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
+		}
 
 		$items = [];
 
@@ -491,7 +494,7 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		// TODO: since 1.5.0 to content container named `content` instead of `data`.
 		if ( ! empty( $data['data'] ) ) {
 			$content = $data['data'];
 		} else {
@@ -534,12 +537,15 @@ class Source_Local extends Source_Base {
 	}
 
 	private function prepare_template_export( $template_id ) {
-		$template_data = $this->get_data( [ 'template_id' => $template_id ], 'raw' );
+		$template_data = $this->get_data( [
+			'template_id' => $template_id,
+		], 'raw' );
 
-		if ( empty( $template_data['content'] ) )
+		if ( empty( $template_data['content'] ) ) {
 			return new \WP_Error( '404', 'The template does not exist' );
+		}
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`
+		// TODO: since 1.5.0 to content container named `content` instead of `data`.
 		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
 		$template_type = self::get_template_type( $template_id );
@@ -585,7 +591,7 @@ class Source_Local extends Source_Base {
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 
-			// template library bulk actions
+			// template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
 

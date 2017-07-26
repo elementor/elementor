@@ -5,7 +5,9 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Manager {
 
@@ -113,14 +115,13 @@ class Manager {
 	}
 
 	public function update_template( array $template_data ) {
-		// TODO: Temp patch since 1.5.0
+		// TODO: Temp patch since 1.5.0.
 		if ( isset( $template_data['data'] ) ) {
 			$template_data['content'] = $template_data['data'];
 
 			unset( $template_data['data'] );
 		}
-		// END Patch
-
+		// END Patch.
 		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -200,7 +201,7 @@ class Manager {
 	}
 
 	public function export_template( array $args ) {
-		// TODO: Add nonce for security
+		// TODO: Add nonce for security.
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -213,7 +214,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		// If you reach this line, the export was not successful
+		// If you reach this line, the export was not successful.
 		return $source->export_template( $args['template_id'] );
 	}
 

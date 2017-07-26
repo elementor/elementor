@@ -3,7 +3,9 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Compatibility {
 
@@ -17,27 +19,28 @@ class Compatibility {
 	}
 
 	public static function init() {
-		// Hotfix for NextGEN Gallery plugin
+		// Hotfix for NextGEN Gallery plugin.
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
 			add_filter( 'elementor/utils/get_edit_link', function( $edit_link ) {
 				return add_query_arg( 'display_gallery_iframe', '', $edit_link );
 			} );
 		}
 
-		// Hack for Ninja Forms
+		// Hack for Ninja Forms.
 		if ( class_exists( '\Ninja_Forms' ) && class_exists( '\NF_Display_Render' ) ) {
 			add_action( 'elementor/preview/enqueue_styles', function() {
 				ob_start();
 
-				\NF_Display_Render::localize( 0 );
+					\NF_Display_Render::localize( 0 );
 
-				ob_clean();
+					ob_clean();
 
-				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
-			} );
+					wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
+				}
+			);
 		}
 
-		// Exclude our Library from sitemap.xml in Yoast SEO plugin
+		// Exclude our Library from sitemap.xml in Yoast SEO plugin.
 		add_filter( 'wpseo_sitemaps_supported_post_types', function( $post_types ) {
 			unset( $post_types[ Source_Local::CPT ] );
 
@@ -52,7 +55,7 @@ class Compatibility {
 			return $retval;
 		}, 10, 2 );
 
-		// Disable optimize files in Editor from Autoptimize plugin
+		// Disable optimize files in Editor from Autoptimize plugin.
 		add_filter( 'autoptimize_filter_noptimize', function( $retval ) {
 			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$retval = true;
@@ -61,7 +64,7 @@ class Compatibility {
 			return $retval;
 		} );
 
-		// Add the description (content) tab for a new product, so it can be edited with Elementor
+		// Add the description (content) tab for a new product, so it can be edited with Elementor.
 		add_filter( 'woocommerce_product_tabs', function( $tabs ) {
 			if ( ! isset( $tabs['description'] ) && Plugin::$instance->preview->is_preview_mode() ) {
 				$post = get_post();
@@ -105,7 +108,6 @@ class Compatibility {
 	 *
 	 * @return array
 	 */
-
 	public static function on_wxr_importer_pre_process_post_meta( $post_meta ) {
 		if ( '_elementor_data' === $post_meta['key'] ) {
 			$post_meta['value'] = wp_slash( $post_meta['value'] );

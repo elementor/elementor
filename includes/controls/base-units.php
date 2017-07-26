@@ -1,20 +1,22 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A group of Dimensions settings (Top, Right, Bottom, Left) With the option to link them together
  *
  * @param array  $default {
- * 		@type integer       $top                     Default empty
- * 		@type integer       $right                   Default empty
- * 		@type integer       $bottom                  Default empty
- * 		@type integer       $left                    Default empty
- * 		@type string        $unit                    The selected CSS Unit. 'px', '%', 'em'
- * 		                               				 Default 'px'
- * 		@type bool          $isLinked                Whether to link them together ( prevent set different values )
- * 		                               				 Default true
+ *      @type integer       $top                     Default empty
+ *      @type integer       $right                   Default empty
+ *      @type integer       $bottom                  Default empty
+ *      @type integer       $left                    Default empty
+ *      @type string        $unit                    The selected CSS Unit. 'px', '%', 'em'
+ *                                                   Default 'px'
+ *      @type bool          $isLinked                Whether to link them together ( prevent set different values )
+ *                                                   Default true
  * }
  *
  * @param array        $size_units              Array of available CSS Units like 'px', '%', 'em'
@@ -23,9 +25,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *                                              Default 'all'
  * @param array  $range {
  *     {
- * 		@type integer $min        The minimum value of range
- * 		@type integer $max        The maximum value of range
- * 		@type integer $step       The interval that the slider moves on
+ *      @type integer $min        The minimum value of range
+ *      @type integer $max        The maximum value of range
+ *      @type integer $step       The interval that the slider moves on
  *    },
  *    ...
  * }
