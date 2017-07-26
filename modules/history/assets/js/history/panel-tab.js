@@ -57,6 +57,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.updateCurrentItem( childView.$el );
 
-		this.render();
+		if ( ! this.isDestroyed ) {
+			this.render();
+		}
 	}
 } );
