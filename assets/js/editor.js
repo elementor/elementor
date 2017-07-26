@@ -2273,6 +2273,10 @@ EditorView = ControlsStack.extend( {
 		return ControlsStack.prototype.isVisibleSectionControl.apply( this, arguments ) && elementor.helpers.isActiveControl( sectionControlModel, this.model.get( 'settings' ).attributes );
 	},
 
+	scrollToEditedElement: function() {
+		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ) );
+	},
+
 	onBeforeRender: function() {
 		var controls = elementor.getElementControls( this.model );
 
@@ -2307,14 +2311,7 @@ EditorView = ControlsStack.extend( {
 	onDeviceModeChange: function() {
 		ControlsStack.prototype.onDeviceModeChange.apply( this, arguments );
 
-		var self = this;
-
-		// Timeout according to preview resize css animation duration
-		setTimeout( function() {
-			elementor.$previewContents.find( 'html, body' ).animate( {
-				scrollTop: self.getOption( 'editedElementView' ).$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
-			} );
-		}, 500 );
+		this.scrollToEditedElement();
 	},
 
 	onChildviewSettingsChange: function( childView ) {
@@ -4961,7 +4958,16 @@ helpers = {
 		}
 
 		return $element.wpColorPicker( defaultOptions );
-	}
+	},
+
+	scrollToView: function( view ) {
+		// Timeout according to preview resize css animation duration
+		setTimeout( function() {
+			elementor.$previewContents.find( 'html, body' ).animate( {
+				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
+			} );
+		}, 500 );
+	},
 };
 
 module.exports = helpers;
@@ -7757,6 +7763,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 	onSettingsExternalChange: function() {
 		this.applySavedValue();
+		this.triggerMethod( 'after:external:change' );
 	},
 
 	renderResponsiveSwitchers: function() {
@@ -7924,6 +7931,10 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 		} else if ( ! this.model.get( 'toggle' ) ) {
 			this.ui.inputs.first().prop( 'checked', true ).trigger( 'change' );
 		}
+	},
+
+	onAfterExternalChange: function() {
+		this.render();
 	}
 } );
 
@@ -8011,6 +8022,10 @@ ControlColorItemView = ControlBaseItemView.extend( {
 		} ).wpColorPicker( 'instance' )
 			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );
+	},
+
+	onAfterExternalChange: function() {
+		this.render();
 	},
 
 	onBeforeDestroy: function() {
@@ -8202,6 +8217,10 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		this.updateDimensions();
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onLinkDimensionsClicked: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -8284,6 +8303,10 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		    .toggleClass( 'elementor-gallery-empty', ! hasImages );
 
 		this.initRemoveDialog();
+	},
+
+	onAfterExternalChange: function() {
+		this.render();
 	},
 
 	hasImages: function() {
@@ -8534,6 +8557,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	openFrame: function() {
 		if ( ! this.frame ) {
 			this.initFrame();
@@ -8674,6 +8701,10 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 		ControlMultipleBaseItemView.prototype.onRender.apply( this, arguments );
 
 		this.changeLabelTitle();
+	},
+
+	onAfterExternalChange: function() {
+		this.render();
 	},
 
 	onInputChange: function() {
@@ -8923,6 +8954,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.toggleMinRowsClass();
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onSortStart: function( event, ui ) {
 		ui.item.data( 'oldIndex', ui.item.index() );
 	},
@@ -9091,6 +9126,10 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		this.ui.select.select2( this.getSelect2Options() );
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onBeforeDestroy: function() {
 		if ( this.ui.select.data( 'select2' ) ) {
 			this.ui.select.select2( 'destroy' );
@@ -9152,6 +9191,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		} else if ( 'unit' === dataChanged ) {
 			this.resetSize();
 		}
+	},
+
+	onAfterExternalChange: function() {
+		this.render();
 	},
 
 	onBeforeDestroy: function() {
@@ -9406,6 +9449,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
+	},
+
+	onAfterExternalChange: function() {
+		tinymce.get( this.editorID ).setContent( this.getControlValue() );
 	},
 
 	onBeforeDestroy: function() {
@@ -10581,6 +10628,10 @@ module.exports = Marionette.Behavior.extend( {
 
 	listenerAttached: false,
 
+	initialize: function() {
+		this.lazySaveHistory = _.debounce( _.bind( this.lazySaveHistory, this ), 800 );
+	},
+
 	// use beforeRender that runs after the settingsModel is exist
 	onBeforeRender: function() {
 		if ( ! this.listenerAttached ) {
@@ -10589,7 +10640,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	saveTextHistory: function( model, changed, control ) {
+	lazySaveHistory: function( model, changed, control ) {
 		var changedAttributes = {};
 
 		changedAttributes[ control.name ] = {
@@ -10610,6 +10661,8 @@ module.exports = Marionette.Behavior.extend( {
 		};
 
 		elementor.history.history.addItem( historyItem );
+
+		delete this.oldValues[ control.name ];
 	},
 
 	saveHistory: function( model ) {
@@ -10623,29 +10676,13 @@ module.exports = Marionette.Behavior.extend( {
 		if ( 1 === changed.length ) {
 			var control = model.controls[ changed[0] ];
 
-			if ( 'text' === control.type || 'textarea' === control.type || 'wysiwyg' === control.type ) {
-
-				// Text fields - save only on blur, set the callback once on first change
-				if ( ! self.oldValues[ control.name ] ) {
-					self.oldValues[ control.name ] = model.previous( control.name );
-
-					var panelView = elementor.getPanelView().getCurrentPageView(),
-						controlModel = panelView.collection.findWhere( { name: control.name } ),
-						view = panelView.children.findByModel( controlModel ),
-						callback = function() {
-							self.saveTextHistory( model, changed, control );
-							delete self.oldValues[ control.name ];
-					};
-
-					if ( 'wysiwyg' === control.type ) {
-						tinymce.activeEditor.once( 'blur', callback );
-					} else {
-						view.$el.find( ':input' ).one( 'blur', callback );
-					}
-				}
-
-				return;
+			if ( ! self.oldValues[ control.name ] ) {
+				self.oldValues[ control.name ] = model.previous( control.name );
 			}
+
+			self.lazySaveHistory( model, changed, control );
+
+			return;
 		}
 
 		var changedAttributes = {};
@@ -10693,9 +10730,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				settings.set( key, values['new'] );
+				settings.setExternalChange( key, values['new'] );
 			} else {
-				settings.set( key, values.old );
+				settings.setExternalChange( key, values.old );
 			}
 		} );
 
@@ -10791,15 +10828,6 @@ var	Manager = function() {
 		}
 
 		self.doItem( requiredIndex );
-
-		var panel = elementor.getPanelView();
-		// If element exist - render again, maybe the settings has been changed
-		if ( self.findView( panel.getCurrentPageView().model.get( 'id' ) ) ) {
-			panel.getCurrentPageView().render();
-		} else {
-			// If the the element isn't exist - show the history panel
-			elementor.getPanelView().setPage( 'historyPage' );
-		}
 	};
 
 	var addHotKeys = function() {
@@ -10922,7 +10950,7 @@ var	Manager = function() {
 	};
 
 	this.doItem = function( index ) {
-		// Don't track wile restore the item
+		// Don't track while restore the item
 		this.setActive( false );
 
 		var item = items.at( index );
@@ -10934,6 +10962,33 @@ var	Manager = function() {
 		}
 
 		this.setActive( true );
+
+		var panel = elementor.getPanelView(),
+			panelPage = panel.getCurrentPageView();
+
+		if ( 'editor' === panel.getCurrentPageName() ) {
+			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
+				// If the the element isn't exist - show the history panel
+				panel.setPage( 'historyPage' );
+			} else {
+				// If element exist - render again, maybe the settings has been changed
+				// editor.render();
+				panelPage.scrollToEditedElement();
+			}
+		} else {
+			if ( 'historyPage' === panel.getCurrentPageName() ) {
+				panelPage.render();
+			}
+
+			// Try scroll to affected element.
+			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
+				var modelID = item.get( 'items' ).first().get( 'history' ).behavior.view.model.get( 'id' ),
+					view = self.findView( modelID ) ;
+				if ( view ) {
+					elementor.helpers.scrollToView( view );
+				}
+			}
+		}
 	};
 
 	this.undoItem = function( index ) {
@@ -11111,7 +11166,9 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.updateCurrentItem( childView.$el );
 
-		this.render();
+		if ( ! this.isDestroyed ) {
+			this.render();
+		}
 	}
 } );
 
