@@ -29,6 +29,8 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [Dimensions](_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
 * [Font](_font.md) - Choose a font from the Google font library. (coming soon)
 * [Icon](_icon.md) - Choose icon within the font-awesome library. (coming soon)
+* [Box Shadow](_box-shadow.md) - Add a shadow effect to your element.
+* [Text Shadow](_text-shadow.md) - Add a shadow effect to a text inside your element.
 * [Entrance Animation](_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 

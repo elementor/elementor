@@ -3,7 +3,7 @@ namespace Elementor\Core\Settings\Page;
 
 use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
-use \Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Post_CSS_File;
 
