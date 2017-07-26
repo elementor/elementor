@@ -36,7 +36,6 @@ class Widget_Video extends Widget_Base {
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
 					'vimeo' => __( 'Vimeo', 'elementor' ),
-					// 'hosted' => __( 'HTML5 Video', 'elementor' ),
 				],
 			]
 		);
@@ -465,7 +464,7 @@ class Widget_Video extends Widget_Base {
 
 		$video_html = Embed::get_embed_html( $video_link, $embed_params );
 
-		if ( ! $video_html ) {
+		if ( empty( $video_html ) ) {
 			echo $video_link;
 
 			return;

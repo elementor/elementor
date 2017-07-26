@@ -33,7 +33,7 @@ class Widget_WordPress extends Widget_Base {
 		if ( $this->_is_pojo_widget() ) {
 			$category = 'pojo';
 		} else {
-			$category = 'wordpress';
+			$category = 'wordpress'; // WPCS: spelling ok.
 		}
 		return [ $category ];
 	}
@@ -54,8 +54,8 @@ class Widget_WordPress extends Widget_Base {
 
 		ob_start();
 		echo '<div class="widget-inside media-widget-control"><div class="form wp-core-ui">';
-		echo '<input type="hidden" class="id_base" value="' . $instance->id_base . '" />';
-		echo '<input type="hidden" class="widget-id" value="widget-' . $this->get_id() . '" />';
+		echo '<input type="hidden" class="id_base" value="' . esc_attr( $instance->id_base ) . '" />';
+		echo '<input type="hidden" class="widget-id" value="widget-' . esc_attr( $this->get_id() ) . '" />';
 		echo '<div class="widget-content">';
 		$instance->form( $this->get_settings( 'wp' ) );
 		echo '</div></div></div>';

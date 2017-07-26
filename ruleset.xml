@@ -19,4 +19,10 @@
 		<exclude name="Squiz.Commenting.VariableComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 	</rule>
+
+	<rule ref="WordPress.WP.DeprecatedFunctions">
+		<properties>
+			<property name="minimum_supported_version" value="4.5" />
+		</properties>
+	</rule>
 </ruleset>
