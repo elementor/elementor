@@ -206,7 +206,16 @@ helpers = {
 		}
 
 		return $element.wpColorPicker( defaultOptions );
-	}
+	},
+
+	scrollToView: function( view ) {
+		// Timeout according to preview resize css animation duration
+		setTimeout( function() {
+			elementor.$previewContents.find( 'html, body' ).animate( {
+				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
+			} );
+		}, 500 );
+	},
 };
 
 module.exports = helpers;
