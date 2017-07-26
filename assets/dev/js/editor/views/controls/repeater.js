@@ -109,6 +109,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.toggleMinRowsClass();
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onSortStart: function( event, ui ) {
 		ui.item.data( 'oldIndex', ui.item.index() );
 	},

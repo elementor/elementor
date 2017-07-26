@@ -15,6 +15,10 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		this.ui.select.select2( this.getSelect2Options() );
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onBeforeDestroy: function() {
 		if ( this.ui.select.data( 'select2' ) ) {
 			this.ui.select.select2( 'destroy' );

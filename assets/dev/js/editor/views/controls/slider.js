@@ -49,6 +49,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		}
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onBeforeDestroy: function() {
 		if ( this.ui.slider.data( 'uiSlider' ) ) {
 			this.ui.slider.slider( 'destroy' );

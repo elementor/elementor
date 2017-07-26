@@ -17,6 +17,10 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			.removeAttr( 'maxlength' );
 	},
 
+	onAfterExternalChange: function() {
+		this.render();
+	},
+
 	onBeforeDestroy: function() {
 		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
 			this.ui.input.wpColorPicker( 'close' );
