@@ -57,15 +57,6 @@ var	Manager = function() {
 		}
 
 		self.doItem( requiredIndex );
-
-		var panel = elementor.getPanelView();
-		// If element exist - render again, maybe the settings has been changed
-		if ( self.findView( panel.getCurrentPageView().model.get( 'id' ) ) ) {
-			panel.getCurrentPageView().render();
-		} else {
-			// If the the element isn't exist - show the history panel
-			elementor.getPanelView().setPage( 'historyPage' );
-		}
 	};
 
 	var addHotKeys = function() {
@@ -188,7 +179,7 @@ var	Manager = function() {
 	};
 
 	this.doItem = function( index ) {
-		// Don't track wile restore the item
+		// Don't track while restore the item
 		this.setActive( false );
 
 		var item = items.at( index );
@@ -200,6 +191,33 @@ var	Manager = function() {
 		}
 
 		this.setActive( true );
+
+		var panel = elementor.getPanelView(),
+			panelPage = panel.getCurrentPageView();
+
+		if ( 'editor' === panel.getCurrentPageName() ) {
+			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
+				// If the the element isn't exist - show the history panel
+				panel.setPage( 'historyPage' );
+			} else {
+				// If element exist - render again, maybe the settings has been changed
+				// editor.render();
+				panelPage.scrollToEditedElement();
+			}
+		} else {
+			if ( 'historyPage' === panel.getCurrentPageName() ) {
+				panelPage.render();
+			}
+
+			// Try scroll to affected element.
+			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
+				var modelID = item.get( 'items' ).first().get( 'history' ).behavior.view.model.get( 'id' ),
+					view = self.findView( modelID ) ;
+				if ( view ) {
+					elementor.helpers.scrollToView( view );
+				}
+			}
+		}
 	};
 
 	this.undoItem = function( index ) {
