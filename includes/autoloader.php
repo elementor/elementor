@@ -39,7 +39,6 @@ class Autoloader {
 		'Images_Manager' => 'includes/managers/image.php',
 		'Maintenance' => 'includes/maintenance.php',
 		'Maintenance_Mode' => 'includes/maintenance-mode.php',
-		'PageSettings\Manager' => 'includes/page-settings/manager.php',
 		'Post_CSS_File' => 'includes/css-file/post-css-file.php',
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',
