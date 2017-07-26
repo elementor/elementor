@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Widget_Image_Carousel extends Widget_Base {
 
@@ -130,6 +130,23 @@ class Widget_Image_Carousel extends Widget_Base {
 					'link_to' => 'custom',
 				],
 				'show_label' => false,
+			]
+		);
+
+		$this->add_control(
+			'open_lightbox',
+			[
+				'label' => __( 'Lightbox', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'link_to' => 'file',
+				],
 			]
 		);
 
@@ -555,7 +572,13 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( $link ) {
 				$link_key = 'link_' . $index;
 
-				$this->add_render_attribute( $link_key, 'href', $link );
+				$this->add_render_attribute( $link_key, [
+					'href' => $link['url'],
+					'class' => 'elementor-clickable',
+					'data-open-lightbox' => $settings['open_lightbox'],
+					'data-elementor-lightbox-slideshow' => $this->get_id(),
+					'data-elementor-lightbox-index' => $index,
+				] );
 
 				if ( ! empty( $link['is_external'] ) ) {
 					$this->add_render_attribute( $link_key, 'target', '_blank' );
@@ -620,6 +643,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( empty( $instance['link']['url'] ) ) {
 				return false;
 			}
+
 			return $instance['link'];
 		}
 

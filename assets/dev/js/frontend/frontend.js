@@ -10,17 +10,20 @@
 
 	var ElementorFrontend = function() {
 		var self = this,
-			dialogsManager,
-			scopeWindow = window;
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
 		this.Module = Module;
 
 		var initElements = function() {
-			elements.$document = $( self.getScopeWindow().document );
+			elements.$document = $( document );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.window = window;
+
+			elements.$window = $( window );
 		};
 
 		var initOnReadyComponents = function() {
@@ -33,22 +36,24 @@
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var getSiteSettings = function( settingType, settingName ) {
+			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
+
+			if ( settingName ) {
+				return settingsObject[ settingName ];
+			}
+
+			return settingsObject;
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
 			initElements();
 
-			$( window ).trigger( 'elementor/frontend/init' );
+			elements.$window.trigger( 'elementor/frontend/init' );
 
 			initOnReadyComponents();
-		};
-
-		this.getScopeWindow = function() {
-			return scopeWindow;
-		};
-
-		this.setScopeWindow = function( window ) {
-			scopeWindow = window;
 		};
 
 		this.getElements = function( element ) {
@@ -65,6 +70,14 @@
 			}
 
 			return dialogsManager;
+		};
+
+		this.getPageSettings = function( settingName ) {
+			return getSiteSettings( 'page', settingName );
+		};
+
+		this.getGeneralSettings = function( settingName ) {
+			return getSiteSettings( 'general', settingName );
 		};
 
 		this.isEditMode = function() {
@@ -118,7 +131,7 @@
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = $( self.getScopeWindow() );
+				to = self.getElements( '$window' );
 			}
 
 			if ( ! self.isEditMode() ) {

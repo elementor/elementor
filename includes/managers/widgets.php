@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Widgets_Manager {
 	/**
@@ -60,8 +60,6 @@ class Widgets_Manager {
 
 	private function _register_wp_widgets() {
 		global $wp_widget_factory;
-
-		include( ELEMENTOR_PATH . 'includes/widgets/wordpress.php' );
 
 		// Skip Pojo widgets
 		$pojo_allowed_widgets = [
@@ -161,7 +159,9 @@ class Widgets_Manager {
 		}
 
 		// Override the global $post for the render
-		$GLOBALS['post'] = get_post( (int) $_POST['post_id'] );
+		query_posts( [ 'p' => $_POST['post_id'], 'post_type' => 'any' ] );
+
+		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 
 		$data = json_decode( stripslashes( $_POST['data'] ), true );
 

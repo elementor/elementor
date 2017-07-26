@@ -94,10 +94,10 @@
 		left: 0;
 		position: absolute;
 	}
+}
 
-	.elementor-invisible {
-		visibility: hidden;
-	}
+.elementor-invisible {
+	visibility: hidden;
 }
 
 // Alignment Classes
@@ -135,31 +135,6 @@
 	}
 }
 
-// Lightbox Modal
-.elementor-lightbox-modal {
-
-	.dialog- {
-
-		&widget-content {
-			background: none;
-			box-shadow: none;
-
-			@media (max-width: $screen-sm-max) {
-				width: 100%;
-			}
-
-			@media (min-width: $screen-lg-min) {
-				width: 50%;
-			}
-		}
-
-		&close-button {
-			top: 12px;
-			right: 0;
-		}
-	}
-}
-
 .elementor-custom-embed-play {
 	position: absolute;
 	top: 50%;
@@ -169,30 +144,39 @@
 	i {
 		font-size: 100px;
 		color: #fff;
-		opacity: 0.7;
-		text-shadow: 3px 2px 24px rgba(0, 0, 0, 0.5);
+		opacity: 0.8;
+		text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 		transition: all .5s;
-	}
-
-	&:not(.elementor-playing) {
-
-		i {
-
-			&:before {
-				content: "\f01d";
-			}
-		}
 	}
 
 	&.elementor-playing {
 
 		i {
+			font-family: 'FontAwesome';
 			animation: fa-spin 2s infinite linear;
 
 			&:before {
 				content: "\f1ce";
 			}
 		}
+	}
+}
+
+.elementor-swiper-button {
+	position: absolute;
+	z-index: 1;
+	cursor: pointer;
+	font-size: 25px;
+	color: #fff;
+	top: 50%;
+	transform: translateY(-50%);
+
+	&-prev {
+		left: 40px;
+	}
+
+	&-next {
+		right: 40px;
 	}
 }
 
@@ -275,7 +259,7 @@
 // Admin Bar - Icon (Front-End)
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
 	content: "\e800";
-	font-family: eicon;
+	font-family: eicons;
 	font-size: 12px;
 	margin-top: 5px;
 }

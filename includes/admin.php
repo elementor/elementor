@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Admin {
 
@@ -20,7 +20,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.1',
+			'3.2.3',
 			true
 		);
 

@@ -4,6 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.8
 Stable tag: 1.5.5
+Beta tag: 1.6.0-RC1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -182,6 +183,10 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.6.0 RC1 - Available For Beta Testing
+* [Read more about v1.6](https://github.com/pojome/elementor/issues/2077)
+* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
 
 = 1.5.5 - 18.07.2017 =
 * Fix! - Page Settings data gets corrupted on revision save ([#2031](https://github.com/pojome/elementor/issues/2031))

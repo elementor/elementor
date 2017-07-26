@@ -4,7 +4,7 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Api;
 use Elementor\PageSettings\Page;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Source_Remote extends Source_Base {
 

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 abstract class Element_Base extends Controls_Stack {
 
@@ -182,6 +182,10 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( is_array( $key ) ) {
 			foreach ( $key as $attribute_key => $attributes ) {
+				if ( is_array( $attributes ) ) {
+					$attributes = wp_json_encode( $attributes );
+				}
+
 				$this->add_render_attribute( $element, $attribute_key, $attributes, $overwrite );
 			}
 
@@ -224,7 +228,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	public function print_element() {
-		$this->enqueue_scripts();
+		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+			$this->enqueue_scripts();
+		}
 
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
@@ -272,18 +278,6 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->_is_type_instance;
 	}
 
-	final public function get_frontend_settings_keys() {
-		$controls = [];
-
-		foreach ( $this->get_controls() as $control ) {
-			if ( ! empty( $control['frontend_available'] ) ) {
-				$controls[] = $control['name'];
-			}
-		}
-
-		return $controls;
-	}
-
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
@@ -313,13 +307,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
-
-			foreach ( $frontend_settings as $key => $setting ) {
-				if ( in_array( $setting, [ null, '' ], true ) ) {
-					unset( $frontend_settings[ $key ] );
-				}
-			}
+			$frontend_settings = $this->get_frontend_settings();
 
 			if ( $frontend_settings ) {
 				$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );

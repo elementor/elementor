@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 abstract class Controls_Stack {
 
@@ -28,11 +28,15 @@ abstract class Controls_Stack {
 	 */
 	protected $_current_tab = null;
 
+	abstract public function get_name();
+
+	public function get_unique_name() {
+		return $this->get_name();
+	}
+
 	public function get_id() {
 		return $this->_id;
 	}
-
-	abstract public function get_name();
 
 	public static function get_type() {
 		return 'stack';
@@ -108,7 +112,7 @@ abstract class Controls_Stack {
 	}
 
 	public function remove_control( $control_id ) {
-		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
+		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
 	}
 
 	public function update_control( $control_id, array $args ) {
@@ -249,6 +253,18 @@ abstract class Controls_Stack {
 		return $this->_config;
 	}
 
+	final public function get_frontend_settings_keys() {
+		$controls = [];
+
+		foreach ( $this->get_controls() as $control ) {
+			if ( ! empty( $control['frontend_available'] ) ) {
+				$controls[] = $control['name'];
+			}
+		}
+
+		return $controls;
+	}
+
 	public function get_data( $item = null ) {
 		return self::_get_items( $this->_data, $item );
 	}
@@ -265,6 +281,18 @@ abstract class Controls_Stack {
 		$settings_mask = array_fill_keys( array_keys( $settings ), null );
 
 		return array_merge( $settings_mask, $active_settings );
+	}
+
+	public function get_frontend_settings() {
+		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
+
+		foreach ( $frontend_settings as $key => $setting ) {
+			if ( in_array( $setting, [ null, '' ], true ) ) {
+				unset( $frontend_settings[ $key ] );
+			}
+		}
+
+		return $frontend_settings;
 	}
 
 	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {

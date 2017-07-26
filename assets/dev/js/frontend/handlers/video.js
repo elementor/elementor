@@ -30,26 +30,7 @@ VideoModule = HandlerModule.extend( {
 	},
 
 	handleVideo: function() {
-		if ( this.getElementSettings( 'lightbox' ) ) {
-			var elementSettings = this.getElementSettings(),
-				position = elementSettings.lightbox_content_position;
-
-			var options = {
-				type: 'video',
-				url: this.elements.$videoFrame.attr( 'src' ),
-				modalOptions: {
-					id: 'elementor-video-modal-' + this.getID(),
-					videoAspectRatio: elementSettings.aspect_ratio,
-					entranceAnimation: elementSettings.lightbox_content_animation,
-					position: {
-						my: position,
-						at: position
-					}
-				}
-			};
-
-			this.getLightBox().showModal( options );
-		} else {
+		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
 
 			this.playVideo();
@@ -71,15 +52,6 @@ VideoModule = HandlerModule.extend( {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
 	},
 
-	refreshModalPosition: function() {
-		var position = this.getElementSettings( 'lightbox_content_position' );
-
-		this.getLightBox().setPosition( {
-			my: position,
-			at: position
-		} );
-	},
-
 	bindEvents: function() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo );
 	},
@@ -87,12 +59,6 @@ VideoModule = HandlerModule.extend( {
 	onElementChange: function( propertyName ) {
 		if ( 'lightbox_content_animation' === propertyName ) {
 			this.animateVideo();
-
-			return;
-		}
-
-		if ( -1 !== [ 'lightbox_content_width', 'lightbox_content_position' ].indexOf( propertyName ) ) {
-			this.refreshModalPosition();
 
 			return;
 		}
@@ -107,8 +73,6 @@ VideoModule = HandlerModule.extend( {
 
 		if ( 'aspect_ratio' === propertyName && isLightBoxEnabled ) {
 			this.handleAspectRatio();
-
-			this.refreshModalPosition();
 		}
 	}
 } );

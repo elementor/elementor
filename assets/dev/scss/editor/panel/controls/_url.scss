@@ -60,7 +60,7 @@
 		}
 	}
 
-	input[type=url] {
+	input[type=url], .elementor-input[data-setting=url] {
 		direction: ltr; // Force ltr also in RTL languages
 
 		&:not(:focus) {

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Element_Section extends Element_Base {
 
@@ -23,11 +23,11 @@ class Element_Section extends Element_Base {
 			],
 			'save' => [
 				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
-				'icon' => 'floppy-o',
+				'icon' => 'save',
 			],
 			'remove' => [
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
-				'icon' => 'times',
+				'icon' => 'close',
 			],
 		];
 	}
@@ -135,8 +135,6 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Stretch Section', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
 				'render_type' => 'template',
@@ -760,8 +758,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Flip', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'No', 'elementor' ),
-					'label_on' => __( 'Yes', 'elementor' ),
 					'condition' => [
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
@@ -776,8 +772,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Invert', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'No', 'elementor' ),
-					'label_on' => __( 'Yes', 'elementor' ),
 					'frontend_available' => true,
 					'condition' => [
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
@@ -791,8 +785,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'No', 'elementor' ),
-					'label_on' => __( 'Yes', 'elementor' ),
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
 					],
@@ -1045,8 +1037,6 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
 				'return_value' => 'reverse-mobile',
 				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
 			]
@@ -1118,14 +1108,14 @@ class Element_Section extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>"><i class="fa fa-bars"></i></li>
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>"><i class="eicon-section"></i></li>
 				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
 					<?php endif; ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-						<i class="fa fa-<?php echo $edit_tool['icon']; ?>"></i>
+						<i class="eicon-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# } #>

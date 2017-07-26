@@ -10,18 +10,10 @@
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 
-	<rule ref="WordPress-Core">
-		<exclude name="Generic.ControlStructures.InlineControlStructure" />
-		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
+	<rule ref="WordPress">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeKeyFound" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
+		<exclude name="Generic.Commenting.DocComment.MissingShort" />
+		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
 	</rule>
-
-	<!-- Extras -->
-	<rule ref="WordPress.PHP.DiscouragedFunctions" />
-
-	<!-- VIP -->
-	<rule ref="WordPress.Arrays.ArrayAssignmentRestrictions" />
-	<rule ref="WordPress.Functions.FunctionRestrictions" />
-	<rule ref="WordPress.Variables.VariableRestrictions" />
 </ruleset>

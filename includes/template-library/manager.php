@@ -1,11 +1,11 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
-use Elementor\PageSettings\Manager as PageSettingsManager;
 use Elementor\Plugin;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Manager {
 
@@ -98,7 +98,8 @@ class Manager {
 		$args['content'] = json_decode( stripslashes( $args['content'] ), true );
 
 		if ( 'page' === $args['type'] ) {
-			$page = PageSettingsManager::get_page( $args['post_id'] );
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+
 			$args['page_settings'] = $page->get_data( 'settings' );
 		}
 
@@ -236,17 +237,12 @@ class Manager {
 	}
 
 	private function register_default_sources() {
-		include( ELEMENTOR_PATH . 'includes/template-library/classes/class-import-images.php' );
-		include( ELEMENTOR_PATH . 'includes/template-library/sources/base.php' );
-
 		$sources = [
 			'local',
 			'remote',
 		];
 
 		foreach ( $sources as $source_filename ) {
-			include( ELEMENTOR_PATH . 'includes/template-library/sources/' . $source_filename . '.php' );
-
 			$class_name = ucwords( $source_filename );
 			$class_name = str_replace( '-', '_', $class_name );
 

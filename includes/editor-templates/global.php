@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 ?>
 <script type="text/template" id="tmpl-elementor-empty-preview">
 	<div class="elementor-first-add">
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <script type="text/template" id="tmpl-elementor-add-section">
 	<div class="elementor-add-section-inner">
 		<div class="elementor-add-section-close">
-			<i class="fa fa-times"></i>
+			<i class="eicon-close"></i>
 		</div>
 		<div class="elementor-add-new-section">
 			<button class="elementor-add-section-button elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>

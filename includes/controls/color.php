@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 /**
  * A Color Picker control.
@@ -20,20 +20,6 @@ class Control_Color extends Base_Data_Control {
 
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_register_script( 'iris', '/wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-		wp_register_script( 'wp-color-picker', '/wp-admin/js/color-picker' . $suffix . '.js', [ 'iris' ], false, true );
-
-		wp_localize_script(
-			'wp-color-picker',
-			'wpColorPickerL10n',
-			[
-				'clear' => __( 'Clear', 'elementor' ),
-				'defaultString' => __( 'Default', 'elementor' ),
-				'pick' => __( 'Select Color', 'elementor' ),
-				'current' => __( 'Current Color', 'elementor' ),
-			]
-		);
 
 		wp_register_script(
 			'wp-color-picker-alpha',

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Widget_Image_Gallery extends Widget_Base {
 
@@ -19,6 +19,14 @@ class Widget_Image_Gallery extends Widget_Base {
 
 	public function get_categories() {
 		return [ 'general-elements' ];
+	}
+
+	public function get_script_depends() {
+		return [ 'jquery-swiper' ];
+	}
+
+	public function add_lightbox_data_to_image_link( $link_html ) {
+		return preg_replace( '/^<a/', '<a class="elementor-clickable" data-elementor-lightbox-slideshow="' . $this->get_id() . '"', $link_html );
 	}
 
 	protected function _register_controls() {
@@ -282,7 +290,13 @@ class Widget_Image_Gallery extends Widget_Base {
 		}
 		?>
 		<div class="elementor-image-gallery">
-			<?php echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
+			<?php
+			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
+
+			echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' );
+
+			remove_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
+			?>
 		</div>
 		<?php
 	}

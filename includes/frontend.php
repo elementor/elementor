@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+use Elementor\Core\Settings\Manager as SettingsManager;
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Frontend {
 
@@ -14,7 +16,7 @@ class Frontend {
 	private $_is_frontend_mode = false;
 	private $_has_elementor_in_page = false;
 	private $_is_excerpt = false;
-	private $content_removed_filters =[];
+	private $content_removed_filters = [];
 
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -126,7 +128,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.1',
+			'3.2.3',
 			true
 		);
 
@@ -134,6 +136,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
+				'elementor-dialog',
 				'elementor-waypoints',
 
 			],
@@ -192,8 +195,8 @@ class Frontend {
 		$post = get_post();
 
 		$elementor_frontend_config = [
-			'isEditMode' => Plugin::$instance->editor->is_edit_mode(),
-			'stretchedSectionContainer' => get_option( 'elementor_stretched_section_container', '' ),
+			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
+			'settings' => SettingsManager::get_settings_frontend_config(),
 			'is_rtl' => is_rtl(),
 			'post' => [
 				'id' => $post->ID,
@@ -205,18 +208,19 @@ class Frontend {
 			],
 		];
 
-		$elements_manager = Plugin::$instance->elements_manager;
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$elements_manager = Plugin::$instance->elements_manager;
 
-		$elements_frontend_keys = [
-			'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
-			'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
-		];
+			$elements_frontend_keys = [
+				'section' => $elements_manager->get_element_types( 'section' )->get_frontend_settings_keys(),
+				'column' => $elements_manager->get_element_types( 'column' )->get_frontend_settings_keys(),
+			];
 
-		$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
+			$elements_frontend_keys += Plugin::$instance->widgets_manager->get_widgets_frontend_settings_keys();
 
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$elementor_frontend_config['elements'] = [
 				'data' => (object) [],
+				'editSettings' => (object) [],
 				'keys' => $elements_frontend_keys,
 			];
 		}
@@ -491,7 +495,7 @@ class Frontend {
 
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests
-		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+		if ( is_admin() && ! Utils::is_ajax() ) {
 			return;
 		}
 

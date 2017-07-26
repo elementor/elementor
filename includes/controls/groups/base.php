@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 abstract class Group_Control_Base implements Group_Control_Interface {
 
@@ -14,6 +14,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$filtered_fields = $this->filter_fields();
 
 		$filtered_fields = $this->prepare_fields( $filtered_fields );
+
+		// For php < 7
+		reset( $filtered_fields );
 
 		if ( isset( $this->args['separator'] ) ) {
 			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];

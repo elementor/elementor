@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Group_Control_Box_Shadow extends Group_Control_Base {
 
@@ -17,8 +17,6 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 		$controls['box_shadow_type'] = [
 			'label' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'label_on' => __( 'Yes', 'elementor' ),
-			'label_off' => __( 'No', 'elementor' ),
 			'return_value' => 'yes',
 			'separator' => 'before',
 			'render_type' => 'ui',
