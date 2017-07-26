@@ -9,7 +9,7 @@ A control that allows the user to set the "Box Model" dimensions: top / right / 
 	'bottom' => (int),
 	'left' => (int),
 	'unit' => (string) // The selected CSS Unit. 'px', '%', 'em',
-	'isLinked' => (bool)
+	'isLinked' => (bool),
 ]
 ```
 		

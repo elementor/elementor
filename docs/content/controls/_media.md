@@ -5,7 +5,7 @@ A control that allows the user to select an image from the WordPress media libra
 ```php
 [
     'id' => (string),
-    'url' => (string)
+    'url' => (string),
 ]
 ```
 
