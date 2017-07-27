@@ -138,7 +138,8 @@ var	Manager = function() {
 				status: 'not_applied',
 				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
-				action: ''
+				action: '',
+				editing_started: true
 			} );
 		}
 
@@ -217,6 +218,10 @@ var	Manager = function() {
 					elementor.helpers.scrollToView( view );
 				}
 			}
+		}
+
+		if ( item.get( 'editing_started' ) ) {
+			elementor.setFlagEditorChange( false );
 		}
 	};
 
