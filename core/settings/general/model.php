@@ -110,7 +110,7 @@ class Model extends BaseModel {
 								],
 							],
 							'selectors' => [
-								'.elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+								'(tablet+).elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
 							'description' => __( 'The content width is relevant for video and other content types and does not affect the image width.', 'elementor' ),
 						],
