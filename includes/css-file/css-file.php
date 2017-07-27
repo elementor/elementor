@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class CSS_File {
 
@@ -118,11 +120,11 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * @param array $control
-	 * @param array $controls_stack
+	 * @param array    $control
+	 * @param array    $controls_stack
 	 * @param callable $value_callback
-	 * @param array $placeholders
-	 * @param array $replacements
+	 * @param array    $placeholders
+	 * @param array    $replacements
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
@@ -133,36 +135,38 @@ abstract class CSS_File {
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			try {
-				$output_css_property = preg_replace_callback( '/\{\{(?:([^.}]+)\.)?([^}]*)}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-					$parser_control = $control;
+				$output_css_property = preg_replace_callback(
+					'/\{\{(?:([^.}]+)\.)?([^}]*)}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+						$parser_control = $control;
 
-					$value_to_insert = $value;
+						$value_to_insert = $value;
 
-					if ( ! empty( $matches[1] ) ) {
-						if ( ! isset( $controls_stack[ $matches[1] ] ) ) {
-							return '';
+						if ( ! empty( $matches[1] ) ) {
+							if ( ! isset( $controls_stack[ $matches[1] ] ) ) {
+								return '';
+							}
+
+							$parser_control = $controls_stack[ $matches[1] ];
+
+							$value_to_insert = call_user_func( $value_callback, $parser_control );
 						}
 
-						$parser_control = $controls_stack[ $matches[1] ];
+						if ( Controls_Manager::FONT === $control['type'] ) {
+							$this->fonts[] = $value_to_insert;
+						}
 
-						$value_to_insert = call_user_func( $value_callback, $parser_control );
-					}
+						/** @var Base_Data_Control $control_obj */
+						$control_obj = Plugin::$instance->controls_manager->get_control( $parser_control['type'] );
 
-					if ( Controls_Manager::FONT === $control['type'] ) {
-						$this->fonts[] = $value_to_insert;
-					}
+						$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );
 
-					/** @var Base_Data_Control $control_obj */
-					$control_obj = Plugin::$instance->controls_manager->get_control( $parser_control['type'] );
+						if ( '' === $parsed_value ) {
+							throw new \Exception();
+						}
 
-					$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );
-
-					if ( '' === $parsed_value ) {
-						throw new \Exception();
-					}
-
-					return $parsed_value;
-				}, $css_property );
+						return $parsed_value;
+					}, $css_property
+				);
 			} catch ( \Exception $e ) {
 				return;
 			}
@@ -324,9 +328,11 @@ abstract class CSS_File {
 	 * @param array $replacements
 	 */
 	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
-		$this->add_control_rules( $control, $controls_stack, function( $control ) use ( $values ) {
-			return $this->get_style_control_value( $control, $values );
-		}, $placeholders, $replacements );
+		$this->add_control_rules(
+			$control, $controls_stack, function( $control ) use ( $values ) {
+				return $this->get_style_control_value( $control, $values );
+			}, $placeholders, $replacements
+		);
 	}
 
 	/**

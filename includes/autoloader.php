@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Autoloader {
 
@@ -33,12 +35,12 @@ class Autoloader {
 		'Group_Control_Box_Shadow' => 'includes/controls/groups/box-shadow.php',
 		'Group_Control_Image_Size' => 'includes/controls/groups/image-size.php',
 		'Group_Control_Interface' => 'includes/interfaces/group-control.php',
+		'Group_Control_Text_Shadow' => 'includes/controls/groups/text-shadow.php',
 		'Group_Control_Typography' => 'includes/controls/groups/typography.php',
 		'Heartbeat' => 'includes/heartbeat.php',
 		'Images_Manager' => 'includes/managers/image.php',
 		'Maintenance' => 'includes/maintenance.php',
 		'Maintenance_Mode' => 'includes/maintenance-mode.php',
-		'PageSettings\Manager' => 'includes/page-settings/manager.php',
 		'Post_CSS_File' => 'includes/css-file/post-css-file.php',
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',

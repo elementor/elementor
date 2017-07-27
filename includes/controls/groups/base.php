@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Group_Control_Base implements Group_Control_Interface {
 
@@ -14,6 +16,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$filtered_fields = $this->filter_fields();
 
 		$filtered_fields = $this->prepare_fields( $filtered_fields );
+
+		// For php < 7
+		reset( $filtered_fields );
 
 		if ( isset( $this->args['separator'] ) ) {
 			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];
@@ -114,8 +119,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$field_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
 		if ( ! empty( $args['condition'] ) ) {
-			if ( empty( $field_args['condition'] ) )
+			if ( empty( $field_args['condition'] ) ) {
 				$field_args['condition'] = [];
+			}
 
 			$field_args['condition'] += $args['condition'];
 		}
@@ -179,9 +185,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$args = $this->get_args();
 
 		$selectors = array_combine(
-			array_map( function( $key ) use ( $args ) {
-				return str_replace( '{{SELECTOR}}', $args['selector'], $key );
-			}, array_keys( $selectors ) ),
+			array_map(
+				function( $key ) use ( $args ) {
+						return str_replace( '{{SELECTOR}}', $args['selector'], $key );
+				}, array_keys( $selectors )
+			),
 			$selectors
 		);
 
@@ -192,9 +200,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback( '/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function( $matches ) use ( $controls_prefix ) {
-				return $controls_prefix . $matches[0];
-			}, $selector );
+			$selector = preg_replace_callback(
+				'/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function( $matches ) use ( $controls_prefix ) {
+					return $controls_prefix . $matches[0];
+				}, $selector
+			);
 		}
 
 		return $selectors;

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Posts_CSS_Manager {
 
@@ -11,7 +13,7 @@ class Posts_CSS_Manager {
 	}
 
 	public function init() {
-		// Create the css directory if it's not exist
+		// Create the css directory if it's not exist.
 		$wp_upload_dir = wp_upload_dir( null, false );
 
 		$css_path = $wp_upload_dir['basedir'] . CSS_File::FILE_BASE_DIR;
@@ -32,7 +34,7 @@ class Posts_CSS_Manager {
 	}
 
 	/**
-	 * @param bool $skip
+	 * @param bool   $skip
 	 * @param string $meta_key
 	 *
 	 * @return bool
@@ -48,14 +50,22 @@ class Posts_CSS_Manager {
 	public function clear_cache() {
 		$errors = [];
 
-		// Delete post meta
+		// Delete post meta.
 		global $wpdb;
 
-		$wpdb->delete( $wpdb->postmeta, [ 'meta_key' => Post_CSS_File::META_KEY ] );
+		$wpdb->delete(
+			$wpdb->postmeta, [
+				'meta_key' => Post_CSS_File::META_KEY,
+			]
+		);
 
-		$wpdb->delete( $wpdb->options, [ 'option_name' => Global_CSS_File::META_KEY ] );
+		$wpdb->delete(
+			$wpdb->options, [
+				'option_name' => Global_CSS_File::META_KEY,
+			]
+		);
 
-		// Delete files
+		// Delete files.
 		$wp_upload_dir = wp_upload_dir( null, false );
 
 		$path = sprintf( '%s%s%s*', $wp_upload_dir['basedir'], CSS_File::FILE_BASE_DIR, '/' );

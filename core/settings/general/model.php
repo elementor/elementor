@@ -4,7 +4,9 @@ namespace Elementor\Core\Settings\General;
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Model extends BaseModel {
 
@@ -18,9 +20,9 @@ class Model extends BaseModel {
 
 	public function get_panel_page_settings() {
 		return [
-			'title' => __( 'General Settings', 'elementor' ),
+			'title' => __( 'Global Settings', 'elementor' ),
 			'menu' => [
-				'icon' => 'fa fa-cog',
+				'icon' => 'fa fa-cogs',
 				'beforeItem' => 'revision-history',
 			],
 		];
@@ -29,7 +31,7 @@ class Model extends BaseModel {
 	public static function get_controls_list() {
 
 		return [
-			Manager::PANEL_TAB_GENERAL_STYLE => [
+			Controls_Manager::TAB_STYLE => [
 				'style' => [
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
@@ -78,18 +80,25 @@ class Model extends BaseModel {
 				],
 			],
 			Manager::PANEL_TAB_LIGHTBOX => [
-				'lightbox_style' => [
-					'label' => __( 'Style', 'elementor' ),
+				'lightbox' => [
+					'label' => __( 'Lightbox', 'elementor' ),
 					'controls' => [
+						'elementor_global_image_lightbox' => [
+							'label' => __( 'Image Lightbox', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'description' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
+							'frontend_available' => true,
+						],
 						'elementor_lightbox_color' => [
-							'label' => __( 'Color', 'elementor' ),
+							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox-modal' => 'background-color: {{VALUE}}',
+								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
-						'elementor_lightbox_width' => [
-							'label' => __( 'Width', 'elementor' ),
+						'elementor_lightbox_content_width' => [
+							'label' => __( 'Content Width', 'elementor' ),
 							'type' => Controls_Manager::SLIDER,
 							'units' => [ '%' ],
 							'default' => [
@@ -101,35 +110,9 @@ class Model extends BaseModel {
 								],
 							],
 							'selectors' => [
-								'.elementor-lightbox-modal .dialog-widget-content' => 'width: {{SIZE}}{{UNIT}};',
+								'.elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 							],
-						],
-						'elementor_lightbox_content_position' => [
-							'label' => __( 'Content Position', 'elementor' ),
-							'type' => Controls_Manager::SELECT,
-							'default' => 'center center',
-							'options' => [
-								'center center' => __( 'Center', 'elementor' ),
-								'center top' => __( 'Top', 'elementor' ),
-							],
-							'frontend_available' => true,
-						],
-						'elementor_lightbox_content_animation' => [
-							'label' => __( 'Entrance Animation', 'elementor' ),
-							'type' => Controls_Manager::ANIMATION,
-							'label_block' => true,
-							'frontend_available' => true,
-						],
-					],
-				],
-				'lightbox_settings' => [
-					'label' => __( 'Settings', 'elementor' ),
-					'controls' => [
-						'elementor_open_images_in_lightbox' => [
-							'label' => __( 'Open Images In Lightbox', 'elementor' ),
-							'type' => Controls_Manager::SWITCHER,
-							'default' => 'yes',
-							'frontend_available' => true,
+							'description' => __( 'The content width is relevant for video and other content types and does not affect the image width.', 'elementor' ),
 						],
 					],
 				],
@@ -144,10 +127,12 @@ class Model extends BaseModel {
 
 			foreach ( $sections as $section_name => $section_data ) {
 
-				$this->start_controls_section( $section_name, [
-					'label' => $section_data['label'],
-					'tab' => $tab_name,
-				] );
+				$this->start_controls_section(
+					$section_name, [
+						'label' => $section_data['label'],
+						'tab' => $tab_name,
+					]
+				);
 
 				foreach ( $section_data['controls'] as $control_name => $control_data ) {
 					$this->add_control( $control_name, $control_data );

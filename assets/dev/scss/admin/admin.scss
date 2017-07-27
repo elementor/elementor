@@ -63,7 +63,7 @@ body {
 
 		div.wp-menu-image:before {
 			content: "\e800";
-			font-family: eicon;
+			font-family: eicons;
 			font-size: 14px;
 			margin-top: 3px;
 		}
@@ -190,7 +190,7 @@ body {
 // Customizer widget icon
 #available-widgets [class*="elementor-template"] .widget-title:before {
 	content: "\e801";
-	font-family: eicon;
+	font-family: eicons;
 	font-size: 17px;
 }
 

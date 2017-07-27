@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Scheme_Color extends Scheme_Base {
 
@@ -49,9 +51,10 @@ class Scheme_Color extends Scheme_Base {
 			<?php
 			$description = static::get_description();
 
-			if ( $description ) { ?>
+			if ( $description ) :
+				?>
 				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo $description; ?></div>
-			<?php } ?>
+			<?php endif; ?>
 			<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
 		</div>
 		<div class="elementor-panel-scheme-colors-more-palettes elementor-panel-box">
@@ -62,8 +65,7 @@ class Scheme_Color extends Scheme_Base {
 				<?php foreach ( $this->_get_system_schemes_to_print() as $scheme_name => $scheme ) : ?>
 					<div class="elementor-panel-scheme-color-system-scheme" data-scheme-name="<?php echo $scheme_name; ?>">
 						<div class="elementor-panel-scheme-color-system-items">
-							<?php
-							foreach ( $scheme['items'] as $color_value ) : ?>
+							<?php foreach ( $scheme['items'] as $color_value ) : ?>
 								<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
 							<?php endforeach; ?>
 						</div>

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A Gallery creation control. Based on the WordPress media gallery creator
@@ -19,8 +21,9 @@ class Control_Gallery extends Base_Data_Control {
 
 	public function on_import( $settings ) {
 		foreach ( $settings as &$attachment ) {
-			if ( empty( $attachment['url'] ) )
+			if ( empty( $attachment['url'] ) ) {
 				continue;
+			}
 
 			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
 		}

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Group_Control_Image_Size extends Group_Control_Base {
 
@@ -12,7 +14,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]
+	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ].
 	 *
 	 * @param string $setting_key
 	 *
@@ -21,7 +23,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	public static function get_attachment_image_html( $settings, $setting_key = 'image' ) {
 		$id  = $settings[ $setting_key ]['id'];
 
-		// Old version of image settings
+		// Old version of image settings.
 		if ( ! isset( $settings[ $setting_key . '_size' ] ) ) {
 			$settings[ $setting_key . '_size' ] = '';
 		}
@@ -32,15 +34,18 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$html = '';
 
-		// If is the new version - with image size
-		$image_sizes   = get_intermediate_image_sizes();
+		// If is the new version - with image size.
+		$image_sizes = get_intermediate_image_sizes();
 
 		$image_sizes[] = 'full';
 
 		if ( ! empty( $id ) && in_array( $size, $image_sizes ) ) {
 			$image_class .= " attachment-$size size-$size";
+			$image_attr = [
+				'class' => trim( $image_class ),
+			];
 
-			$html .= wp_get_attachment_image( $id, $size, false, [ 'class' => trim( $image_class ) ] );
+			$html .= wp_get_attachment_image( $id, $size, false, $image_attr );
 		} else {
 			$image_src = self::get_attachment_image_src( $id, $setting_key, $settings );
 
@@ -149,7 +154,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		if ( ! empty( $args['default'] ) && isset( $image_sizes[ $args['default'] ] ) ) {
 			$default_value = $args['default'];
 		} else {
-			// Get the first item for default value
+			// Get the first item for default value.
 			$default_value = array_keys( $image_sizes );
 			$default_value = array_shift( $default_value );
 		}
@@ -166,8 +171,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
-		if ( empty( $attachment_id ) )
+		if ( empty( $attachment_id ) ) {
 			return false;
+		}
 
 		$size = $instance[ $group_name . '_size' ];
 
@@ -175,15 +181,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$attachment_size = $size;
 		} else {
 			// Use BFI_Thumb script
-			// TODO: Please rewrite this code
+			// TODO: Please rewrite this code.
 			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 
 			$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
 
 			$attachment_size = [
 				// Defaults sizes
-				0 => null, // Width
-				1 => null, // Height
+				0 => null, // Width.
+				1 => null, // Height.
 
 				'bfi_thumb' => true,
 				'crop' => true,

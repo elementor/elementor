@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Admin {
 
@@ -20,7 +22,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.1',
+			'3.2.3',
 			true
 		);
 
@@ -86,8 +88,8 @@ class Admin {
 
 		wp_enqueue_style( 'elementor-admin-app' );
 
-		// It's for upgrade notice
-		// TODO: enqueue this just if needed
+		// It's for upgrade notice.
+		// TODO: enqueue this just if needed.
 		add_thickbox();
 	}
 
@@ -117,21 +119,21 @@ class Admin {
 			</button>
 		</div>
 		<div id="elementor-editor">
-	        <a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
-		        <div id="elementor-editor-button" class="elementor-button button button-primary button-hero">
-			        <i class="eicon-elementor"></i>
+			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+				<div id="elementor-editor-button" class="elementor-button button button-primary button-hero">
+					<i class="eicon-elementor"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
-		        </div>
-		        <div class="elementor-loader-wrapper">
-			        <div class="elementor-loader">
-				        <div class="elementor-loader-box"></div>
-				        <div class="elementor-loader-box"></div>
-				        <div class="elementor-loader-box"></div>
-				        <div class="elementor-loader-box"></div>
-			        </div>
-			        <div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
-		        </div>
-	        </a>
+				</div>
+				<div class="elementor-loader-wrapper">
+					<div class="elementor-loader">
+						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-box"></div>
+					</div>
+					<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+				</div>
+			</a>
 		</div>
 		<?php
 	}
@@ -216,30 +218,34 @@ class Admin {
 
 	public function admin_notices() {
 		$upgrade_notice = Api::get_upgrade_notice();
-		if ( empty( $upgrade_notice ) )
+		if ( empty( $upgrade_notice ) ) {
 			return;
+		}
 
-		if ( ! current_user_can( 'update_plugins' ) )
+		if ( ! current_user_can( 'update_plugins' ) ) {
 			return;
+		}
 
 		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ] ) ) {
 			return;
 		}
 
-		// Check if have any upgrades
+		// Check if have any upgrades.
 		$update_plugins = get_site_transient( 'update_plugins' );
 		if ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) ) {
 			return;
 		}
 		$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
 
-		// Check if have upgrade notices to show
-		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) )
+		// Check if have upgrade notices to show.
+		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) ) {
 			return;
+		}
 
 		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
-		if ( User::is_user_notice_viewed( $notice_id ) )
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
 			return;
+		}
 
 		$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
 		$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
@@ -251,7 +257,8 @@ class Admin {
 				</div>
 				<div class="elementor-message-content">
 					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
-					<p><?php
+					<p>
+					<?php
 						printf(
 							/* translators: 1: details URL, 2: accessibility text, 3: version number, 4: update URL, 5: accessibility text */
 							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
@@ -267,7 +274,8 @@ class Admin {
 							esc_url( $upgrade_url ),
 							esc_attr( __( 'Update Now', 'elementor' ) )
 						);
-						?></p>
+						?>
+					</p>
 				</div>
 				<div class="elementor-update-now">
 					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'Update Now', 'elementor' ); ?></a>
@@ -384,11 +392,13 @@ class Admin {
 
 		$reason_key = '';
 
-		if ( ! empty( $_POST['reason_key'] ) )
+		if ( ! empty( $_POST['reason_key'] ) ) {
 			$reason_key = $_POST['reason_key'];
+		}
 
-		if ( ! empty( $_POST[ "reason_{$reason_key}" ] ) )
+		if ( ! empty( $_POST[ "reason_{$reason_key}" ] ) ) {
 			$reason_text = $_POST[ "reason_{$reason_key}" ];
+		}
 
 		Api::send_feedback( $reason_key, $reason_text );
 
@@ -415,7 +425,7 @@ class Admin {
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 
-		// Ajax
+		// Ajax.
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
 	}
 }

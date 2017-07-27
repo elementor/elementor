@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Base_Data_Control extends Base_Control {
 
@@ -10,11 +12,13 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	public function get_value( $control, $widget ) {
-		if ( ! isset( $control['default'] ) )
+		if ( ! isset( $control['default'] ) ) {
 			$control['default'] = $this->get_default_value();
+		}
 
-		if ( ! isset( $widget[ $control['name'] ] ) )
+		if ( ! isset( $widget[ $control['name'] ] ) ) {
 			return $control['default'];
+		}
 
 		return $widget[ $control['name'] ];
 	}

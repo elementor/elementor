@@ -1,10 +1,13 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * An Hover Animation effect select box control.
+ *
  * @see Control_Hover_Animation::get_animations() fot all available animations.
  *
  * @param string $default     The selected effect key

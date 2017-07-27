@@ -7,11 +7,11 @@ use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Global_CSS_File;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Manager extends BaseManager {
-
-	const PANEL_TAB_GENERAL_STYLE = 'general_style';
 
 	const PANEL_TAB_LIGHTBOX = 'lightbox';
 
@@ -112,8 +112,6 @@ class Manager extends BaseManager {
 	}
 
 	private function add_panel_tabs() {
-		Controls_Manager::add_tab( self::PANEL_TAB_GENERAL_STYLE, __( 'General Style', 'elementor' ) );
-
 		Controls_Manager::add_tab( self::PANEL_TAB_LIGHTBOX, __( 'Lightbox', 'elementor' ) );
 	}
 }

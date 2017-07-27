@@ -3,7 +3,9 @@ namespace Elementor\System_Info\Classes;
 
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Network_Plugins_Reporter extends Base_Reporter {
 

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Toggle extends Widget_Base {
 
@@ -226,8 +228,7 @@ class Widget_Toggle extends Widget_Base {
 		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-toggle">
-			<?php
-			$counter = 1; ?>
+			<?php $counter = 1; ?>
 			<?php foreach ( $tabs as $item ) : ?>
 				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">
@@ -238,7 +239,8 @@ class Widget_Toggle extends Widget_Base {
 				<div class="elementor-toggle-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 			<?php
 				$counter++;
-			endforeach; ?>
+			endforeach;
+			?>
 		</div>
 		<?php
 	}

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Schemes_Manager {
 
@@ -85,8 +87,9 @@ class Schemes_Manager {
 
 	public function get_scheme_value( $scheme_type, $scheme_value ) {
 		$scheme = $this->get_scheme( $scheme_type );
-		if ( ! $scheme )
+		if ( ! $scheme ) {
 			return false;
+		}
 
 		return $scheme->get_scheme_value()[ $scheme_value ];
 	}
