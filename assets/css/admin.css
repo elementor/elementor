@@ -56,6 +56,13 @@
   .dialog-close-button:not(:hover) {
     opacity: .4; }
 
+body.admin-bar .dialog-close-button {
+  top: 30px; }
+
+@media (max-width: 767px) {
+  body.admin-bar .dialog-close-button {
+    top: 40px; } }
+
 .dialog-options-widget .dialog-widget-header,
 .dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
