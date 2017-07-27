@@ -510,40 +510,35 @@ class Widget_Video extends Widget_Base {
 			if ( $this->has_image_overlay() ) {
 				$this->add_render_attribute( 'image-overlay', 'class', 'elementor-custom-embed-image-overlay' );
 
-				if ( ! $settings['lightbox'] ) {
+				if ( $settings['lightbox'] ) {
+					$lightbox_options = [
+						'type' => 'video',
+						'url' => Embed::get_embed_url( $video_link, $embed_params ),
+						'modalOptions' => [
+							'id' => 'elementor-lightbox-' . $this->get_id(),
+							'entranceAnimation' => $settings['lightbox_content_animation'],
+							'videoAspectRatio' => $settings['aspect_ratio'],
+						],
+					];
+
+					$this->add_render_attribute( 'image-overlay', [
+						'class' => 'elementor-clickable',
+						'data-elementor-open-lightbox' => 'yes',
+						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
+					] );
+				} else {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . $settings['image_overlay']['url'] . ');' );
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php
-					if ( $settings['lightbox'] ) :
-						$lightbox_options = [
-							'type' => 'video',
-							'url' => Embed::get_embed_url( $video_link, $embed_params ),
-							'modalOptions' => [
-								'id' => 'elementor-lightbox-' . $this->get_id(),
-								'entranceAnimation' => $settings['lightbox_content_animation'],
-								'videoAspectRatio' => $settings['aspect_ratio'],
-							],
-						];
-
-						$this->add_render_attribute( 'image_overlay_link', [
-							'href' => $settings['image_overlay']['url'],
-							'class' => 'elementor-clickable',
-							'data-open-lightbox' => 'yes',
-							'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
-						] );
-						?>
-						<a <?php echo $this->get_render_attribute_string( 'image_overlay_link' ); ?>>
-							<img src="<?php echo $settings['image_overlay']['url']; ?>">
+					if ( $settings['lightbox'] ) : ?>
+						<img src="<?php echo $settings['image_overlay']['url']; ?>">
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
 							<i class="eicon-play"></i>
 						</div>
-					<?php endif; ?>
-					<?php if ( $settings['lightbox'] ) : ?>
-						</a>
 					<?php endif; ?>
 				</div>
 			<?php } ?>
