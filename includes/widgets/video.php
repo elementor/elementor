@@ -83,22 +83,6 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'aspect_ratio',
-			[
-				'label' => __( 'Aspect Ratio', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'frontend_available' => true,
-				'options' => [
-					'169' => '16:9',
-					'43' => '4:3',
-					'32' => '3:2',
-				],
-				'default' => '169',
-				'prefix_class' => 'elementor-aspect-ratio-',
-			]
-		);
-
-		$this->add_control(
 			'heading_youtube',
 			[
 				'label' => __( 'Video Options', 'elementor' ),
@@ -326,10 +310,34 @@ class Widget_Video extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_play_icon_style',
+			'section_video_style',
+			[
+				'label' => __( 'Video', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'aspect_ratio',
+			[
+				'label' => __( 'Aspect Ratio', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'169' => '16:9',
+					'43' => '4:3',
+					'32' => '3:2',
+				],
+				'default' => '169',
+				'prefix_class' => 'elementor-aspect-ratio-',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'play_icon_title',
 			[
 				'label' => __( 'Play Icon', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'type' => Controls_Manager::HEADING,
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
@@ -343,6 +351,10 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'color: {{VALUE}}',
+				],
+				'separator' => 'before',
+				'condition' => [
+					'show_image_overlay' => 'yes',
 				],
 			]
 		);
@@ -361,6 +373,9 @@ class Widget_Video extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'font-size: {{SIZE}}{{UNIT}}',
 				],
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
 			]
 		);
 
@@ -369,6 +384,14 @@ class Widget_Video extends Widget_Base {
 			[
 				'name' => 'play_icon_text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
+				'fields_options' => [
+					'text_shadow_type' => [
+						'label' => _x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+					],
+				],
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
 			]
 		);
 
