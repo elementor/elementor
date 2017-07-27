@@ -63,6 +63,7 @@ App = Marionette.Application.extend( {
 			Date_time: require( 'elementor-views/controls/date-time' ),
 			Code: require( 'elementor-views/controls/code' ),
 			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Text_shadow: require( 'elementor-views/controls/box-shadow' ),
 			Structure: require( 'elementor-views/controls/structure' ),
 			Animation: require( 'elementor-views/controls/select2' ),
 			Hover_animation: require( 'elementor-views/controls/select2' ),

@@ -1,15 +1,17 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * An 'Order By' select box control.
  *
- *	@param array $default {
- * 		@type string $order_by      The selected order
+ *  @param array $default {
+ *      @type string $order_by      The selected order
  *                                  Default empty
- * 		@type string $reverse_order Whether to reverse the order
+ *      @type string $reverse_order Whether to reverse the order
  *                                  Default empty
  * }
  *

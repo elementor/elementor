@@ -7,7 +7,9 @@ use Elementor\Group_Control_Background;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Model extends BaseModel {
 
@@ -27,7 +29,11 @@ class Model extends BaseModel {
 	}
 
 	public function get_name() {
-		return 'page-settings-' . $this->post->ID;
+		return 'page-settings';
+	}
+
+	public function get_unique_name() {
+		return $this->get_name() . '-' . $this->post->ID;
 	}
 
 	public function get_css_wrapper_selector() {

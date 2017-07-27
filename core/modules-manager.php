@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Core;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 final class Modules_Manager {
 

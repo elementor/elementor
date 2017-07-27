@@ -3,7 +3,9 @@ namespace Elementor;
 
 use Elementor\Core\Settings\Manager as SettingsManager;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Frontend {
 
@@ -128,7 +130,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.1',
+			'3.2.3',
 			true
 		);
 
@@ -136,6 +138,7 @@ class Frontend {
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'js/frontend' . $suffix . '.js',
 			[
+				'elementor-dialog',
 				'elementor-waypoints',
 
 			],
@@ -312,14 +315,16 @@ class Frontend {
 		}
 
 		switch ( $font_type ) {
-			case Fonts::GOOGLE :
-				if ( ! in_array( $font, $this->google_fonts ) )
+			case Fonts::GOOGLE:
+				if ( ! in_array( $font, $this->google_fonts ) ) {
 					$this->google_fonts[] = $font;
+				}
 				break;
 
-			case Fonts::EARLYACCESS :
-				if ( ! in_array( $font, $this->google_early_access_fonts ) )
+			case Fonts::EARLYACCESS:
+				if ( ! in_array( $font, $this->google_early_access_fonts ) ) {
 					$this->google_early_access_fonts[] = $font;
+				}
 				break;
 		}
 
@@ -379,7 +384,7 @@ class Frontend {
 
 		ob_start();
 
-		// Handle JS and Customizer requests, with css inline
+		// Handle JS and Customizer requests, with css inline.
 		if ( is_customize_preview() || Utils::is_ajax() ) {
 			$with_css = true;
 		}
@@ -477,7 +482,7 @@ class Frontend {
 		];
 
 		foreach ( $filters as $filter ) {
-			// Check if another plugin/theme do not already removed the filter
+			// Check if another plugin/theme do not already removed the filter.
 			if ( has_filter( 'the_content', $filter ) ) {
 				remove_filter( 'the_content', $filter );
 				$this->content_removed_filters[] = $filter;
@@ -493,7 +498,7 @@ class Frontend {
 	}
 
 	public function __construct() {
-		// We don't need this class in admin side, but in AJAX requests
+		// We don't need this class in admin side, but in AJAX requests.
 		if ( is_admin() && ! Utils::is_ajax() ) {
 			return;
 		}
@@ -503,7 +508,7 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 
-		// Hack to avoid enqueue post css while it's a `the_excerpt` call
+		// Hack to avoid enqueue post css while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
 	}

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Scheme_Color_Picker extends Scheme_Color {
 
@@ -19,12 +21,14 @@ class Scheme_Color_Picker extends Scheme_Color {
 	}
 
 	public function get_default_scheme() {
-		return array_replace( parent::get_default_scheme(), [
-			self::COLOR_5 => '#4054b2',
-			self::COLOR_6 => '#23a455',
-			self::COLOR_7 => '#000',
-			self::COLOR_8 => '#fff',
-		] );
+		return array_replace(
+			parent::get_default_scheme(), [
+				self::COLOR_5 => '#4054b2',
+				self::COLOR_6 => '#23a455',
+				self::COLOR_7 => '#000',
+				self::COLOR_8 => '#fff',
+			]
+		);
 	}
 
 	public function get_scheme_titles() {

@@ -6,7 +6,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-slider';
-		ui.colors = '.elementor-box-shadow-color-picker';
+		ui.colors = '.elementor-shadow-color-picker';
 
 		return ui;
 	},

@@ -4,7 +4,9 @@ namespace Elementor\System_Info;
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 use Elementor\System_Info\Helpers\Model_Helper;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Main {
 
@@ -39,7 +41,7 @@ class Main {
 	/**
 	 * @param array $properties
 	 *
-	 *@return \WP_Error|false|Base_Reporter
+	 * @return \WP_Error|false|Base_Reporter
 	 */
 	public function create_reporter( array $properties ) {
 		$properties = Model_Helper::prepare_properties( $this->get_settings( 'reporter_properties' ), $properties );
@@ -76,7 +78,7 @@ class Main {
 			<div><?php $this->print_report( $reports, 'html' ); ?></div>
 			<h3><?php _e( 'Copy & Paste Info', 'elementor' ); ?></h3>
 			<div id="elementor-system-info-raw">
-				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php _e( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ) ?></label>
+				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php _e( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ); ?></label>
 				<textarea id="elementor-system-info-raw-code" readonly>
 					<?php
 					unset( $reports['wordpress']['report']['admin_email'] );
@@ -94,7 +96,7 @@ class Main {
 				</script>
 			</div>
 			<hr>
-			<form action="<?php echo admin_url( 'admin-ajax.php' ) ?>" method="post">
+			<form action="<?php echo admin_url( 'admin-ajax.php' ); ?>" method="post">
 				<input type="hidden" name="action" value="elementor_system_info_download_file">
 				<input type="submit" class="button button-primary" value="<?php _e( 'Download System Info', 'elementor' ); ?>">
 			</form>
@@ -223,7 +225,7 @@ class Main {
 
 	/**
 	 * @param string $setting
-	 * @param array $container
+	 * @param array  $container
 	 *
 	 * @return mixed
 	 */

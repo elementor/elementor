@@ -5,7 +5,9 @@ use Elementor\CSS_File;
 use Elementor\Plugin;
 use Elementor\Utils;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Manager {
 
@@ -76,7 +78,7 @@ abstract class Manager {
 
 		$this->save_settings_to_db( $settings_to_save, $id );
 
-		// Clear cache after save
+		// Clear cache after save.
 		if ( isset( $this->models_cache[ $id ] ) ) {
 			unset( $this->models_cache[ $id ] );
 		}
@@ -116,7 +118,7 @@ abstract class Manager {
 
 	/**
 	 * @param array $settings
-	 * @param int $id
+	 * @param int   $id
 	 *
 	 * @return void
 	 */
@@ -168,7 +170,7 @@ abstract class Manager {
 		$this->models_cache[ $id ] = new $class_name( [
 			'id' => $id,
 			'settings' => $this->get_saved_settings( $id ),
-		] );;
+		] );
 	}
 
 	private function get_editor_template() {

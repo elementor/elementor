@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Rollback {
 
@@ -44,7 +46,7 @@ class Rollback {
 	protected function apply_package() {
 		$update_plugins = get_site_transient( 'update_plugins' );
 		if ( ! is_object( $update_plugins ) ) {
-			$update_plugins = new \stdClass;
+			$update_plugins = new \stdClass();
 		}
 
 		$plugin_info = new \stdClass();

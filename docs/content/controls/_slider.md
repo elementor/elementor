@@ -4,8 +4,13 @@ A draggable Range Slider control typically used to obtain a size setting.
 The slider control can optionally have a number of unit types (`size_units`) for the user to choose from.
 The control also accepts a `range` argument that allows you to set the `min`, `max` and `step` values per unit type.
 
-
-*Returns:* `array` of `size` and `unit`;
+*Returns:* Array
+```php
+[
+    'size' => (number),
+    'unit' => (string),
+]
+```
 
 ## Example
 

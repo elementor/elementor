@@ -47,6 +47,15 @@
   padding: 20px 0;
   font-weight: 500; }
 
+.dialog-close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 15px; }
+  .dialog-close-button:not(:hover) {
+    opacity: .4; }
+
 .dialog-options-widget .dialog-widget-header,
 .dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
@@ -74,17 +83,6 @@
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
-
-.dialog-lightbox-close-button {
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  left: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: .65; }
-  .dialog-lightbox-close-button:hover {
-    opacity: 1; }
 
 .elementor-video-wrapper {
   position: relative;
@@ -189,7 +187,7 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  background: #6d7882;
+  background: #f1f3f5;
   z-index: 9999; }
 
 .elementor-loader-wrapper {
@@ -204,7 +202,7 @@ body {
     height: 100px;
     position: relative; }
   .elementor-loader-wrapper .elementor-loader-box {
-    background-color: #e6e9ec; }
+    background-color: #495157; }
   .elementor-loader-wrapper .elementor-loader-box {
     position: absolute;
     -webkit-animation: load 1.8s linear infinite;
@@ -248,7 +246,7 @@ body {
     opacity: .3; } }
 
 .elementor-loading-title {
-  color: #fff;
+  color: #495157;
   text-align: center;
   text-transform: uppercase;
   margin-top: 30px;
@@ -1662,7 +1660,11 @@ select {
     display: block; }
   .elementor-panel .elementor-control-type-box_shadow .elementor-control-input-wrapper {
     overflow: hidden; }
-  .elementor-panel .elementor-control-type-box_shadow .elementor-box-shadow-slider {
+  .elementor-panel .elementor-control-type-box_shadow .elementor-shadow-slider {
+    margin-top: 10px; }
+  .elementor-panel .elementor-control-type-text_shadow .elementor-control-input-wrapper {
+    overflow: hidden; }
+  .elementor-panel .elementor-control-type-text_shadow .elementor-shadow-slider {
     margin-top: 10px; }
   .elementor-panel .elementor-control-type-switcher.elementor-label-inline > .elementor-control-content .elementor-control-field .elementor-control-title {
     width: 70%; }

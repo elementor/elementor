@@ -3,11 +3,13 @@ namespace Elementor\Core\Settings\Page;
 
 use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
-use \Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Post_CSS_File;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Manager extends BaseManager {
 
@@ -36,7 +38,7 @@ class Manager extends BaseManager {
 
 	public static function add_page_templates( $post_templates ) {
 		$post_templates = [
-				self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
+			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
 		] + $post_templates;
 
 		return $post_templates;

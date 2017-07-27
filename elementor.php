@@ -4,10 +4,13 @@
  * Description: The most advanced frontend drag & drop page builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
  * Plugin URI: https://elementor.com/
  * Author: Elementor.com
- * Version: 1.5.4
+ * Version: 1.5.5
  * Author URI: https://elementor.com/
  *
  * Text Domain: elementor
+ *
+ * @package Elementor
+ * @category Core
  *
  * Elementor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +21,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-*/
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
-define( 'ELEMENTOR_VERSION', '1.5.4' );
+define( 'ELEMENTOR_VERSION', '1.5.5' );
 define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '1.4.10' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
@@ -74,6 +79,7 @@ function elementor_fail_php_version() {
  * @return void
  */
 function elementor_fail_wp_version() {
+	/* translators: %s: WP version */
 	$message = sprintf( esc_html__( 'Elementor requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT ACTIVE.', 'elementor' ), '4.5' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );

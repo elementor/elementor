@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Settings extends Settings_Page {
 
@@ -184,6 +186,16 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 								],
 							],
+							'global_image_lightbox' => [
+								'label' => __( 'Image Lightbox', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'std' => 'yes',
+									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
+									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
+								],
+							],
 						],
 					],
 				],
@@ -207,11 +219,11 @@ class Settings extends Settings_Page {
 										'internal' => __( 'Internal Embedding', 'elementor' ),
 									],
 									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
-									          __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
-									          '</div>' .
-									          '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-									          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
-									          '</div>',
+											  __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
+											  '</div>' .
+											  '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
+											  __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
+											  '</div>',
 								],
 							],
 							'editor_break_lines' => [

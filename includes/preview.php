@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Preview {
 
@@ -67,7 +69,7 @@ class Preview {
 	 * @return void
 	 */
 	private function enqueue_styles() {
-		// Hold-on all jQuery plugins after all HTML markup render
+		// Hold-on all jQuery plugins after all HTML markup render.
 		wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
 
 		Plugin::$instance->frontend->enqueue_styles();

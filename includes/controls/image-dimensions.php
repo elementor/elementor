@@ -1,14 +1,16 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * An Image Dimensions control. Shows Width and Height inputs and an Apply button
  *
  * @param array  $default {
- * 		@type integer $width   Default empty
- * 		@type integer $height  Default empty
+ *      @type integer $width   Default empty
+ *      @type integer $height  Default empty
  * }
  *
  * @since 1.0.0
@@ -49,13 +51,13 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-image-dimensions-field">
-					<?php $control_uid = $this->get_control_uid( 'width' );  ?>
+					<?php $control_uid = $this->get_control_uid( 'width' ); ?>
 					<input id="<?php echo $control_uid; ?>" type="text" data-setting="width" />
 					<label for="<?php echo $control_uid; ?>" class="elementor-image-dimensions-field-description"><?php _e( 'Width', 'elementor' ); ?></label>
 				</div>
 				<div class="elementor-image-dimensions-separator">x</div>
 				<div class="elementor-image-dimensions-field">
-					<?php $control_uid = $this->get_control_uid( 'height' );  ?>
+					<?php $control_uid = $this->get_control_uid( 'height' ); ?>
 					<input id="<?php echo $control_uid; ?>" type="text" data-setting="height" />
 					<label for="<?php echo $control_uid; ?>" class="elementor-image-dimensions-field-description"><?php _e( 'Height', 'elementor' ); ?></label>
 				</div>
@@ -66,7 +68,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	}
 
 	private function _is_image_editor_supports() {
-		$arg = [ 'mime_type' => 'image/jpeg' ];
+		$arg = [
+			'mime_type' => 'image/jpeg',
+		];
 		return ( wp_image_editor_supports( $arg ) );
 	}
 }
