@@ -465,7 +465,7 @@ class Widget_Video extends Widget_Base {
 		$video_html = Embed::get_embed_html( $video_link, $embed_params );
 
 		if ( empty( $video_html ) ) {
-			echo $video_link;
+			echo esc_url( $video_link );
 
 			return;
 		}
@@ -481,7 +481,7 @@ class Widget_Video extends Widget_Base {
 		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
 			if ( ! $settings['lightbox'] ) {
-				echo $video_html;
+				echo $video_html; // XSS ok.
 			}
 
 			if ( $this->has_image_overlay() ) {
@@ -529,8 +529,9 @@ class Widget_Video extends Widget_Base {
 
 	public function render_plain_content() {
 		$settings = $this->get_active_settings();
+		$url = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
-		echo 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
+		echo esc_url( $url );
 	}
 
 	public function get_embed_params() {
