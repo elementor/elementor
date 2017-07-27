@@ -872,7 +872,9 @@ var Shapes = HandlerModule.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new StretchedSection( { $element: $scope } );
+	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
+		new StretchedSection( { $element: $scope } );
+	}
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element:  $scope } );
