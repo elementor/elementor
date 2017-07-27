@@ -136,7 +136,7 @@ var	Manager = function() {
 		if ( ! items.length ) {
 			items.add( {
 				status: 'not_applied',
-				title: 'Editing Started',
+				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
 				action: ''
 			} );
@@ -303,7 +303,7 @@ var	Manager = function() {
 	this.startInsertTemplate = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'add',
-			title: elementor.translate( 'Template' ),
+			title: elementor.translate( 'template' ),
 			subTitle: model.get( 'title' )
 		} );
 	};

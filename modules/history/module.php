@@ -23,6 +23,7 @@ class Module extends BaseModule {
 				'edited' => __( 'Edited', 'elementor' ),
 				'moved' => __( 'Moved', 'elementor' ),
 				'duplicated' => __( 'Duplicated', 'elementor' ),
+				'editing_started' => __( 'Editing Started', 'elementor' ),
 			],
 		] );
 		return $settings;
