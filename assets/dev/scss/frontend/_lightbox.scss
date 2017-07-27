@@ -64,10 +64,17 @@
 
 	.elementor-video-container {
 		position: absolute;
-		width: 50%;
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
+
+		@media (min-width: $screen-md-min) {
+			width: 50%;
+		}
+
+		@media (max-width: $screen-sm-max) {
+			width: 100%;
+		}
 	}
 
 
