@@ -9,14 +9,6 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	// On click 'Delete'
-	onChildviewBeforeRemove: function( childView ) {
-		elementor.history.history.addItem( {
-			type: 'remove',
-			title: elementor.history.history.getModelLabel( childView.model )
-		} );
-	},
-
 	saveCollectionHistory: function( collection, event ) {
 		var historyItem,
 			models,

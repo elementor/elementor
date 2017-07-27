@@ -192,7 +192,7 @@ BaseElementView = BaseContainer.extend( {
 					},
 					defaultOption: 'confirm',
 					onConfirm: _.bind( function() {
-						this.trigger( 'before:remove' );
+						elementor.channels.data.trigger( 'element:before:remove', this.model );
 
 						var parent = this._parent;
 
@@ -201,6 +201,8 @@ BaseElementView = BaseContainer.extend( {
 						this.model.destroy();
 
 						parent.isManualRemoving = false;
+
+						elementor.channels.data.trigger( 'element:after:remove', this.model );
 					}, this )
 				} );
 			}
