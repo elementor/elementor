@@ -97,23 +97,6 @@ class Model extends BaseModel {
 								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
-						'elementor_lightbox_content_width' => [
-							'label' => __( 'Content Width', 'elementor' ),
-							'type' => Controls_Manager::SLIDER,
-							'units' => [ '%' ],
-							'default' => [
-								'unit' => '%',
-							],
-							'range' => [
-								'%' => [
-									'min' => 50,
-								],
-							],
-							'selectors' => [
-								'(tablet+).elementor-lightbox .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
-							],
-							'description' => __( 'The content width is relevant for video and other content types and does not affect the image width.', 'elementor' ),
-						],
 					],
 				],
 			],
