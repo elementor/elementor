@@ -4,7 +4,9 @@ namespace Elementor\System_Info\Classes;
 use Elementor\Api;
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Server_Reporter extends Base_Reporter {
 
@@ -76,15 +78,17 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	public function get_elementor_library() {
-		$response = wp_remote_post( Api::$api_info_url, [
-			'timeout' => 25,
-			'body' => [
-				// Which API version is used
-				'api_version' => ELEMENTOR_VERSION,
-				// Which language to return
-				'site_lang' => get_bloginfo( 'language' ),
-			],
-		] );
+		$response = wp_remote_post(
+			Api::$api_info_url, [
+				'timeout' => 25,
+				'body' => [
+					// Which API version is used
+					'api_version' => ELEMENTOR_VERSION,
+					// Which language to return
+					'site_lang' => get_bloginfo( 'language' ),
+				],
+			]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return [

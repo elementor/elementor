@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Icon_List extends Widget_Base {
 
@@ -358,10 +360,11 @@ class Widget_Icon_List extends Widget_Base {
 							$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 						}
 
-						echo '<a ' . $this->get_render_attribute_string( $link_key ) .  '>';
+						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
 
-					if ( $item['icon'] ) : ?>
+					if ( $item['icon'] ) :
+					?>
 						<span class="elementor-icon-list-icon">
 							<i class="<?php echo esc_attr( $item['icon'] ); ?>"></i>
 						</span>
@@ -374,7 +377,8 @@ class Widget_Icon_List extends Widget_Base {
 					?>
 				</li>
 				<?php
-			endforeach; ?>
+			endforeach;
+			?>
 		</ul>
 		<?php
 	}

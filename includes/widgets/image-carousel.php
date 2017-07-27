@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Image_Carousel extends Widget_Base {
 
@@ -58,7 +60,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Slides to Show', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [ '' => __( 'Default', 'elementor' ) ] + $slides_to_show,
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+				] + $slides_to_show,
 				'frontend_available' => true,
 			]
 		);
@@ -134,9 +138,9 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'open_in_lightbox',
+			'open_lightbox',
 			[
-				'label' => __( 'Open In Lightbox', 'elementor' ),
+				'label' => __( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
@@ -557,8 +561,9 @@ class Widget_Image_Carousel extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		if ( empty( $settings['carousel'] ) )
+		if ( empty( $settings['carousel'] ) ) {
 			return;
+		}
 
 		$slides = [];
 
@@ -573,8 +578,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				$link_key = 'link_' . $index;
 
 				$this->add_render_attribute( $link_key, [
-					'href' => $link,
-					'data-open_in_lightbox' => $settings['open_in_lightbox'],
+					'href' => $link['url'],
+					'class' => 'elementor-clickable',
+					'data-open-lightbox' => $settings['open_lightbox'],
+					'data-elementor-lightbox-slideshow' => $this->get_id(),
+					'data-elementor-lightbox-index' => $index,
 				] );
 
 				if ( ! empty( $link['is_external'] ) ) {
@@ -640,6 +648,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( empty( $instance['link']['url'] ) ) {
 				return false;
 			}
+
 			return $instance['link'];
 		}
 

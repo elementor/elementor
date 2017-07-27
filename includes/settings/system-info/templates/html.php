@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * @var array $reports
@@ -16,10 +18,12 @@ foreach ( $reports as $report_name => $report ) : ?>
 			</tr>
 			</thead>
 			<tbody>
-			<?php foreach ( $report['report'] as $field_name => $field ) :
+			<?php
+			foreach ( $report['report'] as $field_name => $field ) :
 
 				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ] ) ) :
-					foreach ( $field['value'] as $plugin ) : ?>
+					foreach ( $field['value'] as $plugin ) :
+					?>
 						<tr>
 							<td>
 								<?php
@@ -33,7 +37,9 @@ foreach ( $reports as $report_name => $report ) : ?>
 									$plugin_name .= ' - ' . $plugin['Version'];
 								endif;
 
-								echo $plugin_name; ?></td>
+								echo $plugin_name;
+								?>
+								</td>
 							<td>
 								<?php
 								if ( $plugin['Author'] ) :
@@ -45,21 +51,32 @@ foreach ( $reports as $report_name => $report ) : ?>
 									endif;
 
 									echo "By $author";
-								endif; ?></td>
+								endif;
+								?>
+								</td>
 							<td></td>
 						</tr>
-					<?php endforeach;
-				else : ?>
+					<?php
+					endforeach;
+				else :
+				?>
 					<tr>
 						<td><?php echo $field['label']; ?>:</td>
 						<td><?php echo nl2br( $field['value'] ); ?></td>
-						<td><?php if ( ! empty( $field['recommendation'] ) ) :
+						<td>
+						<?php
+						if ( ! empty( $field['recommendation'] ) ) :
 								echo $field['recommendation'];
-							endif; ?></td>
+							endif;
+							?>
+							</td>
 					</tr>
-				<?php endif;
-			endforeach; ?>
+				<?php
+				endif;
+			endforeach;
+			?>
 			</tbody>
 		</table>
 	</div>
-<?php endforeach;
+<?php
+endforeach;

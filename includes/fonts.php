@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Fonts {
 
@@ -857,8 +859,9 @@ class Fonts {
 	public static function get_font_type( $name ) {
 		$fonts = self::get_fonts();
 
-		if ( empty( $fonts[ $name ] ) )
+		if ( empty( $fonts[ $name ] ) ) {
 			return false;
+		}
 
 		return $fonts[ $name ];
 	}

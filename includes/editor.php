@@ -3,7 +3,9 @@ namespace Elementor;
 
 use Elementor\Core\Settings\Manager as SettingsManager;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Editor {
 
@@ -287,7 +289,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.1',
+			'3.2.3',
 			true
 		);
 
@@ -301,7 +303,6 @@ class Editor {
 				'backbone-marionette',
 				'backbone-radio',
 				'perfect-scrollbar',
-				//'jquery-easing',
 				'nprogress',
 				'tipsy',
 				'imagesloaded',

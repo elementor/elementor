@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Image extends Widget_Base {
 
@@ -39,7 +41,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'image', // Actually its `image_size`
+				'name' => 'image', // Actually its `image_size`.
 				'label' => __( 'Image Size', 'elementor' ),
 				'default' => 'large',
 			]
@@ -110,9 +112,9 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'open_in_lightbox',
+			'open_lightbox',
 			[
-				'label' => __( 'Open In Lightbox', 'elementor' ),
+				'label' => __( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
@@ -323,7 +325,8 @@ class Widget_Image extends Widget_Base {
 		if ( $link ) {
 			$this->add_render_attribute( 'link', [
 				'href' => $link['url'],
-				'data-open_in_lightbox' => $settings['open_in_lightbox'],
+				'class' => 'elementor-clickable',
+				'data-open-lightbox' => $settings['open_lightbox'],
 			] );
 
 			if ( ! empty( $link['is_external'] ) ) {
@@ -335,26 +338,33 @@ class Widget_Image extends Widget_Base {
 			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-		<?php
-		if ( $has_caption ) : ?>
+		<?php if ( $has_caption ) : ?>
 			<figure class="wp-caption">
-		<?php endif;
+		<?php
+		endif;
 
-		if ( $link ) : ?>
+		if ( $link ) :
+		?>
 				<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-		<?php endif;
+		<?php
+		endif;
 
 		echo Group_Control_Image_Size::get_attachment_image_html( $settings );
 
-		if ( $link ) : ?>
+		if ( $link ) :
+		?>
 				</a>
-		<?php endif;
+		<?php
+		endif;
 
-		if ( $has_caption ) : ?>
+		if ( $has_caption ) :
+		?>
 				<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
-		<?php endif;
+		<?php
+		endif;
 
-		if ( $has_caption ) : ?>
+		if ( $has_caption ) :
+		?>
 			</figure>
 		<?php endif; ?>
 		</div>
@@ -401,7 +411,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( link_url ) {
-					#><a href="{{ link_url }}"><#
+					#><a class="elementor-clickable" data-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
 			}
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
 

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Settings_Page {
 	private $tabs;
@@ -157,7 +159,8 @@ abstract class Settings_Page {
 					}
 
 					echo "<a id='elementor-settings-tab-$tab_id' class='nav-tab$active_class' href='#tab-$tab_id'>$tab[label]</a>";
-				} ?>
+				}
+				?>
 			</div>
 			<form id="elementor-settings-form" method="post" action="options.php">
 				<?php

@@ -1781,6 +1781,7 @@ App = Marionette.Application.extend( {
 			Date_time: require( 'elementor-views/controls/date-time' ),
 			Code: require( 'elementor-views/controls/code' ),
 			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Text_shadow: require( 'elementor-views/controls/box-shadow' ),
 			Structure: require( 'elementor-views/controls/structure' ),
 			Animation: require( 'elementor-views/controls/select2' ),
 			Hover_animation: require( 'elementor-views/controls/select2' ),
@@ -5671,7 +5672,8 @@ Introduction = function() {
 	var initModal = function() {
 		modal = elementor.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-introduction',
-			closeButton: true
+			closeButton: true,
+			closeButtonClass: 'eicon-close'
 		} );
 
 		modal.getElements( 'closeButton' ).on( 'click', function() {
@@ -7326,8 +7328,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
+		if ( ! Backbone.$( event.target ).closest( '.elementor-clickable' ).length ) {
+			event.preventDefault();
+
+			event.stopPropagation();
+		}
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
@@ -8161,7 +8166,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-slider';
-		ui.colors = '.elementor-box-shadow-color-picker';
+		ui.colors = '.elementor-shadow-color-picker';
 
 		return ui;
 	},
@@ -10222,14 +10227,6 @@ WidgetView = BaseElementView.extend( {
 		} );
 
 		return this;
-	},
-
-	onClickEdit: function( event ) {
-		if ( Backbone.$( event.target ).closest( '.elementor-event-save-default' ).length ) {
-			return;
-		}
-
-		BaseElementView.prototype.onClickEdit.apply( this, arguments );
 	},
 
 	onRender: function() {

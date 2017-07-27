@@ -1,7 +1,14 @@
 # URL
 A url field with a `show_external` option that shows a button that allows the user to set it to open the link in a new tab.
 
-*Returns:* `array( 'url' => (string), 'is_external' => (bool), 'nofollow' => (bool) )`
+*Returns:* Array
+```php
+[
+    'url' => (string),
+    'is_external' => (bool),
+    'nofollow' => (bool),
+]
+```
 
 ## Example
 
