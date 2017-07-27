@@ -10904,9 +10904,10 @@ var	Manager = function() {
 		if ( ! items.length ) {
 			items.add( {
 				status: 'not_applied',
-				title: 'Editing Started',
+				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
-				action: ''
+				action: '',
+				editing_started: true
 			} );
 		}
 
@@ -10985,6 +10986,10 @@ var	Manager = function() {
 					elementor.helpers.scrollToView( view );
 				}
 			}
+		}
+
+		if ( item.get( 'editing_started' ) ) {
+			elementor.setFlagEditorChange( false );
 		}
 	};
 
@@ -11071,7 +11076,7 @@ var	Manager = function() {
 	this.startInsertTemplate = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'add',
-			title: elementor.translate( 'Template' ),
+			title: elementor.translate( 'template' ),
 			subTitle: model.get( 'title' )
 		} );
 	};
