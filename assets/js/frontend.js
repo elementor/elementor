@@ -114,14 +114,24 @@ module.exports = ElementsHandler;
 
 		this.Module = Module;
 
+		var setDeviceModeData = function() {
+			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+		};
+
 		var initElements = function() {
-			elements.$document = $( document );
-
-			elements.$elementor = elements.$document.find( '.elementor' );
-
 			elements.window = window;
 
 			elements.$window = $( window );
+
+			elements.$document = $( document );
+
+			elements.$body = $( 'body' );
+
+			elements.$elementor = elements.$document.find( '.elementor' );
+		};
+
+		var bindEvents = function() {
+			elements.$window.on( 'resize', setDeviceModeData );
 		};
 
 		var initOnReadyComponents = function() {
@@ -148,6 +158,10 @@ module.exports = ElementsHandler;
 			self.hooks = new EventManager();
 
 			initElements();
+
+			bindEvents();
+
+			setDeviceModeData();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
@@ -872,7 +886,9 @@ var Shapes = HandlerModule.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new StretchedSection( { $element: $scope } );
+	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
+		new StretchedSection( { $element: $scope } );
+	}
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element:  $scope } );
@@ -1509,7 +1525,7 @@ LightboxModule = ViewModule.extend( {
 		}
 
 		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
-			currentLinkOpenInLightbox = a.dataset.openInLightbox;
+			currentLinkOpenInLightbox = a.dataset.openLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox;
 	},
