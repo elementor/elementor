@@ -26,13 +26,11 @@ abstract class Source_Base {
 	}
 
 	protected function replace_elements_ids( $content ) {
-		return Plugin::$instance->db->iterate_data(
-			$content, function( $element ) {
-				$element['id'] = Utils::generate_random_string();
+		return Plugin::$instance->db->iterate_data( $content, function( $element ) {
+			$element['id'] = Utils::generate_random_string();
 
-				return $element;
-			}
-		);
+			return $element;
+		} );
 	}
 
 	/**
