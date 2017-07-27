@@ -305,7 +305,7 @@ LightboxModule = ViewModule.extend( {
 		}
 
 		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
-			currentLinkOpenInLightbox = a.dataset.openLightbox;
+			currentLinkOpenInLightbox = a.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox;
 	},
