@@ -530,7 +530,7 @@ class Widget_Video extends Widget_Base {
 						$this->add_render_attribute( 'image_overlay_link', [
 							'href' => $settings['image_overlay']['url'],
 							'class' => 'elementor-clickable',
-							'data-open-lightbox' => 'yes',
+							'data-elementor-open-lightbox' => 'yes',
 							'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
 						] );
 						?>
