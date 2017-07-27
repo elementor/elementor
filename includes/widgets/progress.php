@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Progress extends Widget_Base {
 
@@ -69,18 +71,15 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-	    $this->add_control(
-	        'display_percentage',
-	        [
-	            'label' => __( 'Display Percentage', 'elementor' ),
-	            'type' => Controls_Manager::SELECT,
-	            'default' => 'show',
-	            'options' => [
-	                'show' => __( 'Show', 'elementor' ),
-	                'hide' => __( 'Hide', 'elementor' ),
-	            ],
-	        ]
-	    );
+		$this->add_control( 'display_percentage', [
+			'label' => __( 'Display Percentage', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'show',
+			'options' => [
+				'show' => __( 'Show', 'elementor' ),
+				'hide' => __( 'Hide', 'elementor' ),
+			],
+		] );
 
 		$this->add_control(
 			'inner_text',
@@ -212,7 +211,8 @@ class Widget_Progress extends Widget_Base {
 				<?php } ?>
 			</div>
 		</div>
-	<?php }
+	<?php
+	}
 
 	protected function _content_template() {
 		?>

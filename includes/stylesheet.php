@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Stylesheet {
 
@@ -71,9 +73,9 @@ class Stylesheet {
 	}
 
 	/**
-	 * @param string $selector
+	 * @param string       $selector
 	 * @param array|string $style_rules
-	 * @param array $query
+	 * @param array        $query
 	 *
 	 * @return $this
 	 */
@@ -253,29 +255,31 @@ class Stylesheet {
 	private function add_query_hash( $query_hash ) {
 		$this->rules[ $query_hash ] = [];
 
-		uksort( $this->rules, function( $a, $b ) {
-			if ( 'all' === $a ) {
-				return -1;
+		uksort(
+			$this->rules, function( $a, $b ) {
+				if ( 'all' === $a ) {
+					return -1;
+				}
+
+				if ( 'all' === $b ) {
+					return 1;
+				}
+
+				$a_query = $this->hash_to_query( $a );
+
+				$b_query = $this->hash_to_query( $b );
+
+				if ( isset( $a_query['min'] ) xor isset( $b_query['min'] ) ) {
+					return 1;
+				}
+
+				if ( isset( $a_query['min'] ) ) {
+					return $a_query['min'] - $b_query['min'];
+				}
+
+				return $b_query['max'] - $a_query['max'];
 			}
-
-			if ( 'all' === $b ) {
-				return 1;
-			}
-
-			$a_query = $this->hash_to_query( $a );
-
-			$b_query = $this->hash_to_query( $b );
-
-			if ( isset( $a_query['min'] ) xor isset( $b_query['min'] ) ) {
-				return 1;
-			}
-
-			if ( isset( $a_query['min'] ) ) {
-				return $a_query['min'] - $b_query['min'];
-			}
-
-			return $b_query['max'] - $a_query['max'];
-		} );
+		);
 	}
 
 	/**

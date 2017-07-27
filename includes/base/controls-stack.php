@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Controls_Stack {
 
@@ -28,18 +30,22 @@ abstract class Controls_Stack {
 	 */
 	protected $_current_tab = null;
 
+	abstract public function get_name();
+
+	public function get_unique_name() {
+		return $this->get_name();
+	}
+
 	public function get_id() {
 		return $this->_id;
 	}
-
-	abstract public function get_name();
 
 	public static function get_type() {
 		return 'stack';
 	}
 
 	/**
-	 * @param array $haystack
+	 * @param array  $haystack
 	 * @param string $needle
 	 *
 	 * @return mixed the whole haystack or the
@@ -70,15 +76,17 @@ abstract class Controls_Stack {
 
 		$settings = $this->get_controls_settings();
 
-		$active_controls = array_reduce( array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
-			$control = $controls[ $control_key ];
+		$active_controls = array_reduce(
+			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
+				$control = $controls[ $control_key ];
 
-			if ( $this->is_control_visible( $control, $settings ) ) {
-				$active_controls[ $control_key ] = $control;
-			}
+				if ( $this->is_control_visible( $control, $settings ) ) {
+					$active_controls[ $control_key ] = $control;
+				}
 
-			return $active_controls;
-		}, [] );
+				return $active_controls;
+			}, []
+		);
 
 		return $active_controls;
 	}
@@ -108,7 +116,7 @@ abstract class Controls_Stack {
 	}
 
 	public function remove_control( $control_id ) {
-		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_name(), $control_id );
+		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
 	}
 
 	public function update_control( $control_id, array $args ) {
@@ -128,9 +136,11 @@ abstract class Controls_Stack {
 	final public function get_scheme_controls() {
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
-		return array_filter( $this->get_controls(), function( $control ) use ( $enabled_schemes ) {
-			return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
-		} );
+		return array_filter(
+			$this->get_controls(), function( $control ) use ( $enabled_schemes ) {
+				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
+			}
+		);
 	}
 
 	final public function get_style_controls( $controls = null ) {
@@ -154,9 +164,11 @@ abstract class Controls_Stack {
 	}
 
 	final public function get_class_controls() {
-		return array_filter( $this->get_active_controls(), function( $control ) {
-			return ( isset( $control['prefix_class'] ) );
-		} );
+		return array_filter(
+			$this->get_active_controls(), function( $control ) {
+				return ( isset( $control['prefix_class'] ) );
+			}
+		);
 	}
 
 	final public function get_tabs_controls() {
@@ -195,7 +207,9 @@ abstract class Controls_Stack {
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
 
-			$control_args['responsive'] = [ 'max' => $device_name ];
+			$control_args['responsive'] = [
+				'max' => $device_name,
+			];
 
 			if ( isset( $control_args['min_affected_device'] ) ) {
 				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {
@@ -300,17 +314,19 @@ abstract class Controls_Stack {
 			$controls = $this->get_controls();
 		}
 
-		return array_reduce( array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
-			if ( isset( $controls[ $setting_key ] ) ) {
-				$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
+		return array_reduce(
+			array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
+				if ( isset( $controls[ $setting_key ] ) ) {
+					$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
 
-				if ( null !== $result ) {
-					$filtered_settings[ $setting_key ] = $result;
+					if ( null !== $result ) {
+						$filtered_settings[ $setting_key ] = $result;
+					}
 				}
-			}
 
-			return $filtered_settings;
-		}, [] );
+				return $filtered_settings;
+			}, []
+		);
 	}
 
 	public function is_control_visible( $control, $values = null ) {
@@ -352,7 +368,7 @@ abstract class Controls_Stack {
 			 * If the $condition_value is a non empty array - check if the $condition_value contains the $instance_value,
 			 * If the $instance_value is a non empty array - check if the $instance_value contains the $condition_value
 			 * otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			 **/
+			 */
 			if ( is_array( $condition_value ) && ! empty( $condition_value ) ) {
 				$is_contains = in_array( $instance_value, $condition_value );
 			} elseif ( is_array( $instance_value ) && ! empty( $instance_value ) ) {
@@ -378,7 +394,7 @@ abstract class Controls_Stack {
 		$this->add_control( $section_id, $args );
 
 		if ( null !== $this->_current_section ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) );
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) ); // XSS ok.
 		}
 
 		$this->_current_section = $this->get_section_args( $section_id );
@@ -388,10 +404,12 @@ abstract class Controls_Stack {
 	}
 
 	public function end_controls_section() {
-		// Save the current section for the action
+		// Save the current section for the action.
 		$current_section = $this->_current_section;
 		$section_id = $current_section['section'];
-		$args = [ 'tab' => $current_section['tab'] ];
+		$args = [
+			'tab' => $current_section['tab'],
+		];
 
 		do_action( 'elementor/element/before_section_end', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_end', $this, $args );
@@ -404,7 +422,7 @@ abstract class Controls_Stack {
 
 	public function start_controls_tabs( $tabs_id ) {
 		if ( null !== $this->_current_tab ) {
-			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) );
+			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) ); // XSS ok.
 		}
 
 		$this->add_control(
@@ -425,7 +443,7 @@ abstract class Controls_Stack {
 
 	public function start_controls_tab( $tab_id, $args ) {
 		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) );
+			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) ); // XSS ok.
 		}
 
 		$args['type'] = Controls_Manager::TAB;
@@ -441,7 +459,7 @@ abstract class Controls_Stack {
 	}
 
 	final public function set_settings( $key, $value = null ) {
-		// strict check if override all settings
+		// strict check if override all settings.
 		if ( is_array( $key ) ) {
 			$this->_settings = $key;
 		} else {
@@ -505,7 +523,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * @param array $data - Required for a normal instance, It's optional only for internal `type instance`
+	 * @param array $data - Required for a normal instance, It's optional only for internal `type instance`.
 	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {

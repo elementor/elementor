@@ -10,18 +10,19 @@
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 
-	<rule ref="WordPress-Core">
-		<exclude name="Generic.ControlStructures.InlineControlStructure" />
-		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
+	<rule ref="WordPress">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeKeyFound" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
+		<exclude name="Generic.Commenting.DocComment.MissingShort" />
+		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
+		<exclude name="Squiz.Commenting.ClassComment.Missing" />
+		<exclude name="Squiz.Commenting.VariableComment.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 	</rule>
 
-	<!-- Extras -->
-	<rule ref="WordPress.PHP.DiscouragedFunctions" />
-
-	<!-- VIP -->
-	<rule ref="WordPress.Arrays.ArrayAssignmentRestrictions" />
-	<rule ref="WordPress.Functions.FunctionRestrictions" />
-	<rule ref="WordPress.Variables.VariableRestrictions" />
+	<rule ref="WordPress.WP.DeprecatedFunctions">
+		<properties>
+			<property name="minimum_supported_version" value="4.5" />
+		</properties>
+	</rule>
 </ruleset>

@@ -6,7 +6,9 @@ use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Main class plugin
@@ -151,8 +153,8 @@ class Plugin {
 	 * @return void
 	 */
 	public function __clone() {
-		// Cloning instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		// Cloning instances of the class is forbidden.
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
 	}
 
 	/**
@@ -162,8 +164,8 @@ class Plugin {
 	 * @return void
 	 */
 	public function __wakeup() {
-		// Unserializing instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		// Unserializing instances of the class is forbidden.
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
 	}
 
 	/**

@@ -46,6 +46,15 @@
   padding: 20px 0;
   font-weight: 500; }
 
+.dialog-close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 15px; }
+  .dialog-close-button:not(:hover) {
+    opacity: .4; }
+
 .dialog-options-widget .dialog-widget-header,
 .dialog-confirm-widget .dialog-widget-header {
   font-size: 15px;
@@ -73,17 +82,6 @@
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
-
-.dialog-lightbox-close-button {
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  left: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: .65; }
-  .dialog-lightbox-close-button:hover {
-    opacity: 1; }
 
 .elementor-video-wrapper {
   position: relative;
@@ -130,7 +128,7 @@ body.elementor-editor-inactive #elementor-editor {
 #adminmenu #toplevel_page_elementor div.wp-menu-image:before,
 #adminmenu #toplevel_page_edit-post_type-elementor_library div.wp-menu-image:before {
   content: "\e800";
-  font-family: eicon;
+  font-family: eicons;
   font-size: 14px;
   margin-top: 3px; }
 
@@ -258,7 +256,7 @@ body.elementor-editor-inactive #elementor-editor {
 
 #available-widgets [class*="elementor-template"] .widget-title:before {
   content: "\e801";
-  font-family: eicon;
+  font-family: eicons;
   font-size: 17px; }
 
 .elementor-settings-form-page {
@@ -384,9 +382,8 @@ body.elementor-editor-inactive #elementor-editor {
 #elementor-deactivate-feedback-modal .dialog-widget-content {
   width: 550px; }
 
-#elementor-deactivate-feedback-modal .dialog-close-button i:before {
-  content: '\f335';
-  font: 20px dashicons; }
+#elementor-deactivate-feedback-modal .dialog-close-button {
+  transition: all 0.5s; }
 
 #elementor-deactivate-feedback-modal .dialog-widget-header {
   padding: 18px 15px;

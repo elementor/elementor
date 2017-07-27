@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 class Controls_Manager {
 
@@ -45,6 +45,7 @@ class Controls_Manager {
 	const SELECT2 = 'select2';
 	const DATE_TIME = 'date_time';
 	const BOX_SHADOW = 'box_shadow';
+	const TEXT_SHADOW = 'text_shadow';
 	const ANIMATION = 'animation';
 	const HOVER_ANIMATION = 'hover_animation';
 	const ORDER = 'order';
@@ -141,6 +142,7 @@ class Controls_Manager {
 			self::SELECT2,
 			self::DATE_TIME,
 			self::BOX_SHADOW,
+			self::TEXT_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::ORDER,
@@ -166,6 +168,7 @@ class Controls_Manager {
 		$this->control_groups['typography'] = new Group_Control_Typography();
 		$this->control_groups['image-size'] = new Group_Control_Image_Size();
 		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
 		do_action( 'elementor/controls/controls_registered', $this );
 	}
@@ -288,7 +291,7 @@ class Controls_Manager {
 	}
 
 	public function open_stack( Controls_Stack $element ) {
-		$stack_id = $element->get_name();
+		$stack_id = $element->get_unique_name();
 
 		$this->controls_stack[ $stack_id ] = [
 			'tabs' => [],
@@ -323,7 +326,7 @@ class Controls_Manager {
 			}
 		}
 
-		$stack_id = $element->get_name();
+		$stack_id = $element->get_unique_name();
 
 		if ( ! $overwrite && isset( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
@@ -376,7 +379,7 @@ class Controls_Manager {
 	}
 
 	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data ) {
-		$old_control_data = $this->get_control_from_stack( $element->get_name(), $control_id );
+		$old_control_data = $this->get_control_from_stack( $element->get_unique_name(), $control_id );
 		if ( is_wp_error( $old_control_data ) ) {
 			return false;
 		}
@@ -387,7 +390,7 @@ class Controls_Manager {
 	}
 
 	public function get_element_stack( Controls_Stack $controls_stack ) {
-		$stack_id = $controls_stack->get_name();
+		$stack_id = $controls_stack->get_unique_name();
 
 		if ( ! isset( $this->controls_stack[ $stack_id ] ) ) {
 			return null;

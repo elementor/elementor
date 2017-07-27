@@ -3,13 +3,6 @@
 //
 .elementor-widget-video {
 
-	.elementor-open-lightbox {
-
-		iframe {
-			display: none;
-		}
-	}
-
 	.elementor-open-inline {
 
 		.elementor-custom-embed-image-overlay {
@@ -32,8 +25,7 @@
 			.elementor-custom-embed-play {
 
 				i {
-					opacity: 0.9;
-					text-shadow: 3px 2px 30px rgba(0,0,0,0.6);
+					opacity: 1;
 				}
 			}
 		}

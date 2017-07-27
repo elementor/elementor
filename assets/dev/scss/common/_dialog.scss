@@ -68,6 +68,18 @@
 	font-weight: 500;
 }
 
+.dialog-close-button {
+	cursor: pointer;
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	font-size: 15px;
+
+	&:not(:hover) {
+		opacity: .4;
+	}
+}
+
 .dialog-options-widget,
 .dialog-confirm-widget {
 
@@ -114,20 +126,5 @@
 		> button {
 			width: 100%;
 		}
-	}
-}
-
-// Modal widget
-.dialog-lightbox-close-button {
-	cursor: pointer;
-	position: absolute;
-	top: 16px;
-	@include end(20px);
-	font-size: 16px;
-	color: #ffffff;
-	opacity: .65;
-
-	&:hover {
-		opacity: 1;
 	}
 }

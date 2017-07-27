@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Global_CSS_File extends CSS_File {
 
@@ -79,23 +81,25 @@ class Global_CSS_File extends CSS_File {
 			$scheme_controls = $widget->get_scheme_controls();
 
 			foreach ( $scheme_controls as $control ) {
-				$this->add_control_rules( $control, $widget->get_controls(), function( $control ) use ( $elementor ) {
-					$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
+				$this->add_control_rules(
+					$control, $widget->get_controls(), function( $control ) use ( $elementor ) {
+						$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
-					if ( empty( $scheme_value ) ) {
-						return null;
-					}
+						if ( empty( $scheme_value ) ) {
+							return null;
+						}
 
-					if ( ! empty( $control['scheme']['key'] ) ) {
-						$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-					}
+						if ( ! empty( $control['scheme']['key'] ) ) {
+							$scheme_value = $scheme_value[ $control['scheme']['key'] ];
+						}
 
-					if ( empty( $scheme_value ) ) {
-						return null;
-					}
+						if ( empty( $scheme_value ) ) {
+							return null;
+						}
 
-					return $scheme_value;
-				}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ] );
+						return $scheme_value;
+					}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ]
+				);
 			}
 		}
 	}
@@ -110,7 +114,11 @@ class Global_CSS_File extends CSS_File {
 		$space_between_widgets = get_option( 'elementor_space_between_widgets' );
 
 		if ( is_numeric( $space_between_widgets ) ) {
-			$this->stylesheet_obj->add_rules( '.elementor-widget:not(:last-child)', [ 'margin-bottom' => $space_between_widgets . 'px' ] );
+			$this->stylesheet_obj->add_rules(
+				'.elementor-widget:not(:last-child)', [
+					'margin-bottom' => $space_between_widgets . 'px',
+				]
+			);
 		}
 	}
 }
