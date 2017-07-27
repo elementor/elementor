@@ -97,6 +97,9 @@ var	Manager = function() {
 			.on( 'element:before:add', self.startAddElement )
 			.on( 'element:after:add', self.endItem )
 
+			.on( 'element:before:remove', self.startRemoveElement )
+			.on( 'element:after:remove', self.endItem )
+
 			.on( 'element:before:duplicate', self.startDuplicateElement )
 			.on( 'element:after:duplicate', self.endItem )
 
@@ -331,6 +334,13 @@ var	Manager = function() {
 	this.startDuplicateElement = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'duplicate',
+			title: self.getModelLabel( model )
+		} );
+	};
+
+	this.startRemoveElement = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'remove',
 			title: self.getModelLabel( model )
 		} );
 	};
