@@ -114,14 +114,24 @@ module.exports = ElementsHandler;
 
 		this.Module = Module;
 
+		var setDeviceModeData = function() {
+			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+		};
+
 		var initElements = function() {
-			elements.$document = $( document );
-
-			elements.$elementor = elements.$document.find( '.elementor' );
-
 			elements.window = window;
 
 			elements.$window = $( window );
+
+			elements.$document = $( document );
+
+			elements.$body = $( 'body' );
+
+			elements.$elementor = elements.$document.find( '.elementor' );
+		};
+
+		var bindEvents = function() {
+			elements.$window.on( 'resize', setDeviceModeData );
 		};
 
 		var initOnReadyComponents = function() {
@@ -148,6 +158,10 @@ module.exports = ElementsHandler;
 			self.hooks = new EventManager();
 
 			initElements();
+
+			bindEvents();
+
+			setDeviceModeData();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
