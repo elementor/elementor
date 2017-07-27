@@ -494,20 +494,21 @@ class Widget_Video extends Widget_Base {
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php
 					if ( $settings['lightbox'] ) :
-						$modal_options = [
-							'id' => 'elementor-lightbox-' . $this->get_id(),
-							'entranceAnimation' => $settings['lightbox_content_animation'],
-							'videoAspectRatio' => $settings['aspect_ratio'],
+						$lightbox_options = [
+							'type' => 'video',
+							'url' => Embed::get_embed_url( $video_link, $embed_params ),
+							'modalOptions' => [
+								'id' => 'elementor-lightbox-' . $this->get_id(),
+								'entranceAnimation' => $settings['lightbox_content_animation'],
+								'videoAspectRatio' => $settings['aspect_ratio'],
+							],
 						];
+
 						$this->add_render_attribute( 'image_overlay_link', [
 							'href' => $settings['image_overlay']['url'],
 							'class' => 'elementor-clickable',
 							'data-open-lightbox' => 'yes',
-							'data-elementor-lightbox' => [
-								'type' => 'video',
-								'url' => Embed::get_embed_url( $video_link, $embed_params ),
-								'modalOptions' => wp_json_encode( $modal_options ),
-							],
+							'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
 						] );
 						?>
 						<a <?php echo $this->get_render_attribute_string( 'image_overlay_link' ); ?>>
