@@ -1544,6 +1544,10 @@ LightboxModule = ViewModule.extend( {
 
 		event.preventDefault();
 
+		if ( elementorFrontend.isEditMode() && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
+			return;
+		}
+
 		var lightboxData = {};
 
 		if ( element.dataset.elementorLightbox ) {
