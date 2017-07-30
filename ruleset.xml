@@ -10,7 +10,7 @@
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 
-	<rule ref="WordPress">
+	<rule ref="WordPress-Extra">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="Squiz.Commenting.FileComment.Missing" />
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />

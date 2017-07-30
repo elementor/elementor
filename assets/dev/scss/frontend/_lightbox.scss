@@ -26,8 +26,6 @@
 			position: absolute;
 			color: #ffffff;
 			font-size: 25px;
-			top: 35px;
-			right: 35px;
 			padding: 5px;
 			z-index: 2;
 			line-height: 1;
@@ -64,10 +62,17 @@
 
 	.elementor-video-container {
 		position: absolute;
-		width: 50%;
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
+
+		@media (min-width: $screen-md-min) {
+			width: 50%;
+		}
+
+		@media (max-width: $screen-sm-max) {
+			width: 100%;
+		}
 	}
 
 
@@ -89,3 +94,18 @@
 		}
 	}
 }
+
+@media (min-width: $screen-sm-max) {
+
+	.elementor-lightbox {
+
+		.dialog- {
+
+			&lightbox-close-button {
+				top: 35px;
+				right: 35px;
+			}
+		}
+	}
+}
+
