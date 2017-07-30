@@ -4,7 +4,7 @@ module.exports = Marionette.Behavior.extend( {
 	listenerAttached: false,
 
 	initialize: function() {
-		this.lazySaveHistory = _.debounce( _.bind( this.lazySaveHistory, this ), 800 );
+		this.lazySaveTextHistory = _.debounce( _.bind( this.saveTextHistory, this ), 800 );
 	},
 
 	// use beforeRender that runs after the settingsModel is exist
@@ -15,7 +15,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	lazySaveHistory: function( model, changed, control ) {
+	saveTextHistory: function( model, changed, control ) {
 		var changedAttributes = {};
 
 		changedAttributes[ control.name ] = {
@@ -41,6 +41,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	saveHistory: function( model ) {
+		if ( ! elementor.history.history.getActive() ) {
+			return;
+		}
+
 		var self = this,
 			changed = Object.keys( model.changed );
 
@@ -55,7 +59,12 @@ module.exports = Marionette.Behavior.extend( {
 				self.oldValues[ control.name ] = model.previous( control.name );
 			}
 
-			self.lazySaveHistory( model, changed, control );
+			if ( elementor.history.history.isItemStarted() ) {
+				// Do not delay the execusion
+				self.saveTextHistory( model, changed, control );
+			} else {
+				self.lazySaveTextHistory( model, changed, control );
+			}
 
 			return;
 		}
