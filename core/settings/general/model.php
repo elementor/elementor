@@ -97,6 +97,13 @@ class Model extends BaseModel {
 								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
+						'elementor_enable_lightbox_in_editor' => [
+							'label' => __( 'Enable In Editor', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'description' => __( '', 'elementor' ),
+							'frontend_available' => true,
+						],
 					],
 				],
 			],
