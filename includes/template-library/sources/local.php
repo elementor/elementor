@@ -241,8 +241,12 @@ class Source_Local extends Source_Base {
 			$content = $db->get_plain_editor( $template_id );
 		}
 
+		if ( ! empty( $content ) ) {
+			$content = $this->replace_elements_ids( $content );
+		}
+
 		$data = [
-			'content' => $this->replace_elements_ids( $content ),
+			'content' => $content,
 		];
 
 		if ( ! empty( $args['page_settings'] ) ) {
@@ -295,6 +299,10 @@ class Source_Local extends Source_Base {
 		 */
 		foreach ( $template_ids as $template_id ) {
 			$file_data = $this->prepare_template_export( $template_id );
+
+			if ( is_wp_error( $file_data ) ) {
+				continue;
+			}
 
 			$complete_path = $temp_path . '/' . $file_data['name'];
 

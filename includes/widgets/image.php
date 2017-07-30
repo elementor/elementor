@@ -326,7 +326,7 @@ class Widget_Image extends Widget_Base {
 			$this->add_render_attribute( 'link', [
 				'href' => $link['url'],
 				'class' => 'elementor-clickable',
-				'data-open-lightbox' => $settings['open_lightbox'],
+				'data-elementor-open-lightbox' => $settings['open_lightbox'],
 			] );
 
 			if ( ! empty( $link['is_external'] ) ) {
@@ -411,7 +411,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( link_url ) {
-					#><a class="elementor-clickable" data-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
+					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
 			}
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
 
