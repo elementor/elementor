@@ -83,22 +83,6 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'aspect_ratio',
-			[
-				'label' => __( 'Aspect Ratio', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'frontend_available' => true,
-				'options' => [
-					'169' => '16:9',
-					'43' => '4:3',
-					'32' => '3:2',
-				],
-				'default' => '169',
-				'prefix_class' => 'elementor-aspect-ratio-',
-			]
-		);
-
-		$this->add_control(
 			'heading_youtube',
 			[
 				'label' => __( 'Video Options', 'elementor' ),
@@ -326,10 +310,34 @@ class Widget_Video extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_play_icon_style',
+			'section_video_style',
+			[
+				'label' => __( 'Video', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'aspect_ratio',
+			[
+				'label' => __( 'Aspect Ratio', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'169' => '16:9',
+					'43' => '4:3',
+					'32' => '3:2',
+				],
+				'default' => '169',
+				'prefix_class' => 'elementor-aspect-ratio-',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'play_icon_title',
 			[
 				'label' => __( 'Play Icon', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'type' => Controls_Manager::HEADING,
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
@@ -343,6 +351,10 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'color: {{VALUE}}',
+				],
+				'separator' => 'before',
+				'condition' => [
+					'show_image_overlay' => 'yes',
 				],
 			]
 		);
@@ -361,6 +373,9 @@ class Widget_Video extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'font-size: {{SIZE}}{{UNIT}}',
 				],
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
 			]
 		);
 
@@ -369,6 +384,14 @@ class Widget_Video extends Widget_Base {
 			[
 				'name' => 'play_icon_text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
+				'fields_options' => [
+					'text_shadow_type' => [
+						'label' => _x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+					],
+				],
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
 			]
 		);
 
@@ -465,7 +488,7 @@ class Widget_Video extends Widget_Base {
 		$video_html = Embed::get_embed_html( $video_link, $embed_params );
 
 		if ( empty( $video_html ) ) {
-			echo $video_link;
+			echo esc_url( $video_link );
 
 			return;
 		}
@@ -481,45 +504,41 @@ class Widget_Video extends Widget_Base {
 		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
 			if ( ! $settings['lightbox'] ) {
-				echo $video_html;
+				echo $video_html; // XSS ok.
 			}
 
 			if ( $this->has_image_overlay() ) {
 				$this->add_render_attribute( 'image-overlay', 'class', 'elementor-custom-embed-image-overlay' );
 
-				if ( ! $settings['lightbox'] ) {
+				if ( $settings['lightbox'] ) {
+					$lightbox_options = [
+						'type' => 'video',
+						'url' => Embed::get_embed_url( $video_link, $embed_params ),
+						'modalOptions' => [
+							'id' => 'elementor-lightbox-' . $this->get_id(),
+							'entranceAnimation' => $settings['lightbox_content_animation'],
+							'videoAspectRatio' => $settings['aspect_ratio'],
+						],
+					];
+
+					$this->add_render_attribute( 'image-overlay', [
+						'class' => 'elementor-clickable',
+						'data-elementor-open-lightbox' => 'yes',
+						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
+					] );
+				} else {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . $settings['image_overlay']['url'] . ');' );
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php
-					if ( $settings['lightbox'] ) :
-						$modal_options = [
-							'id' => 'elementor-lightbox-' . $this->get_id(),
-							'entranceAnimation' => $settings['lightbox_content_animation'],
-							'videoAspectRatio' => $settings['aspect_ratio'],
-						];
-						$this->add_render_attribute( 'image_overlay_link', [
-							'href' => $settings['image_overlay']['url'],
-							'class' => 'elementor-clickable',
-							'data-open-lightbox' => 'yes',
-							'data-elementor-lightbox' => [
-								'type' => 'video',
-								'url' => Embed::get_embed_url( $video_link, $embed_params ),
-								'modalOptions' => wp_json_encode( $modal_options ),
-							],
-						] );
-						?>
-						<a <?php echo $this->get_render_attribute_string( 'image_overlay_link' ); ?>>
-							<img src="<?php echo $settings['image_overlay']['url']; ?>">
+					if ( $settings['lightbox'] ) : ?>
+						<img src="<?php echo $settings['image_overlay']['url']; ?>">
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
 							<i class="eicon-play"></i>
 						</div>
-					<?php endif; ?>
-					<?php if ( $settings['lightbox'] ) : ?>
-						</a>
 					<?php endif; ?>
 				</div>
 			<?php } ?>
@@ -529,8 +548,9 @@ class Widget_Video extends Widget_Base {
 
 	public function render_plain_content() {
 		$settings = $this->get_active_settings();
+		$url = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
-		echo 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
+		echo esc_url( $url );
 	}
 
 	public function get_embed_params() {

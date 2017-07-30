@@ -414,7 +414,7 @@ class Frontend {
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
 
-		$is_builder_mode = is_singular() && User::is_current_user_can_edit( $post_id ) || Plugin::$instance->db->is_built_with_elementor( $post_id );
+		$is_builder_mode = is_singular() && User::is_current_user_can_edit( $post_id ) && Plugin::$instance->db->is_built_with_elementor( $post_id );
 
 		if ( ! $is_builder_mode ) {
 			return;

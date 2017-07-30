@@ -80,6 +80,23 @@
 	}
 }
 
+body.admin-bar {
+
+	.dialog-close-button {
+		top: 30px;
+	}
+}
+
+@media (max-width: $screen-sm-max) {
+
+	body.admin-bar {
+
+		.dialog-close-button {
+			top: 40px;
+		}
+	}
+}
+
 .dialog-options-widget,
 .dialog-confirm-widget {
 

@@ -114,14 +114,24 @@ module.exports = ElementsHandler;
 
 		this.Module = Module;
 
+		var setDeviceModeData = function() {
+			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+		};
+
 		var initElements = function() {
-			elements.$document = $( document );
-
-			elements.$elementor = elements.$document.find( '.elementor' );
-
 			elements.window = window;
 
 			elements.$window = $( window );
+
+			elements.$document = $( document );
+
+			elements.$body = $( 'body' );
+
+			elements.$elementor = elements.$document.find( '.elementor' );
+		};
+
+		var bindEvents = function() {
+			elements.$window.on( 'resize', setDeviceModeData );
 		};
 
 		var initOnReadyComponents = function() {
@@ -148,6 +158,10 @@ module.exports = ElementsHandler;
 			self.hooks = new EventManager();
 
 			initElements();
+
+			bindEvents();
+
+			setDeviceModeData();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
@@ -872,7 +886,9 @@ var Shapes = HandlerModule.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new StretchedSection( { $element: $scope } );
+	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
+		new StretchedSection( { $element: $scope } );
+	}
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element:  $scope } );
@@ -1236,6 +1252,7 @@ LightboxModule = ViewModule.extend( {
 				}
 			},
 			selectors: {
+				links: 'a, [data-elementor-lightbox]',
 				slideshow: {
 					activeSlide: '.swiper-slide-active',
 					prevSlide: '.swiper-slide-prev',
@@ -1503,21 +1520,21 @@ LightboxModule = ViewModule.extend( {
 		}
 	},
 
-	isLightboxLink: function( a ) {
-		if ( ! /\.(png|jpe?g|gif|svg)$/i.test( a.href ) ) {
+	isLightboxLink: function( element ) {
+		if ( 'A' === element.tagName && ! /\.(png|jpe?g|gif|svg)$/i.test( element.href ) ) {
 			return false;
 		}
 
 		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
-			currentLinkOpenInLightbox = a.dataset.openInLightbox;
+			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox;
 	},
 
 	openLink: function( event ) {
-		var a = event.currentTarget;
+		var element = event.currentTarget;
 
-		if ( ! this.isLightboxLink( a ) ) {
+		if ( ! this.isLightboxLink( element ) ) {
 			if ( elementorFrontend.isEditMode() ) {
 				event.preventDefault();
 			}
@@ -1529,8 +1546,8 @@ LightboxModule = ViewModule.extend( {
 
 		var lightboxData = {};
 
-		if ( a.dataset.elementorLightbox ) {
-			lightboxData = JSON.parse( a.dataset.elementorLightbox );
+		if ( element.dataset.elementorLightbox ) {
+			lightboxData = JSON.parse( element.dataset.elementorLightbox );
 		}
 
 		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
@@ -1539,18 +1556,18 @@ LightboxModule = ViewModule.extend( {
 			return;
 		}
 
-		if ( ! a.dataset.elementorLightboxSlideshow ) {
+		if ( ! element.dataset.elementorLightboxSlideshow ) {
 			this.showModal( {
 				type: 'image',
-				url: a.href
+				url: element.href
 			} );
 
 			return;
 		}
 
-		var slideshowID = a.dataset.elementorLightboxSlideshow;
+		var slideshowID = element.dataset.elementorLightboxSlideshow;
 
-		var $allSlideshowLinks = jQuery( 'a' ).filter( function() {
+		var $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( function() {
 			return slideshowID === this.dataset.elementorLightboxSlideshow;
 		} );
 
@@ -1586,10 +1603,10 @@ LightboxModule = ViewModule.extend( {
 			return a.index - b.index;
 		} );
 
-		var initialSlide = a.dataset.elementorLightboxIndex;
+		var initialSlide = element.dataset.elementorLightboxIndex;
 
 		if ( undefined === initialSlide ) {
-			initialSlide = $allSlideshowLinks.index( a );
+			initialSlide = $allSlideshowLinks.index( element );
 		}
 
 		this.showModal( {
@@ -1607,7 +1624,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', 'a', this.openLink );
+		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onInit: function() {
