@@ -10,6 +10,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	saveCollectionHistory: function( collection, event ) {
+		if ( ! elementor.history.history.getActive() ) {
+			return;
+		}
+
 		var historyItem,
 			models,
 			firstModel,

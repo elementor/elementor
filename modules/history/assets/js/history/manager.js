@@ -131,6 +131,10 @@ var	Manager = function() {
 		currentItemID = null;
 	};
 
+	this.isItemStarted = function() {
+		return null !== currentItemID;
+	}
+
 	this.addItem = function( itemData ) {
 		if ( ! this.getActive() ) {
 			return;
