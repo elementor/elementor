@@ -580,7 +580,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				$this->add_render_attribute( $link_key, [
 					'href' => $link['url'],
 					'class' => 'elementor-clickable',
-					'data-open-lightbox' => $settings['open_lightbox'],
+					'data-elementor-open-lightbox' => $settings['open_lightbox'],
 					'data-elementor-lightbox-slideshow' => $this->get_id(),
 					'data-elementor-lightbox-index' => $index,
 				] );
