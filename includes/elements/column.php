@@ -225,9 +225,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
-				'condition' => [
-					'background_background' => [ 'classic', 'gradient' ],
-				],
 			]
 		);
 

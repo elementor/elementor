@@ -185,9 +185,6 @@ class Widget_Testimonial extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => [
-					'testimonial_image[url]!' => '',
-				],
 			]
 		);
 
@@ -196,9 +193,6 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img',
-				'condition' => [
-					'testimonial_image[url]!' => '',
-				],
 				'separator' => 'before',
 			]
 		);
@@ -211,9 +205,6 @@ class Widget_Testimonial extends Widget_Base {
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'condition' => [
-					'testimonial_image[url]!' => '',
 				],
 			]
 		);
