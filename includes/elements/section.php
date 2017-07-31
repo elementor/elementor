@@ -429,7 +429,7 @@ class Element_Section extends Element_Base {
 
 		// Background Overlay
 		$this->start_controls_section(
-			'background_overlay_section',
+			'section_background_overlay',
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
