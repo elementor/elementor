@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor {
 
+	private $_post_id;
+
 	private $_is_edit_mode;
 
 	private $_editor_templates = [];
@@ -18,17 +20,17 @@ class Editor {
 			return;
 		}
 
-		$post_id = $_REQUEST['post'];
+		$this->_post_id = $_REQUEST['post'];
 
-		if ( ! $this->is_edit_mode( $post_id ) ) {
+		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
 
 		$this->init_editor_templates();
 
-		query_posts( [ 'p' => $post_id, 'post_type' => get_post_type( $post_id ) ] );
+		query_posts( [ 'p' => $this->_post_id, 'post_type' => get_post_type( $this->_post_id ) ] );
 
-		Plugin::$instance->db->switch_to_post( $post_id );
+		Plugin::$instance->db->switch_to_post( $this->_post_id );
 
 		add_filter( 'show_admin_bar', '__return_false' );
 
@@ -57,11 +59,11 @@ class Editor {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $post_id );
+		Plugin::$instance->db->set_is_elementor_page( $this->_post_id );
 
 		// Post Lock
-		if ( ! $this->get_locked_user( $post_id ) ) {
-			$this->lock_post( $post_id );
+		if ( ! $this->get_locked_user( $this->_post_id ) ) {
+			$this->lock_post( $this->_post_id );
 		}
 
 		// Setup default heartbeat options
@@ -159,14 +161,12 @@ class Editor {
 	public function enqueue_scripts() {
 		global $wp_styles, $wp_scripts;
 
-		$post_id = get_the_ID();
-
 		// Set the global data like $authordata and etc
-		setup_postdata( $post_id );
+		setup_postdata( $this->_post_id );
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $post_id, DB::STATUS_DRAFT );
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -320,7 +320,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$locked_user = $this->get_locked_user( $post_id );
+		$locked_user = $this->get_locked_user( $this->_post_id );
 
 		if ( $locked_user ) {
 			$locked_user = $locked_user->display_name;
@@ -337,7 +337,7 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
-			'preview_link' => set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) ),
+			'preview_link' => set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $this->_post_id ) ) ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -348,11 +348,11 @@ class Editor {
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'revisions' => Revisions_Manager::get_revisions(),
-			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
+			'revisions_enabled' => ( $this->_post_id && wp_revisions_enabled( get_post( $this->_post_id ) ) ),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
-			'post_id' => $post_id,
+			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',

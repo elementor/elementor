@@ -90,6 +90,13 @@ class Model extends BaseModel {
 							'description' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
 							'frontend_available' => true,
 						],
+						'elementor_enable_lightbox_in_editor' => [
+							'label' => __( 'Enable In Editor', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'description' => __( '', 'elementor' ),
+							'frontend_available' => true,
+						],
 						'elementor_lightbox_color' => [
 							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
@@ -97,6 +104,7 @@ class Model extends BaseModel {
 								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
+
 					],
 				],
 			],
