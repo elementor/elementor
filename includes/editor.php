@@ -21,7 +21,7 @@ class Editor {
 		'editor-templates/templates.php',
 	];
 
-	public function init() {
+	public function init( $die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
@@ -81,7 +81,11 @@ class Editor {
 
 		// Print the panel
 		$this->print_panel_html();
-		die;
+
+		// From the action it's an empty string, from tests its `false`
+		if ( false !== $die ) {
+			die;
+		}
 	}
 
 	public function redirect_to_new_url() {
