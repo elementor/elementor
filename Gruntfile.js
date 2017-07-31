@@ -274,7 +274,10 @@ module.exports = function( grunt ) {
 					'assets/dev/scss/**/*.scss',
 					'modules/**/*.scss'
 				],
-				tasks: [ 'styles' ]
+				tasks: [ 'styles' ],
+				options: {
+					livereload: true
+				}
 			},
 
 			scripts: {
@@ -282,7 +285,10 @@ module.exports = function( grunt ) {
 					'assets/dev/js/**/*.js',
 					'modules/**/*.js'
 				],
-				tasks: [ 'scripts' ]
+				tasks: [ 'scripts' ],
+				options: {
+					livereload: true
+				}
 			}
 		},
 
