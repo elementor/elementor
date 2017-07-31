@@ -657,6 +657,13 @@ body.admin-bar .dialog-close-button {
          -moz-appearance: none;
               appearance: none;
       color: inherit;
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      font-style: inherit;
+      text-transform: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
       -webkit-flex-basis: 100%;
           -ms-flex-preferred-size: 100%;
               flex-basis: 100%;

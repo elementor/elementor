@@ -15,6 +15,8 @@ class Manager extends BaseManager {
 
 	const PANEL_TAB_LIGHTBOX = 'lightbox';
 
+	const META_KEY = '_elementor_general_settings';
+
 	public function __construct() {
 		parent::__construct();
 
@@ -78,18 +80,31 @@ class Manager extends BaseManager {
 	protected function save_settings_to_db( array $settings, $id ) {
 		$model_controls = Model::get_controls_list();
 
+		$one_list_settings = [];
+
 		foreach ( $model_controls as $tab_name => $sections ) {
 
 			foreach ( $sections as $section_name => $section_data ) {
 
 				foreach ( $section_data['controls'] as $control_name => $control_data ) {
 					if ( isset( $settings[ $control_name ] ) ) {
+						$one_list_control_name = str_replace( 'elementor_', '', $control_name );
+
+						$one_list_settings[ $one_list_control_name ] = $settings[ $control_name ];
+
 						update_option( $control_name, $settings[ $control_name ] );
 					} else {
 						delete_option( $control_name );
 					}
 				}
 			}
+		}
+
+		// Save all settings in one list for future usage
+		if ( ! empty( $one_list_settings ) ) {
+			update_option( self::META_KEY, $one_list_settings );
+		} else {
+			delete_option( self::META_KEY );
 		}
 	}
 

@@ -73,6 +73,13 @@
 		select {
 			appearance: none;
 			color: inherit;
+			font-size: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+			font-style: inherit;
+			text-transform: inherit;
+			letter-spacing: inherit;
+			line-height: inherit;
 			flex-basis: 100%;
 			@include padding-end(20px);
 		}
