@@ -453,9 +453,6 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
-				'condition' => [
-					'background_background' => [ 'none', 'classic', 'gradient', 'video' ],
-				],
 			]
 		);
 
