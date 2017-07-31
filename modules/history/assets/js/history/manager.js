@@ -166,7 +166,9 @@ var	Manager = function() {
 				id: id,
 				title: itemData.title,
 				subTitle: itemData.subTitle,
-				action: getActionLabel( itemData )
+				action: getActionLabel( itemData ),
+				type: itemData.type,
+				elementType: itemData.elementType
 			} );
 
 			self.startItemTitle = '';
@@ -308,7 +310,8 @@ var	Manager = function() {
 	this.startMovingItem = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'move',
-			title: self.getModelLabel( model )
+			title: self.getModelLabel( model ),
+			elementType: model.get( 'elType' )
 		} );
 	};
 
@@ -316,7 +319,8 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: elementor.translate( 'template' ),
-			subTitle: model.get( 'title' )
+			subTitle: model.get( 'title' ),
+			elementType: 'template'
 		} );
 	};
 
@@ -324,28 +328,32 @@ var	Manager = function() {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
 		elementor.history.history.startItem( {
 			type: 'add',
-			title: self.getModelLabel( elementView.model )
+			title: self.getModelLabel( elementView.model ),
+			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' )
 		} );
 	};
 
 	this.startAddElement = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'add',
-			title: self.getModelLabel( model )
+			title: self.getModelLabel( model ),
+			elementType: model.elType
 		} );
 	};
 
 	this.startDuplicateElement = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'duplicate',
-			title: self.getModelLabel( model )
+			title: self.getModelLabel( model ),
+			elementType: model.get( 'elType' )
 		} );
 	};
 
 	this.startRemoveElement = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'remove',
-			title: self.getModelLabel( model )
+			title: self.getModelLabel( model ),
+			elementType: model.get( 'elType' )
 		} );
 	};
 
