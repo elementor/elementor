@@ -44,6 +44,17 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '4.5', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
+	// Fix language if the `get_user_locale` is difference from the `get_locale
+	if ( isset( $_REQUEST['action']  ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
+		add_action( 'set_current_user', function() {
+			global $current_user;
+			$current_user->locale = get_locale();
+		} );
+
+		// Fix for Polylang
+		define( 'PLL_AJAX_ON_FRONT', true );
+	}
+
 	require( ELEMENTOR_PATH . 'includes/plugin.php' );
 }
 
