@@ -206,7 +206,7 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'background_background' => [ 'classic', 'gradient', 'video' ],
+					'background_background' => [ 'classic', 'gradient' ],
 				],
 			]
 		);
