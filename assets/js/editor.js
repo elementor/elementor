@@ -382,9 +382,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		elementor.channels.data.trigger( 'drag:before:update', model );
 
-		var newIndex = ui.item.parent().children().index( ui.item );
-
-		this.view.addChildElement( model.toJSON( { copyHtmlCache: true } ), { at: newIndex } );
+		var newIndex = ui.item.parent().children().index( ui.item ),
+			modelJSON = model.toJSON( { copyHtmlCache: true } );
 
 		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
 
@@ -393,6 +392,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		model.destroy();
 
 		senderSection.isManualRemoving = false;
+
+		this.view.addChildElement( modelJSON, { at: newIndex } );
 
 		elementor.channels.data.trigger( 'drag:after:update', model );
 	},
@@ -10499,7 +10500,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( ! elementor.history.history.getActive() ) {
 			return;
 		}
-		
+
 		var historyItem,
 			models,
 			firstModel,
