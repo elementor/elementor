@@ -162,7 +162,7 @@ The current control settings for this example would be:
 
 ### Control structure types
 
-By default, the value that the control returns is represented as a string or number (for example, a possible value for a 'color' control would be '#f7f7f7'). However, some controls return more than one value, and require a different way of handling.
+By default, the value that the control returns is represented as a string or number (for example, a possible value for a 'color' control would be `#f7f7f7`). However, some controls return more than one value, and require a different way of handling.
 
 #### Multiple Control
 A multiple control is a control that returns more than a single value. The returned values by such a control are represented by an array.
