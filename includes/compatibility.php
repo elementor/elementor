@@ -30,14 +30,12 @@ class Compatibility {
 		if ( class_exists( '\Ninja_Forms' ) && class_exists( '\NF_Display_Render' ) ) {
 			add_action( 'elementor/preview/enqueue_styles', function() {
 				ob_start();
+				\NF_Display_Render::localize( 0 );
 
-					\NF_Display_Render::localize( 0 );
+				ob_clean();
 
-					ob_clean();
-
-					wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
-				}
-			);
+				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
+			} );
 		}
 
 		// Exclude our Library from sitemap.xml in Yoast SEO plugin.
@@ -80,12 +78,24 @@ class Compatibility {
 			return $tabs;
 		} );
 
+		// Fix JetPack Contact Form in Editor Mode.
+		if ( class_exists( 'Grunion_Editor_View' ) ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', function() {
+				remove_action( 'media_buttons', 'grunion_media_button', 999 );
+				remove_action( 'admin_enqueue_scripts', 'grunion_enable_spam_recheck' );
+
+				remove_action( 'admin_notices', [ 'Grunion_Editor_View', 'handle_editor_view_js' ] );
+				remove_filter( 'mce_external_plugins', [ 'Grunion_Editor_View', 'mce_external_plugins' ] );
+				remove_filter( 'mce_buttons', [ 'Grunion_Editor_View', 'mce_buttons' ] );
+				remove_action( 'admin_head', [ 'Grunion_Editor_View', 'admin_head' ] );
+			} );
+		}
+
 		// Copy elementor data while polylang creates a translation copy
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
 	}
 
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
-
 		Plugin::$instance->db->copy_elementor_meta( $from, $to );
 
 		return $keys;
