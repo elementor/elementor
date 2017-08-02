@@ -2009,16 +2009,7 @@ App = Marionette.Application.extend( {
 	onPreviewLoaded: function() {
 		NProgress.done();
 
-		this.initFrontend();
-
-		this.initElements();
-
-		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
-
 		this.$previewContents = this.$preview.contents();
-
-		var Preview = require( 'elementor-views/preview' ),
-			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
 		var $previewElementorEl = this.$previewContents.find( '#elementor' );
 
@@ -2026,6 +2017,12 @@ App = Marionette.Application.extend( {
 			this.onPreviewElNotFound();
 			return;
 		}
+
+		this.initFrontend();
+
+		this.initElements();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
@@ -2037,6 +2034,9 @@ App = Marionette.Application.extend( {
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
+
+		var Preview = require( 'elementor-views/preview' ),
+			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
 		this.addRegions( {
 			sections: iframeRegion,
