@@ -91,6 +91,23 @@ class Compatibility {
 			} );
 		}
 
+		// Fix Popup Maker in Editor Mode.
+		if ( class_exists( 'PUM_Admin_Shortcode_UI' ) ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', function() {
+				$pum_admin_instance = \PUM_Admin_Shortcode_UI::instance();
+
+				remove_action( 'print_media_templates', array( $pum_admin_instance, 'print_media_templates' ) );
+				remove_action( 'admin_print_footer_scripts', array( $pum_admin_instance, 'admin_print_footer_scripts' ), 100 );
+				remove_action( 'wp_ajax_pum_do_shortcode', array( $pum_admin_instance, 'wp_ajax_pum_do_shortcode' ) );
+
+				remove_action( 'admin_enqueue_scripts', array( $pum_admin_instance, 'admin_enqueue_scripts' ) );
+
+				remove_filter( 'mce_external_plugins', array( $pum_admin_instance, 'mce_external_plugins' ) );
+				remove_filter( 'mce_buttons', array( $pum_admin_instance, 'mce_buttons' ) );
+				remove_filter( 'pum_admin_var', array( $pum_admin_instance, 'pum_admin_var' ) );
+			} );
+		}
+
 		// Copy elementor data while polylang creates a translation copy
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
 	}
