@@ -6,7 +6,6 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
 **Stable tag:** 1.5.5  
-**Beta tag:** 1.6.0-RC4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
