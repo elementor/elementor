@@ -1,6 +1,7 @@
 # Travis CI Configuration File
 
 sudo: false
+dist: trusty
 
 # Tell Travis CI we're using PHP
 language: php
