@@ -111,6 +111,8 @@ class Widget_WordPress extends Widget_Base {
 			'after_title' => '</h5>',
 		];
 
+		$empty_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $empty_widget_args, $this ); // WPCS: spelling ok.
+
 		$this->get_widget_instance()->widget( $empty_widget_args, $this->get_settings( 'wp' ) );
 	}
 
