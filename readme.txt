@@ -183,7 +183,8 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.6.0 - 18.07.2017 =
+= 1.6.0 - 02.08.2017 =
+* [Read more in the release post](https://elementor.com/v160-image-lightbox/)
 * New! - Added native Lightbox for images and galleries ([#218](https://github.com/pojome/elementor/issues/218))
 * New! - Added Text Shadow control ([#1696](https://github.com/pojome/elementor/issues/1696)) ([Developer API](https://github.com/pojome/elementor/blob/master/docs/content/controls/_text-shadow.md))
 * New! - Added Text Shadow option for Heading widget ([#1940](https://github.com/pojome/elementor/issues/1940))
