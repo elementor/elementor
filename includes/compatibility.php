@@ -78,7 +78,7 @@ class Compatibility {
 			return $tabs;
 		} );
 
-		// Fix JetPack Contact Form in Editor Mode.
+		// Fix Jetpack Contact Form in Editor Mode.
 		if ( class_exists( 'Grunion_Editor_View' ) ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', function() {
 				remove_action( 'media_buttons', 'grunion_media_button', 999 );

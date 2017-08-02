@@ -185,6 +185,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.6.1 - 02.08.2017 ###
+* Fix! - Conflict with contact form module by Jetpack ([#2125](https://github.com/pojome/elementor/issues/2125))
+* Fix! - Updated previous stable version for rollback
+* Fix! - Checking if the content area not found before anything else
+* Fix! - Condition hidden for section control didn't work well
+* Fix! - Reset border for iFrame in video lightbox ([#2121](https://github.com/pojome/elementor/issues/2121))
+
 ### 1.6.0 - 02.08.2017 ###
 * [Read more in the release post](https://elementor.com/v160-image-lightbox/)
 * New! - Added native Lightbox for images and galleries ([#218](https://github.com/pojome/elementor/issues/218))
