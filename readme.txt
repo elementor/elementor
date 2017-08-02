@@ -186,7 +186,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 = 1.6.0 - 18.07.2017 =
 * New! - Added native Lightbox for images and galleries ([#218](https://github.com/pojome/elementor/issues/218))
-* New! - Added Text Shadow control ([#1696](https://github.com/pojome/elementor/issues/1696)) (Developer API)
+* New! - Added Text Shadow control ([#1696](https://github.com/pojome/elementor/issues/1696)) ([Developer API](https://github.com/pojome/elementor/blob/master/docs/content/controls/_text-shadow.md))
 * New! - Added Text Shadow option for Heading widget ([#1940](https://github.com/pojome/elementor/issues/1940))
 * New! - Added bulk import / export for template library([#1241](https://github.com/pojome/elementor/issues/1241))
 * Tweak! - The editor loading now in the wp-admin area instead of the front-end
@@ -196,7 +196,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak! - Replaced textarea input with WYSIWYG control for Testimonial widget ([#1321](https://github.com/pojome/elementor/issues/1321))
 * Tweak! - Changed default play icon for Video widget
 * Tweak! - First step to move Autoloader classes method
-* Tweak! - Switcher control `label_on` and `label_off` is not required anymore (Developer API)
+* Tweak! - Switcher control `label_on` and `label_off` is not required anymore ([Developer API](https://github.com/pojome/elementor/blob/master/docs/content/controls/_switcher.md))
 * Tweak! - Style settings now also in the editor (under > menu > general settings)
 * Tweak! - Changed the colors of editor loading screen to positive design
 * Tweak! - Added Mute option for YouTube in Video widget ([#1897](https://github.com/pojome/elementor/issues/1897))
