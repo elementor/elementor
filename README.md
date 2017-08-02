@@ -186,10 +186,30 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 1.6.0 RC4 - Available For Beta Testing
-* [Read more about v1.6](https://github.com/pojome/elementor/issues/2077)
-* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
-###
+### 1.6.0 - 18.07.2017 ###
+* New! - Added native Lightbox for images and galleries ([#218](https://github.com/pojome/elementor/issues/218))
+* New! - Added Text Shadow control ([#1696](https://github.com/pojome/elementor/issues/1696)) ([Developer API](https://github.com/pojome/elementor/blob/master/docs/content/controls/_text-shadow.md))
+* New! - Added Text Shadow option for Heading widget ([#1940](https://github.com/pojome/elementor/issues/1940))
+* New! - Added bulk import / export for template library ([#1241](https://github.com/pojome/elementor/issues/1241))
+* New! - Added `elementor/widgets/wordpress/widget_args` filter to customize WP widget markup ([#2052](https://github.com/pojome/elementor/issues/2052))
+* Tweak! - The editor loading now in the wp-admin area instead of the front-end
+* Tweak! - Replaced editor icons from FontAwesome to Eicons for beautiful sharpness
+* Tweak! - Added library access to all users with `edit_pages` capability
+* Tweak! - Loading scripts from the preview for more accurate front-end simulation and fix some issues
+* Tweak! - Replaced textarea input with WYSIWYG control for Testimonial widget ([#1321](https://github.com/pojome/elementor/issues/1321))
+* Tweak! - Changed default play icon for Video widget
+* Tweak! - First step to move Autoloader classes method
+* Tweak! - Switcher control `label_on` and `label_off` is not required anymore ([Developer API](https://github.com/pojome/elementor/blob/master/docs/content/controls/_switcher.md))
+* Tweak! - Style settings now also in the editor (under > menu > general settings)
+* Tweak! - Changed the colors of editor loading screen to positive design
+* Tweak! - Added Mute option for YouTube in Video widget ([#1897](https://github.com/pojome/elementor/issues/1897))
+* Twaek! - Added compatibility for Polylang plugin ([#1959](https://github.com/pojome/elementor/issues/1959))
+* Fix! - Unknown text input in Group Controls ([#1926](https://github.com/pojome/elementor/issues/1926))
+* Fix! - Show edit with elementor button on admin bar in regular posts
+* Fix! - Inherit style for select field from field
+* Fix! - Conflict with ManageWP on Multisite ([#1600](https://github.com/pojome/elementor/issues/1600), [#1456](https://github.com/pojome/elementor/issues/1456))
+* Deprecated! - `elementor/controls/get_available_tabs_controls` filter, please use `\Elementor\Controls_Manager::add_tab( $tab_name, $tab_title )` instead of
+
 ### 1.5.5 - 18.07.2017 ###
 * Fix! - Page Settings data gets corrupted on revision save ([#2031](https://github.com/pojome/elementor/issues/2031))
 
