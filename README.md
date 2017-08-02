@@ -186,7 +186,8 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 1.6.1 - 02.08.2017 ###
-* Fix! - Conflict with contact form module by Jetpack ([#2125](https://github.com/pojome/elementor/issues/2125))
+* Fix! - Conflict with Contact Form module by Jetpack ([#2125](https://github.com/pojome/elementor/issues/2125))
+* Fix! - Conflict with Popup Maker plugin
 * Fix! - Updated previous stable version for rollback
 * Fix! - Checking if the content area not found before anything else
 * Fix! - Condition hidden for section control didn't work well
