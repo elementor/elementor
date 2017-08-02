@@ -206,7 +206,7 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'background_background' => [ 'classic', 'gradient', 'video' ],
+					'background_background' => [ 'classic', 'gradient' ],
 				],
 			]
 		);
@@ -225,9 +225,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
-				'condition' => [
-					'background_background' => [ 'classic', 'gradient' ],
-				],
 			]
 		);
 
