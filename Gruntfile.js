@@ -463,8 +463,6 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'test', [
-		'shell:tests_create_static_index',
-		'shell:tests_create_static_preview',
 		'qunit',
 		'clean:qunit'
 	] );
