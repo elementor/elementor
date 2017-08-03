@@ -22,11 +22,11 @@ class Editor {
 	];
 
 	public function init( $die = true ) {
-		if ( empty( $_REQUEST['post'] ) ) {
+		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
 			return;
 		}
 
-		$this->_post_id = $_REQUEST['post'];
+		$this->_post_id = absint( $_REQUEST['post'] );
 
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
