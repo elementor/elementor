@@ -183,6 +183,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.6.2 - 03.08.2017 =
+* Fix! - More compatibility for some server configuration ([#2119](https://github.com/pojome/elementor/issues/2119))
+* Fix! - Added lightobx control for image gallery widget ([#2121](https://github.com/pojome/elementor/issues/2121))
+* Fix! - Conflict with TablePress and other plugins that add buttons to TinyMCE ([Topic](https://wordpress.org/support/topic/cant-view-editor-in-1-6-after-update/))
+
 = 1.6.1 - 02.08.2017 =
 * Fix! - Conflict with Contact Form module by Jetpack ([#2125](https://github.com/pojome/elementor/issues/2125))
 * Fix! - Conflict with Popup Maker plugin
