@@ -140,7 +140,7 @@ class Frontend {
 			[
 				'elementor-dialog',
 				'elementor-waypoints',
-
+				'jquery-swiper',
 			],
 			ELEMENTOR_VERSION,
 			true
