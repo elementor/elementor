@@ -211,6 +211,8 @@ class Plugin {
 		$this->maintenance_mode = new Maintenance_Mode();
 		$this->modules_manager = new Modules_Manager();
 
+		Tracker::init();
+
 		if ( is_admin() ) {
 			$this->revisions_manager = new Revisions_Manager();
 			$this->heartbeat = new Heartbeat();
