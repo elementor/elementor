@@ -327,8 +327,8 @@ class Editor {
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
 		// Remove all TinyMCE plugins.
-		remove_all_filters( 'mce_buttons' );
-		remove_all_filters( 'mce_external_plugins' );
+		remove_all_filters( 'mce_buttons', 10 );
+		remove_all_filters( 'mce_external_plugins', 10 );
 
 		wp_enqueue_script( 'elementor-editor' );
 
