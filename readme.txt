@@ -183,6 +183,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.6.3 - 06.08.2017 =
+* Fix! - Lightbox for Image Carousel ([#2135](https://github.com/pojome/elementor/issues/2135))
+* Fix! - Allow to dismiss message asking to share anonymous usage data ([#2136](https://github.com/pojome/elementor/issues/2136))
+* Fix! - Conflict with Advanced TinyMCE plugin ([Topic](https://wordpress.org/support/topic/tinymce-unbreakable-space-not-display/))
+
 = 1.6.2 - 03.08.2017 =
 * Fix! - More compatibility for some server configuration ([#2119](https://github.com/pojome/elementor/issues/2119))
 * Fix! - Added lightobx control for image gallery widget ([#2121](https://github.com/pojome/elementor/issues/2121))
