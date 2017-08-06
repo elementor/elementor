@@ -23,10 +23,6 @@ class Widget_Image_Gallery extends Widget_Base {
 		return [ 'general-elements' ];
 	}
 
-	public function get_script_depends() {
-		return [ 'jquery-swiper' ];
-	}
-
 	public function add_lightbox_data_to_image_link( $link_html ) {
 		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
 	}
