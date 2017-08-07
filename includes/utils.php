@@ -21,6 +21,12 @@ class Utils {
 		return apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 	}
 
+	public static function get_preview_url( $post_id ) {
+		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+
+		return apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+	}
+
 	public static function is_post_type_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
 		$is_supported = post_type_supports( $post_type, 'elementor' );
