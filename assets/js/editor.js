@@ -1882,9 +1882,15 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementModel = elementor.modules.element;
+		var ElementModel = elementor.modules.element,
+			config = this.config.data;
 
-		this.elements = new ElementModel.Collection( this.config.data );
+		// If it's an reload, use the not-saved data
+		if ( this.elements ) {
+			config = this.elements.toJSON();
+		}
+
+		this.elements = new ElementModel.Collection( config );
 	},
 
 	initPreview: function() {
