@@ -52,7 +52,7 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 			return $return;
 		}, $html );
 
-		$html = str_replace( home_url(), 'file:///tmp/wordpress', $html );
+		$html = str_replace( home_url(), 'file://' . ABSPATH, $html );
 		$html = str_replace( wp_json_encode( add_query_arg( 'elementor-preview', '', get_permalink( $_REQUEST['post'] ) ) ), '"./preview.html?"', $html );
 
 		$quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
