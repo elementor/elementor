@@ -32,8 +32,14 @@ define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '1.4.10' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
-define( 'ELEMENTOR_URL', plugins_url( '/', ELEMENTOR__FILE__ ) );
 define( 'ELEMENTOR_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) );
+
+if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
+	define( 'ELEMENTOR_URL', 'file://' . ELEMENTOR_PATH );
+} else {
+	define( 'ELEMENTOR_URL', plugins_url( '/', ELEMENTOR__FILE__ ) );
+}
+
 define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modules' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
