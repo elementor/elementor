@@ -47,6 +47,12 @@ class Widgets_Manager {
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
+			
+			$override_file = get_template_directory() . '/elementor/widgets/' . $widget_filename . '_override.php';
+			if ( file_exists( $override_file ) ) {
+				include( $override_file );
+				$widget_filename .= '_override';
+			}
 
 			$class_name = str_replace( '-', '_', $widget_filename );
 
