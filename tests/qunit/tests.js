@@ -23,7 +23,7 @@ QUnit.test( 'Preview loaded', function( assert ) {
 });
 
 QUnit.test( 'Frontend CSS loaded', function( assert ) {
-	assert.equal( 1, elementor.$previewContents.find( '#elementor-frontend-css' ).length );
+	assert.equal( elementor.$previewContents.find( '#elementor-frontend-css' ).length, 1 );
 });
 
 function testPreview() {
