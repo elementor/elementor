@@ -88,6 +88,8 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-twitter',
 							'fa fa-vimeo',
 							'fa fa-vk',
+							'fa fa-weibo',
+							'fa fa-weixin',
 							'fa fa-whatsapp',
 							'fa fa-wordpress',
 							'fa fa-xing',
