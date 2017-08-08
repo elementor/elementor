@@ -33,10 +33,7 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 
 		$html = ob_get_clean();
 
-		// fix wp assets url
-		$html = str_replace( home_url( '/wp-includes' ), 'file://' . ABSPATH . 'wp-includes', $html );
-		// fix elementor assets url
-		$html = str_replace( home_url().'file:', 'file:', $html );
+		$html = fix_qunit_html_urls( $html );
 
 		$quint = '<script src="vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>
 		<script src="vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>
