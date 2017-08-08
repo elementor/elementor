@@ -15,6 +15,8 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	}
 
 	public function test_enqueueScripts() {
+		ini_set( 'memory_limit', '64M' );
+
 		ob_start();
 		Elementor\Plugin::$instance->editor->enqueue_scripts();
 		ob_end_clean();

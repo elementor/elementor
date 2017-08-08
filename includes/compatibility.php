@@ -30,14 +30,12 @@ class Compatibility {
 		if ( class_exists( '\Ninja_Forms' ) && class_exists( '\NF_Display_Render' ) ) {
 			add_action( 'elementor/preview/enqueue_styles', function() {
 				ob_start();
+				\NF_Display_Render::localize( 0 );
 
-					\NF_Display_Render::localize( 0 );
+				ob_clean();
 
-					ob_clean();
-
-					wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
-				}
-			);
+				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
+			} );
 		}
 
 		// Exclude our Library from sitemap.xml in Yoast SEO plugin.
@@ -80,12 +78,46 @@ class Compatibility {
 			return $tabs;
 		} );
 
+		// Fix Jetpack Contact Form in Editor Mode.
+		if ( class_exists( 'Grunion_Editor_View' ) ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', function() {
+				remove_action( 'media_buttons', 'grunion_media_button', 999 );
+				remove_action( 'admin_enqueue_scripts', 'grunion_enable_spam_recheck' );
+
+				remove_action( 'admin_notices', [ 'Grunion_Editor_View', 'handle_editor_view_js' ] );
+				remove_action( 'admin_head', [ 'Grunion_Editor_View', 'admin_head' ] );
+			} );
+		}
+
+		// Fix Popup Maker in Editor Mode.
+		if ( class_exists( 'PUM_Admin_Shortcode_UI' ) ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', function() {
+				$pum_admin_instance = \PUM_Admin_Shortcode_UI::instance();
+
+				remove_action( 'print_media_templates', [ $pum_admin_instance, 'print_media_templates' ] );
+				remove_action( 'admin_print_footer_scripts', [ $pum_admin_instance, 'admin_print_footer_scripts' ], 100 );
+				remove_action( 'wp_ajax_pum_do_shortcode', [ $pum_admin_instance, 'wp_ajax_pum_do_shortcode' ] );
+
+				remove_action( 'admin_enqueue_scripts', [ $pum_admin_instance, 'admin_enqueue_scripts' ] );
+
+				remove_filter( 'pum_admin_var', [ $pum_admin_instance, 'pum_admin_var' ] );
+			} );
+		}
+
+		// Fix Preview URL for https://premium.wpmudev.org/project/domain-mapping/ plugin
+		if ( class_exists( 'domain_map' ) ) {
+			add_filter( 'elementor/utils/preview_url', function( $preview_url ) {
+				$preview_url = \domain_map::utils()->unswap_url( $preview_url );
+				$preview_url = add_query_arg( [ 'dm' => \Domainmap_Module_Mapping::BYPASS ], $preview_url );
+				return $preview_url;
+			} );
+		}
+
 		// Copy elementor data while polylang creates a translation copy
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
 	}
 
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
-
 		Plugin::$instance->db->copy_elementor_meta( $from, $to );
 
 		return $keys;

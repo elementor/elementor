@@ -5,8 +5,7 @@
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
-**Stable tag:** 1.5.5  
-**Beta tag:** 1.6.0-RC4  
+**Stable tag:** 1.6.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -186,7 +185,26 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 1.6.0 - 18.07.2017 ###
+### 1.6.3 - 06.08.2017 ###
+* Fix! - Lightbox for Image Carousel ([#2135](https://github.com/pojome/elementor/issues/2135))
+* Fix! - Allow to dismiss message asking to share anonymous usage data ([#2136](https://github.com/pojome/elementor/issues/2136))
+* Fix! - Conflict with Advanced TinyMCE plugin ([Topic](https://wordpress.org/support/topic/tinymce-unbreakable-space-not-display/))
+
+### 1.6.2 - 03.08.2017 ###
+* Fix! - More compatibility for some server configuration ([#2119](https://github.com/pojome/elementor/issues/2119))
+* Fix! - Added lightobx control for image gallery widget ([#2121](https://github.com/pojome/elementor/issues/2121))
+* Fix! - Conflict with TablePress and other plugins that add buttons to TinyMCE ([Topic](https://wordpress.org/support/topic/cant-view-editor-in-1-6-after-update/))
+
+### 1.6.1 - 02.08.2017 ###
+* Fix! - Conflict with Contact Form module by Jetpack ([#2125](https://github.com/pojome/elementor/issues/2125))
+* Fix! - Conflict with Popup Maker plugin
+* Fix! - Updated previous stable version for rollback
+* Fix! - Checking if the content area not found before anything else
+* Fix! - Condition hidden for section control didn't work well
+* Fix! - Reset border for iFrame in video lightbox ([#2121](https://github.com/pojome/elementor/issues/2121))
+
+### 1.6.0 - 02.08.2017 ###
+* [Read more in the release post](https://elementor.com/v160-image-lightbox/)
 * New! - Added native Lightbox for images and galleries ([#218](https://github.com/pojome/elementor/issues/218))
 * New! - Added Text Shadow control ([#1696](https://github.com/pojome/elementor/issues/1696)) ([Developer API](https://github.com/pojome/elementor/blob/master/docs/content/controls/_text-shadow.md))
 * New! - Added Text Shadow option for Heading widget ([#1940](https://github.com/pojome/elementor/issues/1940))

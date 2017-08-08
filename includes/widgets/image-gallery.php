@@ -23,12 +23,8 @@ class Widget_Image_Gallery extends Widget_Base {
 		return [ 'general-elements' ];
 	}
 
-	public function get_script_depends() {
-		return [ 'jquery-swiper' ];
-	}
-
 	public function add_lightbox_data_to_image_link( $link_html ) {
-		return preg_replace( '/^<a/', '<a class="elementor-clickable" data-elementor-lightbox-slideshow="' . $this->get_id() . '"', $link_html );
+		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
 	}
 
 	protected function _register_controls() {
@@ -78,6 +74,23 @@ class Widget_Image_Gallery extends Widget_Base {
 					'file' => __( 'Media File', 'elementor' ),
 					'attachment' => __( 'Attachment Page', 'elementor' ),
 					'none' => __( 'None', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'open_lightbox',
+			[
+				'label' => __( 'Lightbox', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'gallery_link' => 'file',
 				],
 			]
 		);
@@ -293,6 +306,12 @@ class Widget_Image_Gallery extends Widget_Base {
 		?>
 		<div class="elementor-image-gallery">
 			<?php
+			$this->add_render_attribute( 'link', [
+				'class' => 'elementor-clickable',
+				'data-elementor-open-lightbox' => $settings['open_lightbox'],
+				'data-elementor-lightbox-slideshow' => $this->get_id(),
+			] );
+
 			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
 
 			echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' );

@@ -16,17 +16,20 @@ class Editor {
 	private $_editor_templates = [];
 
 	public function init( $die = true ) {
-		if ( empty( $_REQUEST['post'] ) ) {
+		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
 			return;
 		}
 
-		$this->_post_id = $_REQUEST['post'];
+		$this->_post_id = absint( $_REQUEST['post'] );
 
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
 
 		$this->init_editor_templates();
+
+		// Send MIME Type header like WP admin-header.
+		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
 		query_posts( [ 'p' => $this->_post_id, 'post_type' => get_post_type( $this->_post_id ) ] );
 
@@ -319,6 +322,10 @@ class Editor {
 
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
+		// Remove all TinyMCE plugins.
+		remove_all_filters( 'mce_buttons', 10 );
+		remove_all_filters( 'mce_external_plugins', 10 );
+
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -341,7 +348,7 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => wp_create_nonce( 'elementor-editing' ),
-			'preview_link' => set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $this->_post_id ) ) ),
+			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -412,6 +419,7 @@ class Editor {
 				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
 				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
 				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+				// translators: %s: WordPress Revision docs.
 				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),

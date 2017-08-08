@@ -229,4 +229,3 @@ class Tracker {
 
 	}
 }
-Tracker::init();
