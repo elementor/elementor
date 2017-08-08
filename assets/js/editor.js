@@ -11005,10 +11005,12 @@ var	Manager = function() {
 
 			// Try scroll to affected element.
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
-				var modelID = item.get( 'items' ).first().get( 'history' ).behavior.view.model.get( 'id' ),
-					view = self.findView( modelID ) ;
-				if ( view ) {
-					elementor.helpers.scrollToView( view );
+				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
+				if ( oldView.model ){
+					var view = self.findView( oldView.model.get( 'id' ) ) ;
+					if ( view ) {
+						elementor.helpers.scrollToView( view );
+					}
 				}
 			}
 		}
