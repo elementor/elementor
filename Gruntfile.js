@@ -350,12 +350,6 @@ module.exports = function( grunt ) {
 					'git add --all',
 					'git commit -m "Bump to <%= pkg.version %>"'
 				].join( '&&' )
-			},
-			tests_create_static_index: {
-				command: 'php tests/qunit/php/create-static-index.php'
-			},
-			tests_create_static_preview: {
-				command: 'php tests/qunit/php/create-static-preview.php'
 			}
 		},
 

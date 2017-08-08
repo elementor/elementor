@@ -18,11 +18,9 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
 			wp_enqueue_editor();
 
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+			wp_register_script( 'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
 
-			wp_register_script( 'iris', '/wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-
-			wp_register_script( 'wp-color-picker', "/wp-admin/js/color-picker$suffix.js", [ 'iris' ], false, 1 );
+			wp_register_script( 'wp-color-picker', 'file://' . ABSPATH . 'wp-admin/js/color-picker.js', [ 'iris' ], false, 1 );
 
 			wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', [
 					'clear' => __( 'Clear' ),
@@ -40,10 +38,8 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 		\Elementor\Plugin::$instance->editor->init( false );
 
 		$html = ob_get_clean();
-		// fix wp assets url
-		$html = str_replace( home_url( '/wp-includes' ), 'file://' . ABSPATH . 'wp-includes', $html );
-		// fix elementor assets url
-		$html = str_replace( home_url().'file:', 'file:', $html );
+
+		$html = fix_qunit_html_urls( $html );
 
 		$html = str_replace( wp_json_encode( add_query_arg( 'elementor-preview', '', get_permalink( $_REQUEST['post'] ) ) ), '"./preview.html?"', $html );
 
