@@ -429,7 +429,7 @@ class Element_Section extends Element_Base {
 
 		// Background Overlay
 		$this->start_controls_section(
-			'background_overlay_section',
+			'section_background_overlay',
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
@@ -453,9 +453,6 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
-				'condition' => [
-					'background_background' => [ 'none', 'classic', 'gradient', 'video' ],
-				],
 			]
 		);
 
