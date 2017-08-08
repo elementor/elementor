@@ -6,6 +6,7 @@
 		border: 1px solid $editor-lightest;
 		padding: 10px 15px;
 		margin-bottom: 10px;
+		font-size: 11px;
 
 		&:hover:not(.elementor-revision-current-preview) {
 			background-color: fade_out($editor-background, 0.7) ;
@@ -52,10 +53,6 @@
 		}
 	}
 
-	&date {
-		font-size: 11px;
-	}
-
 	&meta {
 		padding-top: 5px;
 		font-size: 10px;
@@ -65,6 +62,4 @@
 	&current-preview {
 		background-color: $editor-background;
 	}
-
-
 }
