@@ -1504,9 +1504,15 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementModel = elementor.modules.element;
+		var ElementModel = elementor.modules.element,
+			config = this.config.data;
 
-		this.elements = new ElementModel.Collection( this.config.data );
+		// If it's an reload, use the not-saved data
+		if ( this.elements ) {
+			config = this.elements.toJSON();
+		}
+
+		this.elements = new ElementModel.Collection( config );
 	},
 
 	initPreview: function() {
@@ -1631,16 +1637,7 @@ App = Marionette.Application.extend( {
 	onPreviewLoaded: function() {
 		NProgress.done();
 
-		this.initFrontend();
-
-		this.initElements();
-
-		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
-
 		this.$previewContents = this.$preview.contents();
-
-		var Preview = require( 'elementor-views/preview' ),
-			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
 		var $previewElementorEl = this.$previewContents.find( '#elementor' );
 
@@ -1648,6 +1645,12 @@ App = Marionette.Application.extend( {
 			this.onPreviewElNotFound();
 			return;
 		}
+
+		this.initFrontend();
+
+		this.initElements();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
@@ -1659,6 +1662,9 @@ App = Marionette.Application.extend( {
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
+
+		var Preview = require( 'elementor-views/preview' ),
+			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
 		this.addRegions( {
 			sections: iframeRegion,
@@ -1889,7 +1895,6 @@ App = Marionette.Application.extend( {
 			string = stringKey;
 		}
 
-<<<<<<< HEAD
 		if ( templateArgs ) {
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
@@ -1897,22 +1902,6 @@ App = Marionette.Application.extend( {
 		}
 
 		return string;
-=======
-	initDialogsManager: function() {
-		this.dialogsManager = new DialogsManager.Instance();
-	},
-
-	initElements: function() {
-		var ElementModel = elementor.modules.element,
-			config = this.config.data;
-
-		// If it's an reload, use the not-saved data
-		if ( this.elements ) {
-			config = this.elements.toJSON();
-		}
-
-		this.elements = new ElementModel.Collection( config );
->>>>>>> 0153200edca1b9519932398e2d11176e2edb45a1
 	},
 
 	compareVersions: function( versionA, versionB, operator ) {
@@ -2070,7 +2059,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this._initDialog();
 
-<<<<<<< HEAD
 		this.listenTo( elementor.channels.editor, 'status:change', this.onEditorChanged )
 			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
@@ -2107,31 +2095,13 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 				dialog.setMessage( $dialogMessage );
 			}
-=======
-		this.$previewContents = this.$preview.contents();
-
-		var $previewElementorEl = this.$previewContents.find( '#elementor' );
->>>>>>> 0153200edca1b9519932398e2d11176e2edb45a1
 
 			return dialog;
 		};
 	},
 
-<<<<<<< HEAD
 	_publishBuilder: function() {
 		var self = this;
-=======
-		this.initFrontend();
-
-		this.initElements();
-
-		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
-
-		var iframeRegion = new Marionette.Region( {
-			// Make sure you get the DOM object out of the jQuery object
-			el: $previewElementorEl[0]
-		} );
->>>>>>> 0153200edca1b9519932398e2d11176e2edb45a1
 
 		var options = {
 			status: 'publish',
@@ -2144,17 +2114,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			}
 		};
 
-<<<<<<< HEAD
 		self.ui.buttonSaveButton.addClass( 'elementor-button-state' );
-=======
-		var Preview = require( 'elementor-views/preview' ),
-			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
-
-		this.addRegions( {
-			sections: iframeRegion,
-			panel: '#elementor-panel'
-		} );
->>>>>>> 0153200edca1b9519932398e2d11176e2edb45a1
 
 		NProgress.start();
 
