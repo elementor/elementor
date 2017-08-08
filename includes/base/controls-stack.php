@@ -178,11 +178,21 @@ abstract class Controls_Stack {
 	}
 
 	final public function add_responsive_control( $id, array $args, $overwrite = false ) {
+		$args['responsive'] = [];
+
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
 			self::RESPONSIVE_TABLET,
 			self::RESPONSIVE_MOBILE,
 		];
+
+		if ( isset( $args['devices'] ) ) {
+			$devices = array_intersect( $devices, $args['devices'] );
+
+			$args['responsive']['devices'] = $devices;
+
+			unset( $args['devices'] );
+		}
 
 		if ( isset( $args['default'] ) ) {
 			$args['desktop_default'] = $args['default'];
@@ -207,9 +217,7 @@ abstract class Controls_Stack {
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
 
-			$control_args['responsive'] = [
-				'max' => $device_name,
-			];
+			$control_args['responsive']['max'] = $device_name;
 
 			if ( isset( $control_args['min_affected_device'] ) ) {
 				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {

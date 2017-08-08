@@ -4911,7 +4911,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		} );
 
 		if ( ! Object.keys( query ).length && control.responsive ) {
-			query = elementor.helpers.cloneObject( control.responsive );
+			query = _.pick( elementor.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
 
 			if ( 'desktop' === query.max ) {
 				delete query.max;
@@ -8091,9 +8091,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		this.$el.addClass( elClasses );
+
 		this.renderResponsiveSwitchers();
 
 		this.triggerMethod( 'ready' );
+
 		this.toggleControlVisibility();
 	},
 
@@ -8138,7 +8140,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
+		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
 	},
