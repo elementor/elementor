@@ -18,6 +18,7 @@ class Module extends BaseModule {
 				'history' => __( 'History', 'elementor' ),
 				'no_history_1' => __( 'History lets you undo and redo the latest actions in the panel.', 'elementor' ),
 				'no_history_2' => __( 'Start designing your page and you\'ll be able to see the entire history here.', 'elementor' ),
+				'template' => __( 'Template', 'elementor' ),
 				'added' => __( 'Added', 'elementor' ),
 				'removed' => __( 'Removed', 'elementor' ),
 				'edited' => __( 'Edited', 'elementor' ),
