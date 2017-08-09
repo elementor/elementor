@@ -23,10 +23,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	openFrame: function() {
 		if ( ! this.frame ) {
 			this.initFrame();

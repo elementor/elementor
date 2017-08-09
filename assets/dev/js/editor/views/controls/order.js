@@ -22,10 +22,6 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 		this.changeLabelTitle();
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	onInputChange: function() {
 		this.changeLabelTitle();
 	}
