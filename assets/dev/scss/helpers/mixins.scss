@@ -36,7 +36,7 @@
 
 @mixin input-placeholder() {
 
-	// Keep the following rules each alone!
+	// Keep the following rules each alone (Auto Prefix Bug)!
 	&::-webkit-input-placeholder {
 		@include placeholder-style();
 	}
