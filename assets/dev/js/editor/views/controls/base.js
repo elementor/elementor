@@ -180,6 +180,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		this.triggerMethod( 'ready' );
 		this.toggleControlVisibility();
+		this.addTooltip();
 	},
 
 	onBaseInputChange: function( event ) {
@@ -238,6 +239,34 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	onReady: function() {},
+
+	onAfterExternalChange: function() {
+		this.hideTooltip();
+		this.render();
+	},
+
+	addTooltip: function() {
+		// Create tooltip on controls
+		this.$( '.tooltip-target' ).tipsy( {
+			gravity: function() {
+				// `n` for down, `s` for up
+				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
+
+				if ( undefined !== gravity ) {
+					return gravity;
+				} else {
+					return 'n';
+				}
+			},
+			title: function() {
+				return this.getAttribute( 'data-tooltip' );
+			}
+		} );
+	},
+
+	hideTooltip: function() {
+		jQuery( '.tipsy' ).hide();
+	},
 
 	updateElementModel: function( value ) {
 		this.setValue( value );
