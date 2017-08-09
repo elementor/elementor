@@ -639,13 +639,20 @@ body.admin-bar .dialog-close-button {
       outline: 0; }
     .elementor-field-group .elementor-field-textual::-webkit-input-placeholder {
       color: inherit;
-      opacity: 0.5; }
-    .elementor-field-group .elementor-field-textual::-moz-placeholder {
-      color: inherit;
-      opacity: 0.5; }
+      font-family: inherit;
+      opacity: 0.6; }
     .elementor-field-group .elementor-field-textual:-ms-input-placeholder {
       color: inherit;
-      opacity: 0.5; }
+      font-family: inherit;
+      opacity: 0.6; }
+    .elementor-field-group .elementor-field-textual::-moz-placeholder {
+      color: inherit;
+      font-family: inherit;
+      opacity: 0.6; }
+    .elementor-field-group .elementor-field-textual::placeholder {
+      color: inherit;
+      font-family: inherit;
+      opacity: 0.6; }
   .elementor-field-group .elementor-select-wrapper {
     display: -webkit-box;
     display: -webkit-flex;
