@@ -1,5 +1,9 @@
 <?php
-namespace Elementor;
+namespace Elementor\Modules\History;
+
+use Elementor\Plugin;
+use Elementor\Post_CSS_File;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -120,12 +124,6 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the id' );
 		}
 
-		$revision = Plugin::$instance->db->get_plain_editor( $_POST['id'] );
-
-		if ( empty( $revision ) ) {
-			wp_send_json_error( __( 'Invalid Revision', 'elementor' ) );
-		}
-
 		$deleted = wp_delete_post_revision( $_POST['id'] );
 
 		if ( $deleted && ! is_wp_error( $deleted ) ) {
@@ -142,9 +140,55 @@ class Revisions_Manager {
 		}
 	}
 
+	public static function ajax_save_builder_data( $return_data ) {
+		$latest_revision = self::get_revisions(
+			$_POST['post_id'], [
+				'posts_per_page' => 1,
+			]
+		);
+
+		$all_revision_ids = self::get_revisions(
+			$_POST['post_id'], [
+				'fields' => 'ids',
+			], false
+		);
+
+		if ( ! empty( $latest_revision ) ) {
+			$return_data['last_revision'] = $latest_revision[0];
+			$return_data['revisions_ids'] = $all_revision_ids;
+		}
+
+		return $return_data;
+	}
+
+	public static function db_before_save(  $status, $has_changes ) {
+		if ( $has_changes ) {
+			self::handle_revision();
+		}
+	}
+
+	public static function editor_config( $config, $post_id ) {
+		$config['revisions'] = self::get_revisions();
+		$config['revisions_enabled'] = ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) );
+		$config['i18n'] = [
+			'revision_history' => __( 'Revision History', 'elementor' ),
+			'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
+			'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+			'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+			// translators: %s: WordPress Revision docs.
+			'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
+			'revision' => __( 'Revision', 'elementor' ),
+		];
+
+		return $config;
+	}
+
 	private static function register_actions() {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
+		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_config' ], 10, 2 );
+		add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'ajax_save_builder_data' ] );
+		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 
 		if ( Utils::is_ajax() ) {
 			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );

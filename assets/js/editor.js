@@ -11244,6 +11244,8 @@ module.exports = Marionette.LayoutView.extend( {
 
 	regionViews: {},
 
+	currentTab: null,
+
 	initialize: function() {
 		this.initRegionViews();
 	},
@@ -11292,6 +11294,10 @@ module.exports = Marionette.LayoutView.extend( {
 		this.showView( tabName );
 	},
 
+	getCurrentTab: function() {
+		return this.currentTab;
+	},
+
 	showView: function( viewName ) {
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {},
@@ -11301,7 +11307,10 @@ module.exports = Marionette.LayoutView.extend( {
 			View = viewDetails.view();
 		}
 
-		viewDetails.region.show( new View( options ) );
+		options.viewName = viewName;
+		this.currentTab = new View( options );
+
+		viewDetails.region.show( this.currentTab );
 	},
 
 	onRender: function() {
@@ -11371,14 +11380,15 @@ RevisionsManager = function() {
 					return false;
 				}
 
-				var revisionsPage = panel.getCurrentPageView();
+				var revisionsTab = panel.getCurrentPageView().getCurrentTab();
 
-				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
+				return revisionsTab.currentPreviewId && revisionsTab.currentPreviewItem && revisionsTab.children.length > 1;
 			},
 			handle: function( event ) {
-				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW_KEY === event.which );
+				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
 			}
 		};
+
 
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
@@ -11408,7 +11418,10 @@ RevisionsManager = function() {
 				revisionModel.destroy();
 
 				if ( ! revisions.length ) {
-					elementor.getPanelView().setPage( 'revisionsPage' );
+					var panel = elementor.getPanelView();
+					if ( 'historyPage' === panel.getCurrentPageName() ) {
+						panel.getCurrentPageView().activateTab( 'revisions' );
+					}
 				}
 			}
 		};
@@ -11524,7 +11537,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		elementor.revisions.deleteRevision( revisionView.model, {
+		elementor.history.revisions.deleteRevision( revisionView.model, {
 			success: function() {
 				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
 					self.onDiscardClick();
