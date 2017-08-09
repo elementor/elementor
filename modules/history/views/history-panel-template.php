@@ -17,8 +17,8 @@
 <script type="text/template" id="tmpl-elementor-panel-history-no-items">
 	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
 	<div class="elementor-panel-nerd-box-title"><?php _e( 'No History Yet', 'elementor' ); ?></div>
-	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( 'no_revisions_1' ) }}}</div>
-	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( 'no_revisions_2' ) }}}</div>
+	<div class="elementor-panel-nerd-box-message"><?php _e( 'History lets you undo and redo all changes you made in current session.', 'elementor' ) ?></div>
+	<div class="elementor-panel-nerd-box-message"><?php _e( 'Start designing your page and you\'ll be able to see the entire changes here.', 'elementor' ) ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-history-item">
