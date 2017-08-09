@@ -45,10 +45,6 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 		} else if ( ! this.model.get( 'toggle' ) ) {
 			this.ui.inputs.first().prop( 'checked', true ).trigger( 'change' );
 		}
-	},
-
-	onAfterExternalChange: function() {
-		this.render();
 	}
 } );
 

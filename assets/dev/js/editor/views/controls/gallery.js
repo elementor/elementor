@@ -28,10 +28,6 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		this.initRemoveDialog();
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	hasImages: function() {
 		return !! this.getControlValue().length;
 	},

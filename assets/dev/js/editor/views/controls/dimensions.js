@@ -138,10 +138,6 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		this.updateDimensions();
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	onLinkDimensionsClicked: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
