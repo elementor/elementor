@@ -185,7 +185,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 1.6.3 - 06.08.2017 ###
+### 1.6.4 - 06.08.2017 ###
+* Tweak! - Allow to close lightbox when clicking outside of the element
+* Fix! - Added font family inherit for input placeholder
+* Fix! - Reload none-saved changes on editor reload
+* Fix! - Added compatibility for WPMU DEV's Domain Mapping plugin ([#2120](https://github.com/pojome/elementor/issues/2120))
+
+### 1.6.3 - 09.08.2017 ###
 * Fix! - Lightbox for Image Carousel ([#2135](https://github.com/pojome/elementor/issues/2135))
 * Fix! - Allow to dismiss message asking to share anonymous usage data ([#2136](https://github.com/pojome/elementor/issues/2136))
 * Fix! - Conflict with Advanced TinyMCE plugin ([Topic](https://wordpress.org/support/topic/tinymce-unbreakable-space-not-display/))
