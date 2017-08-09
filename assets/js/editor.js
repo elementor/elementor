@@ -4531,7 +4531,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		} );
 
 		if ( ! Object.keys( query ).length && control.responsive ) {
-			query = elementor.helpers.cloneObject( control.responsive );
+			query = _.pick( elementor.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
 
 			if ( 'desktop' === query.max ) {
 				delete query.max;
@@ -7404,23 +7404,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onRenderCollection: function() {
-		// Create tooltip on controls
-		this.$( '.tooltip-target' ).tipsy( {
-			gravity: function() {
-				// `n` for down, `s` for up
-				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
-
-				if ( undefined !== gravity ) {
-					return gravity;
-				} else {
-					return 'n';
-				}
-			},
-			title: function() {
-				return this.getAttribute( 'data-tooltip' );
-			}
-		} );
-
 		this.openActiveSection();
 	},
 
@@ -7739,10 +7722,13 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		this.$el.addClass( elClasses );
+
 		this.renderResponsiveSwitchers();
 
 		this.triggerMethod( 'ready' );
+
 		this.toggleControlVisibility();
+		this.addTooltip();
 	},
 
 	onBaseInputChange: function( event ) {
@@ -7787,7 +7773,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
+		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
 	},
@@ -7801,6 +7787,34 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	onReady: function() {},
+
+	onAfterExternalChange: function() {
+		this.hideTooltip();
+		this.render();
+	},
+
+	addTooltip: function() {
+		// Create tooltip on controls
+		this.$( '.tooltip-target' ).tipsy( {
+			gravity: function() {
+				// `n` for down, `s` for up
+				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
+
+				if ( undefined !== gravity ) {
+					return gravity;
+				} else {
+					return 'n';
+				}
+			},
+			title: function() {
+				return this.getAttribute( 'data-tooltip' );
+			}
+		} );
+	},
+
+	hideTooltip: function() {
+		jQuery( '.tipsy' ).hide();
+	},
 
 	updateElementModel: function( value ) {
 		this.setValue( value );
@@ -7947,10 +7961,6 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 		} else if ( ! this.model.get( 'toggle' ) ) {
 			this.ui.inputs.first().prop( 'checked', true ).trigger( 'change' );
 		}
-	},
-
-	onAfterExternalChange: function() {
-		this.render();
 	}
 } );
 
@@ -8038,10 +8048,6 @@ ControlColorItemView = ControlBaseItemView.extend( {
 		} ).wpColorPicker( 'instance' )
 			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
 			.removeAttr( 'maxlength' );
-	},
-
-	onAfterExternalChange: function() {
-		this.render();
 	},
 
 	onBeforeDestroy: function() {
@@ -8233,10 +8239,6 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		this.updateDimensions();
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	onLinkDimensionsClicked: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -8319,10 +8321,6 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 		    .toggleClass( 'elementor-gallery-empty', ! hasImages );
 
 		this.initRemoveDialog();
-	},
-
-	onAfterExternalChange: function() {
-		this.render();
 	},
 
 	hasImages: function() {
@@ -8573,10 +8571,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	openFrame: function() {
 		if ( ! this.frame ) {
 			this.initFrame();
@@ -8717,10 +8711,6 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 		ControlMultipleBaseItemView.prototype.onRender.apply( this, arguments );
 
 		this.changeLabelTitle();
-	},
-
-	onAfterExternalChange: function() {
-		this.render();
 	},
 
 	onInputChange: function() {
@@ -8970,10 +8960,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.toggleMinRowsClass();
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	onSortStart: function( event, ui ) {
 		ui.item.data( 'oldIndex', ui.item.index() );
 	},
@@ -9142,10 +9128,6 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 		this.ui.select.select2( this.getSelect2Options() );
 	},
 
-	onAfterExternalChange: function() {
-		this.render();
-	},
-
 	onBeforeDestroy: function() {
 		if ( this.ui.select.data( 'select2' ) ) {
 			this.ui.select.select2( 'destroy' );
@@ -9207,10 +9189,6 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		} else if ( 'unit' === dataChanged ) {
 			this.resetSize();
 		}
-	},
-
-	onAfterExternalChange: function() {
-		this.render();
 	},
 
 	onBeforeDestroy: function() {
@@ -10684,12 +10662,12 @@ module.exports = Marionette.Behavior.extend( {
 		if ( 1 === changed.length ) {
 			var control = model.controls[ changed[0] ];
 
-			if ( ! self.oldValues[ control.name ] ) {
+			if ( _.isUndefined( self.oldValues[ control.name ] ) ) {
 				self.oldValues[ control.name ] = model.previous( control.name );
 			}
 
 			if ( elementor.history.history.isItemStarted() ) {
-				// Do not delay the execusion
+				// Do not delay the execution
 				self.saveTextHistory( model, changed, control );
 			} else {
 				self.lazySaveTextHistory( model, changed, control );
@@ -10789,7 +10767,7 @@ var HistoryCollection = require( './collection' ),
 
 var	Manager = function() {
 	var self = this,
-		currentItemID,
+		currentItemID = null,
 		items = new HistoryCollection(),
 		active = true;
 
