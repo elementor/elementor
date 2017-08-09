@@ -176,9 +176,11 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		}
 
 		this.$el.addClass( elClasses );
+
 		this.renderResponsiveSwitchers();
 
 		this.triggerMethod( 'ready' );
+
 		this.toggleControlVisibility();
 		this.addTooltip();
 	},
@@ -225,7 +227,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var templateHtml = Backbone.$( '#tmpl-elementor-control-responsive-switchers' ).html();
+		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
 	},

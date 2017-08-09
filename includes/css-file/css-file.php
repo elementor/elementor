@@ -204,7 +204,7 @@ abstract class CSS_File {
 			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
 
 			if ( ! $query && ! empty( $control['responsive'] ) ) {
-				$query = $control['responsive'];
+				$query = array_intersect_key( $control['responsive'], array_flip( [ 'min', 'max' ] ) );
 
 				if ( ! empty( $query['max'] ) && Element_Base::RESPONSIVE_DESKTOP === $query['max'] ) {
 					unset( $query['max'] );

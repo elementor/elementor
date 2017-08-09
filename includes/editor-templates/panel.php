@@ -199,15 +199,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
 	<div class="elementor-control-responsive-switchers">
-		<a class="elementor-responsive-switcher elementor-responsive-switcher-desktop" data-device="desktop">
-			<i class="eicon-device-desktop"></i>
-		</a>
-		<a class="elementor-responsive-switcher elementor-responsive-switcher-tablet" data-device="tablet">
-			<i class="eicon-device-tablet"></i>
-		</a>
-		<a class="elementor-responsive-switcher elementor-responsive-switcher-mobile" data-device="mobile">
-			<i class="eicon-device-mobile"></i>
-		</a>
+		<#
+			var devices = responsive.devices || [ 'desktop', 'tablet', 'mobile' ];
+
+			_.each( devices, function( device ) { #>
+				<a class="elementor-responsive-switcher elementor-responsive-switcher-{{ device }}" data-device="{{ device }}">
+					<i class="eicon-device-{{ device }}"></i>
+				</a>
+			<# } );
+		#>
 	</div>
 </script>
 
