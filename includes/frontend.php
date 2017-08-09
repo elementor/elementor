@@ -130,7 +130,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.3',
+			'3.2.4',
 			true
 		);
 
