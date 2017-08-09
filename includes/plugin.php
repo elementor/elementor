@@ -5,6 +5,7 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Modules\History\Revisions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

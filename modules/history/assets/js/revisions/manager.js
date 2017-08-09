@@ -37,12 +37,12 @@ RevisionsManager = function() {
 					return false;
 				}
 
-				var revisionsPage = panel.getCurrentPageView();
+				var revisionsTab = panel.getCurrentPageView().getCurrentTab();
 
-				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
+				return revisionsTab.currentPreviewId && revisionsTab.currentPreviewItem && revisionsTab.children.length > 1;
 			},
 			handle: function( event ) {
-				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW_KEY === event.which );
+				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
 			}
 		};
 
@@ -74,7 +74,10 @@ RevisionsManager = function() {
 				revisionModel.destroy();
 
 				if ( ! revisions.length ) {
-					elementor.getPanelView().setPage( 'revisionsPage' );
+					var panel = elementor.getPanelView();
+					if ( 'historyPage' === panel.getCurrentPageName() ) {
+						panel.getCurrentPageView().activateTab( 'revisions' );
+					}
 				}
 			}
 		};
