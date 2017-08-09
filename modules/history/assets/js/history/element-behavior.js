@@ -55,12 +55,12 @@ module.exports = Marionette.Behavior.extend( {
 		if ( 1 === changed.length ) {
 			var control = model.controls[ changed[0] ];
 
-			if ( ! self.oldValues[ control.name ] ) {
+			if ( _.isUndefined( self.oldValues[ control.name ] ) ) {
 				self.oldValues[ control.name ] = model.previous( control.name );
 			}
 
 			if ( elementor.history.history.isItemStarted() ) {
-				// Do not delay the execusion
+				// Do not delay the execution
 				self.saveTextHistory( model, changed, control );
 			} else {
 				self.lazySaveTextHistory( model, changed, control );

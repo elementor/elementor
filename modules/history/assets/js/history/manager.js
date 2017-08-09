@@ -5,7 +5,7 @@ var HistoryCollection = require( './collection' ),
 
 var	Manager = function() {
 	var self = this,
-		currentItemID,
+		currentItemID = null,
 		items = new HistoryCollection(),
 		active = true;
 
