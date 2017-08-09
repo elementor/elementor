@@ -36,6 +36,7 @@
 
 @mixin input-placeholder() {
 
+	// Keep the following rules each alone!
 	&::-webkit-input-placeholder {
 		@include placeholder-style();
 	}
