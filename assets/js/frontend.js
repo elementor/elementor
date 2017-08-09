@@ -1241,6 +1241,7 @@ LightboxModule = ViewModule.extend( {
 				playing: 'elementor-playing',
 				hidden: 'elementor-hidden',
 				invisible: 'elementor-invisible',
+				preventClose: 'elementor-lightbox-prevent-close',
 				slideshow: {
 					container: 'swiper-container',
 					slidesWrapper: 'swiper-wrapper',
@@ -1282,7 +1283,13 @@ LightboxModule = ViewModule.extend( {
 		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
-			closeButtonClass: 'eicon-close'
+			closeButtonClass: 'eicon-close',
+			selectors: {
+				preventClose: '.' + this.getSettings( 'classes.preventClose' )
+			},
+			hide: {
+				onClick: true
+			}
 		} );
 
 		modal.on( 'hide', function() {
@@ -1342,7 +1349,7 @@ LightboxModule = ViewModule.extend( {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			$item = jQuery( '<div>', { 'class': classes.item } ),
-			$image = jQuery( '<img>', { src: imageURL, 'class': classes.image } );
+			$image = jQuery( '<img>', { src: imageURL, 'class': classes.image + ' ' + classes.preventClose } );
 
 		$item.append( $image );
 
@@ -1382,8 +1389,8 @@ LightboxModule = ViewModule.extend( {
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { 'class': slideshowClasses.container } ),
 			$slidesWrapper = $( '<div>', { 'class': slideshowClasses.slidesWrapper } ),
-			$prevButton = $( '<div>', { 'class': slideshowClasses.prevButton } ).html( $( '<i>', { 'class': slideshowClasses.prevButtonIcon } ) ),
-			$nextButton = $( '<div>', { 'class': slideshowClasses.nextButton } ).html( $( '<i>', { 'class': slideshowClasses.nextButtonIcon } ) );
+			$prevButton = $( '<div>', { 'class': slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { 'class': slideshowClasses.prevButtonIcon } ) ),
+			$nextButton = $( '<div>', { 'class': slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { 'class': slideshowClasses.nextButtonIcon } ) );
 
 		options.slides.forEach( function( slide ) {
 			var slideClass =  slideshowClasses.slide + ' ' + classes.item;
@@ -1394,7 +1401,7 @@ LightboxModule = ViewModule.extend( {
 
 			var $slide = $( '<div>', { 'class': slideClass } ),
 				$zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
-				$slideImage = $( '<img>', { 'class': classes.image } ).attr( 'src', slide.image );
+				$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose } ).attr( 'src', slide.image );
 
 			$slide.append( $zoomContainer );
 
