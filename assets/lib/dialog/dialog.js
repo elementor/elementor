@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v3.2.3
+ * Dialogs Manager v3.2.4
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -130,8 +130,8 @@
 
 			elements.window.on('keyup', onWindowKeyUp);
 
-			if (settings.hide.onBackgroundClick) {
-				elements.widget.on('click', hideOnBackgroundClick);
+			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
+				elements.widget.on('click', hideOnClick);
 			}
 
 			if (settings.position.autoRefresh) {
@@ -207,6 +207,9 @@
 					globalPrefix: parentSettings.classPrefix,
 					prefix: parentSettings.classPrefix + '-' + widgetName
 				},
+				selectors: {
+					preventClose: '.' + parentSettings.classPrefix + '-prevent-close'
+				},
 				container: 'body',
 				position: {
 					element: 'widget',
@@ -219,6 +222,7 @@
 				hide: {
 					auto: false,
 					autoDelay: 5000,
+					onClick: false,
 					onBackgroundClick: true
 				}
 			};
@@ -252,8 +256,14 @@
 			});
 		};
 
-		var hideOnBackgroundClick = function(event) {
-			if (event.target !== this) {
+		var hideOnClick = function(event) {
+
+			if (settings.hide.onClick) {
+
+				if ($(event.target).closest(settings.selectors.preventClose).length) {
+					return;
+				}
+			} else if (event.target !== this) {
 				return;
 			}
 
@@ -273,8 +283,8 @@
 
 			elements.window.off('keyup', onWindowKeyUp);
 
-			if (settings.hide.onBackgroundClick) {
-				elements.widget.off('click', hideOnBackgroundClick);
+			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
+				elements.widget.off('click', hideOnClick);
 			}
 
 			if (settings.position.autoRefresh) {

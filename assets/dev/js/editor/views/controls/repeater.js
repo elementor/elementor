@@ -39,7 +39,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
 		this.listenTo( this.collection, 'change', this.onRowControlChange );
-		this.listenTo( this.collection, 'add remove reset', this.onRowChange, this );
+		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
 	},
 
 	addRow: function( data, options ) {
@@ -149,18 +149,67 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onRowChange: function() {
-		var model = this.elementSettingsModel;
+	onRowUpdate: function( collection, event ) {
+		var settings = this.elementSettingsModel;
 
-		model.changed = {};
+		var collectionCloned = collection.clone();
 
-		model.trigger( 'change', model, model._pending );
+		if ( event.add ) {
+			collectionCloned.remove( event.changes.added[0] );
+		} else {
+			collectionCloned.add( event.changes.removed[0], { at: event.index } );
+		}
+
+		settings.changed = {};
+
+		settings.changed[ this.model.get( 'name' ) ] = collection;
+
+		settings._previousAttributes = {};
+
+		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+
+		settings.trigger( 'change', settings,  settings._pending );
+
+		delete settings.changed;
+		delete settings._previousAttributes;
 
 		this.toggleMinRowsClass();
 	},
 
 	onRowControlChange: function( model ) {
-		this.elementSettingsModel.trigger( 'change', model, model._pending );
+		var changed = Object.keys( model.changed );
+
+		if ( ! changed.length ) {
+			return;
+		}
+
+		var collectionCloned = model.collection.clone(),
+			modelIndex = collectionCloned.findIndex( model ),
+			modelCloned = collectionCloned.find( model ),
+			_previousAttributes = modelCloned._previousAttributes;
+
+		// Replace the referenced model
+		modelCloned = modelCloned.clone();
+
+		// Save it with old values
+		modelCloned.set( _previousAttributes );
+
+		collectionCloned.remove( model );
+		collectionCloned.add( modelCloned, { at: modelIndex } );
+
+		var element = this._parent.model,
+			settings = element.get( 'settings' );
+
+		settings.changed = {};
+		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
+
+		settings._previousAttributes = {};
+		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+
+		settings.trigger( 'change', settings );
+
+		delete settings.changed;
+		delete settings._previousAttributes;
 	},
 
 	onButtonAddRowClick: function() {

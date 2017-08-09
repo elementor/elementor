@@ -221,10 +221,10 @@ class Plugin {
 			$this->admin = new Admin();
 			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
-		}
 
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			new Images_Manager();
+			if ( Utils::is_ajax() ) {
+				new Images_Manager();
+			}
 		}
 	}
 

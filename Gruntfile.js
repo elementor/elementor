@@ -400,10 +400,18 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		qunit: {
+			src: 'tests/qunit/index.html'
+		},
+
 		clean: {
 			//Clean up build folder
 			main: [
 				'build'
+			],
+			qunit: [
+				'tests/qunit/index.html',
+				'tests/qunit/preview.html'
 			]
 		}
 	} );
@@ -446,5 +454,10 @@ module.exports = function( grunt ) {
 		'replace',
 		'shell:git_add_all',
 		'release'
+	] );
+
+	grunt.registerTask( 'test', [
+		'qunit',
+		'clean:qunit'
 	] );
 };

@@ -92,6 +92,14 @@ SectionView = BaseElementView.extend( {
 		};
 	},
 
+	onSettingsChanged: function( settingsModel ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+
+		if ( settingsModel.changed.structure ) {
+			this.redefineLayout();
+		}
+	},
+
 	getColumnPercentSize: function( element, size ) {
 		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
@@ -112,8 +120,6 @@ SectionView = BaseElementView.extend( {
 		}
 
 		this.model.setSetting( 'structure', structure );
-
-		this.redefineLayout();
 	},
 
 	redefineLayout: function() {
@@ -214,7 +220,9 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onBeforeRender: function() {
-		this._checkIsEmpty();
+		if ( ! this.model.get( 'dontFillEmpty' ) ) {
+			this._checkIsEmpty();
+		}
 	},
 
 	onRender: function() {
@@ -250,7 +258,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onAddChild: function() {
-		if ( ! this.isBuffering ) {
+		if ( ! this.isBuffering && ! this.model.get( 'dontFillEmpty' ) ) {
 			// Reset the layout just when we have really add/remove element.
 			this.resetLayout();
 		}

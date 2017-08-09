@@ -10,7 +10,9 @@ final class Modules_Manager {
 	private $modules = null;
 
 	public function __construct() {
-		$modules = [];
+		$modules = [
+			'history'
+		];
 
 		foreach ( $modules as $module_id ) {
 			$class_name = str_replace( '-', ' ', $module_id );
