@@ -48,21 +48,8 @@
 			outline: 0;
 		}
 
-		// Keep the following rules each alone!
-		&::-webkit-input-placeholder {
-			color: inherit;
-			opacity: 0.5;
-		}
-
-		&::-moz-placeholder {
-			color: inherit;
-			opacity: 0.5;
-		}
-
-		&:-ms-input-placeholder {
-			color: inherit;
-			opacity: 0.5;
-		}
+		// Input Placeholder
+		@include input-placeholder();
 	}
 
 	.elementor-select-wrapper {
