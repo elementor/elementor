@@ -1,26 +1,12 @@
 var RevisionsCollection = require( './collection' ),
-	RevisionsPageView = require( './panel-page' ),
-	RevisionsEmptyView = require( './empty-view' ),
 	RevisionsManager;
 
 RevisionsManager = function() {
 	var self = this,
 		revisions;
 
-	var addPanelPage = function() {
-		elementor.getPanelView().addPage( 'revisionsPage', {
-			getView: function() {
-				if ( revisions.length ) {
-					return RevisionsPageView;
-				}
-
-				return RevisionsEmptyView;
-			},
-			title: elementor.translate( 'revision_history' ),
-			options: {
-				collection: revisions
-			}
-		} );
+	this.getItems = function() {
+		return revisions;
 	};
 
 	var onEditorSaved = function( data ) {
@@ -40,15 +26,14 @@ RevisionsManager = function() {
 	};
 
 	var addHotKeys = function() {
-		var H_KEY = 72,
-			UP_ARROW_KEY = 38,
+		var UP_ARROW_KEY = 38,
 			DOWN_ARROW_KEY = 40;
 
 		var navigationHandler = {
 			isWorthHandling: function() {
 				var panel = elementor.getPanelView();
 
-				if ( 'revisionsPage' !== panel.getCurrentPageName() ) {
+				if ( 'historyPage' !== panel.getCurrentPageName() ) {
 					return false;
 				}
 
@@ -64,15 +49,6 @@ RevisionsManager = function() {
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
 		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
-
-		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showRevisionsPage', {
-			isWorthHandling: function( event ) {
-				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
-			},
-			handle: function() {
-				elementor.getPanelView().setPage( 'revisionsPage' );
-			}
-		} );
 	};
 
 	this.addRevision = function( revisionData ) {
@@ -80,8 +56,8 @@ RevisionsManager = function() {
 
 		var panel = elementor.getPanelView();
 
-		if ( panel.getCurrentPageView() instanceof RevisionsEmptyView ) {
-			panel.setPage( 'revisionsPage' );
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().activateTab( 'revisions' );
 		}
 	};
 
@@ -116,8 +92,6 @@ RevisionsManager = function() {
 		attachEvents();
 
 		addHotKeys();
-
-		elementor.on( 'preview:loaded', addPanelPage );
 	};
 };
 

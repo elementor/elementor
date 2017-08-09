@@ -2112,6 +2112,42 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-revision-current-preview {
   background-color: #e6e9ec; }
 
+.elementor-history-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px solid #d5dadf;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  cursor: pointer; }
+  .elementor-history-item:hover {
+    background-color: rgba(230, 233, 236, 0.3); }
+    .elementor-history-item:hover .elementor-history-item__icon .fa:before {
+      content: '\f1da'; }
+  .elementor-history-item-applied {
+    color: #a4afb7; }
+  .elementor-history-item-current {
+    background: #e6e9ec;
+    cursor: inherit; }
+    .elementor-history-item-current .elementor-history-item__icon .fa:before, .elementor-history-item-current:hover .elementor-history-item__icon .fa:before {
+      content: '\f00c'; }
+  .elementor-history-item__details {
+    width: 95%; }
+  .elementor-history-item__title {
+    font-weight: bold; }
+  .elementor-history-item__subtitle, .elementor-history-item__action {
+    font-weight: lighter; }
+  .elementor-history-item__action {
+    font-style: italic;
+    text-decoration: underline; }
+  .elementor-history-item .__icon {
+    float: left; }
+
 #elementor-preview {
   background-color: #333;
   position: absolute;

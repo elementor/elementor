@@ -47,14 +47,14 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initItems: function() {
 		this.items = new Backbone.Collection( [
 			{
-				name: 'global-colors',
+            	name: 'global-colors',
 				icon: 'fa fa-paint-brush',
 				title: elementor.translate( 'global_colors' ),
 				type: 'page',
 				pageName: 'colorScheme'
 			},
 			{
-				name: 'global-fonts',
+	            name: 'global-fonts',
 				icon: 'fa fa-font',
 				title: elementor.translate( 'global_fonts' ),
 				type: 'page',
@@ -68,14 +68,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
-				name: 'revision-history',
-				icon: 'fa fa-history',
-				title: elementor.translate( 'revision_history' ),
-				type: 'page',
-				pageName: 'revisionsPage'
-			},
-			{
-				name: 'clear-page',
+	            name: 'clear-page',
 				icon: 'fa fa-eraser',
 				title: elementor.translate( 'clear_page' ),
 				callback: function() {
@@ -122,7 +115,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		}
 
 		items.add( itemData, options );
-	}
+				}
 } );
 
 module.exports = PanelMenuPageView;

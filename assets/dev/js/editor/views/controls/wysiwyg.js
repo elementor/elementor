@@ -114,6 +114,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
+	onAfterExternalChange: function() {
+		tinymce.get( this.editorID ).setContent( this.getControlValue() );
+	},
+
 	onBeforeDestroy: function() {
 		// Remove TinyMCE and QuickTags instances
 		delete QTags.instances[ this.editorID ];
