@@ -30,6 +30,7 @@
 // Forms > Input Placeholder
 @mixin placeholder-style() {
 	color: inherit;
+	font-family: inherit;
 	opacity: 0.6;
 }
 
@@ -48,6 +49,10 @@
 	}
 
 	&:-moz-placeholder {
+		@include placeholder-style();
+	}
+
+	&::placeholder {
 		@include placeholder-style();
 	}
 }
