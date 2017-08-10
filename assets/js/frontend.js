@@ -144,6 +144,12 @@ module.exports = ElementsHandler;
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var initHotKeys = function() {
+			self.hotKeys = require( 'elementor-utils/hot-keys' );
+
+			self.hotKeys.bindListener( elements.$window );
+		};
+
 		var getSiteSettings = function( settingType, settingName ) {
 			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
 
@@ -164,6 +170,10 @@ module.exports = ElementsHandler;
 			setDeviceModeData();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
+
+			if ( ! self.isEditMode() ) {
+				initHotKeys();
+			}
 
 			initOnReadyComponents();
 		};
@@ -283,7 +293,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":19,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":16,"elementor-frontend/utils/lightbox":17,"elementor-frontend/utils/youtube":18}],3:[function(require,module,exports){
+},{"../utils/hooks":19,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":16,"elementor-frontend/utils/lightbox":17,"elementor-frontend/utils/youtube":18,"elementor-utils/hot-keys":20}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -395,7 +405,7 @@ HandlerModule = ViewModule.extend( {
 
 module.exports = HandlerModule;
 
-},{"../utils/view-module":21}],4:[function(require,module,exports){
+},{"../utils/view-module":22}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -1217,7 +1227,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":21}],17:[function(require,module,exports){
+},{"../../utils/view-module":22}],17:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' ),
 	LightboxModule;
 
@@ -1668,7 +1678,7 @@ LightboxModule = ViewModule.extend( {
 
 module.exports = LightboxModule;
 
-},{"../../utils/view-module":21}],18:[function(require,module,exports){
+},{"../../utils/view-module":22}],18:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1719,7 +1729,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":21}],19:[function(require,module,exports){
+},{"../../utils/view-module":22}],19:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1979,6 +1989,58 @@ var EventManager = function() {
 module.exports = EventManager;
 
 },{}],20:[function(require,module,exports){
+var HotKeys = function() {
+	var hotKeysHandlers = this.hotKeysHandlers = {};
+
+	var isMac = function() {
+		return -1 !== navigator.userAgent.indexOf( 'Mac OS X' );
+	};
+
+	var applyHotKey = function( event ) {
+		var handlers = hotKeysHandlers[ event.which ];
+
+		if ( ! handlers ) {
+			return;
+		}
+
+		jQuery.each( handlers, function() {
+			var handler = this;
+
+			if ( handler.isWorthHandling && ! handler.isWorthHandling( event ) ) {
+				return;
+			}
+
+			// Fix for some keyboard sources that consider alt key as ctrl key
+			if ( ! handler.allowAltKey && event.altKey ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			handler.handle( event );
+		} );
+	};
+
+	this.isControlEvent = function( event ) {
+		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
+	};
+
+	this.addHotKeyHandler = function( keyCode, handlerName, handler ) {
+		if ( ! hotKeysHandlers[ keyCode ] ) {
+			hotKeysHandlers[ keyCode ] = {};
+		}
+
+		hotKeysHandlers[ keyCode ][ handlerName ] = handler;
+	};
+
+	this.bindListener = function( $listener ) {
+		$listener.on( 'keydown', applyHotKey );
+	};
+};
+
+module.exports = new HotKeys();
+
+},{}],21:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,
@@ -2170,7 +2232,7 @@ Module.extend = function( properties ) {
 
 module.exports = Module;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var Module = require( './module' ),
 	ViewModule;
 
@@ -2196,5 +2258,5 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":20}]},{},[2])
+},{"./module":21}]},{},[2])
 //# sourceMappingURL=frontend.js.map
