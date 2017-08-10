@@ -135,8 +135,6 @@ module.exports = ElementsHandler;
 		};
 
 		var initOnReadyComponents = function() {
-			self.hotKeys = require( 'elementor-utils/hot-keys' );
-
 			self.utils = {
 				youtube: new YouTubeModule(),
 				anchors: new AnchorsModule(),
@@ -144,6 +142,12 @@ module.exports = ElementsHandler;
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
+		};
+
+		var initHotKeys = function() {
+			self.hotKeys = require( 'elementor-utils/hot-keys' );
+
+			self.hotKeys.bindListener( elements.$window );
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
@@ -166,6 +170,10 @@ module.exports = ElementsHandler;
 			setDeviceModeData();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
+
+			if ( ! self.isEditMode() ) {
+				initHotKeys();
+			}
 
 			initOnReadyComponents();
 		};
@@ -1981,8 +1989,8 @@ var EventManager = function() {
 module.exports = EventManager;
 
 },{}],20:[function(require,module,exports){
-var HotKeys = function( $ ) {
-	var hotKeysHandlers = {};
+var HotKeys = function() {
+	var hotKeysHandlers = this.hotKeysHandlers = {};
 
 	var isMac = function() {
 		return -1 !== navigator.userAgent.indexOf( 'Mac OS X' );
@@ -1995,7 +2003,9 @@ var HotKeys = function( $ ) {
 			return;
 		}
 
-		_.each( handlers, function( handler ) {
+		jQuery.each( handlers, function() {
+			var handler = this;
+
 			if ( handler.isWorthHandling && ! handler.isWorthHandling( event ) ) {
 				return;
 			}
@@ -2028,7 +2038,7 @@ var HotKeys = function( $ ) {
 	};
 };
 
-module.exports = new HotKeys( jQuery );
+module.exports = new HotKeys();
 
 },{}],21:[function(require,module,exports){
 var Module = function() {

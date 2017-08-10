@@ -10474,8 +10474,8 @@ var EventManager = function() {
 module.exports = EventManager;
 
 },{}],121:[function(require,module,exports){
-var HotKeys = function( $ ) {
-	var hotKeysHandlers = {};
+var HotKeys = function() {
+	var hotKeysHandlers = this.hotKeysHandlers = {};
 
 	var isMac = function() {
 		return -1 !== navigator.userAgent.indexOf( 'Mac OS X' );
@@ -10488,7 +10488,9 @@ var HotKeys = function( $ ) {
 			return;
 		}
 
-		_.each( handlers, function( handler ) {
+		jQuery.each( handlers, function() {
+			var handler = this;
+
 			if ( handler.isWorthHandling && ! handler.isWorthHandling( event ) ) {
 				return;
 			}
@@ -10521,7 +10523,7 @@ var HotKeys = function( $ ) {
 	};
 };
 
-module.exports = new HotKeys( jQuery );
+module.exports = new HotKeys();
 
 },{}],122:[function(require,module,exports){
 var Module = function() {
