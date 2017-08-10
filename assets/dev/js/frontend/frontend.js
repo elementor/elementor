@@ -46,6 +46,12 @@
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var initHotKeys = function() {
+			self.hotKeys = require( 'elementor-utils/hot-keys' );
+
+			self.hotKeys.bindListener( elements.$window );
+		};
+
 		var getSiteSettings = function( settingType, settingName ) {
 			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
 
@@ -66,6 +72,10 @@
 			setDeviceModeData();
 
 			elements.$window.trigger( 'elementor/frontend/init' );
+
+			if ( ! self.isEditMode() ) {
+				initHotKeys();
+			}
 
 			initOnReadyComponents();
 		};
