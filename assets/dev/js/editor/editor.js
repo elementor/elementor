@@ -23,7 +23,7 @@ App = Marionette.Application.extend( {
 	ajax: require( 'elementor-editor-utils/ajax' ),
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	revisions:  require( 'elementor-revisions/manager' ),
-	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
+	hotKeys: require( 'elementor-utils/hot-keys' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -155,8 +155,6 @@ App = Marionette.Application.extend( {
 		this.ajax.init();
 
 		this.revisions.init();
-
-		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -241,6 +239,115 @@ App = Marionette.Application.extend( {
 		};
 	},
 
+	initHotKeys: function() {
+		var keysDictionary = {
+			del: 46,
+			d: 68,
+			l: 76,
+			m: 77,
+			p: 80,
+			s: 83
+		};
+
+		var $ = jQuery,
+			hotKeysHandlers = {},
+			hotKeysManager = this.hotKeys;
+
+		hotKeysHandlers[ keysDictionary.del ] = {
+			deleteElement: {
+				isWorthHandling: function( event ) {
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
+						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
+
+					return isEditorOpen && ! isInputTarget;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.d ] = {
+			/* Waiting for CTRL+Z / CTRL+Y
+			duplicateElement: {
+				isWorthHandling: function( event ) {
+					return self.isControlEvent( event );
+				},
+				handle: function() {
+					var panel = elementor.getPanelView();
+
+					if ( 'editor' !== panel.getCurrentPageName() ) {
+						return;
+					}
+
+					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
+				}
+			}*/
+		};
+
+		hotKeysHandlers[ keysDictionary.l ] = {
+			showTemplateLibrary: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
+				},
+				handle: function() {
+					elementor.templates.showTemplatesModal();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.m ] = {
+			changeDeviceMode: {
+				devices: [ 'desktop', 'tablet', 'mobile' ],
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
+				},
+				handle: function() {
+					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+						modeIndex = this.devices.indexOf( currentDeviceMode );
+
+					modeIndex++;
+
+					if ( modeIndex >= this.devices.length ) {
+						modeIndex = 0;
+					}
+
+					elementor.changeDeviceMode( this.devices[ modeIndex ] );
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.p ] = {
+			changeEditMode: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event );
+				},
+				handle: function() {
+					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.s ] = {
+			saveEditor: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event );
+				},
+				handle: function() {
+					elementor.getPanelView().getFooterView()._publishBuilder();
+				}
+			}
+		};
+
+		_.each( hotKeysHandlers, function( handlers, keyCode ) {
+			_.each( handlers, function( handler, handlerName ) {
+				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
+			} );
+		} );
+
+		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
+	},
+
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
@@ -310,7 +417,7 @@ App = Marionette.Application.extend( {
 
 		this.initElements();
 
-		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
+		this.initHotKeys();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object

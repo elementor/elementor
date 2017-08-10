@@ -37,6 +37,8 @@
 		};
 
 		var initOnReadyComponents = function() {
+			self.hotKeys = require( 'elementor-utils/hot-keys' );
+
 			self.utils = {
 				youtube: new YouTubeModule(),
 				anchors: new AnchorsModule(),
