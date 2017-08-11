@@ -226,6 +226,10 @@ class Plugin {
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			new Images_Manager();
 		}
+
+		if ( defined( 'WP_CLI' ) ) {
+			require_once ELEMENTOR_PATH . '/includes/wp-cli-commands.php';
+		}
 	}
 
 	private function add_cpt_support() {
