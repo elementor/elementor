@@ -22,7 +22,6 @@ class WP_CLI_Commands extends \WP_CLI_Command
 	 *  	- This will regenerate the CSS files for elementor page builder on all the sites in network.
 	 * 
 	 * @alias regenerate-css
-	 *
 	*/
 	public function regenerate_css( $args, $assoc_args ) {
 
