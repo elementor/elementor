@@ -394,7 +394,6 @@ class Editor {
 				'global_fonts' => __( 'Global Fonts', 'elementor' ),
 				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
-				'revision_history' => __( 'Revision History', 'elementor' ),
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'inner_section' => __( 'Columns', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
