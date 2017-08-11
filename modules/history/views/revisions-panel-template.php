@@ -16,7 +16,7 @@
 
 	<div class="elementor-panel-box">
 		<div class="elementor-panel-heading">
-			<div class="elementor-panel-heading-title"><?php _e( 'Revision History', 'elementor' ); ?></div>
+			<div class="elementor-panel-heading-title"><?php _e( 'Revisions', 'elementor' ); ?></div>
 		</div>
 		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
 	</div>
