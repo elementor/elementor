@@ -1,4 +1,4 @@
-﻿@charset "UTF-8";
+@charset "UTF-8";
 .dialog-widget {
   position: fixed;
   height: 100%;
@@ -130,9 +130,7 @@ body.admin-bar .dialog-close-button {
   .elementor .elementor-widget:not(.elementor-widget-text-editor) figure {
     margin: 0; }
   .elementor embed,
-  .elementor-custom-embed iframe,
-  .elementor-soundcloud-wrapper iframe,
-  .elementor-video-wrapper iframe,
+  .elementor iframe,
   .elementor object,
   .elementor video {
     max-width: 100%;
