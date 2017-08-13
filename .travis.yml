@@ -48,6 +48,7 @@ script:
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
+  - npm install grunt
   - grunt test
 
 after_success:
