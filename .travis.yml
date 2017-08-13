@@ -42,13 +42,14 @@ before_script:
         composer global require "phpunit/phpunit=4.8.*"
       fi
   - composer require satooshi/php-coveralls '~1.0'
+  - npm install -g grunt-cli
+  - npm install
 
 script:
   - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
-  - npm install grunt
   - grunt test
 
 after_success:
