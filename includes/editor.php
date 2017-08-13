@@ -179,7 +179,7 @@ class Editor {
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		// Hack for waypoint with editor mode.
 		wp_register_script(
