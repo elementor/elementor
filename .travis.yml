@@ -42,6 +42,8 @@ before_script:
         composer global require "phpunit/phpunit=4.8.*"
       fi
   - composer require satooshi/php-coveralls '~1.0'
+  - composer global require wp-coding-standards/wpcs
+  - phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
 
 script:
   - phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
