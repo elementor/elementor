@@ -123,7 +123,7 @@ function testPreview() {
 				add: columnView.$el.find( '.elementor-editor-element-add' ),
 				duplicate: columnView.$el.find( '.elementor-editor-element-duplicate' ),
 				remove: columnView.$el.find( '.elementor-editor-element-remove' )
-			};
+		};
 
 		QUnit.module( 'Check columns buttons', function( hooks ) {
 			assert.equal( columnButtons.trigger.length, 1 , 'Trigger Button exist' );
@@ -160,7 +160,7 @@ function testPreview() {
 			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
 
 			var headingView = columnView.children.first(),
-				secondColumn = sectionView.children.findByIndex(2);
+				secondColumn = sectionView.children.findByIndex( 2 );
 
 			var done = assert.async();
 			setTimeout(function() {
