@@ -2077,7 +2077,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
           align-items: center;
   border: 1px solid #d5dadf;
   padding: 10px 15px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  font-size: 11px; }
   .elementor-revision-item:hover:not(.elementor-revision-current-preview) {
     background-color: rgba(230, 233, 236, 0.3); }
   .elementor-revision-item:not(:hover) .elementor-revision-item__tools-delete {
@@ -2101,9 +2102,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-revision-item__tools-delete {
     cursor: pointer; }
 
-.elementor-revision-date {
-  font-size: 11px; }
-
 .elementor-revision-meta {
   padding-top: 5px;
   font-size: 10px;
@@ -2124,6 +2122,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   border: 1px solid #d5dadf;
   padding: 10px 15px;
   margin-bottom: 10px;
+  font-size: 11px;
+  line-height: 1.4;
   cursor: pointer; }
   .elementor-history-item:hover {
     background-color: rgba(230, 233, 236, 0.3); }
