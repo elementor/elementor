@@ -48,6 +48,7 @@ script:
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
+  - grunt test
 
 after_success:
   - travis_retry php vendor/bin/coveralls --verbose --exclude-no-stmt

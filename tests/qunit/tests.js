@@ -1,6 +1,6 @@
 var elementorTests = {};
 
-elementorTests.setPanelSelectedElement = function (category, name) {
+elementorTests.setPanelSelectedElement = function( category, name ) {
 	elementor.getPanelView().setPage( 'elements' );
 
 	var elementsPanel = elementor.getPanelView().getCurrentPageView().elements.currentView,
@@ -126,16 +126,16 @@ function testPreview() {
 		};
 
 		QUnit.module( 'Check columns buttons', function( hooks ) {
-			assert.equal( columnButtons.trigger.length, 1 , 'Trigger Button exist' );
-			assert.equal( columnButtons.add.length, 1 , 'Add Button exist' );
-			assert.equal( columnButtons.duplicate.length, 1 , 'Duplicate Button exist' );
-			assert.equal( columnButtons.remove.length, 1 , 'Remove Button exist' );
+			assert.equal( columnButtons.trigger.length, 1, 'Trigger Button exist' );
+			assert.equal( columnButtons.add.length, 1, 'Add Button exist' );
+			assert.equal( columnButtons.duplicate.length, 1, 'Duplicate Button exist' );
+			assert.equal( columnButtons.remove.length, 1, 'Remove Button exist' );
 		} );
 
 		QUnit.module( 'Add a Column', function( hooks ) {
 			columnButtons.add.click();
 
-			assert.equal( sectionView.children.length, 2 , 'Column was Added' );
+			assert.equal( sectionView.children.length, 2, 'Column was Added' );
 			assert.equal( historyItems.length, 3, 'History has 2 item' ); // the first items is the editing started
 			assert.equal( historyItems.first().get( 'elementType' ), 'column', 'History elementType is `column`' );
 			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
@@ -144,7 +144,7 @@ function testPreview() {
 		QUnit.module( 'Duplicate a Column', function( hooks ) {
 			columnButtons.duplicate.click();
 
-			assert.equal( sectionView.children.length, 3 , 'Column was Duplicated' );
+			assert.equal( sectionView.children.length, 3, 'Column was Duplicated' );
 			assert.equal( historyItems.length, 4, 'History has 3 item' ); // the first items is the editing started
 			assert.equal( historyItems.first().get( 'elementType' ), 'column', 'History elementType is `column`' );
 			assert.equal( historyItems.first().get( 'type' ), 'duplicate', 'History type is `duplicate`' );
