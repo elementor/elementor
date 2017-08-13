@@ -61,8 +61,8 @@ function testPreview() {
 			['general-elements', 'shortcode'],
 			['general-elements', 'html'],
 			['general-elements', 'menu-anchor'],
-			['general-elements', 'sidebar'],
-
+			['general-elements', 'sidebar']
+			//,
 			// ['wordpress', 'wp-widget-pages'],
 			// ['wordpress', 'wp-widget-calendar'],
 			// ['wordpress', 'wp-widget-archives'],

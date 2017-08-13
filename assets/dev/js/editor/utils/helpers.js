@@ -215,7 +215,7 @@ helpers = {
 				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
 			} );
 		}, 500 );
-	},
+	}
 };
 
 module.exports = helpers;
