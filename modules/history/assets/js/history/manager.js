@@ -65,7 +65,7 @@ var	Manager = function() {
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: function( event ) {
-				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]');
+				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
 			},
 			handle: function( event ) {
 				navigate( Z_KEY === event.which && event.shiftKey );
@@ -133,7 +133,7 @@ var	Manager = function() {
 
 	this.isItemStarted = function() {
 		return null !== currentItemID;
-	}
+	};
 
 	this.addItem = function( itemData ) {
 		if ( ! this.getActive() ) {
@@ -222,7 +222,7 @@ var	Manager = function() {
 			// Try scroll to affected element.
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
 				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
-				if ( oldView.model ){
+				if ( oldView.model ) {
 					var view = self.findView( oldView.model.get( 'id' ) ) ;
 					if ( view ) {
 						elementor.helpers.scrollToView( view );
