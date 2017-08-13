@@ -2815,6 +2815,14 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				link: elementor.config.settings_page_link,
 				newTab: true
 			},
+            {
+                name: 'elementor-docs',
+                icon: 'fa fa-question-circle',
+                title: elementor.translate( 'elementor_docs' ),
+                type: 'link',
+                link: elementor.config.docs_elementor_site,
+                newTab: true
+            },
 			{
 				name: 'about-elementor',
 				icon: 'fa fa-info-circle',
