@@ -94,7 +94,6 @@ AddSectionView = Marionette.ItemView.extend( {
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
-		newSection.redefineLayout();
 
 		elementor.channels.data.trigger( 'element:after:add' );
 	},
