@@ -174,7 +174,18 @@ var	Manager = function() {
 			self.startItemAction = '';
 		}
 
-		currentItem.get( 'items' ).add( itemData, { at: 0 } );
+		var position = 0;
+
+		// Temp fix. insert the `remove` subItem before the section changes subItem,
+		// in a multi columns section - the structure has been changed
+		// in a one column section - it's filled with an empty column
+		// the order is important for the `redoItem`, that needed to change thr section first
+		// and only after - to remove the column.
+		if ( 'column' === itemData.elementType && 'remove' === itemData.type ) {
+			position = 1;
+		}
+
+		currentItem.get( 'items' ).add( itemData, { at: position } );
 
 		items.add( currentItem, { at: 0 } );
 
