@@ -106,9 +106,8 @@ var	Manager = function() {
 			.on( 'section:before:drop', self.startDropElement )
 			.on( 'section:after:drop', self.endItem )
 
-			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
-			.on( 'library:InsertTemplate:after', self.endItem );
-
+			.on( 'template:before:insert', self.startInsertTemplate )
+			.on( 'template:after:insert', self.endItem );
 	};
 
 	this.setActive = function( value ) {
