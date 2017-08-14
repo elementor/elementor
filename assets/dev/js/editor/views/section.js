@@ -153,7 +153,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	_checkIsEmpty: function() {
-		if ( ! this.collection.length ) {
+		if ( ! this.collection.length && ! this.model.get( 'dontFillEmpty' ) ) {
 			this.addEmptyColumn();
 		}
 	},
@@ -220,9 +220,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onBeforeRender: function() {
-		if ( ! this.model.get( 'dontFillEmpty' ) ) {
-			this._checkIsEmpty();
-		}
+		this._checkIsEmpty();
 	},
 
 	onRender: function() {
