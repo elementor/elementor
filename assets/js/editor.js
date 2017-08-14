@@ -601,11 +601,11 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.channels.data.trigger( 'library:InsertTemplate:before', templateModel );
+				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
 				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
-				elementor.channels.data.trigger( 'library:InsertTemplate:after', templateModel );
+				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
 					elementor.settings.page.model.set( data.page_settings );
@@ -6670,8 +6670,6 @@ BaseElementView = BaseContainer.extend( {
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
-		this.initRemoveDialog();
-
 		this.initControlsCSSParser();
 	},
 
@@ -6733,41 +6731,6 @@ BaseElementView = BaseContainer.extend( {
 
 	isInner: function() {
 		return !! this.model.get( 'isInner' );
-	},
-
-	initRemoveDialog: function() {
-		var removeDialog;
-
-		this.getRemoveDialog = function() {
-			if ( ! removeDialog ) {
-				var elementTitle = this.model.getTitle();
-
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
-					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
-					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
-					},
-					defaultOption: 'confirm',
-					onConfirm: _.bind( function() {
-						elementor.channels.data.trigger( 'element:before:remove', this.model );
-
-						var parent = this._parent;
-
-						parent.isManualRemoving = true;
-
-						this.model.destroy();
-
-						parent.isManualRemoving = false;
-
-						elementor.channels.data.trigger( 'element:after:remove', this.model );
-					}, this )
-				} );
-			}
-
-			return removeDialog;
-		};
 	},
 
 	initControlsCSSParser: function() {
@@ -6893,10 +6856,6 @@ BaseElementView = BaseContainer.extend( {
 		this.trigger( 'request:duplicate' );
 	},
 
-	confirmRemove: function() {
-		this.getRemoveDialog().show();
-	},
-
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
@@ -7006,7 +6965,17 @@ BaseElementView = BaseContainer.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.confirmRemove();
+		elementor.channels.data.trigger( 'element:before:remove', this.model );
+
+		var parent = this._parent;
+
+		parent.isManualRemoving = true;
+
+		this.model.destroy();
+
+		parent.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'element:after:remove', this.model );
 	},
 
 	onClickSave: function( event ) {
@@ -10868,9 +10837,8 @@ var	Manager = function() {
 			.on( 'section:before:drop', self.startDropElement )
 			.on( 'section:after:drop', self.endItem )
 
-			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
-			.on( 'library:InsertTemplate:after', self.endItem );
-
+			.on( 'template:before:insert', self.startInsertTemplate )
+			.on( 'template:after:insert', self.endItem );
 	};
 
 	this.setActive = function( value ) {
@@ -11132,7 +11100,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	template: '#tmpl-elementor-panel-history-tab',
 
-	
 	childView: Marionette.ItemView.extend( {
 		template: '#tmpl-elementor-panel-history-item',
 		ui: {
