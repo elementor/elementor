@@ -162,7 +162,6 @@ function testPreview() {
 			var headingView = columnView.children.first(),
 				secondColumn = sectionView.children.findByIndex( 2 );
 
-
 			assert.timeout( 0 );
 			var done = assert.async();
 			setTimeout(function() {
