@@ -6388,7 +6388,6 @@ AddSectionView = Marionette.ItemView.extend( {
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
-		newSection.redefineLayout();
 
 		elementor.channels.data.trigger( 'element:after:add' );
 	},
@@ -9485,6 +9484,8 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
+
+		this._checkIsEmpty();
 	},
 
 	addEmptyColumn: function() {
@@ -9582,7 +9583,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	_checkIsEmpty: function() {
-		if ( ! this.collection.length ) {
+		if ( ! this.collection.length && ! this.model.get( 'dontFillEmpty' ) ) {
 			this.addEmptyColumn();
 		}
 	},
@@ -9645,12 +9646,6 @@ SectionView = BaseElementView.extend( {
 	destroyAddSectionView: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
-		}
-	},
-
-	onBeforeRender: function() {
-		if ( ! this.model.get( 'dontFillEmpty' ) ) {
-			this._checkIsEmpty();
 		}
 	},
 
@@ -10905,7 +10900,18 @@ var	Manager = function() {
 			self.startItemAction = '';
 		}
 
-		currentItem.get( 'items' ).add( itemData, { at: 0 } );
+		var position = 0;
+
+		// Temp fix. insert the `remove` subItem before the section changes subItem,
+		// in a multi columns section - the structure has been changed
+		// in a one column section - it's filled with an empty column
+		// the order is important for the `redoItem`, that needed to change thr section first
+		// and only after - to remove the column.
+		if ( 'column' === itemData.elementType && 'remove' === itemData.type ) {
+			position = 1;
+		}
+
+		currentItem.get( 'items' ).add( itemData, { at: position } );
 
 		items.add( currentItem, { at: 0 } );
 
