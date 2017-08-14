@@ -5,12 +5,8 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		if ( ! defined( 'WP_ADMIN' ) ) {
-			define( 'WP_ADMIN', false );
-		}
-
+		define( 'WP_ADMIN', false );
 		define( 'WP_USE_THEMES', true );
-
 		$_GET['elementor-preview'] = 1;
 
 		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
@@ -27,19 +23,24 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 		$template = get_index_template();
 		$template = apply_filters( 'template_include', $template );
 
+		// Recreate the frontend instance because it's scripts hooks are removed in previous test
+		\Elementor\Plugin::$instance->frontend = new \Elementor\Frontend();
+
 		ob_start();
 
 		require $template;
 
 		$html = ob_get_clean();
 
-		$html = fix_qunit_html_urls( $html );
-
-		$quint = '<script src="vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>
-		<script src="vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>
-		<script src="vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.drag-n-drop.js"></script>';
+		$plugin_path = str_replace( '\\', '/', ELEMENTOR_PATH );
+		$quint = '' .
+		'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>' .
+		'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>' .
+		'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.drag-n-drop.js"></script>';
 
 		$html = str_replace( '</body>', $quint . '</body>', $html );
+
+		$html = fix_qunit_html_urls( $html );
 
 		file_put_contents( __DIR__ . '/qunit/preview.html', $html );
 	}

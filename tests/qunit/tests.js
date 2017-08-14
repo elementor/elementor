@@ -1,6 +1,6 @@
 var elementorTests = {};
 
-elementorTests.setPanelSelectedElement = function (category, name) {
+elementorTests.setPanelSelectedElement = function( category, name ) {
 	elementor.getPanelView().setPage( 'elements' );
 
 	var elementsPanel = elementor.getPanelView().getCurrentPageView().elements.currentView,
@@ -61,24 +61,24 @@ function testPreview() {
 			['general-elements', 'shortcode'],
 			['general-elements', 'html'],
 			['general-elements', 'menu-anchor'],
-			['general-elements', 'sidebar'],
-
-			['wordpress', 'wp-widget-pages'],
-			['wordpress', 'wp-widget-calendar'],
-			['wordpress', 'wp-widget-archives'],
-			['wordpress', 'wp-widget-media_audio'],
-			['wordpress', 'wp-widget-media_image'],
-			['wordpress', 'wp-widget-media_video'],
-			['wordpress', 'wp-widget-meta'],
-			['wordpress', 'wp-widget-search'],
-			['wordpress', 'wp-widget-text'],
-			['wordpress', 'wp-widget-categories'],
-			['wordpress', 'wp-widget-recent-posts'],
-			['wordpress', 'wp-widget-recent-comments'],
-			['wordpress', 'wp-widget-rss'],
-			['wordpress', 'wp-widget-tag_cloud'],
-			['wordpress', 'wp-widget-nav_menu'],
-			['wordpress', 'wp-widget-elementor-library']
+			['general-elements', 'sidebar']
+			//,
+			// ['wordpress', 'wp-widget-pages'],
+			// ['wordpress', 'wp-widget-calendar'],
+			// ['wordpress', 'wp-widget-archives'],
+			// ['wordpress', 'wp-widget-media_audio'],
+			// ['wordpress', 'wp-widget-media_image'],
+			// ['wordpress', 'wp-widget-media_video'],
+			// ['wordpress', 'wp-widget-meta'],
+			// ['wordpress', 'wp-widget-search'],
+			// ['wordpress', 'wp-widget-text'],
+			// ['wordpress', 'wp-widget-categories'],
+			// ['wordpress', 'wp-widget-recent-posts'],
+			// ['wordpress', 'wp-widget-recent-comments'],
+			// ['wordpress', 'wp-widget-rss'],
+			// ['wordpress', 'wp-widget-tag_cloud'],
+			// ['wordpress', 'wp-widget-nav_menu'],
+			// ['wordpress', 'wp-widget-elementor-library']
 		];
 
 	_( elements ).each(function( element ) {
@@ -88,13 +88,6 @@ function testPreview() {
 
 			assert.equal( element[1], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
 		});
-	});
-
-	QUnit.test( 'simulateDragDrop', function( assert ) {
-		pQuery( '[data-id="hphgwx5"]' ).simulate( 'drag-n-drop', {
-			dragTarget: pQuery( '[data-id="tvpmxwz"]' )
-		});
-		assert.equal( 1, pQuery( '[data-id="tvpmxwz"]' ).find( '[data-id="hphgwx5"]' ).length );
 	});
 
 	QUnit.test( 'Add New Section', function( assert ) {
@@ -107,24 +100,66 @@ function testPreview() {
 		// Click on `Add section`
 		pQuery( '.elementor-add-section-button' ).click();
 
-		// Ensure The Presets is shown
-		assert.equal( 1, pQuery( '.elementor-add-section-inner [data-structure="10"]' ).length, 'Prese structure 10 exist' );
+		var sectionsCollection = elementor.sections.currentView.collection,
+			historyItems = elementor.history.history.getItems(),
+			presetsStructureButton = pQuery( '.elementor-add-section-inner [data-structure="10"]' );
 
-		// Add a Section with one Column
-		pQuery( '.elementor-add-section-inner [data-structure="10"]' ).click();
+		assert.equal( 1, presetsStructureButton.length, 'Presets is shown' );
 
-		// Ensure the Section was added
-		assert.ok( elementor.sections.currentView.collection.first(), 'Section Added' );
+		QUnit.module( 'Add a Section', function( hooks ) {
+			presetsStructureButton.click();
 
-		// Ensure the Column was added to the section
-		assert.equal( elementor.sections.currentView.collection.first().get( 'elements' ).first().get( 'elType' ), 'column', 'Empty Column added' );
+			assert.ok( sectionsCollection.first(), 'Section Added' );
+			assert.equal( sectionsCollection.first().get( 'elements' ).first().get( 'elType' ), 'column', 'Empty Column added' );
+			assert.equal( historyItems.length, 2, 'History has one item' ); // the first items is the editing started
+			assert.equal( historyItems.first().get( 'elementType' ), 'section', 'History elementType is `section`' );
+			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
+		} );
 
-		var HistoryItems = elementor.history.history.getItems();
-		//
-		assert.equal( HistoryItems.length, 2, 'History has one item' ); // the first items is the editing started
-		assert.equal( HistoryItems.first().get( 'elementType' ), 'section', 'History elementType is `section`' );
-		assert.equal( HistoryItems.first().get( 'type' ), 'add', 'History type is `add`' );
-	});
+		var sectionView = elementor.sections.currentView.children.first(),
+			columnView = sectionView.children.first(),
+			columnButtons = {
+				trigger: columnView.$el.find( '.elementor-editor-element-trigger' ),
+				add: columnView.$el.find( '.elementor-editor-element-add' ),
+				duplicate: columnView.$el.find( '.elementor-editor-element-duplicate' ),
+				remove: columnView.$el.find( '.elementor-editor-element-remove' )
+		};
+
+		QUnit.module( 'Check columns buttons', function( hooks ) {
+			assert.equal( columnButtons.trigger.length, 1, 'Trigger Button exist' );
+			assert.equal( columnButtons.add.length, 1, 'Add Button exist' );
+			assert.equal( columnButtons.duplicate.length, 1, 'Duplicate Button exist' );
+			assert.equal( columnButtons.remove.length, 1, 'Remove Button exist' );
+		} );
+
+		QUnit.module( 'Add a Column', function( hooks ) {
+			columnButtons.add.click();
+
+			assert.equal( sectionView.children.length, 2, 'Column was Added' );
+			assert.equal( historyItems.length, 3, 'History has 2 item' ); // the first items is the editing started
+			assert.equal( historyItems.first().get( 'elementType' ), 'column', 'History elementType is `column`' );
+			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
+		} );
+
+		QUnit.module( 'Duplicate a Column', function( hooks ) {
+			columnButtons.duplicate.click();
+
+			assert.equal( sectionView.children.length, 3, 'Column was Duplicated' );
+			assert.equal( historyItems.length, 4, 'History has 3 item' ); // the first items is the editing started
+			assert.equal( historyItems.first().get( 'elementType' ), 'column', 'History elementType is `column`' );
+			assert.equal( historyItems.first().get( 'type' ), 'duplicate', 'History type is `duplicate`' );
+		} );
+
+		QUnit.module( 'Add Heading widget', function( hooks ) {
+			elementorTests.setPanelSelectedElement( 'basic', 'heading' );
+			columnView.addElementFromPanel( { at: 0 } );
+
+			assert.equal( columnView.model.get( 'elements' ).first().get( 'widgetType' ), 'heading', 'Heading was Added' );
+			assert.equal( historyItems.length, 5, 'History has 4 item' ); // the first items is the editing started
+			assert.equal( historyItems.first().get( 'elementType' ), 'widget', 'History elementType is `widget`' );
+			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
+		} );
+	} );
 }
 
 elementor.on( 'preview:loaded', function() {

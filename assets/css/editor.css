@@ -2148,6 +2148,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-history-item .__icon {
     float: right; }
 
+.elementor-history-revisions-message {
+  font-size: 11px;
+  text-align: center;
+  padding: 5px 0; }
+
 #elementor-preview {
   background-color: #333;
   position: absolute;

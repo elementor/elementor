@@ -16,8 +16,6 @@ class Module extends BaseModule {
 		$settings = array_replace_recursive( $settings, [
 			'i18n' => [
 				'history' => __( 'History', 'elementor' ),
-				'no_history_1' => __( 'Once you start working, you\'ll be able to redo / undo any action you make in the editor.', 'elementor' ),
-				'no_history_2' => __( 'You can undo changes with Ctrl / Cmd + Z and redo them with Ctrl / Cmd + Shift + Z', 'elementor' ),
 				'template' => __( 'Template', 'elementor' ),
 				'added' => __( 'Added', 'elementor' ),
 				'removed' => __( 'Removed', 'elementor' ),
@@ -27,6 +25,7 @@ class Module extends BaseModule {
 				'editing_started' => __( 'Editing Started', 'elementor' ),
 			],
 		] );
+
 		return $settings;
 	}
 

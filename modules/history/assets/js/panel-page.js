@@ -20,6 +20,8 @@ module.exports = Marionette.LayoutView.extend( {
 
 	regionViews: {},
 
+	currentTab: null,
+
 	initialize: function() {
 		this.initRegionViews();
 	},
@@ -68,6 +70,10 @@ module.exports = Marionette.LayoutView.extend( {
 		this.showView( tabName );
 	},
 
+	getCurrentTab: function() {
+		return this.currentTab;
+	},
+
 	showView: function( viewName ) {
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {},
@@ -77,7 +83,10 @@ module.exports = Marionette.LayoutView.extend( {
 			View = viewDetails.view();
 		}
 
-		viewDetails.region.show( new View( options ) );
+		options.viewName = viewName;
+		this.currentTab = new View( options );
+
+		viewDetails.region.show( this.currentTab );
 	},
 
 	onRender: function() {

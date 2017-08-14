@@ -111,8 +111,6 @@ BaseElementView = BaseContainer.extend( {
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
-		this.initRemoveDialog();
-
 		this.initControlsCSSParser();
 	},
 
@@ -174,41 +172,6 @@ BaseElementView = BaseContainer.extend( {
 
 	isInner: function() {
 		return !! this.model.get( 'isInner' );
-	},
-
-	initRemoveDialog: function() {
-		var removeDialog;
-
-		this.getRemoveDialog = function() {
-			if ( ! removeDialog ) {
-				var elementTitle = this.model.getTitle();
-
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
-					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
-					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
-					},
-					defaultOption: 'confirm',
-					onConfirm: _.bind( function() {
-						elementor.channels.data.trigger( 'element:before:remove', this.model );
-
-						var parent = this._parent;
-
-						parent.isManualRemoving = true;
-
-						this.model.destroy();
-
-						parent.isManualRemoving = false;
-
-						elementor.channels.data.trigger( 'element:after:remove', this.model );
-					}, this )
-				} );
-			}
-
-			return removeDialog;
-		};
 	},
 
 	initControlsCSSParser: function() {
@@ -334,10 +297,6 @@ BaseElementView = BaseContainer.extend( {
 		this.trigger( 'request:duplicate' );
 	},
 
-	confirmRemove: function() {
-		this.getRemoveDialog().show();
-	},
-
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
@@ -447,7 +406,17 @@ BaseElementView = BaseContainer.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.confirmRemove();
+		elementor.channels.data.trigger( 'element:before:remove', this.model );
+
+		var parent = this._parent;
+
+		parent.isManualRemoving = true;
+
+		this.model.destroy();
+
+		parent.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'element:after:remove', this.model );
 	},
 
 	onClickSave: function( event ) {

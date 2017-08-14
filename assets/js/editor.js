@@ -601,11 +601,11 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.channels.data.trigger( 'library:InsertTemplate:before', templateModel );
+				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
 				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
-				elementor.channels.data.trigger( 'library:InsertTemplate:after', templateModel );
+				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
 					elementor.settings.page.model.set( data.page_settings );
@@ -2779,14 +2779,14 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initItems: function() {
 		this.items = new Backbone.Collection( [
 			{
-            	name: 'global-colors',
+				name: 'global-colors',
 				icon: 'fa fa-paint-brush',
 				title: elementor.translate( 'global_colors' ),
 				type: 'page',
 				pageName: 'colorScheme'
 			},
 			{
-	            name: 'global-fonts',
+				name: 'global-fonts',
 				icon: 'fa fa-font',
 				title: elementor.translate( 'global_fonts' ),
 				type: 'page',
@@ -2800,7 +2800,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
-	            name: 'clear-page',
+				name: 'clear-page',
 				icon: 'fa fa-eraser',
 				title: elementor.translate( 'clear_page' ),
 				callback: function() {
@@ -2815,14 +2815,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				link: elementor.config.settings_page_link,
 				newTab: true
 			},
-            {
-                name: 'elementor-docs',
-                icon: 'fa fa-question-circle',
-                title: elementor.translate( 'elementor_docs' ),
-                type: 'link',
-                link: elementor.config.docs_elementor_site,
-                newTab: true
-            },
 			{
 				name: 'about-elementor',
 				icon: 'fa fa-info-circle',
@@ -4985,7 +4977,7 @@ helpers = {
 				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
 			} );
 		}, 500 );
-	},
+	}
 };
 
 module.exports = helpers;
@@ -6678,8 +6670,6 @@ BaseElementView = BaseContainer.extend( {
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
-		this.initRemoveDialog();
-
 		this.initControlsCSSParser();
 	},
 
@@ -6741,41 +6731,6 @@ BaseElementView = BaseContainer.extend( {
 
 	isInner: function() {
 		return !! this.model.get( 'isInner' );
-	},
-
-	initRemoveDialog: function() {
-		var removeDialog;
-
-		this.getRemoveDialog = function() {
-			if ( ! removeDialog ) {
-				var elementTitle = this.model.getTitle();
-
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
-					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
-					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
-					},
-					defaultOption: 'confirm',
-					onConfirm: _.bind( function() {
-						elementor.channels.data.trigger( 'element:before:remove', this.model );
-
-						var parent = this._parent;
-
-						parent.isManualRemoving = true;
-
-						this.model.destroy();
-
-						parent.isManualRemoving = false;
-
-						elementor.channels.data.trigger( 'element:after:remove', this.model );
-					}, this )
-				} );
-			}
-
-			return removeDialog;
-		};
 	},
 
 	initControlsCSSParser: function() {
@@ -6901,10 +6856,6 @@ BaseElementView = BaseContainer.extend( {
 		this.trigger( 'request:duplicate' );
 	},
 
-	confirmRemove: function() {
-		this.getRemoveDialog().show();
-	},
-
 	renderOnChange: function( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
@@ -7014,7 +6965,17 @@ BaseElementView = BaseContainer.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.confirmRemove();
+		elementor.channels.data.trigger( 'element:before:remove', this.model );
+
+		var parent = this._parent;
+
+		parent.isManualRemoving = true;
+
+		this.model.destroy();
+
+		parent.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'element:after:remove', this.model );
 	},
 
 	onClickSave: function( event ) {
@@ -10835,7 +10796,7 @@ var	Manager = function() {
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: function( event ) {
-				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]');
+				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
 			},
 			handle: function( event ) {
 				navigate( Z_KEY === event.which && event.shiftKey );
@@ -10876,9 +10837,8 @@ var	Manager = function() {
 			.on( 'section:before:drop', self.startDropElement )
 			.on( 'section:after:drop', self.endItem )
 
-			.on( 'library:InsertTemplate:before', self.startInsertTemplate )
-			.on( 'library:InsertTemplate:after', self.endItem );
-
+			.on( 'template:before:insert', self.startInsertTemplate )
+			.on( 'template:after:insert', self.endItem );
 	};
 
 	this.setActive = function( value ) {
@@ -10903,7 +10863,7 @@ var	Manager = function() {
 
 	this.isItemStarted = function() {
 		return null !== currentItemID;
-	}
+	};
 
 	this.addItem = function( itemData ) {
 		if ( ! this.getActive() ) {
@@ -10992,7 +10952,7 @@ var	Manager = function() {
 			// Try scroll to affected element.
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
 				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
-				if ( oldView.model ){
+				if ( oldView.model ) {
 					var view = self.findView( oldView.model.get( 'id' ) ) ;
 					if ( view ) {
 						elementor.helpers.scrollToView( view );
@@ -11252,6 +11212,8 @@ module.exports = Marionette.LayoutView.extend( {
 
 	regionViews: {},
 
+	currentTab: null,
+
 	initialize: function() {
 		this.initRegionViews();
 	},
@@ -11300,6 +11262,10 @@ module.exports = Marionette.LayoutView.extend( {
 		this.showView( tabName );
 	},
 
+	getCurrentTab: function() {
+		return this.currentTab;
+	},
+
 	showView: function( viewName ) {
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {},
@@ -11309,7 +11275,10 @@ module.exports = Marionette.LayoutView.extend( {
 			View = viewDetails.view();
 		}
 
-		viewDetails.region.show( new View( options ) );
+		options.viewName = viewName;
+		this.currentTab = new View( options );
+
+		viewDetails.region.show( this.currentTab );
 	},
 
 	onRender: function() {
@@ -11379,12 +11348,12 @@ RevisionsManager = function() {
 					return false;
 				}
 
-				var revisionsPage = panel.getCurrentPageView();
+				var revisionsTab = panel.getCurrentPageView().getCurrentTab();
 
-				return revisionsPage.currentPreviewId && revisionsPage.currentPreviewItem && revisionsPage.children.length > 1;
+				return revisionsTab.currentPreviewId && revisionsTab.currentPreviewItem && revisionsTab.children.length > 1;
 			},
 			handle: function( event ) {
-				elementor.getPanelView().getCurrentPageView().navigate( UP_ARROW_KEY === event.which );
+				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
 			}
 		};
 
@@ -11416,7 +11385,10 @@ RevisionsManager = function() {
 				revisionModel.destroy();
 
 				if ( ! revisions.length ) {
-					elementor.getPanelView().setPage( 'revisionsPage' );
+					var panel = elementor.getPanelView();
+					if ( 'historyPage' === panel.getCurrentPageName() ) {
+						panel.getCurrentPageView().activateTab( 'revisions' );
+					}
 				}
 			}
 		};
@@ -11532,7 +11504,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		elementor.revisions.deleteRevision( revisionView.model, {
+		elementor.history.revisions.deleteRevision( revisionView.model, {
 			success: function() {
 				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
 					self.onDiscardClick();
