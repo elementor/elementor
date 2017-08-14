@@ -328,6 +328,10 @@ module.exports = function( grunt ) {
 					{
 						from: /ELEMENTOR_VERSION', '.*?'/g,
 						to: 'ELEMENTOR_VERSION\', \'<%= pkg.version %>\''
+					},
+					{
+						from: /ELEMENTOR_PREVIOUS_STABLE_VERSION', '.*?'/g,
+						to: 'ELEMENTOR_PREVIOUS_STABLE_VERSION\', \'<%= grunt.config.get( \'prev_stable_version\' ) %>\''
 					}
 				]
 			},
@@ -340,6 +344,17 @@ module.exports = function( grunt ) {
 						from: /Stable tag: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
 						to: 'Stable tag: <%= pkg.version %>'
 					}
+				]
+			},
+
+			packageFile: {
+				src: [ 'package.json' ],
+				overwrite: true,
+				replacements: [
+					{
+						from: /prev_stable_version": ".*?"/g,
+						to: 'prev_stable_version": "<%= grunt.config.get( \'prev_stable_version\' ) %>"'
+			}
 				]
 			}
 		},
@@ -448,13 +463,19 @@ module.exports = function( grunt ) {
 		'default' // Remove banners for GitHub
 	] );
 
-	grunt.registerTask( 'publish', [
-		'default',
-		'bumpup',
-		'replace',
-		'shell:git_add_all',
-		'release'
-	] );
+	grunt.registerTask( 'publish', function( releaseType ) {
+		releaseType = releaseType ? releaseType : 'patch';
+
+		var prevStableVersion = 'patch' === releaseType ? pkgInfo.prev_stable_version : pkgInfo.version;
+
+		grunt.config.set( 'prev_stable_version', prevStableVersion );
+
+		grunt.task.run( 'default' );
+		grunt.task.run( 'bumpup:' + releaseType );
+		grunt.task.run( 'replace' );
+		grunt.task.run( 'shell:git_add_all' );
+		grunt.task.run( 'release' );
+	} );
 
 	grunt.registerTask( 'test', [
 		'qunit',
