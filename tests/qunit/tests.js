@@ -158,25 +158,6 @@ function testPreview() {
 			assert.equal( historyItems.length, 5, 'History has 4 item' ); // the first items is the editing started
 			assert.equal( historyItems.first().get( 'elementType' ), 'widget', 'History elementType is `widget`' );
 			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
-
-			var headingView = columnView.children.first(),
-				secondColumn = sectionView.children.findByIndex( 2 );
-
-			assert.timeout( 0 );
-			var done = assert.async();
-			setTimeout(function() {
-				pQuery( headingView.$el ).simulate( 'drag-n-drop', {
-					dragTarget: secondColumn.$el
-				} );
-
-				assert.equal( secondColumn.$el.find( '.' + headingView.getElementUniqueID() ).length, 1, 'Heading has been moved' );
-				assert.equal( historyItems.length, 6, 'History has 5 item' ); // the first items is the editing started
-				assert.equal( historyItems.first().get( 'elementType' ), 'widget', 'History elementType is `widget`' );
-				assert.equal( historyItems.first().get( 'type' ), 'move', 'History type is `add`' );
-
-				done();
-			}, 1000 );
-
 		} );
 	} );
 }
