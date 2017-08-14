@@ -94,11 +94,11 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.channels.data.trigger( 'library:InsertTemplate:before', templateModel );
+				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
 				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
 
-				elementor.channels.data.trigger( 'library:InsertTemplate:after', templateModel );
+				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
 					elementor.settings.page.model.set( data.page_settings );
