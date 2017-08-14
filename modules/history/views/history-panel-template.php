@@ -1,7 +1,7 @@
 <script type="text/template" id="tmpl-elementor-panel-history-page">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab active" data-view="history"><?php echo __( 'History', 'elementor' ); ?></div>
-		<div id="elementor-panel-elements-navigation-revisions" class="elementor-panel-navigation-tab" data-view="revisions"><?php echo __( 'Revisions', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab active" data-view="history"><?php esc_html_e( 'History', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-revisions" class="elementor-panel-navigation-tab" data-view="revisions"><?php esc_html_e( 'Revisions', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-history-content"></div>
 </script>
@@ -16,9 +16,9 @@
 
 <script type="text/template" id="tmpl-elementor-panel-history-no-items">
 	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
-	<div class="elementor-panel-nerd-box-title"><?php _e( 'No History Yet', 'elementor' ); ?></div>
-	<div class="elementor-panel-nerd-box-message"><?php _e( 'History lets you undo and redo all changes you made in current session.', 'elementor' ) ?></div>
-	<div class="elementor-panel-nerd-box-message"><?php _e( 'Start designing your page and you\'ll be able to see the entire changes here.', 'elementor' ) ?></div>
+	<div class="elementor-panel-nerd-box-title"><?php esc_html_e( 'No History Yet', 'elementor' ); ?></div>
+	<div class="elementor-panel-nerd-box-message"><?php esc_html_e( 'Once you start working, you\'ll be able to redo / undo any action you make in the editor.', 'elementor' ) ?></div>
+	<div class="elementor-panel-nerd-box-message"><?php esc_html_e( 'You can undo changes with Ctrl / Cmd + Z and redo them with Ctrl / Cmd + Shift + Z', 'elementor' ) ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-history-item">

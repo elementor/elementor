@@ -161,7 +161,7 @@ class Revisions_Manager {
 		return $return_data;
 	}
 
-	public static function db_before_save(  $status, $has_changes ) {
+	public static function db_before_save( $status, $has_changes ) {
 		if ( $has_changes ) {
 			self::handle_revision();
 		}
