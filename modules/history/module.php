@@ -25,6 +25,7 @@ class Module extends BaseModule {
 				'editing_started' => __( 'Editing Started', 'elementor' ),
 			],
 		] );
+
 		return $settings;
 	}
 

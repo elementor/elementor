@@ -167,26 +167,28 @@ class Revisions_Manager {
 		}
 	}
 
-	public static function editor_config( $config, $post_id ) {
-		$config['revisions'] = self::get_revisions();
-		$config['revisions_enabled'] = ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) );
-		$config['i18n'] = [
-			'revision_history' => __( 'Revision History', 'elementor' ),
-			'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
-			'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-			'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-			// translators: %s: WordPress Revision docs.
-			'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
-			'revision' => __( 'Revision', 'elementor' ),
-		];
+	public static function editor_settings( $settings, $post_id ) {
+		$settings = array_replace_recursive( $settings, [
+			'revisions' => self::get_revisions(),
+			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
+			'i18n' => [
+				'revision_history' => __( 'Revision History', 'elementor' ),
+				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
+				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+				// translators: %s: WordPress Revision docs.
+				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
+				'revision' => __( 'Revision', 'elementor' ),
+			],
+		] );
 
-		return $config;
+		return $settings;
 	}
 
 	private static function register_actions() {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
-		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_config' ], 10, 2 );
+		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_settings' ], 10, 2 );
 		add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'ajax_save_builder_data' ] );
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 
