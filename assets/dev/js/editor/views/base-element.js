@@ -111,8 +111,6 @@ BaseElementView = BaseContainer.extend( {
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
-		this.initRemoveDialog();
-
 		this.initControlsCSSParser();
 	},
 
@@ -143,11 +141,15 @@ BaseElementView = BaseContainer.extend( {
 			_.extend( itemData, customData );
 		}
 
+		elementor.channels.data.trigger( 'element:before:add', itemData );
+
 		var newView = this.addChildElement( itemData, options );
 
 		if ( 'section' === newView.getElementType() && newView.isInner() ) {
 			newView.addEmptyColumn();
 		}
+
+		elementor.channels.data.trigger( 'element:after:add', itemData );
 
 	},
 
@@ -172,37 +174,6 @@ BaseElementView = BaseContainer.extend( {
 		return !! this.model.get( 'isInner' );
 	},
 
-	initRemoveDialog: function() {
-		var removeDialog;
-
-		this.getRemoveDialog = function() {
-			if ( ! removeDialog ) {
-				var elementTitle = this.model.getTitle();
-
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
-					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
-					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
-					},
-					defaultOption: 'confirm',
-					onConfirm: _.bind( function() {
-						var parent = this._parent;
-
-						parent.isManualRemoving = true;
-
-						this.model.destroy();
-
-						parent.isManualRemoving = false;
-					}, this )
-				} );
-			}
-
-			return removeDialog;
-		};
-	},
-
 	initControlsCSSParser: function() {
 		this.controlsCSSParser = new ControlsCSSParser( { id: this.model.cid } );
 	},
@@ -223,21 +194,20 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderStyles: function( settings ) {
-		var self = this;
 		if ( ! settings ) {
 			settings = this.getEditModel().get( 'settings' );
 		}
 
-		self.controlsCSSParser.stylesheet.empty();
+		this.controlsCSSParser.stylesheet.empty();
 
-		self.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
+		this.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, this.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ this.getID(), '#elementor .' + this.getElementUniqueID() ] );
 
-		self.controlsCSSParser.addStyleToDocument();
+		this.controlsCSSParser.addStyleToDocument();
 
 		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
 
 		if ( extraCSS ) {
-			self.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
+			this.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
 		}
 	},
 
@@ -325,10 +295,6 @@ BaseElementView = BaseContainer.extend( {
 
 	duplicate: function() {
 		this.trigger( 'request:duplicate' );
-	},
-
-	confirmRemove: function() {
-		this.getRemoveDialog().show();
 	},
 
 	renderOnChange: function( settings ) {
@@ -440,7 +406,17 @@ BaseElementView = BaseContainer.extend( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.confirmRemove();
+		elementor.channels.data.trigger( 'element:before:remove', this.model );
+
+		var parent = this._parent;
+
+		parent.isManualRemoving = true;
+
+		this.model.destroy();
+
+		parent.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'element:after:remove', this.model );
 	},
 
 	onClickSave: function( event ) {
