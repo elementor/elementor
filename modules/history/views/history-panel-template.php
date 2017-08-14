@@ -10,6 +10,7 @@
 	<div class="elementor-panel-box">
 		<div class="elementor-panel-box-content">
 			<div id="elementor-history-list"></div>
+			<div class="elementor-history-revisions-message"><?php esc_html_e( 'Switch to Revisions tab for older versions', 'elementor' ) ?></div>
 		</div>
 	</div>
 </script>
