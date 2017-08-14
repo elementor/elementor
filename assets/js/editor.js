@@ -2779,14 +2779,14 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 	initItems: function() {
 		this.items = new Backbone.Collection( [
 			{
-            	name: 'global-colors',
+				name: 'global-colors',
 				icon: 'fa fa-paint-brush',
 				title: elementor.translate( 'global_colors' ),
 				type: 'page',
 				pageName: 'colorScheme'
 			},
 			{
-	            name: 'global-fonts',
+				name: 'global-fonts',
 				icon: 'fa fa-font',
 				title: elementor.translate( 'global_fonts' ),
 				type: 'page',
@@ -2800,7 +2800,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
-	            name: 'clear-page',
+				name: 'clear-page',
 				icon: 'fa fa-eraser',
 				title: elementor.translate( 'clear_page' ),
 				callback: function() {
@@ -2815,14 +2815,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				link: elementor.config.settings_page_link,
 				newTab: true
 			},
-            {
-                name: 'elementor-docs',
-                icon: 'fa fa-question-circle',
-                title: elementor.translate( 'elementor_docs' ),
-                type: 'link',
-                link: elementor.config.docs_elementor_site,
-                newTab: true
-            },
 			{
 				name: 'about-elementor',
 				icon: 'fa fa-info-circle',
@@ -4985,7 +4977,7 @@ helpers = {
 				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
 			} );
 		}, 500 );
-	},
+	}
 };
 
 module.exports = helpers;
@@ -10835,7 +10827,7 @@ var	Manager = function() {
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: function( event ) {
-				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]');
+				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
 			},
 			handle: function( event ) {
 				navigate( Z_KEY === event.which && event.shiftKey );
@@ -10903,7 +10895,7 @@ var	Manager = function() {
 
 	this.isItemStarted = function() {
 		return null !== currentItemID;
-	}
+	};
 
 	this.addItem = function( itemData ) {
 		if ( ! this.getActive() ) {
@@ -10992,7 +10984,7 @@ var	Manager = function() {
 			// Try scroll to affected element.
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
 				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
-				if ( oldView.model ){
+				if ( oldView.model ) {
 					var view = self.findView( oldView.model.get( 'id' ) ) ;
 					if ( view ) {
 						elementor.helpers.scrollToView( view );
@@ -11140,6 +11132,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	template: '#tmpl-elementor-panel-history-tab',
 
+	
 	childView: Marionette.ItemView.extend( {
 		template: '#tmpl-elementor-panel-history-item',
 		ui: {
@@ -11396,7 +11389,6 @@ RevisionsManager = function() {
 				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
 			}
 		};
-
 
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
