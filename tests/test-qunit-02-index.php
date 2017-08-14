@@ -16,7 +16,10 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		/* Because it's not wp-admin,  */
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
-			wp_enqueue_editor();
+			// WP >= 4.8.0
+			if ( function_exists( 'wp_enqueue_editor' ) ) {
+				wp_enqueue_editor();
+			}
 
 			wp_register_script( 'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
 
