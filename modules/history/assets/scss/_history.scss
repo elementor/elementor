@@ -1,0 +1,65 @@
+.elementor-history- {
+
+	&item {
+		display: flex;
+		align-items: center;
+		border: 1px solid $editor-lightest;
+		padding: 10px 15px;
+		margin-bottom: 10px;
+		font-size: 11px;
+		line-height: 1.4;
+		cursor: pointer;
+
+		&:hover {
+			background-color: fade_out($editor-background, 0.7) ;
+
+			.elementor-history-item__icon{
+				.fa:before {
+					content:'\f1da';
+				}
+			}
+		}
+
+		&-applied {
+			color: $editor-light;
+		}
+
+		&-current {
+			background: $editor-background;
+			cursor: inherit;
+
+			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
+				.fa:before {
+					content:'\f00c';
+				}
+			}
+		}
+
+		&__details{
+			width: 95%;
+		}
+
+		&__title {
+			font-weight: bold;
+		}
+
+		&__subtitle, &__action {
+			font-weight: lighter;
+		}
+
+		&__action {
+			font-style: italic;
+			text-decoration: underline;
+		}
+
+		.__icon {
+			 float: $end;
+		 }
+	}
+
+	&revisions-message{
+		font-size: 11px;
+		text-align: center;
+		padding: 5px 0;
+	}
+}

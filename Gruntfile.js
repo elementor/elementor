@@ -354,7 +354,7 @@ module.exports = function( grunt ) {
 					{
 						from: /prev_stable_version": ".*?"/g,
 						to: 'prev_stable_version": "<%= grunt.config.get( \'prev_stable_version\' ) %>"'
-					}
+			}
 				]
 			}
 		},
@@ -415,10 +415,18 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		qunit: {
+			src: 'tests/qunit/index.html'
+		},
+
 		clean: {
 			//Clean up build folder
 			main: [
 				'build'
+			],
+			qunit: [
+				'tests/qunit/index.html',
+				'tests/qunit/preview.html'
 			]
 		}
 	} );
@@ -468,4 +476,9 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'shell:git_add_all' );
 		grunt.task.run( 'release' );
 	} );
+
+	grunt.registerTask( 'test', [
+		'qunit',
+		'clean:qunit'
+	] );
 };

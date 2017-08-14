@@ -33,4 +33,20 @@ tests_add_filter(
 // Do this action last
 tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 
+function fix_qunit_html_urls( $html ){
+	// fix wp assets url
+	$html = str_replace( home_url( '/wp-includes' ), 'file://' . ABSPATH . 'wp-includes', $html );
+	$html = str_replace( home_url( '/wp-admin' ), 'file://' . ABSPATH . 'wp-admin', $html );
+	$html = str_replace( home_url( '/wp-content' ), 'file://' . ABSPATH . 'wp-content', $html );
+
+	// fix elementor assets url
+	$html = str_replace( home_url().'file:', 'file:', $html );
+
+	// For local tests in browser
+//	$html = str_replace( 'file:///srv/www/wordpress-develop/public_html/src', 'http://src.wordpress-develop.dev', $html );
+//	$html = str_replace( 'file:///srv/www/elementor/public_html', 'http://wordpress.dev', $html );
+
+	return $html;
+}
+
 require $_tests_dir . '/includes/bootstrap.php';

@@ -79,7 +79,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		elementor.revisions.deleteRevision( revisionView.model, {
+		elementor.history.revisions.deleteRevision( revisionView.model, {
 			success: function() {
 				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
 					self.onDiscardClick();
