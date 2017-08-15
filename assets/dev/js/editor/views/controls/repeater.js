@@ -150,9 +150,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRowUpdate: function( collection, event ) {
-		var settings = this.elementSettingsModel;
-
-		var collectionCloned = collection.clone();
+		var settings = this.elementSettingsModel,
+			collectionCloned = collection.clone(),
+			controlName = this.model.get( 'name' );
 
 		if ( event.add ) {
 			collectionCloned.remove( event.changes.added[0] );
@@ -161,12 +161,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		}
 
 		settings.changed = {};
-
-		settings.changed[ this.model.get( 'name' ) ] = collection;
+		settings.changed[ controlName ] = collection;
 
 		settings._previousAttributes = {};
-
-		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		settings._previousAttributes[ controlName ] = new Backbone.Collection( collectionCloned.toJSON() ) ;
 
 		settings.trigger( 'change', settings,  settings._pending );
 
