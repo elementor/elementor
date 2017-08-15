@@ -33,10 +33,14 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
+	fillCollection: function () {
+		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
+	},
+
 	initialize: function( options ) {
 		ControlBaseItemView.prototype.initialize.apply( this, arguments );
 
-		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
+		this.fillCollection();
 
 		this.listenTo( this.collection, 'change', this.onRowControlChange );
 		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
@@ -192,7 +196,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		// Save back as a collection - for undo
 		collectionCloned = new Backbone.Collection( collectionCloned );
-		
+
 		settings.changed = {};
 		settings.changed[ controlName ] =  model.collection;
 
@@ -227,6 +231,14 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onChildviewClickEdit: function( childView ) {
 		this.editRow( childView );
+	},
+
+
+	onAfterExternalChange: function() {
+		// Update the collection with current value
+		this.fillCollection();
+
+		ControlBaseItemView.prototype.onAfterExternalChange.apply( this, arguments );
 	}
 } );
 
