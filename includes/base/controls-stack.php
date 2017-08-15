@@ -102,7 +102,7 @@ abstract class Controls_Stack {
 					_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . esc_html( $id ), '1.0.0' );
 				}
 
-				$args = array_replace_recursive( $this->_current_section, $args);
+				$args = array_replace_recursive( $this->_current_section, $args );
 
 				if ( null !== $this->_current_tab ) {
 					$args = array_merge( $args, $this->_current_tab );
@@ -514,7 +514,7 @@ abstract class Controls_Stack {
 
 		$section_args_keys = [ 'tab', 'condition' ];
 
-		$args = array_intersect_key( $section_control, array_flip( $section_args_keys ));
+		$args = array_intersect_key( $section_control, array_flip( $section_args_keys ) );
 
 		$args['section'] = $section_id;
 
