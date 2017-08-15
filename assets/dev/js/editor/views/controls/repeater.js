@@ -204,7 +204,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
 
 		settings._previousAttributes = {};
-		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		settings._previousAttributes[ this.model.get( 'name' ) ] = new Backbone.Collection( collectionCloned.toJSON() );
 
 		settings.trigger( 'change', settings );
 

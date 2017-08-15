@@ -8971,7 +8971,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
 
 		settings._previousAttributes = {};
-		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		settings._previousAttributes[ this.model.get( 'name' ) ] = new Backbone.Collection( collectionCloned.toJSON() );
 
 		settings.trigger( 'change', settings );
 
@@ -10587,11 +10587,17 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	saveTextHistory: function( model, changed, control ) {
-		var changedAttributes = {};
+		var changedAttributes = {},
+			currentValue = model.get( control.name );
+
+		if ( currentValue instanceof Backbone.Collection ) {
+			// Deep clone.
+			currentValue = new Backbone.Collection( currentValue.toJSON() );
+		}
 
 		changedAttributes[ control.name ] = {
 			old: this.oldValues[ control.name ],
-			'new': model.get( control.name )
+			'new': currentValue
 		};
 
 		var historyItem = {
