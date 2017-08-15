@@ -8932,6 +8932,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRowUpdate: function( collection, event ) {
+		// Simulate `changed` and `_previousAttributes` values
 		var settings = this.elementSettingsModel,
 			collectionCloned = collection.clone(),
 			controlName = this.model.get( 'name' );
@@ -8946,7 +8947,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		settings.changed[ controlName ] = collection;
 
 		settings._previousAttributes = {};
+		// Save back as a collection - for undo, Deep clone, but keep additions from baseSettings.initialize().
 		settings._previousAttributes[ controlName ] = new Backbone.Collection( collectionCloned.toJSON() ) ;
+
 
 		settings.trigger( 'change', settings,  settings._pending );
 
@@ -8957,6 +8960,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRowControlChange: function( model ) {
+		// Simulate `changed` and `_previousAttributes` values
 		var changed = Object.keys( model.changed );
 
 		if ( ! changed.length ) {
@@ -8964,6 +8968,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		}
 
 		var collectionCloned = model.collection.toJSON(),
+		// Deep clone, but keep additions from baseSettings.initialize().
 			modelIndex = model.collection.findIndex( model ),
 			element = this._parent.model,
 			settings = element.get( 'settings' ),
