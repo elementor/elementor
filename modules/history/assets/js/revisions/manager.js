@@ -53,12 +53,6 @@ RevisionsManager = function() {
 
 	this.addRevision = function( revisionData ) {
 		revisions.add( revisionData, { at: 0 } );
-
-		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().activateTab( 'revisions' );
-		}
 	};
 
 	this.deleteRevision = function( revisionModel, options ) {

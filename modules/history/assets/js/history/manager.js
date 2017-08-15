@@ -157,8 +157,8 @@ var	Manager = function() {
 		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
-				id: id
-			} );
+			id: id
+		} );
 
 		if ( ! currentItem ) {
 			currentItem = new HistoryItem( {
@@ -174,7 +174,18 @@ var	Manager = function() {
 			self.startItemAction = '';
 		}
 
-		currentItem.get( 'items' ).add( itemData, { at: 0 } );
+		var position = 0;
+
+		// Temp fix. insert the `remove` subItem before the section changes subItem,
+		// in a multi columns section - the structure has been changed
+		// in a one column section - it's filled with an empty column
+		// the order is important for the `redoItem`, that needed to change thr section first
+		// and only after - to remove the column.
+		if ( 'column' === itemData.elementType && 'remove' === itemData.type ) {
+			position = 1;
+		}
+
+		currentItem.get( 'items' ).add( itemData, { at: position } );
 
 		items.add( currentItem, { at: 0 } );
 
@@ -202,7 +213,8 @@ var	Manager = function() {
 		this.setActive( true );
 
 		var panel = elementor.getPanelView(),
-			panelPage = panel.getCurrentPageView();
+			panelPage = panel.getCurrentPageView(),
+			viewToScroll;
 
 		if ( 'editor' === panel.getCurrentPageName() ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
@@ -210,8 +222,7 @@ var	Manager = function() {
 				panel.setPage( 'historyPage' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
-				// editor.render();
-				panelPage.scrollToEditedElement();
+				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
 		} else {
 			if ( 'historyPage' === panel.getCurrentPageName() ) {
@@ -222,12 +233,13 @@ var	Manager = function() {
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
 				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
 				if ( oldView.model ) {
-					var view = self.findView( oldView.model.get( 'id' ) ) ;
-					if ( view ) {
-						elementor.helpers.scrollToView( view );
-					}
+					viewToScroll = self.findView( oldView.model.get( 'id' ) ) ;
 				}
 			}
+		}
+
+		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[0], elementor.$previewContents.find( 'html' )[0] ) ) {
+			elementor.helpers.scrollToView( viewToScroll );
 		}
 
 		if ( item.get( 'editing_started' ) ) {
