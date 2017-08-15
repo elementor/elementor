@@ -56,6 +56,8 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
+
+		this._checkIsEmpty();
 	},
 
 	addEmptyColumn: function() {
@@ -153,7 +155,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	_checkIsEmpty: function() {
-		if ( ! this.collection.length ) {
+		if ( ! this.collection.length && ! this.model.get( 'dontFillEmpty' ) ) {
 			this.addEmptyColumn();
 		}
 	},
@@ -216,12 +218,6 @@ SectionView = BaseElementView.extend( {
 	destroyAddSectionView: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
-		}
-	},
-
-	onBeforeRender: function() {
-		if ( ! this.model.get( 'dontFillEmpty' ) ) {
-			this._checkIsEmpty();
 		}
 	},
 

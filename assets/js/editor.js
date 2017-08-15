@@ -5077,6 +5077,17 @@ helpers = {
 		return $element.wpColorPicker( defaultOptions );
 	},
 
+	isInViewport: function ( element, html ) {
+		var rect = element.getBoundingClientRect();
+		html = html || document.documentElement;
+		return (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= (window.innerHeight || html.clientHeight) &&
+			rect.right <= (window.innerWidth || html.clientWidth)
+		);
+	},
+
 	scrollToView: function( view ) {
 		// Timeout according to preview resize css animation duration
 		setTimeout( function() {
@@ -6388,7 +6399,6 @@ AddSectionView = Marionette.ItemView.extend( {
 		var newSection = this.addSection( { elements: elements } );
 
 		newSection.setStructure( selectedStructure );
-		newSection.redefineLayout();
 
 		elementor.channels.data.trigger( 'element:after:add' );
 	},
@@ -8801,10 +8811,14 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
+	fillCollection: function () {
+		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
+	},
+
 	initialize: function( options ) {
 		ControlBaseItemView.prototype.initialize.apply( this, arguments );
 
-		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
+		this.fillCollection();
 
 		this.listenTo( this.collection, 'change', this.onRowControlChange );
 		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
@@ -8918,9 +8932,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRowUpdate: function( collection, event ) {
-		var settings = this.elementSettingsModel;
-
-		var collectionCloned = collection.clone();
+		var settings = this.elementSettingsModel,
+			collectionCloned = collection.clone(),
+			controlName = this.model.get( 'name' );
 
 		if ( event.add ) {
 			collectionCloned.remove( event.changes.added[0] );
@@ -8929,12 +8943,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		}
 
 		settings.changed = {};
-
-		settings.changed[ this.model.get( 'name' ) ] = collection;
+		settings.changed[ controlName ] = collection;
 
 		settings._previousAttributes = {};
-
-		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		settings._previousAttributes[ controlName ] = new Backbone.Collection( collectionCloned.toJSON() ) ;
 
 		settings.trigger( 'change', settings,  settings._pending );
 
@@ -8951,28 +8963,23 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			return;
 		}
 
-		var collectionCloned = model.collection.clone(),
-			modelIndex = collectionCloned.findIndex( model ),
-			modelCloned = collectionCloned.find( model ),
-			_previousAttributes = modelCloned._previousAttributes;
-
-		// Replace the referenced model
-		modelCloned = modelCloned.clone();
+		var collectionCloned = model.collection.toJSON(),
+			modelIndex = model.collection.findIndex( model ),
+			element = this._parent.model,
+			settings = element.get( 'settings' ),
+			controlName = this.model.get( 'name' );
 
 		// Save it with old values
-		modelCloned.set( _previousAttributes );
+		collectionCloned[ modelIndex ] = model._previousAttributes;
 
-		collectionCloned.remove( model );
-		collectionCloned.add( modelCloned, { at: modelIndex } );
-
-		var element = this._parent.model,
-			settings = element.get( 'settings' );
+		// Save back as a collection - for undo
+		collectionCloned = new Backbone.Collection( collectionCloned );
 
 		settings.changed = {};
-		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
+		settings.changed[ controlName ] =  model.collection;
 
 		settings._previousAttributes = {};
-		settings._previousAttributes[ this.model.get( 'name' ) ] = collectionCloned;
+		settings._previousAttributes[ controlName ] = collectionCloned;
 
 		settings.trigger( 'change', settings );
 
@@ -9002,6 +9009,14 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onChildviewClickEdit: function( childView ) {
 		this.editRow( childView );
+	},
+
+
+	onAfterExternalChange: function() {
+		// Update the collection with current value
+		this.fillCollection();
+
+		ControlBaseItemView.prototype.onAfterExternalChange.apply( this, arguments );
 	}
 } );
 
@@ -9485,6 +9500,8 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
+
+		this._checkIsEmpty();
 	},
 
 	addEmptyColumn: function() {
@@ -9582,7 +9599,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	_checkIsEmpty: function() {
-		if ( ! this.collection.length ) {
+		if ( ! this.collection.length && ! this.model.get( 'dontFillEmpty' ) ) {
 			this.addEmptyColumn();
 		}
 	},
@@ -9645,12 +9662,6 @@ SectionView = BaseElementView.extend( {
 	destroyAddSectionView: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
-		}
-	},
-
-	onBeforeRender: function() {
-		if ( ! this.model.get( 'dontFillEmpty' ) ) {
-			this._checkIsEmpty();
 		}
 	},
 
@@ -10592,11 +10603,17 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	saveTextHistory: function( model, changed, control ) {
-		var changedAttributes = {};
+		var changedAttributes = {},
+			currentValue = model.get( control.name );
+
+		if ( currentValue instanceof Backbone.Collection ) {
+			// Deep clone.
+			currentValue = new Backbone.Collection( currentValue.toJSON() );
+		}
 
 		changedAttributes[ control.name ] = {
 			old: this.oldValues[ control.name ],
-			'new': model.get( control.name )
+			'new': currentValue
 		};
 
 		var historyItem = {
@@ -10888,8 +10905,8 @@ var	Manager = function() {
 		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
-				id: id
-			} );
+			id: id
+		} );
 
 		if ( ! currentItem ) {
 			currentItem = new HistoryItem( {
@@ -10905,7 +10922,18 @@ var	Manager = function() {
 			self.startItemAction = '';
 		}
 
-		currentItem.get( 'items' ).add( itemData, { at: 0 } );
+		var position = 0;
+
+		// Temp fix. insert the `remove` subItem before the section changes subItem,
+		// in a multi columns section - the structure has been changed
+		// in a one column section - it's filled with an empty column
+		// the order is important for the `redoItem`, that needed to change thr section first
+		// and only after - to remove the column.
+		if ( 'column' === itemData.elementType && 'remove' === itemData.type ) {
+			position = 1;
+		}
+
+		currentItem.get( 'items' ).add( itemData, { at: position } );
 
 		items.add( currentItem, { at: 0 } );
 
@@ -10933,7 +10961,8 @@ var	Manager = function() {
 		this.setActive( true );
 
 		var panel = elementor.getPanelView(),
-			panelPage = panel.getCurrentPageView();
+			panelPage = panel.getCurrentPageView(),
+			viewToScroll;
 
 		if ( 'editor' === panel.getCurrentPageName() ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
@@ -10941,8 +10970,7 @@ var	Manager = function() {
 				panel.setPage( 'historyPage' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
-				// editor.render();
-				panelPage.scrollToEditedElement();
+				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
 		} else {
 			if ( 'historyPage' === panel.getCurrentPageName() ) {
@@ -10953,12 +10981,13 @@ var	Manager = function() {
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
 				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
 				if ( oldView.model ) {
-					var view = self.findView( oldView.model.get( 'id' ) ) ;
-					if ( view ) {
-						elementor.helpers.scrollToView( view );
-					}
+					viewToScroll = self.findView( oldView.model.get( 'id' ) ) ;
 				}
 			}
+		}
+
+		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[0], elementor.$previewContents.find( 'html' )[0] ) ) {
+			elementor.helpers.scrollToView( viewToScroll );
 		}
 
 		if ( item.get( 'editing_started' ) ) {
@@ -11364,12 +11393,6 @@ RevisionsManager = function() {
 
 	this.addRevision = function( revisionData ) {
 		revisions.add( revisionData, { at: 0 } );
-
-		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().activateTab( 'revisions' );
-		}
 	};
 
 	this.deleteRevision = function( revisionModel, options ) {
