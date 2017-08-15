@@ -8950,28 +8950,23 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			return;
 		}
 
-		var collectionCloned = model.collection.clone(),
-			modelIndex = collectionCloned.findIndex( model ),
-			modelCloned = collectionCloned.find( model ),
-			_previousAttributes = modelCloned._previousAttributes;
-
-		// Replace the referenced model
-		modelCloned = modelCloned.clone();
+		var collectionCloned = model.collection.toJSON(),
+			modelIndex = model.collection.findIndex( model ),
+			element = this._parent.model,
+			settings = element.get( 'settings' ),
+			controlName = this.model.get( 'name' );
 
 		// Save it with old values
-		modelCloned.set( _previousAttributes );
+		collectionCloned[ modelIndex ] = model._previousAttributes;
 
-		collectionCloned.remove( model );
-		collectionCloned.add( modelCloned, { at: modelIndex } );
-
-		var element = this._parent.model,
-			settings = element.get( 'settings' );
-
+		// Save back as a collection - for undo
+		collectionCloned = new Backbone.Collection( collectionCloned );
+		
 		settings.changed = {};
-		settings.changed[ this.model.get( 'name' ) ] =  model.collection;
+		settings.changed[ controlName ] =  model.collection;
 
 		settings._previousAttributes = {};
-		settings._previousAttributes[ this.model.get( 'name' ) ] = new Backbone.Collection( collectionCloned.toJSON() );
+		settings._previousAttributes[ controlName ] = collectionCloned;
 
 		settings.trigger( 'change', settings );
 
