@@ -10893,8 +10893,8 @@ var	Manager = function() {
 		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
-				id: id
-			} );
+			id: id
+		} );
 
 		if ( ! currentItem ) {
 			currentItem = new HistoryItem( {
@@ -10949,7 +10949,8 @@ var	Manager = function() {
 		this.setActive( true );
 
 		var panel = elementor.getPanelView(),
-			panelPage = panel.getCurrentPageView();
+			panelPage = panel.getCurrentPageView(),
+			viewToScroll;
 
 		if ( 'editor' === panel.getCurrentPageName() ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
@@ -10957,8 +10958,7 @@ var	Manager = function() {
 				panel.setPage( 'historyPage' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
-				// editor.render();
-				panelPage.scrollToEditedElement();
+				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
 		} else {
 			if ( 'historyPage' === panel.getCurrentPageName() ) {
@@ -10969,12 +10969,13 @@ var	Manager = function() {
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
 				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
 				if ( oldView.model ) {
-					var view = self.findView( oldView.model.get( 'id' ) ) ;
-					if ( view && ! elementor.helpers.isInViewport( view.$el[0], elementor.$previewContents.find( 'html' )[0] ) ) {
-						elementor.helpers.scrollToView( view );
-					}
+					viewToScroll = self.findView( oldView.model.get( 'id' ) ) ;
 				}
 			}
+		}
+
+		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[0], elementor.$previewContents.find( 'html' )[0] ) ) {
+			elementor.helpers.scrollToView( viewToScroll );
 		}
 
 		if ( item.get( 'editing_started' ) ) {
