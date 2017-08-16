@@ -17,16 +17,19 @@ module.exports = Marionette.Behavior.extend( {
 
 	saveTextHistory: function( model, changed, control ) {
 		var changedAttributes = {},
-			currentValue = model.get( control.name );
+			currentValue = model.get( control.name ),
+			newValue;
 
 		if ( currentValue instanceof Backbone.Collection ) {
 			// Deep clone.
-			currentValue = new Backbone.Collection( currentValue.toJSON() );
+			newValue = currentValue.toJSON();
+		} else {
+			newValue = currentValue;
 		}
 
 		changedAttributes[ control.name ] = {
 			old: this.oldValues[ control.name ],
-			'new': currentValue
+			'new': newValue
 		};
 
 		var historyItem = {

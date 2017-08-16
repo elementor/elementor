@@ -34,7 +34,32 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	fillCollection: function () {
-		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
+		var controlName = this.model.get( 'name' );
+		this.collection = this.elementSettingsModel.get( controlName );
+
+		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
+			var self = this;
+			this.collection = new Backbone.Collection( this.collection, {
+				model: function( attrs, options ) {
+					options = options || {};
+
+					options.controls = self.model.get( 'fields' );
+
+					if ( ! attrs._id ) {
+						attrs._id = elementor.helpers.getUniqueID();
+					}
+
+					var BaseSettingsModel = require( 'elementor-models/base-settings' );
+
+					return new BaseSettingsModel( attrs, options );
+				}
+			} );
+
+			// Set the value silent
+			this.elementSettingsModel.set( controlName, this.collection, { silent: true } );
+			this.listenTo( this.collection, 'change', this.onRowControlChange );
+			this.listenTo( this.collection, 'update', this.onRowUpdate, this );
+		}
 	},
 
 	initialize: function( options ) {
@@ -169,8 +194,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		settings.changed[ controlName ] = collection;
 
 		settings._previousAttributes = {};
-		// Save back as a collection - for undo, Deep clone, but keep additions from baseSettings.initialize().
-		settings._previousAttributes[ controlName ] = new Backbone.Collection( collectionCloned.toJSON() ) ;
+		settings._previousAttributes[ controlName ] = collectionCloned.toJSON();
 
 		settings.trigger( 'change', settings,  settings._pending );
 
@@ -189,7 +213,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		}
 
 		var collectionCloned = model.collection.toJSON(),
-		// Deep clone, but keep additions from baseSettings.initialize().
 			modelIndex = model.collection.findIndex( model ),
 			element = this._parent.model,
 			settings = element.get( 'settings' ),
@@ -197,9 +220,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		// Save it with old values
 		collectionCloned[ modelIndex ] = model._previousAttributes;
-
-		// Save back as a collection - for undo
-		collectionCloned = new Backbone.Collection( collectionCloned );
 
 		settings.changed = {};
 		settings.changed[ controlName ] =  model.collection;
@@ -227,6 +247,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onChildviewClickRemove: function( childView ) {
 		childView.model.destroy();
+		this.render();
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
