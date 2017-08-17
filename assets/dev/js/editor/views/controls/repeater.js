@@ -33,7 +33,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
-	fillCollection: function () {
+	fillCollection: function() {
 		var controlName = this.model.get( 'name' );
 		this.collection = this.elementSettingsModel.get( controlName );
 
@@ -257,7 +257,6 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	onChildviewClickEdit: function( childView ) {
 		this.editRow( childView );
 	},
-
 
 	onAfterExternalChange: function() {
 		// Update the collection with current value
