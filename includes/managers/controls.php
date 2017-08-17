@@ -339,6 +339,8 @@ class Controls_Manager {
 			$control_data['tab'] = $default_args['tab'];
 		}
 
+		$control_data = apply_filters( 'elementor/controls/add_to_stack', $control_data, $stack_id );
+
 		$this->controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $tabs[ $control_data['tab'] ];
 
 		$this->controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
