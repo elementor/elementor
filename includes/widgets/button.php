@@ -61,7 +61,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Click me', 'elementor' ),
 				'placeholder' => __( 'Click me', 'elementor' ),
-				'dynamic' => [],
 			]
 		);
 
