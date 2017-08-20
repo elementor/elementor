@@ -183,6 +183,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.6.5 - 20.08.2017 =
+* Tweak! - Added compatibility for the future release of Elementor Pro
+* Fix! - Set font size inherit for Heading widget ([#2098](https://github.com/pojome/elementor/issues/2098))
+* Fix! - Anchor links smooth scrolling not working when admin bar is disabled ([#2210](https://github.com/pojome/elementor/issues/2210))
+
 = 1.6.4 - 06.08.2017 =
 * Tweak! - Allow to close lightbox when clicking outside of the element
 * Fix! - Added font family inherit for input placeholder
