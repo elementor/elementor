@@ -43,8 +43,12 @@ module.exports = ViewModule.extend( {
 			return;
 		}
 
-		var adminBarHeight = this.elements.$wpAdminBar.height(),
-			scrollTop = $anchor.offset().top - adminBarHeight;
+		var hasAdminBar = ( 1 <= this.elements.$wpAdminBar.length ),
+			scrollTop = $anchor.offset().top;
+
+		if ( hasAdminBar ) {
+			scrollTop -= this.elements.$wpAdminBar.height();
+		}
 
 		event.preventDefault();
 
