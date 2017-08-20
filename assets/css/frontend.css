@@ -870,7 +870,8 @@ body.admin-bar .dialog-close-button {
   margin: 0;
   line-height: 1; }
   .elementor-widget-heading .elementor-heading-title > a {
-    color: inherit; }
+    color: inherit;
+    font-size: inherit; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-small {
     font-size: 15px; }
   .elementor-widget-heading .elementor-heading-title.elementor-size-medium {
