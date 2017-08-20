@@ -260,7 +260,7 @@ App = Marionette.Application.extend( {
 					return isEditorOpen && ! isInputTarget;
 				},
 				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
 				}
 			}
 		};
