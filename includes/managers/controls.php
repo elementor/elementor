@@ -438,7 +438,7 @@ class Controls_Manager {
 						<div class="elementor-panel-nerd-box-message">' .
 							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
 						'</div>
-						<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="https://go.elementor.com/pro-custom-css/" target="_blank">' .
+						<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
 							__( 'Go Pro', 'elementor' ) .
 						'</a>
 						</div>',
