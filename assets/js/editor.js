@@ -1602,7 +1602,7 @@ App = Marionette.Application.extend( {
 					return isEditorOpen && ! isInputTarget;
 				},
 				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).confirmRemove();
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
 				}
 			}
 		};
@@ -6919,10 +6919,7 @@ BaseElementView = BaseContainer.extend( {
 		this.duplicate();
 	},
 
-	onClickRemove: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
+	removeElement: function() {
 		elementor.channels.data.trigger( 'element:before:remove', this.model );
 
 		var parent = this._parent;
@@ -6934,6 +6931,12 @@ BaseElementView = BaseContainer.extend( {
 		parent.isManualRemoving = false;
 
 		elementor.channels.data.trigger( 'element:after:remove', this.model );
+	},
+
+	onClickRemove: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+		this.removeElement();
 	},
 
 	onClickSave: function( event ) {
