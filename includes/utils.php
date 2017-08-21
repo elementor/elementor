@@ -22,8 +22,8 @@ class Utils {
 	}
 
 	public static function get_pro_link( $link ) {
-		if ( defined( 'ELEMENTOR_PRO_PARTNER_ID' ) ) {
-			$link = add_query_arg( 'partner_id', sanitize_key( ELEMENTOR_PRO_PARTNER_ID ), $link );
+		if ( defined( 'ELEMENTOR_PARTNER_ID' ) ) {
+			$link = add_query_arg( 'partner_id', sanitize_key( ELEMENTOR_PARTNER_ID ), $link );
 		}
 
 		return $link;
