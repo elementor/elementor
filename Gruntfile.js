@@ -254,7 +254,9 @@ module.exports = function( grunt ) {
 						require( 'autoprefixer' )( {
 							browsers: 'last 5 versions'
 						} ),
-						require( 'cssnano' )()
+						require( 'cssnano' )( {
+							reduceIdents: false
+						} )
 					]
 				},
 				files: [ {
