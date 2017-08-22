@@ -8993,6 +8993,11 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			return;
 		}
 
+		// On cloned model.
+		if ( ! model.collection.toJSON ) {
+			model.collection = new Backbone.Collection( model.collection );
+		}
+
 		var collectionCloned = model.collection.toJSON(),
 			modelIndex = model.collection.findIndex( model ),
 			element = this._parent.model,
