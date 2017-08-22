@@ -21,6 +21,14 @@ class Utils {
 		return apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 	}
 
+	public static function get_pro_link( $link ) {
+		if ( defined( 'ELEMENTOR_PARTNER_ID' ) ) {
+			$link = add_query_arg( 'partner_id', sanitize_key( ELEMENTOR_PARTNER_ID ), $link );
+		}
+
+		return $link;
+	}
+
 	public static function get_preview_url( $post_id ) {
 		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
 

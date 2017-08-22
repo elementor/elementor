@@ -43,7 +43,8 @@ class Settings extends Settings_Page {
 
 	public function go_elementor_pro() {
 		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( 'https://go.elementor.com/pro-admin-menu/' );
+			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			die;
 		}
 	}
 
