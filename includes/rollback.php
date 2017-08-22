@@ -57,6 +57,9 @@ class Rollback {
 
 		$update_plugins->response[ $this->plugin_name ] = $plugin_info;
 
+		// Remove handle beta testers.
+		remove_filter( 'pre_set_site_transient_update_plugins', [ Plugin::instance()->beta_testers, 'check_version' ] );
+
 		set_site_transient( 'update_plugins', $update_plugins );
 	}
 
