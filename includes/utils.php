@@ -22,6 +22,21 @@ class Utils {
 	}
 
 	public static function get_pro_link( $link ) {
+		static $theme_name = false;
+
+		if ( ! $theme_name ) {
+			$theme_obj = wp_get_theme();
+			if ( $theme_obj->parent() ) {
+				$theme_name = $theme_obj->parent()->get( 'Name' );
+			} else {
+				$theme_name = $theme_obj->get( 'Name' );
+			}
+
+			$theme_name = sanitize_key( $theme_name );
+		}
+
+		$link = add_query_arg( 'utm_term', $theme_name, $link );
+
 		if ( defined( 'ELEMENTOR_PARTNER_ID' ) ) {
 			$link = add_query_arg( 'partner_id', sanitize_key( ELEMENTOR_PARTNER_ID ), $link );
 		}
