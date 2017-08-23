@@ -123,7 +123,10 @@ class Compatibility {
 	}
 
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
-		Plugin::$instance->db->copy_elementor_meta( $from, $to );
+		// Copy only for a new post.
+		if ( ! $sync ) {
+			Plugin::$instance->db->copy_elementor_meta( $from, $to );
+		}
 
 		return $keys;
 	}
