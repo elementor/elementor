@@ -2176,6 +2176,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   transition: all .5s ease 0s; }
   .elementor-device-desktop #elementor-preview-responsive-wrapper {
     min-width: 1025px;
+    margin: 0 auto;
     width: 100%;
     height: 100%; }
   .elementor-device-tablet #elementor-preview-responsive-wrapper {
