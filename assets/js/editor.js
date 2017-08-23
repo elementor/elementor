@@ -1606,12 +1606,12 @@ App = Marionette.Application.extend( {
 				}
 			}
 		};
+		
 
 		hotKeysHandlers[ keysDictionary.d ] = {
-			/* Waiting for CTRL+Z / CTRL+Y
 			duplicateElement: {
 				isWorthHandling: function( event ) {
-					return self.isControlEvent( event );
+					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
 					var panel = elementor.getPanelView();
@@ -1622,7 +1622,7 @@ App = Marionette.Application.extend( {
 
 					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
 				}
-			}*/
+			}
 		};
 
 		hotKeysHandlers[ keysDictionary.l ] = {
@@ -8781,6 +8781,7 @@ module.exports = RepeaterRowView;
 },{"elementor-behaviors/inner-tabs":3}],101:[function(require,module,exports){
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
+	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlRepeaterItemView;
 
 ControlRepeaterItemView = ControlBaseItemView.extend( {
@@ -8814,26 +8815,25 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
+	createItemModel: function( attrs, options ) {
+		options = options || {};
+
+		options.controls = this.model.get( 'fields' );
+
+		if ( ! attrs._id ) {
+			attrs._id = elementor.helpers.getUniqueID();
+		}
+
+		return new BaseSettingsModel( attrs, options );
+	},
+
 	fillCollection: function() {
 		var controlName = this.model.get( 'name' );
 		this.collection = this.elementSettingsModel.get( controlName );
 
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
-			var self = this;
 			this.collection = new Backbone.Collection( this.collection, {
-				model: function( attrs, options ) {
-					options = options || {};
-
-					options.controls = self.model.get( 'fields' );
-
-					if ( ! attrs._id ) {
-						attrs._id = elementor.helpers.getUniqueID();
-					}
-
-					var BaseSettingsModel = require( 'elementor-models/base-settings' );
-
-					return new BaseSettingsModel( attrs, options );
-				}
+				model: this.createItemModel( attrs, options )
 			} );
 
 			// Set the value silent
@@ -9032,7 +9032,8 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		this.addRow( childView.model.clone(), { at: childView.itemIndex } );
+		var newModel = this.createItemModel( childView.model.toJSON() );
+		this.addRow( newModel, { at: childView.itemIndex } );
 	},
 
 	onChildviewClickEdit: function( childView ) {
