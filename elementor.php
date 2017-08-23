@@ -59,6 +59,11 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 
 		// Fix for Polylang
 		define( 'PLL_AJAX_ON_FRONT', true );
+
+		add_action( 'pll_pre_init', function( $polylang ) {
+			$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
+			$_REQUEST['lang'] = $post_language->locale;
+		} );
 	}
 
 	require( ELEMENTOR_PATH . 'includes/plugin.php' );
