@@ -645,10 +645,6 @@ body.admin-bar .dialog-close-button {
       color: inherit;
       font-family: inherit;
       opacity: 0.6; }
-    .elementor-field-group .elementor-field-textual::-moz-placeholder {
-      color: inherit;
-      font-family: inherit;
-      opacity: 0.6; }
     .elementor-field-group .elementor-field-textual::placeholder {
       color: inherit;
       font-family: inherit;
@@ -1653,7 +1649,7 @@ body.admin-bar .dialog-close-button {
   .elementor-social-icon-twitch {
     background-color: #6441A5; }
   .elementor-social-icon-twitter {
-    background-color: #55acee; }
+    background-color: #1DA1F2; }
   .elementor-social-icon-vimeo {
     background-color: #1ab7ea; }
   .elementor-social-icon-vk {
