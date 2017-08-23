@@ -1606,12 +1606,12 @@ App = Marionette.Application.extend( {
 				}
 			}
 		};
+		
 
 		hotKeysHandlers[ keysDictionary.d ] = {
-			/* Waiting for CTRL+Z / CTRL+Y
 			duplicateElement: {
 				isWorthHandling: function( event ) {
-					return self.isControlEvent( event );
+					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
 					var panel = elementor.getPanelView();
@@ -1622,7 +1622,7 @@ App = Marionette.Application.extend( {
 
 					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
 				}
-			}*/
+			}
 		};
 
 		hotKeysHandlers[ keysDictionary.l ] = {
