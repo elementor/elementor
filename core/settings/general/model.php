@@ -111,6 +111,13 @@ class Model extends BaseModel {
 								'.elementor-lightbox .dialog-lightbox-close-button, .elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
 							],
 						],
+						'elementor_lightbox_ui_color_hover' => [
+							'label' => __( 'UI Hover Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox .dialog-lightbox-close-button:hover, .elementor-lightbox .elementor-swiper-button:hover' => 'color: {{VALUE}}',
+							],
+						],
 					],
 				],
 			],
