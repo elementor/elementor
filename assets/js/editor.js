@@ -1521,16 +1521,15 @@ App = Marionette.Application.extend( {
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
-		if ( ! Backbone.$( '#' + previewIframeId ).length ) {
-			var previewIFrame = document.createElement( 'iframe' );
+		if ( ! this.$preview ) {
+			this.$preview = Backbone.$( '<iframe>', {
+				id: previewIframeId,
+				src: this.config.preview_link + '&' + ( new Date().getTime() ),
+				allowfullscreen: 1
+			} );
 
-			previewIFrame.id = previewIframeId;
-			previewIFrame.src = this.config.preview_link + '&' + ( new Date().getTime() );
-
-			this.$previewResponsiveWrapper.append( previewIFrame );
+			this.$previewResponsiveWrapper.append( this.$preview );
 		}
-
-		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
 	},
@@ -10862,7 +10861,7 @@ var	Manager = function() {
 	};
 
 	var onPanelSave = function() {
-		// Check if it's a save after made changes, `items.length - 1` is the `Editi
+		// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
 		var firstEditItem = items.at( items.length - 2 );
 		editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
 	};
