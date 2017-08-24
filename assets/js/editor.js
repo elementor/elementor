@@ -1606,7 +1606,6 @@ App = Marionette.Application.extend( {
 				}
 			}
 		};
-		
 
 		hotKeysHandlers[ keysDictionary.d ] = {
 			duplicateElement: {
