@@ -104,7 +104,14 @@ class Model extends BaseModel {
 								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
-
+						'elementor_lightbox_ui_color' => [
+							'label' => __( 'UI Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox .dialog-lightbox-close-button' => 'color: {{VALUE}}',
+								'.elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
+							],
+						],
 					],
 				],
 			],
