@@ -108,8 +108,7 @@ class Model extends BaseModel {
 							'label' => __( 'UI Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox .dialog-lightbox-close-button' => 'color: {{VALUE}}',
-								'.elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
+								'.elementor-lightbox .dialog-lightbox-close-button, .elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
 							],
 						],
 					],
