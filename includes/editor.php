@@ -166,6 +166,8 @@ class Editor {
 	}
 
 	public function enqueue_scripts() {
+		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
+
 		global $wp_styles, $wp_scripts;
 
 		// Set the global data like $authordata and etc
