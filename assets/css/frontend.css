@@ -2392,12 +2392,12 @@ button.swiper-pagination-bullet {
   padding: 5px;
   z-index: 2;
   line-height: 1;
-  opacity: 0.5;
+  opacity: 0.75;
   -webkit-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s; }
   .elementor-lightbox .dialog-lightbox-close-button:hover {
-    opacity: 0.9; }
+    opacity: 1; }
 
 .elementor-lightbox .swiper-container {
   height: 100%; }
