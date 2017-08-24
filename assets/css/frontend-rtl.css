@@ -2387,17 +2387,21 @@ button.swiper-pagination-bullet {
 .elementor-lightbox .dialog-lightbox-close-button {
   cursor: pointer;
   position: absolute;
-  color: #ffffff;
   font-size: 25px;
   padding: 5px;
   z-index: 2;
-  line-height: 1;
-  opacity: 0.5;
+  line-height: 1; }
+
+.elementor-lightbox .dialog-lightbox-close-button,
+.elementor-lightbox .elementor-swiper-button {
+  color: rgba(255, 255, 255, 0.75);
   -webkit-transition: all 0.5s;
   -o-transition: all 0.5s;
-  transition: all 0.5s; }
-  .elementor-lightbox .dialog-lightbox-close-button:hover {
-    opacity: 0.9; }
+  transition: all 0.5s;
+  opacity: 1; }
+  .elementor-lightbox .dialog-lightbox-close-button:hover,
+  .elementor-lightbox .elementor-swiper-button:hover {
+    color: #ffffff; }
 
 .elementor-lightbox .swiper-container {
   height: 100%; }
@@ -2439,17 +2443,11 @@ button.swiper-pagination-bullet {
     .elementor-lightbox .elementor-video-container {
       width: 100%; } }
 
-.elementor-lightbox .elementor-swiper-button {
-  opacity: 0.5;
-  -webkit-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s; }
-  .elementor-lightbox .elementor-swiper-button:hover {
-    opacity: 0.9; }
-  .elementor-lightbox .elementor-swiper-button-prev {
-    left: 40px; }
-  .elementor-lightbox .elementor-swiper-button-next {
-    right: 40px; }
+.elementor-lightbox .elementor-swiper-button-prev {
+  left: 40px; }
+
+.elementor-lightbox .elementor-swiper-button-next {
+  right: 40px; }
 
 @media (min-width: 767px) {
   .elementor-lightbox .dialog-lightbox-close-button {
