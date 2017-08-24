@@ -109,67 +109,18 @@ abstract class Controls_Stack {
 			$target_tab = $this->_current_tab;
 
 			if ( $options['position'] ) {
-				$default_position = [
-					'type' => 'control',
-					'at' => 'after',
-				];
+				$position_info = $this->get_position_info( $options['position'] );
 
-				$position = array_merge( $default_position, $options['position'] );
-
-				if (
-					'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ] ) ||
-					'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ] )
-				) {
-					_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
-
+				if ( ! $position_info ) {
 					return false;
 				}
 
-				$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+				$options['index'] = $position_info['index'];
 
-				$controls_keys = array_keys( $registered_controls );
+				$target_section_args = $position_info['section'];
 
-				$target_control_index = array_search( $position['of'], $controls_keys );
-
-				$target_section_index = $target_control_index;
-
-				if ( false !== $target_control_index ) {
-					while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
-						$target_section_index--;
-					}
-
-					$target_section = $registered_controls[ $controls_keys[ $target_section_index ] ];
-
-					$section_id = $target_section['name'];
-
-					$target_section_args = $this->get_section_args( $section_id );
-
-					if ( 'section' === $position['type'] ) {
-						$target_control_index++;
-
-						if ( 'end' === $position['at'] ) {
-							while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
-								if ( ++$target_control_index >= count( $registered_controls ) ) {
-									break;
-								}
-							}
-						}
-					}
-
-					$target_control = $registered_controls[ $controls_keys[ $target_control_index ] ];
-
-					if ( ! empty( $target_control['tabs_wrapper'] ) ) {
-						$target_tab = [
-							'tabs_wrapper' => $target_control['tabs_wrapper'],
-							'inner_tab' => $target_control['inner_tab'],
-						];
-					}
-
-					if ( 'after' === $position['at'] ) {
-						$target_control_index++;
-					}
-
-					$options['index'] = $target_control_index;
+				if ( ! empty( $position_info['tab'] ) ) {
+					$target_tab = $position_info['tab'];
 				}
 			}
 
@@ -199,6 +150,74 @@ abstract class Controls_Stack {
 
 	public function update_control( $control_id, array $args ) {
 		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+	}
+
+	final public function get_position_info( array $position ) {
+		$default_position = [
+			'type' => 'control',
+			'at' => 'after',
+		];
+
+		$position = array_merge( $default_position, $position );
+
+		if (
+			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ] ) ||
+			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ] )
+		) {
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
+
+			return false;
+		}
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		$target_control_index = array_search( $position['of'], $controls_keys );
+
+		$target_section_index = $target_control_index;
+
+		if ( false == $target_control_index ) {
+			return false;
+		}
+
+		while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
+			$target_section_index--;
+		}
+
+		if ( 'section' === $position['type'] ) {
+			$target_control_index++;
+
+			if ( 'end' === $position['at'] ) {
+				while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
+					if ( ++$target_control_index >= count( $registered_controls ) ) {
+						break;
+					}
+				}
+			}
+		}
+
+		$target_control = $registered_controls[ $controls_keys[ $target_control_index ] ];
+
+		if ( 'after' === $position['at'] ) {
+			$target_control_index++;
+		}
+
+		$section_id = $registered_controls[ $controls_keys[ $target_section_index ] ]['name'];
+
+		$position_info = [
+			'index' => $target_control_index,
+			'section' => $this->get_section_args( $section_id ),
+		];
+
+		if ( ! empty( $target_control['tabs_wrapper'] ) ) {
+			$position_info['tab'] = [
+				'tabs_wrapper' => $target_control['tabs_wrapper'],
+				'inner_tab' => $target_control['inner_tab'],
+			];
+		}
+
+		return $position_info;
 	}
 
 	final public function add_group_control( $group_name, array $args = [] ) {
