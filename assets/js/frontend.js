@@ -272,6 +272,7 @@ module.exports = ElementsHandler;
 		};
 
 		this.getCurrentDeviceMode = function() {
+			if ( elements.$elementor[ 0 ] === undefined ) return;
 			return getComputedStyle( elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
 		};
 
