@@ -7,6 +7,7 @@ var	Manager = function() {
 	var self = this,
 		currentItemID = null,
 		items = new HistoryCollection(),
+		editorSaved = false,
 		active = true;
 
 	var translations = {
@@ -82,6 +83,12 @@ var	Manager = function() {
 		} );
 	};
 
+	var onPanelSave = function() {
+		// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
+		var firstEditItem = items.at( items.length - 2 );
+		editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+	};
+
 	var init = function() {
 		addHotKeys();
 
@@ -108,6 +115,8 @@ var	Manager = function() {
 
 			.on( 'template:before:insert', self.startInsertTemplate )
 			.on( 'template:after:insert', self.endItem );
+
+		elementor.channels.editor.on( 'saved', onPanelSave );
 	};
 
 	this.setActive = function( value ) {
@@ -243,7 +252,9 @@ var	Manager = function() {
 		}
 
 		if ( item.get( 'editing_started' ) ) {
-			elementor.setFlagEditorChange( false );
+			if ( ! editorSaved ) {
+				elementor.setFlagEditorChange( false );
+			}
 		}
 	};
 

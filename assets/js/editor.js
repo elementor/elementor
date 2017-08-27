@@ -1521,16 +1521,15 @@ App = Marionette.Application.extend( {
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
-		if ( ! Backbone.$( '#' + previewIframeId ).length ) {
-			var previewIFrame = document.createElement( 'iframe' );
+		if ( ! this.$preview ) {
+			this.$preview = Backbone.$( '<iframe>', {
+				id: previewIframeId,
+				src: this.config.preview_link + '&' + ( new Date().getTime() ),
+				allowfullscreen: 1
+			} );
 
-			previewIFrame.id = previewIframeId;
-			previewIFrame.src = this.config.preview_link + '&' + ( new Date().getTime() );
-
-			this.$previewResponsiveWrapper.append( previewIFrame );
+			this.$previewResponsiveWrapper.append( this.$preview );
 		}
-
-		this.$preview = Backbone.$( '#' + previewIframeId );
 
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
 	},
@@ -8819,10 +8818,10 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
-	createItemModel: function( attrs, options ) {
+	createItemModel: function( attrs, options, controlView ) {
 		options = options || {};
 
-		options.controls = this.model.get( 'fields' );
+		options.controls = controlView.model.get( 'fields' );
 
 		if ( ! attrs._id ) {
 			attrs._id = elementor.helpers.getUniqueID();
@@ -8837,7 +8836,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
 			this.collection = new Backbone.Collection( this.collection, {
-				model: this.createItemModel( attrs, options )
+				// Use `partial` to supply the `this` as an argument, but not as context
+				// the `_` i sa place holder for original arguments: `attrs` & `options`
+				model: _.partial( this.createItemModel, _, _, this )
 			} );
 
 			// Set the value silent
@@ -9028,6 +9029,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			newChildView = this.children.findByModel( newModel );
 
 		this.editRow( newChildView );
+		this.render();
 	},
 
 	onChildviewClickRemove: function( childView ) {
@@ -9036,8 +9038,9 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		var newModel = this.createItemModel( childView.model.toJSON() );
+		var newModel = this.createItemModel( childView.model.toJSON(), {}, this );
 		this.addRow( newModel, { at: childView.itemIndex } );
+		this.render();
 	},
 
 	onChildviewClickEdit: function( childView ) {
@@ -10790,6 +10793,7 @@ var	Manager = function() {
 	var self = this,
 		currentItemID = null,
 		items = new HistoryCollection(),
+		editorSaved = false,
 		active = true;
 
 	var translations = {
@@ -10865,6 +10869,12 @@ var	Manager = function() {
 		} );
 	};
 
+	var onPanelSave = function() {
+		// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
+		var firstEditItem = items.at( items.length - 2 );
+		editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+	};
+
 	var init = function() {
 		addHotKeys();
 
@@ -10891,6 +10901,8 @@ var	Manager = function() {
 
 			.on( 'template:before:insert', self.startInsertTemplate )
 			.on( 'template:after:insert', self.endItem );
+
+		elementor.channels.editor.on( 'saved', onPanelSave );
 	};
 
 	this.setActive = function( value ) {
@@ -11026,7 +11038,9 @@ var	Manager = function() {
 		}
 
 		if ( item.get( 'editing_started' ) ) {
-			elementor.setFlagEditorChange( false );
+			if ( ! editorSaved ) {
+				elementor.setFlagEditorChange( false );
+			}
 		}
 	};
 
