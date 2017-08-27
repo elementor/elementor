@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-header">
 	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-menu tooltip-target" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
+		<i class="elementor-icon eicon-menu-bar tooltip-target" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
 	</div>
 	<div id="elementor-panel-header-title"></div>
 	<div id="elementor-panel-header-add-button" class="elementor-header-button">
