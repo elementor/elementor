@@ -338,7 +338,7 @@ abstract class Controls_Stack {
 	}
 
 	final public function update_responsive_control( $id, array $args ) {
-		$this->add_responsive_control( $id, $args, true );
+		$this->add_responsive_control( $id, $args, [ 'overwrite' => true ] );
 	}
 
 	final public function remove_responsive_control( $id ) {
