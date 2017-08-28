@@ -415,7 +415,7 @@ class Source_Local extends Source_Base {
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<fieldset id="elementor-import-template-form-inputs">
-						<input type="file" name="file" accept=".json, .zip" required>
+						<input type="file" name="file" accept=".json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
 						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
