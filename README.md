@@ -6,7 +6,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
 **Stable tag:** 1.6.5  
-**Beta tag:** 1.7.0-RC2  
+**Beta tag:** 1.7.0-RC3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -186,10 +186,23 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 1.7.0 RC2 - Available For Beta Testing
-* [Read more about v1.7](https://github.com/pojome/elementor/issues/2220)
-* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
-###
+### 1.7.0 - 28.08.2017 ###
+* New! - History actions in the editor ([#266](https://github.com/pojome/elementor/issues/266))
+* New! - Hotkey: Ctrl / Cmd + Z = Undo
+* New! - Hotkey: Ctrl / Cmd + Shift + Z = Redo
+* New! - Hotkey: Ctrl / Cmd + D = Duplicate
+* New! - Hotkey: Delete = Delete element
+* New! - Added more icons to Social Icons widget: Weibo & WeChat
+* Tweak! - Added color control for UI elements in the lightbox
+* Tweak! - Allow to exclude devices in responsive control
+* Tweak! - Added compatibility for Table of Contents Plus plugin ([#2248](https://github.com/pojome/elementor/issues/2248))
+* Fix! - Added compatibility for Multisite installation with Domain Mapping
+* Fix! - CSS Animations names no longer minified, in order to prevent unexpected conflicts
+* Fix! - Sometimes content in Repeater control disappears
+* Fix! - Conflict rollback to the last version when beta testing mode enabled
+* Fix! - Conflict with Polylang plugin ([#2124](https://github.com/pojome/elementor/issues/2124))
+* Fix! - Allow fullscreen in the editor preview for video player
+
 ### 1.6.5 - 20.08.2017 ###
 * Tweak! - Added compatibility for the future release of Elementor Pro
 * Fix! - Set font size inherit for Heading widget ([#2098](https://github.com/pojome/elementor/issues/2098))
