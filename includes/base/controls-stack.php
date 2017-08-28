@@ -134,7 +134,7 @@ abstract class Controls_Stack {
 				if ( null !== $target_tab ) {
 					$args = array_merge( $args, $target_tab );
 				}
-			} elseif ( empty( $args['section'] ) ) {
+			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
 			}
 		}
@@ -276,6 +276,7 @@ abstract class Controls_Stack {
 
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
+
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
 			self::RESPONSIVE_TABLET,
@@ -333,12 +334,16 @@ abstract class Controls_Stack {
 
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
-			$this->add_control( $id . $id_suffix, $control_args, $options );
+			if ( ! empty( $options['overwrite'] ) ) {
+				$this->update_control( $id . $id_suffix, $control_args );
+			} else {
+				$this->add_control( $id . $id_suffix, $control_args, $options );
+			}
 		}
 	}
 
 	final public function update_responsive_control( $id, array $args ) {
-		$this->add_responsive_control( $id, $args, true );
+		$this->add_responsive_control( $id, $args, [ 'overwrite' => true ] );
 	}
 
 	final public function remove_responsive_control( $id ) {
