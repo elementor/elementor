@@ -84,9 +84,11 @@ var	Manager = function() {
 	};
 
 	var onPanelSave = function() {
-		// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
-		var firstEditItem = items.at( items.length - 2 );
-		editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+		if ( items.length >= 2 ) {
+			// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
+			var firstEditItem = items.at( items.length - 2 );
+			editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+		}
 	};
 
 	var init = function() {
