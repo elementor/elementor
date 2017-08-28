@@ -1,8 +1,8 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "1.6.5",
-	"prev_stable_version": "1.5.5",
+	"version": "1.7.0",
+	"prev_stable_version": "1.6.5",
 	"author": "Pojo Team",
 	"homepage": "http://pojo.me/",
 	"devDependencies": {
