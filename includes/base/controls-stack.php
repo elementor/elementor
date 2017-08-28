@@ -134,7 +134,7 @@ abstract class Controls_Stack {
 				if ( null !== $target_tab ) {
 					$args = array_merge( $args, $target_tab );
 				}
-			} elseif ( empty( $args['section'] ) ) {
+			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
 			}
 		}
