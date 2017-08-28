@@ -276,6 +276,7 @@ abstract class Controls_Stack {
 
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
+
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
 			self::RESPONSIVE_TABLET,
@@ -333,7 +334,11 @@ abstract class Controls_Stack {
 
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
-			$this->add_control( $id . $id_suffix, $control_args, $options );
+			if ( ! empty( $options['overwrite'] ) ) {
+				$this->update_control( $id . $id_suffix, $control_args );
+			} else {
+				$this->add_control( $id . $id_suffix, $control_args, $options );
+			}
 		}
 	}
 
