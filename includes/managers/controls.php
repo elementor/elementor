@@ -415,6 +415,18 @@ class Controls_Manager {
 		return $this->add_control_to_stack( $element, $control_id, $control_data, [ 'overwrite' => true ] );
 	}
 
+	public function get_stacks( $stack_id = null ) {
+		if ( $stack_id ) {
+			if ( isset( $this->stacks[ $stack_id ] ) ) {
+				return $this->stacks[ $stack_id ];
+			}
+
+			return null;
+		}
+
+		return $this->stacks;
+	}
+
 	public function get_element_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_unique_name();
 
