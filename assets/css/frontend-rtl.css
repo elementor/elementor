@@ -645,6 +645,10 @@ body.admin-bar .dialog-close-button {
       color: inherit;
       font-family: inherit;
       opacity: 0.6; }
+    .elementor-field-group .elementor-field-textual::-moz-placeholder {
+      color: inherit;
+      font-family: inherit;
+      opacity: 0.6; }
     .elementor-field-group .elementor-field-textual::placeholder {
       color: inherit;
       font-family: inherit;

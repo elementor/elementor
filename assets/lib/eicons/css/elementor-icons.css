@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?2.3");
-  src: url("../fonts/eicons.eot?2.3#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.3") format("woff2"), url("../fonts/eicons.woff?2.3") format("woff"), url("../fonts/eicons.ttf?2.3") format("truetype"), url("../fonts/eicons.svg?2.3#eicon") format("svg");
+  src: url("../fonts/eicons.eot?2.4");
+  src: url("../fonts/eicons.eot?2.4#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.4") format("woff2"), url("../fonts/eicons.woff?2.4") format("woff"), url("../fonts/eicons.ttf?2.4") format("truetype"), url("../fonts/eicons.svg?2.4#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -30,7 +30,7 @@
 .eicon-plus:before {
   content: '\e803'; }
 
-.eicon-menu:before {
+.eicon-menu-bar:before {
   content: '\e804'; }
 
 .eicon-apps:before {
@@ -150,7 +150,7 @@
 .eicon-navigation-horizontal:before {
   content: '\e843'; }
 
-.eicon-navigation-menu:before {
+.eicon-nav-menu:before {
   content: '\e844'; }
 
 .eicon-navigation-vertical:before {
@@ -446,6 +446,21 @@
 
 .eicon-animated-headline:before {
   content: '\e942'; }
+
+.eicon-menu-toggle:before {
+  content: '\e943'; }
+
+.eicon-fb-embed:before {
+  content: '\e944'; }
+
+.eicon-fb-feed:before {
+  content: '\e945'; }
+
+.eicon-twitter-embed:before {
+  content: '\e946'; }
+
+.eicon-twitter-feed:before {
+  content: '\e947'; }
 
 .eicon-floppy-o:before {
   content: '\e001'; }
