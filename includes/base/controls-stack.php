@@ -28,7 +28,9 @@ abstract class Controls_Stack {
 	 *
 	 * @var null|array
 	 */
-	protected $_current_tab = null;
+	private $_current_tab = null;
+
+
 
 	abstract public function get_name();
 
@@ -57,6 +59,14 @@ abstract class Controls_Stack {
 		}
 
 		return $haystack;
+	}
+
+	public function get_current_section() {
+		return $this->_current_section;
+	}
+
+	public function get_current_tab() {
+		return $this->_current_tab;
 	}
 
 	public function get_controls( $control_id = null ) {
