@@ -96,8 +96,14 @@ class Manager extends BaseManager {
 
 		wp_update_post( $post );
 
-		if ( isset( $data['template'] ) && self::is_cpt_custom_templates_supported() ) {
-			update_post_meta( $post->ID, '_wp_page_template', $data['template'] );
+		if ( self::is_cpt_custom_templates_supported() ) {
+			$template = 'default';
+
+			if ( isset( $data['template'] ) ) {
+				$template = $data['template'];
+			}
+
+			update_post_meta( $post->ID, '_wp_page_template', $template );
 		}
 	}
 
@@ -116,7 +122,19 @@ class Manager extends BaseManager {
 	protected function get_saved_settings( $id ) {
 		$settings = get_post_meta( $id, self::META_KEY, true );
 
-		return $settings ? $settings : [];
+		if ( ! $settings ) {
+			$settings = [];
+		}
+
+		if ( self::is_cpt_custom_templates_supported() ) {
+			$saved_template = get_post_meta( $id, '_wp_page_template', true );
+
+			if ( $saved_template ) {
+				$settings['template'] = $saved_template;
+			}
+		}
+
+		return $settings;
 	}
 
 	protected function get_css_file_name() {
