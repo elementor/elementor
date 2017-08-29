@@ -30,6 +30,8 @@ class Preview {
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
+
+		do_action( 'elementor/preview/init', $this );
 	}
 
 	/**
