@@ -30,6 +30,7 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
+	private $current_injection;
 
 	abstract public function get_name();
 
@@ -112,24 +113,22 @@ abstract class Controls_Stack {
 
 		$options = array_merge( $default_options, $options );
 
+		if ( $options['position'] ) {
+			$this->start_injection( $options['position'] );
+		}
+
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			$target_section_args = $this->_current_section;
 
 			$target_tab = $this->_current_tab;
 
-			if ( $options['position'] ) {
-				$position_info = $this->get_position_info( $options['position'] );
+			if ( $this->current_injection ) {
+				$options['index'] = $this->current_injection['index']++;
 
-				if ( ! $position_info ) {
-					return false;
-				}
+				$target_section_args = $this->current_injection['section'];
 
-				$options['index'] = $position_info['index'];
-
-				$target_section_args = $position_info['section'];
-
-				if ( ! empty( $position_info['tab'] ) ) {
-					$target_tab = $position_info['tab'];
+				if ( ! empty( $this->current_injection['tab'] ) ) {
+					$target_tab = $this->current_injection['tab'];
 				}
 			}
 
@@ -146,6 +145,10 @@ abstract class Controls_Stack {
 			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
 			}
+		}
+
+		if ( $options['position'] ) {
+			$this->end_injection();
 		}
 
 		unset( $options['position'] );
@@ -184,11 +187,11 @@ abstract class Controls_Stack {
 
 		$target_control_index = array_search( $position['of'], $controls_keys );
 
-		$target_section_index = $target_control_index;
-
 		if ( false == $target_control_index ) {
 			return false;
 		}
+
+		$target_section_index = $target_control_index;
 
 		while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
 			$target_section_index--;
@@ -574,6 +577,18 @@ abstract class Controls_Stack {
 
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
+	}
+
+	final public function start_injection( array $position ) {
+		if ( $this->current_injection ) {
+			wp_die( 'A controls injection is already opened. Please close current injection before starting a new one (use `end_injection`).' );
+		}
+
+		$this->current_injection = $this->get_position_info( $position );
+	}
+
+	final public function end_injection() {
+		$this->current_injection = null;
 	}
 
 	final public function set_settings( $key, $value = null ) {
