@@ -109,18 +109,12 @@ class Model extends BaseModel {
 
 			$options += array_flip( get_page_templates( null, $this->post->post_type ) );
 
-			$saved_template = get_post_meta( $this->post->ID, '_wp_page_template', true );
-
-			if ( ! $saved_template ) {
-				$saved_template = 'default';
-			}
-
 			$this->add_control(
 				'template',
 				[
 					'label' => __( 'Template', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => $saved_template,
+					'default' => 'default',
 					'options' => $options,
 					'export' => function( $value ) {
 						return Manager::TEMPLATE_CANVAS === $value;
