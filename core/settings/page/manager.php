@@ -122,6 +122,10 @@ class Manager extends BaseManager {
 	protected function get_saved_settings( $id ) {
 		$settings = get_post_meta( $id, self::META_KEY, true );
 
+		if ( ! $settings ) {
+			$settings = [];
+		}
+
 		if ( self::is_cpt_custom_templates_supported() ) {
 			$saved_template = get_post_meta( $id, '_wp_page_template', true );
 
@@ -130,7 +134,7 @@ class Manager extends BaseManager {
 			}
 		}
 
-		return $settings ? $settings : [];
+		return $settings;
 	}
 
 	protected function get_css_file_name() {
