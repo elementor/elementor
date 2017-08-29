@@ -30,7 +30,7 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
-	private $current_injection;
+	private $injection_point;
 
 	abstract public function get_name();
 
@@ -122,13 +122,13 @@ abstract class Controls_Stack {
 
 			$target_tab = $this->_current_tab;
 
-			if ( $this->current_injection ) {
-				$options['index'] = $this->current_injection['index']++;
+			if ( $this->injection_point ) {
+				$options['index'] = $this->injection_point['index']++;
 
-				$target_section_args = $this->current_injection['section'];
+				$target_section_args = $this->injection_point['section'];
 
-				if ( ! empty( $this->current_injection['tab'] ) ) {
-					$target_tab = $this->current_injection['tab'];
+				if ( ! empty( $this->injection_point['tab'] ) ) {
+					$target_tab = $this->injection_point['tab'];
 				}
 			}
 
@@ -580,15 +580,15 @@ abstract class Controls_Stack {
 	}
 
 	final public function start_injection( array $position ) {
-		if ( $this->current_injection ) {
+		if ( $this->injection_point ) {
 			wp_die( 'A controls injection is already opened. Please close current injection before starting a new one (use `end_injection`).' );
 		}
 
-		$this->current_injection = $this->get_position_info( $position );
+		$this->injection_point = $this->get_position_info( $position );
 	}
 
 	final public function end_injection() {
-		$this->current_injection = null;
+		$this->injection_point = null;
 	}
 
 	final public function set_settings( $key, $value = null ) {
