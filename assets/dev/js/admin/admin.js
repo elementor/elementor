@@ -250,11 +250,14 @@
 
 			this.cache.$activeSettingsTab.removeClass( 'nav-tab-active' );
 
-			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName );
+			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName ),
+				$form = $activePage.parents( 'form' );
 
 			$activePage.addClass( 'elementor-active' );
 
 			$activeTab.addClass( 'nav-tab-active' );
+
+			$form.attr( 'action', 'options.php#elementor-settings-' + tabName  );
 
 			this.cache.$activeSettingsPage = $activePage;
 
