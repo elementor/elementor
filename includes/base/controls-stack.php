@@ -232,14 +232,14 @@ abstract class Controls_Stack {
 		return $position_info;
 	}
 
-	final public function add_group_control( $group_name, array $args = [] ) {
+	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
 			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
 		}
 
-		$group->add_controls( $this, $args );
+		$group->add_controls( $this, $args, $options );
 	}
 
 	final public function get_scheme_controls() {
