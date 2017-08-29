@@ -21,15 +21,14 @@ abstract class Controls_Stack {
 	 *
 	 * @var null|array
 	 */
-	private $_current_section = null;
+	private $_current_section;
 
 	/**
 	 * Holds the current tab while render a set of controls tabs
 	 *
 	 * @var null|array
 	 */
-	private $_current_tab = null;
-
+	private $_current_tab;
 
 
 	abstract public function get_name();
