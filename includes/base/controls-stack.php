@@ -21,16 +21,16 @@ abstract class Controls_Stack {
 	 *
 	 * @var null|array
 	 */
-	private $_current_section = null;
+	private $_current_section;
 
 	/**
 	 * Holds the current tab while render a set of controls tabs
 	 *
 	 * @var null|array
 	 */
-	private $_current_tab = null;
+	private $_current_tab;
 
-
+	private $injection_point;
 
 	abstract public function get_name();
 
@@ -113,24 +113,22 @@ abstract class Controls_Stack {
 
 		$options = array_merge( $default_options, $options );
 
+		if ( $options['position'] ) {
+			$this->start_injection( $options['position'] );
+		}
+
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			$target_section_args = $this->_current_section;
 
 			$target_tab = $this->_current_tab;
 
-			if ( $options['position'] ) {
-				$position_info = $this->get_position_info( $options['position'] );
+			if ( $this->injection_point ) {
+				$options['index'] = $this->injection_point['index']++;
 
-				if ( ! $position_info ) {
-					return false;
-				}
+				$target_section_args = $this->injection_point['section'];
 
-				$options['index'] = $position_info['index'];
-
-				$target_section_args = $position_info['section'];
-
-				if ( ! empty( $position_info['tab'] ) ) {
-					$target_tab = $position_info['tab'];
+				if ( ! empty( $this->injection_point['tab'] ) ) {
+					$target_tab = $this->injection_point['tab'];
 				}
 			}
 
@@ -147,6 +145,10 @@ abstract class Controls_Stack {
 			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
 				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
 			}
+		}
+
+		if ( $options['position'] ) {
+			$this->end_injection();
 		}
 
 		unset( $options['position'] );
@@ -185,11 +187,11 @@ abstract class Controls_Stack {
 
 		$target_control_index = array_search( $position['of'], $controls_keys );
 
-		$target_section_index = $target_control_index;
-
 		if ( false == $target_control_index ) {
 			return false;
 		}
+
+		$target_section_index = $target_control_index;
 
 		while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
 			$target_section_index--;
@@ -230,14 +232,14 @@ abstract class Controls_Stack {
 		return $position_info;
 	}
 
-	final public function add_group_control( $group_name, array $args = [] ) {
+	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
 			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
 		}
 
-		$group->add_controls( $this, $args );
+		$group->add_controls( $this, $args, $options );
 	}
 
 	final public function get_scheme_controls() {
@@ -575,6 +577,18 @@ abstract class Controls_Stack {
 
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
+	}
+
+	final public function start_injection( array $position ) {
+		if ( $this->injection_point ) {
+			wp_die( 'A controls injection is already opened. Please close current injection before starting a new one (use `end_injection`).' );
+		}
+
+		$this->injection_point = $this->get_position_info( $position );
+	}
+
+	final public function end_injection() {
+		$this->injection_point = null;
 	}
 
 	final public function set_settings( $key, $value = null ) {
