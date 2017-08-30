@@ -183,6 +183,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.7.1 - 29.08.2017 =
+* Tweak! - Removed some filters for better performance
+* Fix! - Allow import `.zip` mime type to the library for some browsers / servers
+* Fix! - Save checking for the history log
+* Fix! - Change default template in page settings
+
 = 1.7.0 - 28.08.2017 =
 * New! - History actions in the editor ([#266](https://github.com/pojome/elementor/issues/266))
 * New! - Hotkey: Ctrl / Cmd + Z = Undo
