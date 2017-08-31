@@ -141,6 +141,10 @@ module.exports = ElementsHandler;
 				lightbox: new LightboxModule()
 			};
 
+			self.modules = {
+				StretchElement: require( 'elementor-frontend/modules/stretch-element' )
+			};
+
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
@@ -293,7 +297,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":20,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":16,"elementor-frontend/utils/lightbox":17,"elementor-frontend/utils/youtube":19,"elementor-utils/hot-keys":21}],3:[function(require,module,exports){
+},{"../utils/hooks":20,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/modules/stretch-element":16,"elementor-frontend/utils/anchors":17,"elementor-frontend/utils/lightbox":18,"elementor-frontend/utils/youtube":19,"elementor-utils/hot-keys":21}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -595,8 +599,7 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],10:[function(require,module,exports){
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	StretchModule = require( 'elementor-frontend/utils/stretch-element' );
+var HandlerModule = require( 'elementor-frontend/handler-module' );
 
 var BackgroundVideo = HandlerModule.extend( {
 	player: null,
@@ -743,7 +746,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	initStretch: function() {
-		this.stretchElement = new StretchModule( {
+		this.stretchElement = new elementorFrontend.modules.StretchElement( {
 			selectors: {
 				element: this.$element
 			}
@@ -875,7 +878,7 @@ module.exports = function( $scope ) {
 	new BackgroundVideo( { $element: $scope } );
 };
 
-},{"elementor-frontend/handler-module":3,"elementor-frontend/utils/stretch-element":18}],11:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],11:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
 		$tabsTitles = $scope.find( '.elementor-tab-title' ),
@@ -1135,6 +1138,70 @@ var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
+		return {
+			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
+			selectors: {
+				element: null,
+				container: 'window'
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		return {
+			$element: jQuery( this.getSettings( 'selectors.element' ) )
+		};
+	},
+
+	stretch: function() {
+		var containerSelector = this.getSettings( 'selectors.container' ),
+			$element = this.elements.$element,
+			$container = jQuery( containerSelector ),
+			isSpecialContainer = window !== $container[0],
+			containerWidth = $container.outerWidth(),
+			sectionWidth = $element.outerWidth(),
+			sectionOffset = $element.offset().left,
+			correctOffset = sectionOffset;
+
+		if ( isSpecialContainer ) {
+			var containerOffset = $container.offset().left;
+
+			if ( sectionOffset > containerOffset ) {
+				correctOffset = sectionOffset - containerOffset;
+			} else {
+				correctOffset = 0;
+			}
+		}
+
+		if ( elementorFrontend.config.is_rtl ) {
+			correctOffset = containerWidth - ( sectionWidth + correctOffset );
+		}
+
+		var css = {};
+
+		css.width = containerWidth + 'px';
+
+		css[ this.getSettings( 'direction' ) ] = -correctOffset + 'px';
+
+		$element.css( css );
+	},
+
+	reset: function() {
+		var css = {};
+
+		css.width = 'auto';
+
+		css[ this.getSettings( 'direction' ) ] = 0;
+
+		this.elements.$element.css( css );
+	}
+} );
+
+},{"../../utils/view-module":23}],17:[function(require,module,exports){
+var ViewModule = require( '../../utils/view-module' );
+
+module.exports = ViewModule.extend( {
+	getDefaultSettings: function() {
 
 		return {
 			scrollDuration: 500,
@@ -1199,7 +1266,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":23}],17:[function(require,module,exports){
+},{"../../utils/view-module":23}],18:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' ),
 	LightboxModule;
 
@@ -1649,70 +1716,6 @@ LightboxModule = ViewModule.extend( {
 } );
 
 module.exports = LightboxModule;
-
-},{"../../utils/view-module":23}],18:[function(require,module,exports){
-var ViewModule = require( '../../utils/view-module' );
-
-module.exports = ViewModule.extend( {
-	getDefaultSettings: function() {
-		return {
-			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
-			selectors: {
-				element: null,
-				container: 'window'
-			}
-		};
-	},
-
-	getDefaultElements: function() {
-		return {
-			$element: jQuery( this.getSettings( 'selectors.element' ) )
-		};
-	},
-
-	stretch: function() {
-		var containerSelector = this.getSettings( 'selectors.container' ),
-			$element = this.elements.$element,
-			$container = jQuery( containerSelector ),
-			isSpecialContainer = window !== $container[0],
-			containerWidth = $container.outerWidth(),
-			sectionWidth = $element.outerWidth(),
-			sectionOffset = $element.offset().left,
-			correctOffset = sectionOffset;
-
-		if ( isSpecialContainer ) {
-			var containerOffset = $container.offset().left;
-
-			if ( sectionOffset > containerOffset ) {
-				correctOffset = sectionOffset - containerOffset;
-			} else {
-				correctOffset = 0;
-			}
-		}
-
-		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( sectionWidth + correctOffset );
-		}
-
-		var css = {};
-
-		css.width = containerWidth + 'px';
-
-		css[ this.getSettings( 'direction' ) ] = -correctOffset + 'px';
-
-		$element.css( css );
-	},
-
-	reset: function() {
-		var css = {};
-
-		css.width = 'auto';
-
-		css[ this.getSettings( 'direction' ) ] = 0;
-
-		this.elements.$element.css( css );
-	}
-} );
 
 },{"../../utils/view-module":23}],19:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
