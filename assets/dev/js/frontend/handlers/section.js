@@ -1,5 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	StretchModule = require( 'elementor-frontend/utils/stretch-element' );
+var HandlerModule = require( 'elementor-frontend/handler-module' );
 
 var BackgroundVideo = HandlerModule.extend( {
 	player: null,
@@ -146,7 +145,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	initStretch: function() {
-		this.stretchElement = new StretchModule( {
+		this.stretchElement = new elementorFrontend.modules.StretchElement( {
 			selectors: {
 				element: this.$element
 			}
