@@ -1,4 +1,5 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' );
+var HandlerModule = require( 'elementor-frontend/handler-module' ),
+	StretchModule = require( 'elementor-frontend/utils/stretch-element' );
 
 var BackgroundVideo = HandlerModule.extend( {
 	player: null,
@@ -138,71 +139,38 @@ var BackgroundVideo = HandlerModule.extend( {
 
 var StretchedSection = HandlerModule.extend( {
 
+	stretchElement: null,
+
 	bindEvents: function() {
 		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
 	},
 
+	initStretch: function() {
+		this.stretchElement = new StretchModule( {
+			selectors: {
+				element: this.$element
+			}
+		} );
+	},
+
 	stretchSection: function() {
-		// Clear any previously existing css associated with this script
-		var direction = elementorFrontend.config.is_rtl ? 'right' : 'left',
-			resetCss = {},
-			isStretched = this.$element.hasClass( 'elementor-section-stretched' );
+		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
 
 		if ( elementorFrontend.isEditMode() || isStretched ) {
-			resetCss.width = 'auto';
-
-			resetCss[ direction ] = 0;
-
-			this.$element.css( resetCss );
+			this.stretchElement.reset();
 		}
 
-		if ( ! isStretched ) {
-			return;
+		if ( isStretched ) {
+			this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
+
+			this.stretchElement.stretch();
 		}
-
-		var $sectionContainer,
-			hasSpecialContainer = false;
-
-		try {
-			$sectionContainer = jQuery( elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) );
-
-			if ( $sectionContainer.length ) {
-				hasSpecialContainer = true;
-			}
-		} catch ( e ) {}
-
-		if ( ! hasSpecialContainer ) {
-			$sectionContainer = elementorFrontend.getElements( '$window' );
-		}
-
-		var containerWidth = $sectionContainer.outerWidth(),
-			sectionWidth = this.$element.outerWidth(),
-			sectionOffset = this.$element.offset().left,
-			correctOffset = sectionOffset;
-
-		if ( hasSpecialContainer ) {
-			var containerOffset = $sectionContainer.offset().left;
-
-			if ( sectionOffset > containerOffset ) {
-				correctOffset = sectionOffset - containerOffset;
-			} else {
-				correctOffset = 0;
-			}
-		}
-
-		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( sectionWidth + correctOffset );
-		}
-
-		resetCss.width = containerWidth + 'px';
-
-		resetCss[ direction ] = -correctOffset + 'px';
-
-		this.$element.css( resetCss );
 	},
 
 	onInit: function() {
 		HandlerModule.prototype.onInit.apply( this, arguments );
+
+		this.initStretch();
 
 		this.stretchSection();
 	},
