@@ -1138,7 +1138,7 @@ module.exports = ViewModule.extend( {
 			element: null,
 			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
 			selectors: {
-				container: 'window'
+				container: window
 			}
 		};
 	},
