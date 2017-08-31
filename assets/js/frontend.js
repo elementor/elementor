@@ -1153,8 +1153,11 @@ module.exports = ViewModule.extend( {
 		var containerSelector = this.getSettings( 'selectors.container' ),
 			$element = this.elements.$element,
 			$container = jQuery( containerSelector ),
-			isSpecialContainer = window !== $container[0],
-			containerWidth = $container.outerWidth(),
+			isSpecialContainer = window !== $container[0];
+
+		this.reset();
+
+		var containerWidth = $container.outerWidth(),
 			sectionWidth = $element.outerWidth(),
 			sectionOffset = $element.offset().left,
 			correctOffset = sectionOffset;
