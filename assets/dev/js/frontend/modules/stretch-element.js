@@ -3,9 +3,9 @@ var ViewModule = require( '../../utils/view-module' );
 module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
+			element: null,
 			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
 			selectors: {
-				element: null,
 				container: 'window'
 			}
 		};
@@ -13,7 +13,7 @@ module.exports = ViewModule.extend( {
 
 	getDefaultElements: function() {
 		return {
-			$element: jQuery( this.getSettings( 'selectors.element' ) )
+			$element: jQuery( this.getSettings( 'element' ) )
 		};
 	},
 

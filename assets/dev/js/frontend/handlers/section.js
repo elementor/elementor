@@ -145,11 +145,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	initStretch: function() {
-		this.stretchElement = new elementorFrontend.modules.StretchElement( {
-			selectors: {
-				element: this.$element
-			}
-		} );
+		this.stretchElement = new elementorFrontend.modules.StretchElement( { element: this.$element } );
 	},
 
 	stretchSection: function() {
