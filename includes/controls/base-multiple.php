@@ -40,6 +40,13 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	}
 
 	public function get_style_value( $css_property, $control_value ) {
-		return $control_value[ $css_property ];
+                $res = $control_value[ $css_property ];
+
+		// In some locale decimal comma is used instead of decimal point, but that cannot be used in CSS files
+		// e.g. Czech, Slovak, Spanish
+                if ( is_numeric( $res ) )
+                        $res = str_replace( ',', '.', $res );
+
+                return $res;
 	}
 }
