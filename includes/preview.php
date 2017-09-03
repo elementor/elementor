@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Preview {
 
+	private $post_id;
+
 	/**
 	 * Initialize the preview mode. Fired by `init` action.
 	 *
@@ -17,6 +19,8 @@ class Preview {
 		if ( is_admin() || ! $this->is_preview_mode() ) {
 			return;
 		}
+
+		$this->post_id = get_the_ID();
 
 		// Disable the WP admin bar in preview mode.
 		add_filter( 'show_admin_bar', '__return_false' );
@@ -32,6 +36,10 @@ class Preview {
 		Utils::do_not_cache();
 
 		do_action( 'elementor/preview/init', $this );
+	}
+
+	public function get_post_id() {
+		return $this->post_id;
 	}
 
 	/**
