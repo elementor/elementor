@@ -15,8 +15,7 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 
 #### Settings controls
 
-* [Select](_select.md) - A classic select input 
-* [Checkbox](_checkbox.md) - Choose for Yes/No options
+* [Select](_select.md) - A classic select input
 * [Switcher](_switcher.md) - A Switcher control (on/off) - basically a fancy UI representation of a checkbox.
 * [Choose](_choose.md) - A component that represents radio buttons as a stylized group of buttons with icons
 * [Select2](_select2.md) - A select field based on the select2 plugin.
@@ -30,6 +29,8 @@ Elementor includes a wide array of settings controls. Let's get to know them.
 * [Dimensions](_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
 * [Font](_font.md) - Choose a font from the Google font library. (coming soon)
 * [Icon](_icon.md) - Choose icon within the font-awesome library. (coming soon)
+* [Box Shadow](_box-shadow.md) - Add a shadow effect to your element.
+* [Text Shadow](_text-shadow.md) - Add a shadow effect to a text inside your element.
 * [Entrance Animation](_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Tabs extends Widget_Base {
 
@@ -253,25 +255,25 @@ class Widget_Tabs extends Widget_Base {
 		$tabs = $this->get_settings( 'tabs' );
 		?>
 		<div class="elementor-tabs" role="tablist">
-			<?php
-			$counter = 1; ?>
+			<?php $counter = 1; ?>
 			<div class="elementor-tabs-wrapper" role="tab">
 				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 				<?php
 					$counter++;
-				endforeach; ?>
+				endforeach;
+				?>
 			</div>
 
-			<?php
-			$counter = 1; ?>
+			<?php $counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper" role="tabpanel">
 				<?php foreach ( $tabs as $item ) : ?>
 					<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 					<div class="elementor-tab-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				<?php
 					$counter++;
-				endforeach; ?>
+				endforeach;
+				?>
 			</div>
 		</div>
 		<?php

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Audio extends Widget_Base {
 	protected $_current_instance = [];
@@ -69,8 +71,6 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'elementor' ),
-				'label_on' => __( 'Yes', 'elementor' ),
 			]
 		);
 
@@ -175,8 +175,9 @@ class Widget_Audio extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		if ( empty( $settings['link'] ) )
+		if ( empty( $settings['link'] ) ) {
 			return;
+		}
 
 		$this->_current_instance = $settings;
 
@@ -188,7 +189,8 @@ class Widget_Audio extends Widget_Base {
 			<div class="elementor-soundcloud-wrapper">
 				<?php echo $video_html; ?>
 			</div>
-		<?php endif;
+		<?php
+		endif;
 	}
 
 	public function filter_oembed_result( $html ) {

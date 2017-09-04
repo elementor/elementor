@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_WordPress extends Widget_Base {
 
@@ -31,7 +33,7 @@ class Widget_WordPress extends Widget_Base {
 		if ( $this->_is_pojo_widget() ) {
 			$category = 'pojo';
 		} else {
-			$category = 'wordpress';
+			$category = 'wordpress'; // WPCS: spelling ok.
 		}
 		return [ $category ];
 	}
@@ -48,8 +50,15 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	public function get_form() {
+		$instance = $this->get_widget_instance();
+
 		ob_start();
-		$this->get_widget_instance()->form( $this->get_settings( 'wp' ) );
+		echo '<div class="widget-inside media-widget-control"><div class="form wp-core-ui">';
+		echo '<input type="hidden" class="id_base" value="' . esc_attr( $instance->id_base ) . '" />';
+		echo '<input type="hidden" class="widget-id" value="widget-' . esc_attr( $this->get_id() ) . '" />';
+		echo '<div class="widget-content">';
+		$instance->form( $this->get_settings( 'wp' ) );
+		echo '</div></div></div>';
 		return ob_get_clean();
 	}
 
@@ -64,7 +73,7 @@ class Widget_WordPress extends Widget_Base {
 				$this->_widget_instance = $wp_widget_factory->widgets[ $this->_widget_name ];
 				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
 			} elseif ( class_exists( $this->_widget_name ) ) {
-				$this->_widget_instance = new $this->_widget_name;
+				$this->_widget_instance = new $this->_widget_name();
 				$this->_widget_instance->_set( 'REPLACE_TO_ID' );
 			}
 		}
@@ -101,6 +110,8 @@ class Widget_WordPress extends Widget_Base {
 			'before_title' => '<h5>',
 			'after_title' => '</h5>',
 		];
+
+		$empty_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $empty_widget_args, $this ); // WPCS: spelling ok.
 
 		$this->get_widget_instance()->widget( $empty_widget_args, $this->get_settings( 'wp' ) );
 	}

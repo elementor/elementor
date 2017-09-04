@@ -38,7 +38,9 @@
 						id: 'elementor-deactivate-feedback-modal',
 						headerMessage: self.cache.$dialogHeader,
 						message: self.cache.$dialogForm,
-						hideOnButtonClick: false,
+						hide: {
+							onButtonClick: false
+						},
 						position: {
 							my: 'center',
 							at: 'center'

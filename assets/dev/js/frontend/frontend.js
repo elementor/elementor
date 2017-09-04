@@ -5,49 +5,79 @@
 		Module = require( './handler-module' ),
 		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 		YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
-		AnchorsModule = require( 'elementor-frontend/utils/anchors' );
+		AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
+		LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
 	var ElementorFrontend = function() {
 		var self = this,
-			dialogsManager,
-			scopeWindow = window;
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
-		this.hooks = new EventManager();
-
 		this.Module = Module;
 
+		var setDeviceModeData = function() {
+			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+		};
+
 		var initElements = function() {
-			elements.$document = $( self.getScopeWindow().document );
+			elements.window = window;
+
+			elements.$window = $( window );
+
+			elements.$document = $( document );
+
+			elements.$body = $( 'body' );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+		};
+
+		var bindEvents = function() {
+			elements.$window.on( 'resize', setDeviceModeData );
 		};
 
 		var initOnReadyComponents = function() {
 			self.utils = {
 				youtube: new YouTubeModule(),
-				anchors: new AnchorsModule()
+				anchors: new AnchorsModule(),
+				lightbox: new LightboxModule()
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
+		var initHotKeys = function() {
+			self.hotKeys = require( 'elementor-utils/hot-keys' );
+
+			self.hotKeys.bindListener( elements.$window );
+		};
+
+		var getSiteSettings = function( settingType, settingName ) {
+			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
+
+			if ( settingName ) {
+				return settingsObject[ settingName ];
+			}
+
+			return settingsObject;
+		};
+
 		this.init = function() {
+			self.hooks = new EventManager();
+
 			initElements();
 
-			$( window ).trigger( 'elementor/frontend/init' );
+			bindEvents();
 
-			self.hooks.doAction( 'init' );
+			setDeviceModeData();
+
+			elements.$window.trigger( 'elementor/frontend/init' );
+
+			if ( ! self.isEditMode() ) {
+				initHotKeys();
+			}
+
 			initOnReadyComponents();
-		};
-
-		this.getScopeWindow = function() {
-			return scopeWindow;
-		};
-
-		this.setScopeWindow = function( window ) {
-			scopeWindow = window;
 		};
 
 		this.getElements = function( element ) {
@@ -64,6 +94,14 @@
 			}
 
 			return dialogsManager;
+		};
+
+		this.getPageSettings = function( settingName ) {
+			return getSiteSettings( 'page', settingName );
+		};
+
+		this.getGeneralSettings = function( settingName ) {
+			return getSiteSettings( 'general', settingName );
 		};
 
 		this.isEditMode = function() {
@@ -117,7 +155,7 @@
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = $( self.getScopeWindow() );
+				to = self.getElements( '$window' );
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -146,7 +184,7 @@
 				return callback.apply( element, arguments );
 			};
 
-			$element.elementorWaypoint( correctCallback, options );
+			return $element.elementorWaypoint( correctCallback, options );
 		};
 	};
 

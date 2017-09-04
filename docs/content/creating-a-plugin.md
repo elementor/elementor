@@ -37,5 +37,5 @@ You should write the minimal version of Elementor required for the plugin to wor
 Every PHP file should begin with a check that there is no direct access to the file:
 
 ```php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 ```

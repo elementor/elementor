@@ -1,14 +1,16 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A Media Chooser control. Based on the WordPress media library
  *
  * @param array  $default {
- * 		@type string  $url   Default empty
- * 		@type integer $id    Default empty
+ *      @type string  $url   Default empty
+ *      @type integer $id    Default empty
  * }
  *
  * @since 1.0.0
@@ -61,7 +63,7 @@ class Control_Media extends Control_Base_Multiple {
 
 		wp_register_script(
 			'image-edit',
-			admin_url( '/js/image-edit' . $suffix . '.js' ),
+			'/wp-admin/js/image-edit' . $suffix . '.js',
 			[
 				'jquery',
 				'json2',
@@ -104,23 +106,27 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	public static function get_image_title( $attachment ) {
-		if ( empty( $attachment['id'] ) )
+		if ( empty( $attachment['id'] ) ) {
 			return '';
+		}
 
 		return get_the_title( $attachment['id'] );
 	}
 
 	public static function get_image_alt( $instance ) {
-		if ( empty( $instance['id'] ) )
+		if ( empty( $instance['id'] ) ) {
 			return '';
+		}
 
 		$attachment_id = $instance['id'];
-		if ( ! $attachment_id )
+		if ( ! $attachment_id ) {
 			return '';
+		}
 
 		$attachment = get_post( $attachment_id );
-		if ( ! $attachment )
+		if ( ! $attachment ) {
 			return '';
+		}
 
 		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
 		if ( ! $alt ) {

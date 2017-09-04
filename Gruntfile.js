@@ -60,6 +60,11 @@ module.exports = function( grunt ) {
 				preBundleCB: function( bundle ) {
 					bundle.plugin( remapify, [
 						{
+							cwd: 'assets/dev/js/editor',
+							src: '**/*.js',
+							expose: 'elementor-editor'
+						},
+						{
 							cwd: 'assets/dev/js/editor/behaviors',
 							src: '**/*.js',
 							expose: 'elementor-behaviors'
@@ -123,6 +128,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/admin',
 							src: '**/*.js',
 							expose: 'elementor-admin'
+						},
+						{
+							cwd: 'modules',
+							src: '**/*.js',
+							expose: 'modules'
 						}
 					] );
 				}
@@ -227,7 +237,7 @@ module.exports = function( grunt ) {
 
 					processors: [
 						require( 'autoprefixer' )( {
-							browsers: 'last 2 versions, Safari > 5'
+							browsers: 'last 5 versions'
 						} )
 					]
 				},
@@ -241,7 +251,12 @@ module.exports = function( grunt ) {
 			minify: {
 				options: {
 					processors: [
-						require( 'cssnano' )()
+						require( 'autoprefixer' )( {
+							browsers: 'last 5 versions'
+						} ),
+						require( 'cssnano' )( {
+							reduceIdents: false
+						} )
 					]
 				},
 				files: [ {
@@ -258,16 +273,24 @@ module.exports = function( grunt ) {
 		watch:  {
 			styles: {
 				files: [
-					'assets/dev/scss/**/*.scss'
+					'assets/dev/scss/**/*.scss',
+					'modules/**/*.scss'
 				],
-				tasks: [ 'styles' ]
+				tasks: [ 'styles' ],
+				options: {
+					livereload: true
+				}
 			},
 
 			scripts: {
 				files: [
-					'assets/dev/js/**/*.js'
+					'assets/dev/js/**/*.js',
+					'modules/**/*.js'
 				],
-				tasks: [ 'scripts' ]
+				tasks: [ 'scripts' ],
+				options: {
+					livereload: true
+				}
 			}
 		},
 
@@ -307,6 +330,10 @@ module.exports = function( grunt ) {
 					{
 						from: /ELEMENTOR_VERSION', '.*?'/g,
 						to: 'ELEMENTOR_VERSION\', \'<%= pkg.version %>\''
+					},
+					{
+						from: /ELEMENTOR_PREVIOUS_STABLE_VERSION', '.*?'/g,
+						to: 'ELEMENTOR_PREVIOUS_STABLE_VERSION\', \'<%= grunt.config.get( \'prev_stable_version\' ) %>\''
 					}
 				]
 			},
@@ -319,6 +346,17 @@ module.exports = function( grunt ) {
 						from: /Stable tag: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
 						to: 'Stable tag: <%= pkg.version %>'
 					}
+				]
+			},
+
+			packageFile: {
+				src: [ 'package.json' ],
+				overwrite: true,
+				replacements: [
+					{
+						from: /prev_stable_version": ".*?"/g,
+						to: 'prev_stable_version": "<%= grunt.config.get( \'prev_stable_version\' ) %>"'
+			}
 				]
 			}
 		},
@@ -379,10 +417,18 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		qunit: {
+			src: 'tests/qunit/index.html'
+		},
+
 		clean: {
 			//Clean up build folder
 			main: [
 				'build'
+			],
+			qunit: [
+				'tests/qunit/index.html',
+				'tests/qunit/preview.html'
 			]
 		}
 	} );
@@ -419,11 +465,22 @@ module.exports = function( grunt ) {
 		'default' // Remove banners for GitHub
 	] );
 
-	grunt.registerTask( 'publish', [
-		'default',
-		'bumpup',
-		'replace',
-		'shell:git_add_all',
-		'release'
+	grunt.registerTask( 'publish', function( releaseType ) {
+		releaseType = releaseType ? releaseType : 'patch';
+
+		var prevStableVersion = 'patch' === releaseType ? pkgInfo.prev_stable_version : pkgInfo.version;
+
+		grunt.config.set( 'prev_stable_version', prevStableVersion );
+
+		grunt.task.run( 'default' );
+		grunt.task.run( 'bumpup:' + releaseType );
+		grunt.task.run( 'replace' );
+		grunt.task.run( 'shell:git_add_all' );
+		grunt.task.run( 'release' );
+	} );
+
+	grunt.registerTask( 'test', [
+		'qunit',
+		'clean:qunit'
 	] );
 };

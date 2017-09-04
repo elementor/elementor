@@ -4,8 +4,8 @@ var App;
 Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
 	options = {
 		evaluate: /<#([\s\S]+?)#>/g,
-		interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
-		escape: /\{\{([^\}]+?)\}\}(?!\})/g
+		interpolate: /{{{([\s\S]+?)}}}/g,
+		escape: /{{([^}]+?)}}(?!})/g
 	};
 
 	return _.template( rawTemplate, options );
@@ -22,8 +22,8 @@ App = Marionette.Application.extend( {
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-editor-utils/ajax' ),
 	conditions: require( 'elementor-editor-utils/conditions' ),
-	revisions:  require( 'elementor-revisions/manager' ),
-	hotKeys: require( 'elementor-editor-utils/hot-keys' ),
+	hotKeys: require( 'elementor-utils/hot-keys' ),
+	history:  require( 'modules/history/assets/js/module' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -34,9 +34,13 @@ App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' )
 	},
 
+	// Exporting modules that can be used externally
 	modules: {
 		element: require( 'elementor-models/element' ),
 		WidgetView: require( 'elementor-views/widget' ),
+		panel: {
+			Menu: require( 'elementor-panel/pages/menu/menu' )
+		},
 		controls: {
 			Base: require( 'elementor-views/controls/base' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
@@ -47,7 +51,7 @@ App = Marionette.Application.extend( {
 			Slider: require( 'elementor-views/controls/slider' ),
 			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
 			Choose: require( 'elementor-views/controls/choose' ),
-			Url: require( 'elementor-views/controls/url' ),
+			Url: require( 'elementor-views/controls/base-multiple' ),
 			Font: require( 'elementor-views/controls/font' ),
 			Section: require( 'elementor-views/controls/section' ),
 			Tab: require( 'elementor-views/controls/tab' ),
@@ -59,11 +63,13 @@ App = Marionette.Application.extend( {
 			Date_time: require( 'elementor-views/controls/date-time' ),
 			Code: require( 'elementor-views/controls/code' ),
 			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
+			Text_shadow: require( 'elementor-views/controls/box-shadow' ),
 			Structure: require( 'elementor-views/controls/structure' ),
 			Animation: require( 'elementor-views/controls/select2' ),
 			Hover_animation: require( 'elementor-views/controls/select2' ),
 			Order: require( 'elementor-views/controls/order' ),
-			Switcher: require( 'elementor-views/controls/switcher' )
+			Switcher: require( 'elementor-views/controls/switcher' ),
+			Number: require( 'elementor-views/controls/number' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
@@ -129,20 +135,24 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			PageSettings = require( 'elementor-editor-utils/page-settings' );
+			Settings = require( 'elementor-editor/settings/settings' );
 
 		this.hooks = new EventManager();
 
-		this.pageSettings = new PageSettings();
+		this.settings = new Settings();
+
+		/**
+		 * @deprecated - use `this.settings.page` instead
+		 */
+		this.pageSettings = this.settings.page;
 
 		this.templates.init();
 
 		this.initDialogsManager();
 
 		this.heartbeat.init();
+
 		this.ajax.init();
-		this.revisions.init();
-		this.hotKeys.init();
 	},
 
 	initDialogsManager: function() {
@@ -150,9 +160,15 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementModel = elementor.modules.element;
+		var ElementModel = elementor.modules.element,
+			config = this.config.data;
 
-		this.elements = new ElementModel.Collection( this.config.data );
+		// If it's an reload, use the not-saved data
+		if ( this.elements ) {
+			config = this.elements.toJSON();
+		}
+
+		this.elements = new ElementModel.Collection( config );
 	},
 
 	initPreview: function() {
@@ -163,28 +179,31 @@ App = Marionette.Application.extend( {
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
-		if ( ! Backbone.$( '#' + previewIframeId ).length ) {
-			var previewIFrame = document.createElement( 'iframe' );
+		if ( ! this.$preview ) {
+			this.$preview = Backbone.$( '<iframe>', {
+				id: previewIframeId,
+				src: this.config.preview_link + '&' + ( new Date().getTime() ),
+				allowfullscreen: 1
+			} );
 
-			previewIFrame.id = previewIframeId;
-			previewIFrame.src = this.config.preview_link + '&' + ( new Date().getTime() );
-
-			this.$previewResponsiveWrapper.append( previewIFrame );
+			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview = Backbone.$( '#' + previewIframeId );
-
 		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
-
-		this.initElements();
 	},
 
 	initFrontend: function() {
-		elementorFrontend.setScopeWindow( this.$preview[0].contentWindow );
+		var frontendWindow = this.$preview[0].contentWindow;
+
+		window.elementorFrontend = frontendWindow.elementorFrontend;
+
+		frontendWindow.elementor = this;
 
 		elementorFrontend.init();
 
 		elementorFrontend.elementsHandler.initHandlers();
+
+		this.trigger( 'frontend:init' );
 	},
 
 	initClearPageDialog: function() {
@@ -217,60 +236,115 @@ App = Marionette.Application.extend( {
 		};
 	},
 
-	onStart: function() {
-		this.$window = Backbone.$( window );
+	initHotKeys: function() {
+		var keysDictionary = {
+			del: 46,
+			d: 68,
+			l: 76,
+			m: 77,
+			p: 80,
+			s: 83
+		};
 
-		NProgress.start();
-		NProgress.inc( 0.2 );
+		var $ = jQuery,
+			hotKeysHandlers = {},
+			hotKeysManager = this.hotKeys;
 
-		this.config = ElementorConfig;
+		hotKeysHandlers[ keysDictionary.del ] = {
+			deleteElement: {
+				isWorthHandling: function( event ) {
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
+						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
 
-		Backbone.Radio.DEBUG = false;
-		Backbone.Radio.tuneIn( 'ELEMENTOR' );
+					return isEditorOpen && ! isInputTarget;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
+				}
+			}
+		};
 
-		this.initComponents();
+		hotKeysHandlers[ keysDictionary.d ] = {
+			duplicateElement: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event );
+				},
+				handle: function() {
+					var panel = elementor.getPanelView();
 
-		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+					if ( 'editor' !== panel.getCurrentPageName() ) {
+						return;
+					}
 
-		this.setWorkSaver();
+					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
+				}
+			}
+		};
 
-		this.initClearPageDialog();
+		hotKeysHandlers[ keysDictionary.l ] = {
+			showTemplateLibrary: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
+				},
+				handle: function() {
+					elementor.templates.showTemplatesModal();
+				}
+			}
+		};
 
-		this.$window.trigger( 'elementor:init' );
+		hotKeysHandlers[ keysDictionary.m ] = {
+			changeDeviceMode: {
+				devices: [ 'desktop', 'tablet', 'mobile' ],
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
+				},
+				handle: function() {
+					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+						modeIndex = this.devices.indexOf( currentDeviceMode );
 
-		this.initPreview();
+					modeIndex++;
 
-		this.logSite();
-	},
+					if ( modeIndex >= this.devices.length ) {
+						modeIndex = 0;
+					}
 
-	onPreviewLoaded: function() {
-		NProgress.done();
+					elementor.changeDeviceMode( this.devices[ modeIndex ] );
+				}
+			}
+		};
 
-		this.initFrontend();
+		hotKeysHandlers[ keysDictionary.p ] = {
+			changeEditMode: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event );
+				},
+				handle: function() {
+					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+				}
+			}
+		};
 
-		this.hotKeys.bindListener( Backbone.$( elementorFrontend.getScopeWindow() ) );
+		hotKeysHandlers[ keysDictionary.s ] = {
+			saveEditor: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event );
+				},
+				handle: function() {
+					elementor.getPanelView().getFooterView()._publishBuilder();
+				}
+			}
+		};
 
-		this.$previewContents = this.$preview.contents();
-
-		var Preview = require( 'elementor-views/preview' ),
-			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
-
-		var $previewElementorEl = this.$previewContents.find( '#elementor' );
-
-		if ( ! $previewElementorEl.length ) {
-			this.onPreviewElNotFound();
-			return;
-		}
-
-		var iframeRegion = new Marionette.Region( {
-			// Make sure you get the DOM object out of the jQuery object
-			el: $previewElementorEl[0]
+		_.each( hotKeysHandlers, function( handlers, keyCode ) {
+			_.each( handlers, function( handler, handlerName ) {
+				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
+			} );
 		} );
 
-		this.schemes.init();
+		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
+	},
 
-		this.schemes.printSchemesStyle();
-
+	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
@@ -293,6 +367,67 @@ App = Marionette.Application.extend( {
 				}
 			}
 		} );
+	},
+
+	onStart: function() {
+		this.$window = Backbone.$( window );
+
+		NProgress.start();
+		NProgress.inc( 0.2 );
+
+		this.config = ElementorConfig;
+
+		Backbone.Radio.DEBUG = false;
+		Backbone.Radio.tuneIn( 'ELEMENTOR' );
+
+		this.initComponents();
+
+		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
+
+		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+
+		this.setWorkSaver();
+
+		this.initClearPageDialog();
+
+		this.$window.trigger( 'elementor:init' );
+
+		this.initPreview();
+
+		this.logSite();
+	},
+
+	onPreviewLoaded: function() {
+		NProgress.done();
+
+		this.$previewContents = this.$preview.contents();
+
+		var $previewElementorEl = this.$previewContents.find( '#elementor' );
+
+		if ( ! $previewElementorEl.length ) {
+			this.onPreviewElNotFound();
+			return;
+		}
+
+		this.initFrontend();
+
+		this.initElements();
+
+		this.initHotKeys();
+
+		var iframeRegion = new Marionette.Region( {
+			// Make sure you get the DOM object out of the jQuery object
+			el: $previewElementorEl[0]
+		} );
+
+		this.schemes.init();
+
+		this.schemes.printSchemesStyle();
+
+		this.preventClicksInsideEditor();
+
+		var Preview = require( 'elementor-views/preview' ),
+			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
 		this.addRegions( {
 			sections: iframeRegion,
@@ -318,16 +453,20 @@ App = Marionette.Application.extend( {
 		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
-			elementorFrontend.getScopeWindow().jQuery.holdReady( false );
+			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
 		} );
 
 		this.enqueueTypographyFonts();
 		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
+		this.onEditModeSwitched();
+
 		this.trigger( 'preview:loaded' );
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched: function() {
+		var activeMode = this.channels.dataEditMode.request( 'activeMode' );
+
 		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
 		} else {
@@ -526,6 +665,34 @@ App = Marionette.Application.extend( {
 		}
 
 		return string;
+	},
+
+	compareVersions: function( versionA, versionB, operator ) {
+		var prepareVersion = function( version ) {
+			version = version + '';
+
+			return version.replace( /[^\d.]+/, '.-1.' );
+		};
+
+		versionA  = prepareVersion( versionA );
+		versionB = prepareVersion( versionB );
+
+		if ( versionA === versionB ) {
+			return ! operator || /^={2,3}$/.test( operator );
+		}
+
+		var versionAParts = versionA.split( '.' ).map( Number ),
+			versionBParts = versionB.split( '.' ).map( Number ),
+			longestVersionParts = Math.max( versionAParts.length, versionBParts.length );
+
+		for ( var i = 0; i < longestVersionParts; i++ ) {
+			var valueA = versionAParts[ i ] || 0,
+				valueB = versionBParts[ i ] || 0;
+
+			if ( valueA !== valueB ) {
+				return this.conditions.compare( valueA, valueB, operator );
+			}
+		}
 	},
 
 	logSite: function() {

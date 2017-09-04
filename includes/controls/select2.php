@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A Select box control based on select2 jQuery plugin @see https://select2.github.io/ .
@@ -15,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-class Control_Select2 extends Control_Base {
+class Control_Select2 extends Base_Data_Control {
 
 	public function get_type() {
 		return 'select2';
@@ -28,12 +30,13 @@ class Control_Select2 extends Control_Base {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<# var multiple = ( data.multiple ) ? 'multiple' : ''; #>
-				<select class="elementor-select2" type="select2" {{ multiple }} data-setting="{{ data.name }}">
+				<select id="<?php echo $control_uid; ?>" class="elementor-select2" type="select2" {{ multiple }} data-setting="{{ data.name }}">
 					<# _.each( data.options, function( option_title, option_value ) {
 						var value = data.controlValue;
 						if ( typeof value == 'string' ) {

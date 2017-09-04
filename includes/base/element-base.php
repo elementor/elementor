@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Element_Base extends Controls_Stack {
 
@@ -47,8 +49,10 @@ abstract class Element_Base extends Controls_Stack {
 			$after_index = array_search( $after, array_keys( static::$_edit_tools ) ) + 1;
 
 			static::$_edit_tools = array_slice( static::$_edit_tools, 0, $after_index, true ) +
-			                       [ $tool_name => $tool_data ] +
-			                       array_slice( static::$_edit_tools, $after_index, null, true );
+								   [
+									   $tool_name => $tool_data,
+								   ] +
+								   array_slice( static::$_edit_tools, $after_index, null, true );
 		} else {
 			static::$_edit_tools[ $tool_name ] = $tool_data;
 		}
@@ -63,7 +67,7 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * @param array $haystack
+	 * @param array  $haystack
 	 * @param string $needle
 	 *
 	 * @return mixed the whole haystack or the
@@ -224,7 +228,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	public function print_element() {
-		$this->enqueue_scripts();
+		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+			$this->enqueue_scripts();
+		}
 
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
@@ -263,42 +269,7 @@ abstract class Element_Base extends Controls_Stack {
 
 	protected function _content_template() {}
 
-	protected function _render_settings() {
-		?>
-		<div class="elementor-element-overlay">
-			<div class="elementor-editor-element-settings elementor-editor-<?php echo esc_attr( $this->get_type() ); ?>-settings elementor-editor-<?php echo esc_attr( $this->get_name() ); ?>-settings">
-				<ul class="elementor-editor-element-settings-list">
-					<li class="elementor-editor-element-setting elementor-editor-element-add">
-						<a href="#" title="<?php _e( 'Add Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Add', 'elementor' ); ?></span>
-							<i class="fa fa-plus"></i>
-						</a>
-					</li>
-					<?php /* Temp removing for better UI
-					<li class="elementor-editor-element-setting elementor-editor-element-edit">
-						<a href="#" title="<?php _e( 'Edit Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Edit', 'elementor' ); ?></span>
-							<i class="fa fa-pencil"></i>
-						</a>
-					</li>
-					*/ ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-duplicate">
-						<a href="#" title="<?php _e( 'Duplicate Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Duplicate', 'elementor' ); ?></span>
-							<i class="fa fa-files-o"></i>
-						</a>
-					</li>
-					<li class="elementor-editor-element-setting elementor-editor-element-remove">
-						<a href="#" title="<?php _e( 'Remove Widget', 'elementor' ); ?>">
-							<span class="elementor-screen-only"><?php _e( 'Remove', 'elementor' ); ?></span>
-							<i class="fa fa-trash-o"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<?php
-	}
+	protected function _render_settings() {}
 
 	/**
 	 * @return boolean
@@ -307,35 +278,31 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->_is_type_instance;
 	}
 
-	final public function get_frontend_settings_keys() {
-		$controls = [];
-
-		foreach ( $this->get_controls() as $control ) {
-			if ( ! empty( $control['frontend_available'] ) ) {
-				$controls[] = $control['name'];
-			}
-		}
-
-		return $controls;
-	}
-
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
 		$this->add_render_attribute( '_wrapper', 'data-id', $id );
 
-		$this->add_render_attribute( '_wrapper', 'class', [
-			'elementor-element',
-			'elementor-element-' . $id,
-		] );
+		$this->add_render_attribute(
+			'_wrapper', 'class', [
+				'elementor-element',
+				'elementor-element-' . $id,
+			]
+		);
 
 		$settings = $this->get_active_settings();
 
 		foreach ( self::get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) )
+			if ( empty( $settings[ $control['name'] ] ) ) {
 				continue;
+			}
 
 			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+		}
+
+		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
+			// Hide the element until the animation begins
+			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 		}
 
 		if ( ! empty( $settings['_element_id'] ) ) {
@@ -343,13 +310,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$frontend_settings = array_intersect_key( $settings, array_flip( $this->get_frontend_settings_keys() ) );
-
-			foreach ( $frontend_settings as $key => $setting ) {
-				if ( in_array( $setting, [ null, '' ], true ) ) {
-					unset( $frontend_settings[ $key ] );
-				}
-			}
+			$frontend_settings = $this->get_frontend_settings();
 
 			if ( $frontend_settings ) {
 				$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
@@ -362,10 +323,12 @@ abstract class Element_Base extends Controls_Stack {
 	protected function get_default_data() {
 		$data = parent::get_default_data();
 
-		return array_merge( $data, [
-			'elements' => [],
-			'isInner' => false,
-		] );
+		return array_merge(
+			$data, [
+				'elements' => [],
+				'isInner' => false,
+			]
+		);
 	}
 
 	protected function _print_content() {
@@ -377,13 +340,15 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();
 
-		return array_merge( $config, [
-			'name' => $this->get_name(),
-			'elType' => $this->get_type(),
-			'title' => $this->get_title(),
-			'icon' => $this->get_icon(),
-			'reload_preview' => $this->is_reload_preview_required(),
-		] );
+		return array_merge(
+			$config, [
+				'name' => $this->get_name(),
+				'elType' => $this->get_type(),
+				'title' => $this->get_title(),
+				'icon' => $this->get_icon(),
+				'reload_preview' => $this->is_reload_preview_required(),
+			]
+		);
 	}
 
 	private function _get_child_type( $element_data ) {

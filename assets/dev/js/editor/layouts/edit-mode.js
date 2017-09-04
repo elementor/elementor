@@ -34,15 +34,16 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		this.onPreviewButtonChange();
+		this.onEditModeChanged();
 	},
 
 	onPreviewButtonChange: function() {
 		elementor.changeEditMode( this.getCurrentMode() );
 	},
 
-	onEditModeChanged: function( activeMode ) {
-		var title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
+	onEditModeChanged: function() {
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' ),
+			title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
 
 		this.ui.previewLabel.attr( 'title', title );
 		this.ui.previewLabelA11y.text( title );

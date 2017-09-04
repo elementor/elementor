@@ -13,7 +13,7 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 	childEvents: {
 		'mousedown label': 'onMouseDownLabel',
 		'click @ui.inputs': 'onClickInput',
-		'change @ui.inputs': 'updateElementModel'
+		'change @ui.inputs': 'onBaseInputChange'
 	},
 
 	onMouseDownLabel: function( event ) {

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * An Animation effect select box control.
@@ -11,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-class Control_Animation extends Control_Base {
+class Control_Animation extends Base_Data_Control {
 
 	private static $_animations;
 
@@ -81,11 +83,12 @@ class Control_Animation extends Control_Base {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<select data-setting="{{ data.name }}">
+				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
 					<option value=""><?php _e( 'None', 'elementor' ); ?></option>
 					<?php foreach ( self::get_animations() as $animations_group_name => $animations_group ) : ?>
 						<optgroup label="<?php echo $animations_group_name; ?>">

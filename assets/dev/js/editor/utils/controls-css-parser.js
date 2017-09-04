@@ -32,7 +32,7 @@ ControlsCSSParser = ViewModule.extend( {
 		var self = this;
 
 		_.each( controls, function( control ) {
-			if ( control.styleFields ) {
+			if ( control.styleFields && control.styleFields.length ) {
 				values[ control.name ].each( function( itemModel ) {
 					self.addStyleRules(
 						control.styleFields,
@@ -98,12 +98,16 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		var outputCssProperty;
 
 		try {
-			outputCssProperty = cssProperty.replace( /\{\{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
+			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
 				var parserControl = control,
 					valueToInsert = value;
 
 				if ( controlName ) {
 					parserControl = _.findWhere( controlsStack, { name: controlName } );
+
+					if ( ! parserControl ) {
+						return '';
+					}
 
 					valueToInsert = valueCallback( parserControl );
 				}
@@ -154,13 +158,15 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		}
 
 		_.each( placeholders, function( placeholder, index ) {
-			var placeholderPattern = new RegExp( placeholder, 'g' );
+			// Check if it's a RegExp
+			var regexp = placeholder.source ? placeholder.source : placeholder,
+				placeholderPattern = new RegExp( regexp, 'g' );
 
 			selector = selector.replace( placeholderPattern, replacements[ index ] );
 		} );
 
 		if ( ! Object.keys( query ).length && control.responsive ) {
-			query = elementor.helpers.cloneObject( control.responsive );
+			query = _.pick( elementor.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
 
 			if ( 'desktop' === query.max ) {
 				delete query.max;

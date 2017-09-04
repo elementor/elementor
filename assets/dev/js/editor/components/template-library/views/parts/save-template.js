@@ -32,7 +32,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			saveType = this.model ? this.model.get( 'elType' ) : 'page',
 			JSONParams = { removeDefault: true };
 
-		formData.data = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
+		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 

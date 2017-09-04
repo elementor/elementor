@@ -1,7 +1,11 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+use Elementor\Core\Settings\Manager as SettingsManager;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Group_Control_Typography extends Group_Control_Base {
 
@@ -44,7 +48,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
-		$default_fonts = get_option( 'elementor_default_generic_fonts', 'Sans-serif' );
+		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
@@ -57,7 +61,9 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
 		];
 
-		$typo_weight_options = [ '' => __( 'Default', 'elementor' ) ];
+		$typo_weight_options = [
+			'' => __( 'Default', 'elementor' ),
+		];
 
 		foreach ( array_merge( [ 'normal', 'bold' ], range( 100, 900, 100 ) ) as $weight ) {
 			$typo_weight_options[ $weight ] = ucfirst( $weight );
@@ -129,21 +135,23 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	protected function prepare_fields( $fields ) {
-		array_walk( $fields, function ( &$field, $field_name ) {
-			if ( 'typography' === $field_name ) {
-				return;
+		array_walk(
+			$fields, function( &$field, $field_name ) {
+				if ( 'typography' === $field_name ) {
+					return;
+				}
+
+				$selector_value = ! empty( $field['selector_value'] ) ? $field['selector_value'] : str_replace( '_', '-', $field_name ) . ': {{VALUE}};';
+
+				$field['selectors'] = [
+					'{{SELECTOR}}' => $selector_value,
+				];
+
+				$field['condition'] = [
+					'typography' => [ 'custom' ],
+				];
 			}
-
-			$selector_value = ! empty( $field['selector_value'] ) ? $field['selector_value'] : str_replace( '_', '-', $field_name ) . ': {{VALUE}};';
-
-			$field['selectors'] = [
-				'{{SELECTOR}}' => $selector_value,
-			];
-
-			$field['condition'] = [
-				'typography' => [ 'custom' ],
-			];
-		} );
+		);
 
 		return parent::prepare_fields( $fields );
 	}

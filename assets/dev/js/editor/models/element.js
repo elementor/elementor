@@ -78,7 +78,11 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	initEditSettings: function() {
-		this.set( 'editSettings', new Backbone.Model( this.get( 'defaultEditSettings' ) ) );
+		var editSettings = new Backbone.Model( this.get( 'defaultEditSettings' ) );
+
+		this.set( 'editSettings', editSettings );
+
+		elementorFrontend.config.elements.editSettings[ this.cid ] = editSettings;
 	},
 
 	onDestroy: function() {
@@ -105,20 +109,8 @@ ElementModel = Backbone.Model.extend( {
 		}
 	},
 
-	setSetting: function( key, value, triggerChange ) {
-		triggerChange = triggerChange || false;
-
-		var settings = this.get( 'settings' );
-
-		settings.set( key, value );
-
-		this.set( 'settings', settings );
-
-		if ( triggerChange ) {
-			this.trigger( 'change', this );
-			this.trigger( 'change:settings', this );
-			this.trigger( 'change:settings:' + key, this );
-		}
+	setSetting: function( key, value ) {
+		this.get( 'settings' ).setExternalChange( key, value );
 	},
 
 	getSetting: function( key ) {

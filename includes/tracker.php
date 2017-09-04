@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Tracker {
 
@@ -34,7 +36,7 @@ class Tracker {
 	 * @param bool $override
 	 */
 	public static function send_tracking_data( $override = false ) {
-		// Don't trigger this on AJAX Requests
+		// Don't trigger this on AJAX Requests.
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			return;
 		}
@@ -57,7 +59,7 @@ class Tracker {
 			}
 		}
 
-		// Update time first before sending to ensure it is set
+		// Update time first before sending to ensure it is set.
 		update_option( 'elementor_tracker_last_send', time() );
 
 		// Send here..
@@ -81,7 +83,7 @@ class Tracker {
 			[
 				'timeout' => 25,
 				'blocking' => false,
-				//'sslverify' => false,
+				// 'sslverify' => false,
 				'body' => [
 					'data' => wp_json_encode( $params ),
 				],
@@ -94,8 +96,9 @@ class Tracker {
 	}
 
 	public static function handle_tracker_actions() {
-		if ( ! isset( $_GET['elementor_tracker'] ) )
+		if ( ! isset( $_GET['elementor_tracker'] ) ) {
 			return;
+		}
 
 		if ( 'opt_into' === $_GET['elementor_tracker'] ) {
 			check_admin_referer( 'opt_into' );
@@ -117,19 +120,23 @@ class Tracker {
 
 	public static function admin_notices() {
 		// Show tracker notice after 24 hours from installed time.
-		if ( self::_get_installed_time() > strtotime( '-24 hours' ) )
+		if ( self::_get_installed_time() > strtotime( '-24 hours' ) ) {
 			return;
+		}
 
-		if ( '1' === get_option( 'elementor_tracker_notice' ) )
+		if ( '1' === get_option( 'elementor_tracker_notice' ) ) {
 			return;
+		}
 
-		if ( self::is_allow_track() )
+		if ( self::is_allow_track() ) {
 			return;
+		}
 
-		if ( ! current_user_can( 'manage_options' ) )
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
+		}
 
-		// TODO: Skip for development env
+		// TODO: Skip for development env.
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
@@ -167,6 +174,7 @@ class Tracker {
 
 	/**
 	 * Get the last time tracking data was sent.
+	 *
 	 * @return int|bool
 	 */
 	private static function _get_last_send_time() {
@@ -221,4 +229,3 @@ class Tracker {
 
 	}
 }
-Tracker::init();

@@ -6,6 +6,10 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
+	onGeneralSettingsChange: null,
+
+	onPageSettingsChange: null,
+
 	__construct: function( settings ) {
 		this.$element  = settings.$element;
 
@@ -14,20 +18,50 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	getUniqueHandlerID: function( cid, $element ) {
+		if ( ! cid ) {
+			cid = this.getModelCID();
+		}
+
+		if ( ! $element ) {
+			$element = this.$element;
+		}
+
+		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+	},
+
 	addEditorListener: function() {
-		var self = this;
+		var self = this,
+			uniqueHandlerID = self.getUniqueHandlerID();
 
 		if ( self.onElementChange ) {
-			var cid = self.getModelCID();
+			var elementName = self.getElementName(),
+				eventName = 'change';
 
-			elementorFrontend.addListenerOnce( cid, 'change:' + self.getElementName(), function( controlView, elementView ) {
-				if ( elementView.model.cid !== cid ) {
+			if ( 'global' !== elementName ) {
+				eventName += ':' + elementName;
+			}
+
+			elementorFrontend.addListenerOnce( uniqueHandlerID, eventName, function( controlView, elementView ) {
+				var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
+
+				if ( elementViewHandlerID !== uniqueHandlerID ) {
 					return;
 				}
 
 				self.onElementChange( controlView.model.get( 'name' ),  controlView, elementView );
 			}, elementor.channels.editor );
 		}
+
+		[ 'page', 'general' ].forEach( function( settingsType ) {
+			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
+
+			if ( self[ listenerMethodName ] ) {
+				elementorFrontend.addListenerOnce( uniqueHandlerID, 'change', function( model ) {
+					self[ listenerMethodName ]( model.changed );
+				}, elementor.settings[ settingsType ].model );
+			}
+		} );
 	},
 
 	getElementName: function() {
@@ -43,21 +77,33 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings,
+		var elementSettings = {},
 			modelCID = this.getModelCID();
 
 		if ( elementorFrontend.isEditMode() && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				activeControls = settings.getActiveControls(),
-				activeValues = _.pick( settings.attributes, Object.keys( activeControls ) ),
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
-			elementSettings = _.pick( activeValues, settingsKeys );
+			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+				}
+			} );
 		} else {
 			elementSettings = this.$element.data( 'settings' ) || {};
 		}
 
 		return this.getItems( elementSettings, setting );
+	},
+
+	getEditSettings: function( setting ) {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return {};
+		}
+
+		var editSettings = elementorFrontend.config.elements.editSettings[ this.getModelCID() ];
+
+		return this.getItems( editSettings.attributes, setting );
 	}
 } );
 

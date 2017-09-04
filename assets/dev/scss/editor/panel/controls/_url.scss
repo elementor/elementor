@@ -1,0 +1,80 @@
+.elementor-control-type-url {
+
+	.elementor-control-url-external-hide {
+
+		.elementor-control-url-more {
+			display: none;
+		}
+	}
+
+	.elementor-control-url-external-show {
+
+		input {
+			padding-right: 46px;
+		}
+	}
+
+	.elementor-control-input-wrapper {
+		position: relative;
+	}
+
+	.elementor-control-url {
+
+		&-more {
+			position: absolute;
+			top: 0;
+			right: 0;
+			height: 26px;
+			width: 40px;
+			border-left: 1px solid;
+			cursor: pointer;
+			font-size: 10px;
+			border-radius: 0 3px 3px 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			i {
+				font-size: 13px;
+			}
+
+			&-input {
+				display: none;
+
+				&:not(:checked) {
+
+					+ .elementor-control-url-more-options {
+						display: none;
+					}
+				}
+			}
+
+			&-options {
+				padding-top: 10px;
+			}
+		}
+
+		&-option {
+			padding: 5px;
+			font-size: 12px;
+		}
+	}
+
+	input[type=url], .elementor-input[data-setting=url] {
+		direction: ltr; // Force ltr also in RTL languages
+
+		&:not(:focus) {
+
+			+ .elementor-control-url-more {
+				border-color: $editor-lightest;
+			}
+		}
+
+		&:focus {
+
+			+ .elementor-control-url-more {
+				border-color: $editor-light;
+			}
+		}
+	}
+}

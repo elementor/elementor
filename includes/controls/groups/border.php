@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Group_Control_Border extends Group_Control_Base {
 
@@ -27,7 +29,6 @@ class Group_Control_Border extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-style: {{VALUE}};',
 			],
-			'separator' => 'before',
 		];
 
 		$fields['width'] = [

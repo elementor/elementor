@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Shapes {
 	const FILTER_EXCLUDE = 'exclude';
@@ -23,9 +25,11 @@ class Shapes {
 	}
 
 	public static function filter_shapes( $by, $filter = self::FILTER_INCLUDE ) {
-		return array_filter( self::get_shapes(), function( $shape ) use ( $by, $filter ) {
-			return self::FILTER_INCLUDE === $filter xor empty( $shape[ $by ] );
-		} );
+		return array_filter(
+			self::get_shapes(), function( $shape ) use ( $by, $filter ) {
+				return self::FILTER_INCLUDE === $filter xor empty( $shape[ $by ] );
+			}
+		);
 	}
 
 	public static function get_shape_path( $shape, $is_negative = false ) {

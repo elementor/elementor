@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Group_Control_Background extends Group_Control_Base {
 
@@ -23,10 +25,6 @@ class Group_Control_Background extends Group_Control_Base {
 
 	private static function init_background_types() {
 		return [
-			'none' => [
-				'title' => _x( 'None', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-ban',
-			],
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
 				'icon' => 'fa fa-paint-brush',
@@ -48,7 +46,8 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['background'] = [
 			'label' => _x( 'Background Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
-			'label_block' => true,
+			'label_block' => false,
+			'render_type' => 'ui',
 		];
 
 		$fields['color'] = [
@@ -294,7 +293,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 	protected function get_child_default_args() {
 		return [
-			'types' => [ 'none', 'classic' ],
+			'types' => [ 'classic', 'gradient' ],
 		];
 	}
 

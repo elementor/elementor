@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A Date/Time Picker control.
@@ -12,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *                                  Default empty array
  * @since 1.0.0
  */
-class Control_Date_Time extends Control_Base {
+class Control_Date_Time extends Base_Data_Control {
 
 	public function get_type() {
 		return 'date_time';
@@ -26,11 +28,12 @@ class Control_Date_Time extends Control_Base {
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input class="elementor-date-time-picker" type="text" data-setting="{{ data.name }}">
+				<input id="<?php echo $control_uid; ?>" class="elementor-date-time-picker" type="text" data-setting="{{ data.name }}">
 			</div>
 		</div>
 		<# if ( data.description ) { #>

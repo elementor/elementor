@@ -1,6 +1,8 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js">
@@ -12,15 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php endif; ?>
 		<?php wp_head(); ?>
 	</head>
-
 	<body <?php body_class(); ?>>
-
 	<?php
-	while ( have_posts() ) {
-		the_post();
+	do_action( 'elementor/page_templates/canvas/before_content' );
 
+	while ( have_posts() ) :
+		the_post();
 		the_content();
-	}
+	endwhile;
 
 	wp_footer();
 	?>

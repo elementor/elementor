@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Schemes_Manager {
 
@@ -13,25 +15,16 @@ class Schemes_Manager {
 	private static $_enabled_schemes;
 
 	private static $_schemes_types = [
-		'color',
-		'typography',
-		'color-picker',
+		'color' => 'Scheme_Color',
+		'typography' => 'Scheme_Typography',
+		'color-picker' => 'Scheme_Color_Picker',
 	];
 
 	public function register_scheme( $scheme_class ) {
-		if ( ! class_exists( $scheme_class ) ) {
-			return new \WP_Error( 'scheme_class_name_not_exists' );
-		}
-
+		/** @var Scheme_Base $scheme_instance */
 		$scheme_instance = new $scheme_class();
 
-		if ( ! $scheme_instance instanceof Scheme_Base ) {
-			return new \WP_Error( 'wrong_instance_scheme' );
-		}
-
 		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
-
-		return true;
 	}
 
 	public function unregister_scheme( $id ) {
@@ -94,8 +87,9 @@ class Schemes_Manager {
 
 	public function get_scheme_value( $scheme_type, $scheme_value ) {
 		$scheme = $this->get_scheme( $scheme_type );
-		if ( ! $scheme )
+		if ( ! $scheme ) {
 			return false;
+		}
 
 		return $scheme->get_scheme_value()[ $scheme_value ];
 	}
@@ -129,7 +123,7 @@ class Schemes_Manager {
 		if ( null === self::$_enabled_schemes ) {
 			$enabled_schemes = [];
 
-			foreach ( self::$_schemes_types as $schemes_type ) {
+			foreach ( self::$_schemes_types as $schemes_type => $scheme_class ) {
 				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
 					continue;
 				}
@@ -141,14 +135,8 @@ class Schemes_Manager {
 	}
 
 	private function register_default_schemes() {
-		include( ELEMENTOR_PATH . 'includes/interfaces/scheme.php' );
-
-		include( ELEMENTOR_PATH . 'includes/schemes/base.php' );
-
-		foreach ( self::$_schemes_types as $schemes_type ) {
-			include( ELEMENTOR_PATH . 'includes/schemes/' . $schemes_type . '.php' );
-
-			$this->register_scheme( __NAMESPACE__ . '\Scheme_' . ucfirst( str_replace( '-', '_', $schemes_type ) ) );
+		foreach ( self::$_schemes_types as $schemes_class ) {
+			$this->register_scheme( __NAMESPACE__ . '\\' . $schemes_class );
 		}
 	}
 

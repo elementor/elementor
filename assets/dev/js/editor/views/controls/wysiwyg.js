@@ -3,7 +3,7 @@ var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 
 ControlWysiwygItemView = ControlBaseItemView.extend( {
 	childEvents: {
-		'keyup textarea.elementor-wp-editor': 'updateElementModel'
+		'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
 	},
 
 	// List of buttons to move {buttonToMove: afterButton}
@@ -51,17 +51,23 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
-				editor.on( 'keyup change undo redo SetContent', function() {
-					editor.save();
-
-					self.setValue( editor.getContent() );
-				} );
+				// Save the bind callback to allow overwrite it externally
+				self.saveEditor = _.bind( self.saveEditor, self, editor );
+				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};
 
 		tinyMCEPreInit.mceInit[ self.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
 
-		self.rearrangeButtons();
+		if ( ! elementor.config.tinymceHasCustomConfig ) {
+			self.rearrangeButtons();
+		}
+	},
+
+	saveEditor: function( editor ) {
+		editor.save();
+
+		this.setValue( editor.getContent() );
 	},
 
 	attachElContent: function() {
@@ -106,6 +112,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
+	},
+
+	onAfterExternalChange: function() {
+		tinymce.get( this.editorID ).setContent( this.getControlValue() );
 	},
 
 	onBeforeDestroy: function() {

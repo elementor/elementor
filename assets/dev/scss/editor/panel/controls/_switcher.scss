@@ -1,5 +1,22 @@
 .elementor-control-type-switcher {
 
+	&.elementor-label-inline {
+
+		> .elementor-control-content {
+
+			.elementor-control-field {
+
+				.elementor-control-title {
+					width: 70%;
+				}
+
+				.elementor-control-input-wrapper {
+					width: 30%;
+				}
+			}
+		}
+	}
+
 	.elementor-control-input-wrapper {
 		text-align: $end;
 	}
@@ -16,10 +33,7 @@
 	}
 
 	.elementor-switch-input {
-		position: absolute;
-		top: 0;
-		left: 0;
-		opacity: 0;
+		display: none;
 	}
 
 	.elementor-switch-label {

@@ -19,8 +19,13 @@ var Debug = function() {
 
 	var onError = function( event ) {
 		var originalEvent = event.originalEvent,
-			error = originalEvent.error,
-			isInWatchList = false,
+			error = originalEvent.error;
+
+		if ( ! error ) {
+			return;
+		}
+
+		var isInWatchList = false,
 			urlsToWatch = settings.urlsToWatch;
 
 		jQuery.each( urlsToWatch, function() {
