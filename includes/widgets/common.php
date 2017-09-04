@@ -5,16 +5,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Common Widget
+ */
 class Widget_Common extends Widget_Base {
 
+	/**
+	 * Retrieve the widget name.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'common';
 	}
 
+	/**
+	 * Whether to show the widget in the panel.
+	 *
+	 * @access public
+	 *
+	 * @return bool Whether to show the widget in the panel.
+	 */
 	public function show_in_panel() {
 		return false;
 	}
 
+	/**
+	 * Register the widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'_section_style',
