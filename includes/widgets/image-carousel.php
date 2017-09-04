@@ -5,28 +5,77 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Image Carousel Widget
+ */
 class Widget_Image_Carousel extends Widget_Base {
 
+	/**
+	 * Retrieve the widget name.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'image-carousel';
 	}
 
+	/**
+	 * Retrieve the widget title.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget title.
+	 */
 	public function get_title() {
 		return __( 'Image Carousel', 'elementor' );
 	}
 
+	/**
+	 * Retrieve the widget icon.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget icon.
+	 */
 	public function get_icon() {
 		return 'eicon-slider-push';
 	}
 
+	/**
+	 * Retrieve the list of categories the widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
 	public function get_categories() {
 		return [ 'general-elements' ];
 	}
 
+	/**
+	 * Retrieve the list of scripts the widget depended on.
+	 *
+	 * Used to set scripts dependencies required to run the widget.
+	 *
+	 * @access public
+	 *
+	 * @return array Widget scripts dependencies.
+	 */
 	public function get_script_depends() {
 		return [ 'jquery-slick' ];
 	}
 
+	/**
+	 * Register the widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_image_carousel',
@@ -558,6 +607,13 @@ class Widget_Image_Carousel extends Widget_Base {
 
 	}
 
+	/**
+	 * Render the widget output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @access protected
+	 */
 	protected function render() {
 		$settings = $this->get_settings();
 
@@ -639,6 +695,16 @@ class Widget_Image_Carousel extends Widget_Base {
 		<?php
 	}
 
+	/**
+	 * Retrieve the attachment link URL.
+	 *
+	 * @access private
+	 *
+	 * @param array $attachment
+	 * @param object $instance
+	 *
+	 * @return array|string|false An array/string containing the attachment URL, or false if no link.
+	 */
 	private function get_link_url( $attachment, $instance ) {
 		if ( 'none' === $instance['link_to'] ) {
 			return false;
@@ -657,6 +723,15 @@ class Widget_Image_Carousel extends Widget_Base {
 		];
 	}
 
+	/**
+	 * Retrieve the image caption.
+	 *
+	 * @access private
+	 *
+	 * @param array $attachment
+	 *
+	 * @return string The caption of the image.
+	 */
 	private function get_image_caption( $attachment ) {
 		$caption_type = $this->get_settings( 'caption_type' );
 
