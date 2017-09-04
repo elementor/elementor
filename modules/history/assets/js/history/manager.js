@@ -187,12 +187,12 @@ var	Manager = function() {
 
 		var position = 0;
 
-		// Temp fix. insert the `remove` subItem before the section changes subItem,
-		// in a multi columns section - the structure has been changed
-		// in a one column section - it's filled with an empty column
-		// the order is important for the `redoItem`, that needed to change thr section first
-		// and only after - to remove the column.
-		if ( 'column' === itemData.elementType && 'remove' === itemData.type ) {
+		// Temp fix. On move a column - insert the `remove` subItem before the section changes subItem.
+		// In a multi columns section - the structure has been changed,
+		// In a one column section - it's filled with an empty column,
+		// The order is important for the `redoItem`, that needed to change the section first
+		// and only after that - to remove the column.
+		if ( 'column' === itemData.elementType && 'remove' === itemData.type && 'column' === currentItem.get( 'elementType' ) ) {
 			position = 1;
 		}
 
