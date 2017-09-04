@@ -240,5 +240,5 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @access public
 	 */
-	public function render_plain_content() {}
+	public function render_plain_content( $instance = [] ) {}
 }
