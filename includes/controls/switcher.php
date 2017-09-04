@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A Switcher (on/off) control - basically a fancy UI representation of a checkbox.
@@ -29,19 +31,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	);
 ?>```
  */
-class Control_Switcher extends Control_Base {
+class Control_Switcher extends Base_Data_Control {
 
 	public function get_type() {
 		return 'switcher';
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<label class="elementor-switch">
-					<input type="checkbox" data-setting="{{ data.name }}" class="elementor-switch-input" value="{{ data.return_value }}">
+					<input id="<?php echo $control_uid; ?>" type="checkbox" data-setting="{{ data.name }}" class="elementor-switch-input" value="{{ data.return_value }}">
 					<span class="elementor-switch-label" data-on="{{ data.label_on }}" data-off="{{ data.label_off }}"></span>
 					<span class="elementor-switch-handle"></span>
 				</label>
@@ -55,8 +58,8 @@ class Control_Switcher extends Control_Base {
 
 	protected function get_default_settings() {
 		return [
-			'label_off' => '',
-			'label_on' => '',
+			'label_off' => __( 'No', 'elementor' ),
+			'label_on' => __( 'Yes', 'elementor' ),
 			'return_value' => 'yes',
 		];
 	}

@@ -1,0 +1,65 @@
+.elementor-revision- {
+
+	&item {
+		display: flex;
+		align-items: center;
+		border: 1px solid $editor-lightest;
+		padding: 10px 15px;
+		margin-bottom: 10px;
+		font-size: 11px;
+
+		&:hover:not(.elementor-revision-current-preview) {
+			background-color: fade_out($editor-background, 0.7) ;
+		}
+
+		&:not(:hover) {
+
+			.elementor-revision-item__tools-delete {
+				display: none;
+			}
+		}
+
+		&-loading {
+
+			.elementor-revision-item__tools-delete {
+				display: none;
+			}
+		}
+
+		&:not(.elementor-revision-item-loading) {
+
+			.elementor-revision-item__tools-spinner {
+				display: none;
+			}
+		}
+
+		&__gravatar {
+			border-radius: 50%;
+			overflow: hidden;
+
+			img {
+				display: block;
+			}
+		}
+
+		&__details {
+			@include padding-start(15px);
+			flex-grow: 1;
+			cursor: pointer;
+		}
+
+		&__tools-delete {
+			cursor: pointer;
+		}
+	}
+
+	&meta {
+		padding-top: 5px;
+		font-size: 10px;
+		font-weight: bold;
+	}
+
+	&current-preview {
+		background-color: $editor-background;
+	}
+}

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Testimonial extends Widget_Base {
 
@@ -119,7 +121,7 @@ class Widget_Testimonial extends Widget_Base {
 
 		$this->end_controls_section();
 
-		// Content
+		// Content.
 		$this->start_controls_section(
 			'section_style_testimonial_content',
 			[
@@ -156,7 +158,7 @@ class Widget_Testimonial extends Widget_Base {
 
 		$this->end_controls_section();
 
-		// Image
+		// Image.
 		$this->start_controls_section(
 			'section_style_testimonial_image',
 			[
@@ -183,9 +185,6 @@ class Widget_Testimonial extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => [
-					'testimonial_image[url]!' => '',
-				],
 			]
 		);
 
@@ -194,9 +193,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img',
-				'condition' => [
-					'testimonial_image[url]!' => '',
-				],
+				'separator' => 'before',
 			]
 		);
 
@@ -209,15 +206,12 @@ class Widget_Testimonial extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-				'condition' => [
-					'testimonial_image[url]!' => '',
-				],
 			]
 		);
 
 		$this->end_controls_section();
 
-		// Name
+		// Name.
 		$this->start_controls_section(
 			'section_style_testimonial_name',
 			[
@@ -254,7 +248,7 @@ class Widget_Testimonial extends Widget_Base {
 
 		$this->end_controls_section();
 
-		// Job
+		// Job.
 		$this->start_controls_section(
 			'section_style_testimonial_job',
 			[
@@ -374,7 +368,7 @@ class Widget_Testimonial extends Widget_Base {
 				<div class="elementor-testimonial-content">
 					{{{ settings.testimonial_content }}}
 				</div>
-		    <# } #>
+			<# } #>
 
 			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">

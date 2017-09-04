@@ -3,6 +3,10 @@ var ControlsStack;
 ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
+	activeTab: null,
+
+	activeSection: null,
+
 	templateHelpers: function() {
 		return {
 			elementData: elementor.getElementData( this.model )
@@ -33,37 +37,38 @@ ControlsStack = Marionette.CompositeView.extend( {
 		}
 	},
 
-	activeTab: null,
-
-	activeSection: null,
-
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	filter: function( model ) {
-		if ( model.get( 'tab' ) !== this.activeTab ) {
+	filter: function( controlModel ) {
+		if ( controlModel.get( 'tab' ) !== this.activeTab ) {
 			return false;
 		}
 
-		if ( 'section' === model.get( 'type' ) ) {
+		if ( 'section' === controlModel.get( 'type' ) ) {
 			return true;
 		}
 
-		var section = model.get( 'section' );
+		var section = controlModel.get( 'section' );
 
 		return ! section || section === this.activeSection;
 	},
 
+	isVisibleSectionControl: function( sectionControlModel ) {
+		return this.activeTab === sectionControlModel.get( 'tab' );
+	},
+
 	activateTab: function( $tab ) {
-		var activeTab = this.activeTab = $tab.data( 'tab' );
+		var self = this,
+			activeTab = this.activeTab = $tab.data( 'tab' );
 
 		this.ui.tabs.removeClass( 'active' );
 
 		$tab.addClass( 'active' );
 
-		var sectionControls = this.collection.filter( function( model ) {
-			return 'section' === model.get( 'type' ) && activeTab === model.get( 'tab' );
+		var sectionControls = this.collection.filter( function( controlModel ) {
+			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
 		if ( sectionControls[0] ) {
@@ -93,23 +98,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onRenderCollection: function() {
-		// Create tooltip on controls
-		this.$( '.tooltip-target' ).tipsy( {
-			gravity: function() {
-				// `n` for down, `s` for up
-				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
-
-				if ( undefined !== gravity ) {
-					return gravity;
-				} else {
-					return 'n';
-				}
-			},
-			title: function() {
-				return this.getAttribute( 'data-tooltip' );
-			}
-		} );
-
 		this.openActiveSection();
 	},
 

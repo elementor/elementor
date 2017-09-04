@@ -18,7 +18,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		buttonPublish: '#elementor-panel-footer-publish',
 		watchTutorial: '#elementor-panel-footer-watch-tutorial',
 		showTemplates: '#elementor-panel-footer-templates-modal',
-		saveTemplate: '#elementor-panel-footer-save-template'
+		saveTemplate: '#elementor-panel-footer-save-template',
+		history: '#elementor-panel-footer-history'
 	},
 
 	events: {
@@ -27,7 +28,8 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		'click @ui.buttonPublish': 'onClickButtonPublish',
 		'click @ui.watchTutorial': 'onClickWatchTutorial',
 		'click @ui.showTemplates': 'onClickShowTemplates',
-		'click @ui.saveTemplate': 'onClickSaveTemplate'
+		'click @ui.saveTemplate': 'onClickSaveTemplate',
+		'click @ui.history': 'onClickHistory'
 	},
 
 	initialize: function() {
@@ -55,9 +57,15 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 				$dialogMessage.append( $messageIcon, $messageText );
 
-				dialog = elementor.dialogsManager.createWidget( 'popup', {
+				dialog = elementor.dialogsManager.createWidget( 'simple', {
+					id: 'elementor-saved-popup',
+					position: {
+						element: 'message',
+						of: 'widget'
+					},
 					hide: {
-						delay: 1500
+						auto: true,
+						autoDelay: 1500
 					}
 				} );
 
@@ -108,7 +116,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var $tool = $target.closest( '.elementor-panel-footer-tool' ),
 			isClosedTool = $tool.length && ! $tool.hasClass( 'elementor-open' );
 
-		this.ui.menuButtons.removeClass( 'elementor-open' );
+		this.ui.menuButtons.filter( ':not(.elementor-leave-open)' ).removeClass( 'elementor-open' );
 
 		if ( isClosedTool ) {
 			$tool.addClass( 'elementor-open' );
@@ -159,9 +167,17 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickSaveTemplate: function() {
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView();
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView();
+			}
 		} );
+	},
+
+	onClickHistory: function() {
+		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'historyPage' );
+		}
 	},
 
 	onRender: function() {

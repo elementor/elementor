@@ -1,5 +1,6 @@
 var ControlBaseItemView = require( 'elementor-views/controls/base' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
+	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlRepeaterItemView;
 
 ControlRepeaterItemView = ControlBaseItemView.extend( {
@@ -33,13 +34,43 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		};
 	},
 
+	createItemModel: function( attrs, options, controlView ) {
+		options = options || {};
+
+		options.controls = controlView.model.get( 'fields' );
+
+		if ( ! attrs._id ) {
+			attrs._id = elementor.helpers.getUniqueID();
+		}
+
+		return new BaseSettingsModel( attrs, options );
+	},
+
+	fillCollection: function() {
+		var controlName = this.model.get( 'name' );
+		this.collection = this.elementSettingsModel.get( controlName );
+
+		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
+			this.collection = new Backbone.Collection( this.collection, {
+				// Use `partial` to supply the `this` as an argument, but not as context
+				// the `_` i sa place holder for original arguments: `attrs` & `options`
+				model: _.partial( this.createItemModel, _, _, this )
+			} );
+
+			// Set the value silent
+			this.elementSettingsModel.set( controlName, this.collection, { silent: true } );
+			this.listenTo( this.collection, 'change', this.onRowControlChange );
+			this.listenTo( this.collection, 'update', this.onRowUpdate, this );
+		}
+	},
+
 	initialize: function( options ) {
 		ControlBaseItemView.prototype.initialize.apply( this, arguments );
 
-		this.collection = this.elementSettingsModel.get( this.model.get( 'name' ) );
+		this.fillCollection();
 
 		this.listenTo( this.collection, 'change', this.onRowControlChange );
-		this.listenTo( this.collection, 'add remove reset', this.onRowChange, this );
+		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
 	},
 
 	addRow: function( data, options ) {
@@ -149,18 +180,59 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		this.updateActiveRow();
 	},
 
-	onRowChange: function() {
-		var model = this.elementSettingsModel;
+	onRowUpdate: function( collection, event ) {
+		// Simulate `changed` and `_previousAttributes` values
+		var settings = this.elementSettingsModel,
+			collectionCloned = collection.clone(),
+			controlName = this.model.get( 'name' );
 
-		model.changed = {};
+		if ( event.add ) {
+			collectionCloned.remove( event.changes.added[0] );
+		} else {
+			collectionCloned.add( event.changes.removed[0], { at: event.index } );
+		}
 
-		model.trigger( 'change', model, model._pending );
+		settings.changed = {};
+		settings.changed[ controlName ] = collection;
+
+		settings._previousAttributes = {};
+		settings._previousAttributes[ controlName ] = collectionCloned.toJSON();
+
+		settings.trigger( 'change', settings,  settings._pending );
+
+		delete settings.changed;
+		delete settings._previousAttributes;
 
 		this.toggleMinRowsClass();
 	},
 
 	onRowControlChange: function( model ) {
-		this.elementSettingsModel.trigger( 'change', model, model._pending );
+		// Simulate `changed` and `_previousAttributes` values
+		var changed = Object.keys( model.changed );
+
+		if ( ! changed.length ) {
+			return;
+		}
+
+		var collectionCloned = model.collection.toJSON(),
+			modelIndex = model.collection.findIndex( model ),
+			element = this._parent.model,
+			settings = element.get( 'settings' ),
+			controlName = this.model.get( 'name' );
+
+		// Save it with old values
+		collectionCloned[ modelIndex ] = model._previousAttributes;
+
+		settings.changed = {};
+		settings.changed[ controlName ] =  model.collection;
+
+		settings._previousAttributes = {};
+		settings._previousAttributes[ controlName ] = collectionCloned;
+
+		settings.trigger( 'change', settings );
+
+		delete settings.changed;
+		delete settings._previousAttributes;
 	},
 
 	onButtonAddRowClick: function() {
@@ -173,18 +245,29 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			newChildView = this.children.findByModel( newModel );
 
 		this.editRow( newChildView );
+		this.render();
 	},
 
 	onChildviewClickRemove: function( childView ) {
 		childView.model.destroy();
+		this.render();
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		this.addRow( childView.model.clone(), { at: childView.itemIndex } );
+		var newModel = this.createItemModel( childView.model.toJSON(), {}, this );
+		this.addRow( newModel, { at: childView.itemIndex } );
+		this.render();
 	},
 
 	onChildviewClickEdit: function( childView ) {
 		this.editRow( childView );
+	},
+
+	onAfterExternalChange: function() {
+		// Update the collection with current value
+		this.fillCollection();
+
+		ControlBaseItemView.prototype.onAfterExternalChange.apply( this, arguments );
 	}
 } );
 

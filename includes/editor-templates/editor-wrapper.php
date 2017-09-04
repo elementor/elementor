@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 ?>
 <!DOCTYPE html>
@@ -17,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><?php echo __( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
 	<?php wp_head(); ?>
+	<script>
+		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
+	</script>
 </head>
 <body class="elementor-editor-active">
 <div id="elementor-editor-wrapper">
@@ -29,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 					<div class="elementor-loader-box"></div>
 					<div class="elementor-loader-box"></div>
 				</div>
-				<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ) ?></div>
+				<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
 			</div>
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
@@ -43,6 +48,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	</div>
 	<div id="elementor-panel" class="elementor-panel"></div>
 </div>
-<?php wp_footer(); ?>
+<?php
+	wp_footer();
+	do_action( 'admin_print_footer_scripts' );
+?>
 </body>
 </html>

@@ -8,6 +8,7 @@ TemplateLibraryManager = function() {
 		deleteDialog,
 		errorDialog,
 		layout,
+		startIntent = {},
 		templateTypes = {},
 		templatesCollection;
 
@@ -81,14 +82,27 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel ) {
+	this.importTemplate = function( templateModel, options ) {
+		options = options || {};
+
 		layout.showLoadingView();
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
+			data: {
+				page_settings: options.withPageSettings
+			},
 			success: function( data ) {
 				self.closeModal();
 
-				elementor.getRegion( 'sections' ).currentView.addChildModel( data );
+				elementor.channels.data.trigger( 'template:before:insert', templateModel );
+
+				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
+
+				elementor.channels.data.trigger( 'template:after:insert', templateModel );
+
+				if ( options.withPageSettings ) {
+					elementor.settings.page.model.set( data.page_settings );
+				}
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );
@@ -108,7 +122,7 @@ TemplateLibraryManager = function() {
 			data = templateType.prepareSavedData( data );
 		}
 
-		data.data = JSON.stringify( data.data );
+		data.content = JSON.stringify( data.content );
 
 		var ajaxParams = { data: data };
 
@@ -129,10 +143,10 @@ TemplateLibraryManager = function() {
 		};
 
 		if ( ajaxOptions ) {
-			_.extend( options, ajaxOptions );
+			Backbone.$.extend( true, options, ajaxOptions );
 		}
 
-		return elementor.ajax.send( 'get_template_content', options );
+		return elementor.ajax.send( 'get_template_data', options );
 	};
 
 	this.getDeleteDialog = function() {
@@ -200,7 +214,9 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.startModal = function( onModalReady ) {
+	this.startModal = function( customStartIntent ) {
+		startIntent = customStartIntent || {};
+
 		self.getModal().show();
 
 		self.setTemplatesSource( 'remote' );
@@ -212,8 +228,8 @@ TemplateLibraryManager = function() {
 		layout.showLoadingView();
 
 		self.requestRemoteTemplates( function() {
-			if ( onModalReady ) {
-				onModalReady();
+			if ( startIntent.onReady ) {
+				startIntent.onReady();
 			}
 		} );
 	};
@@ -237,7 +253,9 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showTemplatesModal = function() {
-		self.startModal( self.showTemplates );
+		self.startModal( {
+			onReady: self.showTemplates
+		} );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {

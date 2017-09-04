@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Menu_Anchor extends Widget_Base {
 
@@ -44,7 +46,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 				'label' => __( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'For Example: About', 'elementor' ),
-	            'label_block' => true,
+				'label_block' => true,
 			]
 		);
 

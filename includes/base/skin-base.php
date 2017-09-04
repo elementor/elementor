@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Skin_Base {
 
@@ -56,6 +58,7 @@ abstract class Skin_Base {
 	}
 
 	public function update_control( $id, $args ) {
+		$args['condition']['_skin'] = $this->get_id();
 		$this->parent->update_control( $this->get_control_id( $id ), $args );
 	}
 
@@ -74,6 +77,24 @@ abstract class Skin_Base {
 
 	public function remove_responsive_control( $id ) {
 		$this->parent->remove_responsive_control( $this->get_control_id( $id ) );
+	}
+
+	public function start_controls_tab( $id, $args ) {
+		$args['condition']['_skin'] = $this->get_id();
+		$this->parent->start_controls_tab( $this->get_control_id( $id ), $args );
+	}
+
+	public function end_controls_tab() {
+		$this->parent->end_controls_tab();
+	}
+
+	public function start_controls_tabs( $id ) {
+		$args['condition']['_skin'] = $this->get_id();
+		$this->parent->start_controls_tabs( $this->get_control_id( $id ) );
+	}
+
+	public function end_controls_tabs() {
+		$this->parent->end_controls_tabs();
 	}
 
 	final public function add_group_control( $group_name, $args = [] ) {

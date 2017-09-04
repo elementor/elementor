@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class DB {
 
@@ -15,22 +17,24 @@ class DB {
 	const STATUS_AUTOSAVE = 'autosave';
 
 	/**
+	 * @var array
+	 */
+	protected $switched_post_data = [];
+
+	/**
 	 * Save builder method.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $post_id
-	 * @param array $posted
+	 * @param int    $post_id
+	 * @param array  $posted
 	 * @param string $status
 	 *
 	 * @return void
 	 */
 	public function save_editor( $post_id, $posted, $status = self::STATUS_PUBLISH ) {
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		if ( isset( $GLOBALS['post'] ) ) {
-			$global_post = $GLOBALS['post'];
-		}
-		$GLOBALS['post'] = get_post( $post_id );
+		$this->switch_to_post( $post_id );
 
 		$editor_data = $this->_get_editor_data( $posted );
 
@@ -40,15 +44,14 @@ class DB {
 		if ( self::STATUS_PUBLISH === $status ) {
 			$this->remove_draft( $post_id );
 
-			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
+			// Don't use `update_post_meta` that can't handle `revision` post type
+			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 
-			if ( $is_meta_updated ) {
-				Revisions_Manager::handle_revision();
-			}
+			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
 			$this->_save_plain_text( $post_id );
 		} elseif ( self::STATUS_AUTOSAVE === $status ) {
-			Revisions_Manager::handle_revision();
+			do_action( 'elementor/db/before_save', $status, true );
 
 			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
 
@@ -70,11 +73,7 @@ class DB {
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
 
 		// Restore global post
-		if ( isset( $global_post ) ) {
-			$GLOBALS['post'] = $global_post;
-		} else {
-			unset( $GLOBALS['post'] );
-		}
+		$this->restore_current_post();
 
 		// Remove Post CSS
 		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
@@ -87,7 +86,7 @@ class DB {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $post_id
+	 * @param int    $post_id
 	 * @param string $status
 	 *
 	 * @return array
@@ -95,7 +94,11 @@ class DB {
 	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
 		$data = $this->get_plain_editor( $post_id, $status );
 
-		return $this->_get_editor_data( $data, true );
+		$this->switch_to_post( $post_id );
+		$editor_data = $this->_get_editor_data( $data, true );
+		$this->restore_current_post();
+
+		return $editor_data;
 	}
 
 	protected function _get_json_meta( $post_id, $key ) {
@@ -174,31 +177,17 @@ class DB {
 	}
 
 	/**
-	 * Get edit mode by Page ID
+	 * Set whether the page is elementor page or not
 	 *
-	 * @since 1.0.0
+	 * @since 1.5.0
 	 *
-	 * @param $post_id
-	 *
-	 * @return mixed
+	 * @param int  $post_id
+	 * @param bool $is_elementor
 	 */
-	public function get_edit_mode( $post_id ) {
-		return get_post_meta( $post_id, '_elementor_edit_mode', true );
-	}
-
-	/**
-	 * Setup the edit mode per Page ID
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $post_id
-	 * @param string $mode
-	 *
-	 * @return void
-	 */
-	public function set_edit_mode( $post_id, $mode = 'builder' ) {
-		if ( 'builder' === $mode ) {
-			update_post_meta( $post_id, '_elementor_edit_mode', $mode );
+	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
+		if ( $is_elementor ) {
+			// Use the string `builder` and not a boolean for rollback compatibility
+			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 		} else {
 			delete_post_meta( $post_id, '_elementor_edit_mode' );
 		}
@@ -259,7 +248,7 @@ class DB {
 	 *
 	 * @param array $data
 	 *
-	 * @param bool $with_html_content
+	 * @param bool  $with_html_content
 	 *
 	 * @return array
 	 */
@@ -302,10 +291,6 @@ class DB {
 	}
 
 	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
-		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
-			return;
-		}
-
 		$from_post_meta = get_post_meta( $from_post_id );
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
@@ -316,18 +301,18 @@ class DB {
 				// The elementor JSON needs slashes before saving
 				if ( '_elementor_data' === $meta_key ) {
 					$value = wp_slash( $value );
+				} else {
+					$value = maybe_unserialize( $value );
 				}
 
+				// Don't use `update_post_meta` that can't handle `revision` post type
 				update_metadata( 'post', $to_post_id, $meta_key, $value );
 			}
 		}
 	}
 
 	public function is_built_with_elementor( $post_id ) {
-		$data = $this->get_plain_editor( $post_id );
-		$edit_mode = $this->get_edit_mode( $post_id );
-
-		return ( ! empty( $data ) && 'builder' === $edit_mode );
+		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 	}
 
 	/**
@@ -335,5 +320,39 @@ class DB {
 	 */
 	public function has_elementor_in_post( $post_id ) {
 		return $this->is_built_with_elementor( $post_id );
+	}
+
+	public function switch_to_post( $post_id ) {
+		// If is already switched, or is the same post, return.
+		if ( get_the_ID() === $post_id ) {
+			$this->switched_post_data[] = false;
+			return;
+		}
+
+		$this->switched_post_data[] = [
+			'switched_id' => $post_id,
+			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set
+		];
+
+		$GLOBALS['post'] = get_post( $post_id );
+		setup_postdata( $GLOBALS['post'] );
+	}
+
+	public function restore_current_post() {
+		$data = array_pop( $this->switched_post_data );
+
+		// If not switched, return.
+		if ( ! $data ) {
+			return;
+		}
+
+		// It was switched from an empty global post, restore this state and unset the global post
+		if ( false === $data['original_id'] ) {
+			unset( $GLOBALS['post'] );
+			return;
+		}
+
+		$GLOBALS['post'] = get_post( $data['original_id'] );
+		setup_postdata( $GLOBALS['post'] );
 	}
 }

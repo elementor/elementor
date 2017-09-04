@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Icon_Box extends Widget_Base {
 
@@ -496,8 +498,12 @@ class Widget_Icon_Box extends Widget_Base {
 			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
 
-			if ( ! empty( $settings['link']['is_external'] ) ) {
+			if ( $settings['link']['is_external'] ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
+			}
+
+			if ( $settings['link']['nofollow'] ) {
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 			}
 		}
 

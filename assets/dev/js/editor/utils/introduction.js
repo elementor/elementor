@@ -7,7 +7,8 @@ Introduction = function() {
 	var initModal = function() {
 		modal = elementor.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-introduction',
-			closeButton: true
+			closeButton: true,
+			closeButtonClass: 'eicon-close'
 		} );
 
 		modal.getElements( 'closeButton' ).on( 'click', function() {

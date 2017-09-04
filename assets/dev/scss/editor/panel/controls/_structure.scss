@@ -1,0 +1,116 @@
+.elementor-control-type-structure {
+
+	.elementor-control-structure-preset {
+		border: 1px solid $editor-background;
+		padding: 3px;
+		border-radius: 3px;
+
+		&:not(.elementor-control-structure-current-preset) {
+			display: inline-block;
+			cursor: pointer;
+			height: 50px;
+
+			svg {
+				height: 100%;
+			}
+		}
+
+		path {
+			fill: $editor-background;
+		}
+	}
+
+	.elementor-control-structure-current-preset {
+		margin-top: 15px;
+
+		// For Safari
+		svg {
+			display: block;
+			width: 100%;
+		}
+	}
+
+	.elementor-control-structure-reset {
+		padding: 10px 0 0 2px;
+		font-size: 11px;
+		cursor: pointer;
+		color: $editor-light;
+
+		i {
+			@include margin-end(8px);
+		}
+	}
+
+	.elementor-control-structure-title, .elementor-control-structure-more-presets-title {
+		color: $editor-darkest;
+		font-weight: bold;
+		padding: 13.5px 20px;
+		position: relative;
+
+		&:before, &:after {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+		}
+
+		&:before {
+			top: 0;
+			background-color: $editor-background;
+			transform: translateY(-100%);
+		}
+
+		&:after {
+			bottom: 0;
+			height: 1px;
+			background-color: $editor-background;
+		}
+	}
+
+	.elementor-control-structure-title {
+		margin: 10px -20px 0;
+
+		&:before {
+			height: 10px;
+			box-shadow: inset 0 2px 4px rgba(127,127,127,.1);
+		}
+	}
+
+	.elementor-control-structure-more-presets-title {
+		margin: 15px -20px 0;
+
+		&:before {
+			height: 3px;
+		}
+	}
+
+	.elementor-control-structure-more-presets {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		input {
+			display: none;
+
+			&:checked + .elementor-control-structure-preset {
+				border: 1px solid $editor-light;
+
+				path {
+					fill: $editor-light;
+				}
+			}
+		}
+	}
+
+	.elementor-control-structure-preset-wrapper {
+		margin-top: 15px;
+	}
+
+	.elementor-control-structure-preset-title {
+		text-align: center;
+		padding-top: 5px;
+		font-style: italic;
+		font-size: 11px;
+		color: $editor-light;
+	}
+}

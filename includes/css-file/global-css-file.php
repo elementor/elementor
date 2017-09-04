@@ -1,13 +1,19 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Global_CSS_File extends CSS_File {
 
 	const META_KEY = '_elementor_global_css';
 
 	const FILE_HANDLER_ID = 'elementor-global';
+
+	public function get_name() {
+		return 'global';
+	}
 
 	/**
 	 * @return array
@@ -32,8 +38,6 @@ class Global_CSS_File extends CSS_File {
 
 	protected function render_css() {
 		$this->render_schemes_css();
-
-		$this->render_settings_css();
 	}
 
 	/**
@@ -75,32 +79,26 @@ class Global_CSS_File extends CSS_File {
 			$scheme_controls = $widget->get_scheme_controls();
 
 			foreach ( $scheme_controls as $control ) {
-				$this->add_control_rules( $control, $widget->get_controls(), function ( $control ) use ( $elementor ) {
-					$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
+				$this->add_control_rules(
+					$control, $widget->get_controls(), function( $control ) use ( $elementor ) {
+						$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
-					if ( empty( $scheme_value ) ) {
-						return null;
-					}
+						if ( empty( $scheme_value ) ) {
+							return null;
+						}
 
-					if ( ! empty( $control['scheme']['key'] ) ) {
-						$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-					}
+						if ( ! empty( $control['scheme']['key'] ) ) {
+							$scheme_value = $scheme_value[ $control['scheme']['key'] ];
+						}
 
-					if ( empty( $scheme_value ) ) {
-						return null;
-					}
+						if ( empty( $scheme_value ) ) {
+							return null;
+						}
 
-					return $scheme_value;
-				}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ] );
+						return $scheme_value;
+					}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ]
+				);
 			}
-		}
-	}
-
-	private function render_settings_css() {
-		$container_width = absint( get_option( 'elementor_container_width' ) );
-
-		if ( ! empty( $container_width ) ) {
-			$this->stylesheet_obj->add_rules( '.elementor-section.elementor-section-boxed > .elementor-container', 'max-width:' . $container_width . 'px' );
 		}
 	}
 }

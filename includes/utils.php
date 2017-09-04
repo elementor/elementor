@@ -1,20 +1,53 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Utils {
 
 	public static function is_ajax() {
-		return ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
 	public static function is_script_debug() {
-		return ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
+		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
 	public static function get_edit_link( $post_id = 0 ) {
-		return apply_filters( 'elementor/utils/get_edit_link', add_query_arg( 'elementor', '', get_permalink( $post_id ) ), $post_id );
+		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
+
+		return apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+	}
+
+	public static function get_pro_link( $link ) {
+		static $theme_name = false;
+
+		if ( ! $theme_name ) {
+			$theme_obj = wp_get_theme();
+			if ( $theme_obj->parent() ) {
+				$theme_name = $theme_obj->parent()->get( 'Name' );
+			} else {
+				$theme_name = $theme_obj->get( 'Name' );
+			}
+
+			$theme_name = sanitize_key( $theme_name );
+		}
+
+		$link = add_query_arg( 'utm_term', $theme_name, $link );
+
+		if ( defined( 'ELEMENTOR_PARTNER_ID' ) ) {
+			$link = add_query_arg( 'partner_id', sanitize_key( ELEMENTOR_PARTNER_ID ), $link );
+		}
+
+		return $link;
+	}
+
+	public static function get_preview_url( $post_id ) {
+		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+
+		return apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
 	}
 
 	public static function is_post_type_support( $post_id = 0 ) {
@@ -33,38 +66,33 @@ class Utils {
 		return substr( str_shuffle( str_repeat( $salt, $length ) ), 0, $length );
 	}
 
-	public static function get_youtube_id_from_url( $url ) {
-		preg_match( '/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/', $url, $video_id_parts );
-
-		if ( empty( $video_id_parts[1] ) ) {
-			return false;
-		}
-
-		return $video_id_parts[1];
-	}
-
 	/**
 	 * Tell to WP Cache plugins do not cache this request.
 	 *
 	 * @return void
 	 */
 	public static function do_not_cache() {
-		if ( ! defined( 'DONOTCACHEPAGE' ) )
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 			define( 'DONOTCACHEPAGE', true );
+		}
 
-		if ( ! defined( 'DONOTCACHEDB' ) )
+		if ( ! defined( 'DONOTCACHEDB' ) ) {
 			define( 'DONOTCACHEDB', true );
+		}
 
-		if ( ! defined( 'DONOTMINIFY' ) )
+		if ( ! defined( 'DONOTMINIFY' ) ) {
 			define( 'DONOTMINIFY', true );
+		}
 
-		if ( ! defined( 'DONOTCDN' ) )
+		if ( ! defined( 'DONOTCDN' ) ) {
 			define( 'DONOTCDN', true );
+		}
 
-		if ( ! defined( 'DONOTCACHCEOBJECT' ) )
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
 			define( 'DONOTCACHCEOBJECT', true );
+		}
 
-		// Set the headers to prevent caching for the different browsers
+		// Set the headers to prevent caching for the different browsers.
 		nocache_headers();
 	}
 
@@ -72,7 +100,7 @@ class Utils {
 		$current_offset = (float) get_option( 'gmt_offset' );
 		$timezone_string = get_option( 'timezone_string' );
 
-		// Create a UTC+- zone if no timezone string exists
+		// Create a UTC+- zone if no timezone string exists.
 		if ( empty( $timezone_string ) ) {
 			if ( 0 === $current_offset ) {
 				$timezone_string = 'UTC+0';

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Widget_Divider extends Widget_Base {
 
@@ -79,13 +81,25 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'width',
 			[
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px' ],
+				'range' => [
+					'px' => [
+						'max' => 1000,
+					],
+				],
 				'default' => [
 					'size' => 100,
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
 					'unit' => '%',
 				],
 				'selectors' => [
@@ -120,7 +134,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'gap',
 			[
 				'label' => __( 'Gap', 'elementor' ),

@@ -10,12 +10,14 @@
     @import "reset";
     // Base
 
-	background-color: $editor-background;
-	position: fixed;
-	height: 100%;
-	top: 0;
-	bottom: 0;
-    overflow: visible;
+	&#elementor-panel{
+		position: fixed;
+		height: 100%;
+		top: 0;
+		bottom: 0;
+		overflow: visible;
+		background-color: $editor-background;
+	}
 
 	@media (max-width: $screen-lg-max) {
 		width: $panel-width;

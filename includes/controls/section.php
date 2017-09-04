@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A UI only control. Shows a header that functions as a toggle to show or hide a set of controls.
@@ -10,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-class Control_Section extends Control_Base {
+class Control_Section extends Base_UI_Control {
 
 	public function get_type() {
 		return 'section';

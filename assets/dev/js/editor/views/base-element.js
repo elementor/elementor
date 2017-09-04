@@ -1,11 +1,15 @@
 var BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
+	Validator = require( 'elementor-editor-utils/validator' ),
+	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
-BaseElementView = Marionette.CompositeView.extend( {
+BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
 	controlsCSSParser: null,
+
+	toggleEditTools: true,
 
 	className: function() {
 		return this.getElementUniqueID();
@@ -26,17 +30,31 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	ui: function() {
 		return {
-			duplicateButton: '> .elementor-editor-element-settings .elementor-editor-element-duplicate',
-			removeButton: '> .elementor-editor-element-settings .elementor-editor-element-remove',
-			saveButton: '> .elementor-editor-element-settings .elementor-editor-element-save'
+			triggerButton: '> .elementor-element-overlay .elementor-editor-element-trigger',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
+			saveButton: '> .elementor-element-overlay .elementor-editor-element-save',
+			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-add'
 		};
+	},
+
+	behaviors: function() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
+	},
+
+	getBehavior: function( name ) {
+		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
 	events: function() {
 		return {
 			'click @ui.removeButton': 'onClickRemove',
 			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'onClickDuplicate'
+			'click @ui.duplicateButton': 'onClickDuplicate',
+			'click @ui.triggerButton': 'onClickEdit'
 		};
 	},
 
@@ -93,45 +111,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
 
-		this.on( 'render', function() {
-			this.renderUI();
-			this.runReadyTrigger();
-		} );
-
-		this.initRemoveDialog();
-
 		this.initControlsCSSParser();
 	},
 
 	edit: function() {
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
-	},
-
-	addChildModel: function( model, options ) {
-		return this.collection.add( model, options, true );
-	},
-
-	addChildElement: function( itemData, options ) {
-		options = options || {};
-
-		var myChildType = this.getChildType();
-
-		if ( -1 === myChildType.indexOf( itemData.elType ) ) {
-			delete options.at;
-
-			return this.children.last().addChildElement( itemData, options );
-		}
-
-		var newModel = this.addChildModel( itemData, options ),
-			newView = this.children.findByModel( newModel );
-
-		if ( 'section' === newView.getElementType() && newView.isInner() ) {
-			newView.addEmptyColumn();
-		}
-
-		newView.edit();
-
-		return newView;
 	},
 
 	addElementFromPanel: function( options ) {
@@ -157,7 +141,29 @@ BaseElementView = Marionette.CompositeView.extend( {
 			_.extend( itemData, customData );
 		}
 
-		this.addChildElement( itemData, options );
+		elementor.channels.data.trigger( 'element:before:add', itemData );
+
+		var newView = this.addChildElement( itemData, options );
+
+		if ( 'section' === newView.getElementType() && newView.isInner() ) {
+			newView.addEmptyColumn();
+		}
+
+		elementor.channels.data.trigger( 'element:after:add', itemData );
+
+	},
+
+	addControlValidator: function( controlName, validationCallback ) {
+		validationCallback = _.bind( validationCallback, this );
+
+		var validator = new Validator( { customValidationMethod: validationCallback } ),
+			validators = this.getEditModel().get( 'settings' ).validators;
+
+		if ( ! validators[ controlName ] ) {
+			validators[ controlName ] = [];
+		}
+
+		validators[ controlName ].push( validator );
 	},
 
 	isCollectionFilled: function() {
@@ -166,31 +172,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	isInner: function() {
 		return !! this.model.get( 'isInner' );
-	},
-
-	initRemoveDialog: function() {
-		var removeDialog;
-
-		this.getRemoveDialog = function() {
-			if ( ! removeDialog ) {
-				var elementTitle = this.model.getTitle();
-
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_delete', [ elementTitle.toLowerCase() ] ),
-					headerMessage: elementor.translate( 'delete_element', [ elementTitle ] ),
-					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
-					},
-					defaultOption: 'confirm',
-					onConfirm: _.bind( function() {
-						this.model.destroy();
-					}, this )
-				} );
-			}
-
-			return removeDialog;
-		};
 	},
 
 	initControlsCSSParser: function() {
@@ -212,28 +193,21 @@ BaseElementView = Marionette.CompositeView.extend( {
 		}, this ) );
 	},
 
-	renderStyles: function() {
-		var self = this,
-			settings = self.getEditModel().get( 'settings' );
-
-		self.controlsCSSParser.stylesheet.empty();
-
-		self.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, self.getEditModel().get( 'settings' ).controls, [ /\{\{ID}}/g, /\{\{WRAPPER}}/g ], [ self.getID(), '#elementor .' + self.getElementUniqueID() ] );
-
-		if ( 'column' === self.model.get( 'elType' ) ) {
-			var inlineSize = settings.get( '_inline_size' );
-
-			if ( ! _.isEmpty( inlineSize ) ) {
-				self.controlsCSSParser.stylesheet.addRules( '#elementor .' + self.getElementUniqueID(), { width: inlineSize + '%' }, { min: 'tablet' } );
-			}
+	renderStyles: function( settings ) {
+		if ( ! settings ) {
+			settings = this.getEditModel().get( 'settings' );
 		}
 
-		self.controlsCSSParser.addStyleToDocument();
+		this.controlsCSSParser.stylesheet.empty();
+
+		this.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, this.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ this.getID(), '#elementor .' + this.getElementUniqueID() ] );
+
+		this.controlsCSSParser.addStyleToDocument();
 
 		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
 
 		if ( extraCSS ) {
-			self.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
+			this.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
 		}
 	},
 
@@ -242,33 +216,39 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		self.$el.addClass( 'elementor-element' );
 
-		var settings = self.getEditModel().get( 'settings' );
+		var settings = self.getEditModel().get( 'settings' ),
+			classControls = settings.getClassControls();
 
-		_.each( settings.attributes, function( value, attribute ) {
-			if ( settings.isClassControl( attribute ) ) {
-				var currentControl = settings.getControl( attribute ),
-					previousClassValue = settings.previous( attribute ),
-					classValue = value;
+		// Remove all previous classes
+		_.each( classControls, function( control ) {
+			var previousClassValue = settings.previous( control.name );
 
-				if ( currentControl.classes_dictionary ) {
-					if ( undefined !== currentControl.classes_dictionary[ previousClassValue ] ) {
-						previousClassValue = currentControl.classes_dictionary[ previousClassValue ];
-					}
-
-					if ( undefined !== currentControl.classes_dictionary[ value ] ) {
-						classValue = currentControl.classes_dictionary[ value ];
-					}
+			if ( control.classes_dictionary ) {
+				if ( undefined !== control.classes_dictionary[ previousClassValue ] ) {
+					previousClassValue = control.classes_dictionary[ previousClassValue ];
 				}
+			}
 
-				self.$el.removeClass( currentControl.prefix_class + previousClassValue );
+			self.$el.removeClass( control.prefix_class + previousClassValue );
+		} );
 
-				var isVisible = elementor.helpers.isActiveControl( currentControl, settings.attributes );
+		// Add new classes
+		_.each( classControls, function( control ) {
+			var value = settings.attributes[ control.name ],
+				classValue = value;
 
-				if ( isVisible && ! _.isEmpty( classValue ) ) {
-					self.$el
-						.addClass( currentControl.prefix_class + classValue )
-						.addClass( _.result( self, 'className' ) );
+			if ( control.classes_dictionary ) {
+				if ( undefined !== control.classes_dictionary[ value ] ) {
+					classValue = control.classes_dictionary[ value ];
 				}
+			}
+
+			var isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
+
+			if ( isVisible && ! _.isEmpty( classValue ) ) {
+				self.$el
+					.addClass( control.prefix_class + classValue )
+					.addClass( _.result( self, 'className' ) );
 			}
 		} );
 	},
@@ -277,6 +257,19 @@ BaseElementView = Marionette.CompositeView.extend( {
 		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
 		this.$el.attr( 'id', customElementID );
+	},
+
+	getModelForRender: function() {
+		return elementor.hooks.applyFilters( 'element/templateHelpers/editModel', this.getEditModel(), this );
+	},
+
+	renderUIOnly: function() {
+		var editModel = this.getModelForRender();
+
+		this.renderStyles( editModel.get( 'settings' ) );
+		this.renderCustomClasses();
+		this.renderCustomElementID();
+		this.enqueueFonts();
 	},
 
 	renderUI: function() {
@@ -302,10 +295,6 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 	duplicate: function() {
 		this.trigger( 'request:duplicate' );
-	},
-
-	confirmRemove: function() {
-		this.getRemoveDialog().show();
 	},
 
 	renderOnChange: function( settings ) {
@@ -342,7 +331,7 @@ BaseElementView = Marionette.CompositeView.extend( {
 			}
 
 			if ( ! isContentChanged ) {
-				this.renderUI();
+				this.renderUIOnly();
 				return;
 			}
 		}
@@ -357,6 +346,22 @@ BaseElementView = Marionette.CompositeView.extend( {
 			editModel.renderOnLeave = true;
 		} else {
 			editModel.renderRemoteServer();
+		}
+	},
+
+	onRender: function() {
+		var self = this;
+
+		self.renderUI();
+
+		self.runReadyTrigger();
+
+		if ( self.toggleEditTools ) {
+			self.ui.settingsList.hoverIntent( function() {
+				self.ui.triggerButton.addClass( 'elementor-active' );
+			}, function() {
+				self.ui.triggerButton.removeClass( 'elementor-active' );
+			}, { timeout: 500 } );
 		}
 	},
 
@@ -375,8 +380,11 @@ BaseElementView = Marionette.CompositeView.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
+		if ( ! Backbone.$( event.target ).closest( '.elementor-clickable' ).length ) {
+			event.preventDefault();
+
+			event.stopPropagation();
+		}
 
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
@@ -394,11 +402,24 @@ BaseElementView = Marionette.CompositeView.extend( {
 		this.duplicate();
 	},
 
+	removeElement: function() {
+		elementor.channels.data.trigger( 'element:before:remove', this.model );
+
+		var parent = this._parent;
+
+		parent.isManualRemoving = true;
+
+		this.model.destroy();
+
+		parent.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'element:after:remove', this.model );
+	},
+
 	onClickRemove: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
-
-		this.confirmRemove();
+		this.removeElement();
 	},
 
 	onClickSave: function( event ) {
@@ -406,8 +427,10 @@ BaseElementView = Marionette.CompositeView.extend( {
 
 		var model = this.model;
 
-		elementor.templates.startModal( function() {
-			elementor.templates.getLayout().showSaveTemplateView( model );
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView( model );
+			}
 		} );
 	},
 

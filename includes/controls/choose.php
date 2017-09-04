@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A group of Radio Buttons controls represented as a stylized component with an icon for each option.
@@ -15,21 +17,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-class Control_Choose extends Control_Base {
+class Control_Choose extends Base_Data_Control {
 
 	public function get_type() {
 		return 'choose';
 	}
 
 	public function content_template() {
+		$control_uid = $this->get_control_uid( '{{value}}' );
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<# _.each( data.options, function( options, value ) { #>
-					<input id="elementor-choose-{{ data._cid + data.name + value }}" type="radio" name="elementor-choose-{{ data.name }}" value="{{ value }}">
-					<label class="elementor-choices-label tooltip-target" for="elementor-choose-{{ data._cid + data.name + value }}" data-tooltip="{{ options.title }}" title="{{ options.title }}">
+					<input id="<?php echo $control_uid; ?>" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ value }}">
+					<label class="elementor-choices-label tooltip-target" for="<?php echo $control_uid; ?>" data-tooltip="{{ options.title }}" title="{{ options.title }}">
 						<i class="{{ options.icon }}"></i>
 					</label>
 					<# } ); #>

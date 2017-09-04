@@ -45,11 +45,10 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 		this.setSettingsModel( values );
 	},
 
-	updateElementModel: function( event ) {
-		var inputValue = this.getInputValue( event.currentTarget ),
-			key = event.currentTarget.dataset.setting;
+	updateElementModel: function( value, input ) {
+		var key = input.dataset.setting;
 
-		this.setValue( key, inputValue );
+		this.setValue( key, value );
 	}
 }, {
 	// Static methods

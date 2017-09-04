@@ -26,7 +26,6 @@
 
 	"globals": {
 		"_": false,
-		//"Backbone": false,
 		"jQuery": false,
 		"JSON": false,
 		"wp": false

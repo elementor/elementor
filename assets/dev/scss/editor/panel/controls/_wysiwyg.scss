@@ -1,0 +1,109 @@
+.elementor-control-type-wysiwyg {
+
+	&.elementor-rich-editing-disabled {
+
+		.wp-editor-container {
+			margin-top: 10px;
+		}
+	}
+
+	* {
+		box-sizing: content-box;
+	}
+
+	.wp-editor-container {
+		border: 1px solid $editor-background;
+		border-radius: 3px;
+	}
+
+	#insert-media-button {
+		margin-top: 7px;
+		height: initial;
+		line-height: 1;
+		font-size: 10px;
+		padding: 3px 7px;
+		background-color: $editor-background;
+	}
+
+	.ed_button {
+		height: 22px;
+		width: initial;
+	}
+
+	.wp-media-buttons-icon {
+		height: 14px;
+		margin: 0;
+
+		&:before {
+			font-size: 14px;
+		}
+	}
+
+	.wp-switch-editor {
+		border: none;
+		color: $editor-dark;
+		font-size: 10px;
+		padding: 3px 9px 4px;
+		border-radius: 3px 3px 0 0;
+	}
+
+	.html-active {
+
+		.switch-tmce {
+			background-color: transparent;
+		}
+
+		.switch-html {
+			background-color: $editor-background;
+		}
+	}
+
+	.tmce-active {
+
+		.switch-tmce {
+			background-color: $editor-background;
+		}
+
+		.switch-html {
+			background-color: transparent;
+		}
+	}
+
+	.mce-toolbar-grp, .quicktags-toolbar {
+		background-color: $editor-background;
+	}
+
+	.mce-toolbar-grp {
+
+		> div {
+			padding: 0 3px;
+		}
+	}
+
+	.elementor-wp-editor {
+		box-sizing: border-box;
+	}
+
+	.mce-ico {
+		color: $editor-dark;
+		font-size: 16px;
+	}
+
+	.mce-btn {
+		margin-right: 0;
+		margin-left: 0;
+
+		&:hover, &:active, &.mce-active {
+			border-color: $editor-lightest;
+		}
+	}
+
+	.mce-path {
+		padding: 5px 10px;
+	}
+
+	.mce-path-item {
+		font-size: 12px;
+		color: $editor-dark;
+	}
+}

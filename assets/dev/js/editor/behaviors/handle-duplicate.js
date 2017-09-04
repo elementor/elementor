@@ -10,7 +10,11 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 		var currentIndex = this.view.collection.indexOf( childView.model ),
 			newModel = childView.model.clone();
 
+		elementor.channels.data.trigger( 'element:before:duplicate', newModel );
+
 		this.view.addChildModel( newModel, { at: currentIndex + 1 } );
+
+		elementor.channels.data.trigger( 'element:after:duplicate', newModel );
 	}
 } );
 

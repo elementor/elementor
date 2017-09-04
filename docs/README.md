@@ -17,8 +17,10 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
 * [Hooks](#hooks)
 * [Additional components](#additional-components)
   - [Template Library](#template-library)
+  - [Page Settings](#page-settings)
   - [Icons](#icons)
   - [Menus](#menus)
+* [Elementor Pro](#additional-components)
 
 ## Definitions
 
@@ -59,8 +61,7 @@ Elementor includes a wide array of controls:
 
 ##### Settings controls
 
-* [Select](content/controls/_select.md) - A classic select input 
-* [Checkbox](content/controls/_checkbox.md) - Choose for Yes/No options
+* [Select](content/controls/_select.md) - A classic select input
 * [Switcher](content/controls/_switcher.md) - A Switcher control (on/off) - basically a fancy UI representation of a checkbox.
 * [Choose](content/controls/_choose.md) - A component that represents radio buttons as a stylized group of buttons with icons
 * [Select2](content/controls/_select2.md) - A select field based on the select2 plugin.
@@ -74,6 +75,8 @@ Elementor includes a wide array of controls:
 * [Dimensions](content/controls/_dimensions.md) - A component with 4 number fields, suitable for setting top/right/bottom/left settings
 * [Font](content/controls/_font.md) - Choose a font from the Google font library.
 * [Icon](content/controls/_icon.md) - Choose icon within the font-awesome library.
+* [Box Shadow](content/controls/_box-shadow.md) - Add a shadow effect to your element.
+* [Text Shadow](content/controls/_text-shadow.md) - Add a shadow effect to a text inside your element.
 * [Entrance Animation](content/controls/_animation.md) - Choose an entrance animation type from a list of animations.
 * [Hover Animation](content/controls/_hover-animation.md) - Choose a hover animation type from a list of animations. (coming soon)
 
@@ -84,6 +87,7 @@ Elementor includes a wide array of controls:
 * [Separator](content/controls/controls-and-the-editor.md#separator) - (Not really a control) Display a separator between fields
 
 ## Hooks
+
 Elementor has many hooks that allow to change the default behavior and even extend it with new functionality. 
 - [PHP Hooks](content/hooks/php-hooks.md) - Based on the WordPress Hooks API
 - [JS Hooks](content/hooks/js-hooks.md) - Using an API similar to WordPress Hooks
@@ -94,6 +98,13 @@ Elementor has many hooks that allow to change the default behavior and even exte
 
 The Template Library lets you save pages, sections and widgets for reuse, as well as use pre-designed Elementor templates.
 
+### Page Settings
+
+Page Settings lets the user control some basic and useful settings in the page from within Elementor.
+
+For more information about extending the Page Settings features, please follow [this article](content/controls/page-settings.md).
+
+
 ### Icons
 
 You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as well as [Font Awesome](http://fontawesome.io/).
@@ -102,7 +113,7 @@ You can use the [Elementor Icons](https://github.com/pojome/elementor-icons), as
 
 You can add admin menu under the Elementor menu. As long as it involves simple settings - use the Elementor settings page.
 
-### Elementor Pro
+## Elementor Pro
 
 [Elementor Pro](https://elementor.com/pro/) adds new features to the Elementor Page Builder plugin. Control your conversions, your user engagement, your entire website, from one page builder.
 

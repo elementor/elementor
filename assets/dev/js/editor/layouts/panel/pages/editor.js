@@ -15,10 +15,18 @@ EditorView = ControlsStack.extend( {
 		};
 	},
 
-	activateSection: function( sectionName ) {
-		ControlsStack.prototype.activateSection.apply( this, arguments );
+	openActiveSection: function() {
+		ControlsStack.prototype.openActiveSection.apply( this, arguments );
 
-		elementor.channels.editor.trigger( 'section:activated', sectionName, this );
+		elementor.channels.editor.trigger( 'section:activated', this.activeSection, this );
+	},
+
+	isVisibleSectionControl: function( sectionControlModel ) {
+		return ControlsStack.prototype.isVisibleSectionControl.apply( this, arguments ) && elementor.helpers.isActiveControl( sectionControlModel, this.model.get( 'settings' ).attributes );
+	},
+
+	scrollToEditedElement: function() {
+		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ) );
 	},
 
 	onBeforeRender: function() {
@@ -55,14 +63,7 @@ EditorView = ControlsStack.extend( {
 	onDeviceModeChange: function() {
 		ControlsStack.prototype.onDeviceModeChange.apply( this, arguments );
 
-		var self = this;
-
-		// Timeout according to preview resize css animation duration
-		setTimeout( function() {
-			elementor.$previewContents.find( 'html, body' ).animate( {
-				scrollTop: self.getOption( 'editedElementView' ).$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
-			} );
-		}, 500 );
+		this.scrollToEditedElement();
 	},
 
 	onChildviewSettingsChange: function( childView ) {

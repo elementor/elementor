@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Images_Manager {
 
@@ -56,5 +58,3 @@ class Images_Manager {
 		add_action( 'wp_ajax_elementor_get_images_details', [ $this, 'get_images_details' ] );
 	}
 }
-
-new Images_Manager();

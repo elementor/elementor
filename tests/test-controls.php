@@ -167,7 +167,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'url' => 'THE_LINK',
 			],
 		];
-		$this->assertEquals( [ 'url' => 'THE_LINK', 'is_external' => '' ], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] ) );
+		$this->assertEquals( [ 'url' => 'THE_LINK', 'is_external' => '', 'nofollow' => '' ], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] ) );
 		
 		// Repeater Control
 		$repeater_control = \Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::REPEATER );

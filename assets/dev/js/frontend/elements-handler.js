@@ -36,7 +36,7 @@ ElementsHandler = function( $ ) {
 
 		if ( elementorFrontend.isEditMode() ) {
 			// Elements outside from the Preview
-			$elements = elementorFrontend.getScopeWindow().jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
+			$elements = jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
 		} else {
 			$elements = $( '.elementor-element' );
 		}
@@ -68,17 +68,15 @@ ElementsHandler = function( $ ) {
 		return handlers;
 	};
 
-	// TODO: Temp fallback method from 1.2.0
-	this.addExternalListener = function( $scope, event, callback, externalElement ) {
-		elementorFrontend.addListenerOnce( $scope.data( 'model-cid' ), event, callback, externalElement );
-	};
-
 	this.runReadyTrigger = function( $scope ) {
-		var elementType = $scope.data( 'element_type' );
+		var elementType = $scope.attr( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
 		}
+
+		// Initializing the `$scope` as frontend jQuery instance
+		$scope = jQuery( $scope );
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * A base control for creation of all controls in the panel. All controls accept all the params listed below.
@@ -23,8 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.0.0
  */
-abstract class Control_Base {
-
+abstract class Base_Control {
 	private $_base_settings = [
 		'label' => '',
 		'separator' => 'default',
@@ -37,33 +38,21 @@ abstract class Control_Base {
 
 	private $_settings = [];
 
+	public static function get_features() {
+		return [];
+	}
+
 	abstract public function content_template();
 
 	abstract public function get_type();
 
 	public function __construct() {
 		$this->_settings = array_merge( $this->_base_settings, $this->get_default_settings() );
+
+		$this->_settings['features'] = static::get_features();
 	}
 
 	public function enqueue() {}
-
-	public function get_default_value() {
-		return '';
-	}
-
-	public function get_value( $control, $widget ) {
-		if ( ! isset( $control['default'] ) )
-			$control['default'] = $this->get_default_value();
-
-		if ( ! isset( $widget[ $control['name'] ] ) )
-			return $control['default'];
-
-		return $widget[ $control['name'] ];
-	}
-
-	public function get_style_value( $css_property, $control_value ) {
-		return $control_value;
-	}
 
 	/**
 	 * @param string $setting_key
@@ -81,6 +70,16 @@ abstract class Control_Base {
 		}
 
 		return $this->_settings;
+	}
+
+	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @since    1.5.0
+	 */
+	final public function set_settings( $key, $value ) {
+		$this->_settings[ $key ] = $value;
 	}
 
 	/**
