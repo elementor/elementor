@@ -373,7 +373,6 @@ class Editor {
 			'locked_user' => $locked_user,
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
-			'introduction' => User::get_introduction(),
 			'viewportBreakpoints' => Responsive::get_breakpoints(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
