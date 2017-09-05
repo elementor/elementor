@@ -186,6 +186,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.7.1 - 05.09.2017 ###
+* Tweak! – Added compatibility for the future release of Elementor
+* Tweak! - Added API option for developers to insert controls between preexisting controls
+* Tweak! - Added compatibility with Yoast SEO plugin
+* Fix! – Added compatibility for Multisite installation with Domain Mapping ([#2280](https://github.com/pojome/elementor/issues/2280))
+* Fix! - Disappearing widgets when you undo remove section ([#2301](https://github.com/pojome/elementor/issues/2301))
+
 ### 1.7.1 - 29.08.2017 ###
 * Tweak! - Removed some filters for better performance
 * Fix! - Allow import `.zip` mime type to the library for some browsers / servers
