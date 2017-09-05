@@ -92,6 +92,21 @@ body.admin-bar .dialog-close-button {
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
+.elementor-aspect-ratio-219 .elementor-fit-aspect-ratio {
+  padding-bottom: 42.8571%; }
+
+.elementor-aspect-ratio-169 .elementor-fit-aspect-ratio {
+  padding-bottom: 56.25%; }
+
+.elementor-aspect-ratio-43 .elementor-fit-aspect-ratio {
+  padding-bottom: 75%; }
+
+.elementor-aspect-ratio-32 .elementor-fit-aspect-ratio {
+  padding-bottom: 66.6666%; }
+
+.elementor-aspect-ratio-11 .elementor-fit-aspect-ratio {
+  padding-bottom: 100%; }
+
 .elementor-fit-aspect-ratio {
   position: relative;
   height: 0; }
@@ -1404,15 +1419,6 @@ body.admin-bar .dialog-close-button {
   .elementor-widget-video .elementor-custom-embed-image-overlay img {
     display: block;
     width: 100%; }
-
-.elementor-aspect-ratio-169 .elementor-fit-aspect-ratio {
-  padding-bottom: 56.25%; }
-
-.elementor-aspect-ratio-43 .elementor-fit-aspect-ratio {
-  padding-bottom: 75%; }
-
-.elementor-aspect-ratio-32 .elementor-fit-aspect-ratio {
-  padding-bottom: 66.6666%; }
 
 .elementor-image-carousel-wrapper .slick-image-stretch .slick-slide .slick-slide-image {
   width: 100%; }
