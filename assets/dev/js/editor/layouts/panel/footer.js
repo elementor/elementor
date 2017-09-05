@@ -16,7 +16,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		buttonSave: '#elementor-panel-footer-save',
 		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
 		buttonPublish: '#elementor-panel-footer-publish',
-		watchTutorial: '#elementor-panel-footer-watch-tutorial',
 		showTemplates: '#elementor-panel-footer-templates-modal',
 		saveTemplate: '#elementor-panel-footer-save-template',
 		history: '#elementor-panel-footer-history'
@@ -26,7 +25,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.buttonSave': 'onClickButtonSave',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.watchTutorial': 'onClickWatchTutorial',
 		'click @ui.showTemplates': 'onClickShowTemplates',
 		'click @ui.saveTemplate': 'onClickSaveTemplate',
 		'click @ui.history': 'onClickHistory'
@@ -156,10 +154,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		elementor.changeDeviceMode( newDeviceMode );
-	},
-
-	onClickWatchTutorial: function() {
-		elementor.introduction.startIntroduction();
 	},
 
 	onClickShowTemplates: function() {
