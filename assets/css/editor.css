@@ -92,10 +92,10 @@ body.admin-bar .dialog-close-button {
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.elementor-video-wrapper {
+.elementor-fit-aspect-ratio {
   position: relative;
   height: 0; }
-  .elementor-video-wrapper iframe {
+  .elementor-fit-aspect-ratio iframe {
     position: absolute;
     top: 0;
     left: 0;
