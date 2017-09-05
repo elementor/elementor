@@ -4990,6 +4990,10 @@ helpers = {
 				isNegativeCondition = !! conditionNameParts[3],
 				controlValue = values[ conditionRealName ];
 
+			if ( undefined === controlValue ) {
+				return true;
+			}
+
 			if ( conditionSubKey ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
