@@ -16,7 +16,7 @@
 		&message {
 			animation-duration: .4s; // Open lightbox transition
 
-			&:not(.elementor-video-wrapper) {
+			&:not(.elementor-fit-aspect-ratio) {
 				height: 100%;
 			}
 		}

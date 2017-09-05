@@ -557,7 +557,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
 
 		if ( ! $settings['lightbox'] ) {
-			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-video-wrapper' );
+			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-fit-aspect-ratio' );
 		}
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
