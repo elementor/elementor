@@ -2287,29 +2287,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   border-right-style: solid;
   border-left: none; }
 
-#elementor-introduction .dialog-widget-header {
-  padding: 40px 0 0; }
-
-#elementor-introduction .dialog-widget-content {
-  width: 700px;
-  max-width: 100%; }
-
-#elementor-introduction .elementor-video-wrapper {
-  padding-bottom: 62.4%; }
-
-#elementor-introduction .dialog-message {
-  margin-top: 40px; }
-
-#elementor-introduction-title {
-  color: #9b0a46;
-  font-size: 27px;
-  font-weight: bold; }
-
-#elementor-introduction-subtitle {
-  margin-top: 12px;
-  font-size: 16px;
-  color: #a4afb7; }
-
 #elementor-template-library-modal .dialog-widget-content {
   width: 990px;
   background-color: #f1f3f5; }
