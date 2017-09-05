@@ -184,7 +184,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.7.1 - 05.09.2017 =
+= 1.7.2 - 05.09.2017 =
 * Tweak! – Added compatibility for the future release of Elementor
 * Tweak! - Added API option for developers to insert controls between preexisting controls
 * Tweak! - Added compatibility with Yoast SEO plugin
