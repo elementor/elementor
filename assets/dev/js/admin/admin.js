@@ -208,7 +208,7 @@
 
 			self.cache.$formAnchor = $( 'h1' );
 
-			$( '#wpbody-content' ).find( '.page-title-action' ).after( $importButton );
+			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
 
 			self.cache.$formAnchor.after( $importArea );
 
