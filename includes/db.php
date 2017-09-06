@@ -45,7 +45,7 @@ class DB {
 			$this->remove_draft( $post_id );
 
 			// Don't use `update_post_meta` that can't handle `revision` post type
-			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value ) && update_post_meta( $post_id, '_elementor_data', $json_value );
 
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
