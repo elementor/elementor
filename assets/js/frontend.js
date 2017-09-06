@@ -1158,22 +1158,22 @@ module.exports = ViewModule.extend( {
 		this.reset();
 
 		var containerWidth = $container.outerWidth(),
-			sectionWidth = $element.outerWidth(),
-			sectionOffset = $element.offset().left,
-			correctOffset = sectionOffset;
+			elementWidth = $element.outerWidth(),
+			elementOffset = $element.offset().left,
+			correctOffset = elementOffset;
 
 		if ( isSpecialContainer ) {
 			var containerOffset = $container.offset().left;
 
-			if ( sectionOffset > containerOffset ) {
-				correctOffset = sectionOffset - containerOffset;
+			if ( elementOffset > containerOffset ) {
+				correctOffset = elementOffset - containerOffset;
 			} else {
 				correctOffset = 0;
 			}
 		}
 
 		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( sectionWidth + correctOffset );
+			correctOffset = containerWidth - ( elementWidth + correctOffset );
 		}
 
 		var css = {};
