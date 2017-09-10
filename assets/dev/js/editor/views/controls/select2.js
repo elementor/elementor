@@ -1,7 +1,7 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlSelect2ItemView;
 
-ControlSelect2ItemView = ControlBaseItemView.extend( {
+ControlSelect2ItemView = ControlBaseView.extend( {
 	getSelect2Options: function() {
 		var placeholder = this.ui.select.children( 'option:first[value=""]' ).text();
 

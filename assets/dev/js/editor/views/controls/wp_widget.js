@@ -1,9 +1,9 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlWPWidgetItemView;
 
-ControlWPWidgetItemView = ControlBaseItemView.extend( {
+ControlWPWidgetItemView = ControlBaseView.extend( {
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
 		ui.form = 'form';
 		ui.loading = '.wp-widget-form-loading';

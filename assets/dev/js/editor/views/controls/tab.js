@@ -1,7 +1,7 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlTabItemView;
 
-ControlTabItemView = ControlBaseItemView.extend( {
+ControlTabItemView = ControlBaseView.extend( {
 	triggers: {
 		'click': 'control:tab:clicked'
 	}

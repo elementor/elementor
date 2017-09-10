@@ -1,12 +1,12 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlNumberItemView;
 
-ControlNumberItemView = ControlBaseItemView.extend( {
+ControlNumberItemView = ControlBaseView.extend( {
 	correctionTimeOut: 0,
 
 	getInputValue: function( input ) {
 		var self = this,
-			inputValue = ControlBaseItemView.prototype.getInputValue.apply( self, arguments ),
+			inputValue = ControlBaseView.prototype.getInputValue.apply( self, arguments ),
 			validValue = inputValue,
 			min = self.model.get( 'min' ),
 			max = self.model.get( 'max' );
@@ -28,7 +28,7 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 
 	updateElementModel: function( value, input ) {
 		var self = this,
-			originalInputValue = ControlBaseItemView.prototype.getInputValue.call( self, input );
+			originalInputValue = ControlBaseView.prototype.getInputValue.call( self, input );
 
 		if ( originalInputValue !== value ) {
 			self.correctionTimeOut = setTimeout( function() {
@@ -36,7 +36,7 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 			}, 1200 );
 		}
 
-		ControlBaseItemView.prototype.updateElementModel.apply( this, arguments );
+		ControlBaseView.prototype.updateElementModel.apply( this, arguments );
 	},
 
 	onBaseInputChange: function() {
@@ -44,7 +44,7 @@ ControlNumberItemView = ControlBaseItemView.extend( {
 			clearTimeout( this.correctionTimeOut );
 		}
 
-		ControlBaseItemView.prototype.onBaseInputChange.apply( this, arguments );
+		ControlBaseView.prototype.onBaseInputChange.apply( this, arguments );
 	}
 } );
 

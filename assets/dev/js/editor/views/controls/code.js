@@ -1,10 +1,10 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlCodeEditorItemView;
 
-ControlCodeEditorItemView = ControlBaseItemView.extend( {
+ControlCodeEditorItemView = ControlBaseView.extend( {
 
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
 		ui.editor = '.elementor-code-editor';
 

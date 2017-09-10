@@ -1,9 +1,9 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlMediaItemView;
 
-ControlMediaItemView = ControlBaseItemView.extend( {
+ControlMediaItemView = ControlBaseView.extend( {
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
 		ui.addImages = '.elementor-control-gallery-add';
 		ui.clearGallery = '.elementor-control-gallery-clear';
