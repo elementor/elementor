@@ -427,7 +427,7 @@ class Controls_Manager {
 		return $this->stacks;
 	}
 
-	public function get_element_stack( Controls_Stack $controls_stack ) {
+	public function get_element_stack( Controls_Stack $controls_stack, $common_controls = true ) {
 		$stack_id = $controls_stack->get_unique_name();
 
 		if ( ! isset( $this->stacks[ $stack_id ] ) ) {
@@ -436,7 +436,7 @@ class Controls_Manager {
 
 		$stack = $this->stacks[ $stack_id ];
 
-		if ( 'widget' === $controls_stack->get_type() && 'common' !== $stack_id ) {
+		if ( $common_controls && 'common' !== $stack_id && 'widget' === $controls_stack->get_type() ) {
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
