@@ -1,9 +1,9 @@
-var ControlBaseView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlDateTimePickerItemView;
 
-ControlDateTimePickerItemView = ControlBaseView.extend( {
+ControlDateTimePickerItemView = ControlBaseDataView.extend( {
 	ui: function() {
-		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.picker = '.elementor-date-time-picker';
 

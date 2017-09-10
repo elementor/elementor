@@ -1,7 +1,7 @@
-var ControlBaseView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlWysiwygItemView;
 
-ControlWysiwygItemView = ControlBaseView.extend( {
+ControlWysiwygItemView = ControlBaseDataView.extend( {
 	childEvents: {
 		'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
 	},
@@ -20,7 +20,7 @@ ControlWysiwygItemView = ControlBaseView.extend( {
 	},
 
 	initialize: function() {
-		ControlBaseView.prototype.initialize.apply( this, arguments );
+		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		var self = this;
 
