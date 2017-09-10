@@ -559,14 +559,14 @@ ImageCarouselHandler = HandlerModule.extend( {
 			rtl: 'rtl' === elementSettings.direction,
 			responsive: [
 				{
-					breakpoint: 768,
+					breakpoint: 1025,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
 						slidesToScroll: 1
 					}
 				},
 				{
-					breakpoint: 481,
+					breakpoint: 768,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
 						slidesToScroll: 1
@@ -1158,22 +1158,22 @@ module.exports = ViewModule.extend( {
 		this.reset();
 
 		var containerWidth = $container.outerWidth(),
-			sectionWidth = $element.outerWidth(),
-			sectionOffset = $element.offset().left,
-			correctOffset = sectionOffset;
+			elementWidth = $element.outerWidth(),
+			elementOffset = $element.offset().left,
+			correctOffset = elementOffset;
 
 		if ( isSpecialContainer ) {
 			var containerOffset = $container.offset().left;
 
-			if ( sectionOffset > containerOffset ) {
-				correctOffset = sectionOffset - containerOffset;
+			if ( elementOffset > containerOffset ) {
+				correctOffset = elementOffset - containerOffset;
 			} else {
 				correctOffset = 0;
 			}
 		}
 
 		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( sectionWidth + correctOffset );
+			correctOffset = containerWidth - ( elementWidth + correctOffset );
 		}
 
 		var css = {};
@@ -1488,7 +1488,8 @@ LightboxModule = ViewModule.extend( {
 				grabCursor: true,
 				onSlideChangeEnd: self.onSlideChange,
 				runCallbacksOnInit: false,
-				loop: true
+				loop: true,
+				keyboardControl: true
 			};
 
 			if ( options.swiper ) {
