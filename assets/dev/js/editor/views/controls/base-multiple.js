@@ -1,7 +1,7 @@
-var ControlBaseView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlBaseMultipleItemView;
 
-ControlBaseMultipleItemView = ControlBaseView.extend( {
+ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 
 	applySavedValue: function() {
 		var values = this.getControlValue(),

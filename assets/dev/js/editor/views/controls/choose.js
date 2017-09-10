@@ -1,9 +1,9 @@
-var ControlBaseView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlChooseItemView;
 
-ControlChooseItemView = ControlBaseView.extend( {
+ControlChooseItemView = ControlBaseDataView.extend( {
 	ui: function() {
-		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.inputs = '[type="radio"]';
 
@@ -36,7 +36,7 @@ ControlChooseItemView = ControlBaseView.extend( {
 	},
 
 	onRender: function() {
-		ControlBaseView.prototype.onRender.apply( this, arguments );
+		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		var currentValue = this.getControlValue();
 
