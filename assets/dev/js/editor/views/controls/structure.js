@@ -1,9 +1,9 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseView = require( 'elementor-views/controls/base' ),
 	ControlStructureItemView;
 
-ControlStructureItemView = ControlBaseItemView.extend( {
+ControlStructureItemView = ControlBaseView.extend( {
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
 		ui.resetStructure = '.elementor-control-structure-reset';
 
@@ -15,7 +15,7 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 	},
 
 	templateHelpers: function() {
-		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
+		var helpers = ControlBaseView.prototype.templateHelpers.apply( this, arguments );
 
 		helpers.getMorePresets = _.bind( this.getMorePresets, this );
 

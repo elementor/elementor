@@ -1,6 +1,6 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' );
+var ControlBaseView = require( 'elementor-views/controls/base' );
 
-module.exports = ControlBaseItemView.extend( {
+module.exports = ControlBaseView.extend( {
 	setInputValue: function( input, value ) {
 		// Make sure is string value
 		// TODO: Remove in v1.6

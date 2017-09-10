@@ -1,6 +1,6 @@
-var ControlBaseItemView;
+var ControlBaseView;
 
-ControlBaseItemView = Marionette.CompositeView.extend( {
+ControlBaseView = Marionette.CompositeView.extend( {
 	ui: function() {
 		return {
 			input: 'input[data-setting][type!="checkbox"][type!="radio"]',
@@ -182,6 +182,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'ready' );
 
 		this.toggleControlVisibility();
+
 		this.addTooltip();
 	},
 
@@ -280,4 +281,4 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	}
 } );
 
-module.exports = ControlBaseItemView;
+module.exports = ControlBaseView;
