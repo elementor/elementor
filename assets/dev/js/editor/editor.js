@@ -18,7 +18,6 @@ App = Marionette.Application.extend( {
 	debug: require( 'elementor-editor-utils/debug' ),
 	schemes: require( 'elementor-editor-utils/schemes' ),
 	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
-	introduction: require( 'elementor-editor-utils/introduction' ),
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-editor-utils/ajax' ),
 	conditions: require( 'elementor-editor-utils/conditions' ),
@@ -457,7 +456,6 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-		//this.introduction.startOnLoadIntroduction(); // TEMP Removed
 
 		this.onEditModeSwitched();
 

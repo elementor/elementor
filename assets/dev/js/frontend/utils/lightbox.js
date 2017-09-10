@@ -15,7 +15,7 @@ LightboxModule = ViewModule.extend( {
 				item: 'elementor-lightbox-item',
 				image: 'elementor-lightbox-image',
 				videoContainer: 'elementor-video-container',
-				videoWrapper: 'elementor-video-wrapper',
+				videoWrapper: 'elementor-fit-aspect-ratio',
 				playButton: 'elementor-custom-embed-play',
 				playButtonIcon: 'fa',
 				playing: 'elementor-playing',
@@ -158,7 +158,7 @@ LightboxModule = ViewModule.extend( {
 		modal.onHide = function() {
 			onHideMethod();
 
-			modal.getElements( 'message' ).removeClass( 'elementor-video-wrapper' );
+			modal.getElements( 'message' ).removeClass( 'elementor-fit-aspect-ratio' );
 		};
 	},
 
@@ -220,7 +220,8 @@ LightboxModule = ViewModule.extend( {
 				grabCursor: true,
 				onSlideChangeEnd: self.onSlideChange,
 				runCallbacksOnInit: false,
-				loop: true
+				loop: true,
+				keyboardControl: true
 			};
 
 			if ( options.swiper ) {

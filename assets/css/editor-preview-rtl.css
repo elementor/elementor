@@ -74,8 +74,9 @@ body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element.e
   -webkit-animation-fill-mode: none !important;
           animation-fill-mode: none !important; }
 
-#elementor .elementor-editor-element-settings {
-  word-break: normal; }
+#elementor ul.elementor-editor-element-settings {
+  word-break: normal;
+  padding: 0; }
 
 #elementor .gallery {
   opacity: 1; }

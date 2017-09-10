@@ -92,10 +92,25 @@ body.admin-bar .dialog-close-button {
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
 
-.elementor-video-wrapper {
+.elementor-aspect-ratio-219 .elementor-fit-aspect-ratio {
+  padding-bottom: 42.8571%; }
+
+.elementor-aspect-ratio-169 .elementor-fit-aspect-ratio {
+  padding-bottom: 56.25%; }
+
+.elementor-aspect-ratio-43 .elementor-fit-aspect-ratio {
+  padding-bottom: 75%; }
+
+.elementor-aspect-ratio-32 .elementor-fit-aspect-ratio {
+  padding-bottom: 66.6666%; }
+
+.elementor-aspect-ratio-11 .elementor-fit-aspect-ratio {
+  padding-bottom: 100%; }
+
+.elementor-fit-aspect-ratio {
   position: relative;
   height: 0; }
-  .elementor-video-wrapper iframe {
+  .elementor-fit-aspect-ratio iframe {
     position: absolute;
     top: 0;
     left: 0;
@@ -2286,29 +2301,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   left: 0;
   border-right-style: solid;
   border-left: none; }
-
-#elementor-introduction .dialog-widget-header {
-  padding: 40px 0 0; }
-
-#elementor-introduction .dialog-widget-content {
-  width: 700px;
-  max-width: 100%; }
-
-#elementor-introduction .elementor-video-wrapper {
-  padding-bottom: 62.4%; }
-
-#elementor-introduction .dialog-message {
-  margin-top: 40px; }
-
-#elementor-introduction-title {
-  color: #9b0a46;
-  font-size: 27px;
-  font-weight: bold; }
-
-#elementor-introduction-subtitle {
-  margin-top: 12px;
-  font-size: 16px;
-  color: #a4afb7; }
 
 #elementor-template-library-modal .dialog-widget-content {
   width: 990px;
