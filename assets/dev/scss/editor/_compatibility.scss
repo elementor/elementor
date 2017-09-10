@@ -1,5 +1,4 @@
-// Compatibility elementor editor for themes and plugins
-
+// Compatibility elementor editor for themes and plugins (Preview)
 
 body.elementor-editor-active {
 
@@ -43,9 +42,12 @@ body.elementor-editor-active {
 		animation-fill-mode: none !important;
 	}
 
-	// Fixes Make theme issue
-	.elementor-editor-element-settings {
+	// Hack for Make theme issue
+	ul.elementor-editor-element-settings {
 		word-break: normal;
+
+		// Hack for Divi theme
+		padding: 0;
 	}
 
 	// Hack for jQuery Masonry Image Gallery plugin
