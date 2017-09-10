@@ -477,11 +477,11 @@ abstract class Controls_Stack {
 			$condition_sub_key = $condition_key_parts[2];
 			$is_negative_condition = ! ! $condition_key_parts[3];
 
-			$instance_value = $values[ $pure_condition_key ];
-
-			if ( null === $instance_value ) {
+			if ( ! isset( $values[ $pure_condition_key ] ) || null === $values[ $pure_condition_key ] ) {
 				return false;
 			}
+
+			$instance_value = $values[ $pure_condition_key ];
 
 			if ( $condition_sub_key ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
