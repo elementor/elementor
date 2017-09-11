@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Image_Carousel extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve image carousel widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve image carousel widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve image carousel widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the image carousel widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -57,7 +57,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of scripts the widget depended on.
+	 * Retrieve the list of scripts the image carousel widget depended on.
 	 *
 	 * Used to set scripts dependencies required to run the widget.
 	 *
@@ -70,7 +70,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register image carousel widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -608,7 +608,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render image carousel widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -696,7 +696,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the attachment link URL.
+	 * Retrieve image carousel link URL.
 	 *
 	 * @access private
 	 *
@@ -724,7 +724,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the image caption.
+	 * Retrieve image carousel caption.
 	 *
 	 * @access private
 	 *

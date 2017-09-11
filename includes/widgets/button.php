@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Button extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve button widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve button widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve button widget icon.
 	 *
 	 * @access public
 	 *
@@ -62,7 +62,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register button widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -370,7 +370,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render button widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -414,7 +414,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render button widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
@@ -438,7 +438,7 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Render the button widget.
+	 * Render button widget text.
 	 *
 	 * @access protected
 	 */

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Divider extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve divider widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve divider widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve divider widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register divider widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -198,7 +198,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render divider widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -213,7 +213,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render divider widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *

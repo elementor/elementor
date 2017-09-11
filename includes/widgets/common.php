@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Common extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve common widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
-	 * Whether to show the widget in the panel.
+	 * Whether to show the common widget in the panel or not.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register common widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
