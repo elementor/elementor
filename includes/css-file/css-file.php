@@ -283,7 +283,7 @@ abstract class CSS_File {
 	abstract protected function load_meta();
 
 	/**
-	 * @param string $meta
+	 * @param array $meta
 	 */
 	abstract protected function update_meta( $meta );
 
