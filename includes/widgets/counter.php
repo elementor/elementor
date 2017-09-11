@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Counter extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve counter widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve counter widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve counter widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the counter widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -57,7 +57,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of scripts the widget depended on.
+	 * Retrieve the list of scripts the counter widget depended on.
 	 *
 	 * Used to set scripts dependencies required to run the widget.
 	 *
@@ -70,7 +70,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register counter widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -236,7 +236,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render counter widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
@@ -258,7 +258,7 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render counter widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *

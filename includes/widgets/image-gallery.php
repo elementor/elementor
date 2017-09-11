@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Image_Gallery extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve image gallery widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve image gallery widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve image gallery widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the image gallery widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -72,7 +72,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register image gallery widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -332,7 +332,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render image gallery widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -381,7 +381,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render image gallery widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *

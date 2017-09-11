@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Icon_Box extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve icon box widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve icon box widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve icon box widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the icon box widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -57,7 +57,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register icon box widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -528,7 +528,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render icon box widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -576,7 +576,7 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render icon box widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *

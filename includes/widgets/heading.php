@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Heading extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve heading widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve heading widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve heading widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -203,7 +203,7 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render heading widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -244,7 +244,7 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render heading widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
