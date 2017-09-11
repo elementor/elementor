@@ -18,6 +18,12 @@ class Preview {
 			return;
 		}
 
+		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
+		// TODO: Move this code to `includes/compatibility.php`.
+		if ( class_exists( 'WPSEO_Frontend' ) ) {
+			remove_action( 'template_redirect', [ \WPSEO_Frontend::get_instance(), 'clean_permalink' ], 1 );
+		}
+
 		// Disable the WP admin bar in preview mode.
 		add_filter( 'show_admin_bar', '__return_false' );
 
@@ -105,6 +111,6 @@ class Preview {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'template_redirect', [ $this, 'init' ] );
+		add_action( 'template_redirect', [ $this, 'init' ], 0 );
 	}
 }
