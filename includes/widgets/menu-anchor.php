@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Menu_Anchor extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve menu anchor widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve menu anchor widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve menu anchor widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the menu anchor widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -57,7 +57,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register menu anchor widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -94,7 +94,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render menu anchor widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -114,7 +114,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render menu anchor widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *

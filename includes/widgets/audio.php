@@ -20,7 +20,7 @@ class Widget_Audio extends Widget_Base {
 	protected $_current_instance = [];
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve audio widget name.
 	 *
 	 * @access public
 	 *
@@ -31,7 +31,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve audio widget title.
 	 *
 	 * @access public
 	 *
@@ -42,7 +42,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve audio widget icon.
 	 *
 	 * @access public
 	 *
@@ -53,7 +53,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the audio widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -66,7 +66,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register audio widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -221,7 +221,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render audio widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -248,6 +248,13 @@ class Widget_Audio extends Widget_Base {
 		endif;
 	}
 
+	/**
+	 * Filter audio widget oEmbed results.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @access public
+	 */
 	public function filter_oembed_result( $html ) {
 		$param_keys = [
 			'auto_play',
@@ -284,7 +291,7 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render audio widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
