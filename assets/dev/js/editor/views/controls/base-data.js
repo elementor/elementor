@@ -20,7 +20,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	templateHelpers: function() {
 		var controlData = ControlBaseView.prototype.templateHelpers.apply( this, arguments );
 
-		controlData.controlValue = this.getControlValue();
+		controlData.data.controlValue = this.getControlValue();
 
 		return controlData;
 	},
