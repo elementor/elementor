@@ -186,6 +186,14 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.7.3 - 11.09.2017 ###
+* Tweak! - Added responsive size for icon list widget ([#2302](https://github.com/pojome/elementor/issues/2302))
+* Tweak! - Added keyboard control for lightbox slideshow ([#2270](https://github.com/pojome/elementor/issues/2270))
+* Tweak! – Updated E-Icons font v2.4.2
+* Fix! - Changed image carousel breakpoints ([#2341](https://github.com/pojome/elementor/issues/2341))
+* Fix! - Handles editor view for Divi theme ([#2342](https://github.com/pojome/elementor/issues/2342))
+* Fix! - Live editing to the page settings custom CSS ([#2363](https://github.com/pojome/elementor/issues/2363))
+
 ### 1.7.2 - 05.09.2017 ###
 * Tweak! – Added compatibility for the future release of Elementor
 * Tweak! - Added API option for developers to insert controls between preexisting controls
