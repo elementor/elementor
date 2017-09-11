@@ -117,14 +117,16 @@ abstract class Controls_Stack {
 			$this->start_injection( $options['position'] );
 		}
 
+		if ( $this->injection_point ) {
+			$options['index'] = $this->injection_point['index']++;
+		}
+
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
 			$target_section_args = $this->_current_section;
 
 			$target_tab = $this->_current_tab;
 
 			if ( $this->injection_point ) {
-				$options['index'] = $this->injection_point['index']++;
-
 				$target_section_args = $this->injection_point['section'];
 
 				if ( ! empty( $this->injection_point['tab'] ) ) {
@@ -169,6 +171,10 @@ abstract class Controls_Stack {
 			'type' => 'control',
 			'at' => 'after',
 		];
+
+		if ( ! empty( $position['type'] ) && 'section' === $position['type'] ) {
+			$default_position['at'] = 'end';
+		}
 
 		$position = array_merge( $default_position, $position );
 
@@ -471,11 +477,11 @@ abstract class Controls_Stack {
 			$condition_sub_key = $condition_key_parts[2];
 			$is_negative_condition = ! ! $condition_key_parts[3];
 
-			$instance_value = $values[ $pure_condition_key ];
-
-			if ( null === $instance_value ) {
+			if ( ! isset( $values[ $pure_condition_key ] ) || null === $values[ $pure_condition_key ] ) {
 				return false;
 			}
+
+			$instance_value = $values[ $pure_condition_key ];
 
 			if ( $condition_sub_key ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
@@ -520,6 +526,10 @@ abstract class Controls_Stack {
 
 		$this->_current_section = $this->get_section_args( $section_id );
 
+		if ( $this->injection_point ) {
+			$this->injection_point['section'] = $this->_current_section;
+		}
+
 		do_action( 'elementor/element/after_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_start', $this, $args );
 	}
@@ -556,6 +566,10 @@ abstract class Controls_Stack {
 		$this->_current_tab = [
 			'tabs_wrapper' => $tabs_id,
 		];
+
+		if ( $this->injection_point ) {
+			$this->injection_point['tab'] = $this->_current_tab;
+		}
 	}
 
 	public function end_controls_tabs() {
@@ -573,6 +587,10 @@ abstract class Controls_Stack {
 		$this->add_control( $tab_id, $args );
 
 		$this->_current_tab['inner_tab'] = $tab_id;
+
+		if ( $this->injection_point ) {
+			$this->injection_point['tab']['inner_tab'] = $this->_current_tab['inner_tab'];
+		}
 	}
 
 	public function end_controls_tab() {

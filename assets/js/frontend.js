@@ -141,6 +141,10 @@ module.exports = ElementsHandler;
 				lightbox: new LightboxModule()
 			};
 
+			self.modules = {
+				StretchElement: require( 'elementor-frontend/modules/stretch-element' )
+			};
+
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
@@ -293,7 +297,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":19,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/utils/anchors":16,"elementor-frontend/utils/lightbox":17,"elementor-frontend/utils/youtube":18,"elementor-utils/hot-keys":20}],3:[function(require,module,exports){
+},{"../utils/hooks":20,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/modules/stretch-element":16,"elementor-frontend/utils/anchors":17,"elementor-frontend/utils/lightbox":18,"elementor-frontend/utils/youtube":19,"elementor-utils/hot-keys":21}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -405,7 +409,7 @@ HandlerModule = ViewModule.extend( {
 
 module.exports = HandlerModule;
 
-},{"../utils/view-module":22}],4:[function(require,module,exports){
+},{"../utils/view-module":23}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
@@ -735,71 +739,34 @@ var BackgroundVideo = HandlerModule.extend( {
 
 var StretchedSection = HandlerModule.extend( {
 
+	stretchElement: null,
+
 	bindEvents: function() {
 		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
 	},
 
+	initStretch: function() {
+		this.stretchElement = new elementorFrontend.modules.StretchElement( { element: this.$element } );
+	},
+
 	stretchSection: function() {
-		// Clear any previously existing css associated with this script
-		var direction = elementorFrontend.config.is_rtl ? 'right' : 'left',
-			resetCss = {},
-			isStretched = this.$element.hasClass( 'elementor-section-stretched' );
+		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
 
 		if ( elementorFrontend.isEditMode() || isStretched ) {
-			resetCss.width = 'auto';
-
-			resetCss[ direction ] = 0;
-
-			this.$element.css( resetCss );
+			this.stretchElement.reset();
 		}
 
-		if ( ! isStretched ) {
-			return;
+		if ( isStretched ) {
+			this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
+
+			this.stretchElement.stretch();
 		}
-
-		var $sectionContainer,
-			hasSpecialContainer = false;
-
-		try {
-			$sectionContainer = jQuery( elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) );
-
-			if ( $sectionContainer.length ) {
-				hasSpecialContainer = true;
-			}
-		} catch ( e ) {}
-
-		if ( ! hasSpecialContainer ) {
-			$sectionContainer = elementorFrontend.getElements( '$window' );
-		}
-
-		var containerWidth = $sectionContainer.outerWidth(),
-			sectionWidth = this.$element.outerWidth(),
-			sectionOffset = this.$element.offset().left,
-			correctOffset = sectionOffset;
-
-		if ( hasSpecialContainer ) {
-			var containerOffset = $sectionContainer.offset().left;
-
-			if ( sectionOffset > containerOffset ) {
-				correctOffset = sectionOffset - containerOffset;
-			} else {
-				correctOffset = 0;
-			}
-		}
-
-		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( sectionWidth + correctOffset );
-		}
-
-		resetCss.width = containerWidth + 'px';
-
-		resetCss[ direction ] = -correctOffset + 'px';
-
-		this.$element.css( resetCss );
 	},
 
 	onInit: function() {
 		HandlerModule.prototype.onInit.apply( this, arguments );
+
+		this.initStretch();
 
 		this.stretchSection();
 	},
@@ -1167,6 +1134,73 @@ var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
+		return {
+			element: null,
+			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
+			selectors: {
+				container: window
+			}
+		};
+	},
+
+	getDefaultElements: function() {
+		return {
+			$element: jQuery( this.getSettings( 'element' ) )
+		};
+	},
+
+	stretch: function() {
+		var containerSelector = this.getSettings( 'selectors.container' ),
+			$element = this.elements.$element,
+			$container = jQuery( containerSelector ),
+			isSpecialContainer = window !== $container[0];
+
+		this.reset();
+
+		var containerWidth = $container.outerWidth(),
+			elementWidth = $element.outerWidth(),
+			elementOffset = $element.offset().left,
+			correctOffset = elementOffset;
+
+		if ( isSpecialContainer ) {
+			var containerOffset = $container.offset().left;
+
+			if ( elementOffset > containerOffset ) {
+				correctOffset = elementOffset - containerOffset;
+			} else {
+				correctOffset = 0;
+			}
+		}
+
+		if ( elementorFrontend.config.is_rtl ) {
+			correctOffset = containerWidth - ( elementWidth + correctOffset );
+		}
+
+		var css = {};
+
+		css.width = containerWidth + 'px';
+
+		css[ this.getSettings( 'direction' ) ] = -correctOffset + 'px';
+
+		$element.css( css );
+	},
+
+	reset: function() {
+		var css = {};
+
+		css.width = 'auto';
+
+		css[ this.getSettings( 'direction' ) ] = 0;
+
+		this.elements.$element.css( css );
+	}
+} );
+
+},{"../../utils/view-module":23}],17:[function(require,module,exports){
+var ViewModule = require( '../../utils/view-module' );
+
+module.exports = ViewModule.extend( {
+	getDefaultSettings: function() {
 
 		return {
 			scrollDuration: 500,
@@ -1231,7 +1265,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":22}],17:[function(require,module,exports){
+},{"../../utils/view-module":23}],18:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' ),
 	LightboxModule;
 
@@ -1249,7 +1283,7 @@ LightboxModule = ViewModule.extend( {
 				item: 'elementor-lightbox-item',
 				image: 'elementor-lightbox-image',
 				videoContainer: 'elementor-video-container',
-				videoWrapper: 'elementor-video-wrapper',
+				videoWrapper: 'elementor-fit-aspect-ratio',
 				playButton: 'elementor-custom-embed-play',
 				playButtonIcon: 'fa',
 				playing: 'elementor-playing',
@@ -1392,7 +1426,7 @@ LightboxModule = ViewModule.extend( {
 		modal.onHide = function() {
 			onHideMethod();
 
-			modal.getElements( 'message' ).removeClass( 'elementor-video-wrapper' );
+			modal.getElements( 'message' ).removeClass( 'elementor-fit-aspect-ratio' );
 		};
 	},
 
@@ -1682,7 +1716,7 @@ LightboxModule = ViewModule.extend( {
 
 module.exports = LightboxModule;
 
-},{"../../utils/view-module":22}],18:[function(require,module,exports){
+},{"../../utils/view-module":23}],19:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1733,7 +1767,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":22}],19:[function(require,module,exports){
+},{"../../utils/view-module":23}],20:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1992,7 +2026,7 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var HotKeys = function() {
 	var hotKeysHandlers = this.hotKeysHandlers = {};
 
@@ -2044,7 +2078,7 @@ var HotKeys = function() {
 
 module.exports = new HotKeys();
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,
@@ -2236,7 +2270,7 @@ Module.extend = function( properties ) {
 
 module.exports = Module;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var Module = require( './module' ),
 	ViewModule;
 
@@ -2262,5 +2296,5 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":21}]},{},[2])
+},{"./module":22}]},{},[2])
 //# sourceMappingURL=frontend.js.map
