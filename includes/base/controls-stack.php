@@ -28,9 +28,9 @@ abstract class Controls_Stack {
 	const RESPONSIVE_MOBILE = 'mobile';
 
 	/**
-	 * Control ID.
+	 * Generic ID.
 	 *
-	 * Holds the control ID.
+	 * Holds the ID.
 	 *
 	 * @access private
 	 *
@@ -39,9 +39,9 @@ abstract class Controls_Stack {
 	private $_id;
 
 	/**
-	 * Control settings.
+	 * Parrsed Settings.
 	 *
-	 * Holds the control settings.
+	 * Holds the settings, after the data was processed.
 	 *
 	 * @access private
 	 *
@@ -50,9 +50,9 @@ abstract class Controls_Stack {
 	private $_settings;
 
 	/**
-	 * Control data.
+	 * Raw Data.
 	 *
-	 * Holds the control data/items.
+	 * Holds all the raw data.
 	 *
 	 * @access private
 	 *
@@ -61,9 +61,9 @@ abstract class Controls_Stack {
 	private $_data;
 
 	/**
-	 * Control config.
+	 * The configuration.
 	 *
-	 * Holds the control configuration.
+	 * Holds the configuration used in the editor.
 	 *
 	 * @access private
 	 *
@@ -105,47 +105,47 @@ abstract class Controls_Stack {
 	private $injection_point;
 
 	/**
-	 * Retrieve control name.
+	 * Retrieve the name.
 	 *
 	 * @access public
 	 * @abstract
 	 *
-	 * @return string Control name.
+	 * @return string The name.
 	 */
 	abstract public function get_name();
 
 	/**
-	 * Retrieve unique control name.
+	 * Retrieve unique name.
 	 *
 	 * Some classes need to use unique names, this method allows you to create them.
 	 * By default it returns the regular name.
 	 *
 	 * @access public
 	 *
-	 * @return string Control unique name.
+	 * @return string Unique name.
 	 */
 	public function get_unique_name() {
 		return $this->get_name();
 	}
 
 	/**
-	 * Retrieve control ID.
+	 * Retrieve the ID.
 	 *
 	 * @access public
 	 *
-	 * @return string Control ID.
+	 * @return string The ID.
 	 */
 	public function get_id() {
 		return $this->_id;
 	}
 
 	/**
-	 * Retrieve control type.
+	 * Retrieve the type.
 	 *
 	 * @access public
 	 * @static
 	 *
-	 * @return string Control type.
+	 * @return string The type.
 	 */
 	public static function get_type() {
 		return 'stack';
@@ -186,7 +186,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve current tab.
 	 *
-	 * Get control current tab.
+	 * Get the current tab.
 	 *
 	 * @access public
 	 *
@@ -652,13 +652,13 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve control config.
+	 * Retrieve the config.
 	 *
-	 * Get control config or, if non set, use the initial config.
+	 * Get the config or, if non set, use the initial config.
 	 *
 	 * @access public
 	 *
-	 * @return array|null Control config.
+	 * @return array|null The config.
 	 */
 	final public function get_config() {
 		if ( null === $this->_config ) {
@@ -690,7 +690,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve control data.
+	 * Retrieve the raw data.
 	 *
 	 * Get all the items or, when requested, a specific item.
  	 *
@@ -698,14 +698,14 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $item The requested item. Default is null.
 	 *
-	 * @return array Control data.
+	 * @return array The raw data.
 	 */
 	public function get_data( $item = null ) {
 		return self::_get_items( $this->_data, $item );
 	}
 
 	/**
-	 * Retrieve control settings.
+	 * Retrieve the settings.
 	 *
 	 * Get all the settings or, when requested, a specific setting.
  	 *
@@ -713,7 +713,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $setting The requested setting. Default is null.
 	 *
-	 * @return array Control settings.
+	 * @return array The settings.
 	 */
 	public function get_settings( $setting = null ) {
 		return self::_get_items( $this->_settings, $setting );
@@ -799,6 +799,8 @@ abstract class Controls_Stack {
 
 	/**
 	 * Whether the control is visible or not.
+	 *
+	 * Used to determine whether the control is visible or not.
 	 *
 	 * @access public
 	 *
@@ -1013,7 +1015,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Set control settings.
+	 * Set settings.
 	 *
 	 * @access public
 	 *
@@ -1037,13 +1039,13 @@ abstract class Controls_Stack {
 	protected function _register_controls() {}
 
 	/**
-	 * Retrieve default control data.
+	 * Retrieve default data.
 	 *
-	 * Get the default data of the control. Used to reset the control data on initialization.
+	 * Get the default data. Used to reset the data on initialization.
 	 *
 	 * @access protected
 	 *
-	 * @return array Default control data.
+	 * @return array Default data.
 	 */
 	protected function get_default_data() {
 		return [
@@ -1080,11 +1082,11 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve initial config.
 	 *
-	 * Get the initial configuration of the control.
+	 * Get the initial configuration.
 	 *
 	 * @access protected
 	 *
-	 * @return array Control initial config.
+	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
 		return [
@@ -1117,7 +1119,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Initialize control.
+	 * Initialize controls.
 	 *
 	 * Register the controls.
 	 *
@@ -1130,9 +1132,9 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Initialize control.
+	 * Initialize the class.
 	 *
-	 * Set control ID, settings and data.
+	 * Set the raw data, the ID and the parsed settings.
 	 *
 	 * @access protected
 	 */
@@ -1147,12 +1149,12 @@ abstract class Controls_Stack {
 	/**
 	 * Controls stack constructor.
 	 *
-	 * Initializing the control stack using `$data`. The `$data` is required for
-	 * a normal instance. It is optional only for internal `type instance`.
+	 * Initializing the control stack class using `$data`. The `$data` is required
+	 * for a normal instance. It is optional only for internal `type instance`.
 	 *
 	 * @access public
 	 *
-	 * @param array $data Control data. Default value is an empty array.
+	 * @param array $data The data. Default value is an empty array.
 	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
