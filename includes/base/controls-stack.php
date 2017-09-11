@@ -30,7 +30,7 @@ abstract class Controls_Stack {
 	/**
 	 * Generic ID.
 	 *
-	 * Holds the ID.
+	 * Holds the uniqe ID.
 	 *
 	 * @access private
 	 *
@@ -41,7 +41,8 @@ abstract class Controls_Stack {
 	/**
 	 * Parrsed Settings.
 	 *
-	 * Holds the settings, after the data was processed.
+	 * Holds the settings, which is the data entered by the user and processed
+	 * by elementor.
 	 *
 	 * @access private
 	 *
@@ -52,7 +53,8 @@ abstract class Controls_Stack {
 	/**
 	 * Raw Data.
 	 *
-	 * Holds all the raw data.
+	 * Holds all the raw data including the element type, the child elements,
+	 * the user data.
 	 *
 	 * @access private
 	 *
@@ -63,7 +65,8 @@ abstract class Controls_Stack {
 	/**
 	 * The configuration.
 	 *
-	 * Holds the configuration used in the editor.
+	 * Holds the configuration used to generate the Elementor editor. It includes
+	 * the element name, icon, categories ect...
 	 *
 	 * @access private
 	 *
@@ -74,7 +77,7 @@ abstract class Controls_Stack {
 	/**
 	 * Current section.
 	 *
-	 * Holds the current section while render a set of controls sections.
+	 * Holds the current section while inserting a set of controls sections.
 	 *
 	 * @access private
 	 *
@@ -85,7 +88,7 @@ abstract class Controls_Stack {
 	/**
 	 * Current tab.
 	 *
-	 * Holds the current tab while render a set of controls tabs.
+	 * Holds the current tab while inserting a set of controls tabs.
 	 *
 	 * @access private
 	 *
@@ -96,7 +99,7 @@ abstract class Controls_Stack {
 	/**
 	 * Injection point.
 	 *
-	 * Holds the injection point in the stack.
+	 * Holds the injection point in the stack where the control will be inserted.
 	 *
 	 * @access private
 	 *
@@ -129,7 +132,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the ID.
+	 * Retrieve the generic ID.
 	 *
 	 * @access public
 	 *
@@ -141,6 +144,8 @@ abstract class Controls_Stack {
 
 	/**
 	 * Retrieve the type.
+	 *
+	 * Get the type, i.e. stackת element or widget.
 	 *
 	 * @access public
 	 * @static
@@ -154,7 +159,8 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve items.
 	 *
-	 * Get all the items or, when requested, a specific item.
+	 * Utility method recieves an array with needle, and the it returns all the
+	 * Items match the needle.
 	 *
 	 * @access private
 	 * @static
@@ -175,6 +181,8 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve current section.
 	 *
+	 * When inserting new controls, this method will return the current section.
+	 *
 	 * @access public
 	 *
 	 * @return string Current section.
@@ -186,7 +194,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve current tab.
 	 *
-	 * Get the current tab.
+	 * When inserting new controls, this method will return the current tab.
 	 *
 	 * @access public
 	 *
@@ -203,7 +211,9 @@ abstract class Controls_Stack {
  	 *
 	 * @access public
 	 *
-	 * @param string $control_id The ID of the requested control. Default is null.
+	 * @param string $control_id The ID of the requested control. Optional field,
+	 *                           when set it will return a specific control.
+	 *                           Default is null.
 	 *
 	 * @return mixed Controls list.
 	 */
@@ -222,7 +232,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve active controls.
 	 *
-	 * Get an array of active controls.
+	 * Get an array of all the active controls that meet the condition field.
 	 *
 	 * @access public
 	 *
@@ -251,7 +261,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve controls settings.
 	 *
-	 * Get the settings for all the controls.
+	 * Get the settings for all the controls that represent them.
 	 *
 	 * @access public
 	 *
@@ -344,7 +354,8 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
-	 * @param array  $args       Control arguments.
+	 * @param array  $args       Control arguments. Only the new fields you want
+	 *                           to update.
 	 *
 	 * @return
 	 */
@@ -355,9 +366,22 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve position information.
 	 *
+	 * Get the position while injecting data, based on the element type.
+	 *
+	 * @since 1.7.0
 	 * @access public
 	 *
-	 * @param array $position Position.
+	 * @param array $position {
+	 *     The injection position.
+	 *
+	 *     @type string $type Injection type, either `control` or `section`.
+	 *                        Default value is `control`.
+	 *     @type string $at   Where to inject. If `$type` is `control` accepts
+	 *                        `before` and `after`. If `$type` is `section`
+	 *                        accepts `start` and `end`. Dafault values based on
+	 *                        the `type`.
+	 *     @type string $of   Control/Section ID.
+	 * }
 	 *
 	 * @return array Position info.
 	 */
@@ -436,13 +460,23 @@ abstract class Controls_Stack {
 	/**
 	 * Add new group control to stack.
 	 *
+	 * Register a set of related controls grouped together as a single unified
+	 * control. For example grouping together like typography controls into a
+	 * single, easy-to-use control.
+	 *
 	 * @access public
 	 *
-	 * @param string $group_name Group control ID.
-	 * @param array  $args       Group control arguments.
-	 * @param array  $options    Group control options. Default is empty array.
+	 * @param string $group_name Group control name.
+	 * @param array  $args       {
+	 *     Group control arguments. Default is empty array.
 	 *
-	 * @return
+	 *     @type string $name      Base Control name.
+	 *     @type string $selector  CSS Selector
+	 *     @type string $scheme    Globel scheme to be used.
+	 *     @type array  $condition Display control based on predefined conditional
+	 *                             logic.
+	 * }
+	 * @param array  $options    Group control options. Default is empty array.
 	 */
 	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
@@ -456,6 +490,8 @@ abstract class Controls_Stack {
 
 	/**
 	 * Retrieve scheme controls.
+	 *
+	 * Get all the controls that use schemes.
 	 *
 	 * @access public
 	 *
@@ -473,6 +509,9 @@ abstract class Controls_Stack {
 
 	/**
 	 * Retrieve style controls.
+	 *
+	 * Get style controls for all active controls or, when requested, from a
+	 * specific set of controls.
 	 *
 	 * @access public
 	 *
@@ -503,6 +542,8 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve class controls.
 	 *
+	 * From all the active controls get the controls that use the same prefix class.
+	 *
 	 * @access public
 	 *
 	 * @return array Class controls.
@@ -518,6 +559,8 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve tabs controls.
 	 *
+	 * Get all the tabs assigened to the control.
+	 *
 	 * @access public
 	 *
 	 * @return array Tabs controls.
@@ -530,6 +573,9 @@ abstract class Controls_Stack {
 
 	/**
 	 * Add new responsive control to stack.
+	 *
+	 * Register a set of controls to allow editing based on user screen size.
+	 * This method registeres three screen sizes: Desktop, Tablet and Mobile.
 	 *
 	 * @access public
 	 *
@@ -991,11 +1037,22 @@ abstract class Controls_Stack {
 	/**
 	 * Start injection.
 	 *
-	 * Used to inject controls and tabs to a specific position in the stack.
+	 * Used to inject controls and sections to a specific position in the stack.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 *
-	 * @param array $position The position where to srart the injection.
+	 * @param array $position {
+	 *     The position where to srart the injection.
+	 *
+	 *     @type string $type Injection type, either `control` or `section`.
+	 *                        Default value is `control`.
+	 *     @type string $at   Where to inject. If `$type` is `control` accepts
+	 *                        `before` and `after`. If `$type` is `section`
+	 *                        accepts `start` and `end`. Dafault values based on
+	 *                        the `type`.
+	 *     @type string $of   Control/Section ID.
+	 * }
 	 */
 	final public function start_injection( array $position ) {
 		if ( $this->injection_point ) {
@@ -1008,6 +1065,7 @@ abstract class Controls_Stack {
 	/**
 	 * End injection.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 */
 	final public function end_injection() {
