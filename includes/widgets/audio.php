@@ -254,6 +254,8 @@ class Widget_Audio extends Widget_Base {
 	 * Written in PHP and used to generate the final HTML.
 	 *
 	 * @access public
+	 *
+	 * @param string $html The HTML returned by the oEmbed provider.
 	 */
 	public function filter_oembed_result( $html ) {
 		$param_keys = [
