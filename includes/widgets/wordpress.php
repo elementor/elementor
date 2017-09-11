@@ -29,7 +29,7 @@ class Widget_WordPress extends Widget_Base {
 	private $_widget_instance = null;
 
 	/**
-	 * Whether the widget is is a Pojo widget.
+	 * Whether the widget is a Pojo widget or not.
 	 *
 	 * @access private
 	 *
@@ -94,7 +94,7 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
-	 * Whether the reload preview is required.
+	 * Whether the reload preview is required or not.
 	 *
 	 * Used to determine whether the reload preview is required.
 	 *

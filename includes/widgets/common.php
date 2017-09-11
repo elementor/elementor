@@ -22,7 +22,7 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
-	 * Whether to show the common widget in the panel.
+	 * Whether to show the common widget in the panel or not.
 	 *
 	 * @access public
 	 *

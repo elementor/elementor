@@ -698,7 +698,7 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
-	 * Whether the video widget has an overlay image.
+	 * Whether the video widget has an overlay image or not.
 	 *
 	 * Used to determine whether an overlay image was set for the video.
 	 *
