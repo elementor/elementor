@@ -193,13 +193,13 @@ abstract class Controls_Stack {
 
 		$target_control_index = array_search( $position['of'], $controls_keys );
 
-		if ( false == $target_control_index ) {
+		if ( false === $target_control_index ) {
 			return false;
 		}
 
 		$target_section_index = $target_control_index;
 
-		while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
+		while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
 			$target_section_index--;
 		}
 
@@ -207,7 +207,7 @@ abstract class Controls_Stack {
 			$target_control_index++;
 
 			if ( 'end' === $position['at'] ) {
-				while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
+				while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
 					if ( ++$target_control_index >= count( $registered_controls ) ) {
 						break;
 					}
