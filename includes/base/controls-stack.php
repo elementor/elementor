@@ -5,53 +5,164 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Controls Stack
+ *
+ * @abstract
+ */
 abstract class Controls_Stack {
 
+	/**
+     * Responsive 'desktop' device name.
+     */
 	const RESPONSIVE_DESKTOP = 'desktop';
+
+	/**
+     * Responsive 'tablet' device name.
+     */
 	const RESPONSIVE_TABLET = 'tablet';
+
+	/**
+     * Responsive 'mobile' device name.
+     */
 	const RESPONSIVE_MOBILE = 'mobile';
 
+	/**
+	 * Control ID.
+	 *
+	 * Holds the control ID.
+	 *
+	 * @access private
+	 *
+	 * @var string
+	 */
 	private $_id;
+
+	/**
+	 * Control settings.
+	 *
+	 * Holds the control settings.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $_settings;
+
+	/**
+	 * Control data.
+	 *
+	 * Holds the control data/items.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $_data;
+
+	/**
+	 * Control config.
+	 *
+	 * Holds the control configuration.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $_config;
 
 	/**
-	 * Holds the current section while render a set of controls sections
+	 * Current section.
+	 *
+	 * Holds the current section while render a set of controls sections.
+	 *
+	 * @access private
 	 *
 	 * @var null|array
 	 */
 	private $_current_section;
 
 	/**
-	 * Holds the current tab while render a set of controls tabs
+	 * Current tab.
+	 *
+	 * Holds the current tab while render a set of controls tabs.
+	 *
+	 * @access private
 	 *
 	 * @var null|array
 	 */
 	private $_current_tab;
 
+	/**
+	 * Injection point.
+	 *
+	 * Holds the injection point in the stack.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $injection_point;
 
+	/**
+	 * Retrieve control name.
+	 *
+	 * @access public
+	 * @abstract
+	 *
+	 * @return string Control name.
+	 */
 	abstract public function get_name();
 
+	/**
+	 * Retrieve unique control name.
+	 *
+	 * Some classes need to use unique names, this method allows you to create them.
+	 * By default it returns the regular name.
+	 *
+	 * @access public
+	 *
+	 * @return string Control unique name.
+	 */
 	public function get_unique_name() {
 		return $this->get_name();
 	}
 
+	/**
+	 * Retrieve control ID.
+	 *
+	 * @access public
+	 *
+	 * @return string Control ID.
+	 */
 	public function get_id() {
 		return $this->_id;
 	}
 
+	/**
+	 * Retrieve control type.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return string Control type.
+	 */
 	public static function get_type() {
 		return 'stack';
 	}
 
 	/**
-	 * @param array  $haystack
-	 * @param string $needle
+	 * Retrieve items.
 	 *
-	 * @return mixed the whole haystack or the
-	 * needle from the haystack when requested
+	 * Get all the items or, when requested, a specific item.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @param array  $haystack Default is empty array.
+	 * @param string $needle   Default is null.
+	 *
+	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
 	private static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
@@ -61,14 +172,41 @@ abstract class Controls_Stack {
 		return $haystack;
 	}
 
+	/**
+	 * Retrieve current section.
+	 *
+	 * @access public
+	 *
+	 * @return string Current section.
+	 */
 	public function get_current_section() {
 		return $this->_current_section;
 	}
 
+	/**
+	 * Retrieve current tab.
+	 *
+	 * Get control current tab.
+	 *
+	 * @access public
+	 *
+	 * @return string Current tab.
+	 */
 	public function get_current_tab() {
 		return $this->_current_tab;
 	}
 
+	/**
+	 * Retrieve controls.
+	 *
+	 * Get all the controls or, when requested, a specific control.
+ 	 *
+	 * @access public
+	 *
+	 * @param string $control_id The ID of the requested control. Default is null.
+	 *
+	 * @return mixed Controls list.
+	 */
 	public function get_controls( $control_id = null ) {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -81,6 +219,15 @@ abstract class Controls_Stack {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
+	/**
+	 * Retrieve active controls.
+	 *
+	 * Get an array of active controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Active controls.
+	 */
 	public function get_active_controls() {
 		$controls = $this->get_controls();
 
@@ -101,10 +248,30 @@ abstract class Controls_Stack {
 		return $active_controls;
 	}
 
+	/**
+	 * Retrieve controls settings.
+	 *
+	 * Get the settings for all the controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Controls settings.
+	 */
 	public function get_controls_settings() {
 		return array_intersect_key( $this->get_settings(), $this->get_controls() );
 	}
 
+	/**
+	 * Add new control to stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $id      Control ID.
+	 * @param array  $args    Control arguments.
+	 * @param array  $options Control options. Default is empty array.
+	 *
+	 * @return
+	 */
 	public function add_control( $id, array $args, $options = [] ) {
 		$default_options = [
 			'overwrite' => false,
@@ -158,14 +325,42 @@ abstract class Controls_Stack {
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
 	}
 
+	/**
+	 * Remove control from stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id Control ID.
+	 *
+	 * @return
+	 */
 	public function remove_control( $control_id ) {
 		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
 	}
 
+	/**
+	 * Update control in stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id Control ID.
+	 * @param array  $args       Control arguments.
+	 *
+	 * @return
+	 */
 	public function update_control( $control_id, array $args ) {
 		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
 	}
 
+	/**
+	 * Retrieve position information.
+	 *
+	 * @access public
+	 *
+	 * @param array $position Position.
+	 *
+	 * @return array Position info.
+	 */
 	final public function get_position_info( array $position ) {
 		$default_position = [
 			'type' => 'control',
@@ -238,6 +433,17 @@ abstract class Controls_Stack {
 		return $position_info;
 	}
 
+	/**
+	 * Add new group control to stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $group_name Group control ID.
+	 * @param array  $args       Group control arguments.
+	 * @param array  $options    Group control options. Default is empty array.
+	 *
+	 * @return
+	 */
 	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
@@ -248,6 +454,13 @@ abstract class Controls_Stack {
 		$group->add_controls( $this, $args, $options );
 	}
 
+	/**
+	 * Retrieve scheme controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Scheme controls.
+	 */
 	final public function get_scheme_controls() {
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
@@ -258,6 +471,15 @@ abstract class Controls_Stack {
 		);
 	}
 
+	/**
+	 * Retrieve style controls.
+	 *
+	 * @access public
+	 *
+	 * @param array $controls Controls list. Default is null.
+	 *
+	 * @return array Style controls.
+	 */
 	final public function get_style_controls( $controls = null ) {
 		if ( null === $controls ) {
 			$controls = $this->get_active_controls();
@@ -278,6 +500,13 @@ abstract class Controls_Stack {
 		return $style_controls;
 	}
 
+	/**
+	 * Retrieve class controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Class controls.
+	 */
 	final public function get_class_controls() {
 		return array_filter(
 			$this->get_active_controls(), function( $control ) {
@@ -286,12 +515,28 @@ abstract class Controls_Stack {
 		);
 	}
 
+	/**
+	 * Retrieve tabs controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Tabs controls.
+	 */
 	final public function get_tabs_controls() {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		return $stack['tabs'];
 	}
 
+	/**
+	 * Add new responsive control to stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $id      Responsive control ID.
+	 * @param array  $args    Responsive control arguments.
+	 * @param array  $options Responsive control options. Default is empty array.
+	 */
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
 
@@ -360,10 +605,25 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * Update responsive control in stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $id   Responsive control ID.
+	 * @param array  $args Responsive control arguments.
+	 */
 	final public function update_responsive_control( $id, array $args ) {
 		$this->add_responsive_control( $id, $args, [ 'overwrite' => true ] );
 	}
 
+	/**
+	 * Remove responsive control from stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $id Responsive control ID.
+	 */
 	final public function remove_responsive_control( $id ) {
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
@@ -378,10 +638,28 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * Retrieve class name.
+	 *
+	 * Get the class name or FALSE if called from outside a class.
+	 *
+	 * @access public
+	 *
+	 * @return string|false Class name, or false.
+	 */
 	final public function get_class_name() {
 		return get_called_class();
 	}
 
+	/**
+	 * Retrieve control config.
+	 *
+	 * Get control config or, if non set, use the initial config.
+	 *
+	 * @access public
+	 *
+	 * @return array|null Control config.
+	 */
 	final public function get_config() {
 		if ( null === $this->_config ) {
 			$this->_config = $this->_get_initial_config();
@@ -390,6 +668,15 @@ abstract class Controls_Stack {
 		return $this->_config;
 	}
 
+	/**
+	 * Retrieve frontend settings keys.
+	 *
+	 * Get settings keys for all frontend controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Settings keys for each control.
+	 */
 	final public function get_frontend_settings_keys() {
 		$controls = [];
 
@@ -402,14 +689,45 @@ abstract class Controls_Stack {
 		return $controls;
 	}
 
+	/**
+	 * Retrieve control data.
+	 *
+	 * Get all the items or, when requested, a specific item.
+ 	 *
+	 * @access public
+	 *
+	 * @param string $item The requested item. Default is null.
+	 *
+	 * @return array Control data.
+	 */
 	public function get_data( $item = null ) {
 		return self::_get_items( $this->_data, $item );
 	}
 
+	/**
+	 * Retrieve control settings.
+	 *
+	 * Get all the settings or, when requested, a specific setting.
+ 	 *
+	 * @access public
+	 *
+	 * @param string $setting The requested setting. Default is null.
+	 *
+	 * @return array Control settings.
+	 */
 	public function get_settings( $setting = null ) {
 		return self::_get_items( $this->_settings, $setting );
 	}
 
+	/**
+	 * Retrieve active settings.
+	 *
+	 * Get the settings from all the active controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Active settings.
+	 */
 	public function get_active_settings() {
 		$settings = $this->get_settings();
 
@@ -420,6 +738,15 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	/**
+	 * Retrieve frontend settings.
+	 *
+	 * Get the settings for all frontend controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Frontend settings.
+	 */
 	public function get_frontend_settings() {
 		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
 
@@ -432,6 +759,20 @@ abstract class Controls_Stack {
 		return $frontend_settings;
 	}
 
+	/**
+	 * Filter controls settings.
+	 *
+	 * Recieves controls, settings and a callback function to filter the settings by
+	 * and returns filtered settings.
+	 *
+	 * @access public
+	 *
+	 * @param callable $callback The callback function.
+	 * @param array    $settings Control settings. Default is an empty array.
+	 * @param array    $controls Controls list. Default is an empty array.
+	 *
+	 * @return array Filtered settings.
+	 */
 	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
 		if ( ! $settings ) {
 			$settings = $this->get_settings();
@@ -456,6 +797,16 @@ abstract class Controls_Stack {
 		);
 	}
 
+	/**
+	 * Whether the control is visible or not.
+	 *
+	 * @access public
+	 *
+	 * @param array $control The control.
+	 * @param array $values  Condition values. Default is null.
+	 *
+	 * @return bool Whether the control is visible.
+	 */
 	public function is_control_visible( $control, $values = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
@@ -512,6 +863,14 @@ abstract class Controls_Stack {
 		return true;
 	}
 
+	/**
+	 * Start controls section.
+	 *
+	 * @access public
+	 *
+	 * @param string $section_id Section ID.
+	 * @param array  $args       Control arguments.
+	 */
 	public function start_controls_section( $section_id, array $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
@@ -534,6 +893,11 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_start', $this, $args );
 	}
 
+	/**
+	 * End controls section.
+	 *
+	 * @access public
+	 */
 	public function end_controls_section() {
 		// Save the current section for the action.
 		$current_section = $this->_current_section;
@@ -551,6 +915,13 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
 	}
 
+	/**
+	 * Start controls tabs.
+	 *
+	 * @access public
+	 *
+	 * @param string $tabs_id Tabs ID.
+	 */
 	public function start_controls_tabs( $tabs_id ) {
 		if ( null !== $this->_current_tab ) {
 			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) ); // XSS ok.
@@ -572,10 +943,23 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * End controls tabs.
+	 *
+	 * @access public
+	 */
 	public function end_controls_tabs() {
 		$this->_current_tab = null;
 	}
 
+	/**
+	 * Start controls tab.
+	 *
+	 * @access public
+	 *
+	 * @param string $tab_id Tab ID.
+	 * @param array  $args       Tab arguments.
+	 */
 	public function start_controls_tab( $tab_id, $args ) {
 		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
 			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) ); // XSS ok.
@@ -593,10 +977,24 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * End controls tab.
+	 *
+	 * @access public
+	 */
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
 	}
 
+	/**
+	 * Start injection.
+	 *
+	 * Used to inject controls and tabs to a specific position in the stack.
+	 *
+	 * @access public
+	 *
+	 * @param array $position The position where to srart the injection.
+	 */
 	final public function start_injection( array $position ) {
 		if ( $this->injection_point ) {
 			wp_die( 'A controls injection is already opened. Please close current injection before starting a new one (use `end_injection`).' );
@@ -605,10 +1003,23 @@ abstract class Controls_Stack {
 		$this->injection_point = $this->get_position_info( $position );
 	}
 
+	/**
+	 * End injection.
+	 *
+	 * @access public
+	 */
 	final public function end_injection() {
 		$this->injection_point = null;
 	}
 
+	/**
+	 * Set control settings.
+	 *
+	 * @access public
+	 *
+	 * @param string $key   Setting name.
+	 * @param string $value Setting value. Default value is null.
+	 */
 	final public function set_settings( $key, $value = null ) {
 		// strict check if override all settings.
 		if ( is_array( $key ) ) {
@@ -618,8 +1029,22 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * Register controls.
+	 *
+	 * @access protected
+	 */
 	protected function _register_controls() {}
 
+	/**
+	 * Retrieve default control data.
+	 *
+	 * Get the default data of the control. Used to reset the control data on initialization.
+	 *
+	 * @access protected
+	 *
+	 * @return array Default control data.
+	 */
 	protected function get_default_data() {
 		return [
 			'id' => 0,
@@ -627,6 +1052,13 @@ abstract class Controls_Stack {
 		];
 	}
 
+	/**
+	 * Retrieve parsed settings.
+	 *
+	 * @access protected
+	 *
+	 * @return array Parsed settings.
+	 */
 	protected function _get_parsed_settings() {
 		$settings = $this->_data['settings'];
 
@@ -645,6 +1077,15 @@ abstract class Controls_Stack {
 		return $settings;
 	}
 
+	/**
+	 * Retrieve initial config.
+	 *
+	 * Get the initial configuration of the control.
+	 *
+	 * @access protected
+	 *
+	 * @return array Control initial config.
+	 */
 	protected function _get_initial_config() {
 		return [
 			'controls' => $this->get_controls(),
@@ -652,6 +1093,17 @@ abstract class Controls_Stack {
 		];
 	}
 
+	/**
+	 * Retrieve section arguments.
+	 *
+	 * Get the section arguments based on section ID.
+	 *
+	 * @access protected
+	 *
+	 * @param string $section_id Section ID.
+	 *
+	 * @return array Section arguments.
+	 */
 	protected function get_section_args( $section_id ) {
 		$section_control = $this->get_controls( $section_id );
 
@@ -664,12 +1116,26 @@ abstract class Controls_Stack {
 		return $args;
 	}
 
+	/**
+	 * Initialize control.
+	 *
+	 * Register the controls.
+	 *
+	 * @access private
+	 */
 	private function _init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->_register_controls();
 	}
 
+	/**
+	 * Initialize control.
+	 *
+	 * Set control ID, settings and data.
+	 *
+	 * @access protected
+	 */
 	protected function _init( $data ) {
 		$this->_data = array_merge( $this->get_default_data(), $data );
 
@@ -679,7 +1145,14 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * @param array $data - Required for a normal instance, It's optional only for internal `type instance`.
+	 * Controls stack constructor.
+	 *
+	 * Initializing the control stack using `$data`. The `$data` is required for
+	 * a normal instance. It is optional only for internal `type instance`.
+	 *
+	 * @access public
+	 *
+	 * @param array $data Control data. Default value is an empty array.
 	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
