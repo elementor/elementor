@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Text_Editor extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve text editor widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve text editor widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve text editor widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register text editor widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -299,7 +299,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render text editor widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -315,7 +315,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Render as plain content.
+	 * Render text editor widget as plain content.
 	 *
 	 * Override the default behavior by printing the content without rendering it.
 	 *
@@ -327,7 +327,7 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render text editor widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *

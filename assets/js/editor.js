@@ -4116,8 +4116,10 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
-	updateStylesheet: function() {
-		this.controlsCSS.stylesheet.empty();
+	updateStylesheet: function( keepOldEntries ) {
+		if ( ! keepOldEntries ) {
+			this.controlsCSS.stylesheet.empty();
+		}
 
 		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
@@ -4208,7 +4210,7 @@ module.exports = ViewModule.extend( {
 			}
 		} );
 
-		self.updateStylesheet();
+		self.updateStylesheet( true );
 
 		self.debounceSave();
 	},

@@ -88,7 +88,8 @@ function elementor_load_plugin_textdomain() {
  * @return void
  */
 function elementor_fail_php_version() {
-	$message = esc_html__( 'Elementor requires PHP version 5.4+, plugin is currently NOT ACTIVE.', 'elementor' );
+	/* translators: %s: PHP version */
+	$message = sprintf( esc_html__( 'Elementor requires PHP version %s+, plugin is currently NOT ACTIVE.', 'elementor' ), '5.4' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
