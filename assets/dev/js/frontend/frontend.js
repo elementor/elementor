@@ -43,6 +43,10 @@
 				lightbox: new LightboxModule()
 			};
 
+			self.modules = {
+				StretchElement: require( 'elementor-frontend/modules/stretch-element' )
+			};
+
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 

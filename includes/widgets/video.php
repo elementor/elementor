@@ -5,20 +5,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Video Widget
+ */
 class Widget_Video extends Widget_Base {
 
+	/**
+	 * Retrieve the widget name.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'video';
 	}
 
+	/**
+	 * Retrieve the widget title.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget title.
+	 */
 	public function get_title() {
 		return __( 'Video', 'elementor' );
 	}
 
+	/**
+	 * Retrieve the widget icon.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget icon.
+	 */
 	public function get_icon() {
 		return 'eicon-youtube';
 	}
 
+	/**
+	 * Register the widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_video',
@@ -497,6 +528,13 @@ class Widget_Video extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render the widget output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @access protected
+	 */
 	protected function render() {
 		$settings = $this->get_active_settings();
 
@@ -519,7 +557,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
 
 		if ( ! $settings['lightbox'] ) {
-			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-video-wrapper' );
+			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-fit-aspect-ratio' );
 		}
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
@@ -569,6 +607,13 @@ class Widget_Video extends Widget_Base {
 	<?php
 	}
 
+	/**
+	 * Render as plain content.
+	 *
+	 * Override the default behavior, by printing the video URL insted of rendering it.
+	 *
+	 * @access public
+	 */
 	public function render_plain_content() {
 		$settings = $this->get_active_settings();
 		$url = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
@@ -576,6 +621,13 @@ class Widget_Video extends Widget_Base {
 		echo esc_url( $url );
 	}
 
+	/**
+	 * Retrieve embed parameters.
+	 *
+	 * @access public
+	 *
+	 * @return array Video embed parameters.
+	 */
 	public function get_embed_params() {
 		$settings = $this->get_settings();
 
@@ -614,6 +666,13 @@ class Widget_Video extends Widget_Base {
 		return $params;
 	}
 
+	/**
+	 * Retrieve hosted parameters.
+	 *
+	 * @access protected
+	 *
+	 * @return array Video hosted parameters.
+	 */
 	protected function get_hosted_params() {
 		$settings = $this->get_settings();
 
@@ -638,6 +697,15 @@ class Widget_Video extends Widget_Base {
 		return $params;
 	}
 
+	/**
+	 * Whether the video has an overlay image.
+	 *
+	 * Used to determine whether an overlay image was set for the video.
+	 *
+	 * @access protected
+	 *
+	 * @return bool Whether an image overlay was set for the video.
+	 */
 	protected function has_image_overlay() {
 		$settings = $this->get_settings();
 

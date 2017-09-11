@@ -5,24 +5,64 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Icon List Widget
+ */
 class Widget_Icon_List extends Widget_Base {
 
+	/**
+	 * Retrieve the widget name.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'icon-list';
 	}
 
+	/**
+	 * Retrieve the widget title.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget title.
+	 */
 	public function get_title() {
 		return __( 'Icon List', 'elementor' );
 	}
 
+	/**
+	 * Retrieve the widget icon.
+	 *
+	 * @access public
+	 *
+	 * @return string Widget icon.
+	 */
 	public function get_icon() {
 		return 'eicon-bullet-list';
 	}
 
+	/**
+	 * Retrieve the list of categories the widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
 	public function get_categories() {
 		return [ 'general-elements' ];
 	}
 
+	/**
+	 * Register the widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_icon',
@@ -340,6 +380,13 @@ class Widget_Icon_List extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render the widget output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @access protected
+	 */
 	protected function render() {
 		$settings = $this->get_settings();
 		?>
@@ -383,6 +430,13 @@ class Widget_Icon_List extends Widget_Base {
 		<?php
 	}
 
+	/**
+	 * Render the widget output in the editor.
+	 *
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @access protected
+	 */
 	protected function _content_template() {
 		?>
 		<ul class="elementor-icon-list-items">
