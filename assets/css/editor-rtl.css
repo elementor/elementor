@@ -872,6 +872,8 @@ select {
       -webkit-transition: all 0.5s;
       -o-transition: all 0.5s;
       transition: all 0.5s; }
+      .elementor-panel .elementor-header-button .elementor-icon.eicon-menu-bar {
+        font-size: 18px; }
       .elementor-panel .elementor-header-button .elementor-icon:hover {
         color: #d5dadf; }
   .elementor-panel #elementor-panel-header-title {
