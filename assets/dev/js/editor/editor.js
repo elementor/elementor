@@ -42,6 +42,7 @@ App = Marionette.Application.extend( {
 		},
 		controls: {
 			Base: require( 'elementor-views/controls/base' ),
+			BaseData: require( 'elementor-views/controls/base-data' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
 			Color: require( 'elementor-views/controls/color' ),
 			Dimensions: require( 'elementor-views/controls/dimensions' ),
@@ -125,7 +126,17 @@ App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		return this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] || this.modules.controls.Base;
+		var capitalizedControlName = controlID[0].toUpperCase() + controlID.slice( 1 ),
+			View = this.modules.controls[ capitalizedControlName ];
+
+		if ( ! View ) {
+			var controlData = this.config.controls[ controlID ],
+				isUIControl = -1 !== controlData.features.indexOf( 'ui' );
+
+			View = this.modules.controls[ isUIControl ? 'Base' : 'BaseData' ];
+		}
+
+		return View;
 	},
 
 	getPanelView: function() {
