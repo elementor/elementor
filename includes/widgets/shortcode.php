@@ -57,7 +57,7 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	/**
-	 * Whether the reload preview is required.
+	 * Whether the reload preview is required or not.
 	 *
 	 * Used to determine whether the reload preview is required.
 	 *
