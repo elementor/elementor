@@ -30,6 +30,8 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
+	private $current_popup;
+
 	private $injection_point;
 
 	abstract public function get_name();
@@ -154,6 +156,14 @@ abstract class Controls_Stack {
 		}
 
 		unset( $options['position'] );
+
+		if ( $this->current_popup && ! $this->current_popup['initialized'] ) {
+			$args['popup'] = [
+				'start' => true,
+			];
+
+			$this->current_popup['initialized'] = true;
+		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
 	}
@@ -595,6 +605,28 @@ abstract class Controls_Stack {
 
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
+	}
+
+	final public function start_popup() {
+		$this->current_popup = [
+			'initialized' => false,
+		];
+	}
+
+	final public function end_popup() {
+		$this->current_popup = null;
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
+
+		end( $registered_controls );
+
+		$last_control_key = key( $registered_controls );
+
+		$this->update_control( $last_control_key, [
+			'popup' => [
+				'end' => true,
+			],
+		] );
 	}
 
 	final public function start_injection( array $position ) {
