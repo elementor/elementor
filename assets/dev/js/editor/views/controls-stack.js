@@ -3,6 +3,11 @@ var ControlsStack;
 ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
+	classes: {
+		popup: 'elementor-controls-popup',
+		popupToggle: 'elementor-control-popup-starter-toggle'
+	},
+
 	activeTab: null,
 
 	activeSection: null,
@@ -22,6 +27,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	events: function() {
 		return {
+			'click': 'onClick',
 			'click @ui.tabs': 'onClickTabControl',
 			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
@@ -86,6 +92,44 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
+	handlePopups: function() {
+		var self = this,
+			popupStarted = false,
+			$popup;
+
+		self.removePopups();
+
+		self.children.each( function( child ) {
+			if ( popupStarted ) {
+				$popup.append( child.$el );
+			}
+
+			var popup = child.model.get( 'popup' );
+
+			if ( popup ) {
+				if ( popup.start ) {
+					popupStarted = true;
+
+					$popup = jQuery( '<div>', { 'class': self.classes.popup } );
+
+					child.$el.before( $popup );
+
+					$popup.append( child.$el );
+				} else if ( popup.end ) {
+					popupStarted = false;
+				}
+			}
+		} );
+	},
+
+	hidePopups: function() {
+		this.$el.find( '.' + this.classes.popup ).hide();
+	},
+
+	removePopups: function() {
+		this.$el.find( '.' + this.classes.popup ).remove();
+	},
+
 	openActiveSection: function() {
 		var activeSection = this.activeSection,
 			activeSectionView = this.children.filter( function( view ) {
@@ -99,6 +143,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	onRenderCollection: function() {
 		this.openActiveSection();
+
+		this.handlePopups();
 	},
 
 	onRenderTemplate: function() {
@@ -107,6 +153,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	onModelDestroy: function() {
 		this.destroy();
+	},
+
+	onClick: function( event ) {
+		if ( jQuery( event.target ).closest( '.' + this.classes.popup + ',.' + this.classes.popupToggle ).length ) {
+			return;
+		}
+
+		this.hidePopups();
 	},
 
 	onClickTabControl: function( event ) {

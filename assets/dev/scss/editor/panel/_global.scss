@@ -243,6 +243,55 @@
 	}
 }
 
+.elementor-controls-popup {
+	display: none;
+	position: absolute;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	left: 0;
+	right: 0;
+	margin: -2px auto 5px;
+	width: 90%;
+	z-index: 1;
+	background-color: #fff;
+
+	$triangle-size: 10px;
+
+	&:before {
+		content: '';
+		position: absolute;
+		top: -$triangle-size * 2;
+		right: 20px;
+		border: $triangle-size solid transparent;
+		border-bottom-color: $editor-background;
+	}
+
+	div.elementor-control { // Harder selector to override default settings
+
+		&:first-child {
+			text-transform: uppercase;
+			padding: 0;
+
+			.elementor-control-field {
+				justify-content: space-around;
+				background-color: $editor-background;
+				height: 50px;
+
+				.elementor-control-title, .elementor-control-input-wrapper { // Deep nesting to override default settings
+					width: initial;
+				}
+			}
+		}
+
+		&:nth-child(2) {
+			margin-top: 15px;
+		}
+
+		&:before {
+			content: none;
+		}
+	}
+}
+
 #elementor-panel-get-pro-elements {
 
 	.elementor-panel-nerd-box-message {
