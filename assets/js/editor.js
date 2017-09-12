@@ -9289,7 +9289,10 @@ var ControlBaseView = require( 'elementor-views/controls/base' ),
 
 ControlTabItemView = ControlBaseView.extend( {
 	triggers: {
-		'click': 'control:tab:clicked'
+		'click': {
+			event: 'control:tab:clicked',
+			stopPropagation: false
+		}
 	}
 } );
 
