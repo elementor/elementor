@@ -7206,11 +7206,15 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	events: function() {
-		return {
+		var events = {
 			'click': 'onClick',
 			'click @ui.tabs': 'onClickTabControl',
 			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
+
+		events[ 'click .' + this.classes.popup ] = 'onPopupClick';
+
+		return events;
 	},
 
 	modelEvents: {
@@ -7341,6 +7345,12 @@ ControlsStack = Marionette.CompositeView.extend( {
 		}
 
 		this.hidePopups();
+	},
+
+	onPopupClick: function( event ) {
+		var $currentPopup = jQuery( event.target ).closest( '.' + this.classes.popup );
+
+		this.$el.find( '.' + this.classes.popup ).not( $currentPopup ).hide();
 	},
 
 	onClickTabControl: function( event ) {
