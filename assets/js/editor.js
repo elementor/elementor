@@ -6983,7 +6983,9 @@ ColumnView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget'
@@ -6997,7 +6999,7 @@ ColumnView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
@@ -9432,7 +9434,9 @@ SectionView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-container > .elementor-row',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'column'
@@ -9443,7 +9447,7 @@ SectionView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
@@ -10811,8 +10815,6 @@ var	Manager = function() {
 		addHotKeys();
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/column/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data
