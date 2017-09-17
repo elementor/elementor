@@ -4116,8 +4116,10 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
-	updateStylesheet: function() {
-		this.controlsCSS.stylesheet.empty();
+	updateStylesheet: function( keepOldEntries ) {
+		if ( ! keepOldEntries ) {
+			this.controlsCSS.stylesheet.empty();
+		}
 
 		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
@@ -4208,7 +4210,7 @@ module.exports = ViewModule.extend( {
 			}
 		} );
 
-		self.updateStylesheet();
+		self.updateStylesheet( true );
 
 		self.debounceSave();
 	},
@@ -6986,7 +6988,9 @@ ColumnView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget'
@@ -7000,7 +7004,7 @@ ColumnView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
@@ -9440,7 +9444,9 @@ SectionView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-container > .elementor-row',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'column'
@@ -9451,7 +9457,7 @@ SectionView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
@@ -10828,8 +10834,6 @@ var	Manager = function() {
 		addHotKeys();
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/column/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data
