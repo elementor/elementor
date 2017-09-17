@@ -77,6 +77,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
 	},
 
+	getChildViewContainer: function() {
+		return this.view.getChildViewContainer( this.view );
 	deactivate: function() {
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			this.getChildViewContainer().sortable( 'destroy' );
@@ -203,8 +205,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		view.$el.attr( 'data-model-cid', view.model.cid );
 	},
 
-	getChildViewContainer: function() {
-		return this.view.getChildViewContainer( this.view );
 	}
 } );
 
