@@ -40,6 +40,17 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'basic' ];
 	}
 
+	/**
+	 * Whether inline editing is supported by this widget or not.
+	 *
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_inline_editing_supported() {
+		return false;
+	}
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
@@ -115,14 +126,17 @@ abstract class Widget_Base extends Element_Base {
 	protected function _register_skins() {}
 
 	protected function _get_initial_config() {
+		$config = [
+			'widget_type' => $this->get_name(),
+			'keywords' => $this->get_keywords(),
+			'categories' => $this->get_categories(),
+		];
 
-		return array_merge(
-			parent::_get_initial_config(), [
-				'widget_type' => $this->get_name(),
-				'keywords' => $this->get_keywords(),
-				'categories' => $this->get_categories(),
-			]
-		);
+		if ( $this->is_inline_editing_supported() ) {
+			$config['inlineEditing'] = $this->get_inline_editing_config();
+		}
+
+		return array_merge( parent::_get_initial_config(), $config );
 	}
 
 	final public function print_template() {
@@ -267,6 +281,33 @@ abstract class Widget_Base extends Element_Base {
 
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'section' );
+	}
+
+	protected function get_inline_editing_config() {
+		return [
+			'buttons' => [ 'bold', 'italic', 'underline', 'strikethrough' ]
+		];
+	}
+
+	protected function add_inline_editing_attributes( $inline_editing_key ) {
+		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+			return;
+		}
+
+		if ( ! $this->is_inline_editing_supported() ) {
+			_doing_it_wrong( get_called_class() . '::' . __FUNCTION__, 'You must enable inline editing first (Use `is_inline_editing_supported()`).', '1.8.0' );
+
+			return;
+		}
+
+		$inline_editing_key = (array) $inline_editing_key;
+
+		foreach ( $inline_editing_key as $key ) {
+			$this->add_render_attribute( $key, [
+				'class' => 'elementor-inline-editing',
+				'data-elementor-setting-key' => $key,
+			] );
+		}
 	}
 
 	public function add_skin( Skin_Base $skin ) {
