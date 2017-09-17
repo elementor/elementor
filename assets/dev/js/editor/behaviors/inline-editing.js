@@ -27,8 +27,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		console.log( 'Starting Inline Editing' );
-
 		var editModel = this.view.getEditModel();
 
 		this.$inlineEditingArea.html( editModel.getSetting( this.$inlineEditingArea.data( 'elementor-setting-key' ) ) );
