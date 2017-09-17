@@ -11,6 +11,8 @@ BaseElementView = BaseContainer.extend( {
 
 	toggleEditTools: true,
 
+	allowRender: true,
+
 	className: function() {
 		return this.getElementUniqueID();
 	},
@@ -298,6 +300,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderOnChange: function( settings ) {
+		if ( ! this.allowRender ) {
+			return;
+		}
+
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var hasChanged = settings.hasChanged(),
