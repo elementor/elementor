@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Sidebar extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve sidebar widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve sidebar widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve sidebar widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of categories the widget belongs to.
+	 * Retrieve the list of categories the sidebar widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -57,7 +57,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register sidebar widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -99,7 +99,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render sidebar widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -116,7 +116,7 @@ class Widget_Sidebar extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render sidebar widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
@@ -125,7 +125,7 @@ class Widget_Sidebar extends Widget_Base {
 	protected function _content_template() {}
 
 	/**
-	 * Render the plain content.
+	 * Render sidebar widget as plain content.
 	 *
 	 * Override the default render behavior, don't render sidebar content.
 	 *

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Icon extends Widget_Base {
 
 	/**
-	 * Retrieve the widget name.
+	 * Retrieve icon widget name.
 	 *
 	 * @access public
 	 *
@@ -22,7 +22,7 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget title.
+	 * Retrieve icon widget title.
 	 *
 	 * @access public
 	 *
@@ -33,7 +33,7 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the widget icon.
+	 * Retrieve icon widget icon.
 	 *
 	 * @access public
 	 *
@@ -44,7 +44,7 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
-	 * Register the widget controls.
+	 * Register icon widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -310,7 +310,7 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output on the frontend.
+	 * Render icon widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -356,7 +356,7 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
-	 * Render the widget output in the editor.
+	 * Render icon widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
