@@ -79,6 +79,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	getChildViewContainer: function() {
 		return this.view.getChildViewContainer( this.view );
+	},
+
 	deactivate: function() {
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			this.getChildViewContainer().sortable( 'destroy' );
@@ -205,6 +207,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 		view.$el.attr( 'data-model-cid', view.model.cid );
 	},
 
+	onChildviewInlineEditingStart: function() {
+		this.deactivate();
+	},
+
+	onChildviewInlineEditingStop: function() {
+		this.activate();
 	}
 } );
 
