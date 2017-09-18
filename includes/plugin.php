@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Main class plugin
+ * Main plugin class.
  */
 class Plugin {
 
