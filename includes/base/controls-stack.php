@@ -703,11 +703,11 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve class name.
 	 *
-	 * Get the class name or FALSE if called from outside a class.
+	 * Get the name of the current class.
 	 *
 	 * @access public
 	 *
-	 * @return string|false Class name, or false.
+	 * @return string Class name.
 	 */
 	final public function get_class_name() {
 		return get_called_class();
