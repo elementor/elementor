@@ -1042,8 +1042,8 @@ abstract class Controls_Stack {
 	/**
 	 * Start controls tab.
 	 *
-	 * Used to add a new tab inside a group of tabs.
-	 * method before adding new indevidual tabs using `start_controls_tab()`.
+	 * Used to add a new tab inside a group of tabs. Use this method before
+	 * adding new indevidual tabs using `start_controls_tab()`.
 	 * Each tab added after this point will be assigened to this group of tabs,
 	 * until you close it using `end_controls_tab()` method.
 	 *
