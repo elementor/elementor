@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Skin Base
  *
  * Abstract class to register new skins to Elementor widgets. Skins allow you to
- * tadd new templates, set custom controls and more.
+ * add new templates, set custom controls and more.
  *
  * To add skins to widgets use the `_register_skins()` method and register new
  * skins using `add_skin()` method.
