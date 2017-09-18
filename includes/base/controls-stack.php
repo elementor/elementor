@@ -13,18 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Controls_Stack {
 
 	/**
-     * Responsive 'desktop' device name.
-     */
+	 * Responsive 'desktop' device name.
+	 */
 	const RESPONSIVE_DESKTOP = 'desktop';
 
 	/**
-     * Responsive 'tablet' device name.
-     */
+	 * Responsive 'tablet' device name.
+	 */
 	const RESPONSIVE_TABLET = 'tablet';
 
 	/**
-     * Responsive 'mobile' device name.
-     */
+	 * Responsive 'mobile' device name.
+	 */
 	const RESPONSIVE_MOBILE = 'mobile';
 
 	/**
@@ -165,7 +165,7 @@ abstract class Controls_Stack {
 	 * @access private
 	 * @static
 	 *
-	 * @param array  $haystack Default is empty array.
+	 * @param array  $haystack Default is an empty array.
 	 * @param string $needle   Default is null.
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
@@ -278,7 +278,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $id      Control ID.
 	 * @param array  $args    Control arguments.
-	 * @param array  $options Control options. Default is empty array.
+	 * @param array  $options Control options. Default is an empty array.
 	 *
 	 * @return
 	 */
@@ -375,7 +375,7 @@ abstract class Controls_Stack {
 	 *     The injection position.
 	 *
 	 *     @type string $type Injection type, either `control` or `section`.
-	 *                        Default value is `control`.
+	 *                        Default is `control`.
 	 *     @type string $at   Where to inject. If `$type` is `control` accepts
 	 *                        `before` and `after`. If `$type` is `section`
 	 *                        accepts `start` and `end`. Dafault values based on
@@ -468,7 +468,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $group_name Group control name.
 	 * @param array  $args       {
-	 *     Group control arguments. Default is empty array.
+	 *     Group control arguments. Default is an empty array.
 	 *
 	 *     @type string $name      Base Control name.
 	 *     @type string $selector  CSS Selector
@@ -476,7 +476,7 @@ abstract class Controls_Stack {
 	 *     @type array  $condition Display control based on predefined conditional
 	 *                             logic.
 	 * }
-	 * @param array  $options    Group control options. Default is empty array.
+	 * @param array  $options    Group control options. Default is an empty array.
 	 */
 	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
@@ -581,7 +581,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $id      Responsive control ID.
 	 * @param array  $args    Responsive control arguments.
-	 * @param array  $options Responsive control options. Default is empty array.
+	 * @param array  $options Responsive control options. Default is an empty array.
 	 */
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
@@ -1046,7 +1046,7 @@ abstract class Controls_Stack {
 	 *     The position where to srart the injection.
 	 *
 	 *     @type string $type Injection type, either `control` or `section`.
-	 *                        Default value is `control`.
+	 *                        Default is `control`.
 	 *     @type string $at   Where to inject. If `$type` is `control` accepts
 	 *                        `before` and `after`. If `$type` is `section`
 	 *                        accepts `start` and `end`. Dafault values based on
@@ -1078,7 +1078,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Setting name.
-	 * @param string $value Setting value. Default value is null.
+	 * @param string $value Setting value. Default is null.
 	 */
 	final public function set_settings( $key, $value = null ) {
 		// strict check if override all settings.
@@ -1212,7 +1212,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array $data The data. Default value is an empty array.
+	 * @param array $data The data. Default is an empty array.
 	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
