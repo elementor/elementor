@@ -274,6 +274,10 @@ abstract class Controls_Stack {
 	/**
 	 * Add new control to stack.
 	 *
+	 * Register a single control to the allow the user to set/update data.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
 	 * @access public
 	 *
 	 * @param string $id      Control ID.
@@ -338,6 +342,8 @@ abstract class Controls_Stack {
 	/**
 	 * Remove control from stack.
 	 *
+	 * Unregister an existing control and remove it from the stack.
+	 *
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
@@ -350,6 +356,10 @@ abstract class Controls_Stack {
 
 	/**
 	 * Update control in stack.
+	 *
+	 * Change the value of an existing control in the stack. When you add new
+	 * control you set the `$args` parameter, this method allows you to update
+	 * the arguments by passing new data.
 	 *
 	 * @access public
 	 *
@@ -654,6 +664,10 @@ abstract class Controls_Stack {
 	/**
 	 * Update responsive control in stack.
 	 *
+	 * Change the value of an existing responsive control in the stack. When you
+	 * add new control you set the `$args` parameter, this method allows you to
+	 * update the arguments by passing new data.
+	 *
 	 * @access public
 	 *
 	 * @param string $id   Responsive control ID.
@@ -665,6 +679,8 @@ abstract class Controls_Stack {
 
 	/**
 	 * Remove responsive control from stack.
+	 *
+	 * Unregister an existing responsive control and remove it from the stack.
 	 *
 	 * @access public
 	 *
@@ -914,6 +930,12 @@ abstract class Controls_Stack {
 	/**
 	 * Start controls section.
 	 *
+	 * Used to add a new section of controls. When you use this method, all the
+	 * registered controls from this point will be assigened to this section,
+	 * until you close the section using `end_controls_section()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
@@ -944,6 +966,11 @@ abstract class Controls_Stack {
 	/**
 	 * End controls section.
 	 *
+	 * Used to close an existing open controls section. When you use this method
+	 * it stopps adding new controls to this section.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
 	 * @access public
 	 */
 	public function end_controls_section() {
@@ -965,6 +992,13 @@ abstract class Controls_Stack {
 
 	/**
 	 * Start controls tabs.
+	 *
+	 * Used to add a new set of tabs inside a section. You should use this
+	 * method before adding new indevidual tabs using `start_controls_tab()`.
+	 * Each tab added after this point will be assigened to this group of tabs,
+	 * until you close it using `end_controls_tabs()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @access public
 	 *
@@ -994,6 +1028,11 @@ abstract class Controls_Stack {
 	/**
 	 * End controls tabs.
 	 *
+	 * Used to close an existing open controls tabs. When you use this method it
+	 * stopps adding new controls to this tabs.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
 	 * @access public
 	 */
 	public function end_controls_tabs() {
@@ -1002,6 +1041,13 @@ abstract class Controls_Stack {
 
 	/**
 	 * Start controls tab.
+	 *
+	 * Used to add a new tab inside a group of tabs.
+	 * method before adding new indevidual tabs using `start_controls_tab()`.
+	 * Each tab added after this point will be assigened to this group of tabs,
+	 * until you close it using `end_controls_tab()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @access public
 	 *
@@ -1028,6 +1074,11 @@ abstract class Controls_Stack {
 	/**
 	 * End controls tab.
 	 *
+	 * Used to close an existing open controls tab. When you use this method it
+	 * stopps adding new controls to this tab.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
 	 * @access public
 	 */
 	public function end_controls_tab() {
@@ -1038,6 +1089,10 @@ abstract class Controls_Stack {
 	 * Start injection.
 	 *
 	 * Used to inject controls and sections to a specific position in the stack.
+	 *
+	 * When you use this method, all the registered controls and sections will
+	 * be injected to a specific position in the stack, until you stop the
+	 * injection using `end_injection()` method.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -1065,6 +1120,10 @@ abstract class Controls_Stack {
 	/**
 	 * End injection.
 	 *
+	 * Used to close an existing open injection point. When you use this method
+	 * it stopps adding new controls to this point and continue to add controls
+	 * to the regular position in the stack.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 */
@@ -1075,10 +1134,13 @@ abstract class Controls_Stack {
 	/**
 	 * Set settings.
 	 *
+	 * Change or add new settings to an existing control in the stack.
+	 *
 	 * @access public
 	 *
-	 * @param string $key   Setting name.
-	 * @param string $value Setting value. Default is null.
+	 * @param string|array $key   Setting name, or an array of key/value.
+	 * @param string|null  $value Setting value. Optional field if `$key` is an
+	 *                            array. Default is null.
 	 */
 	final public function set_settings( $key, $value = null ) {
 		// strict check if override all settings.
@@ -1091,6 +1153,14 @@ abstract class Controls_Stack {
 
 	/**
 	 * Register controls.
+	 *
+	 * Used to add new controls to any element type. For example, external
+	 * developers use this method to register controls in a widget.
+	 *
+	 * Should be inherited and register new controls using `add_control()`,
+	 * `add_responsive_control()` and `add_group_control()`, inside control
+	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
+	 * `start_controls_tab()`.
 	 *
 	 * @access protected
 	 */
@@ -1114,6 +1184,12 @@ abstract class Controls_Stack {
 
 	/**
 	 * Retrieve parsed settings.
+	 *
+	 * Get the parsed settings for all the controls that represent them. The
+	 * parser set default values and process the settings.
+	 *
+	 * Classes that extend `Controls_Stack` can add new process to the settings
+	 * parser.
 	 *
 	 * @access protected
 	 *
@@ -1140,7 +1216,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve initial config.
 	 *
-	 * Get the initial configuration.
+	 * Get the element initial configuration.
 	 *
 	 * @access protected
 	 *
