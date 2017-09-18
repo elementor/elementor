@@ -241,7 +241,7 @@ body.admin-bar .dialog-close-button {
   z-index: 1;
   cursor: pointer;
   font-size: 25px;
-  color: #fff;
+  color: rgba(238, 238, 238, 0.9);
   top: 50%;
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
@@ -2117,7 +2117,7 @@ button.swiper-pagination-bullet {
     display: block; }
 
 .swiper-container-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet {
-  margin: 0 7px; }
+  margin: 0 6px; }
 
 /* Progress */
 .swiper-pagination-progress {
@@ -2392,7 +2392,7 @@ button.swiper-pagination-bullet {
 
 .elementor-lightbox .dialog-lightbox-close-button,
 .elementor-lightbox .elementor-swiper-button {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(238, 238, 238, 0.9);
   -webkit-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
