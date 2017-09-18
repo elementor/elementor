@@ -5,53 +5,170 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Controls Stack
+ *
+ * @abstract
+ */
 abstract class Controls_Stack {
 
+	/**
+	 * Responsive 'desktop' device name.
+	 */
 	const RESPONSIVE_DESKTOP = 'desktop';
+
+	/**
+	 * Responsive 'tablet' device name.
+	 */
 	const RESPONSIVE_TABLET = 'tablet';
+
+	/**
+	 * Responsive 'mobile' device name.
+	 */
 	const RESPONSIVE_MOBILE = 'mobile';
 
+	/**
+	 * Generic ID.
+	 *
+	 * Holds the uniqe ID.
+	 *
+	 * @access private
+	 *
+	 * @var string
+	 */
 	private $_id;
+
+	/**
+	 * Parrsed Settings.
+	 *
+	 * Holds the settings, which is the data entered by the user and processed
+	 * by elementor.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $_settings;
+
+	/**
+	 * Raw Data.
+	 *
+	 * Holds all the raw data including the element type, the child elements,
+	 * the user data.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $_data;
+
+	/**
+	 * The configuration.
+	 *
+	 * Holds the configuration used to generate the Elementor editor. It includes
+	 * the element name, icon, categories ect...
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $_config;
 
 	/**
-	 * Holds the current section while render a set of controls sections
+	 * Current section.
+	 *
+	 * Holds the current section while inserting a set of controls sections.
+	 *
+	 * @access private
 	 *
 	 * @var null|array
 	 */
 	private $_current_section;
 
 	/**
-	 * Holds the current tab while render a set of controls tabs
+	 * Current tab.
+	 *
+	 * Holds the current tab while inserting a set of controls tabs.
+	 *
+	 * @access private
 	 *
 	 * @var null|array
 	 */
 	private $_current_tab;
 
+	/**
+	 * Injection point.
+	 *
+	 * Holds the injection point in the stack where the control will be inserted.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $injection_point;
 
+	/**
+	 * Retrieve the name.
+	 *
+	 * @access public
+	 * @abstract
+	 *
+	 * @return string The name.
+	 */
 	abstract public function get_name();
 
+	/**
+	 * Retrieve unique name.
+	 *
+	 * Some classes need to use unique names, this method allows you to create them.
+	 * By default it returns the regular name.
+	 *
+	 * @access public
+	 *
+	 * @return string Unique name.
+	 */
 	public function get_unique_name() {
 		return $this->get_name();
 	}
 
+	/**
+	 * Retrieve the generic ID.
+	 *
+	 * @access public
+	 *
+	 * @return string The ID.
+	 */
 	public function get_id() {
 		return $this->_id;
 	}
 
+	/**
+	 * Retrieve the type.
+	 *
+	 * Get the type, i.e. 'stack', 'element', 'widget' etc.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return string The type.
+	 */
 	public static function get_type() {
 		return 'stack';
 	}
 
 	/**
-	 * @param array  $haystack
-	 * @param string $needle
+	 * Retrieve items.
 	 *
-	 * @return mixed the whole haystack or the
-	 * needle from the haystack when requested
+	 * Utility method recieves an array with needle, and the it returns all the
+	 * Items match the needle.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @param array  $haystack Default is an empty array.
+	 * @param string $needle   Default is null.
+	 *
+	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
 	private static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
@@ -61,14 +178,45 @@ abstract class Controls_Stack {
 		return $haystack;
 	}
 
+	/**
+	 * Retrieve current section.
+	 *
+	 * When inserting new controls, this method will return the current section.
+	 *
+	 * @access public
+	 *
+	 * @return string Current section.
+	 */
 	public function get_current_section() {
 		return $this->_current_section;
 	}
 
+	/**
+	 * Retrieve current tab.
+	 *
+	 * When inserting new controls, this method will return the current tab.
+	 *
+	 * @access public
+	 *
+	 * @return string Current tab.
+	 */
 	public function get_current_tab() {
 		return $this->_current_tab;
 	}
 
+	/**
+	 * Retrieve controls.
+	 *
+	 * Get all the controls or, when requested, a specific control.
+ 	 *
+	 * @access public
+	 *
+	 * @param string $control_id The ID of the requested control. Optional field,
+	 *                           when set it will return a specific control.
+	 *                           Default is null.
+	 *
+	 * @return mixed Controls list.
+	 */
 	public function get_controls( $control_id = null ) {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -81,6 +229,15 @@ abstract class Controls_Stack {
 		return self::_get_items( $stack['controls'], $control_id );
 	}
 
+	/**
+	 * Retrieve active controls.
+	 *
+	 * Get an array of all the active controls that meet the condition field.
+	 *
+	 * @access public
+	 *
+	 * @return array Active controls.
+	 */
 	public function get_active_controls() {
 		$controls = $this->get_controls();
 
@@ -101,10 +258,34 @@ abstract class Controls_Stack {
 		return $active_controls;
 	}
 
+	/**
+	 * Retrieve controls settings.
+	 *
+	 * Get the settings for all the controls that represent them.
+	 *
+	 * @access public
+	 *
+	 * @return array Controls settings.
+	 */
 	public function get_controls_settings() {
 		return array_intersect_key( $this->get_settings(), $this->get_controls() );
 	}
 
+	/**
+	 * Add new control to stack.
+	 *
+	 * Register a single control to the allow the user to set/update data.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 *
+	 * @param string $id      Control ID.
+	 * @param array  $args    Control arguments.
+	 * @param array  $options Control options. Default is an empty array.
+	 *
+	 * @return
+	 */
 	public function add_control( $id, array $args, $options = [] ) {
 		$default_options = [
 			'overwrite' => false,
@@ -158,14 +339,62 @@ abstract class Controls_Stack {
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
 	}
 
+	/**
+	 * Remove control from stack.
+	 *
+	 * Unregister an existing control and remove it from the stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id Control ID.
+	 *
+	 * @return
+	 */
 	public function remove_control( $control_id ) {
 		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
 	}
 
+	/**
+	 * Update control in stack.
+	 *
+	 * Change the value of an existing control in the stack. When you add new
+	 * control you set the `$args` parameter, this method allows you to update
+	 * the arguments by passing new data.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id Control ID.
+	 * @param array  $args       Control arguments. Only the new fields you want
+	 *                           to update.
+	 *
+	 * @return
+	 */
 	public function update_control( $control_id, array $args ) {
 		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
 	}
 
+	/**
+	 * Retrieve position information.
+	 *
+	 * Get the position while injecting data, based on the element type.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 *
+	 * @param array $position {
+	 *     The injection position.
+	 *
+	 *     @type string $type Injection type, either `control` or `section`.
+	 *                        Default is `control`.
+	 *     @type string $at   Where to inject. If `$type` is `control` accepts
+	 *                        `before` and `after`. If `$type` is `section`
+	 *                        accepts `start` and `end`. Dafault values based on
+	 *                        the `type`.
+	 *     @type string $of   Control/Section ID.
+	 * }
+	 *
+	 * @return array Position info.
+	 */
 	final public function get_position_info( array $position ) {
 		$default_position = [
 			'type' => 'control',
@@ -238,6 +467,27 @@ abstract class Controls_Stack {
 		return $position_info;
 	}
 
+	/**
+	 * Add new group control to stack.
+	 *
+	 * Register a set of related controls grouped together as a single unified
+	 * control. For example grouping together like typography controls into a
+	 * single, easy-to-use control.
+	 *
+	 * @access public
+	 *
+	 * @param string $group_name Group control name.
+	 * @param array  $args       {
+	 *     Group control arguments. Default is an empty array.
+	 *
+	 *     @type string $name      Base Control name.
+	 *     @type string $selector  CSS Selector
+	 *     @type string $scheme    Globel scheme to be used.
+	 *     @type array  $condition Display control based on predefined conditional
+	 *                             logic.
+	 * }
+	 * @param array  $options    Group control options. Default is an empty array.
+	 */
 	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
@@ -248,6 +498,15 @@ abstract class Controls_Stack {
 		$group->add_controls( $this, $args, $options );
 	}
 
+	/**
+	 * Retrieve scheme controls.
+	 *
+	 * Get all the controls that use schemes.
+	 *
+	 * @access public
+	 *
+	 * @return array Scheme controls.
+	 */
 	final public function get_scheme_controls() {
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
@@ -258,6 +517,18 @@ abstract class Controls_Stack {
 		);
 	}
 
+	/**
+	 * Retrieve style controls.
+	 *
+	 * Get style controls for all active controls or, when requested, from a
+	 * specific set of controls.
+	 *
+	 * @access public
+	 *
+	 * @param array $controls Controls list. Default is null.
+	 *
+	 * @return array Style controls.
+	 */
 	final public function get_style_controls( $controls = null ) {
 		if ( null === $controls ) {
 			$controls = $this->get_active_controls();
@@ -278,6 +549,15 @@ abstract class Controls_Stack {
 		return $style_controls;
 	}
 
+	/**
+	 * Retrieve class controls.
+	 *
+	 * From all the active controls get the controls that use the same prefix class.
+	 *
+	 * @access public
+	 *
+	 * @return array Class controls.
+	 */
 	final public function get_class_controls() {
 		return array_filter(
 			$this->get_active_controls(), function( $control ) {
@@ -286,12 +566,33 @@ abstract class Controls_Stack {
 		);
 	}
 
+	/**
+	 * Retrieve tabs controls.
+	 *
+	 * Get all the tabs assigened to the control.
+	 *
+	 * @access public
+	 *
+	 * @return array Tabs controls.
+	 */
 	final public function get_tabs_controls() {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		return $stack['tabs'];
 	}
 
+	/**
+	 * Add new responsive control to stack.
+	 *
+	 * Register a set of controls to allow editing based on user screen size.
+	 * This method registeres three screen sizes: Desktop, Tablet and Mobile.
+	 *
+	 * @access public
+	 *
+	 * @param string $id      Responsive control ID.
+	 * @param array  $args    Responsive control arguments.
+	 * @param array  $options Responsive control options. Default is an empty array.
+	 */
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
 
@@ -360,10 +661,31 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * Update responsive control in stack.
+	 *
+	 * Change the value of an existing responsive control in the stack. When you
+	 * add new control you set the `$args` parameter, this method allows you to
+	 * update the arguments by passing new data.
+	 *
+	 * @access public
+	 *
+	 * @param string $id   Responsive control ID.
+	 * @param array  $args Responsive control arguments.
+	 */
 	final public function update_responsive_control( $id, array $args ) {
 		$this->add_responsive_control( $id, $args, [ 'overwrite' => true ] );
 	}
 
+	/**
+	 * Remove responsive control from stack.
+	 *
+	 * Unregister an existing responsive control and remove it from the stack.
+	 *
+	 * @access public
+	 *
+	 * @param string $id Responsive control ID.
+	 */
 	final public function remove_responsive_control( $id ) {
 		$devices = [
 			self::RESPONSIVE_DESKTOP,
@@ -378,10 +700,28 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * Retrieve class name.
+	 *
+	 * Get the name of the current class.
+	 *
+	 * @access public
+	 *
+	 * @return string Class name.
+	 */
 	final public function get_class_name() {
 		return get_called_class();
 	}
 
+	/**
+	 * Retrieve the config.
+	 *
+	 * Get the config or, if non set, use the initial config.
+	 *
+	 * @access public
+	 *
+	 * @return array|null The config.
+	 */
 	final public function get_config() {
 		if ( null === $this->_config ) {
 			$this->_config = $this->_get_initial_config();
@@ -390,6 +730,15 @@ abstract class Controls_Stack {
 		return $this->_config;
 	}
 
+	/**
+	 * Retrieve frontend settings keys.
+	 *
+	 * Get settings keys for all frontend controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Settings keys for each control.
+	 */
 	final public function get_frontend_settings_keys() {
 		$controls = [];
 
@@ -402,14 +751,45 @@ abstract class Controls_Stack {
 		return $controls;
 	}
 
+	/**
+	 * Retrieve the raw data.
+	 *
+	 * Get all the items or, when requested, a specific item.
+ 	 *
+	 * @access public
+	 *
+	 * @param string $item The requested item. Default is null.
+	 *
+	 * @return array The raw data.
+	 */
 	public function get_data( $item = null ) {
 		return self::_get_items( $this->_data, $item );
 	}
 
+	/**
+	 * Retrieve the settings.
+	 *
+	 * Get all the settings or, when requested, a specific setting.
+ 	 *
+	 * @access public
+	 *
+	 * @param string $setting The requested setting. Default is null.
+	 *
+	 * @return array The settings.
+	 */
 	public function get_settings( $setting = null ) {
 		return self::_get_items( $this->_settings, $setting );
 	}
 
+	/**
+	 * Retrieve active settings.
+	 *
+	 * Get the settings from all the active controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Active settings.
+	 */
 	public function get_active_settings() {
 		$settings = $this->get_settings();
 
@@ -420,6 +800,15 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	/**
+	 * Retrieve frontend settings.
+	 *
+	 * Get the settings for all frontend controls.
+	 *
+	 * @access public
+	 *
+	 * @return array Frontend settings.
+	 */
 	public function get_frontend_settings() {
 		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
 
@@ -432,6 +821,20 @@ abstract class Controls_Stack {
 		return $frontend_settings;
 	}
 
+	/**
+	 * Filter controls settings.
+	 *
+	 * Recieves controls, settings and a callback function to filter the settings by
+	 * and returns filtered settings.
+	 *
+	 * @access public
+	 *
+	 * @param callable $callback The callback function.
+	 * @param array    $settings Control settings. Default is an empty array.
+	 * @param array    $controls Controls list. Default is an empty array.
+	 *
+	 * @return array Filtered settings.
+	 */
 	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
 		if ( ! $settings ) {
 			$settings = $this->get_settings();
@@ -456,6 +859,18 @@ abstract class Controls_Stack {
 		);
 	}
 
+	/**
+	 * Whether the control is visible or not.
+	 *
+	 * Used to determine whether the control is visible or not.
+	 *
+	 * @access public
+	 *
+	 * @param array $control The control.
+	 * @param array $values  Condition values. Default is null.
+	 *
+	 * @return bool Whether the control is visible.
+	 */
 	public function is_control_visible( $control, $values = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
@@ -512,6 +927,20 @@ abstract class Controls_Stack {
 		return true;
 	}
 
+	/**
+	 * Start controls section.
+	 *
+	 * Used to add a new section of controls. When you use this method, all the
+	 * registered controls from this point will be assigened to this section,
+	 * until you close the section using `end_controls_section()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 *
+	 * @param string $section_id Section ID.
+	 * @param array  $args       Section arguments.
+	 */
 	public function start_controls_section( $section_id, array $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
@@ -534,6 +963,16 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_start', $this, $args );
 	}
 
+	/**
+	 * End controls section.
+	 *
+	 * Used to close an existing open controls section. When you use this method
+	 * it stopps adding new controls to this section.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 */
 	public function end_controls_section() {
 		// Save the current section for the action.
 		$current_section = $this->_current_section;
@@ -551,6 +990,20 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
 	}
 
+	/**
+	 * Start controls tabs.
+	 *
+	 * Used to add a new set of tabs inside a section. You should use this
+	 * method before adding new indevidual tabs using `start_controls_tab()`.
+	 * Each tab added after this point will be assigened to this group of tabs,
+	 * until you close it using `end_controls_tabs()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 *
+	 * @param string $tabs_id Tabs ID.
+	 */
 	public function start_controls_tabs( $tabs_id ) {
 		if ( null !== $this->_current_tab ) {
 			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) ); // XSS ok.
@@ -572,10 +1025,35 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * End controls tabs.
+	 *
+	 * Used to close an existing open controls tabs. When you use this method it
+	 * stopps adding new controls to this tabs.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 */
 	public function end_controls_tabs() {
 		$this->_current_tab = null;
 	}
 
+	/**
+	 * Start controls tab.
+	 *
+	 * Used to add a new tab inside a group of tabs. Use this method before
+	 * adding new indevidual tabs using `start_controls_tab()`.
+	 * Each tab added after this point will be assigened to this group of tabs,
+	 * until you close it using `end_controls_tab()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 *
+	 * @param string $tab_id Tab ID.
+	 * @param array  $args   Tab arguments.
+	 */
 	public function start_controls_tab( $tab_id, $args ) {
 		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
 			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) ); // XSS ok.
@@ -593,10 +1071,44 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * End controls tab.
+	 *
+	 * Used to close an existing open controls tab. When you use this method it
+	 * stopps adding new controls to this tab.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @access public
+	 */
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
 	}
 
+	/**
+	 * Start injection.
+	 *
+	 * Used to inject controls and sections to a specific position in the stack.
+	 *
+	 * When you use this method, all the registered controls and sections will
+	 * be injected to a specific position in the stack, until you stop the
+	 * injection using `end_injection()` method.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 *
+	 * @param array $position {
+	 *     The position where to srart the injection.
+	 *
+	 *     @type string $type Injection type, either `control` or `section`.
+	 *                        Default is `control`.
+	 *     @type string $at   Where to inject. If `$type` is `control` accepts
+	 *                        `before` and `after`. If `$type` is `section`
+	 *                        accepts `start` and `end`. Dafault values based on
+	 *                        the `type`.
+	 *     @type string $of   Control/Section ID.
+	 * }
+	 */
 	final public function start_injection( array $position ) {
 		if ( $this->injection_point ) {
 			wp_die( 'A controls injection is already opened. Please close current injection before starting a new one (use `end_injection`).' );
@@ -605,10 +1117,31 @@ abstract class Controls_Stack {
 		$this->injection_point = $this->get_position_info( $position );
 	}
 
+	/**
+	 * End injection.
+	 *
+	 * Used to close an existing open injection point. When you use this method
+	 * it stopps adding new controls to this point and continue to add controls
+	 * to the regular position in the stack.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 */
 	final public function end_injection() {
 		$this->injection_point = null;
 	}
 
+	/**
+	 * Set settings.
+	 *
+	 * Change or add new settings to an existing control in the stack.
+	 *
+	 * @access public
+	 *
+	 * @param string|array $key   Setting name, or an array of key/value.
+	 * @param string|null  $value Setting value. Optional field if `$key` is an
+	 *                            array. Default is null.
+	 */
 	final public function set_settings( $key, $value = null ) {
 		// strict check if override all settings.
 		if ( is_array( $key ) ) {
@@ -618,8 +1151,30 @@ abstract class Controls_Stack {
 		}
 	}
 
+	/**
+	 * Register controls.
+	 *
+	 * Used to add new controls to any element type. For example, external
+	 * developers use this method to register controls in a widget.
+	 *
+	 * Should be inherited and register new controls using `add_control()`,
+	 * `add_responsive_control()` and `add_group_control()`, inside control
+	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
+	 * `start_controls_tab()`.
+	 *
+	 * @access protected
+	 */
 	protected function _register_controls() {}
 
+	/**
+	 * Retrieve default data.
+	 *
+	 * Get the default data. Used to reset the data on initialization.
+	 *
+	 * @access protected
+	 *
+	 * @return array Default data.
+	 */
 	protected function get_default_data() {
 		return [
 			'id' => 0,
@@ -627,6 +1182,19 @@ abstract class Controls_Stack {
 		];
 	}
 
+	/**
+	 * Retrieve parsed settings.
+	 *
+	 * Get the parsed settings for all the controls that represent them. The
+	 * parser set default values and process the settings.
+	 *
+	 * Classes that extend `Controls_Stack` can add new process to the settings
+	 * parser.
+	 *
+	 * @access protected
+	 *
+	 * @return array Parsed settings.
+	 */
 	protected function _get_parsed_settings() {
 		$settings = $this->_data['settings'];
 
@@ -645,6 +1213,15 @@ abstract class Controls_Stack {
 		return $settings;
 	}
 
+	/**
+	 * Retrieve initial config.
+	 *
+	 * Get the element initial configuration.
+	 *
+	 * @access protected
+	 *
+	 * @return array The initial config.
+	 */
 	protected function _get_initial_config() {
 		return [
 			'controls' => $this->get_controls(),
@@ -652,6 +1229,17 @@ abstract class Controls_Stack {
 		];
 	}
 
+	/**
+	 * Retrieve section arguments.
+	 *
+	 * Get the section arguments based on section ID.
+	 *
+	 * @access protected
+	 *
+	 * @param string $section_id Section ID.
+	 *
+	 * @return array Section arguments.
+	 */
 	protected function get_section_args( $section_id ) {
 		$section_control = $this->get_controls( $section_id );
 
@@ -664,12 +1252,26 @@ abstract class Controls_Stack {
 		return $args;
 	}
 
+	/**
+	 * Initialize controls.
+	 *
+	 * Register the all controls added by `_register_controls()`.
+	 *
+	 * @access private
+	 */
 	private function _init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->_register_controls();
 	}
 
+	/**
+	 * Initialize the class.
+	 *
+	 * Set the raw data, the ID and the parsed settings.
+	 *
+	 * @access protected
+	 */
 	protected function _init( $data ) {
 		$this->_data = array_merge( $this->get_default_data(), $data );
 
@@ -679,7 +1281,14 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * @param array $data - Required for a normal instance, It's optional only for internal `type instance`.
+	 * Controls stack constructor.
+	 *
+	 * Initializing the control stack class using `$data`. The `$data` is required
+	 * for a normal instance. It is optional only for internal `type instance`.
+	 *
+	 * @access public
+	 *
+	 * @param array $data The data. Default is an empty array.
 	 **/
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
