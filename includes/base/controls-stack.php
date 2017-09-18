@@ -1255,7 +1255,7 @@ abstract class Controls_Stack {
 	/**
 	 * Initialize controls.
 	 *
-	 * Register the controls.
+	 * Register the all controls added by `_register_controls()`.
 	 *
 	 * @access private
 	 */
