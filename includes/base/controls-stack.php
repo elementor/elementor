@@ -939,7 +939,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
-	 * @param array  $args       Control arguments.
+	 * @param array  $args       Section arguments.
 	 */
 	public function start_controls_section( $section_id, array $args ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
@@ -1052,7 +1052,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $tab_id Tab ID.
-	 * @param array  $args       Tab arguments.
+	 * @param array  $args   Tab arguments.
 	 */
 	public function start_controls_tab( $tab_id, $args ) {
 		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
