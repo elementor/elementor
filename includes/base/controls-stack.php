@@ -341,7 +341,9 @@ abstract class Controls_Stack {
 
 	/**
 	 * Remove control from stack.
+	 *
 	 * Unregister an existing control and remove it from the stack.
+	 *
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
@@ -354,9 +356,11 @@ abstract class Controls_Stack {
 
 	/**
 	 * Update control in stack.
+	 *
 	 * Change the value of an existing control in the stack. When you add new
 	 * control you set the `$args` parameter, this method allows you to update
 	 * the arguments by passing new data.
+	 *
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
