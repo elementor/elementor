@@ -354,7 +354,7 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			if ( $target.closest( 'a' ).length ) {
+			if ( $target.closest( 'a:not(.elementor-clickable)' ).length ) {
 				event.preventDefault();
 			}
 
