@@ -284,7 +284,7 @@ abstract class Controls_Stack {
 	 * @param array  $args    Control arguments.
 	 * @param array  $options Control options. Default is an empty array.
 	 *
-	 * @return
+	 * @return bool
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
 		$default_options = [
@@ -341,14 +341,12 @@ abstract class Controls_Stack {
 
 	/**
 	 * Remove control from stack.
-	 *
 	 * Unregister an existing control and remove it from the stack.
-	 *
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
 	 *
-	 * @return
+	 * @return bool|\WP_Error
 	 */
 	public function remove_control( $control_id ) {
 		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
@@ -356,18 +354,16 @@ abstract class Controls_Stack {
 
 	/**
 	 * Update control in stack.
-	 *
 	 * Change the value of an existing control in the stack. When you add new
 	 * control you set the `$args` parameter, this method allows you to update
 	 * the arguments by passing new data.
-	 *
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
 	 * @param array  $args       Control arguments. Only the new fields you want
 	 *                           to update.
 	 *
-	 * @return
+	 * @return bool
 	 */
 	public function update_control( $control_id, array $args ) {
 		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
