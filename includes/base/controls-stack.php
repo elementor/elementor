@@ -185,7 +185,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return string Current section.
+	 * @return null|array Current section.
 	 */
 	public function get_current_section() {
 		return $this->_current_section;
@@ -198,7 +198,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return string Current tab.
+	 * @return null|array Current tab.
 	 */
 	public function get_current_tab() {
 		return $this->_current_tab;
@@ -393,7 +393,7 @@ abstract class Controls_Stack {
 	 *     @type string $of   Control/Section ID.
 	 * }
 	 *
-	 * @return array Position info.
+	 * @return bool|array Position info.
 	 */
 	final public function get_position_info( array $position ) {
 		$default_position = [
