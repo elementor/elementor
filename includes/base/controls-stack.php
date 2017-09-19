@@ -185,7 +185,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return string Current section.
+	 * @return null|array Current section.
 	 */
 	public function get_current_section() {
 		return $this->_current_section;
@@ -198,7 +198,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return string Current tab.
+	 * @return null|array Current tab.
 	 */
 	public function get_current_tab() {
 		return $this->_current_tab;
@@ -284,7 +284,7 @@ abstract class Controls_Stack {
 	 * @param array  $args    Control arguments.
 	 * @param array  $options Control options. Default is an empty array.
 	 *
-	 * @return
+	 * @return bool
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
 		$default_options = [
@@ -348,7 +348,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $control_id Control ID.
 	 *
-	 * @return
+	 * @return bool|\WP_Error
 	 */
 	public function remove_control( $control_id ) {
 		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
@@ -367,7 +367,7 @@ abstract class Controls_Stack {
 	 * @param array  $args       Control arguments. Only the new fields you want
 	 *                           to update.
 	 *
-	 * @return
+	 * @return bool
 	 */
 	public function update_control( $control_id, array $args ) {
 		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
@@ -393,7 +393,7 @@ abstract class Controls_Stack {
 	 *     @type string $of   Control/Section ID.
 	 * }
 	 *
-	 * @return array Position info.
+	 * @return bool|array Position info.
 	 */
 	final public function get_position_info( array $position ) {
 		$default_position = [
