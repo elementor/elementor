@@ -512,13 +512,13 @@ abstract class Controls_Stack {
 		return true;
 	}
 
-	public function start_controls_section( $section_id, array $args ) {
+	public function start_controls_section( $section_id, array $args, $options = [] ) {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
 
 		$args['type'] = Controls_Manager::SECTION;
 
-		$this->add_control( $section_id, $args );
+		$this->add_control( $section_id, $args, $options );
 
 		if ( null !== $this->_current_section ) {
 			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) ); // XSS ok.
@@ -551,7 +551,7 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
 	}
 
-	public function start_controls_tabs( $tabs_id ) {
+	public function start_controls_tabs( $tabs_id, $options = [] ) {
 		if ( null !== $this->_current_tab ) {
 			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) ); // XSS ok.
 		}
@@ -560,7 +560,8 @@ abstract class Controls_Stack {
 			$tabs_id,
 			[
 				'type' => Controls_Manager::TABS,
-			]
+			],
+			$options
 		);
 
 		$this->_current_tab = [
@@ -576,7 +577,7 @@ abstract class Controls_Stack {
 		$this->_current_tab = null;
 	}
 
-	public function start_controls_tab( $tab_id, $args ) {
+	public function start_controls_tab( $tab_id, $args, $options = [] ) {
 		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
 			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) ); // XSS ok.
 		}
@@ -584,7 +585,7 @@ abstract class Controls_Stack {
 		$args['type'] = Controls_Manager::TAB;
 		$args['tabs_wrapper'] = $this->_current_tab['tabs_wrapper'];
 
-		$this->add_control( $tab_id, $args );
+		$this->add_control( $tab_id, $args, $options );
 
 		$this->_current_tab['inner_tab'] = $tab_id;
 
