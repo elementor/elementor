@@ -241,15 +241,11 @@ body.admin-bar .dialog-close-button {
   z-index: 1;
   cursor: pointer;
   font-size: 25px;
-  color: #fff;
+  color: rgba(238, 238, 238, 0.9);
   top: 50%;
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
           transform: translateY(-50%); }
-  .elementor-swiper-button-prev {
-    left: 40px; }
-  .elementor-swiper-button-next {
-    right: 40px; }
 
 @media (max-width: 1024px) {
   .elementor-tablet-align-center {
@@ -1921,10 +1917,7 @@ body.elementor-page .elementor-widget-menu-anchor {
 
 /**
  * Swiper 3.4.2
- */
-/**
- * This is the original swiper file
- * please DO NOT edit it
+ * Customized by Elementor team
  */
 .swiper-container {
   margin-left: auto;
@@ -2078,10 +2071,10 @@ body.elementor-page .elementor-widget-menu-anchor {
 
 /* Bullets */
 .swiper-pagination-bullet {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   display: inline-block;
-  border-radius: 100%;
+  border-radius: 50%;
   background: #000;
   opacity: 0.2; }
 
@@ -2102,8 +2095,7 @@ button.swiper-pagination-bullet {
   background: #fff; }
 
 .swiper-pagination-bullet-active {
-  opacity: 1;
-  background: #007aff; }
+  opacity: 1; }
 
 .swiper-pagination-white .swiper-pagination-bullet-active {
   background: #fff; }
@@ -2121,7 +2113,7 @@ button.swiper-pagination-bullet {
     display: block; }
 
 .swiper-container-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet {
-  margin: 0 5px; }
+  margin: 0 6px; }
 
 /* Progress */
 .swiper-pagination-progress {
@@ -2396,7 +2388,7 @@ button.swiper-pagination-bullet {
 
 .elementor-lightbox .dialog-lightbox-close-button,
 .elementor-lightbox .elementor-swiper-button {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(238, 238, 238, 0.9);
   -webkit-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;

@@ -125,6 +125,8 @@ $editor-info: #71d7f7;
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
 $panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 
+$slides_gui: rgba(238, 238, 238, .9);
+
 // Panel Transition
 $transition-hover: all .5s;
 
@@ -138,7 +140,6 @@ $fourth-layer: 4;
 
 $element-overlay: 9998;
 $editor-layer: 9999;
-
 // Grid Columns
 $column-sizes: (
 	10: 10%,

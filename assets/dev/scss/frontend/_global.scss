@@ -167,17 +167,9 @@
 	z-index: 1;
 	cursor: pointer;
 	font-size: 25px;
-	color: #fff;
+	color: $slides_gui;
 	top: 50%;
 	transform: translateY(-50%);
-
-	&-prev {
-		left: 40px;
-	}
-
-	&-next {
-		right: 40px;
-	}
 }
 
 // Alignment for Tablet
