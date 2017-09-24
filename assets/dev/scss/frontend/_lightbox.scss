@@ -34,7 +34,7 @@
 	//UI Colors
 	.dialog-lightbox-close-button,
 	.elementor-swiper-button {
-		color: rgba(255,255,255,0.75);
+		color: $slides_gui;
 		transition: $transition-hover;
 		opacity: 1;
 
