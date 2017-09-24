@@ -91,7 +91,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Vimeo Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
-				'default' => 'https://vimeo.com/170933924',
+				'default' => 'https://vimeo.com/235215203',
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'vimeo',
