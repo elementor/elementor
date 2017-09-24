@@ -67,6 +67,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Gets the selected image information, and sets it within the control.
 	 */
 	select: function() {
+
+		this.trigger( 'before:select' );
+
 		// Get the attachment from the modal frame.
 		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
 
@@ -78,6 +81,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 			this.render();
 		}
+
+		this.trigger( 'after:select' );
 	},
 
 	onBeforeDestroy: function() {

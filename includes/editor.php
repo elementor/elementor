@@ -87,6 +87,10 @@ class Editor {
 		}
 	}
 
+	public function get_post_id() {
+		return $this->_post_id;
+	}
+
 	public function redirect_to_new_url() {
 		if ( ! isset( $_GET['elementor'] ) ) {
 			return;
