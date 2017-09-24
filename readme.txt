@@ -184,6 +184,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.7.5 - 24.09.2017 =
+* Tweak! - Clear CSS Meta after change print method
+* Tweak! - Set default style for UI controls in all sliders and carousels
+* Fix! - Added compatibility for WordPress 4.8.2 & 4.7.6
+* Fix! - Sync Library tool for manual updating
+
 = 1.7.4 - 18.09.2017 =
 * Tweak! - Added compatibility for the future release of Elementor
 * Fix! - Space widgets applied on the last element ([#2331](https://github.com/pojome/elementor/issues/2331))
