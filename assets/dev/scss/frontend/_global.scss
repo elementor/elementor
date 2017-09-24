@@ -41,10 +41,25 @@
 	object,
 	video {
 		max-width: 100%;
-		width: 100%;
 		margin: 0;
 		line-height: 1;
 		border: none;
+	}
+
+	embed,
+	object,
+	video {
+		width: 100%;
+	}
+
+	.elementor-custom-embed,
+	.elementor-widget-audio,
+	.elementor-widget-html,
+	.elementor-widget-shortcode,
+	.elementor-widget-video	{
+		iframe {
+			width: 100%;
+		}
 	}
 
 	.elementor-custom-embed {
