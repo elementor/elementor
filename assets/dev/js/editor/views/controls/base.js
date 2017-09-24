@@ -33,10 +33,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 			classes += ' ' + modelClasses;
 		}
 
-		if ( ! _.isEmpty( this.model.get( 'section' ) ) ) {
-			classes += ' elementor-control-under-section';
-		}
-
 		if ( ! _.isEmpty( responsive ) ) {
 			classes += ' elementor-control-responsive-' + responsive.max;
 		}
