@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Module_Base {
+abstract class Module {
 
 	/**
 	 * @var \ReflectionClass
@@ -15,7 +15,7 @@ abstract class Module_Base {
 	private $components = [];
 
 	/**
-	 * @var Module_Base
+	 * @var Module
 	 */
 	protected static $_instances = [];
 

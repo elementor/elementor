@@ -19,7 +19,8 @@
 @import "nprogress";
 @import "panel/panel";
 @import "mode-switcher";
-@import "revisions";
+@import "../../../../modules/history/assets/scss/revisions";
+@import "../../../../modules/history/assets/scss/history";
 
 @import "devices";
 @import "tipsy";

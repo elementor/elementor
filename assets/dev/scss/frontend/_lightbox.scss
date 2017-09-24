@@ -24,17 +24,22 @@
 		&lightbox-close-button {
 			cursor: pointer;
 			position: absolute;
-			color: #ffffff;
 			font-size: 25px;
 			padding: 5px;
 			z-index: 2;
 			line-height: 1;
-			opacity: 0.5;
-			transition: $transition-hover;
+		}
+	}
 
-			&:hover {
-				opacity: 0.9;
-			}
+	//UI Colors
+	.dialog-lightbox-close-button,
+	.elementor-swiper-button {
+		color: rgba(255,255,255,0.75);
+		transition: $transition-hover;
+		opacity: 1;
+
+		&:hover {
+			color: #ffffff;
 		}
 	}
 
@@ -77,13 +82,6 @@
 
 
 	.elementor-swiper-button {
-		opacity: 0.5;
-		transition: $transition-hover;
-
-		&:hover {
-			opacity: 0.9;
-		}
-
 
 		&-prev {
 			left: 40px;

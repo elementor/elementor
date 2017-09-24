@@ -13,13 +13,7 @@ class Editor {
 
 	private $_is_edit_mode;
 
-	private $_editor_templates = [
-		'editor-templates/global.php',
-		'editor-templates/panel.php',
-		'editor-templates/panel-elements.php',
-		'editor-templates/repeater.php',
-		'editor-templates/templates.php',
-	];
+	private $_editor_templates = [];
 
 	public function init( $die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
@@ -31,6 +25,8 @@ class Editor {
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
+
+		$this->init_editor_templates();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -170,6 +166,8 @@ class Editor {
 	}
 
 	public function enqueue_scripts() {
+		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
+
 		global $wp_styles, $wp_scripts;
 
 		// Set the global data like $authordata and etc
@@ -183,7 +181,7 @@ class Editor {
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		// Hack for waypoint with editor mode.
 		wp_register_script(
@@ -362,14 +360,13 @@ class Editor {
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
-			'revisions' => Revisions_Manager::get_revisions(),
-			'revisions_enabled' => ( $this->_post_id && wp_revisions_enabled( get_post( $this->_post_id ) ) ),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
+			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'data' => $editor_data,
@@ -397,7 +394,7 @@ class Editor {
 				'global_fonts' => __( 'Global Fonts', 'elementor' ),
 				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
 				'soon' => __( 'Soon', 'elementor' ),
-				'revision_history' => __( 'Revision History', 'elementor' ),
+				'elementor_docs' => __( 'Documentation', 'elementor' ),
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'inner_section' => __( 'Columns', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
@@ -420,12 +417,6 @@ class Editor {
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 				'asc' => __( 'Ascending order', 'elementor' ),
 				'desc' => __( 'Descending order', 'elementor' ),
-				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
-				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-				// translators: %s: WordPress Revision docs.
-				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
-				'revision' => __( 'Revision', 'elementor' ),
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'preview' => __( 'Preview', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
@@ -437,7 +428,7 @@ class Editor {
 			],
 		];
 
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', [] );
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', [], $this->_post_id );
 
 		if ( ! empty( $localized_settings ) ) {
 			$config = array_replace_recursive( $config, $localized_settings );
@@ -558,7 +549,7 @@ class Editor {
 		$plugin->schemes_manager->print_schemes_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			if ( stream_resolve_include_path( $editor_template ) ) {
+			if ( file_exists( $editor_template ) ) {
 				include $editor_template;
 			} else {
 				echo $editor_template;
@@ -578,5 +569,16 @@ class Editor {
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
+	}
+
+	private function init_editor_templates() {
+		// It can be filled from plugins
+		$this->_editor_templates = array_merge( $this->_editor_templates, [
+		 	__DIR__ . '/editor-templates/global.php',
+			__DIR__ . '/editor-templates/panel.php',
+			__DIR__ . '/editor-templates/panel-elements.php',
+			__DIR__ . '/editor-templates/repeater.php',
+			__DIR__ . '/editor-templates/templates.php',
+		] );
 	}
 }

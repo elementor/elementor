@@ -45,7 +45,6 @@ class Autoloader {
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',
 		'Responsive' => 'includes/responsive.php',
-		'Revisions_Manager' => 'includes/managers/revisions.php',
 		'Rollback' => 'includes/rollback.php',
 		'Scheme_Base' => 'includes/schemes/base.php',
 		'Scheme_Color' => 'includes/schemes/color.php',
@@ -79,6 +78,7 @@ class Autoloader {
 	private static $classes_aliases = [
 		'Control_Base' => 'Base_Data_Control',
 		'PageSettings\Manager' => 'Core\Settings\Page\Manager',
+		'Revisions_Manager' => 'Modules\History\Revisions_Manager',
 	];
 
 	public static function run() {

@@ -23,7 +23,7 @@ class Model extends BaseModel {
 			'title' => __( 'Global Settings', 'elementor' ),
 			'menu' => [
 				'icon' => 'fa fa-cogs',
-				'beforeItem' => 'revision-history',
+				'beforeItem' => 'clear-page',
 			],
 		];
 	}
@@ -104,7 +104,20 @@ class Model extends BaseModel {
 								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
-
+						'elementor_lightbox_ui_color' => [
+							'label' => __( 'UI Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox .dialog-lightbox-close-button, .elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
+							],
+						],
+						'elementor_lightbox_ui_color_hover' => [
+							'label' => __( 'UI Hover Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox .dialog-lightbox-close-button:hover, .elementor-lightbox .elementor-swiper-button:hover' => 'color: {{VALUE}}',
+							],
+						],
 					],
 				],
 			],

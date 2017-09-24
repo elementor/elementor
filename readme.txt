@@ -3,7 +3,7 @@ Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, yehudah
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 4.5
 Tested up to: 4.8
-Stable tag: 1.6.4
+Stable tag: 1.7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -23,23 +23,23 @@ Instant reaction was a key feature we wanted to achieve. And we did. Instant dra
 = Live design. Truly live. =
 Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the page and simultaneously see exactly how it looks like. Elementor features live editing that is truly live, with no need to press update or go to preview mode.
 
-= Surprises you won't see anywhere else. =
-Create pages that have "the designer touch", by including unique features like box shadows, background overlays, hover and entrance animations, advanced buttons and more. We worked hard to create the perfect balance between full design capabilities and an intuitive and clean interface. You no longer need to use code, HTML, CSS or shortcode.
+= Surprises you won’t see anywhere else. =
+With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among these features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
 
 = Template Library =
-We've added **Library**, which includes a collection of 20+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
+We've added **Library**, which includes a collection of 100+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
 
 = Mobile Editing =
 Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
 
-= Revision History =
-Never lose your page designs again! Elementor includes a Revision History feature, which means every time you click on the save button, a new revision is saved. You can always trace your steps and switch back and forth between versions. All revisions are seen visually, so you can visually compare between versions and choose the best one!
+= Full History Log: Undo / Redo Actions & Revisions =
+Undo and redo any action you make by clicking on Ctrl / Cmd + Z, or by browsing through the complete list of actions. Want to go back ever further? Switch to Revisions to view a complete list of all earlier saved versions of the page.
 
 = Canvas - Blank Page Template =
 Design your entire page in the page builder. No header, no footer, just Elementor. This is perfect for landing pages and coming soon pages. Canvas works on any theme, and lets you get rid of the header area so you get a blank template to work on.
 
 = New! Maintenance Mode =
-Need to get your site offline for maintenance? Use Elementor's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page, while still allowing admins to access your site. This feature also sends the right HTTP responses to search engines, so you can safely move to maintenance mode without it affecting your traffic.
+Need to get your site offline for maintenance? Use Elementor's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page.
 
 = Get More With Elementor Pro =
 If you thought Elementor is full of useful features, check out Elementor Pro! Elementor Pro extends the basic features even further, and allows you to control your entire website with Elementor.
@@ -182,6 +182,28 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.7.0 - 28.08.2017 =
+* New! - History actions in the editor ([#266](https://github.com/pojome/elementor/issues/266))
+* New! - Hotkey: Ctrl / Cmd + Z = Undo
+* New! - Hotkey: Ctrl / Cmd + Shift + Z = Redo
+* New! - Hotkey: Ctrl / Cmd + D = Duplicate
+* New! - Hotkey: Delete = Delete element
+* New! - Added more icons to Social Icons widget: Weibo & WeChat
+* Tweak! - Added color control for UI elements in the lightbox
+* Tweak! - Allow to exclude devices in responsive control
+* Tweak! - Added compatibility for Table of Contents Plus plugin ([#2248](https://github.com/pojome/elementor/issues/2248))
+* Fix! - Added compatibility for Multisite installation with Domain Mapping
+* Fix! - CSS Animations names no longer minified, in order to prevent unexpected conflicts
+* Fix! - Sometimes content in Repeater control disappears
+* Fix! - Conflict rollback to the last version when beta testing mode enabled
+* Fix! - Conflict with Polylang plugin ([#2124](https://github.com/pojome/elementor/issues/2124))
+* Fix! - Allow fullscreen in the editor preview for video player
+
+= 1.6.5 - 20.08.2017 =
+* Tweak! - Added compatibility for the future release of Elementor Pro
+* Fix! - Set font size inherit for Heading widget ([#2098](https://github.com/pojome/elementor/issues/2098))
+* Fix! - Anchor links smooth scrolling not working when admin bar is disabled ([#2210](https://github.com/pojome/elementor/issues/2210))
 
 = 1.6.4 - 06.08.2017 =
 * Tweak! - Allow to close lightbox when clicking outside of the element

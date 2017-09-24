@@ -107,8 +107,13 @@ class Compatibility {
 		// Fix Preview URL for https://premium.wpmudev.org/project/domain-mapping/ plugin
 		if ( class_exists( 'domain_map' ) ) {
 			add_filter( 'elementor/utils/preview_url', function( $preview_url ) {
-				$preview_url = \domain_map::utils()->unswap_url( $preview_url );
-				$preview_url = add_query_arg( [ 'dm' => \Domainmap_Module_Mapping::BYPASS ], $preview_url );
+				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+					$preview_url = \domain_map::utils()->unswap_url( $preview_url );
+					$preview_url = add_query_arg( [
+						'dm' => \Domainmap_Module_Mapping::BYPASS,
+					], $preview_url );
+				}
+
 				return $preview_url;
 			} );
 		}
@@ -118,7 +123,10 @@ class Compatibility {
 	}
 
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
-		Plugin::$instance->db->copy_elementor_meta( $from, $to );
+		// Copy only for a new post.
+		if ( ! $sync ) {
+			Plugin::$instance->db->copy_elementor_meta( $from, $to );
+		}
 
 		return $keys;
 	}

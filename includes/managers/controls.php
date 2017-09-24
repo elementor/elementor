@@ -299,7 +299,22 @@ class Controls_Manager {
 		];
 	}
 
-	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $overwrite = false ) {
+	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $options = [] ) {
+		if ( ! is_array( $options ) ) {
+			_deprecated_argument( __FUNCTION__, '1.7.0', 'Use `[ \'overwrite\' => ' . var_export( $options, true ) . ' ]` instead.' );
+
+			$options = [
+				'overwrite' => $options,
+			];
+		}
+
+		$default_options = [
+			'overwrite' => false,
+			'index' => null,
+		];
+
+		$options = array_merge( $default_options, $options );
+
 		$default_args = [
 			'type' => self::TEXT,
 			'tab' => self::TAB_CONTENT,
@@ -328,8 +343,9 @@ class Controls_Manager {
 
 		$stack_id = $element->get_unique_name();
 
-		if ( ! $overwrite && isset( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
+		if ( ! $options['overwrite'] && isset( $this->controls_stack[ $stack_id ]['controls'][ $control_id ] ) ) {
 			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
+
 			return false;
 		}
 
@@ -339,9 +355,21 @@ class Controls_Manager {
 			$control_data['tab'] = $default_args['tab'];
 		}
 
+		$control_data = apply_filters( 'elementor/controls/add_to_stack', $control_data, $stack_id );
+
 		$this->controls_stack[ $stack_id ]['tabs'][ $control_data['tab'] ] = $tabs[ $control_data['tab'] ];
 
 		$this->controls_stack[ $stack_id ]['controls'][ $control_id ] = $control_data;
+
+		if ( null !== $options['index'] ) {
+			$controls = $this->controls_stack[ $stack_id ]['controls'];
+
+			$controls_keys = array_keys( $controls );
+
+			array_splice( $controls_keys, $options['index'], 0, $control_id );
+
+			$this->controls_stack[ $stack_id ]['controls'] = array_merge( array_flip( $controls_keys ), $controls );
+		}
 
 		return true;
 	}
@@ -386,7 +414,7 @@ class Controls_Manager {
 
 		$control_data = array_merge( $old_control_data, $control_data );
 
-		return $this->add_control_to_stack( $element, $control_id, $control_data, true );
+		return $this->add_control_to_stack( $element, $control_id, $control_data, [ 'overwrite' => true ] );
 	}
 
 	public function get_element_stack( Controls_Stack $controls_stack ) {
@@ -436,7 +464,7 @@ class Controls_Manager {
 						<div class="elementor-panel-nerd-box-message">' .
 							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
 						'</div>
-						<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="https://go.elementor.com/pro-custom-css/" target="_blank">' .
+						<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
 							__( 'Go Pro', 'elementor' ) .
 						'</a>
 						</div>',
