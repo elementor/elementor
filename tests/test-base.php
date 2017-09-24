@@ -7,11 +7,6 @@ class Elementor_Test_Base extends WP_UnitTestCase {
 
 		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
 
-		// Fake behavior
-		if ( ! defined( 'WP_ADMIN' ) ) {
-			define( 'WP_ADMIN', true );
-		}
-
 		// Make sure the main class is running
 		\Elementor\Plugin::instance();
 

@@ -30,7 +30,7 @@ ImagesManager = function() {
 
 	self.onceTriggerChange = _.once( function( model ) {
 		window.setTimeout( function() {
-			model.get( 'settings' ).trigger( 'change' );
+			model.get( 'settings' ).trigger( 'change', model.get( 'settings' ) );
 		}, 700 );
 	} );
 
@@ -50,7 +50,7 @@ ImagesManager = function() {
 					self.onceTriggerChange( image.model );
 				}
 
-				return ;
+				return;
 			}
 
 			// If it's a new dropped widget

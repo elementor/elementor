@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-header">
 	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-menu tooltip-target" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
+		<i class="elementor-icon eicon-menu-bar tooltip-target" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
 	</div>
 	<div id="elementor-panel-header-title"></div>
 	<div id="elementor-panel-header-add-button" class="elementor-header-button">
@@ -70,22 +70,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	</div>
-	<div id="elementor-panel-footer-help" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Help', 'elementor' ); ?>">
-		<span class="elementor-screen-only"><?php _e( 'Help', 'elementor' ); ?></span>
-		<i class="fa fa-question-circle"></i>
-		<div class="elementor-panel-footer-sub-menu-wrapper">
-			<div class="elementor-panel-footer-sub-menu">
-				<div id="elementor-panel-footer-help-title"><?php _e( 'Need help?', 'elementor' ); ?></div>
-				<div id="elementor-panel-footer-watch-tutorial" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-video-camera"></i>
-					<span class="elementor-title"><?php _e( 'Take a tour', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-external-link"></i>
-					<a class="elementor-title" href="https://go.elementor.com/docs" target="_blank"><?php _e( 'Go to the Documentation', 'elementor' ); ?></a>
-				</div>
-			</div>
-		</div>
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open" title="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+		<span class="elementor-screen-only"><?php _e( 'History', 'elementor' ); ?></span>
+		<i class="fa fa-history"></i>
 	</div>
 	<div id="elementor-panel-footer-templates" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Templates', 'elementor' ); ?>">
 		<span class="elementor-screen-only"><?php _e( 'Templates', 'elementor' ); ?></span>
@@ -212,54 +199,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
 	<div class="elementor-control-responsive-switchers">
-		<a class="elementor-responsive-switcher elementor-responsive-switcher-desktop" data-device="desktop">
-			<i class="eicon-device-desktop"></i>
-		</a>
-		<a class="elementor-responsive-switcher elementor-responsive-switcher-tablet" data-device="tablet">
-			<i class="eicon-device-tablet"></i>
-		</a>
-		<a class="elementor-responsive-switcher elementor-responsive-switcher-mobile" data-device="mobile">
-			<i class="eicon-device-mobile"></i>
-		</a>
+		<#
+			var devices = responsive.devices || [ 'desktop', 'tablet', 'mobile' ];
+
+			_.each( devices, function( device ) { #>
+				<a class="elementor-responsive-switcher elementor-responsive-switcher-{{ device }}" data-device="{{ device }}">
+					<i class="eicon-device-{{ device }}"></i>
+				</a>
+			<# } );
+		#>
 	</div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-revisions">
-	<div class="elementor-panel-scheme-buttons">
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-			<button class="elementor-button" disabled>
-				<i class="fa fa-times"></i><?php _e( 'Discard', 'elementor' ); ?>
-			</button>
-		</div>
-		<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-			<button class="elementor-button elementor-button-success" disabled>
-				<?php _e( 'Apply', 'elementor' ); ?>
-			</button>
-		</div>
+<script type="text/template" id="tmpl-elementor-panel-page-settings">
+	<div class="elementor-panel-navigation">
+		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
+			<# } ); #>
 	</div>
-	<div class="elementor-panel-box">
-		<div class="elementor-panel-heading">
-			<div class="elementor-panel-heading-title"><?php _e( 'Revision History', 'elementor' ); ?></div>
-		</div>
-		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
-	</div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
-	<i class="elementor-panel-nerd-box-icon eicon-nerd"></i>
-	<div class="elementor-panel-nerd-box-title"><?php _e( 'No Revisions Saved Yet', 'elementor' ); ?></div>
-	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_enabled ? 'no_revisions_1' : 'revisions_disabled_1' ) }}}</div>
-	<div class="elementor-panel-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_enabled ? 'no_revisions_2' : 'revisions_disabled_2' ) }}}</div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
-	<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
-	<div class="elementor-revision-item__details">
-		<div class="elementor-revision-date">{{{ date }}}</div>
-		<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php _e( 'By', 'elementor' ); ?> {{{ author }}}</div>
-	</div>
-	<div class="elementor-revision-item__tools">
-		<i class="elementor-revision-item__tools-delete fa fa-times"></i>
-		<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
-	</div>
+	<div id="elementor-panel-page-settings-controls"></div>
 </script>

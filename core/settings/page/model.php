@@ -45,7 +45,7 @@ class Model extends BaseModel {
 			'title' => __( 'Page Settings', 'elementor' ),
 			'menu' => [
 				'icon' => 'fa fa-cog',
-				'beforeItem' => 'revision-history',
+				'beforeItem' => 'clear-page',
 			],
 		];
 	}

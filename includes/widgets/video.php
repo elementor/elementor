@@ -422,6 +422,29 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'lightbox_ui_color',
+			[
+				'label' => __( 'UI Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'lightbox_ui_color_hover',
+			[
+				'label' => __( 'UI Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover' => 'color: {{VALUE}}',
+				],
+				'separator' => 'after',
+			]
+		);
+
+		$this->add_control(
 			'lightbox_video_width',
 			[
 				'label' => __( 'Content Width', 'elementor' ),

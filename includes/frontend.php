@@ -32,7 +32,8 @@ class Frontend {
 		}
 
 		$this->_is_frontend_mode = true;
-		$this->_has_elementor_in_page = Plugin::$instance->db->is_built_with_elementor( get_the_ID() );
+
+		$this->_has_elementor_in_page = is_singular() && Plugin::$instance->db->is_built_with_elementor( get_the_ID() );
 
 		if ( $this->_has_elementor_in_page ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
