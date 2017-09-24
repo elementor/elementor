@@ -63,6 +63,14 @@ class Settings extends Settings_Page {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+
+		// Clear CSS Meta after change print method.
+		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+	}
+
+	public function update_css_print_method() {
+		Plugin::$instance->posts_css_manager->clear_cache();
 	}
 
 	protected function create_tabs() {
