@@ -71,11 +71,11 @@
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
 
-		@media (min-width: $screen-md-min) {
-			width: 50%;
+		@media (min-width: $screen-lg-min) {
+			width: 75%;
 		}
 
-		@media (max-width: $screen-sm-max) {
+		@media (max-width: $screen-md-max) {
 			width: 100%;
 		}
 	}
