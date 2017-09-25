@@ -35,8 +35,6 @@ abstract class Skin_Base {
 	 * Initializing the skin base class by setting parent widget and registering
 	 * controls actions.
 	 *
-	 * @access public
-	 *
 	 * @param Widget_Base $parent
 	 */
 	public function __construct( Widget_Base $parent ) {
@@ -77,6 +75,8 @@ abstract class Skin_Base {
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
 	 * @access public
+	 *
+	 * @deprecated
 	 */
 	public function _content_template() {}
 
@@ -84,6 +84,11 @@ abstract class Skin_Base {
 	 * Register skin controls actions.
 	 *
 	 * Run on init and used to register new skins to be injected to the widget.
+	 * This method is used to register new actions that specify the locaion of
+	 * the skin in the widget.
+	 *
+	 * Example usage:
+	 * `add_action( 'elementor/element/{widget_id}/{section_id}/before_section_end', [ $this, 'register_controls' ] );`
 	 *
 	 * @access protected
 	 */
@@ -161,7 +166,7 @@ abstract class Skin_Base {
 	 * @param string $id   Control ID.
 	 * @param array  $args Control arguments.
 	 *
-	 * @return
+	 * @return bool True if skin added, False otherwise.
 	 */
 	public function add_control( $id, $args ) {
 		$args['condition']['_skin'] = $this->get_id();
@@ -309,7 +314,7 @@ abstract class Skin_Base {
 	/**
 	 * Set parent widget.
 	 *
-	 * Change or add the parent widget of the skin.
+	 * Used to define the parent widget of the skin.
 	 *
 	 * @access public
 	 *
