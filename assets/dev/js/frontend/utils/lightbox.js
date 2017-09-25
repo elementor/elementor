@@ -179,13 +179,7 @@ LightboxModule = ViewModule.extend( {
 				slideClass += ' ' + classes.video;
 			}
 
-			var $slide = $( '<div>', { 'class': slideClass } ),
-				$zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
-				$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose } ).attr( 'src', slide.image );
-
-			$slide.append( $zoomContainer );
-
-			$zoomContainer.append( $slideImage );
+			var $slide = $( '<div>', { 'class': slideClass } );
 
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
@@ -193,6 +187,13 @@ LightboxModule = ViewModule.extend( {
 				var $playIcon = $( '<div>', { 'class': classes.playButton } ).html( $( '<i>', { 'class': classes.playButtonIcon } ) );
 
 				$slide.append( $playIcon );
+			} else {
+				var $zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
+					$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose } ).attr( 'src', slide.image );
+
+				$zoomContainer.append( $slideImage );
+
+				$slide.append( $zoomContainer );
 			}
 
 			$slidesWrapper.append( $slide );
@@ -259,8 +260,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	playSlideVideo: function() {
-		var selectors = this.getSettings( 'selectors' ),
-			$activeSlide = this.getSlide( 'active' ),
+		var $activeSlide = this.getSlide( 'active' ),
 			videoURL = $activeSlide.data( 'elementor-slideshow-video' );
 
 		if ( ! videoURL ) {
@@ -272,8 +272,7 @@ LightboxModule = ViewModule.extend( {
 		var $videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
 			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
 			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
-			$playIcon = $activeSlide.children( '.' + classes.playButton ),
-			$slideImage = $activeSlide.find( '.' + classes.image );
+			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
 		$videoContainer.append( $videoWrapper );
 
@@ -281,12 +280,10 @@ LightboxModule = ViewModule.extend( {
 
 		$activeSlide.append( $videoContainer );
 
-		$playIcon.addClass( classes.playing );
-
-		$playIcon.add( $slideImage ).removeClass( classes.hidden );
+		$playIcon.addClass( classes.playing ).removeClass( classes.hidden );
 
 		$videoFrame.on( 'load', function() {
-			$playIcon.add( $slideImage ).addClass( classes.hidden );
+			$playIcon.addClass( classes.hidden );
 
 			$videoContainer.removeClass( classes.invisible );
 		} );
