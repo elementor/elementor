@@ -64,11 +64,34 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 					continue;
 				
 				$error_msg = sprintf( 'Widget: %s, Control: %s', $widget->get_name(), $control['name'] );
-				
-				if ( empty( $control['default'] ) )
+
+				if ( empty( $control['default'] ) ) {
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );
-				else
-					$this->assertArrayHasKey( $control['default'], $control['options'], $error_msg );
+				} else {
+					$flat_options = [];
+
+					if ( isset( $control['groups'] ) ) {
+						foreach ( $control['groups'] as $index_or_key => $args_or_label ) {
+							if ( is_numeric( $index_or_key ) ) {
+								$args = $args_or_label;
+
+								$this->assertTrue( is_array( $args['options'] ), $error_msg );
+
+								foreach ( $args['options'] as $key => $label ) {
+									$flat_options[ $key ] = $label;
+								}
+							} else {
+								$key = $index_or_key;
+								$label = $args_or_label;
+								$flat_options[ $key ] = $label;
+							}
+						}
+					} else {
+						$flat_options = $control['options'];
+					}
+
+					$this->assertArrayHasKey( $control['default'], $flat_options, $error_msg );
+				}
 			}
 		}
 	}

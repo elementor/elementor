@@ -115,6 +115,8 @@ class Post_CSS_File extends CSS_File {
 	 * @param Element_Base $element
 	 */
 	private function render_styles( Element_Base $element ) {
+		do_action( 'elementor/element/before_parse_css', $this, $element );
+
 		$element_settings = $element->get_settings();
 
 		$this->add_controls_stack_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
