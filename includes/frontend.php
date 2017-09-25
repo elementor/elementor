@@ -354,7 +354,7 @@ class Frontend {
 		}
 
 		// Remove the filter itself in order to allow other `the_content` in the elements
-		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+		$this->remove_content_builder_filter();
 
 		$post_id = get_the_ID();
 		$builder_content = $this->get_builder_content( $post_id );
@@ -365,7 +365,7 @@ class Frontend {
 		}
 
 		// Add the filter again for other `the_content` calls
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+		$this->add_content_builder_filter();
 
 		return $content;
 	}
@@ -515,7 +515,8 @@ class Frontend {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
-		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+
+		$this->add_content_builder_filter();
 
 		// Hack to avoid enqueue post css while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );

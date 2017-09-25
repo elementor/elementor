@@ -320,10 +320,14 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	openLink: function( event ) {
-		var element = event.currentTarget;
+		var element = event.currentTarget,
+			$target = jQuery( event.target ),
+			editMode = elementorFrontend.isEditMode(),
+			isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
-			if ( elementorFrontend.isEditMode() ) {
+
+			if ( editMode && isClickInsideElementor ) {
 				event.preventDefault();
 			}
 
