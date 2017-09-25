@@ -7848,6 +7848,8 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			return;
 		}
 
+		var langTools = ace.require( 'ace/ext/language_tools' );
+
 		self.editor = ace.edit( this.ui.editor[0] );
 
 		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
@@ -7857,8 +7859,32 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			minLines: 10,
 			maxLines: Infinity,
 			showGutter: true,
-			useWorker: true
+			useWorker: true,
+			enableBasicAutocompletion: true,
+			enableLiveAutocompletion: true
 		} );
+
+		if ( 'css' === self.model.attributes.language ) {
+			var selectorCompleter = {
+				getCompletions: function( editor, session, pos, prefix, callback ) {
+					var list = [],
+						token = session.getTokenAt( pos.row, pos.column );
+
+					if ( 0 < prefix.length && 'selector'.match( prefix ) && 'constant' === token.type ) {
+						list = [ {
+							name: 'selector',
+							value: 'selector',
+							score: 1,
+							meta: 'Elementor'
+						} ];
+					}
+
+					callback( null, list );
+				}
+			};
+
+			langTools.addCompleter( selectorCompleter );
+		}
 
 		self.editor.setValue( self.getControlValue(), -1 ); // -1 =  move cursor to the start
 
@@ -7884,7 +7910,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 				if ( annotationsLength > annotations.length ) {
 					session.setAnnotations( annotations );
 				}
-			}) ;
+			} );
 		}
 	}
 } );
