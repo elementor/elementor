@@ -70,6 +70,14 @@ class Frontend {
 		return $classes;
 	}
 
+	public function add_content_builder_filter() {
+		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	public function remove_content_builder_filter() {
+		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
 	public function register_scripts() {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
