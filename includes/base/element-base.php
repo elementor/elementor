@@ -30,7 +30,8 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Element render attributes.
 	 *
-	 * Holds all the render attributes of the element.
+	 * Holds all the render attributes of the element. Used to store data like
+	 * the HTML class name and the class value, or HTML element ID name and value.
 	 *
 	 * @access private
 	 *
@@ -41,7 +42,8 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Element default arguments.
 	 *
-	 * Holds all the default arguments of the element.
+	 * Holds all the default arguments of the element. Used to store additional
+	 * data. For example WordPress widgets use this to store widget names.
 	 *
 	 * @access private
 	 *
@@ -52,7 +54,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Element edit tools.
 	 *
-	 * Holds all the edit tools of the element.
+	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
 	 *
 	 * @access protected
 	 * @static
@@ -89,7 +91,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * Enqueue scripts.
 	 *
 	 * Registers all the scripts defined as element dependencies and enqueues
-	 * them.
+	 * them. Use `get_script_depends()` method to add custom script dependencies.
 	 *
 	 * @access public
 	 */
@@ -124,6 +126,18 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @access public
 	 * @static
+	 *
+	 * @param string $tool_name Edit tool name.
+	 * @param array  $tool_data {
+	 *     Edit tool data.
+	 *
+	 *     @type string $title  Edit tool title.
+	 *     @type string $icon   Edit tool icon.
+	 * }
+	 * @param string $after     Optional. If tool ID defined, the new edit tool
+	 *                          will be added after it. If null, the new edit
+	 *                          tool will be added at the end. Default is null.
+	 *
 	 */
 	final public static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
 		if ( null === static::$_edit_tools ) {
@@ -176,13 +190,14 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve items.
 	 *
 	 * Utility method that recieves an array with a needle and returns all the
-	 * items that match the needle.
+	 * items that match the needle. If needle is not defined the entire haystack
+	 * will be returened.
 	 *
 	 * @access private
 	 * @static
 	 *
-	 * @param array  $haystack Default is an empty array.
-	 * @param string $needle   Default is null.
+	 * @param array  $haystack An array of items.
+	 * @param string $needle   Optional. Default is null.
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
@@ -210,7 +225,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve the default child element type.
 	 *
 	 * @access protected
-     * @abstract
+	 * @abstract
 	 *
 	 * @param array $element_data Element data.
 	 *
@@ -272,9 +287,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Output element template on the frontend.
+	 * Print element template.
 	 *
-	 * Used to generate the final HTML.
+	 * Used to generate the element template on the editor.
 	 *
 	 * @access public
 	 */
@@ -306,6 +321,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * Get all the child elements of this this element.
 	 *
 	 * @access public
+	 *
+	 * @return Element_Base[] Child elements.
 	 */
 	public function get_children() {
 		if ( null === $this->_children ) {
@@ -323,7 +340,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array $item Default is null.
+	 * @param array $item Optional. Default is null.
 	 *
 	 * @return array Default argument(s).
 	 */
@@ -338,7 +355,9 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return array Parent element.
+	 * @deprecated
+	 *
+	 * @return Element_Base Parent element.
 	 */
 	public function get_parent() {
 		return $this->get_data( 'parent' );
@@ -377,17 +396,23 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Add render attribute.
 	 *
-	 * Used to add render attribute to the element.
+	 * Used to add render attribute to specific HTML elements.
+	 *
+	 * Example usage:
+	 *
+	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
+	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );
+	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );
 	 *
 	 * @access public
 	 *
-	 * @param array|string $element   The element.
-	 * @param array|string $key       Attribute key. Dafault is null.
-	 * @param array|string $value     Attribute value. Dafault is null.
-	 * @param bool         $overwrite Whether to overwrite existing attribute.
-	 *                                Default is false, not to overwrite.
+	 * @param array|string $element   The HTML element.
+	 * @param array|string $key       Optional. Attribute key. Dafault is null.
+	 * @param array|string $value     Optional. Attribute value. Dafault is null.
+	 * @param bool         $overwrite Optional. Whether to overwrite existing
+	 *                                attribute. Default is false, not to overwrite.
 	 *
-	 * @return Element_Base Updated instance of the element.
+	 * @return Element_Base Current instance of the element.
 	 */
 	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
 		if ( is_array( $element ) ) {
@@ -424,16 +449,16 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Set render attribute.
 	 *
-	 * Used to set the value of the an element render attribute or to update an
-	 * existing render attribute.
+	 * Used to set the value of the HTML element render attribute or to update
+	 * an existing render attribute.
 	 *
 	 * @access public
 	 *
-	 * @param array|string $element   The element.
-	 * @param array|string $key       Attribute key. Dafault is null.
-	 * @param array|string $value     Attribute value. Dafault is null.
+	 * @param array|string $element The HTML element.
+	 * @param array|string $key     Optional. Attribute key. Dafault is null.
+	 * @param array|string $value   Optional. Attribute value. Dafault is null.
 	 *
-	 * @return Element_Base Updated instance of the element.
+	 * @return Element_Base Current instance of the element.
 	 */
 	public function set_render_attribute( $element, $key = null, $value = null ) {
 		return $this->add_render_attribute( $element, $key, $value, true );
@@ -470,7 +495,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Print element.
 	 *
-	 * Used to generate the element final HTML on the frontend.
+	 * Used to generate the element final HTML on the frontend and the editor.
  	 *
 	 * @access public
 	 */
@@ -497,11 +522,15 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Get the raw element data, including the id, type, settings, child
 	 * elements and whether it is an inner element.
+	 *
+	 * The data with the HTML used always to display the data, but the Elementor
+	 * editor uses the raw data without the HTML in order not to render the data
+	 * again.
  	 *
 	 * @access public
 	 *
-	 * @param bool $with_html_content Whether to return the data with HTML content.
-	 *                                Default is false, without HTML.
+	 * @param bool $with_html_content Optional. Whether to return the data with
+	 *                                HTML content or without. Used for caching. Default is false, without HTML.
 	 *
 	 * @return array Element raw data.
 	 */
@@ -526,7 +555,8 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Retrieve unique selector.
 	 *
-	 * Get the unique selector of the element. Used to set a uniq CSS ID for the
+	 * Get the unique selector of the element. Used to set a unique HTML class
+	 * for each HTML element. This way Elementor can set custom styles for each
 	 * element.
 	 *
 	 * @access public
@@ -689,7 +719,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @param array $element_data Element ID.
 	 *
-	 * @return array|false Child type or false if it's not a valid widget.
+	 * @return Element_Base|false Child type or false if type not found.
 	 */
 	private function _get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
@@ -728,13 +758,13 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * element base constructor.
+	 * Element base constructor.
 	 *
 	 * Initializing the element base class using `$data` and `$args`. The
 	 * `$data` is required for a normal instance.
 	 *
 	 * @param array      $data Element data. Default is an empty array.
-	 * @param array|null $args Element arguments. Default is null.
+	 * @param array|null $args Optional. Element arguments. Default is null.
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
 		parent::__construct( $data );
