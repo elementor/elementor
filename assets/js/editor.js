@@ -1696,7 +1696,7 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			if ( $target.closest( 'a' ).length ) {
+			if ( $target.closest( 'a:not(.elementor-clickable)' ).length ) {
 				event.preventDefault();
 			}
 
@@ -6757,9 +6757,14 @@ BaseElementView = BaseContainer.extend( {
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
 
+				if ( '_column_size' === settingKey ) {
+					isRenderRequired = true;
+					return;
+				}
+
 				if ( ! control ) {
 					isRenderRequired = true;
-
+					isContentChanged = true;
 					return;
 				}
 
@@ -8502,6 +8507,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Gets the selected image information, and sets it within the control.
 	 */
 	select: function() {
+
+		this.trigger( 'before:select' );
+
 		// Get the attachment from the modal frame.
 		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
 
@@ -8513,6 +8521,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 			this.render();
 		}
+
+		this.trigger( 'after:select' );
 	},
 
 	onBeforeDestroy: function() {
@@ -10699,12 +10709,21 @@ module.exports = Marionette.Behavior.extend( {
 		// Stop listen to restore actions
 		behavior.stopListening( settings, 'change', this.saveHistory );
 
+		var restoredValues = {};
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				settings.setExternalChange( key, values['new'] );
+				restoredValues[ key ] =  values['new'];
 			} else {
-				settings.setExternalChange( key, values.old );
+				restoredValues[ key ] =  values.old;
 			}
+		} );
+
+		// Set at once.
+		settings.set( restoredValues );
+
+		// Trigger each field for `baseControl.onSettingsExternalChange`
+		_.each( history.changed, function( values, key ) {
+			settings.trigger( 'change:external:' + key );
 		} );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
