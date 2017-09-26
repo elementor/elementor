@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.8
 Requires PHP: 5.4
-Stable tag: 1.7.3
+Stable tag: 1.7.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -130,7 +130,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = We recommend your host supports: =
 
-* PHP version 5.6 or greater
+* PHP version 7.0 or greater
 * MySQL version 5.6 or greater
 * WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -170,7 +170,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 5.6 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 == Screenshots ==
 
@@ -184,19 +184,30 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.7.5 - 24.09.2017 =
+* Tweak! - Clear CSS Meta after change print method
+* Tweak! - Set default style for UI controls in all sliders and carousels
+* Fix! - Added compatibility for WordPress 4.8.2 & 4.7.6
+* Fix! - Sync Library tool for manual updating
+
+= 1.7.4 - 18.09.2017 =
+* Tweak! - Added compatibility for the future release of Elementor
+* Fix! - Space widgets applied on the last element ([#2331](https://github.com/pojome/elementor/issues/2331))
+* Fix! - Internal CSS for Template Library embed ([#2394](https://github.com/pojome/elementor/issues/2394))
+
 = 1.7.3 - 11.09.2017 =
 * Tweak! - Added responsive size for icon list widget ([#2302](https://github.com/pojome/elementor/issues/2302))
 * Tweak! - Added keyboard control for lightbox slideshow ([#2270](https://github.com/pojome/elementor/issues/2270))
-* Tweak! – Updated E-Icons font v2.4.2
+* Tweak! - Updated E-Icons font v2.4.2
 * Fix! - Changed image carousel breakpoints ([#2341](https://github.com/pojome/elementor/issues/2341))
 * Fix! - Handles editor view for Divi theme ([#2342](https://github.com/pojome/elementor/issues/2342))
 * Fix! - Live editing to the page settings custom CSS ([#2363](https://github.com/pojome/elementor/issues/2363))
 
 = 1.7.2 - 05.09.2017 =
-* Tweak! – Added compatibility for the future release of Elementor
+* Tweak! - Added compatibility for the future release of Elementor
 * Tweak! - Added API option for developers to insert controls between preexisting controls
 * Tweak! - Added compatibility with Yoast SEO plugin
-* Fix! – Added compatibility for Multisite installation with Domain Mapping ([#2280](https://github.com/pojome/elementor/issues/2280))
+* Fix! - Added compatibility for Multisite installation with Domain Mapping ([#2280](https://github.com/pojome/elementor/issues/2280))
 * Fix! - Disappearing widgets when you undo remove section ([#2301](https://github.com/pojome/elementor/issues/2301))
 
 = 1.7.1 - 29.08.2017 =
@@ -309,7 +320,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - Library dialog not loading in different languages
 * Fix! - Removed duplicate data from editor loading
 * Fix! - Navigation condition in Image Carousel widget ([#1920](https://github.com/pojome/elementor/issues/1920))
-* Fix! – Added `latin-ext` subset in Font control for Romanian language ([#1915](https://github.com/pojome/elementor/issues/1915))
+* Fix! - Added `latin-ext` subset in Font control for Romanian language ([#1915](https://github.com/pojome/elementor/issues/1915))
 
 = 1.5.1 - 29.06.2017 =
 * Tweak! - Show the fallback image until video playback starts ([#1901](https://github.com/pojome/elementor/issues/1901))
@@ -359,7 +370,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - `show_label` affected inner label in the repeater control ([#1707](https://github.com/pojome/elementor/issues/1707))
 
 = 1.4.10 - 25.06.2017 =
-* Fix! – CSS `autoprefixer` for minified files (last 5 versions of browsers support)
+* Fix! - CSS `autoprefixer` for minified files (last 5 versions of browsers support)
 
 = 1.4.9 - 19.06.2017 =
 * Tweak! - Compatibility with the new WordPress 4.8 widgets (Rich Text, Image, Video and Audio)

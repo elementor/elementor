@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Main class plugin
+ * Main plugin class.
  */
 class Plugin {
 
@@ -212,6 +212,7 @@ class Plugin {
 		$this->maintenance_mode = new Maintenance_Mode();
 		$this->modules_manager = new Modules_Manager();
 
+		Api::init();
 		Tracker::init();
 
 		if ( is_admin() ) {
