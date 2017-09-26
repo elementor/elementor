@@ -501,7 +501,44 @@ abstract class Controls_Stack {
 
 		return array_search( $control_id, $controls_keys );
 	}
-	
+
+	/**
+	 * Retrieve all controls under a specific section
+	 *
+	 * @access public
+	 *
+	 * @param string $section_id
+	 *
+	 * @return array Section controls
+	 */
+	final public function get_section_controls( $section_id ) {
+		$section_index = $this->get_control_index( $section_id );
+
+		$section_controls = [];
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		while ( true ) {
+			$section_index++;
+
+			if ( ! isset( $controls_keys[ $section_index ] ) ) {
+				break;
+			}
+
+			$control_key = $controls_keys[ $section_index ];
+
+			if ( Controls_Manager::SECTION === $registered_controls[ $control_key ]['type'] ) {
+				break;
+			}
+
+			$section_controls[ $control_key ] = $registered_controls[ $control_key ];
+		};
+
+		return $section_controls;
+	}
+
 	/**
 	 * Add new group control to stack.
 	 *
