@@ -416,17 +416,17 @@ abstract class Controls_Stack {
 			return false;
 		}
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
-
-		$controls_keys = array_keys( $registered_controls );
-
-		$target_control_index = array_search( $position['of'], $controls_keys );
+		$target_control_index = $this->get_control_index( $position['of'] );
 
 		if ( false === $target_control_index ) {
 			return false;
 		}
 
 		$target_section_index = $target_control_index;
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
 
 		while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
 			$target_section_index--;
