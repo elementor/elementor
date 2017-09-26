@@ -370,7 +370,25 @@ abstract class Controls_Stack {
 	 * @return bool
 	 */
 	public function update_control( $control_id, array $args ) {
-		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+		$is_updated = Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+
+		if ( ! $is_updated ) {
+			return false;
+		}
+
+		$control = $this->get_controls( $control_id );
+
+		if ( Controls_Manager::SECTION === $control['type'] ) {
+			$section_args = $this->get_section_args( $control_id );
+
+			$section_controls = $this->get_section_controls( $control_id );
+
+			foreach ( $section_controls as $section_control_id => $section_control ) {
+				$this->update_control( $section_control_id, $section_args );
+			}
+		}
+
+		return true;
 	}
 
 	/**
