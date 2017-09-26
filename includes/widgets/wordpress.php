@@ -227,7 +227,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @access public
 	 *
-	 * @param array $data Widget data. Default is empty array.
+	 * @param array $data Widget data. Default is an empty array.
 	 * @param array $args Widget arguments. Default is null.
 	 */
 	public function __construct( $data = [], $args = null ) {
