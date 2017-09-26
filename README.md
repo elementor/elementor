@@ -6,7 +6,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
 **Requires PHP:** 5.4  
-**Stable tag:** 1.7.5  
+**Stable tag:** 1.7.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -185,6 +185,15 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.7.6 - 24.09.2017 ###
+* Tweak! - Changed video lightbox width for tablet to 100%
+* Tweak! - Changed Vimeo placeholder for the Video widget
+* Tweak! - Added `vh` unit support for control base
+* Fix! - Prevent showing of placeholder image in video lightbox
+* Fix! - Show Swiper arrows navigation in the center
+* Fix! - Set a centered image preview for media control in the panel
+* Fix! - Removed `sourceMappingURL` reference to prevent an error with the Safari browser
 
 ### 1.7.5 - 24.09.2017 ###
 * Tweak! - Clear CSS Meta after change print method

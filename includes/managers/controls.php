@@ -406,6 +406,7 @@ class Controls_Manager {
 
 	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data ) {
 		$old_control_data = $this->get_control_from_stack( $element->get_unique_name(), $control_id );
+
 		if ( is_wp_error( $old_control_data ) ) {
 			return false;
 		}
