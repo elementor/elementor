@@ -468,6 +468,23 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Retrieve control index.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id
+	 *
+	 * @return false|int Control index
+	 */
+	final public function get_control_index( $control_id ) {
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		return array_search( $control_id, $controls_keys );
+	}
+	
+	/**
 	 * Add new group control to stack.
 	 *
 	 * Register a set of related controls grouped together as a single unified
