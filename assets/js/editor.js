@@ -103,6 +103,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var inlineEditingConfig = elementor.getElementData( editModel ).inlineEditing;
 
 		this.pen = new Pen( {
+			linksInNewWindow: true,
+			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
 			list: inlineEditingConfig.buttons
 		} );
@@ -118,7 +120,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.$inlineEditingArea
 			.focus()
-			.on( 'blur', this.stopInlineEditing );
+			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
 
 		this.view.triggerMethod( 'inline:editing:start' );
 	},
@@ -139,6 +141,20 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.$inlineEditingArea = jQuery( event.currentTarget );
 
 		this.startInlineEditing();
+	},
+
+	onInlineEditingBlur: function() {
+		var self = this;
+
+		setTimeout( function() {
+			var selection = elementorFrontend.getElements( 'window' ).getSelection();
+
+			if ( jQuery( selection.focusNode ).hasClass( 'pen-input-wrapper' ) ) {
+				return;
+			}
+
+			self.stopInlineEditing();
+		}, 150 );
 	},
 
 	onInlineEditingUpdate: function() {
