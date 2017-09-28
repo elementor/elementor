@@ -31,9 +31,42 @@
 		maxLength: 100
 	};
 
-	var toolbarIconsDictionary = {
+	var menuIconsDictionary = {
 		h1: {
 			text: 'H1'
+		},
+		h2: {
+			text: 'H2'
+		},
+		h3: {
+			text: 'H3'
+		},
+		h4: {
+			text: 'H4'
+		},
+		h5: {
+			text: 'H5'
+		},
+		h6: {
+			text: 'H6'
+		},
+		close: {
+			className: 'eicon-close'
+		},
+		insertorderedlist: {
+			className: 'fa fa-list-ol'
+		},
+		insertunorderedlist: {
+			className: 'fa fa-list-ul'
+		},
+		createlink: {
+			className: 'fa fa-link'
+		},
+		blockquote: {
+			className: 'fa fa-quote-right'
+		},
+		p: {
+			className: 'fa fa-paragraph'
 		}
 	};
 
@@ -150,43 +183,129 @@
 
 	function commandLink(ctx, tag, value) {
 		if (ctx.config.linksInNewWindow) {
-			value = '< a href="' + value + '" target="_blank">' + (selection.toString()) + '</a>';
+			value = '<a href="' + value + '" target="_blank">' + (selection.toString()) + '</a>';
 			return commandOverall(ctx, 'insertHTML', value);
 		} else {
 			return commandOverall(ctx, tag, value);
 		}
 	}
 
+	function createTool(ctx, name, type, group) {
+		var title = ctx.config.titles[name] || '',
+			iconElement = document.createElement( 'div' );
+
+		iconElement.classList.add('pen-icon');
+
+		iconElement.setAttribute('title', title);
+
+		if ('parent' === type) {
+			iconElement.classList.add('pen-group-icon');
+
+			iconElement.setAttribute('data-group-toggle', name);
+		} else {
+			iconElement.setAttribute('data-action', name);
+		}
+
+		if('child' === type) {
+			iconElement.setAttribute('data-group', group);
+		}
+
+		var iconDictionary = menuIconsDictionary[ name ];
+
+		if ( iconDictionary && iconDictionary.text ) {
+			iconElement.textContent = iconDictionary.text;
+		} else {
+			var iconClass;
+
+			if ( iconDictionary && iconDictionary.className ) {
+				iconClass = iconDictionary.className;
+			} else {
+				iconClass = 'fa fa-' + name;
+			}
+
+			iconElement.innerHTML += '<i class="' + iconClass + '"  ></i>';
+		}
+
+		return iconElement.outerHTML;
+	}
+
+	function activateGroup(ctx, group) {
+		var tools = ctx._menu.querySelectorAll('.pen-icon');
+
+		tools.forEach(function(tool) {
+			toggleNode(tool, tool.getAttribute('data-group') !== group);
+		});
+
+		toggleMenuClose(ctx, ! group);
+
+		ctx.refreshMenuPosition();
+	}
+
+	function showMainMenu(ctx) {
+		toggleLinkInput(ctx, true);
+
+		activateGroup(ctx, null);
+	}
+
+	function showLinkInput(ctx) {
+		var tools = ctx._menu.querySelectorAll('.pen-icon');
+
+		tools.forEach(function(tool) {
+			toggleNode(tool, true);
+		});
+
+		toggleLinkInput(ctx);
+
+		toggleMenuClose(ctx);
+
+		ctx.refreshMenuPosition();
+	}
+
+	function toggleLinkInput(ctx, hide) {
+		var linkInput = ctx._menu.querySelector('.pen-input-wrapper');
+
+		if (! linkInput) {
+			return;
+		}
+
+		toggleNode(linkInput, hide);
+	}
+
+	function toggleMenuClose(ctx, hide) {
+		var closeButton = ctx._menu.querySelector('[data-action="close"]');
+
+		toggleNode(closeButton, hide);
+	}
+
 	function initToolbar(ctx) {
-		var icons = '', inputStr = '<input class="pen-input" placeholder="http://" />';
+		var icons = '', inputStr = '<div class="pen-input-wrapper"><input class="pen-input" placeholder="http://" /></div>';
 
 		ctx._toolbar = ctx.config.toolbar;
 		if (!ctx._toolbar) {
 			var toolList = ctx.config.list;
-			utils.forEach(toolList, function (name) {
-				var iconDictionary = toolbarIconsDictionary[ name ],
-					title = ctx.config.titles[name] || '';
 
-				icons += '<div class="pen-icon" title="' + title + '" data-action="' + name + '">';
+			utils.forEach(toolList, function (name, key) {
+				if (Array.isArray(name)) {
+					var children = name;
 
-				if ( iconDictionary && iconDictionary.text ) {
-					icons += iconDictionary.text;
+					name = key;
+
+					icons += createTool(ctx, name, 'parent');
+
+					utils.forEach(children, function(childName) {
+						icons += createTool(ctx, childName, 'child', name);
+					}, true);
 				} else {
-					var iconClass;
-
-					if ( iconDictionary && iconDictionary.className ) {
-						iconClass = iconDictionary.className;
-					} else {
-						iconClass = 'fa fa-' + name;
-					}
-
-					icons += '<i class="' + iconClass + '"  ></i>';
+					icons += createTool(ctx, name);
 				}
+			});
 
-				icons += '</div>';
-			}, true);
-			if (toolList.indexOf('createlink') >= 0 || toolList.indexOf('insertimage') >= 0)
+			var toolListValues = Object.values(toolList);
+
+			if (toolListValues.indexOf('createlink') >= 0 || toolListValues.indexOf('insertimage') >= 0)
 				icons += inputStr;
+
+			icons += createTool(ctx, 'close');
 		} else if (ctx._toolbar.querySelectorAll('[data-action=createlink]').length ||
 			ctx._toolbar.querySelectorAll('[data-action=insertimage]').length) {
 			icons += inputStr;
@@ -296,25 +415,44 @@
 		addListener(ctx, toolbar, 'click', function(e) {
 			var node = e.target, action;
 
-			while (node !== toolbar && !(action = node.getAttribute('data-action'))) {
+			while (!(action = node.getAttribute('data-action'))) {
+				if (node.parentNode === toolbar) {
+					break;
+				}
+
 				node = node.parentNode;
 			}
 
+			var groupToggle = node.getAttribute('data-group-toggle');
+
+			if (groupToggle) {
+				activateGroup(ctx, groupToggle);
+			}
+
 			if (!action) return;
+
+			if ('close' === action) {
+				showMainMenu(ctx);
+
+				return;
+			}
+
 			if (!/(?:createlink)|(?:insertimage)/.test(action)) return menuApply(action);
+
 			if (!ctx._inputBar) return;
 
 			// create link
 			var input = ctx._inputBar;
-			if (toolbar === ctx._menu) toggleNode(input);
+			if (toolbar === ctx._menu) showLinkInput(ctx);
 			else {
 				ctx._inputActive = true;
 				ctx.menu();
 			}
 			if (ctx._menu.style.display === 'none') return;
 
-			setTimeout(function() { input.focus(); }, 400);
-			var createlink = function() {
+			setTimeout(function() { input.focus(); }, 100);
+
+			var createLink = function() {
 				var inputValue = input.value;
 
 				if (!inputValue) action = 'unlink';
@@ -324,13 +462,17 @@
 						.replace(strReg.mailTo, 'mailto:$1')
 						.replace(strReg.http, 'http://$1');
 				}
+
 				menuApply(action, inputValue);
+
 				if (toolbar === ctx._menu) toggleNode(input, false);
 				else toggleNode(ctx._menu, true);
+
+				ctx.refreshMenuPosition();
 			};
 
 			input.onkeypress = function(e) {
-				if (e.which === 13) return createlink();
+				if (e.which === 13) return createLink();
 			};
 
 		});
@@ -685,8 +827,6 @@
 			, highlight;
 
 		if (inputBar && toolbar === this._menu) {
-			// display link input if createlink enabled
-			inputBar.style.display = 'none';
 			// reset link input value
 			inputBar.value = '';
 		}
@@ -742,14 +882,21 @@
 	// show menu
 	Pen.prototype.menu = function() {
 		if (!this._menu) return this;
+
 		if (selection.isCollapsed) {
 			this._menu.style.display = 'none'; //hide menu
 			this._inputActive = false;
 			return this;
 		}
+
 		if (this._toolbar) {
 			if (!this._inputBar || !this._inputActive) return this;
 		}
+
+		showMainMenu(this);
+	};
+
+	Pen.prototype.refreshMenuPosition = function() {
 		var offset = this._range.getBoundingClientRect()
 			, menuPadding = 10
 			, top = offset.top - menuPadding
@@ -795,6 +942,7 @@
 
 		menu.style.top = menuOffset.y + 'px';
 		menu.style.left = menuOffset.x + 'px';
+
 		return this;
 	};
 
