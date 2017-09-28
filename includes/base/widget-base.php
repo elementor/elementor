@@ -321,6 +321,10 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'buttons' => self::get_inline_editing_basic_tools() ];
 	}
 
+	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
+		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
+	}
+
 	protected function add_inline_editing_attributes( $inline_editing_key ) {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			return;
