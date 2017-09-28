@@ -57,6 +57,17 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Whether inline editing is supported by this widget or not.
+	 *
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_inline_editing_supported() {
+		return true;
+	}
+
+	/**
 	 * Register toggle widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -97,7 +108,7 @@ class Widget_Toggle extends Widget_Base {
 					[
 						'name' => 'tab_content',
 						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
+						'type' => Controls_Manager::TEXTAREA,
 						'default' => __( 'Toggle Content', 'elementor' ),
 						'show_label' => false,
 					],
@@ -276,14 +287,29 @@ class Widget_Toggle extends Widget_Base {
 		?>
 		<div class="elementor-toggle">
 			<?php $counter = 1; ?>
-			<?php foreach ( $tabs as $item ) : ?>
+			<?php foreach ( $tabs as $item ) :
+				$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $counter - 1 );
+
+				$this->add_render_attribute( $tab_title_setting_key, 'class', 'elementor-tab-title' );
+
+				$this->add_inline_editing_attributes( $tab_title_setting_key );
+
+				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+
+				$this->add_render_attribute( $tab_content_setting_key, [
+					'class' => [ 'elementor-toggle-content', 'elementor-clearfix' ],
+					'data-tab' => $counter,
+				] );
+
+				$this->add_inline_editing_attributes( $tab_content_setting_key );
+				?>
 				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
-					<?php echo $item['tab_title']; ?>
+					<span <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></span>
 				</div>
-				<div class="elementor-toggle-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+				<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 			<?php
 				$counter++;
 			endforeach;
@@ -310,9 +336,9 @@ class Widget_Toggle extends Widget_Base {
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>
-						{{{ item.tab_title }}}
+						<span class="elementor-tab-title elementor-inline-editing" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title">{{{ item.tab_title }}}</span>
 					</div>
-					<div class="elementor-toggle-content elementor-clearfix" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+					<div class="elementor-toggle-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content">{{{ item.tab_content }}}</div>
 				<#
 					counter++;
 				} );
