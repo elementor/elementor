@@ -44,6 +44,17 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Whether inline editing is supported by this widget or not.
+	 *
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_inline_editing_supported() {
+		return true;
+	}
+
+	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -216,11 +227,13 @@ class Widget_Heading extends Widget_Base {
 			return;
 		}
 
-		$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title' );
+		$this->add_render_attribute( 'title', 'class', 'elementor-heading-title' );
 
 		if ( ! empty( $settings['size'] ) ) {
-			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $settings['size'] );
+			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
 		}
+
+		$this->add_inline_editing_attributes( 'title' );
 
 		$title = $settings['title'];
 
@@ -238,7 +251,7 @@ class Widget_Heading extends Widget_Base {
 			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
 		}
 
-		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $title );
+		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'title' ), $title );
 
 		echo $title_html;
 	}
@@ -259,7 +272,7 @@ class Widget_Heading extends Widget_Base {
 				title = '<a href="' + settings.link.url + '">' + title + '</a>';
 			}
 
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-size-' + settings.size + '">' + title + '</' + settings.header_size + '>';
+			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title">' + title + '</' + settings.header_size + '>';
 
 			print( title_html );
 		#>
