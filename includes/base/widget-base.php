@@ -13,6 +13,40 @@ abstract class Widget_Base extends Element_Base {
 		return 'widget';
 	}
 
+	public static function get_inline_editing_basic_tools() {
+		return [
+			'bold',
+			'italic',
+			'underline',
+			'strikethrough',
+		];
+	}
+
+	public static function get_inline_editing_advanced_tools() {
+		return array_merge( self::get_inline_editing_basic_tools(), [
+			'createlink',
+			'h1' => [
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'p',
+				'blockquote',
+				'code',
+			],
+			'list' => [
+				'insertorderedlist',
+				'insertorderedlist',
+			],
+			'indent' => [
+				'indent',
+				'outdent',
+			],
+		] );
+	}
+
 	protected static function get_default_edit_tools() {
 		$widget_label = __( 'Widget', 'elementor' );
 
@@ -284,9 +318,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function get_inline_editing_config() {
-		return [
-			'buttons' => [ 'bold', 'italic', 'underline', 'strikethrough' ]
-		];
+		return [ 'buttons' => self::get_inline_editing_basic_tools() ];
 	}
 
 	protected function add_inline_editing_attributes( $inline_editing_key ) {
