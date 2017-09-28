@@ -17,6 +17,7 @@ class Widgets_Manager {
 			'heading',
 			'image',
 			'text-editor',
+			'text',
 			'video',
 			'button',
 			'divider',
