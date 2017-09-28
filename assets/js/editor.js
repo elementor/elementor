@@ -81,10 +81,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		};
 	},
 
-	initialize: function() {
-		this.stopInlineEditing = _.bind( this.stopInlineEditing, this );
-	},
-
 	startInlineEditing: function() {
 		if ( this.inlineEditing ) {
 			return;
@@ -128,13 +124,15 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	stopInlineEditing: function() {
 		this.inlineEditing = false;
 
-		this.view.allowRender = true;
-
-		this.view.getEditModel().renderRemoteServer();
-
 		this.pen.destroy();
 
 		this.view.triggerMethod( 'inline:editing:stop' );
+	},
+
+	renderOnStop: function() {
+		this.view.allowRender = true;
+
+		this.view.getEditModel().renderRemoteServer();
 	},
 
 	onInlineEditingClick: function( event ) {
@@ -147,13 +145,23 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var self = this;
 
 		setTimeout( function() {
-			var selection = elementorFrontend.getElements( 'window' ).getSelection();
+			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
+				$focusNode = jQuery( selection.focusNode );
 
-			if ( jQuery( selection.focusNode ).hasClass( 'pen-input-wrapper' ) ) {
+			if ( $focusNode.hasClass( 'pen-input-wrapper' ) ) {
 				return;
 			}
 
 			self.stopInlineEditing();
+
+			if (
+				$focusNode.closest( self.view.el ).length &&
+				$focusNode.closest( '.' + self.getOption( 'inlineEditingClass' ) ).length
+			) { // There is another inline editing active it this widget
+				return;
+			}
+
+			self.renderOnStop();
 		}, 150 );
 	},
 
