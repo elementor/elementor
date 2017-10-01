@@ -424,6 +424,7 @@ class Editor {
 				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
+				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 
