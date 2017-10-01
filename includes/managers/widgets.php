@@ -180,6 +180,7 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
+		/** @var Widget_Base $widget */
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
