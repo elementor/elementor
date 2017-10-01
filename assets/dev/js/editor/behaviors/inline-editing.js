@@ -40,7 +40,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
-			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'advanced' ]
+			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'basic' ]
 		} );
 
 		var $menu = jQuery( this.pen._menu ),

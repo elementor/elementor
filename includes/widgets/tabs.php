@@ -312,7 +312,7 @@ class Widget_Tabs extends Widget_Base {
 						'data-tab' => $counter,
 					] );
 
-					$this->add_inline_editing_attributes( $tab_title_setting_key, 'basic' );
+					$this->add_inline_editing_attributes( $tab_title_setting_key );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 				<?php
@@ -331,7 +331,7 @@ class Widget_Tabs extends Widget_Base {
 						'data-tab' => $counter,
 					] );
 
-					$this->add_inline_editing_attributes( $tab_content_setting_key );
+					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 					?>
 					<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
@@ -360,7 +360,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="basic">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title">{{{ item.tab_title }}}</div>
 					<#
 						counter++;
 					} ); #>
@@ -371,7 +371,7 @@ class Widget_Tabs extends Widget_Base {
 					<#
 					_.each( settings.tabs, function( item ) { #>
 						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
-						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }} elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content">{{{ item.tab_content }}}</div>
+						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }} elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced">{{{ item.tab_content }}}</div>
 					<#
 					counter++;
 					} ); #>
