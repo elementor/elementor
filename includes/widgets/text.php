@@ -54,10 +54,6 @@ class Widget_Text extends Widget_Base {
 		return true;
 	}
 
-	protected function get_inline_editing_config() {
-		return [ 'buttons' => self::get_inline_editing_advanced_tools() ];
-	}
-
 	/**
 	 * Register text widget controls.
 	 *
