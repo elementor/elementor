@@ -318,7 +318,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function get_inline_editing_config() {
-		return [ 'buttons' => self::get_inline_editing_basic_tools() ];
+		return [ 'buttons' => self::get_inline_editing_advanced_tools() ];
 	}
 
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {

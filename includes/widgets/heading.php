@@ -213,6 +213,10 @@ class Widget_Heading extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	protected function get_inline_editing_config() {
+		return [ 'buttons' => self::get_inline_editing_basic_tools() ];
+	}
+
 	/**
 	 * Render heading widget output on the frontend.
 	 *
