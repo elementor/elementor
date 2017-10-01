@@ -262,20 +262,18 @@ class Widget_Alert extends Widget_Base {
 			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $settings['alert_type'] );
 		}
 
-		echo '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' role="alert">';
-		$html = sprintf( '<span class="elementor-alert-title">%1$s</span>', $settings['alert_title'] );
-
-		if ( ! empty( $settings['alert_description'] ) ) {
-			$html .= sprintf( '<span class="elementor-alert-description">%s</span>', $settings['alert_description'] );
-		}
-
-		if ( ! empty( $settings['show_dismiss'] ) && 'show' === $settings['show_dismiss'] ) {
-			$html .= '<button type="button" class="elementor-alert-dismiss">X</button>';
-		}
-
-		echo $html;
-
-		echo '</div>';
+		$this->add_render_attribute( 'wrapper', 'role', 'alert' );
+		?>
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+			<span class="elementor-alert-title"><?php echo $settings['alert_title']; ?></span>
+			<?php if ( ! empty( $settings['alert_description'] ) ) { ?>
+				<span class="elementor-alert-description"><?php echo $settings['alert_description']; ?></span>
+			<?php }
+			if ( ! empty( $settings['show_dismiss'] ) && 'show' === $settings['show_dismiss'] ) { ?>
+				<button type="button" class="elementor-alert-dismiss">X</button>
+			<?php } ?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -287,24 +285,13 @@ class Widget_Alert extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<#
-		var html = '<div class="elementor-alert elementor-alert-' + settings.alert_type + '" role="alert">';
-		if ( '' !== settings.title ) {
-			html += '<span class="elementor-alert-title">' + settings.alert_title + '</span>';
-
-			if ( '' !== settings.description ) {
-				html += '<span class="elementor-alert-description">' + settings.alert_description + '</span>';
-			}
-
-			if ( 'show' === settings.show_dismiss ) {
-				html += '<button type="button" class="elementor-alert-dismiss">X</button>';
-			}
-
-			html += '</div>';
-		
-			print( html );
-		}
-		#>
+		<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
+			<span class="elementor-alert-title">{{{ settings.alert_title }}}</span>
+			<span class="elementor-alert-description">{{{ settings.alert_description }}}</span>
+			<# if ( 'show' === settings.show_dismiss ) { #>
+				<button type="button" class="elementor-alert-dismiss">X</button>
+			<# } #>
+		</div>
 		<?php
 	}
 }
