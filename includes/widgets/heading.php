@@ -222,7 +222,7 @@ class Widget_Heading extends Widget_Base {
 			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		$this->add_inline_editing_attributes( 'title', 'basic' );
+		$this->add_inline_editing_attributes( 'title' );
 
 		$title = $settings['title'];
 
@@ -261,7 +261,7 @@ class Widget_Heading extends Widget_Base {
 				title = '<a href="' + settings.link.url + '">' + title + '</a>';
 			}
 
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title" data-elementor-inline-editing-toolbar="basic">' + title + '</' + settings.header_size + '>';
+			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title">' + title + '</' + settings.header_size + '>';
 
 			print( title_html );
 		#>

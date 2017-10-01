@@ -450,7 +450,7 @@ class Widget_Image_Box extends Widget_Base {
 			if ( ! empty( $settings['title_text'] ) ) {
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
-				$this->add_inline_editing_attributes( 'title_text', 'basic' );
+				$this->add_inline_editing_attributes( 'title_text' );
 
 				$title_html = $settings['title_text'];
 
@@ -464,7 +464,7 @@ class Widget_Image_Box extends Widget_Base {
 			if ( ! empty( $settings['description_text'] ) ) {
 				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
 
-				$this->add_inline_editing_attributes( 'description_text' );
+				$this->add_inline_editing_attributes( 'description_text', 'advanced' );
 
 				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $settings['description_text'] );
 			}
@@ -511,11 +511,11 @@ class Widget_Image_Box extends Widget_Base {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 
-				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="basic">' + title_html + '</' + settings.title_size  + '>';
+				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text">' + title_html + '</' + settings.title_size  + '>';
 			}
 
 			if ( settings.description_text ) {
-				html += '<p class="elementor-image-box-description elementor-inline-editing" data-elementor-setting-key="description_text">' + settings.description_text + '</p>';
+				html += '<p class="elementor-image-box-description elementor-inline-editing" data-elementor-setting-key="description_text" data-elementor-inline-editing-toolbar="advanced">' + settings.description_text + '</p>';
 			}
 
 			html += '</div>';

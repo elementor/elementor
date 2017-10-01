@@ -272,24 +272,20 @@ abstract class Widget_Base extends Element_Base {
 		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
 	}
 
-	protected function add_inline_editing_attributes( $keys, $toolbar = 'advanced' ) {
+	protected function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			return;
 		}
 
-		$keys = (array) $keys;
+		$this->add_render_attribute( $key, [
+			'class' => 'elementor-inline-editing',
+			'data-elementor-setting-key' => $key,
+		] );
 
-		foreach ( $keys as $key ) {
+		if ( 'basic' !== $toolbar ) {
 			$this->add_render_attribute( $key, [
-				'class' => 'elementor-inline-editing',
-				'data-elementor-setting-key' => $key,
+				'data-elementor-inline-editing-toolbar' => $toolbar,
 			] );
-
-			if ( 'advanced' !== $toolbar ) {
-				$this->add_render_attribute( $key, [
-					'data-elementor-inline-editing-toolbar' => $toolbar,
-				] );
-			}
 		}
 	}
 

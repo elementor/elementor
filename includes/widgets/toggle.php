@@ -281,7 +281,7 @@ class Widget_Toggle extends Widget_Base {
 
 				$this->add_render_attribute( $tab_title_setting_key, 'class', 'elementor-tab-title' );
 
-				$this->add_inline_editing_attributes( $tab_title_setting_key, 'basic' );
+				$this->add_inline_editing_attributes( $tab_title_setting_key );
 
 				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
 
@@ -290,7 +290,7 @@ class Widget_Toggle extends Widget_Base {
 					'data-tab' => $counter,
 				] );
 
-				$this->add_inline_editing_attributes( $tab_content_setting_key );
+				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">
@@ -325,9 +325,9 @@ class Widget_Toggle extends Widget_Base {
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>
-						<span class="elementor-tab-title elementor-inline-editing" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="basic">{{{ item.tab_title }}}</span>
+						<span class="elementor-tab-title elementor-inline-editing" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title">{{{ item.tab_title }}}</span>
 					</div>
-					<div class="elementor-toggle-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content">{{{ item.tab_content }}}</div>
+					<div class="elementor-toggle-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced">{{{ item.tab_content }}}</div>
 				<#
 					counter++;
 				} );

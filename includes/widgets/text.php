@@ -312,7 +312,7 @@ class Widget_Text extends Widget_Base {
 
 		$this->add_render_attribute( 'text', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
 
-		$this->add_inline_editing_attributes( 'text' );
+		$this->add_inline_editing_attributes( 'text', 'advanced' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $text; ?></div>
 		<?php
@@ -339,7 +339,7 @@ class Widget_Text extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-text-editor elementor-clearfix elementor-inline-editing" data-elementor-setting-key="text">{{{ settings.text }}}</div>
+		<div class="elementor-text-editor elementor-clearfix elementor-inline-editing" data-elementor-setting-key="text" data-elementor-inline-editing-toolbar="advanced">{{{ settings.text }}}</div>
 		<?php
 	}
 }
