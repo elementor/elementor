@@ -44,17 +44,6 @@ class Widget_Text extends Widget_Base {
 	}
 
 	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return true;
-	}
-
-	/**
 	 * Register text widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.

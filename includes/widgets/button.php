@@ -44,17 +44,6 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return true;
-	}
-
-	/**
 	 * Retrieve button sizes.
 	 *
 	 * @access public
@@ -441,7 +430,7 @@ class Widget_Button extends Widget_Base {
 						<i class="{{ settings.icon }}"></i>
 					</span>
 					<# } #>
-					<span class="elementor-button-text elementor-inline-editing" data-elementor-setting-key="text">{{{ settings.text }}}</span>
+					<span class="elementor-button-text elementor-inline-editing" data-elementor-setting-key="text" data-elementor-inline-editing-toolbar="basic">{{{ settings.text }}}</span>
 				</span>
 			</a>
 		</div>
@@ -461,7 +450,7 @@ class Widget_Button extends Widget_Base {
 
 		$this->add_render_attribute( 'text', 'class', 'elementor-button-text' );
 
-		$this->add_inline_editing_attributes( 'text' );
+		$this->add_inline_editing_attributes( 'text', 'basic' );
 		?>
 		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) ) : ?>

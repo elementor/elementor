@@ -57,17 +57,6 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return true;
-	}
-
-	/**
 	 * Register tabs widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -323,7 +312,7 @@ class Widget_Tabs extends Widget_Base {
 						'data-tab' => $counter,
 					] );
 
-					$this->add_inline_editing_attributes( $tab_title_setting_key );
+					$this->add_inline_editing_attributes( $tab_title_setting_key, 'basic' );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 				<?php
@@ -371,7 +360,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="basic">{{{ item.tab_title }}}</div>
 					<#
 						counter++;
 					} ); #>

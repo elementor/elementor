@@ -57,17 +57,6 @@ class Widget_Image_Box extends Widget_Base {
 	}
 
 	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return true;
-	}
-
-	/**
 	 * Register image box widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -461,7 +450,7 @@ class Widget_Image_Box extends Widget_Base {
 			if ( ! empty( $settings['title_text'] ) ) {
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
-				$this->add_inline_editing_attributes( 'title_text' );
+				$this->add_inline_editing_attributes( 'title_text', 'basic' );
 
 				$title_html = $settings['title_text'];
 
@@ -522,7 +511,7 @@ class Widget_Image_Box extends Widget_Base {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 
-				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text">' + title_html + '</' + settings.title_size  + '>';
+				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="basic">' + title_html + '</' + settings.title_size  + '>';
 			}
 
 			if ( settings.description_text ) {
