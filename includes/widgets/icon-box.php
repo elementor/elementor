@@ -57,17 +57,6 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return true;
-	}
-
-	/**
 	 * Register icon box widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -572,7 +561,9 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_render_attribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
-		$this->add_inline_editing_attributes( [ 'title_text', 'description_text' ] );
+		$this->add_inline_editing_attributes( 'title_text', 'basic' );
+
+		$this->add_inline_editing_attributes( 'description_text' );
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<div class="elementor-icon-box-icon">
@@ -609,7 +600,7 @@ class Widget_Icon_Box extends Widget_Base {
 			</div>
 			<div class="elementor-icon-box-content">
 				<{{{ settings.title_size }}} class="elementor-icon-box-title">
-					<{{{ iconTag + ' ' + link }}} class="elementor-inline-editing" data-elementor-setting-key="title_text">{{{ settings.title_text }}}</{{{ iconTag }}}>
+					<{{{ iconTag + ' ' + link }}} class="elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="basic">{{{ settings.title_text }}}</{{{ iconTag }}}>
 				</{{{ settings.title_size }}}>
 				<p class="elementor-icon-box-description elementor-inline-editing" data-elementor-setting-key="description_text">{{{ settings.description_text }}}</p>
 			</div>

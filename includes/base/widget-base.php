@@ -13,40 +13,6 @@ abstract class Widget_Base extends Element_Base {
 		return 'widget';
 	}
 
-	public static function get_inline_editing_basic_tools() {
-		return [
-			'bold',
-			'italic',
-			'underline',
-			'strikethrough',
-		];
-	}
-
-	public static function get_inline_editing_advanced_tools() {
-		return array_merge( self::get_inline_editing_basic_tools(), [
-			'createlink',
-			'h1' => [
-				'h1',
-				'h2',
-				'h3',
-				'h4',
-				'h5',
-				'h6',
-				'p',
-				'blockquote',
-				'code',
-			],
-			'list' => [
-				'insertorderedlist',
-				'insertorderedlist',
-			],
-			'indent' => [
-				'indent',
-				'outdent',
-			],
-		] );
-	}
-
 	protected static function get_default_edit_tools() {
 		$widget_label = __( 'Widget', 'elementor' );
 
@@ -72,17 +38,6 @@ abstract class Widget_Base extends Element_Base {
 
 	public function get_categories() {
 		return [ 'basic' ];
-	}
-
-	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return false;
 	}
 
 	public function __construct( $data = [], $args = null ) {
@@ -165,10 +120,6 @@ abstract class Widget_Base extends Element_Base {
 			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
 		];
-
-		if ( $this->is_inline_editing_supported() ) {
-			$config['inlineEditing'] = $this->get_inline_editing_config();
-		}
 
 		return array_merge( parent::_get_initial_config(), $config );
 	}
@@ -317,32 +268,28 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::$instance->elements_manager->get_element_types( 'section' );
 	}
 
-	protected function get_inline_editing_config() {
-		return [ 'buttons' => self::get_inline_editing_advanced_tools() ];
-	}
-
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
 		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
 	}
 
-	protected function add_inline_editing_attributes( $inline_editing_key ) {
+	protected function add_inline_editing_attributes( $keys, $toolbar = 'advanced' ) {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			return;
 		}
 
-		if ( ! $this->is_inline_editing_supported() ) {
-			_doing_it_wrong( get_called_class() . '::' . __FUNCTION__, 'You must enable inline editing first (Use `is_inline_editing_supported()`).', '1.8.0' );
+		$keys = (array) $keys;
 
-			return;
-		}
-
-		$inline_editing_key = (array) $inline_editing_key;
-
-		foreach ( $inline_editing_key as $key ) {
+		foreach ( $keys as $key ) {
 			$this->add_render_attribute( $key, [
 				'class' => 'elementor-inline-editing',
 				'data-elementor-setting-key' => $key,
 			] );
+
+			if ( 'advanced' !== $toolbar ) {
+				$this->add_render_attribute( $key, [
+					'data-elementor-inline-editing-toolbar' => $toolbar,
+				] );
+			}
 		}
 	}
 

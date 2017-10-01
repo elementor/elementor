@@ -259,6 +259,45 @@ class Widgets_Manager {
 		}
 	}
 
+	public function get_inline_editing_config() {
+		$basic_tools = [
+			'bold',
+			'italic',
+			'underline',
+			'strikethrough',
+		];
+
+		$advanced_tools = array_merge( $basic_tools, [
+			'createlink',
+			'h1' => [
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'p',
+				'blockquote',
+				'code',
+			],
+			'list' => [
+				'insertorderedlist',
+				'insertorderedlist',
+			],
+			'indent' => [
+				'indent',
+				'outdent',
+			],
+		] );
+
+		return [
+			'toolbar' => [
+				'basic' => $basic_tools,
+				'advanced' => $advanced_tools,
+			],
+		];
+	}
+
 	public function __construct() {
 		$this->_require_files();
 

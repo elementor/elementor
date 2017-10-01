@@ -44,17 +44,6 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
-	 * Whether inline editing is supported by this widget or not.
-	 *
-	 * @access public
-	 *
-	 * @return bool
-	 */
-	public function is_inline_editing_supported() {
-		return true;
-	}
-
-	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -213,10 +202,6 @@ class Widget_Heading extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	protected function get_inline_editing_config() {
-		return [ 'buttons' => self::get_inline_editing_basic_tools() ];
-	}
-
 	/**
 	 * Render heading widget output on the frontend.
 	 *
@@ -237,7 +222,7 @@ class Widget_Heading extends Widget_Base {
 			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		$this->add_inline_editing_attributes( 'title' );
+		$this->add_inline_editing_attributes( 'title', 'basic' );
 
 		$title = $settings['title'];
 
@@ -276,7 +261,7 @@ class Widget_Heading extends Widget_Base {
 				title = '<a href="' + settings.link.url + '">' + title + '</a>';
 			}
 
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title">' + title + '</' + settings.header_size + '>';
+			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title" data-elementor-inline-editing-toolbar="basic">' + title + '</' + settings.header_size + '>';
 
 			print( title_html );
 		#>

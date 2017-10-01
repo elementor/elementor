@@ -23,9 +23,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var editModel = this.view.getEditModel();
+		var editModel = this.view.getEditModel(),
+			inlineEditingElementData = this.$inlineEditingArea.data();
 
-		this.$inlineEditingArea.html( editModel.getSetting( this.$inlineEditingArea.data( 'elementor-setting-key' ) ) );
+		this.$inlineEditingArea.html( editModel.getSetting( inlineEditingElementData.elementorSettingKey ) );
 
 		var Pen = elementorFrontend.getElements( 'window' ).Pen;
 
@@ -33,13 +34,13 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
-		var inlineEditingConfig = elementor.getElementData( editModel ).inlineEditing;
+		var inlineEditingConfig = elementor.config.inlineEditing;
 
 		this.pen = new Pen( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
-			list: inlineEditingConfig.buttons
+			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'advanced' ]
 		} );
 
 		var $menu = jQuery( this.pen._menu ),
@@ -64,9 +65,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.pen.destroy();
 
 		this.view.triggerMethod( 'inline:editing:stop' );
-	},
 
-	renderOnStop: function() {
 		this.view.allowRender = true;
 
 		this.view.getEditModel().renderRemoteServer();
@@ -90,15 +89,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			}
 
 			self.stopInlineEditing();
-
-			if (
-				$focusNode.closest( self.view.el ).length &&
-				$focusNode.closest( '.' + self.getOption( 'inlineEditingClass' ) ).length
-			) { // There is another inline editing active it this widget
-				return;
-			}
-
-			self.renderOnStop();
 		}, 150 );
 	},
 
