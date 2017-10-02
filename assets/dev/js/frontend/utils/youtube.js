@@ -12,7 +12,6 @@ module.exports = ViewModule.extend( {
 	},
 
 	getDefaultElements: function() {
-
 		return {
 			$firstScript: jQuery( this.getSettings( 'selectors.firstScript' ) )
 		};
