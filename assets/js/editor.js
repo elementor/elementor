@@ -77,7 +77,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	events: function() {
 		return {
 			'click @ui.inlineEditingArea': 'onInlineEditingClick',
-			'keyup @ui.inlineEditingArea':'onInlineEditingUpdate'
+			'input @ui.inlineEditingArea':'onInlineEditingUpdate'
 		};
 	},
 
@@ -106,10 +106,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'basic' ]
 		} );
 
-		var $menu = jQuery( this.pen._menu ),
-			$menuItems = $menu.children();
-
-		$menu.on( 'click', _.bind( this.onInlineEditingUpdate, this ) );
+		var $menuItems = jQuery( this.pen._menu ).children();
 
 		$menuItems.on( 'mousedown', function( event ) {
 			event.preventDefault();
