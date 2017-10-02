@@ -17,9 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Widget_Base extends Element_Base {
 
 	/**
-	 * Whether a template has content.
+	 * Whether the widget has content.
 	 *
-	 * Default is true, widget templates has content.
+	 * Used in cased where the widget has no content. When widgets uses only
+	 * skins to display dynamic content generated on the server. For example the
+	 * posts widget in Elemenrot Pro. Default is true, the widget has content
+	 * template.
 	 *
 	 * @access protected
 	 *
@@ -28,7 +31,7 @@ abstract class Widget_Base extends Element_Base {
 	protected $_has_template_content = true;
 
 	/**
-	 * Retrieve control type.
+	 * Retrieve element type.
 	 *
 	 * Get the element type, in this case `widget`.
 	 *
@@ -44,7 +47,8 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Retrieve default edit tools.
 	 *
-	 * ?????
+	 * Get the default edit tools of the widget. This method is used to set
+	 * initial tools - by default widgets have the duplicate and removal tools.
 	 *
 	 * @access protected
 	 * @static
