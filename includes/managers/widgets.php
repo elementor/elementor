@@ -282,8 +282,8 @@ class Widgets_Manager {
 				'code',
 			],
 			'list' => [
-				'insertorderedlist',
-				'insertorderedlist',
+				'insertOrderedList',
+				'insertUnorderedList',
 			],
 			'indent' => [
 				'indent',
