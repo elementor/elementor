@@ -8,15 +8,14 @@
 	// allow command list
 	var commandsReg = {
 		block: /^(?:p|h[1-6]|blockquote|pre)$/,
-		inline: /^(?:strikethrough|bold|italic|underline|insertorderedlist|insertunorderedlist|indent|outdent)$/,
+		inline: /^(?:justify(center|full|left|right)|strikethrough|bold|italic|underline|insert(un)?orderedlist|(in|out)dent)$/,
 		source: /^(?:createlink|unlink)$/,
 		insert: /^(?:inserthorizontalrule|insertimage|insert)$/,
 		wrap: /^(?:code)$/
 	};
 
-	var lineBreakReg = /^(?:blockquote|pre|div)$/i;
-
-	var effectNodeReg = /(?:[pubia]|h[1-6]|blockquote|[uo]l|li)/i;
+	var lineBreakReg = /^(?:blockquote|pre|div)$/i,
+		effectNodeReg = /(?:[pubia]|h[1-6]|blockquote|code|[uo]l|li)/i;
 
 	var strReg = {
 		whiteSpace: /(^\s+)|(\s+$)/g,
@@ -50,13 +49,25 @@
 		h6: {
 			text: 'H6'
 		},
+		justifyCenter: {
+			className: 'fa fa-align-center'
+		},
+		justifyFull: {
+			className: 'fa fa-align-justify'
+		},
+		justifyLeft: {
+			className: 'fa fa-align-left'
+		},
+		justifyRight: {
+			className: 'fa fa-align-right'
+		},
 		close: {
 			className: 'eicon-close'
 		},
-		insertorderedlist: {
+		insertOrderedList: {
 			className: 'fa fa-list-ol'
 		},
-		insertunorderedlist: {
+		insertUnorderedList: {
 			className: 'fa fa-list-ul'
 		},
 		createlink: {
@@ -124,7 +135,7 @@
 			stayMsg: 'Are you going to leave here?',
 			textarea: '<textarea name="content"></textarea>',
 			list: [
-				'blockquote', 'h2', 'h3', 'p', 'code', 'insertorderedlist', 'insertunorderedlist', 'inserthorizontalrule',
+				'blockquote', 'h2', 'h3', 'p', 'code', 'insertOrderedList', 'insertUnorderedList', 'inserthorizontalrule',
 				'indent', 'outdent', 'bold', 'italic', 'underline', 'createlink', 'insertimage'
 			],
 			titles: {},
@@ -171,7 +182,7 @@
 	}
 
 	function commandBlock(ctx, name) {
-		var list = effectNode(ctx, getNode(ctx), true);
+		var list = effectNode(ctx, true);
 		if (list.indexOf(name) !== -1) name = 'p';
 		return commandOverall(ctx, 'formatblock', name);
 	}
@@ -229,8 +240,12 @@
 		return iconElement.outerHTML;
 	}
 
+	function getMenuTools(ctx) {
+		return Array.prototype.slice.call(ctx._menu.children);
+	}
+
 	function activateGroup(ctx, group) {
-		var tools = ctx._menu.querySelectorAll('.pen-icon');
+		var tools = getMenuTools(ctx);
 
 		tools.forEach(function(tool) {
 			toggleNode(tool, tool.getAttribute('data-group') !== group);
@@ -242,13 +257,13 @@
 	}
 
 	function showMainMenu(ctx) {
-		toggleLinkInput(ctx, true);
-
 		activateGroup(ctx, null);
+
+		toggleLinkInput(ctx, true);
 	}
 
 	function showLinkInput(ctx) {
-		var tools = ctx._menu.querySelectorAll('.pen-icon');
+		var tools = getMenuTools(ctx);
 
 		tools.forEach(function(tool) {
 			toggleNode(tool, true);
@@ -257,8 +272,6 @@
 		toggleLinkInput(ctx);
 
 		toggleMenuClose(ctx);
-
-		ctx.refreshMenuPosition();
 	}
 
 	function toggleLinkInput(ctx, hide) {
@@ -269,16 +282,49 @@
 		}
 
 		toggleNode(linkInput, hide);
+
+		ctx.refreshMenuPosition();
 	}
 
 	function toggleMenuClose(ctx, hide) {
 		var closeButton = ctx._menu.querySelector('[data-action="close"]');
 
 		toggleNode(closeButton, hide);
+
+		ctx.refreshMenuPosition();
+	}
+
+	function createLinkInput() {
+		var inputWrapper = doc.createElement('div'),
+			urlInput = doc.createElement('input'),
+			newWindowLabel = doc.createElement('label'),
+			newWindowCheckbox = doc.createElement('input'),
+			newWindowIcon = doc.createElement('i');
+
+		inputWrapper.className = 'pen-input-wrapper';
+
+		urlInput.className = 'pen-url-input';
+		urlInput.type = 'url';
+		urlInput.placeholder = 'http://';
+
+		newWindowLabel.className = 'pen-icon pen-input-label';
+
+		newWindowCheckbox.className = 'pen-external-url-checkbox';
+		newWindowCheckbox.type = 'checkbox';
+
+		newWindowIcon.className = 'fa fa-external-link';
+
+		newWindowLabel.appendChild(newWindowCheckbox);
+		newWindowLabel.appendChild(newWindowIcon);
+
+		inputWrapper.appendChild(urlInput);
+		inputWrapper.appendChild(newWindowLabel);
+
+		return inputWrapper;
 	}
 
 	function initToolbar(ctx) {
-		var icons = '', inputStr = '<div class="pen-input-wrapper"><input class="pen-input" placeholder="http://" /></div>';
+		var icons = '', inputStr = createLinkInput().outerHTML;
 
 		ctx._toolbar = ctx.config.toolbar;
 		if (!ctx._toolbar) {
@@ -315,11 +361,11 @@
 			ctx._menu = doc.createElement('div');
 			ctx._menu.setAttribute('class', ctx.config.class + '-menu pen-menu');
 			ctx._menu.innerHTML = icons;
-			ctx._inputBar = ctx._menu.querySelector('input');
+			ctx._urlInput = ctx._menu.querySelector('.pen-url-input');
+			ctx._externalUrlCheckbox = ctx._menu.querySelector('.pen-external-url-checkbox');
 			toggleNode(ctx._menu, true);
 			doc.body.appendChild(ctx._menu);
 		}
-		if (ctx._toolbar && ctx._inputBar) toggleNode(ctx._inputBar);
 	}
 
 	function initEvents(ctx) {
@@ -439,10 +485,10 @@
 
 			if (!/(?:createlink)|(?:insertimage)/.test(action)) return menuApply(action);
 
-			if (!ctx._inputBar) return;
+			if (!ctx._urlInput) return;
 
 			// create link
-			var input = ctx._inputBar;
+			var input = ctx._urlInput;
 			if (toolbar === ctx._menu) showLinkInput(ctx);
 			else {
 				ctx._inputActive = true;
@@ -455,26 +501,29 @@
 			var createLink = function() {
 				var inputValue = input.value;
 
-				if (!inputValue) action = 'unlink';
-				else {
+				if (inputValue) {
+					ctx.config.linksInNewWindow = ctx._externalUrlCheckbox.checked;
+
 					inputValue = input.value
 						.replace(strReg.whiteSpace, '')
 						.replace(strReg.mailTo, 'mailto:$1')
 						.replace(strReg.http, 'http://$1');
+				} else {
+					action = 'unlink';
 				}
 
 				menuApply(action, inputValue);
-
-				if (toolbar === ctx._menu) toggleNode(input, false);
-				else toggleNode(ctx._menu, true);
-
-				ctx.refreshMenuPosition();
 			};
 
 			input.onkeypress = function(e) {
-				if (e.which === 13) return createLink();
+				if (e.which === 13) {
+					e.preventDefault();
+
+					createLink()
+				}
 			};
 
+			ctx._externalUrlCheckbox.onchange = createLink;
 		});
 
 		// listen for placeholder
@@ -583,15 +632,24 @@
 	}
 
 	// node effects
-	function effectNode(ctx, el, returnAsNodeName) {
-		var nodes = [];
-		el = el || ctx.config.editor;
+	function effectNode(ctx, returnAsNodeName) {
+		return getNodeParents(ctx, returnAsNodeName).filter(function(node) {
+			return node.nodeName.match(effectNodeReg);
+		});
+	}
+
+	function getNodeParents(ctx, returnAsNodeName) {
+		var nodes = [],
+			el = getNode(ctx);
+
 		while (el && el !== ctx.config.editor) {
-			if (el.nodeName.match(effectNodeReg)) {
+			if (el.nodeType === Node.ELEMENT_NODE) {
 				nodes.push(returnAsNodeName ? el.nodeName.toLowerCase() : el);
 			}
+
 			el = el.parentNode;
 		}
+
 		return nodes;
 	}
 
@@ -779,8 +837,8 @@
 		} else {
 			utils.log('can not find command function for name: ' + name + (value ? (', value: ' + value) : ''), true);
 		}
+
 		if (name === 'indent') this.checkContentChange();
-		else this.cleanContent({cleanAttrs: ['style']});
 	};
 
 	// remove attrs and tags
@@ -813,8 +871,9 @@
 
 	// highlight menu
 	Pen.prototype.highlight = function() {
-		var toolbar = this._toolbar || this._menu
-			, node = getNode(this);
+		var toolbar = this._toolbar || this._menu,
+			node = getNode(this);
+
 		// remove all highlights
 		utils.forEach(toolbar.querySelectorAll('.active'), function(el) {
 			el.classList.remove('active');
@@ -822,13 +881,16 @@
 
 		if (!node) return this;
 
-		var effects = effectNode(this, node)
-			, inputBar = this._inputBar
-			, highlight;
+		var nodeParents = getNodeParents(this),
+			urlInput = this._urlInput,
+			externalUrlCheckbox = this._externalUrlCheckbox,
+			highlight;
 
-		if (inputBar && toolbar === this._menu) {
-			// reset link input value
-			inputBar.value = '';
+		if (urlInput && toolbar === this._menu) {
+			// reset url inputs
+			urlInput.value = '';
+
+			this._externalUrlCheckbox.checked = false;
 		}
 
 		highlight = function(str) {
@@ -836,43 +898,73 @@
 			var el = toolbar.querySelector('[data-action=' + str + ']');
 			return el && el.classList.add('active');
 		};
-		utils.forEach(effects, function(item) {
-			var tag = item.nodeName.toLowerCase();
+
+		utils.forEach(nodeParents, function(item) {
+			var tag = item.nodeName.toLowerCase(),
+				align = item.style.textAlign;
+
+			if (align) {
+				if ('justify' === align) {
+					align = 'full';
+				}
+
+				highlight('justify' + align[0].toUpperCase() + align.slice(1));
+			}
+
+			if (! tag.match(effectNodeReg)) {
+				return;
+			}
+
 			switch(tag) {
 				case 'a':
-					if (inputBar) inputBar.value = item.getAttribute('href');
+					urlInput.value = item.getAttribute('href');
+
+					externalUrlCheckbox.checked = item.getAttribute('target') === '_blank';
+
 					tag = 'createlink';
+
 					break;
 				case 'img':
-					if (inputBar) inputBar.value = item.getAttribute('src');
+					urlInput.value = item.getAttribute('src');
+
 					tag = 'insertimage';
+
 					break;
 				case 'i':
 					tag = 'italic';
+
 					break;
 				case 'u':
 					tag = 'underline';
+
 					break;
 				case 'b':
 					tag = 'bold';
+
 					break;
 				case 'strike':
 					tag = 'strikethrough';
+
 					break;
 				case 'pre':
 				case 'code':
 					tag = 'code';
+
 					break;
 				case 'ul':
-					tag = 'insertunorderedlist';
+					tag = 'insertUnorderedList';
 					break;
+
 				case 'ol':
-					tag = 'insertorderedlist';
+					tag = 'insertOrderedList';
+
 					break;
 				case 'li':
 					tag = 'indent';
+
 					break;
 			}
+
 			highlight(tag);
 		}, true);
 
@@ -890,7 +982,7 @@
 		}
 
 		if (this._toolbar) {
-			if (!this._inputBar || !this._inputActive) return this;
+			if (!this._urlInput || !this._inputActive) return this;
 		}
 
 		showMainMenu(this);
