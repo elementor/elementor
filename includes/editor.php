@@ -425,6 +425,7 @@ class Editor {
 				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
+				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 
@@ -549,7 +550,7 @@ class Editor {
 		$plugin->schemes_manager->print_schemes_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			if ( file_exists( $editor_template ) ) {
+			if ( substr( $editor_template, 0, strlen( ABSPATH ) ) === ABSPATH ) {
 				include $editor_template;
 			} else {
 				echo $editor_template;
