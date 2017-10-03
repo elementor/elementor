@@ -435,7 +435,7 @@ class Admin {
 		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
-		add_filter( 'display_post_states', 'add_elementor_post_state', 10, 2 );
+		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
