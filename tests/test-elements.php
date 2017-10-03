@@ -68,15 +68,39 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 	public function test_controlsDefaultData() {
 		foreach ( Elementor\Plugin::$instance->elements_manager->get_element_types() as $element ) {
 			foreach ( $element->get_controls() as $control ) {
-				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
+				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] ) {
 					continue;
+				}
 
 				$error_msg = sprintf( 'Element: %s, Control: %s', $element->get_name(), $control['name'] );
 
-				if ( empty( $control['default'] ) )
+				if ( empty( $control['default'] ) ) {
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );
-				else
-					$this->assertArrayHasKey( $control['default'], $control['options'], $error_msg );
+				} else {
+					$flat_options = [];
+
+					if ( isset( $control['groups'] ) ) {
+						foreach ( $control['groups'] as $index_or_key => $args_or_label ) {
+							if ( is_numeric( $index_or_key ) ) {
+								$args = $args_or_label;
+
+								$this->assertTrue( is_array( $args['options'] ), $error_msg );
+
+								foreach ( $args['options'] as $key => $label ) {
+									$flat_options[ $key ] = $label;
+								}
+							} else {
+								$key = $index_or_key;
+								$label = $args_or_label;
+								$flat_options[ $key ] = $label;
+							}
+						}
+					} else {
+						$flat_options = $control['options'];
+					}
+
+					$this->assertArrayHasKey( $control['default'], $flat_options, $error_msg );
+				}
 			}
 		}
 	}

@@ -54,7 +54,9 @@ class Control_Repeater extends Base_Data_Control {
 		</label>
 		<div class="elementor-repeater-fields"></div>
 		<div class="elementor-button-wrapper">
-			<button class="elementor-button elementor-button-default elementor-repeater-add"><span class="eicon-plus"></span><?php _e( 'Add Item', 'elementor' ); ?></button>
+			<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
+				<span class="eicon-plus"></span><?php _e( 'Add Item', 'elementor' ); ?>
+			</button>
 		</div>
 		<?php
 	}
