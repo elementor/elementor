@@ -13,6 +13,10 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		'keyup @ui.input': 'onInputChanged'
 	},
 
+	clearInput: function() {
+		this.ui.input.val( '' );
+	},
+
 	onInputChanged: function( event ) {
 		var ESC_KEY = 27;
 
@@ -21,10 +25,6 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		}
 
 		this.triggerMethod( 'search:change:input' );
-	},
-
-	clearInput: function() {
-		this.ui.input.val( '' );
 	}
 } );
 
