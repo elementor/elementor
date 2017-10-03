@@ -95,8 +95,6 @@ var	Manager = function() {
 		addHotKeys();
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/column/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data

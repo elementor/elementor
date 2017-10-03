@@ -89,7 +89,7 @@ abstract class Widget_Base extends Element_Base {
 			$default_value = array_keys( $skin_options );
 			$default_value = array_shift( $default_value );
 
-			if ( 1 >= sizeof( $skin_options ) ) {
+			if ( 1 >= count( $skin_options ) ) {
 				$this->add_control(
 					'_skin',
 					[
