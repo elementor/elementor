@@ -368,6 +368,34 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	showLoadingError: function( title, message, helpURL ) {
+		var dialog = this.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-fatal-error-dialog',
+			headerMessage: title,
+			message: message,
+			position: {
+				my: 'center center',
+				at: 'center center'
+			},
+			strings: {
+				confirm: elementor.translate( 'learn_more' ),
+				cancel: elementor.translate( 'go_back' )
+			},
+			onConfirm: function() {
+				open( helpURL, '_blank' );
+			},
+			onCancel: function() {
+				parent.history.go( -1 );
+			},
+			hide: {
+				onBackgroundClick: false,
+				onButtonClick: false
+			}
+		} );
+
+		dialog.show();
+	},
+
 	onStart: function() {
 		this.$window = Backbone.$( window );
 
@@ -399,12 +427,21 @@ App = Marionette.Application.extend( {
 	onPreviewLoaded: function() {
 		NProgress.done();
 
+		var previewWindow = this.$preview[0].contentWindow;
+
+		if ( ! previewWindow.elementorFrontend ) {
+			this.onPreviewLoadingError();
+
+			return;
+		}
+
 		this.$previewContents = this.$preview.contents();
 
 		var $previewElementorEl = this.$previewContents.find( '#elementor' );
 
 		if ( ! $previewElementorEl.length ) {
 			this.onPreviewElNotFound();
+
 			return;
 		}
 
@@ -472,29 +509,12 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	onPreviewElNotFound: function() {
-		var dialog = this.dialogsManager.createWidget( 'confirm', {
-			id: 'elementor-fatal-error-dialog',
-			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
-			message: elementor.translate( 'preview_el_not_found_message' ),
-			position: {
-				my: 'center center',
-				at: 'center center'
-			},
-            strings: {
-				confirm: elementor.translate( 'learn_more' ),
-				cancel: elementor.translate( 'go_back' )
-            },
-			onConfirm: function() {
-				open( elementor.config.help_the_content_url, '_blank' );
-			},
-			onCancel: function() {
-				parent.history.go( -1 );
-			},
-			hideOnButtonClick: false
-		} );
+	onPreviewLoadingError: function() {
+		this.showLoadingError( this.translate( 'preview_not_loading_header' ), this.translate( 'preview_not_loading_message' ), elementor.config.help_preview_error_url );
+	},
 
-		dialog.show();
+	onPreviewElNotFound: function() {
+		this.showLoadingError( this.translate( 'preview_el_not_found_header' ), this.translate( 'preview_el_not_found_message' ), elementor.config.help_the_content_url );
 	},
 
 	setFlagEditorChange: function( status ) {
