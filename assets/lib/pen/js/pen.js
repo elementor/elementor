@@ -263,7 +263,7 @@
 		newWindowCheckbox.className = 'pen-external-url-checkbox';
 		newWindowCheckbox.type = 'checkbox';
 
-		newWindowIcon.className = 'fa fa-external-link';
+		newWindowIcon.className = 'eicon-external-link';
 
 		newWindowLabel.appendChild(newWindowCheckbox);
 		newWindowLabel.appendChild(newWindowIcon);
