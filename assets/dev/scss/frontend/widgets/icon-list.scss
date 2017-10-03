@@ -7,8 +7,34 @@
 
 		.elementor-icon-list-item {
 
+			&, a {
+				justify-content: center;
+			}
+
 			&:after {
 				margin: auto;
+			}
+		}
+	}
+
+	&.elementor-align-left {
+
+		.elementor-icon-list-item {
+
+			&, a {
+				justify-content: flex-start;
+				text-align: $start;
+			}
+		}
+	}
+
+	&.elementor-align-right {
+
+		.elementor-icon-list-item {
+
+			&, a {
+				justify-content: flex-end;
+				text-align: $end;
 			}
 		}
 	}
