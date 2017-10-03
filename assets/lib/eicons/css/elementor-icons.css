@@ -522,6 +522,9 @@
 .eicon-align-left:before {
   content: '\e967'; }
 
+.eicon-text:before {
+  content: '\e968'; }
+
 .eicon-floppy-o:before {
   content: '\e001'; }
 
