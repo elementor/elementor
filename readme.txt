@@ -184,6 +184,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.7.7 - 03.10.2017 =
+* Tweak! - If current value is not in the options show it as `Unknown value` for Select2 control
+* Fix! - Import all template types by WordPress Importer
+* Fix! - Pagination color default for carousels
+* Fix! - Bug loading editor in some server configurations
+
 = 1.7.6 - 24.09.2017 =
 * Tweak! - Changed video lightbox width for tablet to 100%
 * Tweak! - Changed Vimeo placeholder for the Video widget
