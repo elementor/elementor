@@ -462,22 +462,22 @@
 .eicon-twitter-feed:before {
   content: '\e947'; }
 
-.eicon-heading-1:before {
+.eicon-h1:before {
   content: '\e948'; }
 
-.eicon-heading-2:before {
+.eicon-h2:before {
   content: '\e949'; }
 
-.eicon-heading-3:before {
+.eicon-h3:before {
   content: '\e950'; }
 
-.eicon-heading-4:before {
+.eicon-h4:before {
   content: '\e951'; }
 
-.eicon-heading-5:before {
+.eicon-h5:before {
   content: '\e952'; }
 
-.eicon-heading-6:before {
+.eicon-h6:before {
   content: '\e953'; }
 
 .eicon-paragraph:before {
@@ -492,10 +492,10 @@
 .eicon-list-ol:before {
   content: '\e957'; }
 
-.eicon-increase-indent:before {
+.eicon-indent:before {
   content: '\e958'; }
 
-.eicon-decrease-indent-:before {
+.eicon-outdent:before {
   content: '\e959'; }
 
 .eicon-bold:before {
@@ -524,6 +524,12 @@
 
 .eicon-text:before {
   content: '\e968'; }
+
+.eicon-external-link:before {
+  content: '\e969'; }
+
+.eicon-quote:before {
+  content: '\e970'; }
 
 .eicon-floppy-o:before {
   content: '\e001'; }
