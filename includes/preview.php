@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Preview {
 
+	private $post_id;
+
 	/**
 	 * Initialize the preview mode. Fired by `init` action.
 	 *
@@ -17,6 +19,8 @@ class Preview {
 		if ( is_admin() || ! $this->is_preview_mode() ) {
 			return;
 		}
+
+		$this->post_id = get_the_ID();
 
 		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
 		// TODO: Move this code to `includes/compatibility.php`.
@@ -36,6 +40,12 @@ class Preview {
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
+
+		do_action( 'elementor/preview/init', $this );
+	}
+
+	public function get_post_id() {
+		return $this->post_id;
 	}
 
 	/**

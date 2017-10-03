@@ -87,6 +87,10 @@ class Editor {
 		}
 	}
 
+	public function get_post_id() {
+		return $this->_post_id;
+	}
+
 	public function redirect_to_new_url() {
 		if ( ! isset( $_GET['elementor'] ) ) {
 			return;
@@ -281,6 +285,16 @@ class Editor {
 		);
 
 		wp_register_script(
+			'ace-language-tools',
+			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ext-language_tools.js',
+			[
+				'ace',
+			],
+			'1.2.5',
+			true
+		);
+
+		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -316,6 +330,7 @@ class Editor {
 				'jquery-simple-dtpicker',
 				'elementor-dialog',
 				'ace',
+				'ace-language-tools',
 				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,

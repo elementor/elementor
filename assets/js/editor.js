@@ -1805,7 +1805,7 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			if ( $target.closest( 'a' ).length ) {
+			if ( $target.closest( 'a:not(.elementor-clickable)' ).length ) {
 				event.preventDefault();
 			}
 
@@ -6894,9 +6894,14 @@ BaseElementView = BaseContainer.extend( {
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
 
+				if ( '_column_size' === settingKey ) {
+					isRenderRequired = true;
+					return;
+				}
+
 				if ( ! control ) {
 					isRenderRequired = true;
-
+					isContentChanged = true;
 					return;
 				}
 
@@ -7985,6 +7990,8 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			return;
 		}
 
+		var langTools = ace.require( 'ace/ext/language_tools' );
+
 		self.editor = ace.edit( this.ui.editor[0] );
 
 		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
@@ -7994,8 +8001,32 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			minLines: 10,
 			maxLines: Infinity,
 			showGutter: true,
-			useWorker: true
+			useWorker: true,
+			enableBasicAutocompletion: true,
+			enableLiveAutocompletion: true
 		} );
+
+		if ( 'css' === self.model.attributes.language ) {
+			var selectorCompleter = {
+				getCompletions: function( editor, session, pos, prefix, callback ) {
+					var list = [],
+						token = session.getTokenAt( pos.row, pos.column );
+
+					if ( 0 < prefix.length && 'selector'.match( prefix ) && 'constant' === token.type ) {
+						list = [ {
+							name: 'selector',
+							value: 'selector',
+							score: 1,
+							meta: 'Elementor'
+						} ];
+					}
+
+					callback( null, list );
+				}
+			};
+
+			langTools.addCompleter( selectorCompleter );
+		}
 
 		self.editor.setValue( self.getControlValue(), -1 ); // -1 =  move cursor to the start
 
@@ -8021,7 +8052,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 				if ( annotationsLength > annotations.length ) {
 					session.setAnnotations( annotations );
 				}
-			}) ;
+			} );
 		}
 	}
 } );
@@ -8613,6 +8644,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Gets the selected image information, and sets it within the control.
 	 */
 	select: function() {
+		this.trigger( 'before:select' );
+
 		// Get the attachment from the modal frame.
 		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
 
@@ -8624,6 +8657,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 			this.render();
 		}
+
+		this.trigger( 'after:select' );
 	},
 
 	onBeforeDestroy: function() {
@@ -10840,12 +10875,21 @@ module.exports = Marionette.Behavior.extend( {
 		// Stop listen to restore actions
 		behavior.stopListening( settings, 'change', this.saveHistory );
 
+		var restoredValues = {};
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				settings.setExternalChange( key, values['new'] );
+				restoredValues[ key ] = values['new'];
 			} else {
-				settings.setExternalChange( key, values.old );
+				restoredValues[ key ] = values.old;
 			}
+		} );
+
+		// Set at once.
+		settings.set( restoredValues );
+
+		// Trigger each field for `baseControl.onSettingsExternalChange`
+		_.each( history.changed, function( values, key ) {
+			settings.trigger( 'change:external:' + key );
 		} );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
