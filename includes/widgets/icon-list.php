@@ -174,13 +174,6 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor-align-',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a' => 'justify-content: {{VALUE}};',
-				],
-				'selectors_dictionary' => [
-					'left' => 'flex-start',
-					'right' => 'flex-end',
-				],
 				'classes' => 'elementor-control-start-end',
 			]
 		);
