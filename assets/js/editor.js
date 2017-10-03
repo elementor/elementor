@@ -4878,7 +4878,7 @@ helpers = {
 			return;
 		}
 
-		var fontType = elementor.config.controls.font.fonts[ font ],
+		var fontType = elementor.config.controls.font.options[ font ],
 			fontUrl,
 
 			subsets = {
