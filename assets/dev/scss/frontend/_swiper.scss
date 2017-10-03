@@ -160,6 +160,10 @@
 	opacity: 0.2;
 }
 
+.swiper-pagination-fraction {
+	color: #000;
+}
+
 button.swiper-pagination-bullet {
 	border: none;
 	margin: 0;
@@ -209,7 +213,7 @@ button.swiper-pagination-bullet {
 	position: absolute;
 
 	.swiper-pagination-progressbar {
-		background: #007aff;
+		background: #000;
 		position: absolute;
 		left: 0;
 		top: 0;
