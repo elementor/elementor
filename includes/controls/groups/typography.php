@@ -25,7 +25,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields = [];
 
 		$fields['typography'] = [
-			'label' => _x( 'Typography', 'Typography Control', 'elementor' ),
+			'label' => _x( 'Custom Typography', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'default' => '',
 			'label_on' => __( 'On', 'elementor' ),
@@ -137,7 +137,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function prepare_fields( $fields ) {
 		array_walk(
 			$fields, function( &$field, $field_name ) {
-				if ( 'typography' === $field_name ) {
+				if ( in_array( $field_name, [ 'typography', 'popup_starter' ] ) ) {
 					return;
 				}
 
@@ -170,5 +170,13 @@ class Group_Control_Typography extends Group_Control_Base {
 		}
 
 		return $field_args;
+	}
+
+	protected function get_default_options() {
+		return [
+			'popup' => [
+				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
+			],
+		];
 	}
 }

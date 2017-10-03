@@ -215,4 +215,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		return $image_sizes;
 	}
+
+	protected function get_default_options() {
+		$image_size_title = _x( 'Image Size', 'Image Size Control', 'elementor' );
+
+		return [
+			'popup' => [
+				'title' => $image_size_title,
+				'starter_title' => $image_size_title,
+			],
+		];
+	}
 }

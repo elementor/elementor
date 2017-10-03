@@ -328,4 +328,15 @@ class Group_Control_Background extends Group_Control_Base {
 
 		return parent::prepare_fields( $fields );
 	}
+
+	protected function get_default_options() {
+		$background_title = _x( 'Background', 'Background Control', 'elementor' );
+
+		return [
+			'popup' => [
+				'title' => $background_title,
+				'starter_title' => $background_title,
+			],
+		];
+	}
 }

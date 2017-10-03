@@ -56,4 +56,15 @@ class Group_Control_Border extends Group_Control_Base {
 
 		return $fields;
 	}
+
+	protected function get_default_options() {
+		$border_title = _x( 'Border', 'Border Control', 'elementor' );
+
+		return [
+			'popup' => [
+				'title' => $border_title,
+				'starter_title' => $border_title,
+			],
+		];
+	}
 }

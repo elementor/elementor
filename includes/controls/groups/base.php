@@ -9,6 +9,24 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private $args = [];
 
+	private $options;
+
+	final public function get_options( $option ) {
+		if ( null === $this->options ) {
+			$this->init_options();
+		}
+
+		if ( $option ) {
+			if ( isset( $this->options[ $option ] ) ) {
+				return $this->options[ $option ];
+			}
+
+			return null;
+		}
+
+		return $this->options;
+	}
+
 	final public function add_controls( Controls_Stack $element, array $user_args, array $options = [] ) {
 		$this->init_args( $user_args );
 
@@ -19,6 +37,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		// For php < 7
 		reset( $filtered_fields );
+
+		$filtered_fields = $this->set_popup( $filtered_fields );
 
 		if ( isset( $this->args['separator'] ) ) {
 			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];
@@ -80,8 +100,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	// TODO: Temp - Make it abstract
-	protected function init_fields() {}
+	protected abstract function init_fields();
+
+	protected function get_default_options() {
+		return [];
+	}
 
 	protected function get_child_default_args() {
 		return [];
@@ -165,6 +188,17 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $fields;
 	}
 
+	private function init_options() {
+		$default_options = [
+			'popup' => [
+				'title' => '',
+				'starter_title' => '',
+			],
+		];
+
+		$this->options = array_replace_recursive( $default_options, $this->get_default_options() );
+	}
+
 	private function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
 	}
@@ -222,5 +256,40 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		}
 
 		return $selectors;
+	}
+
+	private function set_popup( array $fields ) {
+		$popup_options = $this->get_options( 'popup' );
+
+		if ( $popup_options['title'] ) {
+			$popup_title_field = [
+				'popup_title' => [
+					'label' => $popup_options['title'],
+					'type' => Controls_Manager::HEADING,
+				]
+			];
+
+			$fields = $popup_title_field + $fields;
+		}
+
+		$fields[ key( $fields ) ]['popup'] = [ 'start' => true ];
+
+		$popup_starter_field = [
+			'popup_starter' => [
+				'label' => $popup_options['starter_title'],
+				'type' => Controls_Manager::POPUP_STARTER,
+				'toggle_title' => __( 'Set', 'elementor' ),
+			]
+		];
+
+		$fields = $popup_starter_field + $fields;
+
+		end( $fields );
+
+		$fields[ key( $fields ) ]['popup'] = [ 'end' => true ];
+
+		reset( $fields );
+
+		return $fields;
 	}
 }
