@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.8
 Requires PHP: 5.4
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -184,7 +184,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.7.6 - 24.09.2017 =
+= 1.7.7 - 03.10.2017 =
+* Tweak! - If current value is not in the options show it as `Unknown value` for Select2 control
+* Fix! - Import all template types by WordPress Importer
+* Fix! - Pagination color default for carousels
+* Fix! - Bug loading editor in some server configurations
+
+= 1.7.6 - 26.09.2017 =
 * Tweak! - Changed video lightbox width for tablet to 100%
 * Tweak! - Changed Vimeo placeholder for the Video widget
 * Tweak! - Added `vh` unit support for control base
