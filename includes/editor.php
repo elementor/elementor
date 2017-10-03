@@ -566,8 +566,12 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
+		$abs_path = str_replace( '\\', '/', ABSPATH );
+
 		foreach ( $this->_editor_templates as $editor_template ) {
-			if ( file_exists( $editor_template ) ) {
+			$template_abs_path = str_replace( '\\', '/', substr( $editor_template, 0, strlen( ABSPATH ) ) );
+
+			if ( $template_abs_path === $abs_path ) {
 				include $editor_template;
 			} else {
 				echo $editor_template;
