@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?2.4.2");
-  src: url("../fonts/eicons.eot?2.4.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.4.2") format("woff2"), url("../fonts/eicons.woff?2.4.2") format("woff"), url("../fonts/eicons.ttf?2.4.2") format("truetype"), url("../fonts/eicons.svg?2.4.2#eicon") format("svg");
+  src: url("../fonts/eicons.eot?2.5.0");
+  src: url("../fonts/eicons.eot?2.5.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.5.0") format("woff2"), url("../fonts/eicons.woff?2.5.0") format("woff"), url("../fonts/eicons.ttf?2.5.0") format("truetype"), url("../fonts/eicons.svg?2.5.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -291,7 +291,7 @@
 .eicon-wordpress:before {
   content: '\e890'; }
 
-.eicon-align-left:before {
+.eicon-code:before {
   content: '\e891'; }
 
 .eicon-anchor:before {
@@ -461,6 +461,66 @@
 
 .eicon-twitter-feed:before {
   content: '\e947'; }
+
+.eicon-heading-1:before {
+  content: '\e948'; }
+
+.eicon-heading-2:before {
+  content: '\e949'; }
+
+.eicon-heading-3:before {
+  content: '\e950'; }
+
+.eicon-heading-4:before {
+  content: '\e951'; }
+
+.eicon-heading-5:before {
+  content: '\e952'; }
+
+.eicon-heading-6:before {
+  content: '\e953'; }
+
+.eicon-paragraph:before {
+  content: '\e954'; }
+
+.eicon-link:before {
+  content: '\e955'; }
+
+.eicon-list-ul:before {
+  content: '\e956'; }
+
+.eicon-list-ol:before {
+  content: '\e957'; }
+
+.eicon-increase-indent:before {
+  content: '\e958'; }
+
+.eicon-decrease-indent-:before {
+  content: '\e959'; }
+
+.eicon-bold:before {
+  content: '\e960'; }
+
+.eicon-italic:before {
+  content: '\e961'; }
+
+.eicon-strikethrough:before {
+  content: '\e962'; }
+
+.eicon-underline:before {
+  content: '\e963'; }
+
+.eicon-align-right:before {
+  content: '\e964'; }
+
+.eicon-align-center:before {
+  content: '\e965'; }
+
+.eicon-align-justify:before {
+  content: '\e966'; }
+
+.eicon-align-left:before {
+  content: '\e967'; }
 
 .eicon-floppy-o:before {
   content: '\e001'; }
