@@ -455,6 +455,11 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		// Don't save type on import, the importer will do it.
+		if ( did_action( 'import_start' ) ) {
+			return;
+		}
+
 		$this->save_item_type( $post_id, 'page' );
 	}
 
