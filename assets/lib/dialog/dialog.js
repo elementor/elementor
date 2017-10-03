@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v3.2.4
+ * Dialogs Manager v3.2.5
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -606,7 +606,7 @@
 
 			var buttonFn = function () {
 
-				if (self.getSettings('hideOnButtonClick')) {
+				if (self.getSettings('hide').onButtonClick) {
 					self.hide();
 				}
 
@@ -661,7 +661,9 @@
 				position: {
 					at: 'center center-100'
 				},
-				hideOnButtonClick: true
+				hide: {
+					onButtonClick: true
+				}
 			});
 
 			return settings;
