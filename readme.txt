@@ -184,6 +184,9 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.7.9 - 03.10.2017 =
+* Fix! - Bug loading editor in Windows server
+
 = 1.7.8 - 03.10.2017 =
 * Fix! - Font and Icon controls that got effected by previous update
 
