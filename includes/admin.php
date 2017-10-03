@@ -184,10 +184,10 @@ class Admin {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array   $post_states An array of post display states.
+	 * @param  array    $post_states An array of post display states.
 	 * @param  \WP_Post $post        The current post object.
 	 *
-	 * @return array                A filtered array of post display states.
+	 * @return array                 A filtered array of post display states.
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
