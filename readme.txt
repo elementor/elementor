@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.8
 Requires PHP: 5.4
-Stable tag: 1.7.5
+Stable tag: 1.7.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -19,35 +19,35 @@ It's about time for a live page builder, with no limits of design. A page builde
 It's time for **[Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
 
 = Faster. Much faster. =
-Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
+Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop page builder, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
 = Live design. Truly live. =
-Never again work on the backend and guess what the frontend will look like. With Elementor, you edit the page and simultaneously see exactly how it looks like. Elementor features live editing that is truly live, with no need to press update or go to preview mode.
+Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live editing that is truly live, with no need to press update or go to preview mode.
 
 = Surprises you won’t see anywhere else. =
-With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among these features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
+With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among our page builder features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
 
-= Template Library =
-We've added **Library**, which includes a collection of 100+ beautiful templates, made for you by our top notch designers. You can also save your own pages and sections, and reuse them on different pages, or export them to whole different websites.
+= Template Library. =
+We've added [Template Library](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), which includes a collection of 100+ beautiful WordPress templates, made for you by our top notch designers. You can save and reuse them on different pages, or export them to whole different websites with our page builder.
 
-= Mobile Editing =
-Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size per device, to reverse column ordering, this is the most powerful solution for creating perfect mobile pages.
+= Mobile First. Mobile Editing. =
+Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile page builder for creating perfect responsive websites.
 
-= Full History Log: Undo / Redo Actions & Revisions =
-Undo and redo any action you make by clicking on Ctrl / Cmd + Z, or by browsing through the complete list of actions. Want to go back ever further? Switch to Revisions to view a complete list of all earlier saved versions of the page.
+= Undo / Redo & Revision History. =
+Our page builder includes undo and redo for any action you make. Click on Ctrl / Cmd + Z, or browse through the complete list of actions. Want to go back ever further? Switch to Revisions to view a complete list of all earlier saved versions of the page.
 
-= Canvas - Blank Page Template =
+= Canvas. A Blank Page Template for Landing Pages. =
 Design your entire page in the page builder. No header, no footer, just Elementor. This is perfect for landing pages and coming soon pages. Canvas works on any theme, and lets you get rid of the header area so you get a blank template to work on.
 
-= New! Maintenance Mode =
-Need to get your site offline for maintenance? Use Elementor's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page.
+= Built-in Maintenance Mode & Under Construction. =
+Need to get your site offline for maintenance? Use Elementor page builder's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page.
 
-= Get More With Elementor Pro =
+= Try Elementor Pro. The Best Page Builder For WordPress. =
 If you thought Elementor is full of useful features, check out Elementor Pro! Elementor Pro extends the basic features even further, and allows you to control your entire website with Elementor.
 
-Design forms live on the frontend, customize your blog posts visually, incorporate slides, WooCommerce, global widgets, custom CSS and much more. [Upgrade now to Elementor Pro!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+Design [forms](https://elementor.com/pro-v140-form-integrations/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)  live on the frontend, customize your blog posts visually, incorporate slides, WooCommerce, global widgets, custom CSS and much more. [Upgrade now to Elementor Pro!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 
-= 28 widgets and counting =
+= 28 free widgets and counting =
 We packed 28 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
@@ -84,7 +84,7 @@ We packed 28 of the most useful widgets into our page builder. True, that's way 
 We've integrated RTL and multi language support within the framework of our page builder, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
-Elementor is free and open source. It's the perfect page builder plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
+Elementor page builder is free and open source. It's the perfect page builder plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
 We have created an extensive [API documentation](https://github.com/pojome/elementor/tree/master/docs), to help you get started and learn just how to integrate with Elementor.
 
 = Translations =
@@ -111,13 +111,13 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
 = Documentation and Support =
-
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 - If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
 - For more information about features, FAQs and documentation, check out our website at [Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Liked Elementor? =
-- Check out our recently featured page on [Product Hunt](https://www.producthunt.com/tech/elementor).
+- Join our [Facebook Group](https://www.facebook.com/groups/Elementors/).
+- Learn from our tutorials on [Youtube Channel](https://www.youtube.com/c/elementor).
 - Or rate us on [WordPress](https://wordpress.org/support/plugin/elementor/reviews/?filter=5/#new-post) :)
 
 == Installation ==
@@ -183,6 +183,21 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.7.7 - 03.10.2017 =
+* Tweak! - If current value is not in the options show it as `Unknown value` for Select2 control
+* Fix! - Import all template types by WordPress Importer
+* Fix! - Pagination color default for carousels
+* Fix! - Bug loading editor in some server configurations
+
+= 1.7.6 - 26.09.2017 =
+* Tweak! - Changed video lightbox width for tablet to 100%
+* Tweak! - Changed Vimeo placeholder for the Video widget
+* Tweak! - Added `vh` unit support for control base
+* Fix! - Prevent showing of placeholder image in video lightbox
+* Fix! - Show Swiper arrows navigation in the center
+* Fix! - Set a centered image preview for media control in the panel
+* Fix! - Removed `sourceMappingURL` reference to prevent an error with the Safari browser
 
 = 1.7.5 - 24.09.2017 =
 * Tweak! - Clear CSS Meta after change print method
