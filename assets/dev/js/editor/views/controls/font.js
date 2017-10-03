@@ -11,7 +11,7 @@ module.exports = ControlSelect2View.extend( {
 		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments );
 
 		helpers.getFontsByGroups = _.bind( function( groups ) {
-			var fonts = this.model.get( 'fonts' ),
+			var fonts = this.model.get( 'options' ),
 				filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
