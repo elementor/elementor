@@ -271,7 +271,7 @@
 	}
 }
 
-@if $direction = rtl {
+@if $direction == rtl {
 
 	.elementor-control-start-end {
 
