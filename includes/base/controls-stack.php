@@ -380,7 +380,25 @@ abstract class Controls_Stack {
 	 * @return bool
 	 */
 	public function update_control( $control_id, array $args ) {
-		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+		$is_updated = Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+
+		if ( ! $is_updated ) {
+			return false;
+		}
+
+		$control = $this->get_controls( $control_id );
+
+		if ( Controls_Manager::SECTION === $control['type'] ) {
+			$section_args = $this->get_section_args( $control_id );
+
+			$section_controls = $this->get_section_controls( $control_id );
+
+			foreach ( $section_controls as $section_control_id => $section_control ) {
+				$this->update_control( $section_control_id, $section_args );
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -426,17 +444,17 @@ abstract class Controls_Stack {
 			return false;
 		}
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
-
-		$controls_keys = array_keys( $registered_controls );
-
-		$target_control_index = array_search( $position['of'], $controls_keys );
+		$target_control_index = $this->get_control_index( $position['of'] );
 
 		if ( false === $target_control_index ) {
 			return false;
 		}
 
 		$target_section_index = $target_control_index;
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
 
 		while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
 			$target_section_index--;
@@ -475,6 +493,60 @@ abstract class Controls_Stack {
 		}
 
 		return $position_info;
+	}
+
+	/**
+	 * Retrieve control index.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id
+	 *
+	 * @return false|int Control index
+	 */
+	final public function get_control_index( $control_id ) {
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		return array_search( $control_id, $controls_keys );
+	}
+
+	/**
+	 * Retrieve all controls under a specific section
+	 *
+	 * @access public
+	 *
+	 * @param string $section_id
+	 *
+	 * @return array Section controls
+	 */
+	final public function get_section_controls( $section_id ) {
+		$section_index = $this->get_control_index( $section_id );
+
+		$section_controls = [];
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		while ( true ) {
+			$section_index++;
+
+			if ( ! isset( $controls_keys[ $section_index ] ) ) {
+				break;
+			}
+
+			$control_key = $controls_keys[ $section_index ];
+
+			if ( Controls_Manager::SECTION === $registered_controls[ $control_key ]['type'] ) {
+				break;
+			}
+
+			$section_controls[ $control_key ] = $registered_controls[ $control_key ];
+		};
+
+		return $section_controls;
 	}
 
 	/**
