@@ -51,4 +51,12 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 
 		return $controls;
 	}
+
+	protected function get_default_options() {
+		return [
+			'popup' => [
+				'starter_title' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
+			],
+		];
+	}
 }
