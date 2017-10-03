@@ -30,57 +30,6 @@
 		maxLength: 100
 	};
 
-	var menuIconsDictionary = {
-		h1: {
-			text: 'H1'
-		},
-		h2: {
-			text: 'H2'
-		},
-		h3: {
-			text: 'H3'
-		},
-		h4: {
-			text: 'H4'
-		},
-		h5: {
-			text: 'H5'
-		},
-		h6: {
-			text: 'H6'
-		},
-		justifyCenter: {
-			className: 'fa fa-align-center'
-		},
-		justifyFull: {
-			className: 'fa fa-align-justify'
-		},
-		justifyLeft: {
-			className: 'fa fa-align-left'
-		},
-		justifyRight: {
-			className: 'fa fa-align-right'
-		},
-		close: {
-			className: 'eicon-close'
-		},
-		insertOrderedList: {
-			className: 'fa fa-list-ol'
-		},
-		insertUnorderedList: {
-			className: 'fa fa-list-ul'
-		},
-		createlink: {
-			className: 'fa fa-link'
-		},
-		blockquote: {
-			className: 'fa fa-quote-right'
-		},
-		p: {
-			className: 'fa fa-paragraph'
-		}
-	};
-
 	// type detect
 	utils.is = function(obj, type) {
 		return toString.call(obj).slice(8, -1) === type;
@@ -131,6 +80,8 @@
 			class: 'pen',
 			debug: false,
 			toolbar: null, // custom toolbar
+			toolbarIconsPrefix: 'fa fa-',
+			toolbarIconsDictionary: {},
 			stay: config.stay || !config.debug,
 			stayMsg: 'Are you going to leave here?',
 			textarea: '<textarea name="content"></textarea>',
@@ -221,7 +172,7 @@
 			iconElement.setAttribute('data-group', group);
 		}
 
-		var iconDictionary = menuIconsDictionary[ name ];
+		var iconDictionary = ctx.config.toolbarIconsDictionary[ name ];
 
 		if ( iconDictionary && iconDictionary.text ) {
 			iconElement.textContent = iconDictionary.text;
@@ -231,7 +182,7 @@
 			if ( iconDictionary && iconDictionary.className ) {
 				iconClass = iconDictionary.className;
 			} else {
-				iconClass = 'fa fa-' + name;
+				iconClass = ctx.config.toolbarIconsPrefix + name;
 			}
 
 			iconElement.innerHTML += '<i class="' + iconClass + '"  ></i>';

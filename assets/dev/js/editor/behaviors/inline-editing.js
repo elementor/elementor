@@ -40,7 +40,28 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
-			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'basic' ]
+			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'basic' ],
+			toolbarIconsPrefix: 'eicon-',
+			toolbarIconsDictionary: {
+				list: {
+					className: 'eicon-list-ul'
+				},
+				insertOrderedList: {
+					className: 'eicon-list-ol'
+				},
+				insertUnorderedList: {
+					className: 'eicon-list-ul'
+				},
+				createlink: {
+					className: 'eicon-link'
+				},
+				blockquote: {
+					className: 'eicon-quote'
+				},
+				p: {
+					className: 'eicon-paragraph'
+				}
+			}
 		} );
 
 		var $menuItems = jQuery( this.pen._menu ).children();
