@@ -25,6 +25,14 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		}
 
 		this.triggerMethod( 'search:change:input' );
+	},
+
+	onRender: function() {
+		var input = this.ui.input;
+
+		setTimeout( function() {
+			input.focus();
+		} );
 	}
 } );
 
