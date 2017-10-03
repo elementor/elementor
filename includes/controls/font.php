@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @param string $default   The selected font name
  *                          Default empty
- * @param array $fonts      All available fonts
+ * @param array $options    All available fonts
  *                          Default @see Fonts::get_fonts()
  *
  * @since 1.0.0
@@ -22,7 +22,7 @@ class Control_Font extends Base_Data_Control {
 
 	protected function get_default_settings() {
 		return [
-			'fonts' => Fonts::get_fonts(),
+			'options' => Fonts::get_fonts(),
 		];
 	}
 
