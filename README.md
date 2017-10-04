@@ -6,7 +6,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.8  
 **Requires PHP:** 5.4  
-**Stable tag:** 1.7.9  
+**Stable tag:** 1.7.10  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -187,7 +187,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 1.7.10 - 03.10.2017 ###
-* Fix! - Extend of Icon control that got effected by previous update
+* Fix! - Extend of Icon control for Social Icons widget
 
 ### 1.7.9 - 03.10.2017 ###
 * Fix! - Bug loading editor in Windows server
