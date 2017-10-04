@@ -186,6 +186,9 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.7.11 - 04.10.2017 ###
+* Fix! - `options is undefined` error when using select2
+
 ### 1.7.10 - 03.10.2017 ###
 * Fix! - Extend of Icon control for Social Icons widget
 
