@@ -179,6 +179,23 @@ class Admin {
 		return $actions;
 	}
 
+	/**
+	 * Adds a "Elementor" post state for post table.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param  array    $post_states An array of post display states.
+	 * @param  \WP_Post $post        The current post object.
+	 *
+	 * @return array                 A filtered array of post display states.
+	 */
+	public function add_elementor_post_state( $post_states, $post ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+			$post_states[] = __( 'Elementor', 'elementor' );
+		}
+		return $post_states;
+	}
+
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
@@ -417,6 +434,8 @@ class Admin {
 
 		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
+
+		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
