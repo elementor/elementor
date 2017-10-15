@@ -87,9 +87,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}
 
 		var editModel = this.view.getEditModel(),
-			inlineEditingElementData = this.$inlineEditingArea.data();
+			elementData = this.$inlineEditingArea.data();
 
-		this.$inlineEditingArea.html( editModel.getSetting( inlineEditingElementData.elementorSettingKey ) );
+		this.$inlineEditingArea.html( editModel.getSetting( elementData.elementorSettingKey ) );
 
 		var Pen = elementorFrontend.getElements( 'window' ).Pen;
 
@@ -97,15 +97,19 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
-		var inlineEditingConfig = elementor.config.inlineEditing;
+		var inlineEditingConfig = elementor.config.inlineEditing,
+			elementDataToolbar = elementData.elementorInlineEditingToolbar;
 
 		this.pen = new Pen( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
-			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'basic' ],
+			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-',
 			toolbarIconsDictionary: {
+				externalLink: {
+					className: 'eicon-external-link'
+				},
 				list: {
 					className: 'eicon-list-ul'
 				},
@@ -123,6 +127,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				},
 				p: {
 					className: 'eicon-paragraph'
+				},
+				pre: {
+					className: 'eicon-code'
 				}
 			}
 		} );
@@ -165,7 +172,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
-			if ( $focusNode.hasClass( 'pen-input-wrapper' ) ) {
+			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
 				return;
 			}
 
@@ -1724,10 +1731,19 @@ App = Marionette.Application.extend( {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
 				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
 
-					return isEditorOpen && ! isInputTarget;
+					if ( ! isEditorOpen ) {
+						return false;
+					}
+
+					var $target = $( event.target );
+
+					if ( $target.is( ':input, .elementor-input' ) ) {
+						return false;
+					}
+
+					return ! $target.closest( '.elementor-inline-editing' ).length;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
