@@ -24,9 +24,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}
 
 		var editModel = this.view.getEditModel(),
-			inlineEditingElementData = this.$inlineEditingArea.data();
+			elementData = this.$inlineEditingArea.data();
 
-		this.$inlineEditingArea.html( editModel.getSetting( inlineEditingElementData.elementorSettingKey ) );
+		this.$inlineEditingArea.html( editModel.getSetting( elementData.elementorSettingKey ) );
 
 		var Pen = elementorFrontend.getElements( 'window' ).Pen;
 
@@ -34,13 +34,14 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
-		var inlineEditingConfig = elementor.config.inlineEditing;
+		var inlineEditingConfig = elementor.config.inlineEditing,
+			elementDataToolbar = elementData.elementorInlineEditingToolbar;
 
 		this.pen = new Pen( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
-			list: inlineEditingConfig.toolbar[ inlineEditingElementData.elementorInlineEditingToolbar || 'basic' ],
+			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-',
 			toolbarIconsDictionary: {
 				list: {
