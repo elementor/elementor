@@ -133,8 +133,13 @@
 	}
 
 	function commandBlock(ctx, name) {
-		var list = effectNode(ctx, true);
-		if (list.indexOf(name) !== -1) name = 'p';
+		var effectNodes = getEffectNodes(ctx),
+			tagsList = effectNodes.map(function(node) {
+				return node.nodeName.toLowerCase();
+			});
+
+		if (tagsList.indexOf(name) !== -1) name = 'p';
+
 		return commandOverall(ctx, 'formatblock', name);
 	}
 
@@ -582,20 +587,19 @@
 		return containsNode(root, node) ? node : null;
 	}
 
-	// node effects
-	function effectNode(ctx, returnAsNodeName) {
-		return getNodeParents(ctx, returnAsNodeName).filter(function(node) {
+	function getEffectNodes(ctx) {
+		return getNodeParents(ctx).filter(function(node) {
 			return node.nodeName.match(effectNodeReg);
 		});
 	}
 
-	function getNodeParents(ctx, returnAsNodeName) {
+	function getNodeParents(ctx) {
 		var nodes = [],
 			el = getNode(ctx);
 
 		while (el && el !== ctx.config.editor) {
 			if (el.nodeType === Node.ELEMENT_NODE) {
-				nodes.push(returnAsNodeName ? el.nodeName.toLowerCase() : el);
+				nodes.push(el);
 			}
 
 			el = el.parentNode;
