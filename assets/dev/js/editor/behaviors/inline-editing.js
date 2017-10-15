@@ -60,6 +60,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				},
 				p: {
 					className: 'eicon-paragraph'
+				},
+				pre: {
+					className: 'eicon-code'
 				}
 			}
 		} );
