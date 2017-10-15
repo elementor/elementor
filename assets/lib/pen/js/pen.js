@@ -197,7 +197,7 @@
 	}
 
 	function getMenuTools(ctx) {
-		return Array.prototype.slice.call(ctx._menu.children);
+		return slice.call(ctx._menu.children);
 	}
 
 	function activateGroup(ctx, group) {
