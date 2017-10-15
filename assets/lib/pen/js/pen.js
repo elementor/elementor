@@ -2,7 +2,6 @@
 (function(root, doc) {
 
 	var Pen, debugMode, selection, utils = {};
-	var toString = Object.prototype.toString;
 	var slice = Array.prototype.slice;
 
 	// allow command list
@@ -32,7 +31,7 @@
 
 	// type detect
 	utils.is = function(obj, type) {
-		return toString.call(obj).slice(8, -1) === type;
+		return Object.prototype.toString.call(obj).slice(8, -1) === type;
 	};
 
 	utils.forEach = function(obj, iterator, arrayLike) {
