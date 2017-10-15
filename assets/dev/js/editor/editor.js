@@ -252,10 +252,19 @@ App = Marionette.Application.extend( {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
 				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
 
-					return isEditorOpen && ! isInputTarget;
+					if ( ! isEditorOpen ) {
+						return false;
+					}
+
+					var $target = $( event.target );
+
+					if ( $target.is( ':input, .elementor-input' ) ) {
+						return false;
+					}
+
+					return ! $target.closest( '.elementor-inline-editing' ).length;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
