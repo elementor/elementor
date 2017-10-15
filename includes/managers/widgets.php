@@ -279,7 +279,7 @@ class Widgets_Manager {
 				'h6',
 				'p',
 				'blockquote',
-				'code',
+				'pre',
 			],
 			'list' => [
 				'insertOrderedList',
