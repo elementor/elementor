@@ -81,7 +81,7 @@
 			debug: false,
 			toolbar: null, // custom toolbar
 			toolbarIconsPrefix: 'fa fa-',
-			toolbarIconsDictionary: {},
+			toolbarIconsDictionary: {externalLink: 'fa fa-external-link'},
 			stay: config.stay || !config.debug,
 			stayMsg: 'Are you going to leave here?',
 			textarea: '<textarea name="content"></textarea>',
@@ -250,7 +250,7 @@
 		ctx.refreshMenuPosition();
 	}
 
-	function createLinkInput() {
+	function createLinkInput(ctx) {
 		var inputWrapper = doc.createElement('div'),
 			urlInput = doc.createElement('input'),
 			newWindowLabel = doc.createElement('label'),
@@ -268,7 +268,7 @@
 		newWindowCheckbox.className = 'pen-external-url-checkbox';
 		newWindowCheckbox.type = 'checkbox';
 
-		newWindowIcon.className = 'eicon-external-link';
+		newWindowIcon.className = ctx.config.toolbarIconsDictionary.externalLink.className;
 
 		newWindowLabel.appendChild(newWindowCheckbox);
 		newWindowLabel.appendChild(newWindowIcon);

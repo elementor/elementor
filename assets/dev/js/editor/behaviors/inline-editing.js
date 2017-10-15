@@ -44,6 +44,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-',
 			toolbarIconsDictionary: {
+				externalLink: {
+					className: 'eicon-external-link'
+				},
 				list: {
 					className: 'eicon-list-ul'
 				},
