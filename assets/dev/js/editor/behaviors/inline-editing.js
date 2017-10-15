@@ -102,7 +102,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
-			if ( $focusNode.hasClass( 'pen-input-wrapper' ) ) {
+			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
 				return;
 			}
 
