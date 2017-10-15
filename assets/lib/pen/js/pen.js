@@ -279,12 +279,94 @@
 		return inputWrapper;
 	}
 
+	function menuApply(ctx, action, value) {
+		ctx.execCommand(action, value);
+
+		ctx._range = ctx.getRange();
+
+		ctx.highlight().menu();
+	}
+
+	function onToolbarClick(ctx, target) {
+		var toolbar = ctx._toolbar || ctx._menu,
+			action;
+
+		while (!(action = target.getAttribute('data-action'))) {
+			if (target.parentNode === toolbar) {
+				break;
+			}
+
+			target = target.parentNode;
+		}
+
+		var groupToggle = target.getAttribute('data-group-toggle');
+
+		if (groupToggle) {
+			activateGroup(ctx, groupToggle);
+		}
+
+		if (!action) return;
+
+		if ('close' === action) {
+			showMainMenu(ctx);
+
+			return;
+		}
+
+		if (!/(?:createlink)|(?:insertimage)/.test(action)) return menuApply(ctx, action);
+
+		if (!ctx._urlInput) return;
+
+		// create link
+		var input = ctx._urlInput;
+		if (toolbar === ctx._menu) showLinkInput(ctx);
+		else {
+			ctx._inputActive = true;
+			ctx.menu();
+		}
+		if (ctx._menu.style.display === 'none') return;
+
+		setTimeout(function() { input.focus(); }, 100);
+
+		var createLink = function() {
+			var inputValue = input.value;
+
+			if (inputValue) {
+				ctx.config.linksInNewWindow = ctx._externalUrlCheckbox.checked;
+
+				inputValue = input.value
+					.replace(strReg.whiteSpace, '')
+					.replace(strReg.mailTo, 'mailto:$1')
+					.replace(strReg.http, 'http://$1');
+			} else {
+				action = 'unlink';
+			}
+
+			menuApply(ctx, action, inputValue);
+		};
+
+		input.onkeypress = function(e) {
+			if (e.which === 13) {
+				e.preventDefault();
+
+				createLink()
+			}
+		};
+
+		ctx._externalUrlCheckbox.onchange = createLink;
+	}
+
 	function initToolbar(ctx) {
-		var icons = '', inputStr = createLinkInput().outerHTML;
+		var icons = '', inputStr = createLinkInput(ctx).outerHTML;
 
 		ctx._toolbar = ctx.config.toolbar;
+
 		if (!ctx._toolbar) {
 			var toolList = ctx.config.list;
+
+			if (! Object.values(toolList).length) {
+				return;
+			}
 
 			utils.forEach(toolList, function (name, key) {
 				if (Array.isArray(name)) {
@@ -328,8 +410,11 @@
 		var toolbar = ctx._toolbar || ctx._menu, editor = ctx.config.editor;
 
 		var toggleMenu = utils.delayExec(function() {
-			ctx.highlight().menu();
+			if (toolbar) {
+				ctx.highlight().menu();
+			}
 		});
+
 		var outsideClick = function() {};
 
 		function updateStatus(delay) {
@@ -407,80 +492,11 @@
 			focusNode(ctx, p, ctx.getRange());
 		});
 
-		var menuApply = function(action, value) {
-			ctx.execCommand(action, value);
-			ctx._range = ctx.getRange();
-			ctx.highlight().menu();
-		};
-
-		// toggle toolbar on key select
-		addListener(ctx, toolbar, 'click', function(e) {
-			var node = e.target, action;
-
-			while (!(action = node.getAttribute('data-action'))) {
-				if (node.parentNode === toolbar) {
-					break;
-				}
-
-				node = node.parentNode;
-			}
-
-			var groupToggle = node.getAttribute('data-group-toggle');
-
-			if (groupToggle) {
-				activateGroup(ctx, groupToggle);
-			}
-
-			if (!action) return;
-
-			if ('close' === action) {
-				showMainMenu(ctx);
-
-				return;
-			}
-
-			if (!/(?:createlink)|(?:insertimage)/.test(action)) return menuApply(action);
-
-			if (!ctx._urlInput) return;
-
-			// create link
-			var input = ctx._urlInput;
-			if (toolbar === ctx._menu) showLinkInput(ctx);
-			else {
-				ctx._inputActive = true;
-				ctx.menu();
-			}
-			if (ctx._menu.style.display === 'none') return;
-
-			setTimeout(function() { input.focus(); }, 100);
-
-			var createLink = function() {
-				var inputValue = input.value;
-
-				if (inputValue) {
-					ctx.config.linksInNewWindow = ctx._externalUrlCheckbox.checked;
-
-					inputValue = input.value
-						.replace(strReg.whiteSpace, '')
-						.replace(strReg.mailTo, 'mailto:$1')
-						.replace(strReg.http, 'http://$1');
-				} else {
-					action = 'unlink';
-				}
-
-				menuApply(action, inputValue);
-			};
-
-			input.onkeypress = function(e) {
-				if (e.which === 13) {
-					e.preventDefault();
-
-					createLink()
-				}
-			};
-
-			ctx._externalUrlCheckbox.onchange = createLink;
-		});
+		if (toolbar) {
+			addListener(ctx, toolbar, 'click', function(e) {
+				onToolbarClick(ctx, e.target);
+			});
+		}
 
 		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
