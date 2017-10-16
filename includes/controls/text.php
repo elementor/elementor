@@ -10,7 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating text control. Displays a simple text input.
  *
- * Creating new control in the editor (inside `_register_controls()` method):
+ * Creating new control in the editor (inside `Widget_Base::_register_controls()`
+ * method):
  *
  *    $this->add_control(
  *    	'text',
@@ -22,11 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    	]
  *    );
  *
- * PHP usage (inside `render()`` method):
+ * PHP usage (inside `Widget_Base::render()` method):
  *
  *    echo '<h2>' . $this->get_settings( 'widget_title' ) . '</h2>';
  *
- * JS usage (inside `_content_template()` method):
+ * JS usage (inside `Widget_Base::_content_template()` method):
  *
  *    <h2>{{{ settings.text }}}</h2>
  *
@@ -38,9 +39,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            hover. Default is empty.
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
- * @param mixed  $default     Optional. The field default value.
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
+ * @param mixed  $default     Optional. The field default value.
  * @param string $input_type  Optional. Any valid HTML5 input type: text, email,
  *                            url, tel, etc. Default is 'text'.
  * @param string $separator   Optional. Set the position of the control separator.
@@ -71,7 +72,9 @@ class Control_Text extends Base_Data_Control {
 	/**
 	 * Render text control output in the editor.
 	 *
-	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
 	 *
 	 * @access public
 	 */
