@@ -10,7 +10,7 @@ ControlIconView = ControlSelect2View.extend( {
 	},
 
 	filterIcons: function() {
-		var icons = this.model.get( 'icons' ),
+		var icons = this.model.get( 'options' ),
 			include = this.model.get( 'include' ),
 			exclude = this.model.get( 'exclude' );
 
@@ -21,7 +21,7 @@ ControlIconView = ControlSelect2View.extend( {
 				filteredIcons[ iconKey ] = icons[ iconKey ];
 			} );
 
-			this.model.set( 'icons', filteredIcons );
+			this.model.set( 'options', filteredIcons );
 			return;
 		}
 
