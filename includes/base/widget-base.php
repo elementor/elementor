@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Widget Base
  *
- * Base class extended to register Elementor widgets.
+ * Base class extended to create Elementor widgets.
  *
  * This class must be extended for each widget.
  *
@@ -150,7 +150,7 @@ abstract class Widget_Base extends Element_Base {
 	 * skin controls.
 	 *
 	 * Note that when you add new controls to widgets they must be wrapped by
-	 * `start_controls_section` and `end_controls_section`.
+	 * `start_controls_section()` and `end_controls_section()`.
 	 *
 	 * @access public
 	 *
@@ -256,7 +256,8 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Print widget template.
 	 *
-	 * Used to generate the widget template on the editor.
+	 * Used to generate the widget template on the editor, using a Backbone
+	 * JavaScript template.
 	 *
 	 * @access public
 	 */
@@ -269,6 +270,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
 
+		// Bail if the widget renderd on the server not using javascript
 		if ( empty( $content_template ) ) {
 			return;
 		}
@@ -310,7 +312,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Parse text editor.
 	 *
-	 * Parses the content from reach text editor with shortcodes, oEmbed and
+	 * Parses the content from rich text editor with shortcodes, oEmbed and
 	 * filtered data.
 	 *
 	 * @access protected
@@ -336,6 +338,9 @@ abstract class Widget_Base extends Element_Base {
 	 * Render widget output on the frontend.
 	 *
 	 * Used to generate the final HTML displayed on the frontend.
+	 *
+	 * Note that if skin is selected, it will be rendered by the skin itself,
+	 * not the widget.
 	 *
 	 * @access public
 	 */
@@ -415,7 +420,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Before widget rendering.
 	 *
-	 * Used to add stuff before the widget.
+	 * Used to add stuff before the widget `_wrapper` element.
 	 *
 	 * @access public
 	 */
@@ -428,7 +433,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * After widget rendering.
 	 *
-	 * Used to add stuff after the widget.
+	 * Used to add stuff after the widget `_wrapper` element.
 	 *
 	 * @access public
 	 */
@@ -520,7 +525,8 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Add new skin.
 	 *
-	 * Register new widget skin to allow the user to set custom designs.
+	 * Register new widget skin to allow the user to set custom designs. Must be
+	 * called inside the `_register_skins()` method.
 	 *
 	 * @access public
 	 *
@@ -559,7 +565,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @access public
 	 *
-	 * @return array Current skin
+	 * @return string Current skin.
 	 */
 	public function get_current_skin_id() {
 		return $this->get_settings( '_skin' );
@@ -572,7 +578,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @access public
 	 *
-	 * @return Skin_Base[]|false
+	 * @return Skin_Base|false Current skin or false.
 	 */
 	public function get_current_skin() {
 		return $this->get_skin( $this->get_current_skin_id() );
