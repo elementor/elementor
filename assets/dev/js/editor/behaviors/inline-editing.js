@@ -59,6 +59,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				createlink: {
 					className: 'eicon-link'
 				},
+				unlink: {
+					className: 'fa fa-chain-broken'
+				},
 				blockquote: {
 					className: 'eicon-quote'
 				},
