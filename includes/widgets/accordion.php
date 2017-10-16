@@ -97,7 +97,7 @@ class Widget_Accordion extends Widget_Base {
 					[
 						'name' => 'tab_content',
 						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
+						'type' => Controls_Manager::TEXTAREA,
 						'default' => __( 'Accordion Content', 'elementor' ),
 						'show_label' => false,
 					],
@@ -291,15 +291,31 @@ class Widget_Accordion extends Widget_Base {
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<?php $counter = 1; ?>
-			<?php foreach ( $settings['tabs'] as $item ) : ?>
+			<?php foreach ( $settings['tabs'] as $item ) :
+				$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $counter - 1 );
+
+				$this->add_render_attribute( $tab_title_setting_key, 'class', 'elementor-tab-title' );
+
+				$this->add_inline_editing_attributes( $tab_title_setting_key, 'none' );
+
+				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+
+				$this->add_render_attribute( $tab_content_setting_key, [
+					'class' => [ 'elementor-accordion-content', 'elementor-clearfix' ],
+					'data-tab' => $counter,
+					'role' => 'tabpanel',
+				] );
+
+				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
+				?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>" role="tab">
+					<div class="elementor-accordion-title" data-tab="<?php echo $counter; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
-						<?php echo $item['tab_title']; ?>
+						<span <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></span>
 					</div>
-					<div class="elementor-accordion-content elementor-clearfix" data-section="<?php echo $counter; ?>" role="tabpanel"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php
 				$counter++;
@@ -328,9 +344,9 @@ class Widget_Accordion extends Widget_Base {
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
-							{{{ item.tab_title }}}
+							<span class="elementor-tab-title elementor-inline-editing" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="none">{{{ item.tab_title }}}</span>
 						</div>
-						<div class="elementor-accordion-content elementor-clearfix" data-section="{{ counter }}" role="tabpanel">{{{ item.tab_content }}}</div>
+						<div class="elementor-accordion-content elementor-clearfix elementor-inline-editing" data-section="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced" role="tabpanel">{{{ item.tab_content }}}</div>
 					</div>
 				<#
 					counter++;

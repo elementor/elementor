@@ -16,7 +16,7 @@ class Widgets_Manager {
 			'common',
 			'heading',
 			'image',
-			'text-editor',
+			'text',
 			'video',
 			'button',
 			'divider',
@@ -41,6 +41,7 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
+			'text-editor',
 		];
 
 		$this->_widget_types = [];
@@ -179,6 +180,7 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
+		/** @var Widget_Base $widget */
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
@@ -256,6 +258,45 @@ class Widgets_Manager {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->enqueue_scripts();
 		}
+	}
+
+	public function get_inline_editing_config() {
+		$basic_tools = [
+			'bold',
+			'italic',
+			'underline',
+			'strikethrough',
+		];
+
+		$advanced_tools = array_merge( $basic_tools, [
+			'createlink',
+			'h1' => [
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'p',
+				'blockquote',
+				'pre',
+			],
+			'list' => [
+				'insertOrderedList',
+				'insertUnorderedList',
+			],
+			'indent' => [
+				'indent',
+				'outdent',
+			],
+		] );
+
+		return [
+			'toolbar' => [
+				'basic' => $basic_tools,
+				'advanced' => $advanced_tools,
+			],
+		];
 	}
 
 	public function __construct() {

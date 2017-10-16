@@ -6,49 +6,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Text Editor Widget
+ * Text Widget
  */
-class Widget_Text_Editor extends Widget_Base {
+class Widget_Text extends Widget_Base {
 
 	/**
-	 * Retrieve text editor widget name.
+	 * Retrieve text widget name.
 	 *
 	 * @access public
 	 *
 	 * @return string Widget name.
 	 */
 	public function get_name() {
-		return 'text-editor';
+		return 'text';
 	}
 
 	/**
-	 * Retrieve text editor widget title.
+	 * Retrieve text widget title.
 	 *
 	 * @access public
 	 *
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'WordPress Editor', 'elementor' );
+		return __( 'Text', 'elementor' );
 	}
 
 	/**
-	 * Retrieve text editor widget icon.
+	 * Retrieve text widget icon.
 	 *
 	 * @access public
 	 *
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-wordpress';
-	}
-
-	public function get_categories() {
-		return [ 'wordpress' ];
+		return 'eicon-text';
 	}
 
 	/**
-	 * Register text editor widget controls.
+	 * Register text widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -63,10 +59,10 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'editor',
+			'text',
 			[
-				'label' => '',
-				'type' => Controls_Manager::WYSIWYG,
+				'label' => __( 'Text', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
 				'default' => __( 'I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 			]
 		);
@@ -303,23 +299,27 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
-	 * Render text editor widget output on the frontend.
+	 * Render text widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
 	 * @access protected
 	 */
 	protected function render() {
-		$editor_content = $this->get_settings( 'editor' );
+		$text = $this->get_settings( 'text' );
 
-		$editor_content = $this->parse_text_editor( $editor_content );
+		$text = $this->parse_text_editor( $text );
+
+		$this->add_render_attribute( 'text', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+
+		$this->add_inline_editing_attributes( 'text', 'advanced' );
 		?>
-		<div class="elementor-text-editor elementor-clearfix"><?php echo $editor_content; ?></div>
+		<div <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $text; ?></div>
 		<?php
 	}
 
 	/**
-	 * Render text editor widget as plain content.
+	 * Render text widget as plain content.
 	 *
 	 * Override the default behavior by printing the content without rendering it.
 	 *
@@ -327,11 +327,11 @@ class Widget_Text_Editor extends Widget_Base {
 	 */
 	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $this->get_settings( 'editor' );
+		echo $this->get_settings( 'text' );
 	}
 
 	/**
-	 * Render text editor widget output in the editor.
+	 * Render text widget output in the editor.
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
@@ -339,7 +339,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-text-editor elementor-clearfix">{{{ settings.editor }}}</div>
+		<div class="elementor-text-editor elementor-clearfix elementor-inline-editing" data-elementor-setting-key="text" data-elementor-inline-editing-toolbar="advanced">{{{ settings.text }}}</div>
 		<?php
 	}
 }
