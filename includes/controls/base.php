@@ -162,7 +162,7 @@ abstract class Base_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * The content template is wrapped by Base_Control::print_template() .
+	 * The content template is wrapped by Base_Control::print_template().
 	 *
 	 * @access public
 	 * @abstract
