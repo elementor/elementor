@@ -530,7 +530,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param bool $with_html_content Optional. Whether to return the data with
-	 *                                HTML content or without. Used for caching. Default is false, without HTML.
+	 *                                HTML content or without. Used for caching.
+	 *                                Default is false, without HTML.
 	 *
 	 * @return array Element raw data.
 	 */
@@ -577,9 +578,9 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _content_template() {}
 
 	/**
-	 * Render element settings.
+	 * Render element edit tools.
 	 *
-	 * Used to generate the final HTML.
+	 * Used to generate the edit tools HTML.
 	 *
 	 * @access protected
 	 */
@@ -764,7 +765,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * `$data` is required for a normal instance.
 	 *
 	 * @param array      $data Element data. Default is an empty array.
-	 * @param array|null $args Optional. Element arguments. Default is null.
+	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
 		parent::__construct( $data );
