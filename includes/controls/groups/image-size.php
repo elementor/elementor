@@ -86,12 +86,12 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return apply_filters( 'image_size_names_choose', $image_sizes );
 	}
 
-	public static function get_attachment_image_src( $attachment_id, $group_name, $instance ) {
+	public static function get_attachment_image_src( $attachment_id, $group_name, array $settings ) {
 		if ( empty( $attachment_id ) ) {
 			return false;
 		}
 
-		$size = $instance[ $group_name . '_size' ];
+		$size = $settings[ $group_name . '_size' ];
 
 		if ( 'custom' !== $size ) {
 			$attachment_size = $size;
@@ -100,7 +100,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			// TODO: Please rewrite this code.
 			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 
-			$custom_dimension = $instance[ $group_name . '_custom_dimension' ];
+			$custom_dimension = $settings[ $group_name . '_custom_dimension' ];
 
 			$attachment_size = [
 				// Defaults sizes

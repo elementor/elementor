@@ -10,7 +10,9 @@ ColumnView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget'
@@ -24,7 +26,7 @@ ColumnView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
