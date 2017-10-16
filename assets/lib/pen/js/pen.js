@@ -1,4 +1,9 @@
-/*! Licensed under MIT, https://github.com/sofish/pen */
+/**
+ * Licensed under MIT, https://github.com/sofish/pen
+ *
+ * Customized by Elementor team
+ */
+
 (function(root, doc) {
 
 	var Pen, debugMode, selection, utils = {};
