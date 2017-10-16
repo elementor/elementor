@@ -106,7 +106,13 @@ abstract class CSS_File {
 		}
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
-			wp_add_inline_style( $this->get_inline_dependency(), $meta['css'] );
+			$dep = $this->get_inline_dependency();
+			// If the dependency has already been printed ( like a template in footer )
+			if ( wp_styles()->query( $dep, 'done' ) ) {
+				echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
+			} else {
+				wp_add_inline_style( $dep , $meta['css'] );
+			}
 		} else {
 			wp_enqueue_style( $this->get_file_handle_id(), $this->url, $this->get_enqueue_dependencies(), $meta['time'] );
 		}

@@ -4116,8 +4116,10 @@ module.exports = ViewModule.extend( {
 		} );
 	},
 
-	updateStylesheet: function() {
-		this.controlsCSS.stylesheet.empty();
+	updateStylesheet: function( keepOldEntries ) {
+		if ( ! keepOldEntries ) {
+			this.controlsCSS.stylesheet.empty();
+		}
 
 		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
@@ -4208,7 +4210,7 @@ module.exports = ViewModule.extend( {
 			}
 		} );
 
-		self.updateStylesheet();
+		self.updateStylesheet( true );
 
 		self.debounceSave();
 	},
@@ -4876,7 +4878,7 @@ helpers = {
 			return;
 		}
 
-		var fontType = elementor.config.controls.font.fonts[ font ],
+		var fontType = elementor.config.controls.font.options[ font ],
 			fontUrl,
 
 			subsets = {
@@ -6981,7 +6983,9 @@ ColumnView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget'
@@ -6995,7 +6999,7 @@ ColumnView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
@@ -7438,10 +7442,6 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 
 		if ( ! _.isEmpty( modelClasses ) ) {
 			classes += ' ' + modelClasses;
-		}
-
-		if ( ! _.isEmpty( this.model.get( 'section' ) ) ) {
-			classes += ' elementor-control-under-section';
 		}
 
 		if ( ! _.isEmpty( responsive ) ) {
@@ -8137,7 +8137,7 @@ module.exports = ControlSelect2View.extend( {
 		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments );
 
 		helpers.getFontsByGroups = _.bind( function( groups ) {
-			var fonts = this.model.get( 'fonts' ),
+			var fonts = this.model.get( 'options' ),
 				filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
@@ -8332,7 +8332,7 @@ ControlIconView = ControlSelect2View.extend( {
 	},
 
 	filterIcons: function() {
-		var icons = this.model.get( 'icons' ),
+		var icons = this.model.get( 'options' ),
 			include = this.model.get( 'include' ),
 			exclude = this.model.get( 'exclude' );
 
@@ -8343,7 +8343,7 @@ ControlIconView = ControlSelect2View.extend( {
 				filteredIcons[ iconKey ] = icons[ iconKey ];
 			} );
 
-			this.model.set( 'icons', filteredIcons );
+			this.model.set( 'options', filteredIcons );
 			return;
 		}
 
@@ -9430,7 +9430,9 @@ SectionView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-container > .elementor-row',
 
 	behaviors: function() {
-		var behaviors = {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'column'
@@ -9441,7 +9443,7 @@ SectionView = BaseElementView.extend( {
 			HandleAddMode: {
 				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
-		};
+		} );
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
@@ -10809,8 +10811,6 @@ var	Manager = function() {
 		addHotKeys();
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/column/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/section/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.data

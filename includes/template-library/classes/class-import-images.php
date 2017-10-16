@@ -18,11 +18,10 @@ class Import_Images {
 
 		$post_id = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT `post_id` FROM %1$s
+				'SELECT `post_id` FROM `' . $wpdb->postmeta . '`
 					WHERE `meta_key` = \'_elementor_source_image_hash\'
-						AND `meta_value` = \'%2$s\'
+						AND `meta_value` = %s
 				;',
-				$wpdb->postmeta,
 				$this->_get_hash_image( $attachment['url'] )
 			)
 		);
