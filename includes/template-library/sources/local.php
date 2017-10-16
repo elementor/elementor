@@ -229,13 +229,13 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template-library/get_template', $data );
 	}
 
-	public function get_data( array $args, $context = 'display' ) {
+	public function get_data( array $args ) {
 		$db = Plugin::$instance->db;
 
 		$template_id = $args['template_id'];
 
 		// TODO: Validate the data (in JS too!).
-		if ( 'display' === $context ) {
+		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
 			$content = $db->get_plain_editor( $template_id );
@@ -554,7 +554,7 @@ class Source_Local extends Source_Base {
 	private function prepare_template_export( $template_id ) {
 		$template_data = $this->get_data( [
 			'template_id' => $template_id,
-		], 'raw' );
+		] );
 
 		if ( empty( $template_data['content'] ) ) {
 			return new \WP_Error( '404', 'The template does not exist' );
