@@ -8363,7 +8363,7 @@ ControlIconView = ControlSelect2View.extend( {
 	},
 
 	filterIcons: function() {
-		var icons = this.model.get( 'icons' ),
+		var icons = this.model.get( 'options' ),
 			include = this.model.get( 'include' ),
 			exclude = this.model.get( 'exclude' );
 
@@ -8374,7 +8374,7 @@ ControlIconView = ControlSelect2View.extend( {
 				filteredIcons[ iconKey ] = icons[ iconKey ];
 			} );
 
-			this.model.set( 'icons', filteredIcons );
+			this.model.set( 'options', filteredIcons );
 			return;
 		}
 
@@ -9052,23 +9052,6 @@ ControlSelect2ItemView = ControlBaseItemView.extend( {
 			allowClear: true,
 			placeholder: placeholder
 		};
-	},
-
-	onBeforeRender: function() {
-		var options = this.model.get( 'options' ),
-			value = this.getControlValue();
-
-		if ( ! _.isArray( value ) ) {
-			value = [value];
-		}
-
-		_.each( value, function( id ) {
-			if ( id && ! options[ id ] ) {
-				options[ id ] = elementor.translate( 'unknown_value' )  + ' (' + id + ')';
-			}
-		} );
-
-		this.model.set( 'options', options );
 	},
 
 	onReady: function() {
