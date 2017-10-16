@@ -186,7 +186,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return string Current section.
+	 * @return null|array Current section.
 	 */
 	public function get_current_section() {
 		return $this->_current_section;
@@ -199,7 +199,7 @@ abstract class Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @return string Current tab.
+	 * @return null|array Current tab.
 	 */
 	public function get_current_tab() {
 		return $this->_current_tab;
@@ -318,7 +318,7 @@ abstract class Controls_Stack {
 
 			if ( null !== $target_section_args ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . esc_html( $id ), '1.0.0' );
+					_doing_it_wrong( get_called_class() . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . esc_html( $id ), '1.0.0' );
 				}
 
 				$args = array_replace_recursive( $target_section_args, $args );
@@ -327,7 +327,7 @@ abstract class Controls_Stack {
 					$args = array_merge( $args, $target_tab );
 				}
 			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
-				wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
+				wp_die( get_called_class() . '::' . __FUNCTION__ . ': Cannot add a control outside of a section (use `start_controls_section`).' );
 			}
 		}
 
@@ -349,7 +349,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $control_id Control ID.
 	 *
-	 * @return
+	 * @return bool|\WP_Error
 	 */
 	public function remove_control( $control_id ) {
 		return Plugin::$instance->controls_manager->remove_control_from_stack( $this->get_unique_name(), $control_id );
@@ -368,10 +368,28 @@ abstract class Controls_Stack {
 	 * @param array  $args       Control arguments. Only the new fields you want
 	 *                           to update.
 	 *
-	 * @return
+	 * @return bool
 	 */
 	public function update_control( $control_id, array $args ) {
-		return Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+		$is_updated = Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args );
+
+		if ( ! $is_updated ) {
+			return false;
+		}
+
+		$control = $this->get_controls( $control_id );
+
+		if ( Controls_Manager::SECTION === $control['type'] ) {
+			$section_args = $this->get_section_args( $control_id );
+
+			$section_controls = $this->get_section_controls( $control_id );
+
+			foreach ( $section_controls as $section_control_id => $section_control ) {
+				$this->update_control( $section_control_id, $section_args );
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -394,7 +412,7 @@ abstract class Controls_Stack {
 	 *     @type string $of   Control/Section ID.
 	 * }
 	 *
-	 * @return array Position info.
+	 * @return bool|array Position info.
 	 */
 	final public function get_position_info( array $position ) {
 		$default_position = [
@@ -412,24 +430,24 @@ abstract class Controls_Stack {
 			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ] ) ||
 			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ] )
 		) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
+			_doing_it_wrong( get_called_class() . '::' . __FUNCTION__, 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
 
 			return false;
 		}
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+		$target_control_index = $this->get_control_index( $position['of'] );
 
-		$controls_keys = array_keys( $registered_controls );
-
-		$target_control_index = array_search( $position['of'], $controls_keys );
-
-		if ( false == $target_control_index ) {
+		if ( false === $target_control_index ) {
 			return false;
 		}
 
 		$target_section_index = $target_control_index;
 
-		while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
 			$target_section_index--;
 		}
 
@@ -437,7 +455,7 @@ abstract class Controls_Stack {
 			$target_control_index++;
 
 			if ( 'end' === $position['at'] ) {
-				while( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
+				while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
 					if ( ++$target_control_index >= count( $registered_controls ) ) {
 						break;
 					}
@@ -469,6 +487,60 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Retrieve control index.
+	 *
+	 * @access public
+	 *
+	 * @param string $control_id
+	 *
+	 * @return false|int Control index
+	 */
+	final public function get_control_index( $control_id ) {
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		return array_search( $control_id, $controls_keys );
+	}
+
+	/**
+	 * Retrieve all controls under a specific section
+	 *
+	 * @access public
+	 *
+	 * @param string $section_id
+	 *
+	 * @return array Section controls
+	 */
+	final public function get_section_controls( $section_id ) {
+		$section_index = $this->get_control_index( $section_id );
+
+		$section_controls = [];
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+
+		$controls_keys = array_keys( $registered_controls );
+
+		while ( true ) {
+			$section_index++;
+
+			if ( ! isset( $controls_keys[ $section_index ] ) ) {
+				break;
+			}
+
+			$control_key = $controls_keys[ $section_index ];
+
+			if ( Controls_Manager::SECTION === $registered_controls[ $control_key ]['type'] ) {
+				break;
+			}
+
+			$section_controls[ $control_key ] = $registered_controls[ $control_key ];
+		};
+
+		return $section_controls;
+	}
+
+	/**
 	 * Add new group control to stack.
 	 *
 	 * Register a set of related controls grouped together as a single unified
@@ -493,7 +565,7 @@ abstract class Controls_Stack {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
-			wp_die( __CLASS__ . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
+			wp_die( get_called_class() . '::' . __FUNCTION__ . ': Group `' . $group_name . '` not found.' );
 		}
 
 		$group->add_controls( $this, $args, $options );

@@ -53,13 +53,9 @@ class Upgrades {
 		global $wpdb;
 
 		$post_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				'SELECT `post_id` FROM %1$s
-						WHERE `meta_key` = \'_elementor_version\'
-							AND `meta_value` = \'%2$s\';',
-				$wpdb->postmeta,
-				'0.1'
-			)
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = \'_elementor_version\'
+						AND `meta_value` = \'0.1\';'
 		);
 
 		if ( empty( $post_ids ) ) {
@@ -93,13 +89,9 @@ class Upgrades {
 
 		// Fix Icon/Icon Box Widgets padding.
 		$post_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				'SELECT `post_id` FROM %1$s
-						WHERE `meta_key` = \'_elementor_version\'
-							AND `meta_value` = \'%2$s\';',
-				$wpdb->postmeta,
-				'0.2'
-			)
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = \'_elementor_version\'
+						AND `meta_value` = \'0.2\';'
 		);
 
 		if ( empty( $post_ids ) ) {
@@ -141,13 +133,9 @@ class Upgrades {
 
 		// Fix Button widget to new sizes options.
 		$post_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				'SELECT `post_id` FROM %1$s
-						WHERE `meta_key` = \'_elementor_version\'
-							AND `meta_value` = \'%2$s\';',
-				$wpdb->postmeta,
-				'0.3'
-			)
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = \'_elementor_version\'
+						AND `meta_value` = \'0.3\';'
 		);
 
 		if ( empty( $post_ids ) ) {
