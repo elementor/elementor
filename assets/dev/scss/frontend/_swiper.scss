@@ -1,10 +1,6 @@
 /**
  * Swiper 3.4.2
- */
-
-/**
- * This is the original swiper file
- * please DO NOT edit it
+ * Customized by Elementor team
  */
 
 .swiper-container {
@@ -156,12 +152,16 @@
 
 /* Bullets */
 .swiper-pagination-bullet {
-	width: 8px;
-	height: 8px;
+	width: 6px;
+	height: 6px;
 	display: inline-block;
-	border-radius: 100%;
+	border-radius: 50%;
 	background: #000;
 	opacity: 0.2;
+}
+
+.swiper-pagination-fraction {
+	color: #000;
 }
 
 button.swiper-pagination-bullet {
@@ -182,7 +182,6 @@ button.swiper-pagination-bullet {
 
 .swiper-pagination-bullet-active {
 	opacity: 1;
-	background: #007aff;
 }
 
 .swiper-pagination-white .swiper-pagination-bullet-active {
@@ -205,7 +204,7 @@ button.swiper-pagination-bullet {
 }
 
 .swiper-container-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet {
-	margin: 0 5px;
+	margin: 0 6px;
 }
 
 /* Progress */
@@ -214,7 +213,7 @@ button.swiper-pagination-bullet {
 	position: absolute;
 
 	.swiper-pagination-progressbar {
-		background: #007aff;
+		background: #000;
 		position: absolute;
 		left: 0;
 		top: 0;
