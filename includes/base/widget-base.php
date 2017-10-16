@@ -19,7 +19,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Whether the widget has content.
 	 *
-	 * Used in cased where the widget has no content. When widgets uses only
+	 * Used in cases where the widget has no content. When widgets uses only
 	 * skins to display dynamic content generated on the server. For example the
 	 * posts widget in Elemenrot Pro. Default is true, the widget has content
 	 * template.
@@ -48,7 +48,8 @@ abstract class Widget_Base extends Element_Base {
 	 * Retrieve default edit tools.
 	 *
 	 * Get the default edit tools of the widget. This method is used to set
-	 * initial tools - by default widgets have the duplicate and removal tools.
+	 * initial tools - it adds Duplicate and Remove on top of of Edit and Save
+	 * tools.
 	 *
 	 * @access protected
 	 * @static
@@ -111,7 +112,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 *
 	 * @param array      $data Widget data. Default is an empty array.
-	 * @param array|null $args Optional. Widget arguments. Default is null.
+	 * @param array|null $args Optional. Widget default arguments. Default is null.
 	 */
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -148,6 +149,9 @@ abstract class Widget_Base extends Element_Base {
 	 * Used to add a new section of controls to the widget. Regular controls and
 	 * skin controls.
 	 *
+	 * Note that when you add new controls to widgets they must be wrapped by
+	 * `start_controls_section` and `end_controls_section`.
+	 *
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
@@ -166,10 +170,10 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Register widget skin control.
+	 * Register the Skin Control if the widget has skins.
 	 *
-	 * Used to add a new skin controls to the widget. Added at the top of the
-	 * controls section.
+	 * An internal method that is used to add a skin control to the widget.
+	 * Added at the top of the controls section.
 	 *
 	 * @access private
 	 */
@@ -214,10 +218,16 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Register skin control.
+	 * Register widget skins.
 	 *
-	 * Used to assign skins to the widgets with `add_skin()` method. This method
-	 * activated while initializing the widget base class.
+	 * This method is activated while initializing the widget base class. It is
+	 * used to assign skins to widgets with `add_skin()` method.
+	 *
+	 * Usage:
+	 *
+	 *    protected function _register_skins() {
+	 *        $this->add_skin( new Skin_Classic( $this ) );
+	 *    }
 	 *
 	 * @access protected
 	 */
@@ -273,9 +283,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Render widget settings.
+	 * Render widget edit tools.
 	 *
-	 * Used to generate the final HTML.
+	 * Used to generate the edit tools HTML.
 	 *
 	 * @access protected
 	 */
@@ -300,7 +310,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Parse text editor.
 	 *
-	 * Parses the content from reach text exitor with shortcodes, oembed and
+	 * Parses the content from reach text editor with shortcodes, oEmbed and
 	 * filtered data.
 	 *
 	 * @access protected
@@ -358,7 +368,21 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Render widget plain content.
 	 *
-	 * Output the widget final HTML on the frontend.
+	 * Elementor saves the page content in a unique way, but it's not the way
+	 * WordPress saves data. This method is used to save generated HTML to the
+	 * database as plain content the WordPress way.
+	 *
+	 * When rendering plain content, it allows other WordPress plugins to
+	 * interact with the content - to search, check SEO and other purposes. It
+	 * also allows the site to keep working even if Elementor is deactivated.
+	 *
+	 * Note that if the widget uses shortcodes to display the data, the best
+	 * practice is to return the shortcode itself.
+	 *
+	 * Also note that if the widget don't display any content it should return
+	 * an empty string. For example Elementor Pro Form Widget uses this method
+	 * to return an empty string because there is no content to return. This way
+	 * if Elementor Pro will be deactivated there won't be any form to display.
 	 *
 	 * @access public
 	 */
@@ -369,7 +393,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Add render attributes.
 	 *
-	 * Used to add render attributes to the widget.
+	 * Used to add several attributes to current widget `_wrapper` element.
 	 *
 	 * @access protected
 	 */
