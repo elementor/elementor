@@ -29,7 +29,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'WordPress Editor', 'elementor' );
+		return __( 'Text Editor', 'elementor' );
 	}
 
 	/**
@@ -40,11 +40,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-wordpress';
-	}
-
-	public function get_categories() {
-		return [ 'wordpress' ];
+		return 'eicon-align-left';
 	}
 
 	/**
