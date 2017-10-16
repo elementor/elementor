@@ -264,7 +264,6 @@ class Widgets_Manager {
 			'bold',
 			'italic',
 			'underline',
-			'strikethrough',
 		];
 
 		$advanced_tools = array_merge( $basic_tools, [
@@ -283,10 +282,6 @@ class Widgets_Manager {
 			'list' => [
 				'insertOrderedList',
 				'insertUnorderedList',
-			],
-			'indent' => [
-				'indent',
-				'outdent',
 			],
 		] );
 
