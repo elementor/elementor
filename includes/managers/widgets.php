@@ -16,7 +16,6 @@ class Widgets_Manager {
 			'common',
 			'heading',
 			'image',
-			'text',
 			'video',
 			'button',
 			'divider',
