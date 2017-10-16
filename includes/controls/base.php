@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
  *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before'/'after'
+ *                            depending on the control type. 'before' / 'after'
  *                            will position the separator before/after the
  *                            control. 'none' will hide the separator. Default
  *                            is 'default'.
@@ -70,7 +70,8 @@ abstract class Base_Control {
 	/**
 	 * Retrieve features.
 	 *
-	 * Get the list of all the available features.
+	 * Get the list of all the available features. Currently Elementor uses only
+	 * the `UI` feature.
 	 *
 	 * @access public
 	 * @static
@@ -80,16 +81,6 @@ abstract class Base_Control {
 	public static function get_features() {
 		return [];
 	}
-
-	/**
-	 * Render control output in the editor.
-	 *
-	 * Used to generate the live preview, using a Backbone JavaScript template.
-	 *
-	 * @access public
-	 * @abstract
-	 */
-	abstract public function content_template();
 
 	/**
 	 * Retrieve control type.
@@ -165,9 +156,25 @@ abstract class Base_Control {
 	}
 
 	/**
+	 * Control content template.
+	 *
+	 * Used to generate the control HTML in the editor using Underscore (JS)
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * The content template is wrapped by Base_Control::print_template() .
+	 *
+	 * @access public
+	 * @abstract
+	 */
+	abstract public function content_template();
+
+	/**
 	 * Print control template.
 	 *
-	 * Used to generate the control template on the editor.
+	 * Used to generate the control HTML in the editor using Underscore (JS)
+	 * template. The variables for the class are available using `data` JS
+	 * object.
 	 *
 	 * @since 1.0.0
 	 * @access public

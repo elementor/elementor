@@ -34,7 +34,7 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	/**
 	 * Retrieve multiple control value.
 	 *
-	 * Get the value of the multiple control from a specific widget.
+	 * Get the value of the multiple control from a specific widget settings.
 	 *
 	 * @access public
 	 *
@@ -68,7 +68,8 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	/**
 	 * Retrieve multiple control style value.
 	 *
-	 * Get the style of the control. Used when adding CSS rules to the control.
+	 * Get the style of the control. Used when adding CSS rules to the control
+	 * while extracting CSS from the `selectors` data argument.
 	 *
 	 * @access public
 	 *
