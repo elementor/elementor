@@ -159,13 +159,14 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve items.
 	 *
-	 * Utility method recieves an array with needle, and the it returns all the
-	 * Items match the needle.
+	 * Utility method that recieves an array with a needle and returns all the
+	 * items that match the needle. If needle is not defined the entire haystack
+	 * will be returened.
 	 *
 	 * @access private
 	 * @static
 	 *
-	 * @param array  $haystack Default is an empty array.
+	 * @param array  $haystack An array of items.
 	 * @param string $needle   Default is null.
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
@@ -284,7 +285,7 @@ abstract class Controls_Stack {
 	 * @param array  $args    Control arguments.
 	 * @param array  $options Control options. Default is an empty array.
 	 *
-	 * @return
+	 * @return bool True if control added, False otherwise.
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
 		$default_options = [
@@ -760,7 +761,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $item The requested item. Default is null.
 	 *
-	 * @return array The raw data.
+	 * @return mixed The raw data.
 	 */
 	public function get_data( $item = null ) {
 		return self::_get_items( $this->_data, $item );
@@ -775,7 +776,7 @@ abstract class Controls_Stack {
 	 *
 	 * @param string $setting The requested setting. Default is null.
 	 *
-	 * @return array The settings.
+	 * @return mixed The settings.
 	 */
 	public function get_settings( $setting = null ) {
 		return self::_get_items( $this->_settings, $setting );
