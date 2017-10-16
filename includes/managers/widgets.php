@@ -268,6 +268,7 @@ class Widgets_Manager {
 
 		$advanced_tools = array_merge( $basic_tools, [
 			'createlink',
+			'unlink',
 			'h1' => [
 				'h1',
 				'h2',
