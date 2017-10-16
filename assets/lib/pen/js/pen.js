@@ -14,7 +14,7 @@
 	};
 
 	var lineBreakReg = /^(?:blockquote|pre|div)$/i,
-		effectNodeReg = /(?:[pubia]|h[1-6]|blockquote|code|[uo]l|li)/i;
+		effectNodeReg = /(?:[pubia]|strong|em|h[1-6]|blockquote|code|[uo]l|li)/i;
 
 	var strReg = {
 		whiteSpace: /(^\s+)|(\s+$)/g,
@@ -106,10 +106,12 @@
 		return defaults;
 	};
 
-	function commandOverall(ctx, cmd, val) {
+	function commandOverall(cmd, val) {
 		var message = ' to exec 「' + cmd + '」 command' + (val ? (' with value: ' + val) : '');
 
 		try {
+			doc.execCommand('styleWithCSS', false);
+
 			doc.execCommand(cmd, false, val);
 		} catch(err) {
 			// TODO: there's an error when insert a image to document, but not a bug
@@ -128,7 +130,7 @@
 		// hide menu when a image was inserted
 		if(name === 'insertimage' && ctx._menu) toggleNode(ctx._menu, true);
 
-		return commandOverall(ctx, name, val);
+		return commandOverall(name, val);
 	}
 
 	function commandBlock(ctx, name) {
@@ -139,20 +141,20 @@
 
 		if (tagsList.indexOf(name) !== -1) name = 'p';
 
-		return commandOverall(ctx, 'formatblock', name);
+		return commandOverall('formatblock', name);
 	}
 
 	function commandWrap(ctx, tag, value) {
 		value = '<' + tag + '>' + (value||selection.toString()) + '</' + tag + '>';
-		return commandOverall(ctx, 'insertHTML', value);
+		return commandOverall('insertHTML', value);
 	}
 
 	function commandLink(ctx, tag, value) {
 		if (ctx.config.linksInNewWindow) {
 			value = '<a href="' + value + '" target="_blank">' + (selection.toString()) + '</a>';
-			return commandOverall(ctx, 'insertHTML', value);
+			return commandOverall('insertHTML', value);
 		} else {
-			return commandOverall(ctx, tag, value);
+			return commandOverall(tag, value);
 		}
 	}
 
@@ -797,7 +799,7 @@
 		if (commandsReg.block.test(name)) {
 			commandBlock(this, name);
 		} else if (commandsReg.inline.test(name)) {
-			commandOverall(this, name, value);
+			commandOverall(name, value);
 		} else if (commandsReg.source.test(name)) {
 			commandLink(this, name, value);
 		} else if (commandsReg.insert.test(name)) {
@@ -871,7 +873,8 @@
 
 		utils.forEach(nodeParents, function(item) {
 			var tag = item.nodeName.toLowerCase(),
-				align = item.style.textAlign;
+				align = item.style.textAlign,
+				textDecoration = item.style.textDecoration;
 
 			if (align) {
 				if ('justify' === align) {
@@ -879,6 +882,10 @@
 				}
 
 				highlight('justify' + align[0].toUpperCase() + align.slice(1));
+			}
+
+			if ('underline' === textDecoration) {
+				highlight('underline');
 			}
 
 			if (! tag.match(effectNodeReg)) {
@@ -901,6 +908,7 @@
 
 					break;
 				case 'i':
+				case 'em':
 					tag = 'italic';
 
 					break;
@@ -909,16 +917,12 @@
 
 					break;
 				case 'b':
+				case 'strong':
 					tag = 'bold';
 
 					break;
 				case 'strike':
 					tag = 'strikethrough';
-
-					break;
-				case 'pre':
-				case 'code':
-					tag = 'code';
 
 					break;
 				case 'ul':
