@@ -645,6 +645,7 @@ TemplateLibraryManager = function() {
 			data: {
 				source: source,
 				edit_mode: true,
+				display: true,
 				template_id: id
 			}
 		};
