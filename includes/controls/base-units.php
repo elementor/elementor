@@ -116,7 +116,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	/**
 	 * Print units control settings.
 	 *
-	 * Used to generate the units control template on the editor.
+	 * Used to generate the units control template in the editor.
 	 *
 	 * @access protected
 	 */

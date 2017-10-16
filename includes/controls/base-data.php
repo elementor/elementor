@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating data controls.
  *
- * @since 1.0.0
+ * @since 1.5.0
  * @abstract
  */
 abstract class Base_Data_Control extends Base_Control {
@@ -32,7 +32,7 @@ abstract class Base_Data_Control extends Base_Control {
 	/**
 	 * Retrieve data control value.
 	 *
-	 * Get the value of the data control from a specific widget.
+	 * Get the value of the data control from a specific widget settings.
 	 *
 	 * @access public
 	 *
@@ -56,7 +56,8 @@ abstract class Base_Data_Control extends Base_Control {
 	/**
 	 * Retrieve data control style value.
 	 *
-	 * Get the style of the control. Used when adding CSS rules to the control.
+	 * Get the style of the control. Used when adding CSS rules to the control
+	 * while extracting CSS from the `selectors` data argument.
 	 *
 	 * @access public
 	 *
