@@ -9,6 +9,7 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
 		addToBasic: {
+			underline: 'italic'
 		},
 		addToAdvanced: {},
 		moveToAdvanced: {
