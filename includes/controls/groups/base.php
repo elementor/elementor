@@ -268,7 +268,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		end( $fields );
 
-		$fields[ key( $fields ) ]['popup'] = [ 'end' => true ];
+		$fields[ key( $fields ) ]['popup']['end'] = true;
 
 		reset( $fields );
 
