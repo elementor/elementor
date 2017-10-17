@@ -11,23 +11,6 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	onBeforeRender: function() {
-		var options = this.model.get( 'options' ),
-			value = this.getControlValue();
-
-		if ( ! _.isArray( value ) ) {
-			value = [value];
-		}
-
-		_.each( value, function( id ) {
-			if ( id && ! options[ id ] ) {
-				options[ id ] = elementor.translate( 'unknown_value' )  + ' (' + id + ')';
-			}
-		} );
-
-		this.model.set( 'options', options );
-	},
-
 	onReady: function() {
 		this.ui.select.select2( this.getSelect2Options() );
 	},
