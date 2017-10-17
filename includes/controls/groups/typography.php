@@ -24,14 +24,17 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$fields['typography'] = [
-			'label' => _x( 'Custom Typography', 'Typography Control', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
+		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
+
+		if ( $default_fonts ) {
+			$default_fonts = ', ' . $default_fonts;
+		}
+
+		$fields['font_family'] = [
+			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::FONT,
 			'default' => '',
-			'label_on' => __( 'On', 'elementor' ),
-			'label_off' => __( 'Off', 'elementor' ),
-			'return_value' => 'custom',
-			'render_type' => 'ui',
+			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
 		];
 
 		$fields['font_size'] = [
@@ -46,19 +49,6 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
-		];
-
-		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
-
-		if ( $default_fonts ) {
-			$default_fonts = ', ' . $default_fonts;
-		}
-
-		$fields['font_family'] = [
-			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
-			'type' => Controls_Manager::FONT,
-			'default' => '',
-			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
 		];
 
 		$typo_weight_options = [
@@ -148,7 +138,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				];
 
 				$field['condition'] = [
-					'typography' => [ 'custom' ],
+					'typography' => 'custom',
 				];
 			}
 		);
@@ -173,9 +163,13 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	protected function get_default_options() {
+		$typography_title = _x( 'Typography', 'Typography Control', 'elementor' );
+
 		return [
 			'popup' => [
-				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
+				'title' => $typography_title,
+				'starter_name' => 'typography',
+				'starter_title' => $typography_title,
 			],
 		];
 	}
