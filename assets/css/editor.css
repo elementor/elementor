@@ -1666,7 +1666,7 @@ select {
   .elementor-panel .elementor-control-type-image_dimensions .elementor-control-input-wrapper {
     overflow: hidden; }
   .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-field {
-    width: 70px;
+    width: 65px;
     float: left; }
     .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-field input:focus + .elementor-image-dimensions-field-description {
       color: #a4afb7; }
@@ -1685,7 +1685,7 @@ select {
   .elementor-panel .elementor-control-type-image_dimensions .elementor-image-dimensions-apply-button {
     float: right;
     height: 27px;
-    width: 70px; }
+    width: 65px; }
   .elementor-panel .elementor-control-type-code {
     padding: 0 10px 15px; }
   .elementor-panel .elementor-control-type-wp_widget .widget-inside {
