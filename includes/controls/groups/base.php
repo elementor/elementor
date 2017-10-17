@@ -38,7 +38,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		// For php < 7
 		reset( $filtered_fields );
 
-		$filtered_fields = $this->set_popup( $filtered_fields );
+		if ( $this->get_options( 'popup' ) ) {
+			$filtered_fields = $this->set_popup( $filtered_fields );
+		}
 
 		if ( isset( $this->args['separator'] ) ) {
 			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];
