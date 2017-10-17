@@ -2,8 +2,11 @@ var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
-	childEvents: {
-		'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
+
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
+		} );
 	},
 
 	// List of buttons to move {buttonToMove: afterButton}

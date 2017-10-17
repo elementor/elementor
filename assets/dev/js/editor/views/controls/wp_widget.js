@@ -11,9 +11,11 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	events: {
-		'keyup @ui.form :input': 'onFormChanged',
-		'change @ui.form :input': 'onFormChanged'
+	events: function() {
+		return {
+			'keyup @ui.form :input': 'onFormChanged',
+			'change @ui.form :input': 'onFormChanged'
+		};
 	},
 
 	onFormChanged: function() {

@@ -25,19 +25,15 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return controlData;
 	},
 
-	baseEvents: {
-		'input @ui.input': 'onBaseInputChange',
-		'change @ui.checkbox': 'onBaseInputChange',
-		'change @ui.radio': 'onBaseInputChange',
-		'input @ui.textarea': 'onBaseInputChange',
-		'change @ui.select': 'onBaseInputChange',
-		'click @ui.responsiveSwitchers': 'onSwitcherClick'
-	},
-
-	childEvents: {},
-
 	events: function() {
-		return _.extend( {}, this.baseEvents, this.childEvents );
+		return {
+			'input @ui.input': 'onBaseInputChange',
+			'change @ui.checkbox': 'onBaseInputChange',
+			'change @ui.radio': 'onBaseInputChange',
+			'input @ui.textarea': 'onBaseInputChange',
+			'change @ui.select': 'onBaseInputChange',
+			'click @ui.responsiveSwitchers': 'onSwitcherClick'
+		};
 	},
 
 	initialize: function( options ) {

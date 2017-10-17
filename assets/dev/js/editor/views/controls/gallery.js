@@ -12,10 +12,12 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.addImages': 'onAddImagesClick',
-		'click @ui.clearGallery': 'onClearGalleryClick',
-		'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'click @ui.addImages': 'onAddImagesClick',
+			'click @ui.clearGallery': 'onClearGalleryClick',
+			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
+		} );
 	},
 
 	onReady: function() {

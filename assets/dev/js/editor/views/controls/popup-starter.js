@@ -10,8 +10,10 @@ ControlPopupStarterView = ControlBaseView.extend( {
 		return ui;
 	},
 
-	events: {
-		'click @ui.popupToggle': 'onPopupToggleClick'
+	events: function() {
+		return {
+			'click @ui.popupToggle': 'onPopupToggleClick'
+		};
 	},
 
 	onPopupToggleClick: function() {

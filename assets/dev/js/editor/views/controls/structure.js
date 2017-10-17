@@ -10,8 +10,10 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.resetStructure': 'onResetStructureClick'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'click @ui.resetStructure': 'onResetStructureClick'
+		} );
 	},
 
 	templateHelpers: function() {

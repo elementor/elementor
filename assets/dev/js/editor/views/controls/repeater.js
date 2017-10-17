@@ -9,11 +9,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		fieldContainer: '.elementor-repeater-fields'
 	},
 
-	events: {
-		'click @ui.btnAddRow': 'onButtonAddRowClick',
-		'sortstart @ui.fieldContainer': 'onSortStart',
-		'sortupdate @ui.fieldContainer': 'onSortUpdate',
-		'sortstop @ui.fieldContainer': 'onSortStop'
+	events: function() {
+		return {
+			'click @ui.btnAddRow': 'onButtonAddRowClick',
+			'sortstart @ui.fieldContainer': 'onSortStart',
+			'sortupdate @ui.fieldContainer': 'onSortUpdate',
+			'sortstop @ui.fieldContainer': 'onSortStop'
+		};
 	},
 
 	childView: RepeaterRowView,
