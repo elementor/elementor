@@ -5,6 +5,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	classes: {
 		popup: 'elementor-controls-popup',
+		popupTitle: 'elementor-controls-popup-title',
 		popupToggle: 'elementor-control-popup-starter-toggle'
 	},
 
@@ -115,6 +116,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 					popupStarted = true;
 
 					$popup = jQuery( '<div>', { 'class': self.classes.popup } );
+
+					$popup.append( jQuery( '<div>', { 'class': self.classes.popupTitle } ).text( popup.title ) );
 
 					child.$el.before( $popup );
 

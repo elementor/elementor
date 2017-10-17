@@ -191,8 +191,12 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private function init_options() {
 		$default_options = [
 			'popup' => [
-				'title' => '',
+				'title' => 'Error: Popup title not set',
+				'starter_name' => 'popup_starter',
+				'starter_value' => 'custom',
 				'starter_title' => '',
+				'toggle_type' => 'switcher',
+				'toggle_title' => __( 'Set', 'elementor' ),
 			],
 		];
 
@@ -261,24 +265,18 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private function set_popup( array $fields ) {
 		$popup_options = $this->get_options( 'popup' );
 
-		if ( $popup_options['title'] ) {
-			$popup_title_field = [
-				'popup_title' => [
-					'label' => $popup_options['title'],
-					'type' => Controls_Manager::HEADING,
-				]
-			];
-
-			$fields = $popup_title_field + $fields;
-		}
-
-		$fields[ key( $fields ) ]['popup'] = [ 'start' => true ];
+		$fields[ key( $fields ) ]['popup'] = [
+			'start' => true,
+			'title' => $popup_options['title'],
+		];
 
 		$popup_starter_field = [
-			'popup_starter' => [
-				'label' => $popup_options['starter_title'],
+			$popup_options['starter_name'] => [
 				'type' => Controls_Manager::POPUP_STARTER,
-				'toggle_title' => __( 'Set', 'elementor' ),
+				'label' => $popup_options['starter_title'],
+				'toggle_type' => $popup_options['toggle_type'],
+				'toggle_title' => $popup_options['toggle_title'],
+				'return_value' => $popup_options['starter_value'],
 			]
 		];
 
