@@ -330,13 +330,10 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	protected function get_default_options() {
-		$background_title = _x( 'Background', 'Background Control', 'elementor' );
-
 		return [
 			'popup' => [
 				'toggle_type' => 'simple',
-				'title' => $background_title,
-				'starter_title' => $background_title,
+				'starter_title' => _x( 'Background', 'Background Control', 'elementor' ),
 			],
 		];
 	}
