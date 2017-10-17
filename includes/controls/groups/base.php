@@ -123,22 +123,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$fields = array_diff_key( $fields, array_flip( $args['exclude'] ) );
 		}
 
-		foreach ( $fields as $field_key => $field ) {
-			if ( empty( $field['condition'] ) ) {
-				continue;
-			}
-
-			foreach ( $field['condition'] as $condition_key => $condition_value ) {
-				preg_match( '/^\w+/', $condition_key, $matches );
-
-				if ( empty( $fields[ $matches[0] ] ) ) {
-					unset( $fields[ $field_key ] );
-
-					continue 2;
-				}
-			}
-		}
-
 		return $fields;
 	}
 
