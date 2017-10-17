@@ -16,6 +16,7 @@ class Widgets_Manager {
 			'common',
 			'heading',
 			'image',
+			'text-editor',
 			'video',
 			'button',
 			'divider',
@@ -40,7 +41,6 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
-			'text-editor',
 		];
 
 		$this->_widget_types = [];
