@@ -856,7 +856,7 @@ select {
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
     left: 0;
     right: 0;
-    margin: -2px auto 5px;
+    margin: -10px auto 5px;
     padding-top: 15px;
     width: 90%;
     z-index: 1;
