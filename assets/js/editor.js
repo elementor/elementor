@@ -7427,19 +7427,15 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return controlData;
 	},
 
-	baseEvents: {
-		'input @ui.input': 'onBaseInputChange',
-		'change @ui.checkbox': 'onBaseInputChange',
-		'change @ui.radio': 'onBaseInputChange',
-		'input @ui.textarea': 'onBaseInputChange',
-		'change @ui.select': 'onBaseInputChange',
-		'click @ui.responsiveSwitchers': 'onSwitcherClick'
-	},
-
-	childEvents: {},
-
 	events: function() {
-		return _.extend( {}, this.baseEvents, this.childEvents );
+		return {
+			'input @ui.input': 'onBaseInputChange',
+			'change @ui.checkbox': 'onBaseInputChange',
+			'change @ui.radio': 'onBaseInputChange',
+			'input @ui.textarea': 'onBaseInputChange',
+			'change @ui.select': 'onBaseInputChange',
+			'click @ui.responsiveSwitchers': 'onSwitcherClick'
+		};
 	},
 
 	initialize: function( options ) {
@@ -7815,8 +7811,10 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'slide @ui.sliders': 'onSlideChange'
+	events: function() {
+		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
+			'slide @ui.sliders': 'onSlideChange'
+		} );
 	},
 
 	initSliders: function() {
@@ -7899,10 +7897,12 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'mousedown label': 'onMouseDownLabel',
-		'click @ui.inputs': 'onClickInput',
-		'change @ui.inputs': 'onBaseInputChange'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'mousedown label': 'onMouseDownLabel',
+			'click @ui.inputs': 'onClickInput',
+			'change @ui.inputs': 'onBaseInputChange'
+		} );
 	},
 
 	onMouseDownLabel: function( event ) {
@@ -8111,8 +8111,10 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.link': 'onLinkDimensionsClicked'
+	events: function() {
+		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
+			'click @ui.link': 'onLinkDimensionsClicked'
+		} );
 	},
 
 	defaultDimensionValue: 0,
@@ -8306,10 +8308,12 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.addImages': 'onAddImagesClick',
-		'click @ui.clearGallery': 'onClearGalleryClick',
-		'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'click @ui.addImages': 'onAddImagesClick',
+			'click @ui.clearGallery': 'onClearGalleryClick',
+			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
+		} );
 	},
 
 	onReady: function() {
@@ -8528,8 +8532,10 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	// Override the base events
-	baseEvents: {
-		'click @ui.btnApply': 'onApplyClicked'
+	events: function() {
+		return {
+			'click @ui.btnApply': 'onApplyClicked'
+		};
 	},
 
 	onApplyClicked: function( event ) {
@@ -8559,9 +8565,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.frameOpeners': 'openFrame',
-		'click @ui.deleteButton': 'deleteImage'
+	events: function() {
+		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
+			'click @ui.frameOpeners': 'openFrame',
+			'click @ui.deleteButton': 'deleteImage'
+		} );
 	},
 
 	onReady: function() {
@@ -8736,8 +8744,10 @@ ControlPopupStarterView = ControlBaseView.extend( {
 		return ui;
 	},
 
-	events: {
-		'click @ui.popupToggle': 'onPopupToggleClick'
+	events: function() {
+		return {
+			'click @ui.popupToggle': 'onPopupToggleClick'
+		};
 	},
 
 	onPopupToggleClick: function() {
@@ -8887,11 +8897,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		fieldContainer: '.elementor-repeater-fields'
 	},
 
-	events: {
-		'click @ui.btnAddRow': 'onButtonAddRowClick',
-		'sortstart @ui.fieldContainer': 'onSortStart',
-		'sortupdate @ui.fieldContainer': 'onSortUpdate',
-		'sortstop @ui.fieldContainer': 'onSortStop'
+	events: function() {
+		return {
+			'click @ui.btnAddRow': 'onButtonAddRowClick',
+			'sortstart @ui.fieldContainer': 'onSortStart',
+			'sortupdate @ui.fieldContainer': 'onSortUpdate',
+			'sortstop @ui.fieldContainer': 'onSortStop'
+		};
 	},
 
 	childView: RepeaterRowView,
@@ -9213,8 +9225,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'slide @ui.slider': 'onSlideChange'
+	events: function() {
+		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
+			'slide @ui.slider': 'onSlideChange'
+		} );
 	},
 
 	initSlider: function() {
@@ -9276,8 +9290,10 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.resetStructure': 'onResetStructureClick'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'click @ui.resetStructure': 'onResetStructureClick'
+		} );
 	},
 
 	templateHelpers: function() {
@@ -9355,9 +9371,11 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	events: {
-		'keyup @ui.form :input': 'onFormChanged',
-		'change @ui.form :input': 'onFormChanged'
+	events: function() {
+		return {
+			'keyup @ui.form :input': 'onFormChanged',
+			'change @ui.form :input': 'onFormChanged'
+		};
 	},
 
 	onFormChanged: function() {
@@ -9397,8 +9415,11 @@ var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
-	childEvents: {
-		'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
+
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
+		} );
 	},
 
 	// List of buttons to move {buttonToMove: afterButton}
