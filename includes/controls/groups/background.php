@@ -334,6 +334,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 		return [
 			'popup' => [
+				'toggle_type' => 'simple',
 				'title' => $background_title,
 				'starter_title' => $background_title,
 			],
