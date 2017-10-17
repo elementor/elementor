@@ -62,7 +62,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 					top: 20,
 					left: 25
 				},
-				helper: _.bind( this._getSortableHelper, this )
+				helper: _.bind( this._getSortableHelper, this ),
+				cancel: '[contenteditable]'
+
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
@@ -205,14 +207,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	onAddChild: function( view ) {
 		view.$el.attr( 'data-model-cid', view.model.cid );
-	},
-
-	onChildviewInlineEditingStart: function() {
-		this.deactivate();
-	},
-
-	onChildviewInlineEditingStop: function() {
-		this.activate();
 	}
 } );
 
