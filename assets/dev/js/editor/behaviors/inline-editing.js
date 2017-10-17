@@ -83,16 +83,12 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.$inlineEditingArea
 			.focus()
 			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
-
-		this.view.triggerMethod( 'inline:editing:start' );
 	},
 
 	stopInlineEditing: function() {
 		this.inlineEditing = false;
 
 		this.pen.destroy();
-
-		this.view.triggerMethod( 'inline:editing:stop' );
 
 		this.view.allowRender = true;
 
