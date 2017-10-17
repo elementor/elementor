@@ -175,7 +175,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private function init_options() {
 		$default_options = [
 			'popup' => [
-				'title' => 'Error: Popup title not set',
 				'starter_name' => 'popup_starter',
 				'starter_value' => 'custom',
 				'starter_title' => '',
@@ -249,10 +248,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private function set_popup( array $fields ) {
 		$popup_options = $this->get_options( 'popup' );
 
-		$fields[ key( $fields ) ]['popup'] = [
-			'start' => true,
-			'title' => $popup_options['title'],
-		];
+		$fields[ key( $fields ) ]['popup']['start'] = true;
 
 		$popup_starter_field = [
 			$popup_options['starter_name'] => [

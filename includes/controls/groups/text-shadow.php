@@ -31,12 +31,9 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	}
 
 	protected function get_default_options() {
-		$text_shadow_title = _x( 'Text Shadow', 'Text Shadow Control', 'elementor' );
-
 		return [
 			'popup' => [
-				'title' => $text_shadow_title,
-				'starter_title' => $text_shadow_title,
+				'starter_title' => _x( 'Text Shadow', 'Text Shadow Control', 'elementor' ),
 				'starter_name' => 'text_shadow_type',
 				'starter_value' => 'yes',
 			],

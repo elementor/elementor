@@ -250,6 +250,7 @@
 	left: 0;
 	right: 0;
 	margin: -2px auto 5px;
+	padding-top: 15px;
 	width: 90%;
 	z-index: 1;
 	background-color: #fff;
@@ -262,14 +263,7 @@
 		top: -$triangle-size * 2;
 		right: 20px;
 		border: $triangle-size solid transparent;
-		border-bottom-color: $editor-background;
-	}
-
-	&-title {
-		text-transform: uppercase;
-		background-color: $editor-background;
-		padding: 20px;
-		margin-bottom: 15px;
+		border-bottom-color: #fff;
 	}
 
 	div.elementor-control { // Harder selector to override default settings

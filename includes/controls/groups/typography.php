@@ -163,13 +163,10 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	protected function get_default_options() {
-		$typography_title = _x( 'Typography', 'Typography Control', 'elementor' );
-
 		return [
 			'popup' => [
-				'title' => $typography_title,
 				'starter_name' => 'typography',
-				'starter_title' => $typography_title,
+				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
 			],
 		];
 	}
