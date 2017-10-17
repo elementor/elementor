@@ -36,7 +36,7 @@ class Control_Popup_Starter extends Base_Data_Control {
 						<input id="<?php echo $control_uid; ?>-default" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
 						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-default"><?php echo __( 'Default', 'elementor' ); ?></label>
 						<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popup-starter-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
-						<label class="elementor-choices-label elementor-control-popup-starter-toggle" for="<?php echo $control_uid; ?>-custom"><?php echo __( 'Custom...', 'elementor' ); ?></label>
+						<label class="elementor-choices-label elementor-control-popup-starter-toggle" for="<?php echo $control_uid; ?>-custom"><?php echo __( 'Custom', 'elementor' ); ?></label>
 					</div>
 				<# } else { #>
 					<label class="elementor-control-popup-starter-toggle elementor-control-popup-starter-simple-toggle">{{{ data.toggle_title }}}</label>
