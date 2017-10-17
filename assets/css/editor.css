@@ -857,6 +857,7 @@ select {
     left: 0;
     right: 0;
     margin: -2px auto 5px;
+    padding-top: 15px;
     width: 90%;
     z-index: 1;
     background-color: #fff; }
@@ -866,12 +867,7 @@ select {
       top: -20px;
       right: 20px;
       border: 10px solid transparent;
-      border-bottom-color: #e6e9ec; }
-    .elementor-panel .elementor-controls-popup-title {
-      text-transform: uppercase;
-      background-color: #e6e9ec;
-      padding: 20px;
-      margin-bottom: 15px; }
+      border-bottom-color: #fff; }
     .elementor-panel .elementor-controls-popup div.elementor-control:before {
       content: none; }
   .elementor-panel #elementor-panel-get-pro-elements .elementor-panel-nerd-box-message {
@@ -1914,11 +1910,14 @@ select {
     width: 50px;
     text-align: center;
     padding: 6px 0;
-    color: #d5dadf;
+    color: #a4afb7;
     text-transform: uppercase;
     border-radius: 3px;
     border: 1px solid;
     cursor: pointer; }
+  .elementor-panel .elementor-control-type-popup_starter .elementor-choices-label {
+    font-size: 10px;
+    text-transform: uppercase; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
