@@ -462,22 +462,22 @@
 .eicon-twitter-feed:before {
   content: '\e947'; }
 
-.eicon-heading-1:before {
+.eicon-h1:before {
   content: '\e948'; }
 
-.eicon-heading-2:before {
+.eicon-h2:before {
   content: '\e949'; }
 
-.eicon-heading-3:before {
+.eicon-h3:before {
   content: '\e950'; }
 
-.eicon-heading-4:before {
+.eicon-h4:before {
   content: '\e951'; }
 
-.eicon-heading-5:before {
+.eicon-h5:before {
   content: '\e952'; }
 
-.eicon-heading-6:before {
+.eicon-h6:before {
   content: '\e953'; }
 
 .eicon-paragraph:before {
@@ -492,10 +492,10 @@
 .eicon-list-ol:before {
   content: '\e957'; }
 
-.eicon-increase-indent:before {
+.eicon-indent:before {
   content: '\e958'; }
 
-.eicon-decrease-indent-:before {
+.eicon-outdent:before {
   content: '\e959'; }
 
 .eicon-bold:before {
@@ -524,6 +524,66 @@
 
 .eicon-text:before {
   content: '\e968'; }
+
+.eicon-external-link:before {
+  content: '\e969'; }
+
+.eicon-quote:before {
+  content: '\e970'; }
+
+.eicon-editor-link:before {
+  content: '\e500'; }
+
+.eicon-editor-unlink:before {
+  content: '\e501'; }
+
+.eicon-editor-exteral-link:before {
+  content: '\e502'; }
+
+.eicon-editor-close:before {
+  content: '\e503'; }
+
+.eicon-editor-list-ol:before {
+  content: '\e504'; }
+
+.eicon-editor-list-ul:before {
+  content: '\e505'; }
+
+.eicon-editor-bold:before {
+  content: '\e506'; }
+
+.eicon-editor-italic:before {
+  content: '\e507'; }
+
+.eicon-editor-underline:before {
+  content: '\e508'; }
+
+.eicon-editor-paragraph:before {
+  content: '\e509'; }
+
+.eicon-editor-h1:before {
+  content: '\e510'; }
+
+.eicon-editor-h2:before {
+  content: '\e511'; }
+
+.eicon-editor-h3:before {
+  content: '\e512'; }
+
+.eicon-editor-h4:before {
+  content: '\e513'; }
+
+.eicon-editor-h5:before {
+  content: '\e514'; }
+
+.eicon-editor-h6:before {
+  content: '\e515'; }
+
+.eicon-editor-quote:before {
+  content: '\e516'; }
+
+.eicon-editor-code:before {
+  content: '\e517'; }
 
 .eicon-floppy-o:before {
   content: '\e001'; }
