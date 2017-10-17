@@ -42,34 +42,34 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			stay: false,
 			editor: this.$inlineEditingArea[ 0 ],
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
-			toolbarIconsPrefix: 'eicon-',
+			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
-					className: 'eicon-external-link'
+					className: 'eicon-editor-external-link'
 				},
 				list: {
-					className: 'eicon-list-ul'
+					className: 'eicon-editor-list-ul'
 				},
 				insertOrderedList: {
-					className: 'eicon-list-ol'
+					className: 'eicon-editor-list-ol'
 				},
 				insertUnorderedList: {
-					className: 'eicon-list-ul'
+					className: 'eicon-editor-list-ul'
 				},
 				createlink: {
-					className: 'eicon-link'
+					className: 'eicon-editor-link'
 				},
 				unlink: {
-					className: 'fa fa-chain-broken'
+					className: 'eicon-editor-unlink'
 				},
 				blockquote: {
-					className: 'eicon-quote'
+					className: 'eicon-editor-quote'
 				},
 				p: {
-					className: 'eicon-paragraph'
+					className: 'eicon-editor-paragraph'
 				},
 				pre: {
-					className: 'eicon-code'
+					className: 'eicon-editor-code'
 				}
 			}
 		} );
