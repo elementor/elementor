@@ -867,19 +867,11 @@ select {
       right: 20px;
       border: 10px solid transparent;
       border-bottom-color: #e6e9ec; }
-    .elementor-panel .elementor-controls-popup div.elementor-control:first-child {
+    .elementor-panel .elementor-controls-popup-title {
       text-transform: uppercase;
-      padding: 0; }
-      .elementor-panel .elementor-controls-popup div.elementor-control:first-child .elementor-control-field {
-        -webkit-justify-content: space-around;
-            -ms-flex-pack: distribute;
-                justify-content: space-around;
-        background-color: #e6e9ec;
-        height: 50px; }
-        .elementor-panel .elementor-controls-popup div.elementor-control:first-child .elementor-control-field .elementor-control-title, .elementor-panel .elementor-controls-popup div.elementor-control:first-child .elementor-control-field .elementor-control-input-wrapper {
-          width: initial; }
-    .elementor-panel .elementor-controls-popup div.elementor-control:nth-child(2) {
-      margin-top: 15px; }
+      background-color: #e6e9ec;
+      padding: 20px;
+      margin-bottom: 15px; }
     .elementor-panel .elementor-controls-popup div.elementor-control:before {
       content: none; }
   .elementor-panel #elementor-panel-get-pro-elements .elementor-panel-nerd-box-message {
@@ -1917,7 +1909,7 @@ select {
     display: none !important; }
   .elementor-panel .elementor-control-type-popup_starter .elementor-control-input-wrapper {
     text-align: right; }
-  .elementor-panel .elementor-control-type-popup_starter .elementor-control-popup-starter-toggle {
+  .elementor-panel .elementor-control-type-popup_starter .elementor-control-popup-starter-simple-toggle {
     display: inline-block;
     width: 50px;
     text-align: center;

@@ -7192,6 +7192,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	classes: {
 		popup: 'elementor-controls-popup',
+		popupTitle: 'elementor-controls-popup-title',
 		popupToggle: 'elementor-control-popup-starter-toggle'
 	},
 
@@ -7302,6 +7303,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 					popupStarted = true;
 
 					$popup = jQuery( '<div>', { 'class': self.classes.popup } );
+
+					$popup.append( jQuery( '<div>', { 'class': self.classes.popupTitle } ).text( popup.title ) );
 
 					child.$el.before( $popup );
 
@@ -8732,22 +8735,22 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 module.exports = ControlOrderItemView;
 
 },{"elementor-views/controls/base-multiple":84}],100:[function(require,module,exports){
-var ControlBaseView = require( 'elementor-views/controls/base' ),
+var ControlChooseView = require( 'elementor-views/controls/choose' ),
 	ControlPopupStarterView;
 
-ControlPopupStarterView = ControlBaseView.extend( {
+ControlPopupStarterView = ControlChooseView.extend( {
 	ui: function() {
-		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
+		var ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
-		ui.popupToggle = '.elementor-control-popup-starter-toggle';
+		ui.popupToggle = 'label.elementor-control-popup-starter-toggle';
 
 		return ui;
 	},
 
 	events: function() {
-		return {
+		return _.extend( ControlChooseView.prototype.events.apply( this, arguments ), {
 			'click @ui.popupToggle': 'onPopupToggleClick'
-		};
+		} );
 	},
 
 	onPopupToggleClick: function() {
@@ -8757,7 +8760,7 @@ ControlPopupStarterView = ControlBaseView.extend( {
 
 module.exports = ControlPopupStarterView;
 
-},{"elementor-views/controls/base":86}],101:[function(require,module,exports){
+},{"elementor-views/controls/choose":88}],101:[function(require,module,exports){
 var RepeaterRowView;
 
 RepeaterRowView = Marionette.CompositeView.extend( {

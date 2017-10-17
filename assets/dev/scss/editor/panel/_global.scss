@@ -265,26 +265,14 @@
 		border-bottom-color: $editor-background;
 	}
 
+	&-title {
+		text-transform: uppercase;
+		background-color: $editor-background;
+		padding: 20px;
+		margin-bottom: 15px;
+	}
+
 	div.elementor-control { // Harder selector to override default settings
-
-		&:first-child {
-			text-transform: uppercase;
-			padding: 0;
-
-			.elementor-control-field {
-				justify-content: space-around;
-				background-color: $editor-background;
-				height: 50px;
-
-				.elementor-control-title, .elementor-control-input-wrapper { // Deep nesting to override default settings
-					width: initial;
-				}
-			}
-		}
-
-		&:nth-child(2) {
-			margin-top: 15px;
-		}
 
 		&:before {
 			content: none;
