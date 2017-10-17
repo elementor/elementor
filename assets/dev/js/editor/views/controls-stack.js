@@ -119,7 +119,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 					child.$el.before( $popup );
 
 					$popup.append( child.$el );
-				} else if ( popup.end ) {
+				}
+
+				if ( popup.end ) {
 					popupStarted = false;
 				}
 			}
