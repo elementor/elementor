@@ -462,74 +462,59 @@
 .eicon-twitter-feed:before {
   content: '\e947'; }
 
-.eicon-h1:before {
-  content: '\e948'; }
+.eicon-editor-link:before {
+  content: '\e500'; }
 
-.eicon-h2:before {
-  content: '\e949'; }
+.eicon-editor-unlink:before {
+  content: '\e501'; }
 
-.eicon-h3:before {
-  content: '\e950'; }
+.eicon-editor-exteral-link:before {
+  content: '\e502'; }
 
-.eicon-h4:before {
-  content: '\e951'; }
+.eicon-editor-close:before {
+  content: '\e503'; }
 
-.eicon-h5:before {
-  content: '\e952'; }
+.eicon-editor-list-ol:before {
+  content: '\e504'; }
 
-.eicon-h6:before {
-  content: '\e953'; }
+.eicon-editor-list-ul:before {
+  content: '\e505'; }
 
-.eicon-paragraph:before {
-  content: '\e954'; }
+.eicon-editor-bold:before {
+  content: '\e506'; }
 
-.eicon-link:before {
-  content: '\e955'; }
+.eicon-editor-italic:before {
+  content: '\e507'; }
 
-.eicon-list-ul:before {
-  content: '\e956'; }
+.eicon-editor-underline:before {
+  content: '\e508'; }
 
-.eicon-list-ol:before {
-  content: '\e957'; }
+.eicon-editor-paragraph:before {
+  content: '\e509'; }
 
-.eicon-indent:before {
-  content: '\e958'; }
+.eicon-editor-h1:before {
+  content: '\e510'; }
 
-.eicon-outdent:before {
-  content: '\e959'; }
+.eicon-editor-h2:before {
+  content: '\e511'; }
 
-.eicon-bold:before {
-  content: '\e960'; }
+.eicon-editor-h3:before {
+  content: '\e512'; }
 
-.eicon-italic:before {
-  content: '\e961'; }
+.eicon-editor-h4:before {
+  content: '\e513'; }
 
-.eicon-strikethrough:before {
-  content: '\e962'; }
+.eicon-editor-h5:before {
+  content: '\e514'; }
 
-.eicon-underline:before {
-  content: '\e963'; }
+.eicon-editor-h6:before {
+  content: '\e515'; }
 
-.eicon-align-right:before {
-  content: '\e964'; }
+.eicon-editor-quote:before {
+  content: '\e516'; }
 
-.eicon-align-center:before {
-  content: '\e965'; }
-
-.eicon-align-justify:before {
-  content: '\e966'; }
-
-.eicon-align-left:before {
-  content: '\e967'; }
-
-.eicon-text:before {
-  content: '\e968'; }
-
-.eicon-external-link:before {
-  content: '\e969'; }
-
-.eicon-quote:before {
-  content: '\e970'; }
+.eicon-editor-code:before {
+  content: '\e517'; }
 
 .eicon-floppy-o:before {
   content: '\e001'; }
