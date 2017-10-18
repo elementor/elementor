@@ -250,6 +250,8 @@ body.admin-bar .dialog-close-button {
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
           transform: translateY(-50%); }
+  .elementor-swiper-button.swiper-button-disabled {
+    opacity: 0.3; }
 
 @media (max-width: 1024px) {
   .elementor-tablet-align-center {
