@@ -31,6 +31,18 @@ heartbeat = {
 				}
 
 				elementor.config.nonce = response.elementor_nonce;
+			},
+			'heartbeat-nonces-expired': function() {
+				elementor.showFatalErrorDialog( {
+					headerMessage: elementor.translate( 'session_expired_header' ),
+					message: elementor.translate( 'session_expired_message' ),
+					strings: {
+						confirm: elementor.translate( 'reload_page' )
+					},
+					onConfirm: function() {
+						location.reload( true );
+					}
+				} );
 			}
 		} );
 
