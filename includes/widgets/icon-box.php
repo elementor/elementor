@@ -559,6 +559,12 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		$link_attributes = $this->get_render_attribute_string( 'link' );
+
+		$this->add_render_attribute( 'description_text', 'class', 'elementor-icon-box-description' );
+
+		$this->add_inline_editing_attributes( 'title_text' );
+
+		$this->add_inline_editing_attributes( 'description_text', 'advanced' );
 		?>
         <div class="elementor-icon-box-wrapper">
             <div class="elementor-icon-box-icon">
@@ -568,9 +574,9 @@ class Widget_Icon_Box extends Widget_Base {
             </div>
             <div class="elementor-icon-box-content">
                 <<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
-                    <<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+                    <<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?> <?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
                 </<?php echo $settings['title_size']; ?>>
-                <p class="elementor-icon-box-description"><?php echo $settings['description_text']; ?></p>
+                <p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
             </div>
         </div>
 		<?php
@@ -595,9 +601,9 @@ class Widget_Icon_Box extends Widget_Base {
             </div>
             <div class="elementor-icon-box-content">
                 <{{{ settings.title_size }}} class="elementor-icon-box-title">
-                    <{{{ iconTag + ' ' + link }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
+                    <{{{ iconTag + ' ' + link }}} class="elementor-inline-editing" data-elementor-setting-key="title_text">{{{ settings.title_text }}}</{{{ iconTag }}}>
                 </{{{ settings.title_size }}}>
-                <p class="elementor-icon-box-description">{{{ settings.description_text }}}</p>
+                <p class="elementor-icon-box-description elementor-inline-editing" data-elementor-setting-key="description_text" data-elementor-inline-editing-toolbar="advanced">{{{ settings.description_text }}}</p>
             </div>
         </div>
 		<?php

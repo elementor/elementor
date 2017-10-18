@@ -94,10 +94,19 @@ class Preview {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
+		$inline_editor = 'pen';
+
+		wp_register_style(
+			$inline_editor . '_inline_editor',
+			ELEMENTOR_ASSETS_URL . 'lib/' . $inline_editor . '/css/' . $inline_editor . $suffix . '.css'
+		);
+
 		wp_register_style(
 			'editor-preview',
 			ELEMENTOR_ASSETS_URL . 'css/editor-preview' . $direction_suffix . $suffix . '.css',
-			[],
+			[
+				$inline_editor . '_inline_editor',
+			],
 			ELEMENTOR_VERSION
 		);
 
@@ -111,6 +120,18 @@ class Preview {
 		Plugin::$instance->frontend->enqueue_scripts();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		$inline_editor = 'pen';
+
+		wp_enqueue_script(
+			$inline_editor . '_inline_editor',
+			ELEMENTOR_ASSETS_URL . 'lib/' . $inline_editor . '/js/' . $inline_editor . $suffix . '.js',
+			[],
+			'',
+			true
+		);
 
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}

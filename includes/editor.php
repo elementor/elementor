@@ -392,6 +392,7 @@ class Editor {
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
+			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
