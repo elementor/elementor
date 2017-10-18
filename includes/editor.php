@@ -308,7 +308,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.4',
+			'3.2.5',
 			true
 		);
 
@@ -383,6 +383,7 @@ class Editor {
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
+			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'data' => $editor_data,
 			'locked_user' => $locked_user,
@@ -417,7 +418,12 @@ class Editor {
 				'insert_media' => __( 'Insert Media', 'elementor' ),
 				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
+				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
+				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
+				'session_expired_header' => __( 'Timeout', 'elementor' ),
+				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
 				'learn_more' => __( 'Learn More', 'elementor' ),
+				'reload_page' => __( 'Reload Page', 'elementor' ),
 				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
@@ -563,8 +569,12 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
+		$abs_path = str_replace( '\\', '/', ABSPATH );
+
 		foreach ( $this->_editor_templates as $editor_template ) {
-			if ( file_exists( $editor_template ) ) {
+			$template_abs_path = str_replace( '\\', '/', substr( $editor_template, 0, strlen( ABSPATH ) ) );
+
+			if ( $template_abs_path === $abs_path ) {
 				include $editor_template;
 			} else {
 				echo $editor_template;
