@@ -8760,7 +8760,8 @@ ControlPopupStarterView = ControlChooseView.extend( {
 module.exports = ControlPopupStarterView;
 
 },{"elementor-views/controls/choose":88}],101:[function(require,module,exports){
-var RepeaterRowView;
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
+	RepeaterRowView;
 
 RepeaterRowView = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
@@ -8842,6 +8843,10 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 			var values = {};
 
 			self.children.each( function( child ) {
+				if ( ! ( child instanceof ControlBaseDataView ) ) {
+					return;
+				}
+
 				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
 
@@ -8887,7 +8892,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 module.exports = RepeaterRowView;
 
-},{"elementor-behaviors/inner-tabs":3}],102:[function(require,module,exports){
+},{"elementor-behaviors/inner-tabs":3,"elementor-views/controls/base-data":83}],102:[function(require,module,exports){
 var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
 	BaseSettingsModel = require( 'elementor-models/base-settings' ),
