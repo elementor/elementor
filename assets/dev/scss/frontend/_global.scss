@@ -171,6 +171,10 @@
 	color: $slides_gui;
 	top: 50%;
 	transform: translateY(-50%);
+
+	&.swiper-button-disabled {
+		opacity: 0.3;
+	}
 }
 
 // Alignment for Tablet
