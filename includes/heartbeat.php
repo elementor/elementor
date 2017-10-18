@@ -40,6 +40,8 @@ class Heartbeat {
 				'heartbeatNonce' => wp_create_nonce( 'heartbeat-nonce' ),
 			];
 		}
+
+		return $response;
 	}
 
 	/**
