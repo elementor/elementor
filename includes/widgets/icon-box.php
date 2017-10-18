@@ -569,15 +569,15 @@ class Widget_Icon_Box extends Widget_Base {
         <div class="elementor-icon-box-wrapper">
             <div class="elementor-icon-box-icon">
                 <<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
-                <i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
-            </<?php echo $icon_tag; ?>>
-        </div>
-        <div class="elementor-icon-box-content">
-        <<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
-        <<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?> <?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
-        </<?php echo $settings['title_size']; ?>>
-        <p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
-        </div>
+                    <i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
+                </<?php echo $icon_tag; ?>>
+            </div>
+            <div class="elementor-icon-box-content">
+                <<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
+                    <<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?> <?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+                </<?php echo $settings['title_size']; ?>>
+                <p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
+            </div>
         </div>
 		<?php
 	}
@@ -592,19 +592,19 @@ class Widget_Icon_Box extends Widget_Base {
 	protected function _content_template() {
 		?>
         <# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-                iconTag = link ? 'a' : 'span'; #>
-            <div class="elementor-icon-box-wrapper">
-                <div class="elementor-icon-box-icon">
-                    <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
+			iconTag = link ? 'a' : 'span'; #>
+        <div class="elementor-icon-box-wrapper">
+            <div class="elementor-icon-box-icon">
+                <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
                     <i class="{{ settings.icon }}"></i>
                 </{{{ iconTag }}}>
             </div>
             <div class="elementor-icon-box-content">
                 <{{{ settings.title_size }}} class="elementor-icon-box-title">
-                <{{{ iconTag + ' ' + link }}} class="elementor-inline-editing" data-elementor-setting-key="title_text">{{{ settings.title_text }}}</{{{ iconTag }}}>
-        </{{{ settings.title_size }}}>
-        <p class="elementor-icon-box-description elementor-inline-editing" data-elementor-setting-key="description_text" data-elementor-inline-editing-toolbar="advanced">{{{ settings.description_text }}}</p>
-        </div>
+                    <{{{ iconTag + ' ' + link }}} class="elementor-inline-editing" data-elementor-setting-key="title_text">{{{ settings.title_text }}}</{{{ iconTag }}}>
+                </{{{ settings.title_size }}}>
+                <p class="elementor-icon-box-description elementor-inline-editing" data-elementor-setting-key="description_text" data-elementor-inline-editing-toolbar="advanced">{{{ settings.description_text }}}</p>
+            </div>
         </div>
 		<?php
 	}
