@@ -291,7 +291,7 @@
 .eicon-wordpress:before {
   content: '\e890'; }
 
-.eicon-code:before {
+.eicon-align-left:before {
   content: '\e891'; }
 
 .eicon-anchor:before {
@@ -468,7 +468,7 @@
 .eicon-editor-unlink:before {
   content: '\e501'; }
 
-.eicon-editor-exteral-link:before {
+.eicon-editor-external-link:before {
   content: '\e502'; }
 
 .eicon-editor-close:before {
