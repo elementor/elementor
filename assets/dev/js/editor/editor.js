@@ -368,11 +368,11 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	showLoadingError: function( title, message, helpURL ) {
-		var dialog = this.dialogsManager.createWidget( 'confirm', {
+	showFatalErrorDialog: function( options ) {
+		var defaultOptions = {
 			id: 'elementor-fatal-error-dialog',
-			headerMessage: title,
-			message: message,
+			headerMessage: '',
+			message: '',
 			position: {
 				my: 'center center',
 				at: 'center center'
@@ -381,9 +381,7 @@ App = Marionette.Application.extend( {
 				confirm: elementor.translate( 'learn_more' ),
 				cancel: elementor.translate( 'go_back' )
 			},
-			onConfirm: function() {
-				open( helpURL, '_blank' );
-			},
+			onConfirm: null,
 			onCancel: function() {
 				parent.history.go( -1 );
 			},
@@ -391,9 +389,11 @@ App = Marionette.Application.extend( {
 				onBackgroundClick: false,
 				onButtonClick: false
 			}
-		} );
+		};
 
-		dialog.show();
+		options = jQuery.extend( true, defaultOptions, options );
+
+		this.dialogsManager.createWidget( 'confirm', options ).show();
 	},
 
 	onStart: function() {
@@ -510,11 +510,23 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewLoadingError: function() {
-		this.showLoadingError( this.translate( 'preview_not_loading_header' ), this.translate( 'preview_not_loading_message' ), elementor.config.help_preview_error_url );
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'preview_not_loading_header' ),
+			message: this.translate( 'preview_not_loading_message' ),
+			onConfirm: function() {
+				open( elementor.config.help_preview_error_url, '_blank' );
+			}
+		} );
 	},
 
 	onPreviewElNotFound: function() {
-		this.showLoadingError( this.translate( 'preview_el_not_found_header' ), this.translate( 'preview_el_not_found_message' ), elementor.config.help_the_content_url );
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'preview_el_not_found_header' ),
+			message: this.translate( 'preview_el_not_found_message' ),
+			onConfirm: function() {
+				open( elementor.config.help_the_content_url, '_blank' );
+			}
+		} );
 	},
 
 	setFlagEditorChange: function( status ) {
