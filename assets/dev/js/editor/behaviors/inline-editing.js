@@ -104,9 +104,12 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingClick: function( event ) {
-		this.$inlineEditingArea = jQuery( event.currentTarget );
+		var self = this,
+			$targetElement = jQuery( event.currentTarget );
 
-		this.startInlineEditing();
+		setTimeout( function() {
+			self.startEditing( $targetElement );
+		}, 30 );
 	},
 
 	onInlineEditingBlur: function() {
@@ -120,8 +123,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				return;
 			}
 
-		}, 150 );
 			self.stopEditing();
+		}, 20 );
 	},
 
 	onInlineEditingUpdate: function() {
