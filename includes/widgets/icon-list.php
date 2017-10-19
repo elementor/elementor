@@ -161,26 +161,20 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'prefix_class' => 'elementor-align-',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a' => 'justify-content: {{VALUE}};',
-				],
-				'selectors_dictionary' => [
-					'left' => 'flex-start',
-					'right' => 'flex-end',
-				],
+				'classes' => 'elementor-control-start-end',
 			]
 		);
 
