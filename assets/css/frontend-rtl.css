@@ -250,6 +250,8 @@ body.admin-bar .dialog-close-button {
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
           transform: translateY(-50%); }
+  .elementor-swiper-button.swiper-button-disabled {
+    opacity: 0.3; }
 
 @media (max-width: 1024px) {
   .elementor-tablet-align-center {
@@ -1361,8 +1363,28 @@ body.admin-bar .dialog-close-button {
 .elementor-shape-circle .elementor-icon {
   border-radius: 50%; }
 
+.elementor-widget-icon-list.elementor-align-center .elementor-icon-list-item, .elementor-widget-icon-list.elementor-align-center .elementor-icon-list-item a {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+
 .elementor-widget-icon-list.elementor-align-center .elementor-icon-list-item:after {
   margin: auto; }
+
+.elementor-widget-icon-list.elementor-align-left .elementor-icon-list-item, .elementor-widget-icon-list.elementor-align-left .elementor-icon-list-item a {
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  text-align: right; }
+
+.elementor-widget-icon-list.elementor-align-right .elementor-icon-list-item, .elementor-widget-icon-list.elementor-align-right .elementor-icon-list-item a {
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  text-align: left; }
 
 .elementor-widget-icon-list:not(.elementor-align-right) .elementor-icon-list-item:after {
   right: 0; }

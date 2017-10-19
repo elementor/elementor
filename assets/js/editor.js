@@ -775,6 +775,7 @@ TemplateLibraryManager = function() {
 			data: {
 				source: source,
 				edit_mode: true,
+				display: true,
 				template_id: id
 			}
 		};
@@ -1849,6 +1850,34 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	showFatalErrorDialog: function( options ) {
+		var defaultOptions = {
+			id: 'elementor-fatal-error-dialog',
+			headerMessage: '',
+			message: '',
+			position: {
+				my: 'center center',
+				at: 'center center'
+			},
+			strings: {
+				confirm: elementor.translate( 'learn_more' ),
+				cancel: elementor.translate( 'go_back' )
+			},
+			onConfirm: null,
+			onCancel: function() {
+				parent.history.go( -1 );
+			},
+			hide: {
+				onBackgroundClick: false,
+				onButtonClick: false
+			}
+		};
+
+		options = jQuery.extend( true, defaultOptions, options );
+
+		this.dialogsManager.createWidget( 'confirm', options ).show();
+	},
+
 	onStart: function() {
 		this.$window = Backbone.$( window );
 
@@ -1880,12 +1909,21 @@ App = Marionette.Application.extend( {
 	onPreviewLoaded: function() {
 		NProgress.done();
 
+		var previewWindow = this.$preview[0].contentWindow;
+
+		if ( ! previewWindow.elementorFrontend ) {
+			this.onPreviewLoadingError();
+
+			return;
+		}
+
 		this.$previewContents = this.$preview.contents();
 
 		var $previewElementorEl = this.$previewContents.find( '#elementor' );
 
 		if ( ! $previewElementorEl.length ) {
 			this.onPreviewElNotFound();
+
 			return;
 		}
 
@@ -1953,29 +1991,24 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	onPreviewLoadingError: function() {
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'preview_not_loading_header' ),
+			message: this.translate( 'preview_not_loading_message' ),
+			onConfirm: function() {
+				open( elementor.config.help_preview_error_url, '_blank' );
+			}
+		} );
+	},
+
 	onPreviewElNotFound: function() {
-		var dialog = this.dialogsManager.createWidget( 'confirm', {
-			id: 'elementor-fatal-error-dialog',
-			headerMessage: elementor.translate( 'preview_el_not_found_header' ),
-			message: elementor.translate( 'preview_el_not_found_message' ),
-			position: {
-				my: 'center center',
-				at: 'center center'
-			},
-            strings: {
-				confirm: elementor.translate( 'learn_more' ),
-				cancel: elementor.translate( 'go_back' )
-            },
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'preview_el_not_found_header' ),
+			message: this.translate( 'preview_el_not_found_message' ),
 			onConfirm: function() {
 				open( elementor.config.help_the_content_url, '_blank' );
-			},
-			onCancel: function() {
-				parent.history.go( -1 );
-			},
-			hideOnButtonClick: false
+			}
 		} );
-
-		dialog.show();
 	},
 
 	setFlagEditorChange: function( status ) {
@@ -2948,6 +2981,10 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		'keyup @ui.input': 'onInputChanged'
 	},
 
+	clearInput: function() {
+		this.ui.input.val( '' );
+	},
+
 	onInputChanged: function( event ) {
 		var ESC_KEY = 27;
 
@@ -2958,8 +2995,12 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		this.triggerMethod( 'search:change:input' );
 	},
 
-	clearInput: function() {
-		this.ui.input.val( '' );
+	onRender: function() {
+		var input = this.ui.input;
+
+		setTimeout( function() {
+			input.focus();
+		} );
 	}
 } );
 
@@ -4974,7 +5015,20 @@ heartbeat = {
 					heartbeat.getModal().hide();
 				}
 
-				elementor.config.nonce = response.elementor_nonce;
+				elementor.config.nonce = response.elementorNonce;
+			},
+			'heartbeat-tick.wp-refresh-nonces': function( event, response ) {
+				var nonces = response['elementor-refresh-nonces'];
+
+				if ( nonces ) {
+					if ( nonces.heartbeatNonce ) {
+						elementor.config.nonce = nonces.elementorNonce;
+					}
+
+					if ( nonces.heartbeatNonce ) {
+						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
+					}
+				}
 			}
 		} );
 
