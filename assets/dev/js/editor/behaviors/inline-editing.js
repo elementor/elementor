@@ -98,7 +98,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = true;
 
-		this.view.getEditModel().renderRemoteServer();
+		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
+			this.view.getEditModel().renderRemoteServer();
+		}
 	},
 
 	onInlineEditingClick: function( event ) {
