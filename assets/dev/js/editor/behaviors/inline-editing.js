@@ -18,15 +18,21 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		};
 	},
 
+	getEditingSettingKey: function() {
+		return this.$currentEditingArea.data().elementorSettingKey;
+	},
+
 	startEditing: function( $element ) {
 		if ( this.editing ) {
 			return;
 		}
 
-		var editModel = this.view.getEditModel(),
-			elementData = this.$inlineEditingArea.data();
+		this.$currentEditingArea = $element;
 
-		this.$inlineEditingArea.html( editModel.getSetting( elementData.elementorSettingKey ) );
+		var elementData = this.$currentEditingArea.data(),
+			editModel = this.view.getEditModel();
+
+		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
 
 		var Pen = elementorFrontend.getElements( 'window' ).Pen;
 
@@ -117,9 +123,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		var settingKey = this.$inlineEditingArea.data( 'elementor-setting-key' );
-
-		this.view.getEditModel().setSetting( settingKey, this.$inlineEditingArea.html() );
+		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.$currentEditingArea.html() );
 	}
 } );
 
