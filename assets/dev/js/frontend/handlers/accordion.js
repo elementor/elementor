@@ -16,7 +16,7 @@ var activateSection = function( sectionIndex, $accordionTitles ) {
 	}
 };
 
-module.exports = function( $scope, $ ) {
+module.exports = function( $scope ) {
 	var defaultActiveSection = $scope.find( '.elementor-accordion' ).data( 'active-section' ),
 		$accordionTitles = $scope.find( '.elementor-accordion-title' );
 
@@ -26,7 +26,12 @@ module.exports = function( $scope, $ ) {
 
 	activateSection( defaultActiveSection, $accordionTitles );
 
-	$accordionTitles.on( 'click', function() {
-		activateSection( this.dataset.section, $accordionTitles );
+	$accordionTitles.on( {
+		click: function() {
+			this.focus();
+		},
+		focus: function() {
+			activateSection( this.dataset.section, $accordionTitles );
+		}
 	} );
 };
