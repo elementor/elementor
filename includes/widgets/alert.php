@@ -266,14 +266,14 @@ class Widget_Alert extends Widget_Base {
 
 		$this->add_render_attribute( 'alert_title', 'class', 'elementor-alert-title' );
 
-		$this->add_inline_editing_attributes( 'alert_title' );
+		$this->add_inline_editing_attributes( 'alert_title', 'none' );
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<span <?php echo $this->get_render_attribute_string( 'alert_title' ); ?>><?php echo $settings['alert_title']; ?></span>
 			<?php if ( ! empty( $settings['alert_description'] ) ) {
 				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
-				$this->add_inline_editing_attributes( 'alert_description', 'advanced' );
+				$this->add_inline_editing_attributes( 'alert_description' );
 				?>
 				<span <?php echo $this->get_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
 			<?php }
@@ -294,8 +294,8 @@ class Widget_Alert extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
-			<span class="elementor-alert-title elementor-inline-editing" data-elementor-setting-key="alert_title">{{{ settings.alert_title }}}</span>
-			<span class="elementor-alert-description elementor-inline-editing" data-elementor-setting-key="alert_description" data-elementor-inline-editing-toolbar="advanced">{{{ settings.alert_description }}}</span>
+			<span class="elementor-alert-title elementor-inline-editing" data-elementor-setting-key="alert_title" data-elementor-inline-editing-toolbar="none">{{{ settings.alert_title }}}</span>
+			<span class="elementor-alert-description elementor-inline-editing" data-elementor-setting-key="alert_description">{{{ settings.alert_description }}}</span>
 			<# if ( 'show' === settings.show_dismiss ) { #>
 				<button type="button" class="elementor-alert-dismiss">X</button>
 			<# } #>

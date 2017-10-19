@@ -451,7 +451,7 @@ class Widget_Image_Box extends Widget_Base {
 			if ( ! empty( $settings['title_text'] ) ) {
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
-				$this->add_inline_editing_attributes( 'title_text' );
+				$this->add_inline_editing_attributes( 'title_text', 'none' );
 
 				$title_html = $settings['title_text'];
 
@@ -465,7 +465,7 @@ class Widget_Image_Box extends Widget_Base {
 			if ( ! empty( $settings['description_text'] ) ) {
 				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
 
-				$this->add_inline_editing_attributes( 'description_text', 'advanced' );
+				$this->add_inline_editing_attributes( 'description_text' );
 
 				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $settings['description_text'] );
 			}

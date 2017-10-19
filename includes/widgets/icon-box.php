@@ -562,9 +562,9 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_render_attribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
-		$this->add_inline_editing_attributes( 'title_text' );
+		$this->add_inline_editing_attributes( 'title_text', 'none' );
 
-		$this->add_inline_editing_attributes( 'description_text', 'advanced' );
+		$this->add_inline_editing_attributes( 'description_text' );
 		?>
         <div class="elementor-icon-box-wrapper">
             <div class="elementor-icon-box-icon">

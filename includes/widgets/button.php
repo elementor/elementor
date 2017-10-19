@@ -450,7 +450,7 @@ class Widget_Button extends Widget_Base {
 
 		$this->add_render_attribute( 'text', 'class', 'elementor-button-text' );
 
-		$this->add_inline_editing_attributes( 'text' );
+		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) ) : ?>
