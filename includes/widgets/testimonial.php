@@ -430,7 +430,7 @@ class Widget_Testimonial extends Widget_Base {
 		#>
 		<div class="elementor-testimonial-wrapper{{ testimonial_alignment }}">
 			<# if ( '' !== settings.testimonial_content ) { #>
-				<div class="elementor-testimonial-content elementor-inline-editing" data-elementor-setting-key="testimonial_content" data-elementor-inline-editing-toolbar="advanced">{{{ settings.testimonial_content }}}</div>
+				<div class="elementor-testimonial-content elementor-inline-editing" data-elementor-setting-key="testimonial_content">{{{ settings.testimonial_content }}}</div>
 			<# } #>
 			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">
@@ -442,11 +442,11 @@ class Widget_Testimonial extends Widget_Base {
 
 					<div class="elementor-testimonial-details">
 						<# if ( '' !== settings.testimonial_name ) { #>
-							<div class="elementor-testimonial-name elementor-inline-editing" data-elementor-setting-key="testimonial_name">{{{ settings.testimonial_name }}}</div>
+							<div class="elementor-testimonial-name elementor-inline-editing" data-elementor-setting-key="testimonial_name" data-elementor-inline-editing-toolbar="none">{{{ settings.testimonial_name }}}</div>
 						<# } #>
 
 						<# if ( '' !== settings.testimonial_job ) { #>
-							<div class="elementor-testimonial-job elementor-inline-editing" data-elementor-setting-key="testimonial_job">{{{ settings.testimonial_job }}}</div>
+							<div class="elementor-testimonial-job elementor-inline-editing" data-elementor-setting-key="testimonial_job" data-elementor-inline-editing-toolbar="none">{{{ settings.testimonial_job }}}</div>
 						<# } #>
 					</div>
 				</div>
