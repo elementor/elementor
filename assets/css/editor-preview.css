@@ -93,14 +93,17 @@
           align-items: center; }
 
 .pen-input-wrapper .pen-url-input {
-  border: none;
-  outline: none;
   line-height: 1;
   padding: 3px;
   width: 250px;
-  background-color: transparent;
-  color: #fff;
   font-size: 12px; }
+  .pen-input-wrapper .pen-url-input, .pen-input-wrapper .pen-url-input:focus {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    color: #fff; }
 
 .pen-input-label {
   margin: 0; }
