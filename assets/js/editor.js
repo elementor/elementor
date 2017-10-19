@@ -5001,15 +5001,7 @@ helpers = {
 	},
 
 	getUniqueID: function() {
-		var id;
-
-		// TODO: Check conflict models
-		//while ( true ) {
-			id = Math.random().toString( 36 ).substr( 2, 7 );
-			//if ( 1 > $( 'li.item-id-' + id ).length ) {
-				return id;
-			//}
-		//}
+		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
 	stringReplaceAll: function( string, replaces ) {
@@ -6472,6 +6464,12 @@ module.exports = BaseAddSectionView.extend( {
 },{"elementor-views/add-section/base":75}],78:[function(require,module,exports){
 module.exports = Marionette.CompositeView.extend( {
 
+	templateHelpers: function() {
+		return {
+			view: this
+		};
+	},
+
 	getBehavior: function( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
@@ -6566,6 +6564,10 @@ BaseElementView = BaseContainer.extend( {
 		return this.model.get( 'elType' );
 	},
 
+	getIDInt: function() {
+		return parseInt( this.getID(), 16 );
+	},
+
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
@@ -6583,13 +6585,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
-	},
-
-	templateHelpers: function() {
-		return {
-			elementModel: this.model,
-			editModel: this.getEditModel()
-		};
 	},
 
 	getTemplateType: function() {
