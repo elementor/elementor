@@ -332,7 +332,7 @@
 		}
 		if (ctx._menu.style.display === 'none') return;
 
-		setTimeout(function() { input.focus(); }, 100);
+		setTimeout(function() { input.focus(); }, 10);
 
 		var createLink = function() {
 			var inputValue = input.value;
