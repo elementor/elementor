@@ -1,9 +1,9 @@
 var InlineEditingBehavior;
 
 InlineEditingBehavior = Marionette.Behavior.extend( {
-	inlineEditing: false,
+	editing: false,
 
-	$inlineEditingArea: null,
+	$currentEditingArea: null,
 
 	ui: function() {
 		return {
@@ -18,8 +18,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		};
 	},
 
-	startInlineEditing: function() {
-		if ( this.inlineEditing ) {
+	startEditing: function( $element ) {
+		if ( this.editing ) {
 			return;
 		}
 
@@ -30,7 +30,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		var Pen = elementorFrontend.getElements( 'window' ).Pen;
 
-		this.inlineEditing = true;
+		this.editing = true;
 
 		this.view.allowRender = false;
 
@@ -40,7 +40,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.pen = new Pen( {
 			linksInNewWindow: true,
 			stay: false,
-			editor: this.$inlineEditingArea[ 0 ],
+			editor: this.$currentEditingArea[0],
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
@@ -80,13 +80,13 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$inlineEditingArea
+		this.$currentEditingArea
 			.focus()
 			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
 	},
 
-	stopInlineEditing: function() {
-		this.inlineEditing = false;
+	stopEditing: function() {
+		this.editing = false;
 
 		this.pen.destroy();
 
@@ -112,8 +112,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				return;
 			}
 
-			self.stopInlineEditing();
 		}, 150 );
+			self.stopEditing();
 	},
 
 	onInlineEditingUpdate: function() {
