@@ -1215,7 +1215,8 @@ body.admin-bar .dialog-close-button {
   overflow: hidden; }
 
 .elementor-widget-tabs .elementor-tab-title {
-  cursor: pointer; }
+  cursor: pointer;
+  outline: none; }
 
 .elementor-widget-tabs .elementor-tab-desktop-title {
   position: relative;

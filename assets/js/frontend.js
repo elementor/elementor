@@ -904,8 +904,13 @@ module.exports = function( $scope, $ ) {
 
 	activateTab( defaultActiveTab );
 
-	$tabsTitles.on( 'click', function() {
-		activateTab( this.dataset.tab );
+	$tabsTitles.on( {
+		click: function() {
+			this.focus();
+		},
+		focus: function() {
+			activateTab( this.dataset.tab );
+		}
 	} );
 };
 
