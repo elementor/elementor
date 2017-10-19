@@ -115,8 +115,6 @@
 		var message = ' to exec 「' + cmd + '」 command' + (val ? (' with value: ' + val) : '');
 
 		try {
-			doc.execCommand('styleWithCSS', false);
-
 			doc.execCommand(cmd, false, val);
 		} catch(err) {
 			// TODO: there's an error when insert a image to document, but not a bug
