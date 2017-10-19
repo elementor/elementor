@@ -512,11 +512,11 @@ class Widget_Image_Box extends Widget_Base {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 
-				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text">' + title_html + '</' + settings.title_size  + '>';
+				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="none">' + title_html + '</' + settings.title_size  + '>';
 			}
 
 			if ( settings.description_text ) {
-				html += '<p class="elementor-image-box-description elementor-inline-editing" data-elementor-setting-key="description_text" data-elementor-inline-editing-toolbar="advanced">' + settings.description_text + '</p>';
+				html += '<p class="elementor-image-box-description elementor-inline-editing" data-elementor-setting-key="description_text">' + settings.description_text + '</p>';
 			}
 
 			html += '</div>';

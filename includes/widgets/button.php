@@ -430,7 +430,7 @@ class Widget_Button extends Widget_Base {
 						<i class="{{ settings.icon }}"></i>
 					</span>
 					<# } #>
-					<span class="elementor-button-text elementor-inline-editing" data-elementor-setting-key="text">{{{ settings.text }}}</span>
+					<span class="elementor-button-text elementor-inline-editing" data-elementor-setting-key="text" data-elementor-inline-editing-toolbar="none">{{{ settings.text }}}</span>
 				</span>
 			</a>
 		</div>
