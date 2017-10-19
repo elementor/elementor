@@ -143,6 +143,17 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Retrieve the generic ID as integer.
+	 *
+	 * @access public
+	 *
+	 * @return string The converted ID.
+	 */
+	public function get_id_int() {
+		return hexdec( $this->_id );
+	}
+
+	/**
 	 * Retrieve the type.
 	 *
 	 * Get the type, i.e. 'stack', 'element', 'widget' etc.
