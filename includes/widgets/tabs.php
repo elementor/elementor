@@ -340,9 +340,9 @@ class Widget_Tabs extends Widget_Base {
 		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 );
-
-				var counter = 1; #>
+				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
+					counter = 1;
+				#>
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
