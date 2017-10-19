@@ -39,7 +39,7 @@ abstract class Controls_Stack {
 	private $_id;
 
 	/**
-	 * Parrsed Settings.
+	 * Parsed Settings.
 	 *
 	 * Holds the settings, which is the data entered by the user and processed
 	 * by elementor.
