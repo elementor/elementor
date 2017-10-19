@@ -64,9 +64,9 @@ module.exports = HandleDuplicateBehavior;
 var InlineEditingBehavior;
 
 InlineEditingBehavior = Marionette.Behavior.extend( {
-	inlineEditing: false,
+	editing: false,
 
-	$inlineEditingArea: null,
+	$currentEditingArea: null,
 
 	ui: function() {
 		return {
@@ -81,19 +81,25 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		};
 	},
 
-	startInlineEditing: function() {
-		if ( this.inlineEditing ) {
+	getEditingSettingKey: function() {
+		return this.$currentEditingArea.data().elementorSettingKey;
+	},
+
+	startEditing: function( $element ) {
+		if ( this.editing ) {
 			return;
 		}
 
-		var editModel = this.view.getEditModel(),
-			elementData = this.$inlineEditingArea.data();
+		this.$currentEditingArea = $element;
 
-		this.$inlineEditingArea.html( editModel.getSetting( elementData.elementorSettingKey ) );
+		var elementData = this.$currentEditingArea.data(),
+			editModel = this.view.getEditModel();
+
+		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
 
 		var Pen = elementorFrontend.getElements( 'window' ).Pen;
 
-		this.inlineEditing = true;
+		this.editing = true;
 
 		this.view.allowRender = false;
 
@@ -103,7 +109,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.pen = new Pen( {
 			linksInNewWindow: true,
 			stay: false,
-			editor: this.$inlineEditingArea[ 0 ],
+			editor: this.$currentEditingArea[0],
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
@@ -143,25 +149,30 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$inlineEditingArea
+		this.$currentEditingArea
 			.focus()
 			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
 	},
 
-	stopInlineEditing: function() {
-		this.inlineEditing = false;
+	stopEditing: function() {
+		this.editing = false;
 
 		this.pen.destroy();
 
 		this.view.allowRender = true;
 
-		this.view.getEditModel().renderRemoteServer();
+		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
+			this.view.getEditModel().renderRemoteServer();
+		}
 	},
 
 	onInlineEditingClick: function( event ) {
-		this.$inlineEditingArea = jQuery( event.currentTarget );
+		var self = this,
+			$targetElement = jQuery( event.currentTarget );
 
-		this.startInlineEditing();
+		setTimeout( function() {
+			self.startEditing( $targetElement );
+		}, 30 );
 	},
 
 	onInlineEditingBlur: function() {
@@ -175,14 +186,12 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				return;
 			}
 
-			self.stopInlineEditing();
-		}, 150 );
+			self.stopEditing();
+		}, 20 );
 	},
 
 	onInlineEditingUpdate: function() {
-		var settingKey = this.$inlineEditingArea.data( 'elementor-setting-key' );
-
-		this.view.getEditModel().setSetting( settingKey, this.$inlineEditingArea.html() );
+		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.$currentEditingArea.html() );
 	}
 } );
 
@@ -415,7 +424,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '[contenteditable]'
+				cancel: '.elementor-inline-editing'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
