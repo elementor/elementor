@@ -63,7 +63,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '[contenteditable]'
+				cancel: '.elementor-inline-editing'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
