@@ -288,12 +288,14 @@ class Widget_Accordion extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings();
+
+		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<?php $counter = 1; ?>
 			<?php foreach ( $settings['tabs'] as $item ) : ?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-accordion-title" data-section="<?php echo $counter; ?>" role="tab">
+					<div class="elementor-accordion-title" tabindex="<?php echo $id_int . $counter; ?>" data-section="<?php echo $counter; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
@@ -321,10 +323,12 @@ class Widget_Accordion extends Widget_Base {
 		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var counter = 1;
+				var counter = 1,
+					tabindex = view.getIDInt().toString().substr( 0, 3 );
+
 				_.each( settings.tabs, function( item ) { #>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" data-section="{{ counter }}" role="tab">
+						<div class="elementor-accordion-title" tabindex="{{ tabindex + counter }}"" data-section="{{ counter }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
