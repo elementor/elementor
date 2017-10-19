@@ -300,12 +300,14 @@ class Widget_Tabs extends Widget_Base {
 	 */
 	protected function render() {
 		$tabs = $this->get_settings( 'tabs' );
+
+		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-tabs" role="tablist">
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-wrapper" role="tab">
 				<?php foreach ( $tabs as $item ) : ?>
-					<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
+					<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="<?php echo $id_int . $counter; ?>" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
 				<?php
 					$counter++;
 				endforeach;
@@ -338,11 +340,13 @@ class Widget_Tabs extends Widget_Base {
 		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
+				var tabindex = view.getIDInt().toString().substr( 0, 3 );
+
 				var counter = 1; #>
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
 					<#
 						counter++;
 					} ); #>
