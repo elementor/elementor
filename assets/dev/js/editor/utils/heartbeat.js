@@ -30,7 +30,20 @@ heartbeat = {
 					heartbeat.getModal().hide();
 				}
 
-				elementor.config.nonce = response.elementor_nonce;
+				elementor.config.nonce = response.elementorNonce;
+			},
+			'heartbeat-tick.wp-refresh-nonces': function( event, response ) {
+				var nonces = response['elementor-refresh-nonces'];
+
+				if ( nonces ) {
+					if ( nonces.heartbeatNonce ) {
+						elementor.config.nonce = nonces.elementorNonce;
+					}
+
+					if ( nonces.heartbeatNonce ) {
+						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
+					}
+				}
 			}
 		} );
 
