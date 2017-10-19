@@ -273,11 +273,13 @@ class Widget_Toggle extends Widget_Base {
 	 */
 	protected function render() {
 		$tabs = $this->get_settings( 'tabs' );
+
+		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-toggle">
 			<?php $counter = 1; ?>
 			<?php foreach ( $tabs as $item ) : ?>
-				<div class="elementor-toggle-title" data-tab="<?php echo $counter; ?>">
+				<div class="elementor-toggle-title" tabindex="<?php echo $id_int . $counter; ?>" data-tab="<?php echo $counter; ?>">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
@@ -304,9 +306,10 @@ class Widget_Toggle extends Widget_Base {
 		<div class="elementor-toggle">
 			<#
 			if ( settings.tabs ) {
-				var counter = 1;
+				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
+					counter = 1;
 				_.each(settings.tabs, function( item ) { #>
-					<div class="elementor-toggle-title" data-tab="{{ counter }}">
+					<div class="elementor-toggle-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}">
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>
