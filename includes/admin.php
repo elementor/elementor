@@ -256,7 +256,7 @@ class Admin {
 					<i class="eicon-elementor-square"></i>
 				</div>
 				<div class="elementor-message-content">
-					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
+					<strong><?php _e( 'Update Notification', 'elementor' ); ?></strong>
 					<p>
 					<?php
 						printf(
