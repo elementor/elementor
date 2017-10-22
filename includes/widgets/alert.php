@@ -277,7 +277,7 @@ class Widget_Alert extends Widget_Base {
 				?>
 				<span <?php echo $this->get_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
 			<?php }
-			if ( ! empty( $settings['show_dismiss'] ) && 'show' === $settings['show_dismiss'] ) { ?>
+			if ( 'show' === $settings['show_dismiss'] ) { ?>
 				<button type="button" class="elementor-alert-dismiss">X</button>
 			<?php } ?>
 		</div>
@@ -293,13 +293,17 @@ class Widget_Alert extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
-			<span class="elementor-alert-title elementor-inline-editing" data-elementor-setting-key="alert_title" data-elementor-inline-editing-toolbar="none">{{{ settings.alert_title }}}</span>
-			<span class="elementor-alert-description elementor-inline-editing" data-elementor-setting-key="alert_description">{{{ settings.alert_description }}}</span>
-			<# if ( 'show' === settings.show_dismiss ) { #>
-				<button type="button" class="elementor-alert-dismiss">X</button>
-			<# } #>
-		</div>
+		<# if ( settings.alert_title ) { #>
+			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
+				<span class="elementor-alert-title elementor-inline-editing" data-elementor-setting-key="alert_title" data-elementor-inline-editing-toolbar="none">{{{ settings.alert_title }}}</span>
+				<# if ( settings.alert_title ) { #>
+					<span class="elementor-alert-description elementor-inline-editing" data-elementor-setting-key="alert_description">{{{ settings.alert_description }}}</span>
+				<# } #>
+				<# if ( 'show' === settings.show_dismiss ) { #>
+					<button type="button" class="elementor-alert-dismiss">X</button>
+				<# } #>
+			</div>
+		<# } #>
 		<?php
 	}
 }
