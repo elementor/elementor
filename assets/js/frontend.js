@@ -412,7 +412,7 @@ module.exports = HandlerModule;
 },{"../utils/view-module":23}],4:[function(require,module,exports){
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
-		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
+		$requestedTitle = $accordionTitles.filter( '[data-tab="' + sectionIndex + '"]' ),
 		isRequestedActive = $requestedTitle.hasClass( 'active' );
 
 	$activeTitle
