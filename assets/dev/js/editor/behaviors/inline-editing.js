@@ -33,7 +33,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			editModel = this.view.getEditModel();
 
 		/**
-		 *  Replace rendered content with udrendered content.
+		 *  Replace rendered content with unrendered content.
 		 *  This way the user can edit the original content, before shortcodes and oEmbeds are fired.
 		 */
 		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );

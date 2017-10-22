@@ -96,7 +96,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			editModel = this.view.getEditModel();
 
 		/**
-		 *  Replace rendered content with udrendered content.
+		 *  Replace rendered content with unrendered content.
 		 *  This way the user can edit the original content, before shortcodes and oEmbeds are fired.
 		 */
 		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
@@ -152,7 +152,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		/**
 		 * When the edit area is not focused (on blur) the inline editing is stopped.
 		 * In order to prevent blur event when the user clicks on toolbar buttons while editing the
-		 * content, we need the prevent their mousedown . This also prevents the blur event.
+		 * content, we need the prevent their mousedown event. This also prevents the blur event.
 		 */
 		$menuItems.on( 'mousedown', function( event ) {
 			event.preventDefault();
