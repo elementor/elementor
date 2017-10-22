@@ -304,8 +304,17 @@ class Widget_Tabs extends Widget_Base {
 		<div class="elementor-tabs" role="tablist">
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-wrapper" role="tab">
-				<?php foreach ( $tabs as $item ) : ?>
-					<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
+				<?php foreach ( $tabs as $item ) :
+					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $counter - 1 );
+
+					$this->add_render_attribute( $tab_title_setting_key, [
+						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
+						'data-tab' => $counter,
+					] );
+
+					$this->add_inline_editing_attributes( $tab_title_setting_key, 'none' );
+					?>
+					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 				<?php
 					$counter++;
 				endforeach;
@@ -314,9 +323,18 @@ class Widget_Tabs extends Widget_Base {
 
 			<?php $counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper" role="tabpanel">
-				<?php foreach ( $tabs as $item ) : ?>
+				<?php foreach ( $tabs as $item ) :
+					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+
+					$this->add_render_attribute( $tab_content_setting_key, [
+						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
+						'data-tab' => $counter,
+					] );
+
+					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
+					?>
 					<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
-					<div class="elementor-tab-content elementor-clearfix" data-tab="<?php echo $counter; ?>"><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				<?php
 					$counter++;
 				endforeach;
@@ -342,7 +360,7 @@ class Widget_Tabs extends Widget_Base {
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="none">{{{ item.tab_title }}}</div>
 					<#
 						counter++;
 					} ); #>
@@ -353,7 +371,7 @@ class Widget_Tabs extends Widget_Base {
 					<#
 					_.each( settings.tabs, function( item ) { #>
 						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
-						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }}" data-tab="{{ counter }}">{{{ item.tab_content }}}</div>
+						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }} elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced">{{{ item.tab_content }}}</div>
 					<#
 					counter++;
 					} ); #>

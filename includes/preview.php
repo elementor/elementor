@@ -112,6 +112,16 @@ class Preview {
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
 
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-inline-editor',
+			ELEMENTOR_ASSETS_URL . 'lib/inline-editor/js/inline-editor' . $suffix . '.js',
+			[],
+			'',
+			true
+		);
+
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
