@@ -95,6 +95,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var elementData = this.$currentEditingArea.data(),
 			editModel = this.view.getEditModel();
 
+		/**
+		 *  Replace rendered content with udrendered content.
+		 *  This way the user can edit the original content, before shortcodes and oEmbeds are fired.
+		 */
 		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
 
 		var ElementorInlineEditor = elementorFrontend.getElements( 'window' ).ElementorInlineEditor;
@@ -145,6 +149,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		var $menuItems = jQuery( this.pen._menu ).children();
 
+		/**
+		 * When the edit area is not focused (on blur) the inline editing is stopped.
+		 * In order to prevent blur event when the user clicks on toolbar buttons while editing the
+		 * content, we need the prevent their mousedown . This also prevents the blur event.
+		 */
 		$menuItems.on( 'mousedown', function( event ) {
 			event.preventDefault();
 		} );
@@ -161,6 +170,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = true;
 
+		/**
+		 * Inline editing has several toolbar types (advanced, basic and none). When editing is stopped,
+		 * we need to rerender the area. To prevent multiple renderings, we will render only areas that
+		 * use advanced toolbars.
+		 */
 		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
 			this.view.getEditModel().renderRemoteServer();
 		}
@@ -170,6 +184,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var self = this,
 			$targetElement = jQuery( event.currentTarget );
 
+		/**
+		 * When starting inline editing we need to set timeout, this allows other inline items to finish
+		 * their operations before focusing new editing area.
+		 */
 		setTimeout( function() {
 			self.startEditing( $targetElement );
 		}, 30 );
@@ -178,6 +196,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	onInlineEditingBlur: function() {
 		var self = this;
 
+		/**
+		 * When exiting inline editing we need to set timeout, to make sure there is no focus on internal
+		 * toolbar action. This prevent the blur and allows the user to continue the inline editing.
+		 */
 		setTimeout( function() {
 			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
 				$focusNode = jQuery( selection.focusNode );
