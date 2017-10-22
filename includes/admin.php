@@ -277,7 +277,7 @@ class Admin {
 						?>
 					</p>
 				</div>
-				<div class="elementor-update-now">
+				<div class="elementor-message-action">
 					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'Update Now', 'elementor' ); ?></a>
 				</div>
 			</div>
