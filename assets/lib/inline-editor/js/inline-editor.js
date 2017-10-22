@@ -6,7 +6,7 @@
 
 (function(root, doc) {
 
-	var Pen, debugMode, selection, utils = {};
+	var InlineEditor, debugMode, selection, utils = {};
 	var slice = Array.prototype.slice;
 
 	// allow command list
@@ -678,7 +678,7 @@
 		node.style.display = hide ? 'none' : 'flex';
 	}
 
-	Pen = function(config) {
+	InlineEditor = function(config) {
 
 		if (!config) throw new Error('Can\'t find config');
 
@@ -730,12 +730,12 @@
 		}
 	};
 
-	Pen.prototype.on = function(type, listener) {
+	InlineEditor.prototype.on = function(type, listener) {
 		addListener(this, this.config.editor, type, listener);
 		return this;
 	};
 
-	Pen.prototype.addOnSubmitListener = function(inputElement) {
+	InlineEditor.prototype.addOnSubmitListener = function(inputElement) {
 		var form = inputElement.form;
 		var me = this;
 		form.addEventListener("submit", function() {
@@ -743,30 +743,30 @@
 		});
 	};
 
-	Pen.prototype.isEmpty = function(node) {
+	InlineEditor.prototype.isEmpty = function(node) {
 		node = node || this.config.editor;
 		return !(node.querySelector('img')) && !(node.querySelector('blockquote')) &&
 			!(node.querySelector('li')) && !trim(node.textContent);
 	};
 
-	Pen.prototype.getContent = function() {
+	InlineEditor.prototype.getContent = function() {
 		return this.isEmpty() ?  '' : trim(this.config.editor.innerHTML);
 	};
 
-	Pen.prototype.setContent = function(html) {
+	InlineEditor.prototype.setContent = function(html) {
 		this.config.editor.innerHTML = html;
 		this.cleanContent();
 		return this;
 	};
 
-	Pen.prototype.checkContentChange = function () {
+	InlineEditor.prototype.checkContentChange = function () {
 		var prevContent = this._prevContent, currentContent = this.getContent();
 		if (prevContent === currentContent) return;
 		this._prevContent = currentContent;
 		triggerListener(this, 'change', currentContent, prevContent);
 	};
 
-	Pen.prototype.getRange = function() {
+	InlineEditor.prototype.getRange = function() {
 		var editor = this.config.editor, range = selection.rangeCount && selection.getRangeAt(0);
 		if (!range) range = doc.createRange();
 		if (!containsNode(editor, range.commonAncestorContainer)) {
@@ -776,7 +776,7 @@
 		return range;
 	};
 
-	Pen.prototype.setRange = function(range) {
+	InlineEditor.prototype.setRange = function(range) {
 		range = range || this._range;
 		if (!range) {
 			range = this.getRange();
@@ -789,13 +789,13 @@
 		return this;
 	};
 
-	Pen.prototype.focus = function(focusStart) {
+	InlineEditor.prototype.focus = function(focusStart) {
 		if (!focusStart) this.setRange();
 		this.config.editor.focus();
 		return this;
 	};
 
-	Pen.prototype.execCommand = function(name, value) {
+	InlineEditor.prototype.execCommand = function(name, value) {
 		name = name.toLowerCase();
 		this.setRange();
 
@@ -818,7 +818,7 @@
 
 	// remove attrs and tags
 	// pen.cleanContent({cleanAttrs: ['style'], cleanTags: ['id']})
-	Pen.prototype.cleanContent = function(options) {
+	InlineEditor.prototype.cleanContent = function(options) {
 		var editor = this.config.editor;
 
 		if (!options) options = this.config;
@@ -839,13 +839,13 @@
 	};
 
 	// auto link content, return content
-	Pen.prototype.autoLink = function() {
+	InlineEditor.prototype.autoLink = function() {
 		autoLink(this.config.editor);
 		return this.getContent();
 	};
 
 	// highlight menu
-	Pen.prototype.highlight = function() {
+	InlineEditor.prototype.highlight = function() {
 		var toolbar = this._toolbar || this._menu,
 			node = getNode(this);
 
@@ -949,7 +949,7 @@
 	};
 
 	// show menu
-	Pen.prototype.menu = function() {
+	InlineEditor.prototype.menu = function() {
 		if (!this._menu) return this;
 
 		if (selection.isCollapsed) {
@@ -965,7 +965,7 @@
 		showMainMenu(this);
 	};
 
-	Pen.prototype.refreshMenuPosition = function() {
+	InlineEditor.prototype.refreshMenuPosition = function() {
 		var offset = this._range.getBoundingClientRect()
 			, menuPadding = 10
 			, top = offset.top - menuPadding
@@ -1015,7 +1015,7 @@
 		return this;
 	};
 
-	Pen.prototype.stay = function(config) {
+	InlineEditor.prototype.stay = function(config) {
 		var ctx = this;
 		if (!window.onbeforeunload) {
 			window.onbeforeunload = function() {
@@ -1024,7 +1024,7 @@
 		}
 	};
 
-	Pen.prototype.destroy = function(isAJoke) {
+	InlineEditor.prototype.destroy = function(isAJoke) {
 		var destroy = isAJoke ? false : true
 			, attr = isAJoke ? 'setAttribute' : 'removeAttribute';
 
@@ -1044,12 +1044,12 @@
 		return this;
 	};
 
-	Pen.prototype.rebuild = function() {
+	InlineEditor.prototype.rebuild = function() {
 		return this.destroy('it\'s a joke');
 	};
 
 	// a fallback for old browers
-	root.Pen = function(config) {
+	root.ElementorInlineEditor = function(config) {
 		if (!config) return utils.log('can\'t find config', true);
 
 		var defaults = utils.merge(config)
@@ -1078,7 +1078,7 @@
 		hr: [/<hr\b[^>]*>/ig, '\n---\n']
 	};
 
-	Pen.prototype.toMd = function() {
+	InlineEditor.prototype.toMd = function() {
 		var html = this.getContent()
 			.replace(/\n+/g, '') // remove line break
 			.replace(/<([uo])l\b[^>]*>(.*?)<\/\1l>/ig, '$2'); // remove ul/ol
@@ -1093,7 +1093,7 @@
 	// make it accessible
 	if (doc.getSelection) {
 		selection = doc.getSelection();
-		root.Pen = Pen;
+		root.ElementorInlineEditor = InlineEditor;
 	}
 
 }(window, document));

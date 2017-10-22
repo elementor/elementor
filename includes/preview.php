@@ -114,11 +114,9 @@ class Preview {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		$inline_editor = 'pen';
-
 		wp_enqueue_script(
-			$inline_editor . '_inline_editor',
-			ELEMENTOR_ASSETS_URL . 'lib/' . $inline_editor . '/js/' . $inline_editor . $suffix . '.js',
+			'elementor-inline-editor',
+			ELEMENTOR_ASSETS_URL . 'lib/inline-editor/js/inline-editor' . $suffix . '.js',
 			[],
 			'',
 			true
