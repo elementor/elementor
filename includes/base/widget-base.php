@@ -525,6 +525,14 @@ abstract class Widget_Base extends Element_Base {
 		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
 	}
 
+	/**
+	 * Add inline editing attributes.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param string $key
+	 * @param string $toolbar
+	 */
 	protected function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			return;
@@ -613,7 +621,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param string $skin_id Skin ID.
 	 *
-	 * @return WP_Error|true Whether the skin was removed successfully from the widget.
+	 * @return \WP_Error|true Whether the skin was removed successfully from the widget.
 	 */
 	public function remove_skin( $skin_id ) {
 		return Plugin::$instance->skins_manager->remove_skin( $this, $skin_id );

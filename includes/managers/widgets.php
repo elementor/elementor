@@ -259,6 +259,25 @@ class Widgets_Manager {
 		}
 	}
 
+	/**
+	 * Retrieve inline editing configuration.
+	 *
+	 * Returns general inline editing configurations like toolbar types etc.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @return array {
+	 *     Inline editing configuration.
+	 *
+	 *     @type array $toolbar {
+	 *         Toolbar types and the actions each toolbar includes.
+	 *         Note: Wysiwyg controls uses the advanced toolbar, textarea controls
+	 *         uses the basic toolbar and text controls has no toolbar.
+	 *
+	 *         @type array $basic    Basic actions included in the edit tool.
+	 *         @type array $advanced Advanced actions included in the edit tool.
+	 *     }
+	 */
 	public function get_inline_editing_config() {
 		$basic_tools = [
 			'bold',
