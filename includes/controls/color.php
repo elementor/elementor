@@ -21,7 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    	[
  *    		'label' => __( 'Title Color', 'plugin-domain' ),
  *    		'type' => Controls_Manager::COLOR,
- *    		'default' => __( 'Default text', 'plugin-domain' ),
  *    		'scheme' => [
  *    			'type' => Scheme_Color::get_type(),
  *    			'value' => Scheme_Color::COLOR_1,
@@ -48,6 +47,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            field. Default is empty.
  * @param string $default     Optional. Default color in rgb, rgba, or hex format.
  *                            Default is empty.
+ * @param array  $scheme      Optional. The value from the active color scheme
+ *                            as the default value returned by the control.
  * @param bool   $alpha       Optional. Whether to allow alpha channel. Default
  *                            is true.
  * @param string $separator   Optional. Set the position of the control separator.
