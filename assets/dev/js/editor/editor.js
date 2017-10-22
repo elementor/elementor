@@ -263,10 +263,19 @@ App = Marionette.Application.extend( {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
 				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName(),
-						isInputTarget = $( event.target ).is( ':input, .elementor-input' );
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
 
-					return isEditorOpen && ! isInputTarget;
+					if ( ! isEditorOpen ) {
+						return false;
+					}
+
+					var $target = $( event.target );
+
+					if ( $target.is( ':input, .elementor-input' ) ) {
+						return false;
+					}
+
+					return ! $target.closest( '.elementor-inline-editing' ).length;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
@@ -358,7 +367,7 @@ App = Marionette.Application.extend( {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = Backbone.$( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor' ).length,
+				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
 			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {

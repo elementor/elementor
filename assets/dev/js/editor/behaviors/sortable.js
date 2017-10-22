@@ -15,13 +15,13 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
-		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched )
+			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode ) {
-			this.active();
+			this.activate();
 		} else {
 			this.deactivate();
 		}
@@ -31,7 +31,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		var deviceMode = elementor.channels.deviceMode.request( 'currentMode' );
 
 		if ( 'desktop' === deviceMode ) {
-			this.active();
+			this.activate();
 		} else {
 			this.deactivate();
 		}
@@ -49,7 +49,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.deactivate();
 	},
 
-	active: function() {
+	activate: function() {
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			return;
 		}
@@ -62,7 +62,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 					top: 20,
 					left: 25
 				},
-				helper: _.bind( this._getSortableHelper, this )
+				helper: _.bind( this._getSortableHelper, this ),
+				cancel: '.elementor-inline-editing'
+
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
@@ -75,6 +77,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 		} );
 
 		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
+	},
+
+	getChildViewContainer: function() {
+		return this.view.getChildViewContainer( this.view );
 	},
 
 	deactivate: function() {
@@ -201,10 +207,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	onAddChild: function( view ) {
 		view.$el.attr( 'data-model-cid', view.model.cid );
-	},
-
-	getChildViewContainer: function() {
-		return this.view.getChildViewContainer( this.view );
 	}
 } );
 
