@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating gallery chooser control. Based on the WordPress
  * media library galleries. Used to select images from the WordPress media library.
-
+ *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
