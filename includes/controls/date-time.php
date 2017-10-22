@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    <#
  *    var due_date = new Date( settings.due_date ),
  *        now_date = new Date(),
- *        due_date_in_days = Math.floor( ( due_date - now_date ) / 86400000 /* Day in miliseconds */ );
+ *        due_date_in_days = Math.floor( ( due_date - now_date ) / 86400000 ); // 86400000 miliseconds in one Day.
  *    #>
  *    <p> Something will happen in {{{ due_date_in_days }}} days. </p>
  *
