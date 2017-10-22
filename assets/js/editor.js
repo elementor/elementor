@@ -97,7 +97,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
 
-		var Pen = elementorFrontend.getElements( 'window' ).Pen;
+		var ElementorInlineEditor = elementorFrontend.getElements( 'window' ).ElementorInlineEditor;
 
 		this.editing = true;
 
@@ -106,7 +106,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var inlineEditingConfig = elementor.config.inlineEditing,
 			elementDataToolbar = elementData.elementorInlineEditingToolbar;
 
-		this.pen = new Pen( {
+		this.pen = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$currentEditingArea[0],
