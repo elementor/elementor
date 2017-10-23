@@ -320,7 +320,7 @@ body.elementor-editor-inactive #elementor-editor {
   .notice.elementor-message h3 {
     margin: 0 0 5px; }
   .notice.elementor-message .elementor-message-action {
-    text-align: center; }
+    text-align: left; }
     .notice.elementor-message .elementor-message-action .elementor-button {
       background-color: #9b0a46;
       color: #fff;
@@ -341,6 +341,10 @@ body.elementor-editor-inactive #elementor-editor {
         -webkit-transform: translateY(1px);
             -ms-transform: translateY(1px);
                 transform: translateY(1px); }
+
+@media (min-width: 1200px) {
+  .elementor-message-action {
+    padding-left: 10px; } }
 
 @media (max-width: 600px) {
   .notice.elementor-message {
