@@ -305,13 +305,13 @@ body.elementor-editor-inactive #elementor-editor {
     width: 100%; }
     .notice.elementor-message .elementor-message-inner .elementor-message-icon,
     .notice.elementor-message .elementor-message-inner .elementor-message-content,
-    .notice.elementor-message .elementor-message-inner .elementor-update-now {
+    .notice.elementor-message .elementor-message-inner .elementor-message-action {
       display: table-cell;
       vertical-align: middle; }
   .notice.elementor-message .elementor-message-icon {
     color: #9b0a46;
-    font-size: 50px;
-    width: 50px; }
+    font-size: 40px;
+    width: 40px; }
   .notice.elementor-message .elementor-message-content {
     padding: 0 20px; }
   .notice.elementor-message p {
@@ -319,9 +319,9 @@ body.elementor-editor-inactive #elementor-editor {
     margin: 0; }
   .notice.elementor-message h3 {
     margin: 0 0 5px; }
-  .notice.elementor-message .elementor-update-now {
-    text-align: center; }
-    .notice.elementor-message .elementor-update-now .elementor-button {
+  .notice.elementor-message .elementor-message-action {
+    text-align: left; }
+    .notice.elementor-message .elementor-message-action .elementor-button {
       background-color: #9b0a46;
       color: #fff;
       border-color: #7c1337;
@@ -331,28 +331,35 @@ body.elementor-editor-inactive #elementor-editor {
       height: auto;
       line-height: 20px;
       text-transform: capitalize; }
-      .notice.elementor-message .elementor-update-now .elementor-button i {
+      .notice.elementor-message .elementor-message-action .elementor-button i {
         padding-left: 5px; }
-      .notice.elementor-message .elementor-update-now .elementor-button:hover {
+      .notice.elementor-message .elementor-message-action .elementor-button:hover {
         background-color: #a0124a; }
-      .notice.elementor-message .elementor-update-now .elementor-button:active {
+      .notice.elementor-message .elementor-message-action .elementor-button:active {
         -webkit-box-shadow: inset 0 1px 0 #7c1337;
                 box-shadow: inset 0 1px 0 #7c1337;
         -webkit-transform: translateY(1px);
             -ms-transform: translateY(1px);
                 transform: translateY(1px); }
 
-@media (max-width: 767px) {
+@media (min-width: 1200px) {
+  .elementor-message-action {
+    padding-left: 10px; } }
+
+@media (max-width: 600px) {
   .notice.elementor-message {
-    padding: 10px; }
+    padding: 20px; }
     .notice.elementor-message .elementor-message-inner {
-      display: block; }
-      .notice.elementor-message .elementor-message-inner .elementor-message-content {
-        display: block;
-        padding: 0; }
+      display: block;
+      text-align: center; }
       .notice.elementor-message .elementor-message-inner .elementor-message-icon,
-      .notice.elementor-message .elementor-message-inner .elementor-update-now {
-        display: none; } }
+      .notice.elementor-message .elementor-message-inner .elementor-message-content,
+      .notice.elementor-message .elementor-message-inner .elementor-message-action {
+        display: block; }
+      .notice.elementor-message .elementor-message-inner .elementor-message-icon {
+        width: auto; }
+      .notice.elementor-message .elementor-message-inner .elementor-message-content {
+        padding: 10px 0; } }
 
 /*= Elementor System Info
 ---------------------------------------*/

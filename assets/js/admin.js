@@ -56,7 +56,9 @@
 						$wpTitle.val( 'Elementor #' + $( '#post_ID' ).val() );
 					}
 
-					wp.autosave.server.triggerSave();
+					if ( wp.autosave ) {
+						wp.autosave.server.triggerSave();
+					}
 
 					self.animateLoader();
 
