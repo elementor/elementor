@@ -40,7 +40,7 @@
 		}
 
 		.elementor-message-action {
-			text-align: center;
+			text-align: $end;
 
 			.elementor-button {
 				background-color: $editor-accent;
@@ -66,6 +66,14 @@
 				}
 			}
 		}
+	}
+}
+
+
+@media (min-width: 1200px) {
+
+	.elementor-message-action {
+		@include padding-end(10px);
 	}
 }
 
