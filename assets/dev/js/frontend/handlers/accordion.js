@@ -1,4 +1,4 @@
-var activateSection = function( sectionIndex, $accordionTitles ) {
+var activateTab = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
 		$requestedTitle = $accordionTitles.filter( '[data-tab="' + sectionIndex + '"]' ),
 		isRequestedActive = $requestedTitle.hasClass( 'active' );
@@ -17,21 +17,21 @@ var activateSection = function( sectionIndex, $accordionTitles ) {
 };
 
 module.exports = function( $scope ) {
-	var defaultActiveSection = $scope.find( '.elementor-accordion' ).data( 'active-section' ),
+	var defaultActiveTab = $scope.find( '.elementor-accordion' ).data( 'active-tab' ),
 		$accordionTitles = $scope.find( '.elementor-accordion-title' );
 
-	if ( ! defaultActiveSection ) {
-		defaultActiveSection = 1;
+	if ( ! defaultActiveTab ) {
+		defaultActiveTab = 1;
 	}
 
-	activateSection( defaultActiveSection, $accordionTitles );
+	activateTab( defaultActiveTab, $accordionTitles );
 
 	$accordionTitles.on( {
 		click: function() {
 			this.focus();
 		},
 		focus: function() {
-			activateSection( this.dataset.section, $accordionTitles );
+			activateTab( this.dataset.tab, $accordionTitles );
 		}
 	} );
 };

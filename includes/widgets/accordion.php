@@ -336,7 +336,7 @@ class Widget_Accordion extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-accordion" data-active-section="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
+		<div class="elementor-accordion" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
 			<#
 			if ( settings.tabs ) {
 				var counter = 1,
@@ -344,13 +344,13 @@ class Widget_Accordion extends Widget_Base {
 
 				_.each( settings.tabs, function( item ) { #>
 					<div class="elementor-accordion-item">
-						<div class="elementor-accordion-title" tabindex="{{ tabindex + counter }}"" data-section="{{ counter }}" role="tab">
+						<div class="elementor-accordion-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
 							<span class="elementor-tab-title elementor-inline-editing" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="none">{{{ item.tab_title }}}</span>
 						</div>
-						<div class="elementor-accordion-content elementor-clearfix elementor-inline-editing" data-section="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced" role="tabpanel">{{{ item.tab_content }}}</div>
+						<div class="elementor-accordion-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced" role="tabpanel">{{{ item.tab_content }}}</div>
 					</div>
 				<#
 					counter++;

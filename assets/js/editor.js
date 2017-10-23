@@ -1528,7 +1528,6 @@ App = Marionette.Application.extend( {
 	hotKeys: require( 'elementor-utils/hot-keys' ),
 	history:  require( 'modules/history/assets/js/module' ),
 
-
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
 		data: Backbone.Radio.channel( 'ELEMENTOR:data' ),
