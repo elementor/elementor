@@ -4175,6 +4175,8 @@ ElementModel = Backbone.Model.extend( {
 			return;
 		}
 
+		console.trace();
+
 		this.renderOnLeave = false;
 
 		this.trigger( 'before:remote:render' );
@@ -7081,7 +7083,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditSettingsChanged: function( changedModel ) {
-		this.renderOnChange( changedModel );
+		elementor.channels.editor
+			.trigger( 'change:editSettings', changedModel, this );
 	},
 
 	onSettingsChanged: function( changedModel ) {

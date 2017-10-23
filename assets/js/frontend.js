@@ -95,7 +95,7 @@ ElementsHandler = function( $ ) {
 
 module.exports = ElementsHandler;
 
-},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":6,"elementor-frontend/handlers/global":7,"elementor-frontend/handlers/image-carousel":8,"elementor-frontend/handlers/progress":9,"elementor-frontend/handlers/section":10,"elementor-frontend/handlers/tabs":11,"elementor-frontend/handlers/text-editor":12,"elementor-frontend/handlers/toggle":13,"elementor-frontend/handlers/video":14,"elementor-frontend/handlers/widget":15}],2:[function(require,module,exports){
+},{"elementor-frontend/handlers/accordion":4,"elementor-frontend/handlers/alert":5,"elementor-frontend/handlers/counter":7,"elementor-frontend/handlers/global":8,"elementor-frontend/handlers/image-carousel":9,"elementor-frontend/handlers/progress":10,"elementor-frontend/handlers/section":11,"elementor-frontend/handlers/tabs":12,"elementor-frontend/handlers/text-editor":13,"elementor-frontend/handlers/toggle":14,"elementor-frontend/handlers/video":15,"elementor-frontend/handlers/widget":16}],2:[function(require,module,exports){
 /* global elementorFrontendConfig */
 ( function( $ ) {
 	var elements = {},
@@ -297,7 +297,7 @@ if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( elementorFrontend.init );
 }
 
-},{"../utils/hooks":20,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/modules/stretch-element":16,"elementor-frontend/utils/anchors":17,"elementor-frontend/utils/lightbox":18,"elementor-frontend/utils/youtube":19,"elementor-utils/hot-keys":21}],3:[function(require,module,exports){
+},{"../utils/hooks":21,"./handler-module":3,"elementor-frontend/elements-handler":1,"elementor-frontend/modules/stretch-element":17,"elementor-frontend/utils/anchors":18,"elementor-frontend/utils/lightbox":19,"elementor-frontend/utils/youtube":20,"elementor-utils/hot-keys":22}],3:[function(require,module,exports){
 var ViewModule = require( '../utils/view-module' ),
 	HandlerModule;
 
@@ -305,6 +305,8 @@ HandlerModule = ViewModule.extend( {
 	$element: null,
 
 	onElementChange: null,
+
+	onEditSettingsChange: null,
 
 	onGeneralSettingsChange: null,
 
@@ -353,6 +355,16 @@ HandlerModule = ViewModule.extend( {
 			}, elementor.channels.editor );
 		}
 
+		if ( self.onEditSettingsChange ) {
+			elementorFrontend.addListenerOnce( uniqueHandlerID, 'change:editSettings', function( changedModel, view ) {
+				if ( view.model.cid !== self.getModelCID() ) {
+					return;
+				}
+
+				self.onEditSettingsChange( Object.keys( changedModel.changed )[0] );
+			}, elementor.channels.editor );
+		}
+
 		[ 'page', 'general' ].forEach( function( settingsType ) {
 			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
 
@@ -397,58 +409,30 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getEditSettings: function( setting ) {
-		if ( ! elementorFrontend.isEditMode() ) {
-			return {};
+		var attributes = {};
+
+		if ( elementorFrontend.isEditMode() ) {
+			attributes = elementorFrontend.config.elements.editSettings[ this.getModelCID() ].attributes;
 		}
 
-		var editSettings = elementorFrontend.config.elements.editSettings[ this.getModelCID() ];
-
-		return this.getItems( editSettings.attributes, setting );
+		return this.getItems( attributes, setting );
 	}
 } );
 
 module.exports = HandlerModule;
 
-},{"../utils/view-module":23}],4:[function(require,module,exports){
-var activateTab = function( sectionIndex, $accordionTitles ) {
-	var $activeTitle = $accordionTitles.filter( '.active' ),
-		$requestedTitle = $accordionTitles.filter( '[data-tab="' + sectionIndex + '"]' ),
-		isRequestedActive = $requestedTitle.hasClass( 'active' );
-
-	$activeTitle
-		.removeClass( 'active' )
-		.next()
-		.slideUp();
-
-	if ( ! isRequestedActive ) {
-		$requestedTitle
-			.addClass( 'active' )
-			.next()
-			.slideDown();
-	}
-};
+},{"../utils/view-module":24}],4:[function(require,module,exports){
+var TabsModule = require( 'elementor-frontend/handlers/base-tabs' );
 
 module.exports = function( $scope ) {
-	var defaultActiveTab = $scope.find( '.elementor-accordion' ).data( 'active-tab' ),
-		$accordionTitles = $scope.find( '.elementor-accordion-title' );
-
-	if ( ! defaultActiveTab ) {
-		defaultActiveTab = 1;
-	}
-
-	activateTab( defaultActiveTab, $accordionTitles );
-
-	$accordionTitles.on( {
-		click: function() {
-			this.focus();
-		},
-		focus: function() {
-			activateTab( this.dataset.tab, $accordionTitles );
-		}
+	new TabsModule( {
+		$element: $scope,
+		showTabFn: 'slideDown',
+		hideTabFn: 'slideUp'
 	} );
 };
 
-},{}],5:[function(require,module,exports){
+},{"elementor-frontend/handlers/base-tabs":6}],5:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	$scope.find( '.elementor-alert-dismiss' ).on( 'click', function() {
 		$( this ).parent().fadeOut();
@@ -456,6 +440,116 @@ module.exports = function( $scope, $ ) {
 };
 
 },{}],6:[function(require,module,exports){
+var HandlerModule = require( 'elementor-frontend/handler-module' );
+
+module.exports = HandlerModule.extend( {
+	$activeContent: null,
+
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				tabTitle: '.elementor-tab-title',
+				tabContent: '.elementor-tab-content'
+			},
+			classes: {
+				active: 'elementor-active'
+			},
+			showTabFn: 'show',
+			hideTabFn: 'hide',
+			toggleSelf: true,
+			hidePrevious: true
+		};
+	},
+
+	getDefaultElements: function() {
+		var selectors = this.getSettings( 'selectors' );
+
+		return {
+			$tabTitles: this.$element.find( selectors.tabTitle ),
+			$tabContents: this.$element.find( selectors.tabContent )
+		};
+	},
+
+	activateDefaultTab: function() {
+		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1;
+
+		this.changeActiveTab( defaultActiveTab );
+	},
+
+	deactivateActiveTab: function( tabIndex ) {
+		var settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeFilter );
+
+		$activeTitle.add( $activeContent ).removeClass( activeClass );
+
+		$activeContent[ settings.hideTabFn ]();
+	},
+
+	activateTab: function( tabIndex ) {
+		var settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
+			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' );
+
+		$requestedTitle.add( $requestedContent ).addClass( activeClass );
+
+		$requestedContent[ settings.showTabFn ]();
+	},
+
+	isActiveTab: function( tabIndex ) {
+		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
+	},
+
+	bindEvents: function() {
+		var self = this;
+
+		self.elements.$tabTitles.on( 'focus', function( event ) {
+			self.changeActiveTab( event.currentTarget.dataset.tab );
+		} );
+
+		if ( self.getSettings( 'toggleSelf' ) ) {
+			self.elements.$tabTitles.on( 'mousedown', function( event ) {
+				if ( jQuery( event.currentTarget ).is( ':focus' ) ) {
+					self.changeActiveTab( event.currentTarget.dataset.tab );
+				}
+			} );
+		}
+	},
+
+	onInit: function() {
+		HandlerModule.prototype.onInit.apply( this, arguments );
+
+		this.activateDefaultTab();
+	},
+
+	onEditSettingsChange: function( propertyName ) {
+		if ( 'activeItemIndex' === propertyName ) {
+			this.activateDefaultTab();
+		}
+	},
+
+	changeActiveTab: function( tabIndex ) {
+		var isActiveTab = this.isActiveTab( tabIndex ),
+			settings = this.getSettings();
+
+		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
+			this.deactivateActiveTab();
+		}
+
+		if ( ! settings.hidePrevious && isActiveTab ) {
+			this.deactivateActiveTab( tabIndex );
+		}
+
+		if ( ! isActiveTab ) {
+			this.activateTab( tabIndex );
+		}
+	}
+} );
+
+},{"elementor-frontend/handler-module":3}],7:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	elementorFrontend.waypoint( $scope.find( '.elementor-counter-number' ), function() {
 		var $number = $( this ),
@@ -471,7 +565,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	GlobalHandler;
 
@@ -524,7 +618,7 @@ module.exports = function( $scope ) {
 	new GlobalHandler( { $element: $scope } );
 };
 
-},{"elementor-frontend/handler-module":3}],8:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],9:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	ImageCarouselHandler;
 
@@ -594,7 +688,7 @@ module.exports = function( $scope ) {
 	new ImageCarouselHandler( { $element: $scope } );
 };
 
-},{"elementor-frontend/handler-module":3}],9:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],10:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	elementorFrontend.waypoint( $scope.find( '.elementor-progress-bar' ), function() {
 		var $progressbar = $( this );
@@ -603,7 +697,7 @@ module.exports = function( $scope, $ ) {
 	}, { offset: '90%' } );
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' );
 
 var BackgroundVideo = HandlerModule.extend( {
@@ -879,47 +973,17 @@ module.exports = function( $scope ) {
 	new BackgroundVideo( { $element: $scope } );
 };
 
-},{"elementor-frontend/handler-module":3}],11:[function(require,module,exports){
-module.exports = function( $scope, $ ) {
-	var defaultActiveTab = $scope.find( '.elementor-tabs' ).data( 'active-tab' ),
-		$tabsTitles = $scope.find( '.elementor-tab-title' ),
-		$tabs = $scope.find( '.elementor-tab-content' ),
-		$active,
-		$content;
+},{"elementor-frontend/handler-module":3}],12:[function(require,module,exports){
+var TabsModule = require( 'elementor-frontend/handlers/base-tabs' );
 
-	if ( ! defaultActiveTab ) {
-		defaultActiveTab = 1;
-	}
-
-	var activateTab = function( tabIndex ) {
-		if ( $active ) {
-			$active.removeClass( 'active' );
-
-			$content.hide();
-		}
-
-		$active = $tabsTitles.filter( '[data-tab="' + tabIndex + '"]' );
-
-		$active.addClass( 'active' );
-
-		$content = $tabs.filter( '[data-tab="' + tabIndex + '"]' );
-
-		$content.show();
-	};
-
-	activateTab( defaultActiveTab );
-
-	$tabsTitles.on( {
-		click: function() {
-			this.focus();
-		},
-		focus: function() {
-			activateTab( this.dataset.tab );
-		}
+module.exports = function( $scope ) {
+	new TabsModule( {
+		$element: $scope,
+		toggleSelf: false
 	} );
 };
 
-},{}],12:[function(require,module,exports){
+},{"elementor-frontend/handlers/base-tabs":6}],13:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	TextEditor;
 
@@ -1022,30 +1086,19 @@ module.exports = function( $scope ) {
 	new TextEditor( { $element: $scope } );
 };
 
-},{"elementor-frontend/handler-module":3}],13:[function(require,module,exports){
-module.exports = function( $scope, $ ) {
-	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
+},{"elementor-frontend/handler-module":3}],14:[function(require,module,exports){
+var TabsModule = require( 'elementor-frontend/handlers/base-tabs' );
 
-	$toggleTitles.on( {
-		click: function() {
-			this.focus();
-		},
-		focus: function() {
-			var $active = $( this ),
-				$content = $active.next();
-
-			if ( $active.hasClass( 'active' ) ) {
-				$active.removeClass( 'active' );
-				$content.slideUp();
-			} else {
-				$active.addClass( 'active' );
-				$content.slideDown();
-			}
-		}
+module.exports = function( $scope ) {
+	new TabsModule( {
+		$element: $scope,
+		showTabFn: 'slideDown',
+		hideTabFn: 'slideUp',
+		hidePrevious: false
 	} );
 };
 
-},{}],14:[function(require,module,exports){
+},{"elementor-frontend/handlers/base-tabs":6}],15:[function(require,module,exports){
 var HandlerModule = require( 'elementor-frontend/handler-module' ),
 	VideoModule;
 
@@ -1129,7 +1182,7 @@ module.exports = function( $scope ) {
 	new VideoModule( { $element: $scope } );
 };
 
-},{"elementor-frontend/handler-module":3}],15:[function(require,module,exports){
+},{"elementor-frontend/handler-module":3}],16:[function(require,module,exports){
 module.exports = function( $scope, $ ) {
 	if ( ! elementorFrontend.isEditMode() ) {
 		return;
@@ -1144,7 +1197,7 @@ module.exports = function( $scope, $ ) {
 	} );
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1211,7 +1264,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":23}],17:[function(require,module,exports){
+},{"../../utils/view-module":24}],18:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1280,7 +1333,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":23}],18:[function(require,module,exports){
+},{"../../utils/view-module":24}],19:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' ),
 	LightboxModule;
 
@@ -1733,7 +1786,7 @@ LightboxModule = ViewModule.extend( {
 
 module.exports = LightboxModule;
 
-},{"../../utils/view-module":23}],19:[function(require,module,exports){
+},{"../../utils/view-module":24}],20:[function(require,module,exports){
 var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
@@ -1783,7 +1836,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"../../utils/view-module":23}],20:[function(require,module,exports){
+},{"../../utils/view-module":24}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2042,7 +2095,7 @@ var EventManager = function() {
 
 module.exports = EventManager;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var HotKeys = function() {
 	var hotKeysHandlers = this.hotKeysHandlers = {};
 
@@ -2094,7 +2147,7 @@ var HotKeys = function() {
 
 module.exports = new HotKeys();
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var Module = function() {
 	var $ = jQuery,
 		instanceParams = arguments,
@@ -2286,7 +2339,7 @@ Module.extend = function( properties ) {
 
 module.exports = Module;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var Module = require( './module' ),
 	ViewModule;
 
@@ -2312,5 +2365,5 @@ ViewModule = Module.extend( {
 
 module.exports = ViewModule;
 
-},{"./module":22}]},{},[2])
+},{"./module":23}]},{},[2])
 //# sourceMappingURL=frontend.js.map
