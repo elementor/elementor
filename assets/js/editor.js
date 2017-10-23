@@ -4175,8 +4175,6 @@ ElementModel = Backbone.Model.extend( {
 			return;
 		}
 
-		console.trace();
-
 		this.renderOnLeave = false;
 
 		this.trigger( 'before:remote:render' );
