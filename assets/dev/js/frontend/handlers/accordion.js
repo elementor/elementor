@@ -1,6 +1,6 @@
 var activateSection = function( sectionIndex, $accordionTitles ) {
 	var $activeTitle = $accordionTitles.filter( '.active' ),
-		$requestedTitle = $accordionTitles.filter( '[data-section="' + sectionIndex + '"]' ),
+		$requestedTitle = $accordionTitles.filter( '[data-tab="' + sectionIndex + '"]' ),
 		isRequestedActive = $requestedTitle.hasClass( 'active' );
 
 	$activeTitle
