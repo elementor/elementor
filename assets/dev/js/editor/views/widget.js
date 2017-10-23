@@ -26,6 +26,19 @@ WidgetView = BaseElementView.extend( {
 		return events;
 	},
 
+	behaviors: function() {
+		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
+
+		_.extend( behaviors, {
+			InlineEditing: {
+				behaviorClass: require( 'elementor-behaviors/inline-editing' ),
+				inlineEditingClass: 'elementor-inline-editing'
+			}
+		} );
+
+		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
+	},
+
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 

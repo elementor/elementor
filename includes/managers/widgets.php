@@ -179,6 +179,7 @@ class Widgets_Manager {
 		// Start buffering
 		ob_start();
 
+		/** @var Widget_Base $widget */
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
@@ -256,6 +257,60 @@ class Widgets_Manager {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->enqueue_scripts();
 		}
+	}
+
+	/**
+	 * Retrieve inline editing configuration.
+	 *
+	 * Returns general inline editing configurations like toolbar types etc.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @return array {
+	 *     Inline editing configuration.
+	 *
+	 *     @type array $toolbar {
+	 *         Toolbar types and the actions each toolbar includes.
+	 *         Note: Wysiwyg controls uses the advanced toolbar, textarea controls
+	 *         uses the basic toolbar and text controls has no toolbar.
+	 *
+	 *         @type array $basic    Basic actions included in the edit tool.
+	 *         @type array $advanced Advanced actions included in the edit tool.
+	 *     }
+	 */
+	public function get_inline_editing_config() {
+		$basic_tools = [
+			'bold',
+			'italic',
+			'underline',
+		];
+
+		$advanced_tools = array_merge( $basic_tools, [
+			'createlink',
+			'unlink',
+			'h1' => [
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'p',
+				'blockquote',
+				'pre',
+			],
+			'list' => [
+				'insertOrderedList',
+				'insertUnorderedList',
+			],
+		] );
+
+		return [
+			'toolbar' => [
+				'basic' => $basic_tools,
+				'advanced' => $advanced_tools,
+			],
+		];
 	}
 
 	public function __construct() {

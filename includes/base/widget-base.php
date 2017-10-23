@@ -243,14 +243,13 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array The initial widget config.
 	 */
 	protected function _get_initial_config() {
+		$config = [
+			'widget_type' => $this->get_name(),
+			'keywords' => $this->get_keywords(),
+			'categories' => $this->get_categories(),
+		];
 
-		return array_merge(
-			parent::_get_initial_config(), [
-				'widget_type' => $this->get_name(),
-				'keywords' => $this->get_keywords(),
-				'categories' => $this->get_categories(),
-			]
-		);
+		return array_merge( parent::_get_initial_config(), $config );
 	}
 
 	/**
@@ -522,6 +521,35 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::$instance->elements_manager->get_element_types( 'section' );
 	}
 
+	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
+		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
+	}
+
+	/**
+	 * Add inline editing attributes.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param string $key
+	 * @param string $toolbar
+	 */
+	protected function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
+		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+			return;
+		}
+
+		$this->add_render_attribute( $key, [
+			'class' => 'elementor-inline-editing',
+			'data-elementor-setting-key' => $key,
+		] );
+
+		if ( 'basic' !== $toolbar ) {
+			$this->add_render_attribute( $key, [
+				'data-elementor-inline-editing-toolbar' => $toolbar,
+			] );
+		}
+	}
+
 	/**
 	 * Add new skin.
 	 *
@@ -593,7 +621,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param string $skin_id Skin ID.
 	 *
-	 * @return WP_Error|true Whether the skin was removed successfully from the widget.
+	 * @return \WP_Error|true Whether the skin was removed successfully from the widget.
 	 */
 	public function remove_skin( $skin_id ) {
 		return Plugin::$instance->skins_manager->remove_skin( $this, $skin_id );

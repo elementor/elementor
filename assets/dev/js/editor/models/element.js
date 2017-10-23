@@ -110,17 +110,39 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	setSetting: function( key, value ) {
-		this.get( 'settings' ).setExternalChange( key, value );
+		var keyParts = key.split( '.' ),
+			isRepeaterKey = 3 === keyParts.length,
+			settings = this.get( 'settings' );
+
+		key = keyParts[0];
+
+		if ( isRepeaterKey ) {
+			settings = settings.get( key ).models[ keyParts[1] ];
+
+			key = keyParts[2];
+		}
+
+		settings.setExternalChange( key, value );
 	},
 
 	getSetting: function( key ) {
-		var settings = this.get( 'settings' );
+		var keyParts = key.split( '.' ),
+			isRepeaterKey = 3 === keyParts.length,
+			settings = this.get( 'settings' );
 
-		if ( undefined === settings.get( key ) ) {
+		key = keyParts[0];
+
+		var value = settings.get( key );
+
+		if ( undefined === value ) {
 			return '';
 		}
 
-		return settings.get( key );
+		if ( isRepeaterKey ) {
+			value = value.models[ keyParts[1] ].get( keyParts[2] );
+		}
+
+		return value;
 	},
 
 	setHtmlCache: function( htmlCache ) {
