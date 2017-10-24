@@ -1267,7 +1267,7 @@ select {
       padding: 0 2px;
       text-transform: uppercase;
       font-size: 9px; }
-  .elementor-panel .elementor-control-start-end .eicon-h-align-left, .elementor-panel .elementor-control-start-end .eicon-h-align-right {
+  .elementor-control-start-end .eicon-h-align-left, .elementor-control-start-end .eicon-h-align-right {
     -webkit-transform: rotate(180deg);
         -ms-transform: rotate(180deg);
             transform: rotate(180deg); }
