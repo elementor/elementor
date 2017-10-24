@@ -273,7 +273,7 @@ class Admin {
 					<i class="eicon-elementor-square"></i>
 				</div>
 				<div class="elementor-message-content">
-					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
+					<strong><?php _e( 'Update Notification', 'elementor' ); ?></strong>
 					<p>
 					<?php
 						printf(
@@ -294,7 +294,7 @@ class Admin {
 						?>
 					</p>
 				</div>
-				<div class="elementor-update-now">
+				<div class="elementor-message-action">
 					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'Update Now', 'elementor' ); ?></a>
 				</div>
 			</div>
