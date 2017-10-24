@@ -445,7 +445,7 @@
 				selecting = false;
 			});
 			addListener(ctx, editor, 'mouseup', function() {
-				if (selecting) updateStatus(100);
+				if (selecting) updateStatus(200);
 				selecting = false;
 			});
 			// Hide menu when focusing outside of editor
