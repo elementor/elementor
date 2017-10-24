@@ -186,7 +186,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 1.7.12 - 21.10.2017 ###
+### 1.7.12 - 24.10.2017 ###
 * Fix! - Stay in the same tab settings after saving
 * Fix! - Refresh heartbeat token when nonce is expired
 * Fix! - Space for mobile in Image Box widget ([#2586](https://github.com/pojome/elementor/issues/2586))
