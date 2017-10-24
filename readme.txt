@@ -184,6 +184,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.7.12 - 21.10.2017 =
+* Fix! - Stay in the same tab settings after saving
+* Fix! - Refresh heartbeat token when nonce is expired
+* Fix! - Space for mobile in Image Box widget ([#2586](https://github.com/pojome/elementor/issues/2586))
+* Fix! - Added visual indication for disabled swiper nav arrow button
+* Fix! - Color picker alignment for extended panel ([#2548](https://github.com/pojome/elementor/issues/2548))
+
 = 1.7.11 - 04.10.2017 =
 * Fix! - `options is undefined` error when using select2
 
