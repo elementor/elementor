@@ -129,11 +129,8 @@
 		color: $editor-light;
 	}
 
-	&.elementor-save-active {
-
-		.elementor-button {
-			@extend .elementor-button-success;
-		}
+	.elementor-save-active {
+		@extend .elementor-button-success;
 	}
 }
 

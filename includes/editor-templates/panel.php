@@ -91,12 +91,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<div id="elementor-panel-footer-save" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">
-		<button class="elementor-button">
+		<button id="elementor-panel-saver-done" class="elementor-button">
 			<span class="elementor-state-icon">
 				<i class="fa fa-spin fa-circle-o-notch "></i>
 			</span>
-			<?php _e( 'Save', 'elementor' ); ?>
+			<?php esc_html_e( 'Done', 'elementor' ); ?>
 		</button>
+		<div class="elementor-panel-footer-sub-menu-wrapper">
+			<div class="elementor-panel-footer-sub-menu">
+				<div id="elementor-panel-saver-publish" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-folder"></i>
+					<span class="elementor-title"><?php esc_html_e( 'Publish', 'elementor' ); ?></span>
+				</div>
+				<div id="elementor-panel-saver-save-draft" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-save"></i>
+					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
+				</div>
+			</div>
+			<div id="elementor-panel-saver-last-save"></div>
+		</div>
 	</div>
 </script>
 

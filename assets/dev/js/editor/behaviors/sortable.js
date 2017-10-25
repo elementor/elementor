@@ -199,7 +199,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 			this.view.addChildElement( model, { at: newIndex } );
 
-			elementor.setFlagEditorChange( true );
+			elementor.saver.setFlagEditorChange( true );
 
 			elementor.channels.data.trigger( 'drag:after:update', model );
 		}
