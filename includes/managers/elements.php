@@ -131,7 +131,9 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
 		}
 
-		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+		$post_id = $_POST['post_id'];
+
+		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
@@ -143,9 +145,26 @@ class Elements_Manager {
 
 		$posted = json_decode( stripslashes( $_POST['data'] ), true );
 
-		Plugin::$instance->db->save_editor( $_POST['post_id'], $posted, $status );
+		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [] );
+		$post = get_post( $post_id );
+
+		$last_date = mysql2date( __( 'F j, Y' ), $post->post_modified );
+		$last_time = mysql2date( __( 'g:i a' ), $post->post_modified );
+		$last_id = get_post_meta( $post_id, '_edit_last', true );
+
+		if ( $last_id ) {
+			$last_user = get_userdata( $last_id );
+			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
+			$last_edited = sprintf( __( 'Last edited by %1$s on %2$s at %3$s', '' ), esc_html( $last_user->display_name ), $last_date, $last_time );
+		} else {
+			/* translators: 1: Post edited date, 2: Post edited time */
+			$last_edited = sprintf( __( 'Last edited on %1$s at %2$s', '' ), $last_date, $last_time );
+		}
+
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [
+			'last_edited' => $last_edited,
+		] );
 
 		wp_send_json_success( $return_data );
 	}
