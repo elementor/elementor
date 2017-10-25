@@ -17,10 +17,18 @@ class Control_Animation extends Base_Data_Control {
 
 	private static $_animations;
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'animation';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {
 			self::$_animations = [
@@ -82,6 +90,10 @@ class Control_Animation extends Base_Data_Control {
 		return self::$_animations;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

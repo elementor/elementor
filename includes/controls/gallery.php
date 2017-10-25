@@ -15,10 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Gallery extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'gallery';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function on_import( $settings ) {
 		foreach ( $settings as &$attachment ) {
 			if ( empty( $attachment['url'] ) ) {
@@ -34,6 +42,10 @@ class Control_Gallery extends Base_Data_Control {
 		return $settings;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
@@ -64,6 +76,10 @@ class Control_Gallery extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
@@ -71,6 +87,10 @@ class Control_Gallery extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [];
 	}

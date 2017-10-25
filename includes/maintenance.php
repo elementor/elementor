@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Maintenance {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function activation() {
 		wp_clear_scheduled_hook( 'elementor/tracker/send_event' );
 
@@ -14,10 +18,18 @@ class Maintenance {
 		flush_rewrite_rules();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function uninstall() {
 		wp_clear_scheduled_hook( 'elementor/tracker/send_event' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function init() {
 		register_activation_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'activation' ] );
 		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'uninstall' ] );

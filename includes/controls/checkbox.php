@@ -16,16 +16,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Checkbox extends Base_Data_Control {
 
+	/**
+	 * @since 1.5.4
+	 * @access public
+	*/
 	public function get_type() {
 		return 'checkbox';
 	}
 
+	/**
+	 * @since 1.5.4
+	 * @access public
+	*/
 	public function get_value( $control, $widget ) {
 		_deprecated_file( __CLASS__, '1.5.4' );
 
 		return parent::get_value( $control, $widget );
 	}
 
+	/**
+	 * @since 1.5.4
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<label class="elementor-control-title">
