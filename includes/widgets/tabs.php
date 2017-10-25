@@ -190,7 +190,7 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-mobile-title, {{WRAPPER}} .elementor-tab-desktop-title.active, {{WRAPPER}} .elementor-tab-title:before, {{WRAPPER}} .elementor-tab-title:after, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-mobile-title, {{WRAPPER}} .elementor-tab-desktop-title.elementor-active, {{WRAPPER}} .elementor-tab-title:before, {{WRAPPER}} .elementor-tab-title:after, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -201,7 +201,7 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-desktop-title.active' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-desktop-title.elementor-active' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tabs-content-wrapper' => 'background-color: {{VALUE}};',
 				],
 			]
@@ -237,7 +237,7 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title.active' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.elementor-active' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -300,6 +300,8 @@ class Widget_Tabs extends Widget_Base {
 	 */
 	protected function render() {
 		$tabs = $this->get_settings( 'tabs' );
+
+		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-tabs" role="tablist">
 			<?php $counter = 1; ?>
@@ -310,6 +312,7 @@ class Widget_Tabs extends Widget_Base {
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $counter,
+						'tabindex' => $id_int . $counter,
 					] );
 
 					$this->add_inline_editing_attributes( $tab_title_setting_key, 'none' );
@@ -353,14 +356,16 @@ class Widget_Tabs extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-tabs" data-active-tab="{{ editSettings.activeItemIndex ? editSettings.activeItemIndex : 0 }}" role="tablist">
+		<div class="elementor-tabs" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var counter = 1; #>
+				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
+					counter = 1;
+				#>
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
 					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="none">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-desktop-title elementor-inline-editing" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_title" data-elementor-inline-editing-toolbar="none">{{{ item.tab_title }}}</div>
 					<#
 						counter++;
 					} ); #>
