@@ -446,7 +446,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '.elementor-inline-editing'
+				cancel: '.elementor-inline-editing, .elementor-tab-title'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
@@ -5193,15 +5193,7 @@ helpers = {
 	},
 
 	getUniqueID: function() {
-		var id;
-
-		// TODO: Check conflict models
-		//while ( true ) {
-			id = Math.random().toString( 36 ).substr( 2, 7 );
-			//if ( 1 > $( 'li.item-id-' + id ).length ) {
-				return id;
-			//}
-		//}
+		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
 	stringReplaceAll: function( string, replaces ) {
@@ -6664,6 +6656,12 @@ module.exports = BaseAddSectionView.extend( {
 },{"elementor-views/add-section/base":76}],79:[function(require,module,exports){
 module.exports = Marionette.CompositeView.extend( {
 
+	templateHelpers: function() {
+		return {
+			view: this
+		};
+	},
+
 	getBehavior: function( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
@@ -6760,6 +6758,10 @@ BaseElementView = BaseContainer.extend( {
 		return this.model.get( 'elType' );
 	},
 
+	getIDInt: function() {
+		return parseInt( this.getID(), 16 );
+	},
+
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
@@ -6779,11 +6781,13 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
+	// TODO: backward compatibility method since 1.8.0
 	templateHelpers: function() {
-		return {
-			elementModel: this.model,
-			editModel: this.getEditModel()
-		};
+		var templateHelpers = BaseContainer.prototype.templateHelpers.apply( this, arguments );
+
+		return jQuery.extend( templateHelpers, {
+			editModel: this.getEditModel() // @deprecated. Use view.getEditModel() instead.
+		} );
 	},
 
 	getTemplateType: function() {
@@ -7077,7 +7081,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditSettingsChanged: function( changedModel ) {
-		this.renderOnChange( changedModel );
+		elementor.channels.editor
+			.trigger( 'change:editSettings', changedModel, this );
 	},
 
 	onSettingsChanged: function( changedModel ) {

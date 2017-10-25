@@ -61,9 +61,8 @@ class Utils {
 		return apply_filters( 'elementor/utils/get_placeholder_image_src', ELEMENTOR_ASSETS_URL . 'images/placeholder.png' );
 	}
 
-	public static function generate_random_string( $length = 7 ) {
-		$salt = 'abcdefghijklmnopqrstuvwxyz';
-		return substr( str_shuffle( str_repeat( $salt, $length ) ), 0, $length );
+	public static function generate_random_string() {
+		return dechex( rand() );
 	}
 
 	/**

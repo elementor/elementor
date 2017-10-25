@@ -1,5 +1,11 @@
 module.exports = Marionette.CompositeView.extend( {
 
+	templateHelpers: function() {
+		return {
+			view: this
+		};
+	},
+
 	getBehavior: function( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},

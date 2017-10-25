@@ -5,7 +5,7 @@
 .elementor-toggle {
 	text-align: $start;
 
-	.elementor-toggle-title {
+	.elementor-tab-title {
 		font-weight: bold;
 		line-height: 1;
 		padding: 15px;
@@ -24,7 +24,7 @@
 			}
 		}
 
-		&.active {
+		&.elementor-active {
 			border-bottom: none;
 
 			.elementor-toggle-icon {
@@ -39,7 +39,7 @@
 		}
 	}
 
-	.elementor-toggle-content {
+	.elementor-tab-content {
 	    padding: 0 15px 15px;
 		border-bottom: 1px solid $gray-light;
 	    display: none;
@@ -51,11 +51,11 @@
 
 	.elementor-toggle {
 
-		.elementor-toggle-title {
+		.elementor-tab-title {
 			padding: 12px;
 		}
 
-		.elementor-toggle-content {
+		.elementor-tab-content {
 			padding: 0 12px 10px;
 		}
 	}

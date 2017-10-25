@@ -39,7 +39,7 @@ abstract class Controls_Stack {
 	private $_id;
 
 	/**
-	 * Parrsed Settings.
+	 * Parsed Settings.
 	 *
 	 * Holds the settings, which is the data entered by the user and processed
 	 * by elementor.
@@ -140,6 +140,17 @@ abstract class Controls_Stack {
 	 */
 	public function get_id() {
 		return $this->_id;
+	}
+
+	/**
+	 * Retrieve the generic ID as integer.
+	 *
+	 * @access public
+	 *
+	 * @return string The converted ID.
+	 */
+	public function get_id_int() {
+		return hexdec( $this->_id );
 	}
 
 	/**
