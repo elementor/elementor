@@ -17,10 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Media extends Control_Base_Multiple {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'media';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [
 			'url' => '',
@@ -31,6 +39,8 @@ class Control_Media extends Control_Base_Multiple {
 	/**
 	 * Fetch images and replace to new
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param $settings
 	 *
 	 * @return array|bool
@@ -52,6 +62,10 @@ class Control_Media extends Control_Base_Multiple {
 		return $settings;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_media();
@@ -76,6 +90,10 @@ class Control_Media extends Control_Base_Multiple {
 		wp_enqueue_script( 'image-edit' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
@@ -99,12 +117,20 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_image_title( $attachment ) {
 		if ( empty( $attachment['id'] ) ) {
 			return '';
@@ -113,6 +139,10 @@ class Control_Media extends Control_Base_Multiple {
 		return get_the_title( $attachment['id'] );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_image_alt( $instance ) {
 		if ( empty( $instance['id'] ) ) {
 			return '';

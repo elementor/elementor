@@ -26,10 +26,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Dimensions extends Control_Base_Units {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'dimensions';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return array_merge(
 			parent::get_default_value(), [
@@ -42,6 +50,10 @@ class Control_Dimensions extends Control_Base_Units {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return array_merge(
 			parent::get_default_settings(), [
@@ -52,6 +64,10 @@ class Control_Dimensions extends Control_Base_Units {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$dimensions = [
 			'top' => __( 'Top', 'elementor' ),

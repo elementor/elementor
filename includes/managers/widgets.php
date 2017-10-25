@@ -11,6 +11,10 @@ class Widgets_Manager {
 	 */
 	private $_widget_types = null;
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _init_widgets() {
 		$build_widgets_filename = [
 			'common',
@@ -60,6 +64,10 @@ class Widgets_Manager {
 		do_action( 'elementor/widgets/widgets_registered', $this );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _register_wp_widgets() {
 		global $wp_widget_factory;
 
@@ -101,10 +109,18 @@ class Widgets_Manager {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_widget_type( Widget_Base $widget ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->_init_widgets();
@@ -115,6 +131,10 @@ class Widgets_Manager {
 		return true;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function unregister_widget_type( $name ) {
 		if ( ! isset( $this->_widget_types[ $name ] ) ) {
 			return false;
@@ -125,6 +145,10 @@ class Widgets_Manager {
 		return true;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->_init_widgets();
@@ -137,6 +161,10 @@ class Widgets_Manager {
 		return $this->_widget_types;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_widget_types_config() {
 		$config = [];
 
@@ -151,6 +179,10 @@ class Widgets_Manager {
 		return $config;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function ajax_render_widget() {
 		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
 			wp_send_json_error( new \WP_Error( 'token_expired' ) );
@@ -198,6 +230,10 @@ class Widgets_Manager {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function ajax_get_wp_widget_form() {
 		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
 			die;
@@ -232,12 +268,20 @@ class Widgets_Manager {
 		wp_send_json_success( $widget_obj->get_form() );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function render_widgets_content() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->print_template();
 		}
 	}
 
+	/**
+	 * @since 1.3.0
+	 * @access public
+	*/
 	public function get_widgets_frontend_settings_keys() {
 		$keys = [];
 
@@ -252,12 +296,20 @@ class Widgets_Manager {
 		return $keys;
 	}
 
+	/**
+	 * @since 1.3.0
+	 * @access public
+	*/
 	public function enqueue_widgets_scripts() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->enqueue_scripts();
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		$this->_require_files();
 
