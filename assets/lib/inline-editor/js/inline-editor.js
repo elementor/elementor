@@ -84,6 +84,7 @@
 			class: 'pen',
 			debug: false,
 			toolbar: null, // custom toolbar
+			mode: 'basic',
 			toolbarIconsPrefix: 'fa fa-',
 			toolbarIconsDictionary: {externalLink: 'fa fa-external-link'},
 			stay: config.stay || !config.debug,
@@ -482,7 +483,21 @@
 			editor.classList.remove('pen-placeholder');
 			if (e.which !== 13 || e.shiftKey) return;
 			var node = getNode(ctx, true);
-			if (!node || !lineBreakReg.test(node.nodeName)) return;
+
+			if (!node) {
+				return;
+			}
+
+			if(!lineBreakReg.test(node.nodeName)) {
+				if (ctx.config.mode === 'basic') {
+					e.preventDefault();
+
+					commandOverall('insertHTML', '<br>');
+				}
+
+				return;
+			}
+
 			var lastChild = node.lastChild;
 			if (!lastChild || !lastChild.previousSibling) return;
 			if (lastChild.previousSibling.textContent || lastChild.textContent) return;
