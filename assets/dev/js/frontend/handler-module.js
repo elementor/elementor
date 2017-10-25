@@ -6,6 +6,8 @@ HandlerModule = ViewModule.extend( {
 
 	onElementChange: null,
 
+	onEditSettingsChange: null,
+
 	onGeneralSettingsChange: null,
 
 	onPageSettingsChange: null,
@@ -53,6 +55,16 @@ HandlerModule = ViewModule.extend( {
 			}, elementor.channels.editor );
 		}
 
+		if ( self.onEditSettingsChange ) {
+			elementorFrontend.addListenerOnce( uniqueHandlerID, 'change:editSettings', function( changedModel, view ) {
+				if ( view.model.cid !== self.getModelCID() ) {
+					return;
+				}
+
+				self.onEditSettingsChange( Object.keys( changedModel.changed )[0] );
+			}, elementor.channels.editor );
+		}
+
 		[ 'page', 'general' ].forEach( function( settingsType ) {
 			var listenerMethodName = 'on' + settingsType.charAt( 0 ).toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
 
@@ -97,13 +109,13 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getEditSettings: function( setting ) {
-		if ( ! elementorFrontend.isEditMode() ) {
-			return {};
+		var attributes = {};
+
+		if ( elementorFrontend.isEditMode() ) {
+			attributes = elementorFrontend.config.elements.editSettings[ this.getModelCID() ].attributes;
 		}
 
-		var editSettings = elementorFrontend.config.elements.editSettings[ this.getModelCID() ];
-
-		return this.getItems( editSettings.attributes, setting );
+		return this.getItems( attributes, setting );
 	}
 } );
 

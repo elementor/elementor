@@ -1,7 +1,7 @@
 /**
  * Licensed under MIT, https://github.com/sofish/pen
  *
- * Customized by Elementor team
+ * Customized and fixed by Elementor team
  */
 
 (function(root, doc) {
@@ -445,7 +445,7 @@
 				selecting = false;
 			});
 			addListener(ctx, editor, 'mouseup', function() {
-				if (selecting) updateStatus(100);
+				if (selecting) updateStatus(200);
 				selecting = false;
 			});
 			// Hide menu when focusing outside of editor
@@ -598,12 +598,24 @@
 	}
 
 	function getNode(ctx, byRoot) {
-		var node, root = ctx.config.editor;
+		var node,
+			root = ctx.config.editor;
+
 		ctx._range = ctx._range || ctx.getRange();
+
 		node = ctx._range.commonAncestorContainer;
+
+		// Fix selection detection for Firefox
+		if (node.hasChildNodes() && ctx._range.startOffset + 1 === ctx._range.endOffset) {
+			node = node.childNodes[ctx._range.startOffset];
+		}
+
 		if (!node || node === root) return null;
+
 		while (node && (node.nodeType !== 1) && (node.parentNode !== root)) node = node.parentNode;
+
 		while (node && byRoot && (node.parentNode !== root)) node = node.parentNode;
+
 		return containsNode(root, node) ? node : null;
 	}
 
