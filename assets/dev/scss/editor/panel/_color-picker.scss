@@ -4,10 +4,10 @@
 		position: absolute;
 		z-index: 1;
 		top: 0;
-		left: 0;
+		@include end(7px);
 		background-color: #fff;
 		border: solid #fff;
-		border-width: 0 17px 0 12px;
+		border-width: 0 10px 0 5px;
 		padding-top: 10px;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 
