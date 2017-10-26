@@ -238,7 +238,7 @@
 
 		toggleLinkInput(ctx, true);
 
-		toggleUnlinkTool(ctx, ctx._urlInput.value === '');
+		toggleUnlinkTool(ctx, !ctx._urlInput || ctx._urlInput.value === '');
 	}
 
 	function showLinkInput(ctx) {
