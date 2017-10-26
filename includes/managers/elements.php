@@ -160,10 +160,10 @@ class Elements_Manager {
 
 		if ( DB::STATUS_AUTOSAVE === $status ) {
 			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
-			$last_edited = sprintf( __( 'Draft saved on %1$s at %2$s', '' ), $last_date, $last_time );
+			$last_edited = sprintf( __( 'Draft saved on %1$s at %2$s', 'elementor' ), $last_date, $last_time );
 		} else {
 			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
-			$last_edited = sprintf( __( 'Last edited on %1$s at %2$s', '' ), $last_date, $last_time );
+			$last_edited = sprintf( __( 'Last edited on %1$s at %2$s', 'elementor' ), $last_date, $last_time );
 		}
 
 		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [

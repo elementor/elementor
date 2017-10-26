@@ -90,6 +90,12 @@
         -webkit-box-shadow: none;
                 box-shadow: none;
         color: #fff; }
+      .pen-input-wrapper .pen-url-input::-webkit-input-placeholder {
+        color: #d5dadf; }
+      .pen-input-wrapper .pen-url-input:-ms-input-placeholder {
+        color: #d5dadf; }
+      .pen-input-wrapper .pen-url-input::placeholder {
+        color: #d5dadf; }
   .pen-input-label {
     margin: 0; }
   .pen-external-url-checkbox {
@@ -505,6 +511,9 @@ html.elementor-html {
     display: table-cell;
     vertical-align: middle;
     height: 40px; }
+
+.elementor-editor-active .elementor-inline-editing {
+  min-height: 15px; }
 
 .elementor-sortable-placeholder:not(.elementor-column-placeholder) {
   background-color: #71d7f7;

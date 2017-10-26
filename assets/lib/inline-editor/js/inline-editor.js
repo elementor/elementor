@@ -12,7 +12,8 @@
 	// allow command list
 	var commandsReg = {
 		block: /^(?:p|h[1-6]|blockquote|pre)$/,
-		inline: /^(?:justify(center|full|left|right)|strikethrough|bold|italic|underline|insert(un)?orderedlist|(in|out)dent)$/,
+		inline: /^(?:justify(center|full|left|right)|strikethrough|insert(un)?orderedlist|(in|out)dent)$/,
+		biu: /^(bold|italic|underline)$/,
 		source: /^(?:createlink|unlink)$/,
 		insert: /^(?:inserthorizontalrule|insertimage|insert)$/,
 		wrap: /^(?:code)$/
@@ -32,6 +33,21 @@
 		prefix: /^(?:https?|ftp):\/\//i,
 		notLink: /^(?:img|a|input|audio|video|source|code|pre|script|head|title|style)$/i,
 		maxLength: 100
+	};
+
+	var styleBackupDict = {
+		bold: {
+			styleKey: 'font-weight',
+			correctValue: 'normal'
+		},
+		italic: {
+			styleKey: 'font-style',
+			correctValue: 'normal'
+		},
+		underline: {
+			styleKey: 'text-decoration',
+			correctValue: 'none'
+		}
 	};
 
 	// type detect
@@ -84,6 +100,7 @@
 			class: 'pen',
 			debug: false,
 			toolbar: null, // custom toolbar
+			mode: 'basic',
 			toolbarIconsPrefix: 'fa fa-',
 			toolbarIconsDictionary: {externalLink: 'fa fa-external-link'},
 			stay: config.stay || !config.debug,
@@ -220,6 +237,8 @@
 		activateGroup(ctx, null);
 
 		toggleLinkInput(ctx, true);
+
+		toggleUnlinkTool(ctx, !ctx._urlInput || ctx._urlInput.value === '');
 	}
 
 	function showLinkInput(ctx) {
@@ -242,6 +261,16 @@
 		}
 
 		toggleNode(linkInput, hide);
+	}
+
+	function toggleUnlinkTool(ctx, hide) {
+		var unlinkTool = ctx._menu.querySelector('[data-action="unlink"]');
+
+		if (! unlinkTool) {
+			return;
+		}
+
+		toggleNode(unlinkTool, hide);
 
 		ctx.refreshMenuPosition();
 	}
@@ -462,7 +491,7 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
-			if (e.which === 8 && ctx.isEmpty()) return lineBreak(ctx, true);
+			if (e.which === 8 && ctx.isEmpty()) return lineBreak(ctx);
 			// toggle toolbar on key select
 			if (e.which !== 13 || e.shiftKey) return updateStatus(400);
 			var node = getNode(ctx, true);
@@ -482,7 +511,21 @@
 			editor.classList.remove('pen-placeholder');
 			if (e.which !== 13 || e.shiftKey) return;
 			var node = getNode(ctx, true);
-			if (!node || !lineBreakReg.test(node.nodeName)) return;
+
+			if (!node) {
+				return;
+			}
+
+			if(!lineBreakReg.test(node.nodeName)) {
+				if (ctx.config.mode === 'basic') {
+					e.preventDefault();
+
+					commandOverall('insertHTML', '<br>');
+				}
+
+				return;
+			}
+
 			var lastChild = node.lastChild;
 			if (!lastChild || !lastChild.previousSibling) return;
 			if (lastChild.previousSibling.textContent || lastChild.textContent) return;
@@ -504,7 +547,7 @@
 
 		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
-			if (ctx.isEmpty()) lineBreak(ctx, true);
+			if (ctx.isEmpty()) lineBreak(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
 		});
 
@@ -641,12 +684,13 @@
 	}
 
 	// breakout from node
-	function lineBreak(ctx, empty) {
-		var range = ctx._range = ctx.getRange(), node = doc.createElement('p');
-		if (empty) ctx.config.editor.innerHTML = '';
+	function lineBreak(ctx) {
+		// Currently this function is more harmful than helpful
+		/*var range = ctx._range = ctx.getRange(), node = doc.createElement('p');
+		ctx.config.editor.innerHTML = '';
 		node.innerHTML = '<br>';
 		range.insertNode(node);
-		focusNode(ctx, node.childNodes[0], range);
+		focusNode(ctx, node.childNodes[0], range);*/
 	}
 
 	function focusNode(ctx, node, range) {
@@ -815,6 +859,18 @@
 			commandBlock(this, name);
 		} else if (commandsReg.inline.test(name)) {
 			commandOverall(name, value);
+		} else if (commandsReg.biu.test(name)) {
+			// Temporarily removing all override style rules
+			// to make sure the command will be executed correctly
+			var styleBackup = styleBackupDict[ name ];
+
+			styleBackup.backupValue = this.config.editor.style[ styleBackup.styleKey ];
+
+			this.config.editor.style[ styleBackup.styleKey ] = styleBackup.correctValue;
+
+			commandOverall(name, value);
+
+			this.config.editor.style[ styleBackup.styleKey ] = styleBackup.backupValue;
 		} else if (commandsReg.source.test(name)) {
 			commandLink(this, name, value);
 		} else if (commandsReg.insert.test(name)) {
