@@ -281,8 +281,8 @@ class Widgets_Manager {
 	public function get_inline_editing_config() {
 		$basic_tools = [
 			'bold',
-			'italic',
 			'underline',
+			'italic',
 		];
 
 		$advanced_tools = array_merge( $basic_tools, [
