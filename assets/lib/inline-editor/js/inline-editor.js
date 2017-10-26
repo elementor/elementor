@@ -237,6 +237,8 @@
 		activateGroup(ctx, null);
 
 		toggleLinkInput(ctx, true);
+
+		toggleUnlinkTool(ctx, ctx._urlInput.value === '');
 	}
 
 	function showLinkInput(ctx) {
@@ -259,6 +261,16 @@
 		}
 
 		toggleNode(linkInput, hide);
+	}
+
+	function toggleUnlinkTool(ctx, hide) {
+		var unlinkTool = ctx._menu.querySelector('[data-action="unlink"]');
+
+		if (! unlinkTool) {
+			return;
+		}
+
+		toggleNode(unlinkTool, hide);
 
 		ctx.refreshMenuPosition();
 	}
