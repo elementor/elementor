@@ -93,8 +93,15 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.$currentEditingArea = $element;
 
 		var elementData = this.$currentEditingArea.data(),
+			elementDataToolbar = elementData.elementorInlineEditingToolbar,
+			mode = 'advanced' === elementDataToolbar ? 'advanced' : 'basic',
 			editModel = this.view.getEditModel(),
+			inlineEditingConfig = elementor.config.inlineEditing,
 			contentHTML = editModel.getSetting( this.getEditingSettingKey() );
+
+		if ( 'advanced' === mode ) {
+			contentHTML = wp.editor.autop( contentHTML );
+		}
 
 		/**
 		 *  Replace rendered content with unrendered content.
@@ -108,14 +115,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
-		var inlineEditingConfig = elementor.config.inlineEditing,
-			elementDataToolbar = elementData.elementorInlineEditingToolbar;
-
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$currentEditingArea[0],
-			mode: 'advanced' === elementDataToolbar ? 'advanced' : 'basic',
+			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
