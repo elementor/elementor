@@ -2037,6 +2037,8 @@ select {
       height: 26px;
       background-color: #556068;
       color: #a4afb7; }
+  .elementor-panel #elementor-panel-footer-preview a {
+    color: #a4afb7; }
   .elementor-panel #elementor-panel-footer-publish .elementor-icon, .elementor-panel #elementor-panel-footer-publish .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {

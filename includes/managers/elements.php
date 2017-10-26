@@ -137,10 +137,10 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
-		if ( isset( $_POST['status'] ) || in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_DRAFT, DB::STATUS_AUTOSAVE ] ) ) {
+		$status = DB::STATUS_DRAFT;
+
+		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_AUTOSAVE ] ) ) {
 			$status = $_POST['status'];
-		} else {
-			$status = DB::STATUS_DRAFT;
 		}
 
 		$posted = json_decode( stripslashes( $_POST['data'] ), true );
@@ -149,16 +149,20 @@ class Elements_Manager {
 
 		$post = get_post( $post_id );
 
-		$last_date = mysql2date( __( 'F j, Y' ), $post->post_modified );
-		$last_time = mysql2date( __( 'g:i a' ), $post->post_modified );
-		$last_id = get_post_meta( $post_id, '_edit_last', true );
-
-		if ( $last_id ) {
-			$last_user = get_userdata( $last_id );
-			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
-			$last_edited = sprintf( __( 'Last edited by %1$s on %2$s at %3$s', '' ), esc_html( $last_user->display_name ), $last_date, $last_time );
+		if ( 'autosave' === $status ) {
+			$modified_post = wp_get_post_autosave( $post_id, get_current_user_id() );
 		} else {
-			/* translators: 1: Post edited date, 2: Post edited time */
+			$modified_post = $post;
+		}
+
+		$last_date = mysql2date( __( 'F j, Y' ), $modified_post->post_modified );
+		$last_time = mysql2date( __( 'g:i a' ), $modified_post->post_modified );
+
+		if ( DB::STATUS_AUTOSAVE === $status ) {
+			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
+			$last_edited = sprintf( __( 'Draft saved on %1$s at %2$s', '' ), $last_date, $last_time );
+		} else {
+			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
 			$last_edited = sprintf( __( 'Last edited on %1$s at %2$s', '' ), $last_date, $last_time );
 		}
 

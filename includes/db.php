@@ -41,16 +41,22 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		if ( self::STATUS_PUBLISH === $status ) {
-			$this->remove_draft( $post_id );
+		$save_original = true;
 
+		// If the post is a draft - save the `autosave` to the original draft.
+		// Allow a revision only if the original post is already published.
+		if ( self::STATUS_AUTOSAVE === $status && self::STATUS_PUBLISH === get_post_status( $post_id ) ) {
+			$save_original = false;
+		}
+
+		if ( $save_original ) {
 			// Don't use `update_post_meta` that can't handle `revision` post type
 			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
 			$this->_save_plain_text( $post_id );
-		} elseif ( self::STATUS_AUTOSAVE === $status ) {
+		} else {
 			do_action( 'elementor/db/before_save', $status, true );
 
 			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
@@ -88,11 +94,12 @@ class DB {
 	 *
 	 * @param int    $post_id
 	 * @param string $status
+	 * @param bool $allow_preview
 	 *
 	 * @return array
 	 */
-	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->get_plain_editor( $post_id, $status );
+	public function get_builder( $post_id, $status = self::STATUS_PUBLISH, $allow_preview = false ) {
+		$data = $this->get_plain_editor( $post_id, $status, $allow_preview );
 
 		$this->switch_to_post( $post_id );
 		$editor_data = $this->_get_editor_data( $data, true );
@@ -111,19 +118,24 @@ class DB {
 		return $meta;
 	}
 
-	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
+	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH, $allow_preview = false ) {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
-		if ( self::STATUS_DRAFT === $status ) {
-			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
+		if ( $allow_preview && is_preview() ) {
+			$autosave = wp_get_post_autosave( $post_id );
 
-			if ( ! empty( $draft_data ) ) {
-				$data = $draft_data;
-			}
+			if ( is_object( $autosave ) ) {
+				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 
-			if ( empty( $data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
+				if ( ! empty( $autosave_data ) ) {
+					$data = $autosave_data;
+
+				}
 			}
+		}
+
+		if ( self::STATUS_DRAFT === $status && empty( $data ) ) {
+			$data = $this->_get_new_editor_from_wp_editor( $post_id );
 		}
 
 		return $data;
@@ -161,19 +173,6 @@ class DB {
 				],
 			],
 		];
-	}
-
-	/**
-	 * Remove draft data from DB.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param $post_id
-	 *
-	 * @return void
-	 */
-	public function remove_draft( $post_id ) {
-		delete_post_meta( $post_id, '_elementor_draft_data' );
 	}
 
 	/**
@@ -263,7 +262,7 @@ class DB {
 			}
 
 			$editor_data[] = $element->get_raw_data( $with_html_content );
-		} // End Section
+		} // End foreach().
 
 		return $editor_data;
 	}

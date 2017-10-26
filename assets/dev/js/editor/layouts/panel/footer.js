@@ -1,7 +1,6 @@
-var PanelFooterItemView,
-	SaverBehavior = require( './../../components/saver/behaviors/footerSaver' );
+var SaverBehavior = require( './../../components/saver/behaviors/footerSaver' );
 
-PanelFooterItemView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
 
 	tagName: 'nav',
@@ -12,16 +11,16 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	ui: {
 		menuButtons: '.elementor-panel-footer-tool',
+		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
-		showTemplates: '#elementor-panel-footer-templates-modal',
 		saveTemplate: '#elementor-panel-footer-save-template',
 		history: '#elementor-panel-footer-history'
 	},
 
 	events: {
+		'click @ui.settings': 'onClickSettings',
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
-		'click @ui.showTemplates': 'onClickShowTemplates',
 		'click @ui.saveTemplate': 'onClickSaveTemplate',
 		'click @ui.history': 'onClickHistory'
 	},
@@ -33,7 +32,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			}
 		};
 
-		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
 	},
 
 	initialize: function() {
@@ -62,6 +61,12 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		}
 	},
 
+	onClickSettings: function() {
+		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'page_settings' );
+		}
+	},
+
 	onDeviceModeChange: function() {
 		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
 			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
@@ -79,10 +84,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		elementor.changeDeviceMode( newDeviceMode );
-	},
-
-	onClickShowTemplates: function() {
-		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {
@@ -107,5 +108,3 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		} );
 	}
 } );
-
-module.exports = PanelFooterItemView;

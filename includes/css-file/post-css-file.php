@@ -61,8 +61,12 @@ class Post_CSS_File extends CSS_File {
 		update_post_meta( $this->post_id, '_elementor_css', $meta );
 	}
 
+	protected function get_data() {
+		return Plugin::$instance->db->get_plain_editor( $this->post_id );
+	}
+
 	protected function render_css() {
-		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
+		$data = $this->get_data();
 
 		if ( ! empty( $data ) ) {
 			foreach ( $data as $element_data ) {

@@ -596,54 +596,59 @@ SortableBehavior = Marionette.Behavior.extend( {
 module.exports = SortableBehavior;
 
 },{}],7:[function(require,module,exports){
-/**
- * TODO:
- * elementor-pro/modules/global-widget/assets/js/editor/editor.js:139 setSaveButton
- * elementor/assets/dev/js/editor/editor.js:341 elementor.getPanelView().getFooterView()._publishBuilder()
- *
- */
 module.exports = Marionette.Behavior.extend( {
-	savedDialog: null,
-
 	ui: {
 		buttonDone: '#elementor-panel-saver-done',
 		buttonSaveDraft: '#elementor-panel-saver-save-draft',
 		buttonUpdate: '#elementor-panel-saver-update',
 		buttonPublish: '#elementor-panel-saver-publish',
+		buttonPublishTitle: '#elementor-panel-saver-publish .elementor-title',
 		lastEdit: '#elementor-panel-saver-last-save'
 	},
 
 	events: {
 		'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
 		'click @ui.buttonUpdate': 'onClickButtonUpdate',
-		'click @ui.buttonPublish': 'onClickButtonPublish'
+		'click @ui.buttonPublish': 'onClickButtonPublish',
+		'click @ui.buttonPreview': 'onClickButtonPreview'
 	},
 
 	initialize: function() {
-		this.listenTo( elementor.channels.editor, 'status:change', this.onEditorChanged );
-
 		elementor.saver.on( 'before:save', _.bind( this.onBeforeSave, this ) );
 		elementor.saver.on( 'after:save', _.bind( this.onAfterSave, this ) );
+
+		elementor.settings.page.model.on( 'change', _.bind( this.onPostStatusChange, this ) );
+	},
+
+	onRender: function() {
+		this.showButtons( elementor.settings.page.model.get( 'post_status' ) );
+	},
+
+	onPostStatusChange: function( settings ) {
+		var changed = settings.changed;
+
+		if ( ! ( _.isUndefined( changed.post_status ) ) ) {
+			this.showButtons( changed.post_status );
+		}
 	},
 
 	onBeforeSave: function() {
 		NProgress.start();
+		this.ui.lastEdit.html( elementor.translate( 'saving' ) + '...' );
 	},
 
 	onAfterSave: function( data ) {
 		NProgress.done();
-
+		var saveNote = '';
 		if ( data.last_edited ) {
-			this.ui.lastEdit.html( data.last_edited );
+			saveNote = data.last_edited;
 		}
-	},
 
-	onEditorChanged: function() {
-		this.ui.buttonDone.toggleClass( 'elementor-save-active', elementor.saver.isEditorChanged() );
+		this.ui.lastEdit.html( saveNote );
 	},
 
 	onClickButtonSaveDraft: function() {
-		elementor.saver.saveDraft( );
+		elementor.saver.update( );
 	},
 
 	onClickButtonUpdate: function() {
@@ -652,6 +657,18 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPublish: function() {
 		elementor.saver.publish();
+	},
+
+	showButtons: function( postStatus ) {
+		if ( 'publish' === postStatus ) {
+			this.ui.buttonSaveDraft.hide();
+			this.ui.buttonPublish.hide();
+			this.ui.buttonUpdate.show();
+		} else {
+			this.ui.buttonSaveDraft.show();
+			this.ui.buttonPublish.show();
+			this.ui.buttonUpdate.hide();
+		}
 	}
 } );
 
@@ -666,7 +683,13 @@ module.exports = Module.extend( {
 	__construct: function() {
 		this.setWorkSaver();
 
-		this.autoSaveTimer = window.setInterval( _.bind( this.doAutoSave, this ), 15000 );
+		elementor.channels.editor.on( 'status:change', _.bind( this.startTime, this ) );
+	},
+
+	startTime: function() {
+		if ( ! this.autoSaveTimer ) {
+			this.autoSaveTimer = window.setInterval( _.bind( this.doAutoSave, this ), 15000 );
+		}
 	},
 
 	doAutoSave: function() {
@@ -674,10 +697,10 @@ module.exports = Module.extend( {
 			return;
 		}
 
-		this.saveDraft();
+		this.saveAutoSave();
 	},
 
-	saveDraft: function() {
+	saveAutoSave: function() {
 		this.saveEditor( {
 			status: 'autosave'
 		} );
@@ -685,7 +708,7 @@ module.exports = Module.extend( {
 
 	update: function() {
 		this.saveEditor( {
-			status: elementor.config.settings.page.settings.post_status
+			status: elementor.settings.page.model.get( 'post_status' )
 		} );
 	},
 
@@ -726,14 +749,22 @@ module.exports = Module.extend( {
 		self.trigger( 'before:save' )
 			.trigger( 'before:save:' + options.status );
 
+		self.isSaving = true;
+
 		return elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
 				data: JSON.stringify( newData )
 			},
+
 			success: function( data ) {
+				self.isSaving = false;
 				self.setFlagEditorChange( false );
+
+				if ( 'autosave' !== options.status ) {
+					elementor.settings.page.model.set( 'post_status', options.status );
+				}
 
 				elementor.config.data = newData;
 
@@ -2000,7 +2031,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.saver.saveDraft();
+					elementor.saver.saveAutoSave();
 				}
 			}
 		};
@@ -2437,10 +2468,9 @@ EditModeItemView = Marionette.ItemView.extend( {
 module.exports = EditModeItemView;
 
 },{}],31:[function(require,module,exports){
-var PanelFooterItemView,
-	SaverBehavior = require( './../../components/saver/behaviors/footerSaver' );
+var SaverBehavior = require( './../../components/saver/behaviors/footerSaver' );
 
-PanelFooterItemView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
 
 	tagName: 'nav',
@@ -2451,16 +2481,16 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 	ui: {
 		menuButtons: '.elementor-panel-footer-tool',
+		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
-		showTemplates: '#elementor-panel-footer-templates-modal',
 		saveTemplate: '#elementor-panel-footer-save-template',
 		history: '#elementor-panel-footer-history'
 	},
 
 	events: {
+		'click @ui.settings': 'onClickSettings',
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
-		'click @ui.showTemplates': 'onClickShowTemplates',
 		'click @ui.saveTemplate': 'onClickSaveTemplate',
 		'click @ui.history': 'onClickHistory'
 	},
@@ -2472,7 +2502,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			}
 		};
 
-		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
 	},
 
 	initialize: function() {
@@ -2501,6 +2531,12 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		}
 	},
 
+	onClickSettings: function() {
+		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'page_settings' );
+		}
+	},
+
 	onDeviceModeChange: function() {
 		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
 			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
@@ -2518,10 +2554,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		elementor.changeDeviceMode( newDeviceMode );
-	},
-
-	onClickShowTemplates: function() {
-		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {
@@ -2546,8 +2578,6 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		} );
 	}
 } );
-
-module.exports = PanelFooterItemView;
 
 },{"./../../components/saver/behaviors/footerSaver":7}],32:[function(require,module,exports){
 var PanelHeaderItemView;
@@ -5072,7 +5102,9 @@ heartbeat = {
 			'heartbeat-tick': function( event, response ) {
 				if ( response.locked_user ) {
 					if ( elementor.saver.isEditorChanged() ) {
-						elementor.saver.saveEditor( { status: 'autosave' } );
+						elementor.saver.saveEditor( {
+							status: 'autosave'
+						} );
 					}
 
 					heartbeat.showLockMessage( response.locked_user );
@@ -11919,7 +11951,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		elementor.saver.saveDraft();
+		elementor.saver.saveAutoSave();
 
 		this.isRevisionApplied = true;
 
