@@ -86,6 +86,14 @@
         -webkit-box-shadow: none;
                 box-shadow: none;
         color: #fff; }
+      .pen-input-wrapper .pen-url-input::-webkit-input-placeholder {
+        color: #d5dadf; }
+      .pen-input-wrapper .pen-url-input:-ms-input-placeholder {
+        color: #d5dadf; }
+      .pen-input-wrapper .pen-url-input::-ms-input-placeholder {
+        color: #d5dadf; }
+      .pen-input-wrapper .pen-url-input::placeholder {
+        color: #d5dadf; }
   .pen-input-label {
     margin: 0; }
   .pen-external-url-checkbox {
