@@ -125,7 +125,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		elementor.saver.saveDraft();
+		elementor.saver.saveAutoSave();
 
 		this.isRevisionApplied = true;
 

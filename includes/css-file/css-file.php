@@ -221,6 +221,10 @@ abstract class CSS_File {
 		}
 	}
 
+	public function get_fonts() {
+		return $this->fonts;
+	}
+
 	/**
 	 * @return string
 	 */
@@ -326,6 +330,14 @@ abstract class CSS_File {
 		return false;
 	}
 
+	protected function parse_css() {
+		$this->render_css();
+
+		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
+
+		$this->css = $this->stylesheet_obj->__toString();
+	}
+
 	/**
 	 * @param array $control
 	 * @param array $values
@@ -380,13 +392,5 @@ abstract class CSS_File {
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
 
 		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
-	}
-
-	private function parse_css() {
-		$this->render_css();
-
-		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
-
-		$this->css = $this->stylesheet_obj->__toString();
 	}
 }

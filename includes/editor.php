@@ -179,7 +179,7 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT, true );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -446,6 +446,7 @@ class Editor {
 				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
+				'saving' => __( 'Saving', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];

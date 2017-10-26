@@ -8,7 +8,13 @@ module.exports = Module.extend( {
 	__construct: function() {
 		this.setWorkSaver();
 
-		this.autoSaveTimer = window.setInterval( _.bind( this.doAutoSave, this ), 15000 );
+		elementor.channels.editor.on( 'status:change', _.bind( this.startTime, this ) );
+	},
+
+	startTime: function() {
+		if ( ! this.autoSaveTimer ) {
+			this.autoSaveTimer = window.setInterval( _.bind( this.doAutoSave, this ), 15000 );
+		}
 	},
 
 	doAutoSave: function() {
@@ -16,10 +22,10 @@ module.exports = Module.extend( {
 			return;
 		}
 
-		this.saveDraft();
+		this.saveAutoSave();
 	},
 
-	saveDraft: function() {
+	saveAutoSave: function() {
 		this.saveEditor( {
 			status: 'autosave'
 		} );
@@ -27,7 +33,7 @@ module.exports = Module.extend( {
 
 	update: function() {
 		this.saveEditor( {
-			status: elementor.config.settings.page.settings.post_status
+			status: elementor.settings.page.model.get( 'post_status' )
 		} );
 	},
 
@@ -68,14 +74,22 @@ module.exports = Module.extend( {
 		self.trigger( 'before:save' )
 			.trigger( 'before:save:' + options.status );
 
+		self.isSaving = true;
+
 		return elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
 				data: JSON.stringify( newData )
 			},
+
 			success: function( data ) {
+				self.isSaving = false;
 				self.setFlagEditorChange( false );
+
+				if ( 'autosave' !== options.status ) {
+					elementor.settings.page.model.set( 'post_status', options.status );
+				}
 
 				elementor.config.data = newData;
 

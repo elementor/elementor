@@ -42,6 +42,7 @@ class Autoloader {
 		'Maintenance' => 'includes/maintenance.php',
 		'Maintenance_Mode' => 'includes/maintenance-mode.php',
 		'Post_CSS_File' => 'includes/css-file/post-css-file.php',
+		'Post_Preview_CSS' => 'includes/css-file/post-preview-css.php',
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',
 		'Responsive' => 'includes/responsive.php',

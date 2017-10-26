@@ -393,6 +393,15 @@ class Frontend {
 
 		ob_start();
 
+		if ( is_preview() ) {
+			$autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+
+			if ( $autosave ) {
+				$preview_css = new Post_Preview_CSS( $autosave->ID );
+				$preview_css->enqueue();
+			}
+		}
+
 		// Handle JS and Customizer requests, with css inline.
 		if ( is_customize_preview() || Utils::is_ajax() ) {
 			$with_css = true;
