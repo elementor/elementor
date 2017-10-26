@@ -132,7 +132,12 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	},
 
 	onAfterExternalChange: function() {
-		tinymce.get( this.editorID ).setContent( this.getControlValue() );
+		var controlValue = this.getControlValue();
+
+		tinymce.get( this.editorID ).setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
 	onBeforeDestroy: function() {
