@@ -93,13 +93,21 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.$currentEditingArea = $element;
 
 		var elementData = this.$currentEditingArea.data(),
-			editModel = this.view.getEditModel();
+			elementDataToolbar = elementData.elementorInlineEditingToolbar,
+			mode = 'advanced' === elementDataToolbar ? 'advanced' : 'basic',
+			editModel = this.view.getEditModel(),
+			inlineEditingConfig = elementor.config.inlineEditing,
+			contentHTML = editModel.getSetting( this.getEditingSettingKey() );
+
+		if ( 'advanced' === mode ) {
+			contentHTML = wp.editor.autop( contentHTML );
+		}
 
 		/**
 		 *  Replace rendered content with unrendered content.
 		 *  This way the user can edit the original content, before shortcodes and oEmbeds are fired.
 		 */
-		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
+		this.$currentEditingArea.html( contentHTML );
 
 		var ElementorInlineEditor = elementorFrontend.getElements( 'window' ).ElementorInlineEditor;
 
@@ -107,13 +115,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
-		var inlineEditingConfig = elementor.config.inlineEditing,
-			elementDataToolbar = elementData.elementorInlineEditingToolbar;
-
-		this.pen = new ElementorInlineEditor( {
+		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$currentEditingArea[0],
+			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
@@ -147,7 +153,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			}
 		} );
 
-		var $menuItems = jQuery( this.pen._menu ).children();
+		var $menuItems = jQuery( this.editor._menu ).children();
 
 		/**
 		 * When the edit area is not focused (on blur) the inline editing is stopped.
@@ -166,7 +172,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	stopEditing: function() {
 		this.editing = false;
 
-		this.pen.destroy();
+		this.editor.destroy();
 
 		this.view.allowRender = true;
 
@@ -213,7 +219,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.$currentEditingArea.html() );
+		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
 	}
 } );
 
@@ -2942,7 +2948,9 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend( {
 	},
 
 	onPanelElementsFilterChange: function() {
-		elementor.getPanelView().getCurrentPageView().showView( 'elements' );
+		if ( elementor.channels.panelElements.request( 'filter:value' ) ) {
+			elementor.getPanelView().getCurrentPageView().showView( 'elements' );
+		}
 	}
 } );
 
@@ -9716,7 +9724,12 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	},
 
 	onAfterExternalChange: function() {
-		tinymce.get( this.editorID ).setContent( this.getControlValue() );
+		var controlValue = this.getControlValue();
+
+		tinymce.get( this.editorID ).setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
 	onBeforeDestroy: function() {
