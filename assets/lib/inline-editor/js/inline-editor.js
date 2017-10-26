@@ -12,7 +12,8 @@
 	// allow command list
 	var commandsReg = {
 		block: /^(?:p|h[1-6]|blockquote|pre)$/,
-		inline: /^(?:justify(center|full|left|right)|strikethrough|bold|italic|underline|insert(un)?orderedlist|(in|out)dent)$/,
+		inline: /^(?:justify(center|full|left|right)|strikethrough|insert(un)?orderedlist|(in|out)dent)$/,
+		biu: /^(bold|italic|underline)$/,
 		source: /^(?:createlink|unlink)$/,
 		insert: /^(?:inserthorizontalrule|insertimage|insert)$/,
 		wrap: /^(?:code)$/
@@ -32,6 +33,21 @@
 		prefix: /^(?:https?|ftp):\/\//i,
 		notLink: /^(?:img|a|input|audio|video|source|code|pre|script|head|title|style)$/i,
 		maxLength: 100
+	};
+
+	var styleBackupDict = {
+		bold: {
+			styleKey: 'font-weight',
+			correctValue: 'normal'
+		},
+		italic: {
+			styleKey: 'font-style',
+			correctValue: 'normal'
+		},
+		underline: {
+			styleKey: 'text-decoration',
+			correctValue: 'none'
+		}
 	};
 
 	// type detect
@@ -830,6 +846,18 @@
 			commandBlock(this, name);
 		} else if (commandsReg.inline.test(name)) {
 			commandOverall(name, value);
+		} else if (commandsReg.biu.test(name)) {
+			// Temporarily removing all override style rules
+			// to make sure the command will be executed correctly
+			var styleBackup = styleBackupDict[ name ];
+
+			styleBackup.backupValue = this.config.editor.style[ styleBackup.styleKey ];
+
+			this.config.editor.style[ styleBackup.styleKey ] = styleBackup.correctValue;
+
+			commandOverall(name, value);
+
+			this.config.editor.style[ styleBackup.styleKey ] = styleBackup.backupValue;
 		} else if (commandsReg.source.test(name)) {
 			commandLink(this, name, value);
 		} else if (commandsReg.insert.test(name)) {
