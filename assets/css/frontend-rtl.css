@@ -2354,7 +2354,7 @@ button.swiper-pagination-bullet {
       -ms-flex-pack: center;
           justify-content: center;
   position: relative;
-  padding: 70px;
+  padding: 70px 80px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   height: 100%;
@@ -2381,10 +2381,10 @@ button.swiper-pagination-bullet {
       width: 100%; } }
 
 .elementor-lightbox .elementor-swiper-button-prev {
-  left: 40px; }
+  left: 35px; }
 
 .elementor-lightbox .elementor-swiper-button-next {
-  right: 40px; }
+  right: 35px; }
 
 @media (max-width: 767px) {
   .elementor-lightbox .elementor-swiper-button-prev {
