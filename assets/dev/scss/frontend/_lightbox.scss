@@ -28,6 +28,10 @@
 			padding: 5px;
 			z-index: 2;
 			line-height: 1;
+
+			@media (max-width: $screen-sm-max) {
+				padding: 0;
+			}
 		}
 	}
 
@@ -55,10 +59,14 @@
 		align-items: center;
 		justify-content: center;
 		position: relative;
-		padding: 80px;
+		padding: 70px;
 		box-sizing: border-box;
 		height: 100%;
 		margin: auto;
+
+		@media (max-width: $screen-sm-max) {
+			padding: 40px;
+		}
 	}
 
 	.elementor-lightbox-image {
@@ -80,7 +88,6 @@
 		}
 	}
 
-
 	.elementor-swiper-button {
 
 		&-prev {
@@ -90,20 +97,16 @@
 		&-next {
 			right: 40px;
 		}
-	}
-}
 
-@media (min-width: $screen-sm-max) {
+		@media (max-width: $screen-sm-max) {
 
-	.elementor-lightbox {
+			&-prev {
+				left: 10px;
+			}
 
-		.dialog- {
-
-			&lightbox-close-button {
-				top: 35px;
-				right: 35px;
+			&-next {
+				right: 10px;
 			}
 		}
 	}
 }
-
