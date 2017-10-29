@@ -26,12 +26,8 @@ module.exports = Module.extend( {
 	},
 
 	saveAutoSave: function( options ) {
-		this.saveEditor( {
-			status: 'autosave'
-		} );
-
 		options = _.extend( {
-			status:  'autosave'
+			status: 'autosave'
 		}, options );
 
 		this.saveEditor( options );
