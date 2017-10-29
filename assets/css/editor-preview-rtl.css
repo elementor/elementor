@@ -502,6 +502,9 @@ html.elementor-html {
     vertical-align: middle;
     height: 40px; }
 
+.elementor-editor-active .elementor-inline-editing {
+  min-height: 15px; }
+
 .elementor-sortable-placeholder:not(.elementor-column-placeholder) {
   background-color: #71d7f7;
   -webkit-animation-timing-function: ease-out;
