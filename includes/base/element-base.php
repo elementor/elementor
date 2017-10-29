@@ -806,12 +806,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
-		parent::__construct( $data );
-
 		if ( $data ) {
 			$this->_is_type_instance = false;
 		} elseif ( $args ) {
 			$this->_default_args = $args;
 		}
+
+		parent::__construct( $data );
 	}
 }
