@@ -14,10 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Section extends Base_UI_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'section';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<div class="elementor-panel-heading">
@@ -29,6 +37,10 @@ class Control_Section extends Base_UI_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'separator' => 'none',

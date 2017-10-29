@@ -9,6 +9,10 @@ class Debug {
 	const MAX_LOGS_TO_SAVE = 10;
 	const REPORT_NAME = 'debug';
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function debug_log() {
 		if ( empty( $_POST['data'] ) ) {
 			return;
@@ -75,6 +79,10 @@ class Debug {
 		update_option( self::OPTION_NAME, $log );
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access private
+	*/
 	private function add_system_info_report() {
 		Main::add_report(
 			self::REPORT_NAME, [
@@ -84,6 +92,10 @@ class Debug {
 		);
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function __construct() {
 		add_action( 'wp_ajax_elementor_debug_log', [ $this, 'debug_log' ] );
 

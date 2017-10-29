@@ -19,10 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Choose extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'choose';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid( '{{value}}' );
 		?>
@@ -46,6 +54,10 @@ class Control_Choose extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'options' => [],

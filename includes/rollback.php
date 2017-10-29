@@ -12,12 +12,20 @@ class Rollback {
 	protected $plugin_name;
 	protected $plugin_slug;
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function __construct( $args = [] ) {
 		foreach ( $args as $key => $value ) {
 			$this->{$key} = $value;
 		}
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access private
+	*/
 	private function print_inline_style() {
 		?>
 		<style>
@@ -43,6 +51,10 @@ class Rollback {
 		<?php
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	protected function apply_package() {
 		$update_plugins = get_site_transient( 'update_plugins' );
 		if ( ! is_object( $update_plugins ) ) {
@@ -63,6 +75,10 @@ class Rollback {
 		set_site_transient( 'update_plugins', $update_plugins );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	protected function upgrade() {
 		require_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
 
@@ -81,6 +97,10 @@ class Rollback {
 		$upgrader->upgrade( $this->plugin_name );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function run() {
 		$this->apply_package();
 		$this->upgrade();
