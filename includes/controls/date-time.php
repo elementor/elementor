@@ -16,10 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Date_Time extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'date_time';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	function get_default_settings() {
 		return [
 			'picker_options' => [],
@@ -27,6 +35,10 @@ class Control_Date_Time extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

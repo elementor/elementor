@@ -7,10 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Validations {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function html( $input ) {
 		return stripslashes( wp_filter_post_kses( addslashes( $input ) ) );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function checkbox_list( $input ) {
 		if ( empty( $input ) ) {
 			$input = [];
@@ -19,6 +27,10 @@ class Settings_Validations {
 		return $input;
 	}
 
+	/**
+	 * @since 1.4.8
+	 * @access public
+	*/
 	public static function clear_cache( $input ) {
 		Plugin::$instance->posts_css_manager->clear_cache();
 

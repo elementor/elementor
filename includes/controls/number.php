@@ -21,10 +21,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Number extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'number';
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function get_default_settings() {
 		return [
 			'min' => '',
@@ -33,6 +41,10 @@ class Control_Number extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>
