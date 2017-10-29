@@ -605,10 +605,13 @@ module.exports = SortableBehavior;
 module.exports = Marionette.Behavior.extend( {
 	ui: {
 		buttonDone: '#elementor-panel-saver-done',
+		buttonDoneIcon: '#elementor-panel-saver-done-icon',
 		buttonSaveDraft: '#elementor-panel-saver-save-draft',
 		buttonUpdate: '#elementor-panel-saver-update',
+		buttonPreview: '#elementor-panel-saver-preview span',
 		buttonPublish: '#elementor-panel-saver-publish',
 		buttonPublishTitle: '#elementor-panel-saver-publish .elementor-title',
+		formPreview: '#elementor-panel-saver-preview form',
 		lastEdit: '#elementor-panel-saver-last-save'
 	},
 
@@ -622,6 +625,8 @@ module.exports = Marionette.Behavior.extend( {
 	initialize: function() {
 		elementor.saver.on( 'before:save', _.bind( this.onBeforeSave, this ) );
 		elementor.saver.on( 'after:save', _.bind( this.onAfterSave, this ) );
+
+		elementor.channels.editor.on( 'status:change', _.bind( this.removeDoneIcon, this ) );
 
 		elementor.settings.page.model.on( 'change', _.bind( this.onPostStatusChange, this ) );
 	},
@@ -640,21 +645,35 @@ module.exports = Marionette.Behavior.extend( {
 
 	onBeforeSave: function() {
 		NProgress.start();
-		this.ui.lastEdit.html( elementor.translate( 'saving' ) + '...' );
+		this.ui.buttonDone.addClass( 'elementor-button-state' );
+		this.ui.buttonDoneIcon.hide();
 	},
 
-	onAfterSave: function( data ) {
+	onAfterSave: function() {
 		NProgress.done();
-		var saveNote = '';
-		if ( data.last_edited ) {
-			saveNote = data.last_edited;
-		}
+		this.ui.buttonDone.removeClass( 'elementor-button-state' );
+		this.ui.buttonDoneIcon.show();
+	},
 
-		this.ui.lastEdit.html( saveNote );
+	onClickButtonPreview: function( event ) {
+		event.preventDefault();
+
+		var self = this,
+			submit = function() {
+				self.ui.formPreview.submit();
+			};
+
+		if ( elementor.saver.isEditorChanged() ) {
+			elementor.saver.saveAutoSave( {
+				onSuccess: submit
+			} );
+		} else {
+			submit();
+		}
 	},
 
 	onClickButtonSaveDraft: function() {
-		elementor.saver.update( );
+		elementor.saver.update();
 	},
 
 	onClickButtonUpdate: function() {
@@ -663,6 +682,10 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPublish: function() {
 		elementor.saver.publish();
+	},
+
+	removeDoneIcon: function() {
+		this.ui.buttonDoneIcon.hide();
 	},
 
 	showButtons: function( postStatus ) {
@@ -706,22 +729,32 @@ module.exports = Module.extend( {
 		this.saveAutoSave();
 	},
 
-	saveAutoSave: function() {
+	saveAutoSave: function( options ) {
 		this.saveEditor( {
 			status: 'autosave'
 		} );
+
+		options = _.extend( {
+			status:  'autosave'
+		}, options );
+
+		this.saveEditor( options );
 	},
 
-	update: function() {
-		this.saveEditor( {
+	update: function( options ) {
+		options = _.extend( {
 			status: elementor.settings.page.model.get( 'post_status' )
-		} );
+		}, options );
+
+		this.saveEditor( options );
 	},
 
-	publish: function() {
-		this.saveEditor( {
+	publish: function( options ) {
+		options = _.extend( {
 			status: 'publish'
-		} );
+		}, options );
+
+		this.saveEditor( options );
 	},
 
 	setFlagEditorChange: function( status ) {

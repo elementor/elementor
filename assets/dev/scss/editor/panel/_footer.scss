@@ -134,14 +134,19 @@
 	}
 }
 
-#elementor-panel-footer-preview {
+#elementor-panel-saver-preview {
 	a {
 		color: $editor-light;
 	}
 }
 
-#elementor-panel-footer-publish {
+#elementor-panel-saver-publish {
+	.elementor-icon, .elementor-title {
+		color: $editor-success;
+	}
+}
 
+#elementor-panel-saver-update {
 	.elementor-icon, .elementor-title {
 		color: $editor-success;
 	}
