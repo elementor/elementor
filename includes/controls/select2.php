@@ -19,16 +19,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Select2 extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'select2';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	function get_default_settings() {
 		return [
 			'multiple' => false,
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>
