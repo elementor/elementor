@@ -626,7 +626,7 @@
 	}
 
 	function trim(str) {
-		return (str || '').trim().replace('​', '');
+		return (str || '').trim().replace(/\u200b/g, '');
 	}
 
 	// node.contains is not implemented in IE10/IE11
