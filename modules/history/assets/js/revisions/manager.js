@@ -21,11 +21,6 @@ RevisionsManager = function() {
 		revisions.reset( revisionsToKeep );
 	};
 
-	var attachEvents = function() {
-		elementor.channels.editor.on( 'saved', onEditorSaved );
-		elementor.on( 'preview:loaded', checkNewAutoSave );
-	};
-
 	var checkNewAutoSave = function() {
 		if ( ! elementor.config.newer_autosave ) {
 			return;
@@ -50,8 +45,13 @@ RevisionsManager = function() {
 		} ).show();
 
 		jQuery( '.dialog-widget' ).css( {
-				backgroundColor: 'rgba(0, 0, 0, 0.3)'
+			backgroundColor: 'rgba(0, 0, 0, 0.3)'
 		} );
+	};
+
+	var attachEvents = function() {
+		elementor.channels.editor.on( 'saved', onEditorSaved );
+		elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {
