@@ -491,7 +491,7 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
-			if (e.which === 8 && ctx.isEmpty()) return lineBreak(ctx);
+			if (ctx.isEmpty()) return handleEmptyContent(ctx);
 			// toggle toolbar on key select
 			if (e.which !== 13 || e.shiftKey) return updateStatus(400);
 			var node = getNode(ctx, true);
@@ -547,7 +547,7 @@
 
 		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
-			if (ctx.isEmpty()) lineBreak(ctx);
+			if (ctx.isEmpty()) handleEmptyContent(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
 		});
 
@@ -626,7 +626,7 @@
 	}
 
 	function trim(str) {
-		return (str || '').replace(/^\s+|\s+$/g, '');
+		return (str || '').trim().replace('​', '');
 	}
 
 	// node.contains is not implemented in IE10/IE11
@@ -683,14 +683,34 @@
 		return nodes;
 	}
 
-	// breakout from node
-	function lineBreak(ctx) {
-		// Currently this function is more harmful than helpful
-		/*var range = ctx._range = ctx.getRange(), node = doc.createElement('p');
+	function handleEmptyContent(ctx) {
+		var range = ctx._range = ctx.getRange();
+
 		ctx.config.editor.innerHTML = '';
-		node.innerHTML = '<br>';
-		range.insertNode(node);
-		focusNode(ctx, node.childNodes[0], range);*/
+
+		if (ctx.config.mode === 'advanced') {
+			var p = doc.createElement('p');
+
+			p.innerHTML = '<br>';
+
+			range.insertNode(p);
+
+			focusNode(ctx, p.childNodes[0], range);
+		} else {
+			var textNode = doc.createTextNode('\u200b');
+
+			range.deleteContents();
+
+			range.collapse(false);
+
+			range.insertNode(textNode);
+
+			range.setStartBefore(textNode);
+
+			range.setEndBefore(textNode);
+
+			ctx.setRange();
+		}
 	}
 
 	function focusNode(ctx, node, range) {
