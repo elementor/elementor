@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Images_Manager {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_images_details() {
 		$items = $_POST['items'];
 		$urls  = [];
@@ -18,6 +22,10 @@ class Images_Manager {
 		wp_send_json_success( $urls );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_details( $id, $size, $is_first_time ) {
 		if ( ! class_exists( 'Group_Control_Image_Size' ) ) {
 			require_once ELEMENTOR_PATH . '/includes/controls/groups/image-size.php';
@@ -53,6 +61,10 @@ class Images_Manager {
 		return $urls;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		add_action( 'wp_ajax_elementor_get_image_details', [ $this, 'get_image_details' ] );
 		add_action( 'wp_ajax_elementor_get_images_details', [ $this, 'get_images_details' ] );

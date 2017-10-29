@@ -9,6 +9,10 @@ class Beta_Testers {
 
 	private $transient_key;
 
+	/**
+	 * @since 1.5.0
+	 * @access private
+	*/
 	private function get_beta_version() {
 		$beta_version = get_site_transient( $this->transient_key );
 
@@ -30,6 +34,10 @@ class Beta_Testers {
 		return $beta_version;
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function check_version( $transient ) {
 		if ( empty( $transient->checked ) ) {
 			return $transient;
@@ -54,6 +62,10 @@ class Beta_Testers {
 		return $transient;
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function __construct() {
 		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) ) {
 			return;

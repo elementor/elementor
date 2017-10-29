@@ -19,10 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Text_Shadow extends Control_Base_Multiple {
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'text_shadow';
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [
 			'horizontal' => 0,
@@ -32,6 +40,10 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function get_sliders() {
 		return [
 			'blur' => [
@@ -52,6 +64,10 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<#

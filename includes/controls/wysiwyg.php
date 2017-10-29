@@ -15,10 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Wysiwyg extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'wysiwyg';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<label>

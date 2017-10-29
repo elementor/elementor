@@ -33,10 +33,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Switcher extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'switcher';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>
@@ -56,6 +64,10 @@ class Control_Switcher extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_off' => __( 'No', 'elementor' ),
