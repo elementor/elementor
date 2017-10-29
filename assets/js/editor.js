@@ -604,21 +604,21 @@ module.exports = SortableBehavior;
 },{}],7:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
 	ui: {
-		buttonDone: '#elementor-panel-saver-done',
-		buttonDoneIcon: '#elementor-panel-saver-done-icon',
+		buttonSave: '#elementor-panel-saver-save',
+		buttonSaveIcon: '#elementor-panel-saver-save-icon',
 		buttonSaveDraft: '#elementor-panel-saver-save-draft',
 		buttonUpdate: '#elementor-panel-saver-update',
 		buttonPreview: '#elementor-panel-saver-preview span',
 		buttonPublish: '#elementor-panel-saver-publish',
-		buttonPublishTitle: '#elementor-panel-saver-publish .elementor-title',
-		formPreview: '#elementor-panel-saver-preview form',
-		lastEdit: '#elementor-panel-saver-last-save'
+		buttonPublishChanges: '#elementor-panel-saver-publish-changes',
+		formPreview: '#elementor-panel-saver-preview form'
 	},
 
 	events: {
 		'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
 		'click @ui.buttonUpdate': 'onClickButtonUpdate',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
+		'click @ui.buttonPublishChanges': 'onClickButtonPublish',
 		'click @ui.buttonPreview': 'onClickButtonPreview'
 	},
 
@@ -626,7 +626,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.on( 'before:save', _.bind( this.onBeforeSave, this ) );
 		elementor.saver.on( 'after:save', _.bind( this.onAfterSave, this ) );
 
-		elementor.channels.editor.on( 'status:change', _.bind( this.removeDoneIcon, this ) );
+		elementor.channels.editor.on( 'status:change', _.bind( this. removeSavedIcon, this ) );
 
 		elementor.settings.page.model.on( 'change', _.bind( this.onPostStatusChange, this ) );
 	},
@@ -645,14 +645,14 @@ module.exports = Marionette.Behavior.extend( {
 
 	onBeforeSave: function() {
 		NProgress.start();
-		this.ui.buttonDone.addClass( 'elementor-button-state' );
-		this.ui.buttonDoneIcon.hide();
+		this.ui.buttonSave.addClass( 'elementor-button-state' );
+		this.ui.buttonSaveIcon.hide();
 	},
 
 	onAfterSave: function() {
 		NProgress.done();
-		this.ui.buttonDone.removeClass( 'elementor-button-state' );
-		this.ui.buttonDoneIcon.show();
+		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		this.ui.buttonSaveIcon.show();
 	},
 
 	onClickButtonPreview: function( event ) {
@@ -684,19 +684,21 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.publish();
 	},
 
-	removeDoneIcon: function() {
-		this.ui.buttonDoneIcon.hide();
+	 removeSavedIcon: function() {
+		this.ui.buttonSaveIcon.hide();
 	},
 
 	showButtons: function( postStatus ) {
-		if ( 'publish' === postStatus ) {
+		if ( 'publish' === postStatus || 'private' === postStatus ) {
 			this.ui.buttonSaveDraft.hide();
 			this.ui.buttonPublish.hide();
-			this.ui.buttonUpdate.show();
+			this.ui.buttonUpdate.toggle( 'private' === postStatus );
+			this.ui.buttonPublishChanges.toggle( 'publish' === postStatus );
 		} else {
 			this.ui.buttonSaveDraft.show();
 			this.ui.buttonPublish.show();
 			this.ui.buttonUpdate.hide();
+			this.ui.buttonPublishChanges.hide();
 		}
 	}
 } );
@@ -730,12 +732,8 @@ module.exports = Module.extend( {
 	},
 
 	saveAutoSave: function( options ) {
-		this.saveEditor( {
-			status: 'autosave'
-		} );
-
 		options = _.extend( {
-			status:  'autosave'
+			status: 'autosave'
 		}, options );
 
 		this.saveEditor( options );

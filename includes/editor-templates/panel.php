@@ -73,11 +73,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 	</div>
 	<div id="elementor-panel-footer-save" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">
-		<button id="elementor-panel-saver-done" class="elementor-button elementor-save-active">
+		<button id="elementor-panel-saver-save" class="elementor-button elementor-save-active">
 			<span class="elementor-state-icon">
 				<i class="fa fa-spin fa-circle-o-notch "></i>
 			</span>
-			<span id="elementor-panel-saver-done-icon" style="display: none">
+			<span id="elementor-panel-saver-save-icon" style="display: none">
 				<i class="fa fa-check"></i>
 			</span>
 
@@ -89,9 +89,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<i class="elementor-icon fa fa-paper-plane"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Publish', 'elementor' ); ?></span>
 				</div>
-				<div id="elementor-panel-saver-update" class="elementor-panel-footer-sub-menu-item">
+				<div id="elementor-panel-saver-publish-changes" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-paper-plane"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Publish Changes', 'elementor' ); ?></span>
+				</div>
+				<div id="elementor-panel-saver-update" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-save"></i>
+					<span class="elementor-title"><?php esc_html_e( 'Update', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-save-draft" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save"></i>
@@ -106,7 +110,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="elementor-title"><?php esc_html_e( 'Exit to Dashboard', 'elementor' ); ?></span>
 				</a>
 			</div>
-			<div id="elementor-panel-saver-last-save"> </div>
 		</div>
 	</div>
 </script>

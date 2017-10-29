@@ -2020,9 +2020,7 @@ select {
       color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-preview a {
     color: #a4afb7; }
-  .elementor-panel #elementor-panel-saver-publish .elementor-icon, .elementor-panel #elementor-panel-saver-publish .elementor-title {
-    color: #39b54a; }
-  .elementor-panel #elementor-panel-saver-update .elementor-icon, .elementor-panel #elementor-panel-saver-update .elementor-title {
+  .elementor-panel #elementor-panel-saver-publish .elementor-icon, .elementor-panel #elementor-panel-saver-publish .elementor-title, .elementor-panel #elementor-panel-saver-publish-changes .elementor-icon, .elementor-panel #elementor-panel-saver-publish-changes .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
     color: #b01b1b; }

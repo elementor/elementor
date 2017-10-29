@@ -140,13 +140,7 @@
 	}
 }
 
-#elementor-panel-saver-publish {
-	.elementor-icon, .elementor-title {
-		color: $editor-success;
-	}
-}
-
-#elementor-panel-saver-update {
+#elementor-panel-saver-publish, #elementor-panel-saver-publish-changes {
 	.elementor-icon, .elementor-title {
 		color: $editor-success;
 	}
