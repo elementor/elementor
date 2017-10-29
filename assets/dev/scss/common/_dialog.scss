@@ -71,29 +71,12 @@
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;
-	top: 15px;
-	right: 15px;
+	top: 30px;
+	right: 30px;
 	font-size: 15px;
 
 	&:not(:hover) {
 		opacity: .4;
-	}
-}
-
-body.admin-bar {
-
-	.dialog-close-button {
-		top: 30px;
-	}
-}
-
-@media (max-width: $screen-sm-max) {
-
-	body.admin-bar {
-
-		.dialog-close-button {
-			top: 40px;
-		}
 	}
 }
 
@@ -142,6 +125,21 @@ body.admin-bar {
 
 		> button {
 			width: 100%;
+		}
+	}
+}
+
+@media (max-width: $screen-sm-max) {
+
+	.dialog-close-button {
+		top: 15px;
+		right: 15px;
+	}
+
+	body.admin-bar {
+
+		.dialog-close-button {
+			top: 40px;
 		}
 	}
 }
