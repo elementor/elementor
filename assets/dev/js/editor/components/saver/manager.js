@@ -25,22 +25,32 @@ module.exports = Module.extend( {
 		this.saveAutoSave();
 	},
 
-	saveAutoSave: function() {
+	saveAutoSave: function( options ) {
 		this.saveEditor( {
 			status: 'autosave'
 		} );
+
+		options = _.extend( {
+			status:  'autosave'
+		}, options );
+
+		this.saveEditor( options );
 	},
 
-	update: function() {
-		this.saveEditor( {
+	update: function( options ) {
+		options = _.extend( {
 			status: elementor.settings.page.model.get( 'post_status' )
-		} );
+		}, options );
+
+		this.saveEditor( options );
 	},
 
-	publish: function() {
-		this.saveEditor( {
+	publish: function( options ) {
+		options = _.extend( {
 			status: 'publish'
-		} );
+		}, options );
+
+		this.saveEditor( options );
 	},
 
 	setFlagEditorChange: function( status ) {

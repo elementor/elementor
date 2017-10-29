@@ -62,25 +62,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<span class="elementor-screen-only"><?php esc_html_e( 'History', 'elementor' ); ?></span>
 		<i class="fa fa-history"></i>
 	</div>
-	<div id="elementor-panel-footer-preview" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
-		<a id="elementor-panel-footer-preview-link" href="<?php echo get_preview_post_link(); ?>" target="wp-preview-<?php echo get_the_ID() ?>">
+	<div id="elementor-panel-saver-preview" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
+		<form style="display: none" action="<?php echo esc_attr( home_url() ); ?>" target="wp-preview-<?php echo get_the_ID() ?>">
+			<input name="p" value="<?php echo get_the_ID() ?>">
+			<input name="preview" value="true">
+		</form>
+		<span>
 			<span class="elementor-screen-only"><?php esc_html_e( 'Preview', 'elementor' ); ?></span>
 			<i class="fa fa-eye"></i>
-		</a>
+		</span>
 	</div>
 	<div id="elementor-panel-footer-save" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">
 		<button id="elementor-panel-saver-done" class="elementor-button elementor-save-active">
-			<?php esc_html_e( 'Done', 'elementor' ); ?>
+			<span class="elementor-state-icon">
+				<i class="fa fa-spin fa-circle-o-notch "></i>
+			</span>
+			<span id="elementor-panel-saver-done-icon" style="display: none">
+				<i class="fa fa-check"></i>
+			</span>
+
+			<?php esc_html_e( 'Save', 'elementor' ); ?>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-saver-publish" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-globe"></i>
+					<i class="elementor-icon fa fa-paper-plane"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Publish', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-update" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-save"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Update', 'elementor' ); ?></span>
+					<i class="elementor-icon fa fa-paper-plane"></i>
+					<span class="elementor-title"><?php esc_html_e( 'Publish Changes', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-save-draft" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save"></i>
@@ -88,7 +99,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div id="elementor-panel-footer-save-template" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Save Template', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php esc_html_e( 'Save to Library', 'elementor' ); ?></span>
 				</div>
 				<a id="elementor-panel-footer-view-edit-page" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( get_edit_post_link() ); ?>">
 					<i class="elementor-icon fa fa-wordpress"></i>
