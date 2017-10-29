@@ -2507,7 +2507,7 @@ EditModeItemView = Marionette.ItemView.extend( {
 module.exports = EditModeItemView;
 
 },{}],31:[function(require,module,exports){
-var SaverBehavior = require( './../../components/saver/behaviors/footerSaver' );
+var SaverBehavior = require( './../../components/saver/behaviors/footer-saver' );
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
@@ -2618,7 +2618,7 @@ module.exports = Marionette.ItemView.extend( {
 	}
 } );
 
-},{"./../../components/saver/behaviors/footerSaver":7}],32:[function(require,module,exports){
+},{"./../../components/saver/behaviors/footer-saver":7}],32:[function(require,module,exports){
 var PanelHeaderItemView;
 
 PanelHeaderItemView = Marionette.ItemView.extend( {
