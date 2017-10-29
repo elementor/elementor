@@ -27,7 +27,7 @@ class Fonts {
 			'Trebuchet MS' => self::SYSTEM,
 			'Georgia' => self::SYSTEM,
 
-			// Google Fonts (last update: 09/07/2017).
+			// Google Fonts (last update: 28/10/2017).
 			'ABeeZee' => self::GOOGLE,
 			'Abel' => self::GOOGLE,
 			'Abhaya Libre' => self::GOOGLE,
@@ -717,6 +717,10 @@ class Fonts {
 			'Sacramento' => self::GOOGLE,
 			'Sahitya' => self::GOOGLE,
 			'Sail' => self::GOOGLE,
+			'Saira' => self::GOOGLE,
+			'Saira Condensed' => self::GOOGLE,
+			'Saira Semi Condensed' => self::GOOGLE,
+			'Saira Extra Condensed' => self::GOOGLE,
 			'Salsa' => self::GOOGLE,
 			'Sanchez' => self::GOOGLE,
 			'Sancreek' => self::GOOGLE,
