@@ -16,10 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Code extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'code';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
@@ -27,6 +35,10 @@ class Control_Code extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

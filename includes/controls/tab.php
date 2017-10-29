@@ -13,10 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Tab extends Base_UI_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'tab';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 			<div class="elementor-panel-tab-heading">
@@ -25,6 +33,10 @@ class Control_Tab extends Base_UI_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'separator' => 'none',

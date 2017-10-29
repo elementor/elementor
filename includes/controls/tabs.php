@@ -13,12 +13,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Tabs extends Base_UI_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'tabs';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'separator' => 'none',

@@ -21,10 +21,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_URL extends Control_Base_Multiple {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'url';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [
 			'url' => '',
@@ -33,6 +41,10 @@ class Control_URL extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
@@ -40,6 +52,10 @@ class Control_URL extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 

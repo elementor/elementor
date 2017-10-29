@@ -9,6 +9,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 	private $args = [];
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	final public function add_controls( Controls_Stack $element, array $user_args, array $options = [] ) {
 		$this->init_args( $user_args );
 
@@ -55,10 +59,18 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	final public function get_args() {
 		return $this->args;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access public
+	*/
 	final public function get_fields() {
 		// TODO: Temp - compatibility for posts group
 		if ( method_exists( $this, '_get_controls' ) ) {
@@ -72,21 +84,41 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return static::$fields;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_controls_prefix() {
 		return $this->args['name'] . '_';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_base_group_classes() {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
 	// TODO: Temp - Make it abstract
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function init_fields() {}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function get_child_default_args() {
 		return [];
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function filter_fields() {
 		$args = $this->get_args();
 
@@ -119,6 +151,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $fields;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function add_group_args_to_field( $control_id, $field_args ) {
 		$args = $this->get_args();
 
@@ -143,6 +179,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $field_args;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function prepare_fields( $fields ) {
 		foreach ( $fields as $field_key => &$field ) {
 			if ( ! empty( $field['condition'] ) ) {
@@ -165,10 +205,18 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $fields;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access private
+	*/
 	private function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access private
+	*/
 	private function get_default_args() {
 		return [
 			'default' => '',
@@ -177,6 +225,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		];
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access private
+	*/
 	private function add_conditions_prefix( $field ) {
 		$controls_prefix = $this->get_controls_prefix();
 
@@ -195,6 +247,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $field;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access private
+	*/
 	private function handle_selectors( $selectors ) {
 		$args = $this->get_args();
 

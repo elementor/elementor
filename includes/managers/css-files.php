@@ -7,11 +7,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Posts_CSS_Manager {
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function __construct() {
 		$this->init();
 		$this->register_actions();
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function init() {
 		// Create the css directory if it's not exist.
 		$wp_upload_dir = wp_upload_dir( null, false );
@@ -23,6 +31,10 @@ class Posts_CSS_Manager {
 		}
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function on_delete_post( $post_id ) {
 		if ( ! Utils::is_post_type_support( $post_id ) ) {
 			return;
@@ -34,6 +46,8 @@ class Posts_CSS_Manager {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access public
 	 * @param bool   $skip
 	 * @param string $meta_key
 	 *
@@ -47,6 +61,10 @@ class Posts_CSS_Manager {
 		return $skip;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function clear_cache() {
 		$errors = [];
 
@@ -81,6 +99,10 @@ class Posts_CSS_Manager {
 		return $errors;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access private
+	*/
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 
