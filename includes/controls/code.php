@@ -43,6 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param string $default     Optional. The field default value.
+ * @param int    $rows        Optional. Number of rows. Default is 10.
  * @param string $language    Optional. Any language supported by Ace editor
  *                            (@see https://ace.c9.io/build/kitchen-sink.html).
  *                            Default is 'html'.
@@ -87,6 +88,7 @@ class Control_Code extends Base_Data_Control {
 		return [
 			'label_block' => true,
 			'language' => 'html', // html/css
+			'rows' => 10,
 		];
 	}
 
@@ -106,7 +108,7 @@ class Control_Code extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<textarea id="<?php echo $control_uid; ?>" rows="10" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
+				<textarea id="<?php echo $control_uid; ?>" rows="{{ data.rows }}" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
