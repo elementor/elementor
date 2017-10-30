@@ -16,10 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Repeater extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'repeater';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'prevent_empty' => true,
@@ -27,6 +35,10 @@ class Control_Repeater extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_value( $control, $widget ) {
 		$value = parent::get_value( $control, $widget );
 
@@ -47,6 +59,10 @@ class Control_Repeater extends Base_Data_Control {
 		return $value;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<label>

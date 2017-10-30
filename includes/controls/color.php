@@ -16,10 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Color extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'color';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -37,6 +45,10 @@ class Control_Color extends Base_Data_Control {
 		wp_enqueue_script( 'wp-color-picker-alpha' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<# var defaultValue = '', dataAlpha = '';
@@ -67,6 +79,10 @@ class Control_Color extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'alpha' => true,

@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Controls {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function render( $field = [] ) {
 		if ( empty( $field ) || empty( $field['id'] ) ) {
 			return;
@@ -31,6 +35,10 @@ class Settings_Controls {
 		self::$method_name( $field );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _text( array $field ) {
 		if ( empty( $field['classes'] ) ) {
 			$field['classes'] = [ 'regular-text' ];
@@ -48,6 +56,10 @@ class Settings_Controls {
 		endif;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _checkbox( array $field ) {
 		?>
 		<label>
@@ -64,6 +76,10 @@ class Settings_Controls {
 		endif;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) ) {
@@ -83,6 +99,10 @@ class Settings_Controls {
 		endif;
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access private
+	*/
 	private static function _select( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		?>
@@ -102,6 +122,10 @@ class Settings_Controls {
 		endif;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
@@ -125,6 +149,10 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _checkbox_list_roles( array $field ) {
 		$defaults = [
 			'exclude' => [],
@@ -143,6 +171,10 @@ class Settings_Controls {
 		self::_checkbox_list( $field );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _raw_html( array $field ) {
 		if ( empty( $field['html'] ) ) {
 			return;

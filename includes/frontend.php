@@ -20,6 +20,10 @@ class Frontend {
 	private $_is_excerpt = false;
 	private $content_removed_filters = [];
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			return;
@@ -46,6 +50,10 @@ class Frontend {
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _print_elements( $elements_data ) {
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -58,6 +66,10 @@ class Frontend {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function body_class( $classes = [] ) {
 		$classes[] = 'elementor-default';
 
@@ -70,14 +82,26 @@ class Frontend {
 		return $classes;
 	}
 
+	/**
+	 * @since 1.8.0
+	 * @access public
+	 */
 	public function add_content_builder_filter() {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 	}
 
+	/**
+	 * @since 1.8.0
+	 * @access public
+	 */
 	public function remove_content_builder_filter() {
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 	}
 
+	/**
+	 * @since 1.2.1
+	 * @access public
+	*/
 	public function register_scripts() {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
@@ -158,6 +182,10 @@ class Frontend {
 		do_action( 'elementor/frontend/after_register_scripts' );
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function register_styles() {
 		do_action( 'elementor/frontend/before_register_styles' );
 
@@ -196,6 +224,10 @@ class Frontend {
 		do_action( 'elementor/frontend/after_register_styles' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue_scripts() {
 		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
 
@@ -241,6 +273,10 @@ class Frontend {
 		do_action( 'elementor/frontend/after_enqueue_scripts' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue_styles() {
 		do_action( 'elementor/frontend/before_enqueue_styles' );
 
@@ -261,6 +297,8 @@ class Frontend {
 
 	/**
 	 * Handle style that do not printed in header
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public function wp_footer() {
 		if ( ! $this->_has_elementor_in_page ) {
@@ -273,6 +311,10 @@ class Frontend {
 		$this->print_google_fonts();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function print_google_fonts() {
 		if ( ! apply_filters( 'elementor/frontend/print_google_fonts', true ) ) {
 			return;
@@ -315,6 +357,10 @@ class Frontend {
 		}
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function enqueue_font( $font ) {
 		$font_type = Fonts::get_font_type( $font );
 		$cache_id = $font_type . $font;
@@ -340,12 +386,20 @@ class Frontend {
 		$this->registered_fonts[] = $cache_id;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access protected
+	*/
 	protected function parse_global_css_code() {
 		$scheme_css_file = new Global_CSS_File();
 
 		$scheme_css_file->enqueue();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function apply_builder_in_content( $content ) {
 		$this->restore_content_filters();
 
@@ -370,6 +424,10 @@ class Frontend {
 		return $content;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_builder_content( $post_id, $with_css = false ) {
 		if ( post_password_required( $post_id ) ) {
 			return '';
@@ -429,6 +487,10 @@ class Frontend {
 		return $content;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
 
@@ -445,6 +507,10 @@ class Frontend {
 		] );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_builder_content_for_display( $post_id ) {
 		if ( ! get_post( $post_id ) ) {
 			return '';
@@ -479,11 +545,19 @@ class Frontend {
 		return $content;
 	}
 
+	/**
+	 * @since 1.4.3
+	 * @access public
+	*/
 	public function start_excerpt_flag( $excerpt ) {
 		$this->_is_excerpt = true;
 		return $excerpt;
 	}
 
+	/**
+	 * @since 1.4.3
+	 * @access public
+	*/
 	public function end_excerpt_flag( $excerpt ) {
 		$this->_is_excerpt = false;
 		return $excerpt;
@@ -491,6 +565,8 @@ class Frontend {
 
 	/**
 	 * Remove WordPress default filters that conflicted with Elementor
+	 * @since 1.5.0
+	 * @access public
 	 */
 	public function remove_content_filters() {
 		$filters = [
@@ -508,6 +584,10 @@ class Frontend {
 		}
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access private
+	*/
 	private function restore_content_filters() {
 		foreach ( $this->content_removed_filters as $filter ) {
 			add_filter( 'the_content', $filter );
@@ -515,6 +595,10 @@ class Frontend {
 		$this->content_removed_filters = [];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests.
 		if ( is_admin() && ! Utils::is_ajax() ) {
