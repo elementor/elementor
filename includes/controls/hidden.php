@@ -12,10 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Hidden extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'hidden';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<input type="hidden" data-setting="{{{ data.name }}}" />

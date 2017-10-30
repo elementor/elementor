@@ -17,10 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Icon extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'icon';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_icons() {
 		return [
 			'fa fa-500px' => '500px',
@@ -814,12 +822,20 @@ class Control_Icon extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'options' => self::get_icons(),
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

@@ -51,18 +51,11 @@
 .dialog-close-button {
   cursor: pointer;
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 30px;
+  right: 30px;
   font-size: 15px; }
   .dialog-close-button:not(:hover) {
     opacity: .4; }
-
-body.admin-bar .dialog-close-button {
-  top: 30px; }
-
-@media (max-width: 767px) {
-  body.admin-bar .dialog-close-button {
-    top: 40px; } }
 
 .dialog-options-widget .dialog-widget-header,
 .dialog-confirm-widget .dialog-widget-header {
@@ -91,6 +84,13 @@ body.admin-bar .dialog-close-button {
 
 .dialog-alert-widget .dialog-buttons-wrapper > button {
   width: 100%; }
+
+@media (max-width: 767px) {
+  .dialog-close-button {
+    top: 15px;
+    right: 15px; }
+  body.admin-bar .dialog-close-button {
+    top: 40px; } }
 
 .elementor-aspect-ratio-219 .elementor-fit-aspect-ratio {
   padding-bottom: 42.8571%; }

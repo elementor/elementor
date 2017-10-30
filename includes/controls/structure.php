@@ -12,10 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Structure extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'structure';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$preset_control_uid = $this->get_control_uid( '{{ preset.key }}' );
 		?>
@@ -53,6 +61,10 @@ class Control_Structure extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'separator' => 'none',

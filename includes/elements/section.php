@@ -11,6 +11,10 @@ class Element_Section extends Element_Base {
 
 	private static $presets = [];
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected static function get_default_edit_tools() {
 		$section_label = __( 'Section', 'elementor' );
 
@@ -34,18 +38,34 @@ class Element_Section extends Element_Base {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_name() {
 		return 'section';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_title() {
 		return __( 'Section', 'elementor' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_icon() {
 		return 'eicon-columns';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_presets( $columns_count = null, $preset_index = null ) {
 		if ( ! self::$presets ) {
 			self::init_presets();
@@ -64,6 +84,10 @@ class Element_Section extends Element_Base {
 		return $presets;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function init_presets() {
 		$additional_presets = [
 			2 => [
@@ -113,6 +137,10 @@ class Element_Section extends Element_Base {
 		}
 	}
 
+	/**
+	 * @since 1.0.10
+	 * @access protected
+	*/
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();
 
@@ -121,6 +149,10 @@ class Element_Section extends Element_Base {
 		return $config;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _register_controls() {
 
 		$this->start_controls_section(
@@ -819,7 +851,7 @@ class Element_Section extends Element_Base {
 				'colors_warning',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'raw' => __( 'Note: The following colors won\'t work if Default Colors are enabled.', 'elementor' ),
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 				]
 			);
@@ -1108,6 +1140,10 @@ class Element_Section extends Element_Base {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
@@ -1130,6 +1166,10 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _content_template() {
 		?>
 		<div class="elementor-background-video-container elementor-hidden-phone">
@@ -1146,6 +1186,10 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function before_render() {
 		$settings = $this->get_settings();
 		?>
@@ -1188,6 +1232,10 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function after_render() {
 		?>
 				</div>
@@ -1196,6 +1244,10 @@ class Element_Section extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.3.0
+	 * @access protected
+	*/
 	protected function _add_render_attributes() {
 		parent::_add_render_attributes();
 
@@ -1211,10 +1263,18 @@ class Element_Section extends Element_Base {
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'column' );
 	}
 
+	/**
+	 * @since 1.5.3
+	 * @access private
+	*/
 	private function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
@@ -1225,6 +1285,10 @@ class Element_Section extends Element_Base {
 		return $html_tag;
 	}
 
+	/**
+	 * @since 1.3.0
+	 * @access private
+	*/
 	private function print_shape_divider( $side ) {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
