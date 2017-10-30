@@ -78,6 +78,7 @@ class Control_URL extends Control_Base_Multiple {
 	/**
 	 * Retrieve url control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -92,6 +93,7 @@ class Control_URL extends Control_Base_Multiple {
 	 * Get the default value of the url control. Used to return the default
 	 * values while initializing the url control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -110,6 +112,7 @@ class Control_URL extends Control_Base_Multiple {
 	 * Get the default settings of the url control. Used to return the default
 	 * settings while initializing the url control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -128,6 +131,7 @@ class Control_URL extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

@@ -12,6 +12,10 @@ class Fonts {
 	const EARLYACCESS = 'earlyaccess';
 	const LOCAL = 'local';
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_fonts() {
 		return [
 			// System fonts.
@@ -856,6 +860,10 @@ class Fonts {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_font_type( $name ) {
 		$fonts = self::get_fonts();
 
@@ -866,6 +874,10 @@ class Fonts {
 		return $fonts[ $name ];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_fonts_by_groups( $groups = [] ) {
 		return array_filter( self::get_fonts(), function( $font ) use ( $groups ) {
 			return in_array( $font, $groups );

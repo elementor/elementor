@@ -10,21 +10,69 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Source_Base {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function get_id();
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function get_title();
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function register_data();
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function get_items( $args = [] );
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function get_item( $template_id );
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	abstract public function get_data( array $args );
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function delete_template( $template_id );
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function save_item( $template_data );
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function update_item( $new_data );
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	abstract public function export_template( $template_id );
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		$this->register_data();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function replace_elements_ids( $content ) {
 		return Plugin::$instance->db->iterate_data( $content, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
@@ -34,6 +82,8 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @since 1.5.0
+	 * @access protected
 	 * @param array  $content a set of elements.
 	 * @param string $method  (on_export|on_import).
 	 *
@@ -55,6 +105,8 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @since 1.5.0
+	 * @access protected
 	 * @param \Elementor\Controls_Stack $element
 	 * @param string                    $method
 	 *

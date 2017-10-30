@@ -73,6 +73,7 @@ class Control_Switcher extends Base_Data_Control {
 	/**
 	 * Retrieve switcher control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -88,6 +89,7 @@ class Control_Switcher extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -115,6 +117,7 @@ class Control_Switcher extends Base_Data_Control {
 	 * Get the default settings of the switcher control. Used to return the
 	 * default settings while initializing the switcher control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

@@ -49,6 +49,7 @@ class Control_Structure extends Base_Data_Control {
 	/**
 	 * Retrieve structure control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -64,6 +65,7 @@ class Control_Structure extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -109,6 +111,7 @@ class Control_Structure extends Base_Data_Control {
 	 * Get the default settings of the structure control. Used to return the
 	 * default settings while initializing the structure control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

@@ -13,6 +13,10 @@ class Elements_Manager {
 
 	private $_categories;
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		$this->require_files();
 
@@ -20,6 +24,8 @@ class Elements_Manager {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param array        $element_data
 	 *
 	 * @param array        $element_args
@@ -54,6 +60,10 @@ class Elements_Manager {
 		return $element;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_categories() {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -62,6 +72,10 @@ class Elements_Manager {
 		return $this->_categories;
 	}
 
+	/**
+	 * @since 1.7.12
+	 * @access public
+	*/
 	public function add_category( $category_name, $category_properties, $offset = null ) {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -78,12 +92,20 @@ class Elements_Manager {
 			+ array_slice( $this->_categories, $offset, null, true );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_element_type( Element_Base $element ) {
 		$this->_element_types[ $element->get_name() ] = $element;
 
 		return true;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function unregister_element_type( $name ) {
 		if ( ! isset( $this->_element_types[ $name ] ) ) {
 			return false;
@@ -94,6 +116,10 @@ class Elements_Manager {
 		return true;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_element_types( $element_name = null ) {
 		if ( is_null( $this->_element_types ) ) {
 			$this->_init_elements();
@@ -106,6 +132,10 @@ class Elements_Manager {
 		return $this->_element_types;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_element_types_config() {
 		$config = [];
 
@@ -116,12 +146,20 @@ class Elements_Manager {
 		return $config;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function render_elements_content() {
 		foreach ( $this->get_element_types() as $element_type ) {
 			$element_type->print_template();
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function ajax_save_builder() {
 		if ( empty( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'elementor-editing' ) ) {
 			wp_send_json_error( new \WP_Error( 'token_expired' ) );
@@ -150,6 +188,10 @@ class Elements_Manager {
 		wp_send_json_success( $return_data );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _init_elements() {
 		$this->_element_types = [];
 
@@ -162,6 +204,10 @@ class Elements_Manager {
 		do_action( 'elementor/elements/elements_registered' );
 	}
 
+	/**
+	 * @since 1.7.12
+	 * @access private
+	*/
 	private function init_categories() {
 		$this->_categories = [
 			'basic' => [
@@ -183,6 +229,10 @@ class Elements_Manager {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 

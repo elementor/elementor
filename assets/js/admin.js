@@ -56,7 +56,9 @@
 						$wpTitle.val( 'Elementor #' + $( '#post_ID' ).val() );
 					}
 
-					wp.autosave.server.triggerSave();
+					if ( wp.autosave ) {
+						wp.autosave.server.triggerSave();
+					}
 
 					self.animateLoader();
 
@@ -251,14 +253,13 @@
 
 			this.cache.$activeSettingsTab.removeClass( 'nav-tab-active' );
 
-			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName ),
-				$form = $activePage.parents( 'form' );
+			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName );
 
 			$activePage.addClass( 'elementor-active' );
 
 			$activeTab.addClass( 'nav-tab-active' );
 
-			$form.attr( 'action', 'options.php#elementor-settings-' + tabName  );
+			this.cache.$settingsForm.attr( 'action', 'options.php#' + tabName  );
 
 			this.cache.$activeSettingsPage = $activePage;
 

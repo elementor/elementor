@@ -111,6 +111,7 @@ class Control_Repeater extends Base_Data_Control {
 	/**
 	 * Retrieve repeater control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -125,7 +126,8 @@ class Control_Repeater extends Base_Data_Control {
 	 * Get the default settings of the repeater control. Used to return the
 	 * default settings while initializing the repeater control.
 	 *
-	 * @access public
+	 * @since 1.0.0
+	 * @access protected
 	 *
 	 * @return array Control default settings.
 	 */
@@ -141,6 +143,7 @@ class Control_Repeater extends Base_Data_Control {
 	 *
 	 * Get the value of the repeater control from a specific widget.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param array $control Control
@@ -175,6 +178,7 @@ class Control_Repeater extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

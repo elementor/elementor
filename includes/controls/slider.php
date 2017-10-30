@@ -103,6 +103,7 @@ class Control_Slider extends Control_Base_Units {
 	/**
 	 * Retrieve slider control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -117,6 +118,7 @@ class Control_Slider extends Control_Base_Units {
 	 * Get the default value of the slider control. Used to return the default
 	 * values while initializing the slider control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -135,6 +137,7 @@ class Control_Slider extends Control_Base_Units {
 	 * Get the default settings of the slider control. Used to return the
 	 * default settings while initializing the slider control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -154,6 +157,7 @@ class Control_Slider extends Control_Base_Units {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

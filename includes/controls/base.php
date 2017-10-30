@@ -73,6 +73,7 @@ abstract class Base_Control {
 	 * Get the list of all the available features. Currently Elementor uses only
 	 * the `UI` feature.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 * @static
 	 *
@@ -85,6 +86,7 @@ abstract class Base_Control {
 	/**
 	 * Retrieve control type.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 * @abstract
 	 */
@@ -95,6 +97,7 @@ abstract class Base_Control {
 	 *
 	 * Initializing the control base class.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 */
 	public function __construct() {
@@ -108,6 +111,7 @@ abstract class Base_Control {
 	 *
 	 * Used to register and enqueue custom scripts and styles used by the control.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 */
 	public function enqueue() {}
@@ -164,6 +168,7 @@ abstract class Base_Control {
 	 *
 	 * Note that the content template is wrapped by Base_Control::print_template().
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 * @abstract
 	 */
@@ -195,6 +200,7 @@ abstract class Base_Control {
 	 * Get the default settings of the control. Used to return the default
 	 * settings while initializing the control.
 	 *
+	 * @since 1.5.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

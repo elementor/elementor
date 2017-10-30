@@ -82,6 +82,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	/**
 	 * Retrieve box shadow control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -96,6 +97,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	 * Get the default value of the box shadow control. Used to return the
 	 * default values while initializing the box shadow control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -116,6 +118,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	 * Get the sliders of the box shadow control. Sliders are used while
 	 * rendering the control output in the editor.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control sliders.
@@ -152,6 +155,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

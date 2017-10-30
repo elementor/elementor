@@ -11,11 +11,17 @@ class Global_CSS_File extends CSS_File {
 
 	const FILE_HANDLER_ID = 'elementor-global';
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function get_name() {
 		return 'global';
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return array
 	 */
 	protected function load_meta() {
@@ -23,6 +29,8 @@ class Global_CSS_File extends CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @param string $meta
 	 */
 	protected function update_meta( $meta ) {
@@ -30,28 +38,42 @@ class Global_CSS_File extends CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return string
 	 */
 	protected function get_file_handle_id() {
 		return self::FILE_HANDLER_ID;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access protected
+	*/
 	protected function render_css() {
 		$this->render_schemes_css();
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return string
 	 */
 	protected function get_file_name() {
 		return 'global';
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access protected
+	*/
 	protected function get_inline_dependency() {
 		return 'elementor-frontend';
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return bool
 	 */
 	protected function is_update_required() {
@@ -72,6 +94,10 @@ class Global_CSS_File extends CSS_File {
 		return false;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access private
+	*/
 	private function render_schemes_css() {
 		$elementor = Plugin::$instance;
 

@@ -89,6 +89,7 @@ class Control_Dimensions extends Control_Base_Units {
 	/**
 	 * Retrieve dimensions control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -103,7 +104,8 @@ class Control_Dimensions extends Control_Base_Units {
 	 * Get the default value of the dimensions control. Used to return the
 	 * default values while initializing the dimensions control.
 	 *
-	 * @access protected
+	 * @since 1.0.0
+	 * @access public
 	 *
 	 * @return array Control default value.
 	 */
@@ -125,6 +127,7 @@ class Control_Dimensions extends Control_Base_Units {
 	 * Get the default settings of the dimensions control. Used to return the
 	 * default settings while initializing the dimensions control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -146,6 +149,7 @@ class Control_Dimensions extends Control_Base_Units {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

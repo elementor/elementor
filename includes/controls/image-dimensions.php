@@ -62,6 +62,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	/**
 	 * Retrieve image dimensions control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -76,6 +77,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * Get the default value of the image dimensions control. Used to return the
 	 * default values while initializing the image dimensions control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -93,6 +95,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * Get the default settings of the image dimensions control. Used to return
 	 * the default settings while initializing the image dimensions control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -111,6 +114,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -150,6 +154,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 *
 	 * Used to determine whether the editor supports a given image mime-type.
 	 *
+	 * @since 1.0.0
 	 * @access private
 	 *
 	 * @return bool Whether the editor supports the given mime-type.
