@@ -11,6 +11,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	events: {
+		'click @ui.buttonSave': 'onClickButtonSave',
 		'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
 		'click @ui.buttonUpdate': 'onClickButtonUpdate',
 		'click @ui.buttonPublish': 'onClickButtonPublish',
@@ -49,6 +50,10 @@ module.exports = Marionette.Behavior.extend( {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
 		this.ui.buttonSaveIcon.show();
+	},
+
+	onClickButtonSave: function() {
+		elementor.saver.saveAutoSave();
 	},
 
 	onClickButtonPreview: function( event ) {
