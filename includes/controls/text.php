@@ -17,10 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Text extends Base_Data_Control {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'text';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>
@@ -36,6 +44,10 @@ class Control_Text extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_settings() {
 		return [
 			'input_type' => 'text',

@@ -64,6 +64,10 @@ BaseElementView = BaseContainer.extend( {
 		return this.model.get( 'elType' );
 	},
 
+	getIDInt: function() {
+		return parseInt( this.getID(), 16 );
+	},
+
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
@@ -83,11 +87,13 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
+	// TODO: backward compatibility method since 1.8.0
 	templateHelpers: function() {
-		return {
-			elementModel: this.model,
-			editModel: this.getEditModel()
-		};
+		var templateHelpers = BaseContainer.prototype.templateHelpers.apply( this, arguments );
+
+		return jQuery.extend( templateHelpers, {
+			editModel: this.getEditModel() // @deprecated. Use view.getEditModel() instead.
+		} );
 	},
 
 	getTemplateType: function() {
@@ -381,7 +387,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditSettingsChanged: function( changedModel ) {
-		this.renderOnChange( changedModel );
+		elementor.channels.editor
+			.trigger( 'change:editSettings', changedModel, this );
 	},
 
 	onSettingsChanged: function( changedModel ) {

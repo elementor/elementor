@@ -13,14 +13,26 @@ class Group_Control_Typography extends Group_Control_Base {
 
 	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_scheme_fields_keys() {
 		return self::$_scheme_fields_keys;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_type() {
 		return 'typography';
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function init_fields() {
 		$fields = [];
 
@@ -124,6 +136,10 @@ class Group_Control_Typography extends Group_Control_Base {
 		return $fields;
 	}
 
+	/**
+	 * @since 1.2.3
+	 * @access protected
+	*/
 	protected function prepare_fields( $fields ) {
 		array_walk(
 			$fields, function( &$field, $field_name ) {
@@ -146,6 +162,10 @@ class Group_Control_Typography extends Group_Control_Base {
 		return parent::prepare_fields( $fields );
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function add_group_args_to_field( $control_id, $field_args ) {
 		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
 

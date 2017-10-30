@@ -106,6 +106,10 @@ class Preview {
 		do_action( 'elementor/preview/enqueue_styles' );
 	}
 
+	/**
+	 * @since 1.5.4
+	 * @access private
+	*/
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
 		Plugin::$instance->frontend->enqueue_scripts();

@@ -22,10 +22,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Order extends Control_Base_Multiple {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'order';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [
 			'order_by' => '',
@@ -33,6 +41,10 @@ class Control_Order extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 

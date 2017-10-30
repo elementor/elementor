@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WordPress_Widgets_Manager {
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function __construct() {
 		if ( version_compare( get_bloginfo( 'version' ), '4.8', '<' ) ) {
 			return;
@@ -16,6 +20,10 @@ class WordPress_Widgets_Manager {
 		add_action( 'elementor/editor/footer', [ $this, 'footer' ] );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function before_enqueue_scripts() {
 		global $wp_scripts;
 
@@ -36,6 +44,10 @@ class WordPress_Widgets_Manager {
 		do_action( 'admin_print_scripts-widgets.php' );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function footer() {
 		do_action( 'admin_footer-widgets.php' );
 	}
