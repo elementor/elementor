@@ -53,7 +53,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonSave: function() {
-		elementor.saver.saveAutoSave();
+		elementor.saver.doAutoSave();
 	},
 
 	onClickButtonPreview: function( event ) {

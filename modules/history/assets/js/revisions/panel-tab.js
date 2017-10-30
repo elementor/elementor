@@ -163,9 +163,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		var currentPreviewModel = this.collection.findWhere({ id: this.currentPreviewId });
 
-		this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
-
-		this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		// Ensure the model is exist and not deleted during a save.
+		if ( currentPreviewModel ) {
+			this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
+			this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		}
 	},
 
 	onChildviewDetailsAreaClick: function( childView ) {
