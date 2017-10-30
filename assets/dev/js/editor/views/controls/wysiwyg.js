@@ -56,7 +56,8 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
 				// Save the bind callback to allow overwrite it externally
-				self.saveEditor = _.bind( self.saveEditor, self, editor );
+				self.saveEditor = self.saveEditor.bind( self, editor );
+
 				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};

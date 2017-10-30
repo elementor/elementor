@@ -127,9 +127,11 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	updateChildIndexes: function() {
-		this.children.each( _.bind( function( view ) {
-			view.updateIndex( this.collection.indexOf( view.model ) + 1 );
-		}, this ) );
+		var collection = this.collection;
+
+		this.children.each( function( view ) {
+			view.updateIndex( collection.indexOf( view.model ) + 1 );
+		} );
 	},
 
 	onRender: function() {

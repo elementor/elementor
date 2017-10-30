@@ -59,7 +59,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		// When a file is selected, run a callback.
-		this.frame.on( 'insert select', _.bind( this.select, this ) );
+		this.frame.on( 'insert select', this.select.bind( this ) );
 	},
 
 	/**

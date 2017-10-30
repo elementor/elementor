@@ -45,8 +45,8 @@ WidgetView = BaseElementView.extend( {
 		var editModel = this.getEditModel();
 
 		editModel.on( {
-			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
-			'remote:render': _.bind( this.onModelRemoteRender, this )
+			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
+			'remote:render': this.onModelRemoteRender.bind( this )
 		} );
 
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
@@ -58,7 +58,7 @@ WidgetView = BaseElementView.extend( {
 		this.render = _.throttle( this.render, 300 );
 
 		this.onRender = function() {
-			_.defer( _.bind( onRenderMethod, this ) );
+			_.defer( onRenderMethod.bind( this ) );
 		};
 	},
 

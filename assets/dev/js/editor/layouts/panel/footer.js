@@ -178,7 +178,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var self = this;
 
 		_.defer( function() {
-			elementor.getPanelView().$el.on( 'click', _.bind( self.onPanelClick, self ) );
+			elementor.getPanelView().$el.on( 'click', self.onPanelClick.bind( self ) );
 		} );
 	}
 } );

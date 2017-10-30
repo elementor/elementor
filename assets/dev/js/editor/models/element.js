@@ -174,7 +174,7 @@ ElementModel = Backbone.Model.extend( {
 				data: JSON.stringify( data ),
 				_nonce: elementor.config.nonce
 			},
-			success: _.bind( this.onRemoteGetHtml, this )
+			success: this.onRemoteGetHtml.bind( this )
 		} );
 	},
 
