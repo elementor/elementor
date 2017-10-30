@@ -20,9 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            hover. Default is empty.
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
- * @param mixed  $default     Optional. The field default value.
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
+ * @param mixed  $default     Optional. The field default value.
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
  *                            and 'none'. 'default' will position the separator
@@ -158,11 +158,11 @@ abstract class Base_Control {
 	/**
 	 * Control content template.
 	 *
-	 * Used to generate the control HTML in the editor using Underscore (JS)
+	 * Used to generate the control HTML in the editor using Underscore JS
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * The content template is wrapped by Base_Control::print_template().
+	 * Note that the content template is wrapped by Base_Control::print_template().
 	 *
 	 * @access public
 	 * @abstract
@@ -172,7 +172,7 @@ abstract class Base_Control {
 	/**
 	 * Print control template.
 	 *
-	 * Used to generate the control HTML in the editor using Underscore (JS)
+	 * Used to generate the control HTML in the editor using Underscore JS
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
