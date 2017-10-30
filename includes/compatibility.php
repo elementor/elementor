@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Compatibility {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function register_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
@@ -18,6 +22,10 @@ class Compatibility {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function init() {
 		// Hotfix for NextGEN Gallery plugin.
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
@@ -122,6 +130,10 @@ class Compatibility {
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
 		// Copy only for a new post.
 		if ( ! $sync ) {
@@ -135,6 +147,8 @@ class Compatibility {
 	 * Normalize Elementor post meta on import,
 	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param array $post_meta
 	 *
 	 * @return array
@@ -154,6 +168,8 @@ class Compatibility {
 	 * Normalize Elementor post meta on import with the new WP_importer,
 	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param array $post_meta
 	 *
 	 * @return array

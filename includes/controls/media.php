@@ -76,6 +76,7 @@ class Control_Media extends Control_Base_Multiple {
 	/**
 	 * Retrieve media control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -90,6 +91,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * Get the default value of the media control. Used to return the default
 	 * values while initializing the media control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -110,6 +112,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * Note: Media import uploads only the defined image size, it does not
 	 * imports the original size.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param array $settings Control settings
@@ -139,6 +142,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * Used to register and enqueue custom scripts and styles used by the media
 	 * control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function enqueue() {
@@ -172,6 +176,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -203,6 +208,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * Get the default settings of the media control. Used to return the default
 	 * settings while initializing the media control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -218,6 +224,7 @@ class Control_Media extends Control_Base_Multiple {
 	 *
 	 * Get the title of the image selected by the media control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -238,6 +245,7 @@ class Control_Media extends Control_Base_Multiple {
 	 *
 	 * Get the alt value of the image selected by the media control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *

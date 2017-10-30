@@ -75,6 +75,7 @@ class Control_Icon extends Base_Data_Control {
 	/**
 	 * Retrieve icon control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -88,6 +89,7 @@ class Control_Icon extends Base_Data_Control {
 	 *
 	 * Get all the available icons.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -892,6 +894,7 @@ class Control_Icon extends Base_Data_Control {
 	 * Get the default settings of the icons control. Used to return the default
 	 * settings while initializing the icons control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -909,6 +912,7 @@ class Control_Icon extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

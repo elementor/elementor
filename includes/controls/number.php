@@ -71,6 +71,7 @@ class Control_Number extends Base_Data_Control {
 	/**
 	 * Retrieve number control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -85,6 +86,7 @@ class Control_Number extends Base_Data_Control {
 	 * Get the default settings of the number control. Used to return the
 	 * default settings while initializing the number control.
 	 *
+	 * @since 1.5.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -104,6 +106,7 @@ class Control_Number extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

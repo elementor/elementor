@@ -31,6 +31,7 @@ class Control_WP_Widget extends Base_Data_Control {
 	/**
 	 * Retrieve WordPress widget control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -45,6 +46,7 @@ class Control_WP_Widget extends Base_Data_Control {
 	 * Get the default value of the WordPress widget control. Used to return the
 	 * default values while initializing the WordPress widget control.
 	 *
+	 * @since 1.4.3
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -60,6 +62,7 @@ class Control_WP_Widget extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

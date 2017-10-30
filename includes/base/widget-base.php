@@ -35,6 +35,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get the element type, in this case `widget`.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -51,6 +52,7 @@ abstract class Widget_Base extends Element_Base {
 	 * initial tools - it adds Duplicate and Remove on top of of Edit and Save
 	 * tools.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 * @static
 	 *
@@ -74,6 +76,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Retrieve widget icon.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -85,6 +88,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Retrieve widget keywords.
 	 *
+	 * @since 1.0.10
 	 * @access public
 	 *
 	 * @return array Widget keywords.
@@ -96,6 +100,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Retrieve widget categories.
 	 *
+	 * @since 1.0.10
 	 * @access public
 	 *
 	 * @return array Widget categories.
@@ -109,6 +114,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Initializing the widget base class.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param array      $data Widget data. Default is an empty array.
@@ -135,6 +141,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Whether to show the widget in the panel or not. By default returns true.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return bool Whether to show the widget in the panel or not.
@@ -152,6 +159,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Note that when you add new controls to widgets they must be wrapped by
 	 * `start_controls_section()` and `end_controls_section()`.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
@@ -175,6 +183,7 @@ abstract class Widget_Base extends Element_Base {
 	 * An internal method that is used to add a skin control to the widget.
 	 * Added at the top of the controls section.
 	 *
+	 * @since 1.0.0
 	 * @access private
 	 */
 	private function _register_skin_control() {
@@ -229,6 +238,7 @@ abstract class Widget_Base extends Element_Base {
 	 *        $this->add_skin( new Skin_Classic( $this ) );
 	 *    }
 	 *
+	 * @since 1.7.12
 	 * @access protected
 	 */
 	protected function _register_skins() {}
@@ -238,6 +248,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get the initial widget configuration.
 	 *
+	 * @since 1.0.10
 	 * @access protected
 	 *
 	 * @return array The initial widget config.
@@ -259,6 +270,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Used to generate the widget template on the editor, using a Backbone
 	 * JavaScript template.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	final public function print_template() {
@@ -289,6 +301,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to generate the edit tools HTML.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _render_settings() {
@@ -315,6 +328,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Parses the content from rich text editor with shortcodes, oEmbed and
 	 * filtered data.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @param string $content Text editor content.
@@ -342,6 +356,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Note that if skin is selected, it will be rendered by the skin itself,
 	 * not the widget.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function render_content() {
@@ -389,6 +404,7 @@ abstract class Widget_Base extends Element_Base {
 	 * to return an empty string because there is no content to return. This way
 	 * if Elementor Pro will be deactivated there won't be any form to display.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function render_plain_content() {
@@ -400,6 +416,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to add several attributes to current widget `_wrapper` element.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
@@ -422,6 +439,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to add stuff before the widget `_wrapper` element.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function before_render() {
@@ -435,6 +453,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to add stuff after the widget `_wrapper` element.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function after_render() {
@@ -453,6 +472,7 @@ abstract class Widget_Base extends Element_Base {
 	 * editor uses the raw data without the HTML in order not to render the data
 	 * again.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param bool $with_html_content Optional. Whether to return the data with
@@ -484,6 +504,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Output the widget final HTML on the frontend.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _print_content() {
@@ -495,6 +516,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get the default widget data. Used to reset the data on initialization.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Default data.
@@ -512,6 +534,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get the widget child type based on element data.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @param array $element_data Widget ID.
@@ -528,6 +551,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Register new widget skin to allow the user to set custom designs. Must be
 	 * called inside the `_register_skins()` method.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param Skin_Base $skin Skin instance.
@@ -543,6 +567,7 @@ abstract class Widget_Base extends Element_Base {
 	 * widget. If the skin does not exist or not assigned to the widget, return
 	 * false.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param string $skin_id Skin ID.
@@ -563,6 +588,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get the ID of the current skin.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Current skin.
@@ -576,6 +602,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get the current skin, or if non exist return false.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return Skin_Base|false Current skin or false.
@@ -589,6 +616,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Unregister an existing skin and remove it from the widget.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param string $skin_id Skin ID.
@@ -604,6 +632,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Get all the skin assigned to the widget.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return Skin_Base[]

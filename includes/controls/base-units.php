@@ -55,6 +55,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	 * Get the default value of the units control. Used to return the default
 	 * values while initializing the units control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -71,6 +72,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	 * Get the default settings of the units control. Used to return the default
 	 * settings while initializing the units control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -118,6 +120,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	 *
 	 * Used to generate the units control template in the editor.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function print_units_template() {

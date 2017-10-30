@@ -47,6 +47,7 @@ class Control_Heading extends Base_UI_Control {
 	/**
 	 * Retrieve heading control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -61,6 +62,7 @@ class Control_Heading extends Base_UI_Control {
 	 * Get the default settings of the heading control. Used to return the
 	 * default settings while initializing the heading control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -78,6 +80,7 @@ class Control_Heading extends Base_UI_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

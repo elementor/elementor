@@ -77,6 +77,7 @@ class Control_Select2 extends Base_Data_Control {
 	/**
 	 * Retrieve select2 control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -91,6 +92,7 @@ class Control_Select2 extends Base_Data_Control {
 	 * Get the default settings of the select2 control. Used to return the
 	 * default settings while initializing the select2 control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -108,6 +110,7 @@ class Control_Select2 extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

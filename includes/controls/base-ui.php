@@ -19,6 +19,7 @@ abstract class Base_UI_Control extends Base_Control {
 	 *
 	 * Get the list of all the available features.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 * @static
 	 *

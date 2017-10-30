@@ -30,6 +30,7 @@ class Control_Tab extends Base_UI_Control {
 	/**
 	 * Retrieve tab control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -45,6 +46,7 @@ class Control_Tab extends Base_UI_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -61,6 +63,7 @@ class Control_Tab extends Base_UI_Control {
 	 * Get the default settings of the tab control. Used to return the
 	 * default settings while initializing the tab control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

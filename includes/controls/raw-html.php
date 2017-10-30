@@ -49,6 +49,7 @@ class Control_Raw_Html extends Base_UI_Control {
 	/**
 	 * Retrieve raw html control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -64,6 +65,7 @@ class Control_Raw_Html extends Base_UI_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -81,6 +83,7 @@ class Control_Raw_Html extends Base_UI_Control {
 	 * Get the default settings of the raw html control. Used to return the
 	 * default settings while initializing the raw html control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

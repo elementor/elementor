@@ -179,6 +179,10 @@ class Admin {
 		return $actions;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
@@ -193,6 +197,10 @@ class Admin {
 		return $classes;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
 
@@ -203,6 +211,10 @@ class Admin {
 		return $links;
 	}
 
+	/**
+	 * @since 1.1.4
+	 * @access public
+	*/
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
 			$row_meta = [
@@ -216,6 +228,10 @@ class Admin {
 		return $plugin_meta;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function admin_notices() {
 		$upgrade_notice = Api::get_upgrade_notice();
 		if ( empty( $upgrade_notice ) ) {
@@ -256,7 +272,7 @@ class Admin {
 					<i class="eicon-elementor-square"></i>
 				</div>
 				<div class="elementor-message-content">
-					<h3><?php _e( 'New in Elementor', 'elementor' ); ?></h3>
+					<strong><?php _e( 'Update Notification', 'elementor' ); ?></strong>
 					<p>
 					<?php
 						printf(
@@ -277,7 +293,7 @@ class Admin {
 						?>
 					</p>
 				</div>
-				<div class="elementor-update-now">
+				<div class="elementor-message-action">
 					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'Update Now', 'elementor' ); ?></a>
 				</div>
 			</div>
@@ -285,6 +301,10 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->base, 'elementor' ) );
@@ -300,6 +320,10 @@ class Admin {
 		return $footer_text;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue_feedback_dialog_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -330,6 +354,10 @@ class Admin {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function print_deactivate_feedback_dialog() {
 		$deactivate_reasons = [
 			'no_longer_needed' => [
@@ -383,6 +411,10 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function ajax_elementor_deactivate_feedback() {
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_elementor_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
@@ -407,6 +439,8 @@ class Admin {
 
 	/**
 	 * Admin constructor.
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );

@@ -69,6 +69,10 @@ class Controls_Manager {
 
 	private static $tabs;
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private static function init_tabs() {
 		self::$tabs = [
 			self::TAB_CONTENT => __( 'Content', 'elementor' ),
@@ -82,6 +86,10 @@ class Controls_Manager {
 		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0', '`' . __CLASS__ . '::add_tab( $tab_name, $tab_title )`' );
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public static function get_tabs() {
 		if ( ! self::$tabs ) {
 			self::init_tabs();
@@ -90,6 +98,10 @@ class Controls_Manager {
 		return self::$tabs;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public static function add_tab( $tab_name, $tab_title ) {
 		if ( ! self::$tabs ) {
 			self::init_tabs();
@@ -290,6 +302,10 @@ class Controls_Manager {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function open_stack( Controls_Stack $element ) {
 		$stack_id = $element->get_unique_name();
 
@@ -299,6 +315,10 @@ class Controls_Manager {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $options = [] ) {
 		if ( ! is_array( $options ) ) {
 			_deprecated_argument( __FUNCTION__, '1.7.0', 'Use `[ \'overwrite\' => ' . var_export( $options, true ) . ' ]` instead.' );
@@ -372,6 +392,10 @@ class Controls_Manager {
 		return true;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function remove_control_from_stack( $stack_id, $control_id ) {
 		if ( is_array( $control_id ) ) {
 			foreach ( $control_id as $id ) {
@@ -391,6 +415,8 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @since 1.1.0
+	 * @access public
 	 * @param string $stack_id
 	 * @param string $control_id
 	 *
@@ -404,6 +430,10 @@ class Controls_Manager {
 		return $this->stacks[ $stack_id ]['controls'][ $control_id ];
 	}
 
+	/**
+	 * @since 1.1.0
+	 * @access public
+	*/
 	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data ) {
 		$old_control_data = $this->get_control_from_stack( $element->get_unique_name(), $control_id );
 
@@ -416,6 +446,10 @@ class Controls_Manager {
 		return $this->add_control_to_stack( $element, $control_id, $control_data, [ 'overwrite' => true ] );
 	}
 
+	/**
+	 * @since 1.7.1
+	 * @access public
+	*/
 	public function get_stacks( $stack_id = null ) {
 		if ( $stack_id ) {
 			if ( isset( $this->stacks[ $stack_id ] ) ) {
@@ -428,6 +462,10 @@ class Controls_Manager {
 		return $this->stacks;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_element_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_unique_name();
 
@@ -449,6 +487,8 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param $element Element_Base
 	 */
 	public function add_custom_css_controls( $element ) {

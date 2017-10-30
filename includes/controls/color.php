@@ -68,6 +68,7 @@ class Control_Color extends Base_Data_Control {
 	/**
 	 * Retrieve color control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -82,6 +83,7 @@ class Control_Color extends Base_Data_Control {
 	 * Used to register and enqueue custom scripts and styles used by the color
 	 * control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function enqueue() {
@@ -108,6 +110,7 @@ class Control_Color extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -146,6 +149,7 @@ class Control_Color extends Base_Data_Control {
 	 * Get the default settings of the color control. Used to return the default
 	 * settings while initializing the color control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

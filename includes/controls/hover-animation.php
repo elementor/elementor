@@ -68,6 +68,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	/**
 	 * Retrieve hover animation control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -81,6 +82,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 *
 	 * Get the available hover animation effects.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -129,6 +131,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -157,6 +160,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 * Get the default settings of the hover animation control. Used to return
 	 * the default settings while initializing the hover animation control.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

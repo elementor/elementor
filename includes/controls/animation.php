@@ -70,6 +70,7 @@ class Control_Animation extends Base_Data_Control {
 	 *
 	 * Get the animation control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -83,6 +84,7 @@ class Control_Animation extends Base_Data_Control {
 	 *
 	 * Get the list of all the available animations.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -155,7 +157,8 @@ class Control_Animation extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @access protected
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public function content_template() {
 		$control_uid = $this->get_control_uid();

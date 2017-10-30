@@ -67,6 +67,7 @@ class Control_Select extends Base_Data_Control {
 	/**
 	 * Retrieve select control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -82,6 +83,7 @@ class Control_Select extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

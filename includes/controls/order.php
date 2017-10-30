@@ -57,6 +57,7 @@ class Control_Order extends Control_Base_Multiple {
 	/**
 	 * Retrieve order control type.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -71,6 +72,7 @@ class Control_Order extends Control_Base_Multiple {
 	 * Get the default value of the order control. Used to return the default
 	 * values while initializing the order control.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -89,6 +91,7 @@ class Control_Order extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {

@@ -18,6 +18,10 @@ class Settings extends Settings_Page {
 	const TAB_INTEGRATIONS = 'integrations';
 	const TAB_ADVANCED = 'advanced';
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_admin_menu() {
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
@@ -30,6 +34,10 @@ class Settings extends Settings_Page {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
@@ -41,6 +49,10 @@ class Settings extends Settings_Page {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function go_elementor_pro() {
 		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
 			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
@@ -48,6 +60,10 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function admin_menu_change_name() {
 		global $submenu;
 
@@ -56,6 +72,10 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		parent::__construct();
 
@@ -69,10 +89,18 @@ class Settings extends Settings_Page {
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 	}
 
+	/**
+	 * @since 1.7.5
+	 * @access public
+	*/
 	public function update_css_print_method() {
 		Plugin::$instance->posts_css_manager->clear_cache();
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
@@ -253,6 +281,10 @@ class Settings extends Settings_Page {
 		];
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	protected function get_page_title() {
 		return __( 'Elementor', 'elementor' );
 	}
