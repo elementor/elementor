@@ -188,7 +188,7 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {

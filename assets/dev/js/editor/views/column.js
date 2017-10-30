@@ -138,7 +138,7 @@ ColumnView = BaseElementView.extend( {
 			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
+			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',

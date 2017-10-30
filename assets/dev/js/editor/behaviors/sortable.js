@@ -62,7 +62,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					top: 20,
 					left: 25
 				},
-				helper: _.bind( this._getSortableHelper, this ),
+				helper: this._getSortableHelper.bind( this ),
 				cancel: '.elementor-inline-editing, .elementor-tab-title'
 
 			},

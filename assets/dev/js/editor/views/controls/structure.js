@@ -17,7 +17,7 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 	templateHelpers: function() {
 		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
 
-		helpers.getMorePresets = _.bind( this.getMorePresets, this );
+		helpers.getMorePresets = this.getMorePresets.bind( this );
 
 		return helpers;
 	},
