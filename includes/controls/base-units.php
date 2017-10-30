@@ -20,8 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     @type int    $right    Optional. Right unit. Default is empty.
  *     @type int    $bottom   Optional. Bottom unit. Default is empty.
  *     @type int    $left     Optional. Left unit. Default is empty.
- *     @type string $unit     Optional. The selected CSS Unit. Available units
- *                            are '%', 'px', 'em', 'rem' or 'deg'. Default is 'px'.
+ *     @type string $unit     Optional. The CSS unit type. Available units are
+ *                            '%', 'px', 'em', 'rem' or 'deg'. Default is 'px'.
  *     @type bool   $isLinked Optional. Whether to link all the values together
  *                            or not. Used to prevent setting different values
  *                            foreach unit location (top, right, bottom,
@@ -31,18 +31,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                                         units like 'px', '%' and 'em'.
  *                                         Default is [ 'px' ].
  * @param array|string $allowed_dimensions Optional. Which fields to show.
- *                                          Available values are 'all',
+ *                                         Available values are 'all',
  *                                         'horizontal', 'vertical',
- *                                         [ 'top', 'left' ... ] Default is 'all'.
+ *                                         [ 'top', 'left' ... ]. Default is 'all'.
  * @param array $range {
- *     The range parameter is populated by default with ranges for each unregister
+ *     The range parameter is populated by default with ranges for each register
  *     size (e.g. px|em|rem|%|deg). @see Control_Base_Units::get_default_settings()
  *
  *     {
- *      @type integer $min  The minimum value of range.
- *      @type integer $max  The maximum value of range.
- *      @type integer $step The intervals value that will be incremented or
- *                          decremented when using the controls' spinners.
+ *      @type integer $min  Optional. The minimum value of range.
+ *      @type integer $max  Optional. The maximum value of range.
+ *      @type integer $step Optional. The intervals value that will be incremented
+ *                          or decremented when using the controls' spinners.
  *     },
  *     ...
  * }
