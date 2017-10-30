@@ -37,7 +37,7 @@ ControlIconView = ControlSelect2View.extend( {
 			return icon.text;
 		}
 
-		return Backbone.$(
+		return jQuery(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
 	},

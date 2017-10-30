@@ -145,7 +145,7 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
-				var newIndex = Backbone.$( this ).index();
+				var newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
 					newIndex++;

@@ -59,7 +59,7 @@ ElementModel = Backbone.Model.extend( {
 			},
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
-		if ( Backbone.$.isEmptyObject( settings ) ) {
+		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
 		}
 

@@ -13,7 +13,7 @@ ControlsCSSParser = ViewModule.extend( {
 
 	getDefaultElements: function() {
 		return {
-			$stylesheetElement: Backbone.$( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
+			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
 		};
 	},
 

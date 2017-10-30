@@ -123,7 +123,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		var model = elementor.channels.data.request( 'dragging:model' );
 
-		Backbone.$( event.target )
+		jQuery( event.target )
 			.addClass( 'elementor-draggable-over' )
 			.attr( {
 				'data-dragged-element': model.get( 'elType' ),
@@ -136,7 +136,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortOut: function( event ) {
 		event.stopPropagation();
 
-		Backbone.$( event.target )
+		jQuery( event.target )
 			.removeClass( 'elementor-draggable-over' )
 			.removeAttr( 'data-dragged-element data-dragged-is-inner' );
 
@@ -147,7 +147,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		event.stopPropagation();
 
 		if ( this.view.isCollectionFilled() ) {
-			Backbone.$( ui.sender ).sortable( 'cancel' );
+			jQuery( ui.sender ).sortable( 'cancel' );
 			return;
 		}
 
@@ -157,7 +157,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
 
 		if ( draggedIsInnerSection && targetIsInnerColumn ) {
-			Backbone.$( ui.sender ).sortable( 'cancel' );
+			jQuery( ui.sender ).sortable( 'cancel' );
 
 			return;
 		}

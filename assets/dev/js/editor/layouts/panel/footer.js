@@ -42,7 +42,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		this.getDialog = function() {
 			if ( ! dialog ) {
-				var $ = Backbone.$,
+				var $ = jQuery,
 					$dialogMessage = $( '<div>', {
 						'class': 'elementor-dialog-message'
 					} ),
@@ -104,7 +104,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onPanelClick: function( event ) {
-		var $target = Backbone.$( event.target ),
+		var $target = jQuery( event.target ),
 			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
 
 		if ( isClickInsideOfTool ) {

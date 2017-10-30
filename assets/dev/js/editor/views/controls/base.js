@@ -74,7 +74,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel = options.elementSettingsModel;
 
 		var controlType = this.model.get( 'type' ),
-			controlSettings = Backbone.$.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
+			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
@@ -206,7 +206,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	onSwitcherClick: function( event ) {
-		var device = Backbone.$( event.currentTarget ).data( 'device' );
+		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
 
@@ -248,7 +248,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.$( '.tooltip-target' ).tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
-				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
+				var gravity = jQuery( this ).data( 'tooltip-pos' );
 
 				if ( undefined !== gravity ) {
 					return gravity;
