@@ -13,6 +13,7 @@ class Widget_Video extends Widget_Base {
 	/**
 	 * Retrieve video widget name.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -24,6 +25,7 @@ class Widget_Video extends Widget_Base {
 	/**
 	 * Retrieve video widget title.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -35,6 +37,7 @@ class Widget_Video extends Widget_Base {
 	/**
 	 * Retrieve video widget icon.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -48,6 +51,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _register_controls() {
@@ -533,6 +537,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
+	 * @since 1.4.5
 	 * @access protected
 	 */
 	protected function render() {
@@ -612,6 +617,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Override the default behavior, by printing the video URL insted of rendering it.
 	 *
+	 * @since 1.4.5
 	 * @access public
 	 */
 	public function render_plain_content() {
@@ -624,6 +630,7 @@ class Widget_Video extends Widget_Base {
 	/**
 	 * Retrieve video widget embed parameters.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 *
 	 * @return array Video embed parameters.
@@ -669,6 +676,7 @@ class Widget_Video extends Widget_Base {
 	/**
 	 * Retrieve video widget hosted parameters.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return array Video hosted parameters.
@@ -702,6 +710,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Used to determine whether an overlay image was set for the video.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 *
 	 * @return bool Whether an image overlay was set for the video.

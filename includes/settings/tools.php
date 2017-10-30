@@ -9,6 +9,10 @@ class Tools extends Settings_Page {
 
 	const PAGE_ID = 'elementor-tools';
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_admin_menu() {
 		add_submenu_page(
 			Settings::PAGE_ID,
@@ -20,6 +24,10 @@ class Tools extends Settings_Page {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
@@ -28,6 +36,10 @@ class Tools extends Settings_Page {
 		wp_send_json_success();
 	}
 
+	/**
+	 * @since 1.1.0
+	 * @access public
+	*/
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
 
@@ -60,6 +72,10 @@ class Tools extends Settings_Page {
 		}
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
 
@@ -83,6 +99,10 @@ class Tools extends Settings_Page {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		parent::__construct();
 
@@ -96,6 +116,10 @@ class Tools extends Settings_Page {
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	protected function create_tabs() {
 		return [
 			'general' => [
@@ -196,12 +220,20 @@ class Tools extends Settings_Page {
 		];
 	}
 
+	/**
+	 * @since 1.5.2
+	 * @access public
+	*/
 	public function display_settings_page() {
 		wp_enqueue_script( 'elementor-dialog' );
 
 		parent::display_settings_page();
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	protected function get_page_title() {
 		return __( 'Tools', 'elementor' );
 	}

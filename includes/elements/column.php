@@ -9,6 +9,10 @@ class Element_Column extends Element_Base {
 
 	protected static $_edit_tools;
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected static function get_default_edit_tools() {
 		$column_label = __( 'Column', 'elementor' );
 
@@ -28,18 +32,34 @@ class Element_Column extends Element_Base {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_name() {
 		return 'column';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_title() {
 		return __( 'Column', 'elementor' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_icon() {
 		return 'eicon-column';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _register_controls() {
 		// Section Layout.
 		$this->start_controls_section(
@@ -439,7 +459,7 @@ class Element_Column extends Element_Base {
 				'colors_warning',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'raw' => __( 'Note: The following colors won\'t work if Default Colors are enabled.', 'elementor' ),
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 				]
 			);
@@ -701,6 +721,10 @@ class Element_Column extends Element_Base {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _render_settings() {
 		?>
 		<div class="elementor-element-overlay">
@@ -718,6 +742,10 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _content_template() {
 		?>
 		<div class="elementor-column-wrap">
@@ -727,6 +755,10 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function before_render() {
 		$settings = $this->get_settings();
 
@@ -747,6 +779,10 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function after_render() {
 		?>
 				</div>
@@ -755,6 +791,10 @@ class Element_Column extends Element_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.3.0
+	 * @access protected
+	*/
 	protected function _add_render_attributes() {
 		parent::_add_render_attributes();
 
@@ -775,6 +815,10 @@ class Element_Column extends Element_Base {
 		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
@@ -783,6 +827,10 @@ class Element_Column extends Element_Base {
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
+	/**
+	 * @since 1.5.3
+	 * @access private
+	*/
 	private function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 

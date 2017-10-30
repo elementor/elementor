@@ -86,20 +86,28 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		if ( this.editing ) {
+		if ( this.editing || 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
 
 		this.$currentEditingArea = $element;
 
 		var elementData = this.$currentEditingArea.data(),
-			editModel = this.view.getEditModel();
+			elementDataToolbar = elementData.elementorInlineEditingToolbar,
+			mode = 'advanced' === elementDataToolbar ? 'advanced' : 'basic',
+			editModel = this.view.getEditModel(),
+			inlineEditingConfig = elementor.config.inlineEditing,
+			contentHTML = editModel.getSetting( this.getEditingSettingKey() );
+
+		if ( 'advanced' === mode ) {
+			contentHTML = wp.editor.autop( contentHTML );
+		}
 
 		/**
 		 *  Replace rendered content with unrendered content.
 		 *  This way the user can edit the original content, before shortcodes and oEmbeds are fired.
 		 */
-		this.$currentEditingArea.html( editModel.getSetting( this.getEditingSettingKey() ) );
+		this.$currentEditingArea.html( contentHTML );
 
 		var ElementorInlineEditor = elementorFrontend.getElements( 'window' ).ElementorInlineEditor;
 
@@ -107,13 +115,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
-		var inlineEditingConfig = elementor.config.inlineEditing,
-			elementDataToolbar = elementData.elementorInlineEditingToolbar;
-
-		this.pen = new ElementorInlineEditor( {
+		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$currentEditingArea[0],
+			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
@@ -147,7 +153,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			}
 		} );
 
-		var $menuItems = jQuery( this.pen._menu ).children();
+		var $menuItems = jQuery( this.editor._menu ).children();
 
 		/**
 		 * When the edit area is not focused (on blur) the inline editing is stopped.
@@ -166,7 +172,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	stopEditing: function() {
 		this.editing = false;
 
-		this.pen.destroy();
+		this.editor.destroy();
 
 		this.view.allowRender = true;
 
@@ -213,7 +219,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.$currentEditingArea.html() );
+		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
 	}
 } );
 
@@ -446,7 +452,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '.elementor-inline-editing'
+				cancel: '.elementor-inline-editing, .elementor-tab-title'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
@@ -2889,7 +2895,9 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend( {
 	},
 
 	onPanelElementsFilterChange: function() {
-		elementor.getPanelView().getCurrentPageView().showView( 'elements' );
+		if ( elementor.channels.panelElements.request( 'filter:value' ) ) {
+			elementor.getPanelView().getCurrentPageView().showView( 'elements' );
+		}
 	}
 } );
 
@@ -5204,15 +5212,7 @@ helpers = {
 	},
 
 	getUniqueID: function() {
-		var id;
-
-		// TODO: Check conflict models
-		//while ( true ) {
-			id = Math.random().toString( 36 ).substr( 2, 7 );
-			//if ( 1 > $( 'li.item-id-' + id ).length ) {
-				return id;
-			//}
-		//}
+		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
 	stringReplaceAll: function( string, replaces ) {
@@ -6675,6 +6675,12 @@ module.exports = BaseAddSectionView.extend( {
 },{"elementor-views/add-section/base":76}],79:[function(require,module,exports){
 module.exports = Marionette.CompositeView.extend( {
 
+	templateHelpers: function() {
+		return {
+			view: this
+		};
+	},
+
 	getBehavior: function( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
@@ -6771,6 +6777,10 @@ BaseElementView = BaseContainer.extend( {
 		return this.model.get( 'elType' );
 	},
 
+	getIDInt: function() {
+		return parseInt( this.getID(), 16 );
+	},
+
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
@@ -6790,11 +6800,13 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
+	// TODO: backward compatibility method since 1.8.0
 	templateHelpers: function() {
-		return {
-			elementModel: this.model,
-			editModel: this.getEditModel()
-		};
+		var templateHelpers = BaseContainer.prototype.templateHelpers.apply( this, arguments );
+
+		return jQuery.extend( templateHelpers, {
+			editModel: this.getEditModel() // @deprecated. Use view.getEditModel() instead.
+		} );
 	},
 
 	getTemplateType: function() {
@@ -7088,7 +7100,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditSettingsChanged: function( changedModel ) {
-		this.renderOnChange( changedModel );
+		elementor.channels.editor
+			.trigger( 'change:editSettings', changedModel, this );
 	},
 
 	onSettingsChanged: function( changedModel ) {
@@ -9807,7 +9820,12 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	},
 
 	onAfterExternalChange: function() {
-		tinymce.get( this.editorID ).setContent( this.getControlValue() );
+		var controlValue = this.getControlValue();
+
+		tinymce.get( this.editorID ).setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
 	onBeforeDestroy: function() {

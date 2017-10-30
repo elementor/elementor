@@ -15,6 +15,10 @@ class Editor {
 
 	private $_editor_templates = [];
 
+	/**
+	 * @since 1.7.0
+	 * @access public
+	*/
 	public function init( $die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
 			return;
@@ -87,10 +91,18 @@ class Editor {
 		}
 	}
 
+	/**
+	 * @since 1.8.0
+	 * @access public
+	 */
 	public function get_post_id() {
 		return $this->_post_id;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function redirect_to_new_url() {
 		if ( ! isset( $_GET['elementor'] ) ) {
 			return;
@@ -106,6 +118,10 @@ class Editor {
 		die;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
@@ -137,6 +153,8 @@ class Editor {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param $post_id
 	 */
 	public function lock_post( $post_id ) {
@@ -148,6 +166,8 @@ class Editor {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param $post_id
 	 *
 	 * @return bool|\WP_User
@@ -165,10 +185,18 @@ class Editor {
 		return get_user_by( 'id', $locked_user );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function print_panel_html() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
@@ -406,8 +434,8 @@ class Editor {
 				'saved' => __( 'Saved', 'elementor' ),
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
 				'edit_element' => __( 'Edit {0}', 'elementor' ),
-				'global_colors' => __( 'Global Colors', 'elementor' ),
-				'global_fonts' => __( 'Global Fonts', 'elementor' ),
+				'global_colors' => __( 'Default Colors', 'elementor' ),
+				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
 				'soon' => __( 'Soon', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
@@ -475,6 +503,10 @@ class Editor {
 		do_action( 'elementor/editor/after_enqueue_scripts' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue_styles() {
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
@@ -536,6 +568,10 @@ class Editor {
 		do_action( 'elementor/editor/after_enqueue_styles' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_wp_editor_config() {
 		ob_start();
 		wp_editor(
@@ -550,17 +586,27 @@ class Editor {
 		return ob_get_clean();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function editor_head_trigger() {
 		do_action( 'elementor/editor/wp_head' );
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param string $template_path - Can be either a link to template file or template HTML content
 	 */
 	public function add_editor_template( $template_path ) {
 		$this->_editor_templates[] = $template_path;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function wp_footer() {
 		$plugin = Plugin::$instance;
 
@@ -586,17 +632,27 @@ class Editor {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param bool $edit_mode
 	 */
 	public function set_edit_mode( $edit_mode ) {
 		$this->_is_edit_mode = $edit_mode;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 	}
 
+	/**
+	 * @since 1.7.0
+	 * @access private
+	*/
 	private function init_editor_templates() {
 		// It can be filled from plugins
 		$this->_editor_templates = array_merge( $this->_editor_templates, [

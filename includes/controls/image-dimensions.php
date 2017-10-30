@@ -17,10 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Image_Dimensions extends Control_Base_Multiple {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'image_dimensions';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [
 			'width' => '',
@@ -28,6 +36,10 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
@@ -35,6 +47,10 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		if ( ! $this->_is_image_editor_supports() ) : ?>
 			<div class="elementor-panel-alert elementor-panel-alert-danger">
@@ -67,6 +83,10 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _is_image_editor_supports() {
 		$arg = [
 			'mime_type' => 'image/jpeg',

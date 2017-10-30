@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Conditions {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function compare( $left_value, $right_value, $operator ) {
 		switch ( $operator ) {
 			case '==':
@@ -32,6 +36,10 @@ class Conditions {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function check( array $conditions, array $comparison ) {
 		$is_or_condition = isset( $conditions['relation'] ) && 'or' === $conditions['relation'];
 

@@ -20,10 +20,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Control_Box_Shadow extends Control_Base_Multiple {
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_type() {
 		return 'box_shadow';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_value() {
 		return [
 			'horizontal' => 0,
@@ -34,6 +42,10 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_sliders() {
 		return [
 			'blur' => [
@@ -59,6 +71,10 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function content_template() {
 		?>
 		<#

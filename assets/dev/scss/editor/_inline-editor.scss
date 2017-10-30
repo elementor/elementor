@@ -106,6 +106,10 @@
 					box-shadow: none;
 					color: #fff;
 				}
+
+				&::placeholder {
+					color: $editor-lightest;
+				}
 			}
 		}
 

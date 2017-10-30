@@ -13,6 +13,7 @@ class Widget_Image extends Widget_Base {
 	/**
 	 * Retrieve image widget name.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -24,6 +25,7 @@ class Widget_Image extends Widget_Base {
 	/**
 	 * Retrieve image widget title.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -35,6 +37,7 @@ class Widget_Image extends Widget_Base {
 	/**
 	 * Retrieve image widget icon.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -48,6 +51,7 @@ class Widget_Image extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _register_controls() {
@@ -341,6 +345,7 @@ class Widget_Image extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {
@@ -414,6 +419,7 @@ class Widget_Image extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _content_template() {
@@ -424,7 +430,7 @@ class Widget_Image extends Widget_Base {
 				url: settings.image.url,
 				size: settings.image_size,
 				dimension: settings.image_custom_dimension,
-				model: editModel
+				model: view.getEditModel()
 			};
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
@@ -480,6 +486,7 @@ class Widget_Image extends Widget_Base {
 	/**
 	 * Retrieve image widget link URL.
 	 *
+	 * @since 1.0.0
 	 * @access private
 	 *
 	 * @param object $instance
