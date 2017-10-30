@@ -166,7 +166,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.$currentEditingArea
 			.focus()
-			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
+			.on( 'blur', this.onInlineEditingBlur.bind( this ) );
 	},
 
 	stopEditing: function() {
@@ -451,7 +451,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					top: 20,
 					left: 25
 				},
-				helper: _.bind( this._getSortableHelper, this ),
+				helper: this._getSortableHelper.bind( this ),
 				cancel: '.elementor-inline-editing, .elementor-tab-title'
 
 			},
@@ -512,7 +512,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		var model = elementor.channels.data.request( 'dragging:model' );
 
-		Backbone.$( event.target )
+		jQuery( event.target )
 			.addClass( 'elementor-draggable-over' )
 			.attr( {
 				'data-dragged-element': model.get( 'elType' ),
@@ -525,7 +525,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortOut: function( event ) {
 		event.stopPropagation();
 
-		Backbone.$( event.target )
+		jQuery( event.target )
 			.removeClass( 'elementor-draggable-over' )
 			.removeAttr( 'data-dragged-element data-dragged-is-inner' );
 
@@ -536,7 +536,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		event.stopPropagation();
 
 		if ( this.view.isCollectionFilled() ) {
-			Backbone.$( ui.sender ).sortable( 'cancel' );
+			jQuery( ui.sender ).sortable( 'cancel' );
 			return;
 		}
 
@@ -546,7 +546,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
 
 		if ( draggedIsInnerSection && targetIsInnerColumn ) {
-			Backbone.$( ui.sender ).sortable( 'cancel' );
+			jQuery( ui.sender ).sortable( 'cancel' );
 
 			return;
 		}
@@ -1153,7 +1153,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	onMenuItemClick: function( event ) {
 		var item = event.currentTarget;
 
-		this.activateMenuItem( Backbone.$( item ) );
+		this.activateMenuItem( jQuery( item ) );
 
 		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
 	}
@@ -1681,15 +1681,17 @@ App = Marionette.Application.extend( {
 	},
 
 	initPreview: function() {
-		this.$previewWrapper = Backbone.$( '#elementor-preview' );
+		var $ = jQuery;
 
-		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
+		this.$previewWrapper = $( '#elementor-preview' );
+
+		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
 
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
 		if ( ! this.$preview ) {
-			this.$preview = Backbone.$( '<iframe>', {
+			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.preview_link + '&' + ( new Date().getTime() ),
 				allowfullscreen: 1
@@ -1698,7 +1700,7 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -1864,7 +1866,7 @@ App = Marionette.Application.extend( {
 
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
-			var $target = Backbone.$( event.target ),
+			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
@@ -1916,7 +1918,7 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		this.$window = Backbone.$( window );
+		this.$window = jQuery( window );
 
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -2005,7 +2007,7 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
+		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
@@ -2161,7 +2163,7 @@ App = Marionette.Application.extend( {
 	},
 
 	reloadPreview: function() {
-		Backbone.$( '#elementor-preview-loading' ).show();
+		jQuery( '#elementor-preview-loading' ).show();
 
 		this.$preview[0].contentWindow.location.reload( true );
 	},
@@ -2177,7 +2179,7 @@ App = Marionette.Application.extend( {
 			return;
 		}
 
-		Backbone.$( 'body' )
+		jQuery( 'body' )
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 
@@ -2378,7 +2380,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 
 		this.getDialog = function() {
 			if ( ! dialog ) {
-				var $ = Backbone.$,
+				var $ = jQuery,
 					$dialogMessage = $( '<div>', {
 						'class': 'elementor-dialog-message'
 					} ),
@@ -2440,7 +2442,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	},
 
 	onPanelClick: function( event ) {
-		var $target = Backbone.$( event.target ),
+		var $target = jQuery( event.target ),
 			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
 
 		if ( isClickInsideOfTool ) {
@@ -2514,7 +2516,7 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		var self = this;
 
 		_.defer( function() {
-			elementor.getPanelView().$el.on( 'click', _.bind( self.onPanelClick, self ) );
+			elementor.getPanelView().$el.on( 'click', self.onPanelClick.bind( self ) );
 		} );
 	}
 } );
@@ -3289,16 +3291,17 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	resetCollection: function() {
-		var items = this.model.get( 'items' );
+		var self = this,
+			items = self.model.get( 'items' );
 
-		this.collection = new Backbone.Collection();
+		self.collection = new Backbone.Collection();
 
-		_.each( items, _.bind( function( item, key ) {
-			item.type = this.getType();
+		_.each( items, function( item, key ) {
+			item.type = self.getType();
 			item.key = key;
 
-			this.collection.add( item );
-		}, this ) );
+			self.collection.add( item );
+		} );
 	},
 
 	resetScheme: function() {
@@ -3371,7 +3374,7 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 	},
 
 	onSystemSchemeClick: function( event ) {
-		var $schemeClicked = Backbone.$( event.currentTarget ),
+		var $schemeClicked = jQuery( event.currentTarget ),
 			schemeName = $schemeClicked.data( 'schemeName' ),
 			scheme = elementor.config.system_schemes[ this.getType() ][ schemeName ].items;
 
@@ -3441,10 +3444,12 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	onRender: function() {
-		elementor.helpers.wpColorPicker( this.ui.input, {
-			change: _.bind( function( event, ui ) {
-				this.triggerMethod( 'value:change', ui.color.toString() );
-			}, this )
+		var self = this;
+
+		elementor.helpers.wpColorPicker( self.ui.input, {
+			change: function( event, ui ) {
+				self.triggerMethod( 'value:change', ui.color.toString() );
+			}
 		} );
 	}
 } );
@@ -3484,7 +3489,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		var self = this;
 
 		this.ui.inputFields.add( this.ui.selectFields ).each( function() {
-			var $this = Backbone.$( this ),
+			var $this = jQuery( this ),
 				name = $this.attr( 'name' ),
 				value = self.model.get( 'value' )[ name ];
 
@@ -3502,7 +3507,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 
 	changeUIValue: function( newValue ) {
 		this.ui.allFields.each( function() {
-			var $this = Backbone.$( this ),
+			var $this = jQuery( this ),
 				thisName = $this.attr( 'name' ),
 				newFieldValue = newValue[ thisName ];
 
@@ -3725,9 +3730,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.updateScrollbar = _.throttle( this.updateScrollbar, 100 );
 
 		this.getRegion( 'content' )
-			.on( 'before:show', _.bind( this.onEditorBeforeShow, this ) )
-			.on( 'empty', _.bind( this.onEditorEmpty, this ) )
-			.on( 'show', _.bind( this.updateScrollbar, this ) );
+			.on( 'before:show', this.onEditorBeforeShow.bind( this ) )
+			.on( 'empty', this.onEditorEmpty.bind( this ) )
+			.on( 'show', this.updateScrollbar.bind( this ) );
 
 		// Set default page to elements
 		this.setPage( 'elements' );
@@ -3736,7 +3741,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( _.bind( this.updateScrollbar, this ) );
+		_.defer( this.updateScrollbar.bind( this ) );
 	},
 
 	onEditorEmpty: function() {
@@ -4059,7 +4064,7 @@ ElementModel = Backbone.Model.extend( {
 			},
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
-		if ( Backbone.$.isEmptyObject( settings ) ) {
+		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
 		}
 
@@ -4174,7 +4179,7 @@ ElementModel = Backbone.Model.extend( {
 				data: JSON.stringify( data ),
 				_nonce: elementor.config.nonce
 			},
-			success: _.bind( this.onRemoteGetHtml, this )
+			success: this.onRemoteGetHtml.bind( this )
 		} );
 	},
 
@@ -4592,7 +4597,7 @@ Ajax = {
 
 		action = this.config.actionPrefix + action;
 
-		Backbone.$.extend( ajaxParams, options );
+		jQuery.extend( ajaxParams, options );
 
 		if ( ajaxParams.data instanceof FormData ) {
 			ajaxParams.data.append( 'action', action );
@@ -4623,7 +4628,7 @@ Ajax = {
 			}
 		}
 
-		return Backbone.$.ajax( ajaxParams );
+		return jQuery.ajax( ajaxParams );
 	}
 };
 
@@ -4666,7 +4671,7 @@ Conditions = function() {
 		var isOrCondition = 'or' === conditions.relation,
 			conditionSucceed = ! isOrCondition;
 
-		Backbone.$.each( conditions.terms, function() {
+		jQuery.each( conditions.terms, function() {
 			var term = this,
 				comparisonResult;
 
@@ -4718,7 +4723,7 @@ ControlsCSSParser = ViewModule.extend( {
 
 	getDefaultElements: function() {
 		return {
-			$stylesheetElement: Backbone.$( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
+			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
 		};
 	},
 
@@ -5037,7 +5042,7 @@ heartbeat = {
 			return modal;
 		};
 
-		Backbone.$( document ).on( {
+		jQuery( document ).on( {
 			'heartbeat-send': function( event, data ) {
 				data.elementor_post_lock = {
 					post_ID: elementor.config.post_id
@@ -5173,7 +5178,7 @@ helpers = {
 
 		if ( undefined !== container[ elementType ] ) {
 
-			if ( Backbone.$.isPlainObject( container[ elementType ] ) ) {
+			if ( jQuery.isPlainObject( container[ elementType ] ) ) {
 				return Object.keys( container[ elementType ] );
 			}
 
@@ -5186,7 +5191,7 @@ helpers = {
 				continue;
 			}
 
-			if ( ! Backbone.$.isPlainObject( container[ type ] ) ) {
+			if ( ! jQuery.isPlainObject( container[ type ] ) ) {
 				continue;
 			}
 
@@ -5276,7 +5281,7 @@ helpers = {
 				return;
 			}
 
-			Backbone.$( this )
+			jQuery( this )
 				.data( 'backup-pointer-events', currentPointerEvents )
 				.css( 'pointer-events', 'none' );
 		} );
@@ -5284,7 +5289,7 @@ helpers = {
 
 	enableElementEvents: function( $element ) {
 		$element.each( function() {
-			var $this = Backbone.$( this ),
+			var $this = jQuery( this ),
 				backupPointerEvents = $this.data( 'backup-pointer-events' );
 
 			if ( undefined === backupPointerEvents ) {
@@ -6098,7 +6103,7 @@ Schemes = function() {
 	};
 
 	var initElements = function() {
-		elements.$style = Backbone.$( '<style>', {
+		elements.$style = jQuery( '<style>', {
 			id: 'elementor-style-scheme'
 		});
 
@@ -6550,7 +6555,7 @@ AddSectionView = Marionette.ItemView.extend( {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: _.bind( this.onDropping, this )
+			onDropping: this.onDropping.bind( this )
 		} );
 	},
 
@@ -6864,7 +6869,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {
-		validationCallback = _.bind( validationCallback, this );
+		validationCallback = validationCallback.bind( this );
 
 		var validator = new Validator( { customValidationMethod: validationCallback } ),
 			validators = this.getEditModel().get( 'settings' ).validators;
@@ -6892,7 +6897,7 @@ BaseElementView = BaseContainer.extend( {
 		var editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
-		_.each( settings.getFontControls(), _.bind( function( control ) {
+		_.each( settings.getFontControls(), function( control ) {
 			var fontFamilyName = editModel.getSetting( control.name );
 
 			if ( _.isEmpty( fontFamilyName ) ) {
@@ -6900,7 +6905,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			elementor.helpers.enqueueFont( fontFamilyName );
-		}, this ) );
+		} );
 	},
 
 	renderStyles: function( settings ) {
@@ -6990,9 +6995,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	runReadyTrigger: function() {
-		_.defer( _.bind( function() {
-			elementorFrontend.elementsHandler.runReadyTrigger( this.$el );
-		}, this ) );
+		var self = this;
+
+		_.defer( function() {
+			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+		} );
 	},
 
 	getID: function() {
@@ -7100,7 +7107,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		if ( ! Backbone.$( event.target ).closest( '.elementor-clickable' ).length ) {
+		if ( ! jQuery( event.target ).closest( '.elementor-clickable' ).length ) {
 			event.preventDefault();
 
 			event.stopPropagation();
@@ -7381,14 +7388,14 @@ ColumnView = BaseElementView.extend( {
 			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
+			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
-				var newIndex = Backbone.$( this ).index();
+				var newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
 					newIndex++;
@@ -7612,7 +7619,7 @@ ControlBaseMultipleItemView = ControlBaseItemView.extend( {
 	getControlValue: function( key ) {
 		var values = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		if ( ! Backbone.$.isPlainObject( values ) ) {
+		if ( ! jQuery.isPlainObject( values ) ) {
 			return {};
 		}
 
@@ -7755,7 +7762,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel = options.elementSettingsModel;
 
 		var controlType = this.model.get( 'type' ),
-			controlSettings = Backbone.$.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
+			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
@@ -7887,7 +7894,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 	},
 
 	onSwitcherClick: function( event ) {
-		var device = Backbone.$( event.currentTarget ).data( 'device' );
+		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
 
@@ -7929,7 +7936,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.$( '.tooltip-target' ).tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
-				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
+				var gravity = jQuery( this ).data( 'tooltip-pos' );
 
 				if ( undefined !== gravity ) {
 					return gravity;
@@ -7981,7 +7988,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var value = this.getControlValue();
 
 		this.ui.sliders.each( function() {
-			var $slider = Backbone.$( this ),
+			var $slider = jQuery( this ),
 				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
 
 			$slider.slider( {
@@ -7997,7 +8004,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 		elementor.helpers.wpColorPicker( this.ui.colors, {
 			change: function() {
-				var $this = Backbone.$( this ),
+				var $this = jQuery( this ),
 					type = $this.data( 'setting' );
 
 				self.setValue( type, $this.wpColorPicker( 'color' ) );
@@ -8031,7 +8038,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		this.ui.colors.each( function() {
-			var $color = Backbone.$( this );
+			var $color = jQuery( this );
 
 			if ( $color.wpColorPicker( 'instance' ) ) {
 				$color.wpColorPicker( 'close' );
@@ -8122,7 +8129,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 
 		self.editor = ace.edit( this.ui.editor[0] );
 
-		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
+		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
 
 		self.editor.setOptions( {
 			mode: 'ace/mode/' + self.model.attributes.language,
@@ -8312,35 +8319,37 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	onReady: function() {
-		var currentValue = this.getControlValue();
+		var self = this,
+			currentValue = self.getControlValue();
 
-		if ( ! this.isLinkedDimensions() ) {
-			this.ui.link.addClass( 'unlinked' );
+		if ( ! self.isLinkedDimensions() ) {
+			self.ui.link.addClass( 'unlinked' );
 
-			this.ui.controls.each( _.bind( function( index, element ) {
+			self.ui.controls.each( function( index, element ) {
 				var value = currentValue[ element.dataset.setting ];
 
 				if ( _.isEmpty( value ) ) {
-					value = this.defaultDimensionValue;
+					value = self.defaultDimensionValue;
 				}
 
-				this.$( element ).val( value );
-			}, this ) );
+				self.$( element ).val( value );
+			} );
 		}
 
-		this.fillEmptyDimensions();
+		self.fillEmptyDimensions();
 	},
 
 	updateDimensionsValue: function() {
 		var currentValue = {},
 			dimensions = this.getPossibleDimensions(),
-			$controls = this.ui.controls;
+			$controls = this.ui.controls,
+			defaultDimensionValue = this.defaultDimensionValue;
 
-		dimensions.forEach( _.bind( function( dimension ) {
+		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' );
 
-			currentValue[ dimension ] = $element.length ? $element.val() : this.defaultDimensionValue;
-		}, this ) );
+			currentValue[ dimension ] = $element.length ? $element.val() : defaultDimensionValue;
+		} );
 
 		this.setValue( currentValue );
 	},
@@ -8348,21 +8357,22 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	fillEmptyDimensions: function() {
 		var dimensions = this.getPossibleDimensions(),
 			allowedDimensions = this.model.get( 'allowed_dimensions' ),
-			$controls = this.ui.controls;
+			$controls = this.ui.controls,
+			defaultDimensionValue = this.defaultDimensionValue;
 
 		if ( this.isLinkedDimensions() ) {
 			return;
 		}
 
-		dimensions.forEach( _.bind( function( dimension ) {
+		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
 				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
 
 			if ( isAllowedDimension && $element.length && _.isEmpty( $element.val() ) ) {
-				$element.val( this.defaultDimensionValue );
+				$element.val( defaultDimensionValue );
 			}
 
-		}, this ) );
+		} );
 	},
 
 	updateDimensions: function() {
@@ -8430,11 +8440,11 @@ module.exports = ControlSelect2View.extend( {
 	},
 
 	templateHelpers: function() {
-		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments );
+		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments ),
+			fonts = this.model.get( 'options' );
 
-		helpers.getFontsByGroups = _.bind( function( groups ) {
-			var fonts = this.model.get( 'options' ),
-				filteredFonts = {};
+		helpers.getFontsByGroups = function( groups ) {
+			var filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
 				if ( _.isArray( groups ) && _.contains( groups, fontType ) || fontType === groups ) {
@@ -8443,7 +8453,7 @@ module.exports = ControlSelect2View.extend( {
 			} );
 
 			return filteredFonts;
-		}, this );
+		};
 
 		return helpers;
 	}
@@ -8592,7 +8602,7 @@ ControlMediaItemView = ControlBaseItemView.extend( {
 						cancel: elementor.translate( 'cancel' )
 					},
 					defaultOption: 'confirm',
-					onConfirm: _.bind( this.resetGallery, this )
+					onConfirm: this.resetGallery.bind( this )
 				} );
 			}
 
@@ -8655,7 +8665,7 @@ ControlIconView = ControlSelect2View.extend( {
 			return icon.text;
 		}
 
-		return Backbone.$(
+		return jQuery(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
 	},
@@ -8663,8 +8673,8 @@ ControlIconView = ControlSelect2View.extend( {
 	getSelect2Options: function() {
 		return {
 			allowClear: true,
-			templateResult: _.bind( this.iconsList, this ),
-			templateSelection: _.bind( this.iconsList, this )
+			templateResult: this.iconsList.bind( this ),
+			templateSelection: this.iconsList.bind( this )
 		};
 	}
 } );
@@ -8764,7 +8774,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		// When a file is selected, run a callback.
-		this.frame.on( 'insert select', _.bind( this.select, this ) );
+		this.frame.on( 'insert select', this.select.bind( this ) );
 	},
 
 	/**
@@ -9139,9 +9149,11 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	updateChildIndexes: function() {
-		this.children.each( _.bind( function( view ) {
-			view.updateIndex( this.collection.indexOf( view.model ) + 1 );
-		}, this ) );
+		var collection = this.collection;
+
+		this.children.each( function( view ) {
+			view.updateIndex( collection.indexOf( view.model ) + 1 );
+		} );
 	},
 
 	onRender: function() {
@@ -9162,7 +9174,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			var editor = tinymce.get( this.id ),
 				settings = editor.settings;
 
-			settings.height = Backbone.$( editor.getContainer() ).height();
+			settings.height = jQuery( editor.getContainer() ).height();
 			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
 			tinymce.init( settings );
 		} );
@@ -9417,7 +9429,7 @@ ControlStructureItemView = ControlBaseItemView.extend( {
 	templateHelpers: function() {
 		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
 
-		helpers.getMorePresets = _.bind( this.getMorePresets, this );
+		helpers.getMorePresets = this.getMorePresets.bind( this );
 
 		return helpers;
 	},
@@ -9499,24 +9511,26 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 	},
 
 	onReady: function() {
+		var self = this;
+
 		elementor.ajax.send( 'editor_get_wp_widget_form', {
 			data: {
 				// Fake Widget ID
-				id: this.model.cid,
-				widget_type: this.model.get( 'widget' ),
-				data: JSON.stringify( this.elementSettingsModel.toJSON() )
+				id: self.model.cid,
+				widget_type: self.model.get( 'widget' ),
+				data: JSON.stringify( self.elementSettingsModel.toJSON() )
 			},
-			success: _.bind( function( data ) {
-				this.ui.form.html( data );
+			success: function( data ) {
+				self.ui.form.html( data );
 				// WP >= 4.8
 				if ( wp.textWidgets ) {
 					var event = new jQuery.Event( 'widget-added' );
-					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
-					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
+					wp.textWidgets.handleWidgetAdded( event, self.ui.form );
+					wp.mediaWidgets.handleWidgetAdded( event, self.ui.form );
 				}
 
-				elementor.hooks.doAction( 'panel/widgets/' + this.model.get( 'widget' ) + '/controls/wp_widget/loaded', this );
-			}, this )
+				elementor.hooks.doAction( 'panel/widgets/' + self.model.get( 'widget' ) + '/controls/wp_widget/loaded', self );
+			}
 		} );
 	}
 } );
@@ -9582,7 +9596,8 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
 				// Save the bind callback to allow overwrite it externally
-				self.saveEditor = _.bind( self.saveEditor, self, editor );
+				self.saveEditor = self.saveEditor.bind( self, editor );
+
 				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};
@@ -10107,8 +10122,8 @@ WidgetView = BaseElementView.extend( {
 		var editModel = this.getEditModel();
 
 		editModel.on( {
-			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
-			'remote:render': _.bind( this.onModelRemoteRender, this )
+			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
+			'remote:render': this.onModelRemoteRender.bind( this )
 		} );
 
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
@@ -10120,7 +10135,7 @@ WidgetView = BaseElementView.extend( {
 		this.render = _.throttle( this.render, 300 );
 
 		this.onRender = function() {
-			_.defer( _.bind( onRenderMethod, this ) );
+			_.defer( onRenderMethod.bind( this ) );
 		};
 	},
 
@@ -10147,7 +10162,7 @@ WidgetView = BaseElementView.extend( {
 	getTemplateType: function() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
-				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
+				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
 			this._templateType = $template.length ? 'js' : 'remote';
 		}
@@ -10891,7 +10906,7 @@ module.exports = Marionette.Behavior.extend( {
 	listenerAttached: false,
 
 	initialize: function() {
-		this.lazySaveTextHistory = _.debounce( _.bind( this.saveTextHistory, this ), 800 );
+		this.lazySaveTextHistory = _.debounce( this.saveTextHistory.bind( this ), 800 );
 	},
 
 	// use beforeRender that runs after the settingsModel is exist
