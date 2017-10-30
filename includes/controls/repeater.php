@@ -82,8 +82,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @param string $label       Optional. The label that appears above of the
  *                            field. Default is empty.
- * @param string $title       Optional. The field title that appears on mouse
- *                            hover. Default is empty.
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array  $default     Optional. Default repeater values. An array of
