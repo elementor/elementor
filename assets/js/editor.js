@@ -781,6 +781,7 @@ module.exports = Module.extend( {
 
 	saveEditor: function( options ) {
 		options = _.extend( {
+			async: true,
 			status: 'draft',
 			onSuccess: null
 		}, options );
@@ -794,6 +795,7 @@ module.exports = Module.extend( {
 		self.isSaving = true;
 
 		return elementor.ajax.send( 'save_builder', {
+			async: options.async,
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -2522,6 +2524,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
+		buttonSave: '#elementor-panel-saver-publish, #elementor-panel-saver-save-draft, #elementor-panel-saver-publish-changes', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',

@@ -41,6 +41,12 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
+		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+
+		if ( $old_autosave ) {
+			wp_delete_post_revision( $old_autosave->ID );
+		}
+
 		$save_original = true;
 
 		// If the post is a draft - save the `autosave` to the original draft.
@@ -58,12 +64,6 @@ class DB {
 			$this->_save_plain_text( $post_id );
 		} else {
 			do_action( 'elementor/db/before_save', $status, true );
-
-			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-			if ( $old_autosave ) {
-				wp_delete_post_revision( $old_autosave->ID );
-			}
 
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
