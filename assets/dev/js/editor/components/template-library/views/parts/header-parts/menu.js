@@ -45,7 +45,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	onMenuItemClick: function( event ) {
 		var item = event.currentTarget;
 
-		this.activateMenuItem( Backbone.$( item ) );
+		this.activateMenuItem( jQuery( item ) );
 
 		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
 	}

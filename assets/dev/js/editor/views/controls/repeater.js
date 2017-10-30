@@ -152,7 +152,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 			var editor = tinymce.get( this.id ),
 				settings = editor.settings;
 
-			settings.height = Backbone.$( editor.getContainer() ).height();
+			settings.height = jQuery( editor.getContainer() ).height();
 			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
 			tinymce.init( settings );
 		} );

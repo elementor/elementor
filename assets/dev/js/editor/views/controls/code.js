@@ -22,7 +22,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 
 		self.editor = ace.edit( this.ui.editor[0] );
 
-		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
+		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
 
 		self.editor.setOptions( {
 			mode: 'ace/mode/' + self.model.attributes.language,
