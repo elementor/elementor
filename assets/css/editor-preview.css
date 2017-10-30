@@ -26,15 +26,12 @@
   .pen-icon {
     position: relative;
     display: -webkit-box;
-    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-align: center;
-    -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
     -webkit-box-pack: center;
-    -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center;
     height: 35px;
@@ -75,7 +72,6 @@
     color: #71d7f7; }
   .pen-input-wrapper {
     -webkit-box-align: center;
-    -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
     .pen-input-wrapper .pen-url-input {
@@ -204,16 +200,13 @@ html.elementor-html {
   text-align: center;
   border: 1px dashed #d5dadf;
   display: -webkit-box;
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   height: 100%;
   -webkit-box-align: center;
-  -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
   -webkit-box-pack: center;
-  -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-first-add .elementor-icon {
@@ -294,7 +287,6 @@ html.elementor-html {
   position: absolute;
   overflow: hidden;
   display: -webkit-box;
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   height: 26px;
@@ -320,15 +312,12 @@ html.elementor-html {
 .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-element-setting {
   cursor: pointer;
   display: -webkit-box;
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-  -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
   -webkit-box-pack: center;
-  -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
   padding: 0;
@@ -392,7 +381,6 @@ html.elementor-html {
   border-radius: 0 0 0 3px;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: reverse;
-  -webkit-flex-direction: row-reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse; }
   .elementor-editor-active .elementor.elementor-edit-mode .elementor-editor-widget-settings .elementor-editor-element-setting:hover {
