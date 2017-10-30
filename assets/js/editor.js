@@ -3219,14 +3219,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
-				name: 'clear-page',
-				icon: 'fa fa-eraser',
-				title: elementor.translate( 'clear_page' ),
-				callback: function() {
-					elementor.clearPage();
-				}
-			},
-			{
 				name: 'elementor-settings',
 				icon: 'eicon-elementor',
 				title: elementor.translate( 'elementor_settings' ),
@@ -3266,7 +3258,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		}
 
 		items.add( itemData, options );
-				}
+	}
 } );
 
 module.exports = PanelMenuPageView;
@@ -4518,8 +4510,13 @@ module.exports = ViewModule.extend( {
 	},
 
 	addPanelMenuItem: function() {
-		var menuSettings = this.getSettings( 'panelPage.menu' ),
-			menuItemOptions = {
+		var menuSettings = this.getSettings( 'panelPage.menu' );
+
+		if ( ! menuSettings ) {
+			return;
+		}
+
+		var menuItemOptions = {
 				icon: menuSettings.icon,
 				title: this.getSettings( 'panelPage.title' ),
 				type: 'page',
@@ -4629,6 +4626,14 @@ module.exports = BaseSettings.extend( {
 				} );
 			} );
 		}
+	},
+
+	bindEvents: function() {
+		this.model.on( 'clearPage', function() {
+			elementor.clearPage();
+		} );
+
+		BaseSettings.prototype.bindEvents.apply( this, arguments );
 	},
 
 	getDataToSave: function( data ) {
