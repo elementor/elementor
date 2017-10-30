@@ -121,7 +121,7 @@ class DB {
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH, $allow_preview = false ) {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
-		if ( $allow_preview && is_preview() ) {
+		if ( $allow_preview && ( self::STATUS_DRAFT === $status || is_preview() ) ) {
 			$autosave = wp_get_post_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {

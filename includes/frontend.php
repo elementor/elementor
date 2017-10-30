@@ -379,7 +379,7 @@ class Frontend {
 			return '';
 		}
 
-		$data = Plugin::$instance->db->get_plain_editor( $post_id );
+		$data = Plugin::$instance->db->get_plain_editor( $post_id, DB::STATUS_PUBLISH, true );
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
 		if ( empty( $data ) ) {
