@@ -18,7 +18,9 @@ module.exports = Module.extend( {
 	},
 
 	doAutoSave: function() {
-		if ( ! this.isEditorChanged() || this.isSaving ) {
+		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( ! this.isEditorChanged() || this.isSaving || 'edit' !== editorMode ) {
 			return;
 		}
 

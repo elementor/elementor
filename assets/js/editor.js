@@ -657,7 +657,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonSave: function() {
-		elementor.saver.saveAutoSave();
+		elementor.saver.doAutoSave();
 	},
 
 	onClickButtonPreview: function( event ) {
@@ -729,7 +729,9 @@ module.exports = Module.extend( {
 	},
 
 	doAutoSave: function() {
-		if ( ! this.isEditorChanged() || this.isSaving ) {
+		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( ! this.isEditorChanged() || this.isSaving || 'edit' !== editorMode ) {
 			return;
 		}
 
@@ -781,7 +783,6 @@ module.exports = Module.extend( {
 
 	saveEditor: function( options ) {
 		options = _.extend( {
-			async: true,
 			status: 'draft',
 			onSuccess: null
 		}, options );
@@ -795,7 +796,6 @@ module.exports = Module.extend( {
 		self.isSaving = true;
 
 		return elementor.ajax.send( 'save_builder', {
-			async: options.async,
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -12070,9 +12070,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		var currentPreviewModel = this.collection.findWhere({ id: this.currentPreviewId });
 
-		this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
-
-		this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		// Ensure the model is exist and not deleted during a save.
+		if ( currentPreviewModel ) {
+			this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
+			this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		}
 	},
 
 	onChildviewDetailsAreaClick: function( childView ) {
