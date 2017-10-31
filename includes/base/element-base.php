@@ -166,6 +166,8 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Retrieve element type.
 	 *
+	 * Get the element type, in this case `element`.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
