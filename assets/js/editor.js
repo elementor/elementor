@@ -115,6 +115,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
+		// Avoid retrieving of old content (e.g. in case of sorting)
+		this.view.model.setHtmlCache( '' );
+
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
@@ -396,7 +399,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		'sortstart': 'onSortStart',
 		'sortreceive': 'onSortReceive',
 		'sortupdate': 'onSortUpdate',
-		'sortstop': 'onSortStop',
 		'sortover': 'onSortOver',
 		'sortout': 'onSortOut'
 	},
