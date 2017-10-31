@@ -101,9 +101,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea
-			.focus()
-			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
+		this.$currentEditingArea.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
 	},
 
 	stopEditing: function() {
