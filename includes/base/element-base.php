@@ -324,7 +324,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->_render_settings(); ?>
+			<?php $this->render_edit_tools(); ?>
 			<?php echo $content_template; ?>
 		</script>
 		<?php
@@ -609,10 +609,18 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Used to generate the edit tools HTML.
 	 *
+	 * @deprecated: 1.8.0 use render_edit_tools() instead.
+	 *
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _render_settings() {}
+	protected function _render_settings() {
+		_deprecated_function( get_called_class() . '::' . __FUNCTION__, '1.8.0', 'render_edit_tools()' );
+
+		$this->render_edit_tools();
+	}
+
+	protected function render_edit_tools() {}
 
 	/**
 	 * Is type instance.
