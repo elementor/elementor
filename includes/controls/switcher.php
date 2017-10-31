@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * PHP usage (inside `Widget_Base::render()` method):
  *
  *    $settings = $this->get_settings();
- *    if ( 'yes' == $settings['show_title'] ) {
+ *    if ( 'yes' === $settings['show_title'] ) {
  *    	echo '<h2>' . $settings['title'] . '</h2>';
  *    }
  *

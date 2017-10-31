@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * method):
  *
  *    $this->add_control(
- *    	'text',
+ *    	'widget_title',
  *    	[
  *    		'label' => __( 'Text', 'plugin-domain' ),
  *    		'type' => Controls_Manager::TEXT,
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <h2>{{{ settings.text }}}</h2>
+ *    <h2>{{{ settings.widget_title }}}</h2>
  *
  * @since 1.0.0
  *

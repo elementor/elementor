@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  *    $image = $this->get_settings( 'image' );
  *    // Get image URL
- *    echo '<img src="' . $image[url] . '">';
+ *    echo '<img src="' . $image['url'] . '">';
  *    // Get image thumbnail by ID
  *    echo wp_get_attachment_image( $image['id'], 'thumbnail' );
  *
@@ -108,9 +108,6 @@ class Control_Media extends Control_Base_Multiple {
 	 *
 	 * Used to import media control files from external sites while importing
 	 * Elementor template JSON file, and replacing the old data.
-	 *
-	 * Note: Media import uploads only the defined image size, it does not
-	 * imports the original size.
 	 *
 	 * @since 1.0.0
 	 * @access public

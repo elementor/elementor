@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     @type string $reverse_order Optional. Whether to reverse the order.
  *                                 Default is empty.
  * }
- * @param array $options      Optional. An array of key=>value pairs:
+ * @param array $options      Optional. An array of key => value pairs:
  *                            `[ 'key' => 'value', ... ]`
  *                            Default is empty.
  * @param string $separator   Optional. Set the position of the control separator.

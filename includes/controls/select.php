@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div style="border-style: {{ settings.text }}"> ... </div>
+ *    <div style="border-style: {{ settings.border_style }}"> ... </div>
  *
  * @since 1.0.0
  *

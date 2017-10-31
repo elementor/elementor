@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  *    $images = $this->get_settings( 'gallery' );
  *    foreach ( $images as $image ) {
- *    	echo '<img src="' . $image[url] . '">';
+ *    	echo '<img src="' . $image['url'] . '">';
  *    }
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
@@ -91,9 +91,6 @@ class Control_Gallery extends Base_Data_Control {
 	 *
 	 * Used to import gallery control files from external sites while importing
 	 * Elementor template JSON file, and replacing the old data.
-	 *
-	 * Note: Gallery import uploads only the defined image size, it does not
-	 * imports the original size.
 	 *
 	 * @since 1.0.0
 	 * @access public
