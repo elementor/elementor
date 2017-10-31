@@ -491,7 +491,31 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
-			if (ctx.isEmpty()) return handleEmptyContent(ctx);
+			if (ctx.isEmpty()) {
+				if (ctx.config.mode === 'advanced') {
+					handleEmptyContent(ctx);
+				}
+
+				return;
+			}
+
+			if (isCaretAtEnd(ctx) && !isCaretAtStart(ctx) && ctx.config.mode !== 'advanced') {
+				var editor = ctx.config.editor;
+
+				editor.innerHTML = editor.innerHTML.replace( /\u200b/, '' );
+
+				var range = ctx.getRange(),
+					emptyCharNode = doc.createTextNode('\u200b');
+
+				range.selectNodeContents(editor);
+
+				range.collapse(false);
+
+				range.insertNode(emptyCharNode);
+
+				focusNode(ctx, emptyCharNode, range);
+			}
+
 			// toggle toolbar on key select
 			if (e.which !== 13 || e.shiftKey) return updateStatus(400);
 			var node = getNode(ctx, true);
@@ -547,7 +571,7 @@
 
 		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
-			if (ctx.isEmpty()) handleEmptyContent(ctx);
+			if (ctx.isEmpty() && ctx.config.mode === 'advanced') handleEmptyContent(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
 		});
 
@@ -688,29 +712,35 @@
 
 		ctx.config.editor.innerHTML = '';
 
-		if (ctx.config.mode === 'advanced') {
-			var p = doc.createElement('p');
+		var p = doc.createElement('p');
 
-			p.innerHTML = '<br>';
+		p.innerHTML = '<br>';
 
-			range.insertNode(p);
+		range.insertNode(p);
 
-			focusNode(ctx, p.childNodes[0], range);
-		} else {
-			var textNode = doc.createTextNode('\u200b');
+		focusNode(ctx, p.childNodes[0], range);
+	}
 
-			range.deleteContents();
+	function isCaretAtEnd(ctx) {
+		var range = ctx.getRange(),
+			clonedRange = range.cloneRange();
 
-			range.collapse(false);
+		clonedRange.selectNodeContents(ctx.config.editor);
 
-			range.insertNode(textNode);
+		clonedRange.setStart(range.endContainer, range.endOffset);
 
-			range.setStartBefore(textNode);
+		return clonedRange.toString() === '';
+	}
 
-			range.setEndBefore(textNode);
+	function isCaretAtStart(ctx) {
+		var range = ctx.getRange(),
+			clonedRange = range.cloneRange();
 
-			ctx.setRange();
-		}
+		clonedRange.selectNodeContents(ctx.config.editor);
+
+		clonedRange.setEnd(range.startContainer, range.startOffset);
+
+		return clonedRange.toString() === '';
 	}
 
 	function focusNode(ctx, node, range) {
@@ -803,6 +833,10 @@
 
 		if(this.config.input) {
 			this.addOnSubmitListener(this.config.input);
+		}
+
+		if (this.config.mode !== 'advanced') {
+			editor.innerHTML += '\u200b';
 		}
 	};
 
