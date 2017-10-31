@@ -32,7 +32,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  *    $website_link = $this->get_settings( 'website_link' );
  *    $target = $website_link['is_external'] ? 'target="_blank"' : '';
- *
  *    echo '<a href="' . $website_link['url'] . '" ' . $target .'>Visit Website</a>';
  *
  * JS usage (inside `Widget_Base::_content_template()` method):

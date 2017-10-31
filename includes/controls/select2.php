@@ -35,13 +35,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  *    $show_elements = $this->get_settings( 'show_elements' );
  *    foreach ( $show_elements as $element ) {
- *    	echo '<div>' . $this->get_settings( $element ) . '</div>';
+ *    	echo '<div>' . $element . '</div>';
  *    }
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
  *    <# _.each( settings.show_elements, function( element ) { #>
- *    	<div>{{{ settings.element }}}</div>
+ *    	<div>{{{ element }}}</div>
  *    <# } #>
  *
  * @since 1.0.0
