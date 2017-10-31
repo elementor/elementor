@@ -469,14 +469,17 @@
 			addListener(ctx, editor, 'mousedown', function() {
 				selecting = true;
 			});
+
 			addListener(ctx, editor, 'mouseleave', function() {
 				if (selecting) updateStatus(800);
 				selecting = false;
 			});
+
 			addListener(ctx, editor, 'mouseup', function() {
 				if (selecting) updateStatus(200);
 				selecting = false;
 			});
+
 			// Hide menu when focusing outside of editor
 			outsideClick = function(e) {
 				if (ctx._menu && !containsNode(editor, e.target) && !containsNode(ctx._menu, e.target)) {
@@ -508,9 +511,7 @@
 					emptyCharNode = doc.createTextNode('\u200b');
 
 				range.selectNodeContents(editor);
-
 				range.collapse(false);
-
 				range.insertNode(emptyCharNode);
 
 				focusNode(ctx, emptyCharNode, range);
@@ -726,7 +727,6 @@
 			clonedRange = range.cloneRange();
 
 		clonedRange.selectNodeContents(ctx.config.editor);
-
 		clonedRange.setStart(range.endContainer, range.endOffset);
 
 		return clonedRange.toString() === '';
@@ -737,7 +737,6 @@
 			clonedRange = range.cloneRange();
 
 		clonedRange.selectNodeContents(ctx.config.editor);
-
 		clonedRange.setEnd(range.startContainer, range.startOffset);
 
 		return clonedRange.toString() === '';
