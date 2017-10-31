@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating controls that return more than a single value.
  * Each value of the multi-value control will be returned as an item in a
- * key=>value array.
+ * key => value array.
  *
  * @since 1.0.0
  * @abstract
