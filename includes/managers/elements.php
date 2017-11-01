@@ -193,8 +193,8 @@ class Elements_Manager {
 			$modified_post = $post;
 		}
 
-		$last_date = mysql2date( __( 'F j, Y' ), $modified_post->post_modified );
-		$last_time = mysql2date( __( 'g:i a' ), $modified_post->post_modified );
+		$last_date = mysql2date( __( 'F j, Y', 'elementor' ), $modified_post->post_modified );
+		$last_time = mysql2date( __( 'g:i a', 'elementor' ), $modified_post->post_modified );
 
 		if ( DB::STATUS_AUTOSAVE === $status ) {
 			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
