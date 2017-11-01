@@ -12,10 +12,14 @@ HandlerModule = ViewModule.extend( {
 
 	onPageSettingsChange: null,
 
+	isEdit: null,
+
 	__construct: function( settings ) {
 		this.$element  = settings.$element;
 
 		if ( elementorFrontend.isEditMode() ) {
+		this.isEdit = this.$element.hasClass( 'elementor-element-edit-mode' );
+
 			this.addEditorListener();
 		}
 	},
