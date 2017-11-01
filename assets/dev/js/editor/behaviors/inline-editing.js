@@ -23,7 +23,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		if ( this.editing || 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if (
+			this.editing ||
+			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			this.view.model.isRemoteRequestActive()
+		) {
 			return;
 		}
 
