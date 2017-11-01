@@ -52,6 +52,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
+		// Avoid retrieving of old content (e.g. in case of sorting)
+		this.view.model.setHtmlCache( '' );
+
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
@@ -101,9 +104,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea
-			.focus()
-			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
+		this.$currentEditingArea.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
 	},
 
 	stopEditing: function() {

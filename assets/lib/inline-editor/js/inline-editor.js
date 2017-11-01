@@ -469,14 +469,17 @@
 			addListener(ctx, editor, 'mousedown', function() {
 				selecting = true;
 			});
+
 			addListener(ctx, editor, 'mouseleave', function() {
 				if (selecting) updateStatus(800);
 				selecting = false;
 			});
+
 			addListener(ctx, editor, 'mouseup', function() {
 				if (selecting) updateStatus(200);
 				selecting = false;
 			});
+
 			// Hide menu when focusing outside of editor
 			outsideClick = function(e) {
 				if (ctx._menu && !containsNode(editor, e.target) && !containsNode(ctx._menu, e.target)) {
@@ -491,7 +494,22 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
-			if (ctx.isEmpty()) return handleEmptyContent(ctx);
+			if (ctx.isEmpty()) {
+				if (ctx.config.mode === 'advanced') {
+					handleEmptyContent(ctx);
+				}
+
+				return;
+			}
+
+			if (isCaretAtEnd(ctx) && !isCaretAtStart(ctx) && ctx.config.mode !== 'advanced') {
+				var editor = ctx.config.editor;
+
+				editor.innerHTML = editor.innerHTML.replace( /\u200b/, '' );
+
+				addEmptyCharAtEnd(ctx);
+			}
+
 			// toggle toolbar on key select
 			if (e.which !== 13 || e.shiftKey) return updateStatus(400);
 			var node = getNode(ctx, true);
@@ -547,7 +565,7 @@
 
 		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
-			if (ctx.isEmpty()) handleEmptyContent(ctx);
+			if (ctx.isEmpty() && ctx.config.mode === 'advanced') handleEmptyContent(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
 		});
 
@@ -688,29 +706,44 @@
 
 		ctx.config.editor.innerHTML = '';
 
-		if (ctx.config.mode === 'advanced') {
-			var p = doc.createElement('p');
+		var p = doc.createElement('p');
 
-			p.innerHTML = '<br>';
+		p.innerHTML = '<br>';
 
-			range.insertNode(p);
+		range.insertNode(p);
 
-			focusNode(ctx, p.childNodes[0], range);
-		} else {
-			var textNode = doc.createTextNode('\u200b');
+		focusNode(ctx, p.childNodes[0], range);
+	}
 
-			range.deleteContents();
+	function addEmptyCharAtEnd(ctx) {
+		var range = ctx.getRange(),
+			emptyCharNode = doc.createTextNode('\u200b');
 
-			range.collapse(false);
+		range.selectNodeContents(ctx.config.editor);
+		range.collapse(false);
+		range.insertNode(emptyCharNode);
 
-			range.insertNode(textNode);
+		focusNode(ctx, emptyCharNode, range);
+	}
 
-			range.setStartBefore(textNode);
+	function isCaretAtEnd(ctx) {
+		var range = ctx.getRange(),
+			clonedRange = range.cloneRange();
 
-			range.setEndBefore(textNode);
+		clonedRange.selectNodeContents(ctx.config.editor);
+		clonedRange.setStart(range.endContainer, range.endOffset);
 
-			ctx.setRange();
-		}
+		return clonedRange.toString() === '';
+	}
+
+	function isCaretAtStart(ctx) {
+		var range = ctx.getRange(),
+			clonedRange = range.cloneRange();
+
+		clonedRange.selectNodeContents(ctx.config.editor);
+		clonedRange.setEnd(range.startContainer, range.startOffset);
+
+		return clonedRange.toString() === '';
 	}
 
 	function focusNode(ctx, node, range) {
@@ -804,6 +837,14 @@
 		if(this.config.input) {
 			this.addOnSubmitListener(this.config.input);
 		}
+
+		if (this.config.mode === 'advanced') {
+			this.getRange().selectNodeContents(editor);
+
+			this.setRange();
+		} else {
+			addEmptyCharAtEnd(this);
+		}
 	};
 
 	InlineEditor.prototype.on = function(type, listener) {
@@ -854,6 +895,7 @@
 
 	InlineEditor.prototype.setRange = function(range) {
 		range = range || this._range;
+
 		if (!range) {
 			range = this.getRange();
 			range.collapse(false); // set to end

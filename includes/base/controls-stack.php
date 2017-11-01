@@ -160,7 +160,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve the type.
 	 *
-	 * Get the type, i.e. 'stack', 'element', 'widget' etc.
+	 * Get the type, e.g. 'stack', 'element', 'widget' etc.
 	 *
 	 * @since 1.4.0
 	 * @access public

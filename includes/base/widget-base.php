@@ -287,7 +287,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->_render_settings(); ?>
+			<?php $this->render_edit_tools(); ?>
 			<div class="elementor-widget-container">
 				<?php echo $content_template; ?>
 			</div>
@@ -300,10 +300,10 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to generate the edit tools HTML.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access protected
 	 */
-	protected function _render_settings() {
+	protected function render_edit_tools() {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
@@ -362,7 +362,7 @@ abstract class Widget_Base extends Element_Base {
 		do_action( 'elementor/widget/before_render_content', $this );
 
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$this->_render_settings();
+			$this->render_edit_tools();
 		}
 
 		?>
