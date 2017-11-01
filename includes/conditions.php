@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Conditions {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -37,6 +38,7 @@ class Conditions {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

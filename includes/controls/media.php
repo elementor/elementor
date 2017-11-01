@@ -128,6 +128,7 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -140,6 +141,7 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

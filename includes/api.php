@@ -14,6 +14,7 @@ class Api {
 	/**
 	 * This function notifies the user of upgrade notices, new templates and contributors
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	 * @param bool $force
@@ -59,6 +60,7 @@ class Api {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -72,6 +74,7 @@ class Api {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -87,6 +90,7 @@ class Api {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -131,6 +135,7 @@ class Api {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -147,6 +152,7 @@ class Api {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -159,6 +165,7 @@ class Api {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

@@ -28,6 +28,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

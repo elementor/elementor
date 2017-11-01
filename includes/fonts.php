@@ -13,6 +13,7 @@ class Fonts {
 	const LOCAL = 'local';
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -861,6 +862,7 @@ class Fonts {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -875,6 +877,7 @@ class Fonts {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
