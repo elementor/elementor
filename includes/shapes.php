@@ -13,6 +13,7 @@ class Shapes {
 	private static $shapes;
 
 	/**
+	 * @static
 	 * @since 1.3.0
 	 * @access public
 	*/
@@ -29,6 +30,7 @@ class Shapes {
 	}
 
 	/**
+	 * @static
 	 * @since 1.3.0
 	 * @access public
 	*/
@@ -41,6 +43,7 @@ class Shapes {
 	}
 
 	/**
+	 * @static
 	 * @since 1.3.0
 	 * @access public
 	*/
@@ -55,6 +58,7 @@ class Shapes {
 	}
 
 	/**
+	 * @static
 	 * @since 1.3.0
 	 * @access private
 	*/

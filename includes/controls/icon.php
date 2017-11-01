@@ -26,6 +26,7 @@ class Control_Icon extends Base_Data_Control {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

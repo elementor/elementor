@@ -13,6 +13,7 @@ class Scheme_Typography extends Scheme_Base {
 	const TYPOGRAPHY_4 = '4';
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

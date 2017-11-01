@@ -10,6 +10,7 @@ class Admin {
 	/**
 	 * Enqueue admin scripts.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -62,6 +63,7 @@ class Admin {
 	/**
 	 * Enqueue admin styles.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -96,6 +98,7 @@ class Admin {
 	/**
 	 * Print switch button in edit post (which has cpt support).
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $post
 	 *
@@ -141,6 +144,7 @@ class Admin {
 	/**
 	 * Fired when the save the post, and flag the post mode.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $post_id
 	 *
@@ -161,6 +165,7 @@ class Admin {
 	/**
 	 * Add edit link in outside edit post.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $actions
 	 * @param $post

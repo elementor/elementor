@@ -11,6 +11,7 @@ class Tracker {
 
 	/**
 	 * Hook into cron event.
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 */
@@ -21,6 +22,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -39,6 +41,7 @@ class Tracker {
 	/**
 	 * Decide whether to send tracking data or not.
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @param bool $override
@@ -100,6 +103,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -108,6 +112,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -135,6 +140,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -171,6 +177,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -184,6 +191,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -203,6 +211,7 @@ class Tracker {
 	/**
 	 * Get the last time tracking data was sent.
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	 * @return int|bool
@@ -212,6 +221,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -240,6 +250,7 @@ class Tracker {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
