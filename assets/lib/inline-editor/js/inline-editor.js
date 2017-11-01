@@ -507,14 +507,7 @@
 
 				editor.innerHTML = editor.innerHTML.replace( /\u200b/, '' );
 
-				var range = ctx.getRange(),
-					emptyCharNode = doc.createTextNode('\u200b');
-
-				range.selectNodeContents(editor);
-				range.collapse(false);
-				range.insertNode(emptyCharNode);
-
-				focusNode(ctx, emptyCharNode, range);
+				addEmptyCharAtEnd(ctx);
 			}
 
 			// toggle toolbar on key select
@@ -722,6 +715,17 @@
 		focusNode(ctx, p.childNodes[0], range);
 	}
 
+	function addEmptyCharAtEnd(ctx) {
+		var range = ctx.getRange(),
+			emptyCharNode = doc.createTextNode('\u200b');
+
+		range.selectNodeContents(ctx.config.editor);
+		range.collapse(false);
+		range.insertNode(emptyCharNode);
+
+		focusNode(ctx, emptyCharNode, range);
+	}
+
 	function isCaretAtEnd(ctx) {
 		var range = ctx.getRange(),
 			clonedRange = range.cloneRange();
@@ -834,8 +838,12 @@
 			this.addOnSubmitListener(this.config.input);
 		}
 
-		if (this.config.mode !== 'advanced') {
-			editor.innerHTML += '\u200b';
+		if (this.config.mode === 'advanced') {
+			this.getRange().selectNodeContents(editor);
+
+			this.setRange();
+		} else {
+			addEmptyCharAtEnd(this);
 		}
 	};
 
@@ -887,6 +895,7 @@
 
 	InlineEditor.prototype.setRange = function(range) {
 		range = range || this._range;
+
 		if (!range) {
 			range = this.getRange();
 			range.collapse(false); // set to end
