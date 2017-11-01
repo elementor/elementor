@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Settings_Validations {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -16,6 +17,7 @@ class Settings_Validations {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -28,6 +30,7 @@ class Settings_Validations {
 	}
 
 	/**
+	 * @static
 	 * @since 1.4.8
 	 * @access public
 	*/

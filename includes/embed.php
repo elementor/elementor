@@ -18,6 +18,7 @@ class Embed {
 	];
 
 	/**
+	 * @static
 	 * @since 1.5.0
 	 * @access public
 	*/
@@ -37,6 +38,7 @@ class Embed {
 	}
 
 	/**
+	 * @static
 	 * @since 1.5.0
 	 * @access public
 	*/
@@ -55,6 +57,7 @@ class Embed {
 	}
 
 	/**
+	 * @static
 	 * @since 1.5.0
 	 * @access public
 	*/
