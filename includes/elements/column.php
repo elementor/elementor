@@ -722,10 +722,10 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access protected
 	*/
-	protected function _render_settings() {
+	protected function render_edit_tools() {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
