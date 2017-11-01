@@ -9,7 +9,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		'sortstart': 'onSortStart',
 		'sortreceive': 'onSortReceive',
 		'sortupdate': 'onSortUpdate',
-		'sortstop': 'onSortStop',
 		'sortover': 'onSortOver',
 		'sortout': 'onSortOut'
 	},
