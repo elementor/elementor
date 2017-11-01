@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Maintenance {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -19,6 +20,7 @@ class Maintenance {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -27,6 +29,7 @@ class Maintenance {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

@@ -165,8 +165,8 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * Returns the WordPress widget settings, to be used in Elementor.
 	 *
+	 * @access protected
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @return \WP_Widget
 	 */

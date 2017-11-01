@@ -23,6 +23,7 @@ class Stylesheet {
 	private $raw = [];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @param array $rules
@@ -44,6 +45,7 @@ class Stylesheet {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @param array $properties

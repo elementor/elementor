@@ -28,6 +28,7 @@ class Source_Local extends Source_Base {
 	private static $_template_types = [ 'page', 'section' ];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -36,6 +37,7 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -50,11 +52,24 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.3
 	 * @access public
-	*/
+	 */
 	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
+	}
+
+	/**
+	 * @static
+	 * @since 1.8.0
+	 * @access public
+	 */
+	public static function remove_template_type( $type ) {
+		$key = array_search( $type, self::$_template_types, true );
+		if ( false !== $key ) {
+			unset( self::$_template_types[ $key ] );
+		}
 	}
 
 	/**

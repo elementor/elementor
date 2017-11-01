@@ -21,6 +21,7 @@ class Responsive {
 	];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @return array
@@ -30,6 +31,7 @@ class Responsive {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @return array
@@ -39,6 +41,7 @@ class Responsive {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @return array
