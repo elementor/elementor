@@ -13,6 +13,7 @@ class Scheme_Color extends Scheme_Base {
 	const COLOR_4 = '4';
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

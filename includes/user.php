@@ -10,6 +10,7 @@ class User {
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -18,6 +19,7 @@ class User {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -64,6 +66,7 @@ class User {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -72,6 +75,7 @@ class User {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -85,6 +89,7 @@ class User {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

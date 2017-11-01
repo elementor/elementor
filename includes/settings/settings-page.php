@@ -11,18 +11,21 @@ abstract class Settings_Page {
 	const PAGE_ID = '';
 
 	/**
+	 * @abstract
 	 * @since 1.5.0
 	 * @access protected
 	*/
 	abstract protected function create_tabs();
 
 	/**
+	 * @abstract
 	 * @since 1.5.0
 	 * @access protected
 	*/
 	abstract protected function get_page_title();
 
 	/**
+	 * @static
 	 * @since 1.5.0
 	 * @access public
 	*/

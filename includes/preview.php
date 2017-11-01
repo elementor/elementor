@@ -12,6 +12,7 @@ class Preview {
 	/**
 	 * Initialize the preview mode. Fired by `init` action.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -51,6 +52,7 @@ class Preview {
 	/**
 	 * Method detect if we are in the preview mode (iFrame).
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return bool
 	 */
@@ -70,6 +72,7 @@ class Preview {
 	 * Do not show the content from the page. Just print empty start HTML.
 	 * The Javascript will add the content later.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @return string
@@ -81,6 +84,7 @@ class Preview {
 	/**
 	 * Enqueue preview scripts and styles.
 	 *
+	 * @access private
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -132,6 +136,7 @@ class Preview {
 	/**
 	 * Preview constructor.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 */
 	public function __construct() {
