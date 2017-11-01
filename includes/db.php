@@ -24,6 +24,7 @@ class DB {
 	/**
 	 * Save builder method.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @param int    $post_id
@@ -90,6 +91,7 @@ class DB {
 	/**
 	 * Get & Parse the builder from DB.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @param int    $post_id
@@ -190,6 +192,7 @@ class DB {
 	/**
 	 * Set whether the page is elementor page or not
 	 *
+	 * @access public
 	 * @since 1.5.0
 	 *
 	 * @param int  $post_id
@@ -263,6 +266,7 @@ class DB {
 	/**
 	 * Sanitize posted data.
 	 *
+	 * @access private
 	 * @since 1.0.0
 	 *
 	 * @param array $data

@@ -12,6 +12,7 @@ class Maintenance_Mode {
 	const MODE_COMING_SOON = 'coming_soon';
 
 	/**
+	 * @static
 	 * @since 1.4.0
 	 * @access public
 	*/
@@ -20,6 +21,7 @@ class Maintenance_Mode {
 	}
 
 	/**
+	 * @static
 	 * @since 1.4.0
 	 * @access public
 	*/

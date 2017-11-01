@@ -83,6 +83,7 @@ class Autoloader {
 	];
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access public
 	*/
@@ -91,6 +92,7 @@ class Autoloader {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access public
 	 * @return array
@@ -100,6 +102,7 @@ class Autoloader {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access private
 	*/
@@ -124,6 +127,7 @@ class Autoloader {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access private
 	*/
