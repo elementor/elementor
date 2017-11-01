@@ -72,7 +72,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 * @access public
 	 *
 	 * @return string Control type.
-	 */
+	*/
 	public function get_type() {
 		return 'hover_animation';
 	}
@@ -87,7 +87,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 * @static
 	 *
 	 * @return array Available hover animation.
-	 */
+	*/
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {
 			self::$_animations = [
@@ -133,7 +133,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>
@@ -164,7 +164,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 * @access protected
 	 *
 	 * @return array Control default settings.
-	 */
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,

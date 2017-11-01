@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Compatibility {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -23,6 +24,7 @@ class Compatibility {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -131,6 +133,7 @@ class Compatibility {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access public
 	*/
@@ -147,6 +150,7 @@ class Compatibility {
 	 * Normalize Elementor post meta on import,
 	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @param array $post_meta
@@ -168,6 +172,7 @@ class Compatibility {
 	 * Normalize Elementor post meta on import with the new WP_importer,
 	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @param array $post_meta

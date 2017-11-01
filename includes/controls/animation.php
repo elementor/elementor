@@ -74,7 +74,7 @@ class Control_Animation extends Base_Data_Control {
 	 * @access public
 	 *
 	 * @return string Control type.
-	 */
+	*/
 	public function get_type() {
 		return 'animation';
 	}
@@ -84,11 +84,11 @@ class Control_Animation extends Base_Data_Control {
 	 *
 	 * Get the list of all the available animations.
 	 *
-	 * @since 1.0.0
+	 * @static	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Control type.
-	 */
+	*/
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {
 			self::$_animations = [
@@ -159,7 +159,7 @@ class Control_Animation extends Base_Data_Control {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

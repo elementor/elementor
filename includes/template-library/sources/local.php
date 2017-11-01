@@ -28,6 +28,7 @@ class Source_Local extends Source_Base {
 	private static $_template_types = [ 'page', 'section' ];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -36,6 +37,7 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -50,6 +52,7 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.3
 	 * @access public
 	*/

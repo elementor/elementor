@@ -10,6 +10,7 @@ class Element_Column extends Element_Base {
 	protected static $_edit_tools;
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access protected
 	*/

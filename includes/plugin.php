@@ -152,6 +152,7 @@ class Plugin {
 	 * The whole idea of the singleton design pattern is that there is a single
 	 * object therefore, we don't want the object to be cloned.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -163,6 +164,7 @@ class Plugin {
 	/**
 	 * Disable unserializing of the class
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -172,6 +174,7 @@ class Plugin {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @return Plugin

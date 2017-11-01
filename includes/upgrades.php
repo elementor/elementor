@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Upgrades {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -16,6 +17,7 @@ class Upgrades {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -35,6 +37,7 @@ class Upgrades {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.10
 	 * @access private
 	*/
@@ -62,6 +65,7 @@ class Upgrades {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -101,6 +105,7 @@ class Upgrades {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -149,6 +154,7 @@ class Upgrades {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/

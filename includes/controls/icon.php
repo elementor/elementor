@@ -79,7 +79,7 @@ class Control_Icon extends Base_Data_Control {
 	 * @access public
 	 *
 	 * @return string Control type.
-	 */
+	*/
 	public function get_type() {
 		return 'icon';
 	}
@@ -94,7 +94,7 @@ class Control_Icon extends Base_Data_Control {
 	 * @static
 	 *
 	 * @return array Available icons.
-	 */
+	*/
 	public static function get_icons() {
 		return [
 			'fa fa-500px' => '500px',
@@ -898,7 +898,7 @@ class Control_Icon extends Base_Data_Control {
 	 * @access protected
 	 *
 	 * @return array Control default settings.
-	 */
+	*/
 	protected function get_default_settings() {
 		return [
 			'options' => self::get_icons(),
@@ -914,7 +914,7 @@ class Control_Icon extends Base_Data_Control {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

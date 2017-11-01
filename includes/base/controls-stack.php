@@ -217,7 +217,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get all the controls or, when requested, a specific control.
  	 *
-	 * @since 1.5.0
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $control_id The ID of the requested control. Optional field,
@@ -1205,7 +1205,7 @@ abstract class Controls_Stack {
 	 * be injected to a specific position in the stack, until you stop the
 	 * injection using `end_injection()` method.
 	 *
-	 * @since 1.7.0
+	 * @since 1.7.1
 	 * @access public
 	 *
 	 * @param array $position {
@@ -1235,7 +1235,7 @@ abstract class Controls_Stack {
 	 * it stopps adding new controls to this point and continue to add controls
 	 * to the regular position in the stack.
 	 *
-	 * @since 1.7.0
+	 * @since 1.7.1
 	 * @access public
 	 */
 	final public function end_injection() {

@@ -13,6 +13,7 @@ class Scheme_Color_Picker extends Scheme_Color {
 	const COLOR_8 = '8';
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -21,6 +22,7 @@ class Scheme_Color_Picker extends Scheme_Color {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

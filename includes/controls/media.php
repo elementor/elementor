@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            hover. Default is empty.
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
- * @param array $default      {
+ * @param array  $default {
  *     Optional. Defautl media values.
  *
  *     @type int    $id  Optional. Media id. Default is empty.
@@ -80,7 +80,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @access public
 	 *
 	 * @return string Control type.
-	 */
+	*/
 	public function get_type() {
 		return 'media';
 	}
@@ -95,7 +95,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @access public
 	 *
 	 * @return array Control default value.
-	 */
+	*/
 	public function get_default_value() {
 		return [
 			'url' => '',
@@ -141,7 +141,7 @@ class Control_Media extends Control_Base_Multiple {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_media();
@@ -175,7 +175,7 @@ class Control_Media extends Control_Base_Multiple {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
@@ -209,7 +209,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @access protected
 	 *
 	 * @return array Control default settings.
-	 */
+	*/
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
@@ -228,7 +228,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @param array $attachment Media attachment.
 	 *
 	 * @return string Image title.
-	 */
+	*/
 	public static function get_image_title( $attachment ) {
 		if ( empty( $attachment['id'] ) ) {
 			return '';
@@ -249,7 +249,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @param array $attachment Media attachment.
 	 *
 	 * @return string Image alt.
-	 */
+	*/
 	public static function get_image_alt( $instance ) {
 		if ( empty( $instance['id'] ) ) {
 			return '';
