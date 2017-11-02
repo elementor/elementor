@@ -5,6 +5,7 @@ module.exports = function( $scope ) {
 		$element: $scope,
 		showTabFn: 'slideDown',
 		hideTabFn: 'slideUp',
-		hidePrevious: false
+		hidePrevious: false,
+		autoExpand: 'editor'
 	} );
 };
