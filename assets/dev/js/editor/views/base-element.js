@@ -14,7 +14,7 @@ BaseElementView = BaseContainer.extend( {
 	allowRender: true,
 
 	className: function() {
-		return this.getElementUniqueID();
+		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -221,8 +221,6 @@ BaseElementView = BaseContainer.extend( {
 
 	renderCustomClasses: function() {
 		var self = this;
-
-		self.$el.addClass( 'elementor-element' );
 
 		var settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
