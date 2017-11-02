@@ -1,22 +1,26 @@
 module.exports = Marionette.Behavior.extend( {
-	ui: {
-		buttonSave: '#elementor-panel-saver-save',
-		buttonSaveIcon: '#elementor-panel-saver-save-icon',
-		buttonSaveDraft: '#elementor-panel-saver-save-draft',
-		buttonUpdate: '#elementor-panel-saver-update',
-		buttonPreview: '#elementor-panel-saver-preview span',
-		buttonPublish: '#elementor-panel-saver-publish',
-		buttonPublishChanges: '#elementor-panel-saver-publish-changes',
-		formPreview: '#elementor-panel-saver-preview form'
+	ui: function() {
+		return {
+			buttonSave: '#elementor-panel-saver-save',
+			buttonSaveIcon: '#elementor-panel-saver-save-icon',
+			buttonSaveDraft: '#elementor-panel-saver-save-draft',
+			buttonUpdate: '#elementor-panel-saver-update',
+			buttonPreview: '#elementor-panel-saver-preview span',
+			buttonPublish: '#elementor-panel-saver-publish',
+			buttonPublishChanges: '#elementor-panel-saver-publish-changes',
+			formPreview: '#elementor-panel-saver-preview form'
+		};
 	},
 
-	events: {
-		'click @ui.buttonSave': 'onClickButtonSave',
-		'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
-		'click @ui.buttonUpdate': 'onClickButtonUpdate',
-		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.buttonPublishChanges': 'onClickButtonPublish',
-		'click @ui.buttonPreview': 'onClickButtonPreview'
+	events: function() {
+		return {
+			'click @ui.buttonSave': 'onClickButtonSave',
+			'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
+			'click @ui.buttonUpdate': 'onClickButtonUpdate',
+			'click @ui.buttonPublish': 'onClickButtonPublish',
+			'click @ui.buttonPublishChanges': 'onClickButtonPublish',
+			'click @ui.buttonPreview': 'onClickButtonPreview'
+		};
 	},
 
 	initialize: function() {
