@@ -160,6 +160,7 @@ class Schemes_Manager {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

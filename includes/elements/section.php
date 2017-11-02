@@ -12,6 +12,7 @@ class Element_Section extends Element_Base {
 	private static $presets = [];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access protected
 	*/
@@ -63,6 +64,7 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -85,6 +87,7 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
