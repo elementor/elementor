@@ -141,22 +141,10 @@
 			 * CSS for support < 4.9
 			 */
 			self.toggler.css({
-				'height': '24px',
-				'margin': '0 6px 6px 0',
-				'padding': '0 0 0 30px',
-				'font-size': '11px'
+				padding: 0
 			});
 
-			self.toggler.find( '.wp-color-result-text' ).css({
-				'background': '#f7f7f7',
-				'border-radius': '0 2px 2px 0',
-				'border-left': '1px solid #ccc',
-				'color': '#555',
-				'display': 'block',
-				'line-height': '22px',
-				'padding': '0 6px',
-				'text-align': 'center'
-			});
+			self.toggler.find( '.wp-color-result-text' ).hide();
 
 			el.iris( {
 				target: self.pickerContainer,
