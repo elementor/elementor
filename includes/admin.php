@@ -197,7 +197,7 @@ class Admin {
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$post_states[] = __( 'Elementor', 'elementor' );
+			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
 		return $post_states;
 	}
