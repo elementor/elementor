@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\TemplateLibrary\Source_Local;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -198,7 +196,7 @@ class Admin {
 	 * @return array                 A filtered array of post display states.
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Source_Local::CPT !== $post->post_type && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$post_states[] = __( 'Elementor', 'elementor' );
 		}
 		return $post_states;
