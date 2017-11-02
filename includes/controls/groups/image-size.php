@@ -10,6 +10,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	protected static $fields;
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -18,6 +19,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ].
@@ -70,6 +72,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -97,6 +100,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
