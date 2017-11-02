@@ -47,10 +47,6 @@
 	.elementor-button {
 		color: $editor-light;
 		background: none;
-
-		&:hover {
-
-		}
 	}
 }
 
@@ -65,7 +61,6 @@
 		display: inline-block;
 
 		&:not(:nth-child(4n)) {
-
 			@media(max-width: $screen-lg-max) {
 				@include margin-end(13px);
 			}
@@ -73,22 +68,42 @@
 			@media(min-width: $screen-xl-min) {
 				@include margin-end(19px);
 			}
+
+			[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
+				@media(max-width: $screen-lg-max) {
+					@include margin-end(5px);
+				}
+
+				@media(min-width: $screen-xl-min) {
+					@include margin-end(12px);
+				}
+			}
 		}
 	}
 
 	.wp-picker-container {
 
 		&.wp-picker-active {
+			padding-top: 10px;
 			transform: translateY(10px);
 
 			.wp-color-result {
-
 				@media(max-width: $screen-lg-max) {
 					margin-right: 4px;
 				}
 
 				@media(min-width: $screen-xl-min) {
 					margin-right: 6px;
+				}
+
+				[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
+					@media(max-width: $screen-lg-max) {
+						margin-right: 10px;
+					}
+
+					@media(min-width: $screen-xl-min) {
+						margin-right: 9px;
+					}
 				}
 			}
 		}

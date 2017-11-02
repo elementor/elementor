@@ -312,10 +312,14 @@ HandlerModule = ViewModule.extend( {
 
 	onPageSettingsChange: null,
 
+	isEdit: null,
+
 	__construct: function( settings ) {
 		this.$element  = settings.$element;
 
-		if ( elementorFrontend.isEditMode() ) {
+		this.isEdit = this.$element.hasClass( 'elementor-element-edit-mode' );
+
+		if ( this.isEdit ) {
 			this.addEditorListener();
 		}
 	},
@@ -392,7 +396,7 @@ HandlerModule = ViewModule.extend( {
 		var elementSettings = {},
 			modelCID = this.getModelCID();
 
-		if ( elementorFrontend.isEditMode() && modelCID ) {
+		if ( this.isEdit && modelCID ) {
 			var settings = elementorFrontend.config.elements.data[ modelCID ],
 				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
 
@@ -411,7 +415,7 @@ HandlerModule = ViewModule.extend( {
 	getEditSettings: function( setting ) {
 		var attributes = {};
 
-		if ( elementorFrontend.isEditMode() ) {
+		if ( this.isEdit ) {
 			attributes = elementorFrontend.config.elements.editSettings[ this.getModelCID() ].attributes;
 		}
 
@@ -457,7 +461,8 @@ module.exports = HandlerModule.extend( {
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: true,
-			hidePrevious: true
+			hidePrevious: true,
+			autoExpand: true
 		};
 	},
 
@@ -471,8 +476,13 @@ module.exports = HandlerModule.extend( {
 	},
 
 	activateDefaultTab: function() {
+		var settings = this.getSettings();
+
+		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+			return;
+		}
+
 		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
-			settings = this.getSettings(),
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
 				hideTabFn: settings.hideTabFn
@@ -1108,7 +1118,8 @@ module.exports = function( $scope ) {
 		$element: $scope,
 		showTabFn: 'slideDown',
 		hideTabFn: 'slideUp',
-		hidePrevious: false
+		hidePrevious: false,
+		autoExpand: 'editor'
 	} );
 };
 
