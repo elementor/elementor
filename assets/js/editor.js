@@ -86,7 +86,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		if ( this.editing || 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if (
+			this.editing ||
+			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			this.view.model.isRemoteRequestActive()
+		) {
 			return;
 		}
 
@@ -6826,7 +6830,7 @@ BaseElementView = BaseContainer.extend( {
 	allowRender: true,
 
 	className: function() {
-		return this.getElementUniqueID();
+		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -7033,8 +7037,6 @@ BaseElementView = BaseContainer.extend( {
 
 	renderCustomClasses: function() {
 		var self = this;
-
-		self.$el.addClass( 'elementor-element' );
 
 		var settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();

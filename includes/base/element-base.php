@@ -526,9 +526,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$this->enqueue_scripts();
-		}
+		$this->enqueue_scripts();
 
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
@@ -677,12 +675,10 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$frontend_settings = $this->get_frontend_settings();
+		$frontend_settings = $this->get_frontend_settings();
 
-			if ( $frontend_settings ) {
-				$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
-			}
+		if ( $frontend_settings ) {
+			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
 	}
 

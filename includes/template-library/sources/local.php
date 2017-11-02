@@ -528,6 +528,13 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
+	public function remove_elementor_post_state_from_library( $post_states, $post ) {
+		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
+			unset( $post_states['elementor'] );
+		}
+		return $post_states;
+	}
+
 	/**
 	 * @since 1.0.0
 	 * @access private
@@ -735,6 +742,7 @@ class Source_Local extends Source_Base {
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
+			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
 			// template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
