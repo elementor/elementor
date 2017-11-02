@@ -15,7 +15,8 @@ module.exports = HandlerModule.extend( {
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: true,
-			hidePrevious: true
+			hidePrevious: true,
+			autoExpand: true
 		};
 	},
 
@@ -29,8 +30,13 @@ module.exports = HandlerModule.extend( {
 	},
 
 	activateDefaultTab: function() {
+		var settings = this.getSettings();
+
+		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+			return;
+		}
+
 		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
-			settings = this.getSettings(),
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
 				hideTabFn: settings.hideTabFn
