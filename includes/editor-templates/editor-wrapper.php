@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+global $wp_version;
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
 	</script>
 </head>
-<body class="elementor-editor-active">
+<body class="elementor-editor-active wp-version-<?php echo str_replace( '.', '-', $wp_version ); ?>">
 <div id="elementor-editor-wrapper">
 	<div id="elementor-preview">
 		<div id="elementor-loading">
