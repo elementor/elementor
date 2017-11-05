@@ -477,6 +477,7 @@ class Editor {
 				'update' => __( 'Update', 'elementor' ),
 				'publish_changes' => __( 'Publish Changes', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
+				'type_here' => __( 'Type Here', 'elementor' ),
 			],
 		];
 
