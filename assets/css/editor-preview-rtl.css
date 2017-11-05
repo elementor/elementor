@@ -75,11 +75,11 @@
         -ms-flex-align: center;
             align-items: center; }
     .pen-input-wrapper .pen-url-input {
+      font-size: 12px;
       line-height: 1.5;
       padding: 0;
       padding-right: 10px;
-      width: 250px;
-      font-size: 12px; }
+      width: 250px; }
       .pen-input-wrapper .pen-url-input, .pen-input-wrapper .pen-url-input:focus {
         background-color: transparent;
         border: none;

@@ -94,11 +94,11 @@
 			align-items: center;
 
 			.pen-url-input {
+				font-size: 12px;
 				line-height: 1.5;
 				padding: 0;
 				@include padding-start(10px);
 				width: 250px;
-				font-size: 12px;
 
 				&, &:focus {
 					background-color: transparent;
