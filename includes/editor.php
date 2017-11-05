@@ -367,10 +367,6 @@ class Editor {
 
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
-		// Remove all TinyMCE plugins.
-		remove_all_filters( 'mce_buttons', 10 );
-		remove_all_filters( 'mce_external_plugins', 10 );
-
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -574,7 +570,12 @@ class Editor {
 	 * @access private
 	*/
 	private function get_wp_editor_config() {
+		// Remove all TinyMCE plugins.
+		remove_all_filters( 'mce_buttons', 10 );
+		remove_all_filters( 'mce_external_plugins', 10 );
+
 		ob_start();
+
 		wp_editor(
 			'%%EDITORCONTENT%%',
 			'elementorwpeditor',
