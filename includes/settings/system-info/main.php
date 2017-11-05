@@ -296,6 +296,7 @@ class Main {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -304,6 +305,7 @@ class Main {
 	}
 
 	/**
+	 * @static
 	 * @since 1.4.0
 	 * @access public
 	*/

@@ -10,6 +10,7 @@ class Heartbeat {
 	/**
 	 * Handle the post lock in the editor.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @param array $response
@@ -47,6 +48,7 @@ class Heartbeat {
 	/**
 	 * Heartbeat constructor.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 */
 	public function __construct() {

@@ -10,6 +10,7 @@ class Admin {
 	/**
 	 * Enqueue admin scripts.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -62,6 +63,7 @@ class Admin {
 	/**
 	 * Enqueue admin styles.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -96,6 +98,7 @@ class Admin {
 	/**
 	 * Print switch button in edit post (which has cpt support).
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $post
 	 *
@@ -141,6 +144,7 @@ class Admin {
 	/**
 	 * Fired when the save the post, and flag the post mode.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $post_id
 	 *
@@ -161,6 +165,7 @@ class Admin {
 	/**
 	 * Add edit link in outside edit post.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $actions
 	 * @param $post
@@ -182,6 +187,7 @@ class Admin {
 	/**
 	 * Adds a "Elementor" post state for post table.
 	 *
+	 * @access public
 	 * @since 1.8.0
 	 *
 	 * @param  array    $post_states An array of post display states.
@@ -191,7 +197,7 @@ class Admin {
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$post_states[] = __( 'Elementor', 'elementor' );
+			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
 		return $post_states;
 	}

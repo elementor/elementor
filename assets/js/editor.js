@@ -86,7 +86,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		if ( this.editing || 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if (
+			this.editing ||
+			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			this.view.model.isRemoteRequestActive()
+		) {
 			return;
 		}
 
@@ -124,6 +128,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			editor: this.$currentEditingArea[0],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
+			cleanAttrs: ['id', 'class', 'name'],
+			placeholder: elementor.translate( 'type_here' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
@@ -452,7 +458,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: this._getSortableHelper.bind( this ),
-				cancel: '.elementor-inline-editing, .elementor-tab-title'
+				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
@@ -6721,7 +6727,7 @@ BaseElementView = BaseContainer.extend( {
 	allowRender: true,
 
 	className: function() {
-		return this.getElementUniqueID();
+		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -6928,8 +6934,6 @@ BaseElementView = BaseContainer.extend( {
 
 	renderCustomClasses: function() {
 		var self = this;
-
-		self.$el.addClass( 'elementor-element' );
 
 		var settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
@@ -8141,6 +8145,10 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			enableLiveAutocompletion: true
 		} );
 
+		self.editor.getSession().setUseWrapMode( true );
+
+		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
 				getCompletions: function( editor, session, pos, prefix, callback ) {
@@ -8189,6 +8197,14 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 				}
 			} );
 		}
+	},
+
+	onResize: function() {
+		this.editor.resize();
+	},
+
+	onDestroy: function() {
+		elementor.panel.$el.off( 'resize.aceEditor' );
 	}
 } );
 
