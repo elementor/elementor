@@ -503,8 +503,6 @@
 			}
 
 			if (isCaretAtEnd(ctx) && !isCaretAtStart(ctx) && ctx.config.mode !== 'advanced') {
-				var editor = ctx.config.editor;
-
 				editor.innerHTML = editor.innerHTML.replace( /\u200b/, '' );
 
 				addEmptyCharAtEnd(ctx);
