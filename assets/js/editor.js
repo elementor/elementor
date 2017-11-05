@@ -8138,6 +8138,10 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			enableLiveAutocompletion: true
 		} );
 
+		self.editor.getSession().setUseWrapMode( true );
+
+		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
 				getCompletions: function( editor, session, pos, prefix, callback ) {
@@ -8186,6 +8190,14 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 				}
 			} );
 		}
+	},
+
+	onResize: function() {
+		this.editor.resize();
+	},
+
+	onDestroy: function() {
+		elementor.panel.$el.off( 'resize.aceEditor' );
 	}
 } );
 
