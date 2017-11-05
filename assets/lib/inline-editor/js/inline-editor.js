@@ -98,6 +98,8 @@
 		// default settings
 		var defaults = {
 			class: 'pen',
+			placeholderClass: 'pen-placeholder',
+			placeholderAttr: 'data-pen-placeholder',
 			debug: false,
 			toolbar: null, // custom toolbar
 			mode: 'basic',
@@ -494,6 +496,8 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
+			checkPlaceholder(ctx);
+
 			if (ctx.isEmpty()) {
 				if (ctx.config.mode === 'advanced') {
 					handleEmptyContent(ctx);
@@ -503,8 +507,6 @@
 			}
 
 			if (isCaretAtEnd(ctx) && !isCaretAtStart(ctx) && ctx.config.mode !== 'advanced') {
-				var editor = ctx.config.editor;
-
 				editor.innerHTML = editor.innerHTML.replace( /\u200b/, '' );
 
 				addEmptyCharAtEnd(ctx);
@@ -526,7 +528,8 @@
 
 		// check line break
 		addListener(ctx, editor, 'keydown', function(e) {
-			editor.classList.remove('pen-placeholder');
+			editor.classList.remove(ctx.config.placeholderClass);
+
 			if (e.which !== 13 || e.shiftKey) return;
 			var node = getNode(ctx, true);
 
@@ -563,7 +566,6 @@
 			});
 		}
 
-		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
 			if (ctx.isEmpty() && ctx.config.mode === 'advanced') handleEmptyContent(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
@@ -640,7 +642,7 @@
 	}
 
 	function checkPlaceholder(ctx) {
-		ctx.config.editor.classList[ctx.isEmpty() ? 'add' : 'remove']('pen-placeholder');
+		ctx.config.editor.classList[ctx.isEmpty() ? 'add' : 'remove'](ctx.config.placeholderClass);
 	}
 
 	function trim(str) {
@@ -810,7 +812,7 @@
 		this.config = defaults;
 
 		// set placeholder
-		if (defaults.placeholder) editor.setAttribute('data-placeholder', defaults.placeholder);
+		if (defaults.placeholder) editor.setAttribute(this.config.placeholderAttr, defaults.placeholder);
 		checkPlaceholder(this);
 
 		// save the selection obj
@@ -1154,28 +1156,33 @@
 		}
 	};
 
-	InlineEditor.prototype.destroy = function(isAJoke) {
-		var destroy = isAJoke ? false : true
-			, attr = isAJoke ? 'setAttribute' : 'removeAttribute';
+	InlineEditor.prototype.destroy = function() {
+		var config = this.config;
 
-		if (!isAJoke) {
-			removeAllListeners(this);
-			try {
-				selection.removeAllRanges();
-				if (this._menu) this._menu.parentNode.removeChild(this._menu);
-			} catch (e) {/* IE throws error sometimes*/}
-		} else {
-			initToolbar(this);
-			initEvents(this);
-		}
-		this._isDestroyed = destroy;
-		this.config.editor[attr]('contenteditable', '');
+		removeAllListeners(this);
+
+		config.editor.classList.remove(config.class, config.placeholderClass);
+
+		config.editor.removeAttribute('contenteditable');
+
+		config.editor.removeAttribute(config.placeholderAttr);
+
+		try {
+			selection.removeAllRanges();
+			if (this._menu) this._menu.parentNode.removeChild(this._menu);
+		} catch (e) {/* IE throws error sometimes*/}
+
+		this._isDestroyed = true;
 
 		return this;
 	};
 
 	InlineEditor.prototype.rebuild = function() {
-		return this.destroy('it\'s a joke');
+		initToolbar(this);
+
+		initEvents(this);
+
+		return this;
 	};
 
 	// a fallback for old browers
