@@ -118,6 +118,17 @@
 		}
 	}
 
+	&-placeholder {
+
+		&:before {
+			content: attr(data-pen-placeholder);
+			position: absolute;
+			font-weight: normal;
+			color: #757575;
+			opacity: 0.6;
+		}
+	}
+
 	&-external-url-checkbox {
 		display: none;
 
