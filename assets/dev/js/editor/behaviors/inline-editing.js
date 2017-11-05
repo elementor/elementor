@@ -23,7 +23,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		if ( this.editing || 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if (
+			this.editing ||
+			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			this.view.model.isRemoteRequestActive()
+		) {
 			return;
 		}
 
@@ -61,6 +65,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			editor: this.$currentEditingArea[0],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
+			cleanAttrs: ['id', 'class', 'name'],
+			placeholder: elementor.translate( 'type_here' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
