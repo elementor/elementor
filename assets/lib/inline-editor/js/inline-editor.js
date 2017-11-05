@@ -566,7 +566,6 @@
 			});
 		}
 
-		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
 			if (ctx.isEmpty() && ctx.config.mode === 'advanced') handleEmptyContent(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
