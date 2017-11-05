@@ -98,6 +98,7 @@
 		// default settings
 		var defaults = {
 			class: 'pen',
+			placeholderClass: 'pen-placeholder',
 			debug: false,
 			toolbar: null, // custom toolbar
 			mode: 'basic',
@@ -526,7 +527,8 @@
 
 		// check line break
 		addListener(ctx, editor, 'keydown', function(e) {
-			editor.classList.remove('pen-placeholder');
+			editor.classList.remove(ctx.config.placeholderClass);
+
 			if (e.which !== 13 || e.shiftKey) return;
 			var node = getNode(ctx, true);
 
@@ -640,7 +642,7 @@
 	}
 
 	function checkPlaceholder(ctx) {
-		ctx.config.editor.classList[ctx.isEmpty() ? 'add' : 'remove']('pen-placeholder');
+		ctx.config.editor.classList[ctx.isEmpty() ? 'add' : 'remove'](ctx.config.placeholderClass);
 	}
 
 	function trim(str) {
