@@ -405,7 +405,7 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
-			'wp_editor' => $this->_get_wp_editor_config(),
+			'wp_editor' => $this->get_wp_editor_config(),
 			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
@@ -571,9 +571,9 @@ class Editor {
 
 	/**
 	 * @since 1.0.0
-	 * @access protected
+	 * @access private
 	*/
-	protected function _get_wp_editor_config() {
+	private function get_wp_editor_config() {
 		ob_start();
 		wp_editor(
 			'%%EDITORCONTENT%%',
