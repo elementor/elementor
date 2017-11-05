@@ -94,8 +94,9 @@
 			align-items: center;
 
 			.pen-url-input {
-				line-height: 1;
-				padding: 3px;
+				line-height: 1.5;
+				padding: 0;
+				@include padding-start(10px);
 				width: 250px;
 				font-size: 12px;
 
