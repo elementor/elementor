@@ -494,6 +494,8 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
+			checkPlaceholder(ctx);
+
 			if (ctx.isEmpty()) {
 				if (ctx.config.mode === 'advanced') {
 					handleEmptyContent(ctx);
