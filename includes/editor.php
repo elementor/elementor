@@ -574,6 +574,8 @@ class Editor {
 		remove_all_filters( 'mce_buttons', 10 );
 		remove_all_filters( 'mce_external_plugins', 10 );
 
+		\_WP_Editors::print_tinymce_scripts();
+
 		ob_start();
 
 		wp_editor(
