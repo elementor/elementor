@@ -99,6 +99,7 @@
 		var defaults = {
 			class: 'pen',
 			placeholderClass: 'pen-placeholder',
+			placeholderAttr: 'data-pen-placeholder',
 			debug: false,
 			toolbar: null, // custom toolbar
 			mode: 'basic',
@@ -812,7 +813,7 @@
 		this.config = defaults;
 
 		// set placeholder
-		if (defaults.placeholder) editor.setAttribute('data-placeholder', defaults.placeholder);
+		if (defaults.placeholder) editor.setAttribute(this.config.placeholderAttr, defaults.placeholder);
 		checkPlaceholder(this);
 
 		// save the selection obj
