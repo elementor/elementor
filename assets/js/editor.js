@@ -456,7 +456,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '.elementor-inline-editing, .elementor-tab-title'
+				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
@@ -607,24 +607,28 @@ module.exports = SortableBehavior;
 
 },{}],7:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
-	ui: {
-		buttonSave: '#elementor-panel-saver-save',
-		buttonSaveIcon: '#elementor-panel-saver-save-icon',
-		buttonSaveDraft: '#elementor-panel-saver-save-draft',
-		buttonUpdate: '#elementor-panel-saver-update',
-		buttonPreview: '#elementor-panel-saver-preview span',
-		buttonPublish: '#elementor-panel-saver-publish',
-		buttonPublishChanges: '#elementor-panel-saver-publish-changes',
-		formPreview: '#elementor-panel-saver-preview form'
+	ui: function() {
+		return {
+			buttonSave: '#elementor-panel-saver-save',
+			buttonSaveIcon: '#elementor-panel-saver-save-icon',
+			buttonSaveDraft: '#elementor-panel-saver-save-draft',
+			buttonUpdate: '#elementor-panel-saver-update',
+			buttonPreview: '#elementor-panel-saver-preview span',
+			buttonPublish: '#elementor-panel-saver-publish',
+			buttonPublishChanges: '#elementor-panel-saver-publish-changes',
+			formPreview: '#elementor-panel-saver-preview form'
+		};
 	},
 
-	events: {
-		'click @ui.buttonSave': 'onClickButtonSave',
-		'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
-		'click @ui.buttonUpdate': 'onClickButtonUpdate',
-		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.buttonPublishChanges': 'onClickButtonPublish',
-		'click @ui.buttonPreview': 'onClickButtonPreview'
+	events: function() {
+		return {
+			'click @ui.buttonSave': 'onClickButtonSave',
+			'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
+			'click @ui.buttonUpdate': 'onClickButtonUpdate',
+			'click @ui.buttonPublish': 'onClickButtonPublish',
+			'click @ui.buttonPublishChanges': 'onClickButtonPublish',
+			'click @ui.buttonPreview': 'onClickButtonPreview'
+		};
 	},
 
 	initialize: function() {
@@ -8246,6 +8250,10 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 			enableLiveAutocompletion: true
 		} );
 
+		self.editor.getSession().setUseWrapMode( true );
+
+		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
 				getCompletions: function( editor, session, pos, prefix, callback ) {
@@ -8294,6 +8302,14 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 				}
 			} );
 		}
+	},
+
+	onResize: function() {
+		this.editor.resize();
+	},
+
+	onDestroy: function() {
+		elementor.panel.$el.off( 'resize.aceEditor' );
 	}
 } );
 
