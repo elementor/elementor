@@ -1156,28 +1156,33 @@
 		}
 	};
 
-	InlineEditor.prototype.destroy = function(isAJoke) {
-		var destroy = isAJoke ? false : true
-			, attr = isAJoke ? 'setAttribute' : 'removeAttribute';
+	InlineEditor.prototype.destroy = function() {
+		var config = this.config;
 
-		if (!isAJoke) {
-			removeAllListeners(this);
-			try {
-				selection.removeAllRanges();
-				if (this._menu) this._menu.parentNode.removeChild(this._menu);
-			} catch (e) {/* IE throws error sometimes*/}
-		} else {
-			initToolbar(this);
-			initEvents(this);
-		}
-		this._isDestroyed = destroy;
-		this.config.editor[attr]('contenteditable', '');
+		removeAllListeners(this);
+
+		config.editor.classList.remove(config.class, config.placeholderClass);
+
+		config.editor.removeAttribute('contenteditable');
+
+		config.editor.removeAttribute(config.placeholderAttr);
+
+		try {
+			selection.removeAllRanges();
+			if (this._menu) this._menu.parentNode.removeChild(this._menu);
+		} catch (e) {/* IE throws error sometimes*/}
+
+		this._isDestroyed = true;
 
 		return this;
 	};
 
 	InlineEditor.prototype.rebuild = function() {
-		return this.destroy('it\'s a joke');
+		initToolbar(this);
+
+		initEvents(this);
+
+		return this;
 	};
 
 	// a fallback for old browers
