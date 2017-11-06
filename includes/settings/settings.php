@@ -137,19 +137,19 @@ class Settings extends Settings_Page {
 								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
 							],
 							'disable_color_schemes' => [
-								'label' => __( 'Disable Global Colors', 'elementor' ),
+								'label' => __( 'Disable Default Colors', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
 									'value' => 'yes',
-									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
+									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
 								],
 							],
 							'disable_typography_schemes' => [
-								'label' => __( 'Disable Global Fonts', 'elementor' ),
+								'label' => __( 'Disable Default Fonts', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
 									'value' => 'yes',
-									'sub_desc' => __( 'Checking this box will disable Elementor\'s Global Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
+									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 								],
 							],
 						],

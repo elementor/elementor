@@ -28,6 +28,7 @@ class Source_Local extends Source_Base {
 	private static $_template_types = [ 'page', 'section' ];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -36,6 +37,7 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -50,11 +52,24 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.3
 	 * @access public
-	*/
+	 */
 	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
+	}
+
+	/**
+	 * @static
+	 * @since 1.8.0
+	 * @access public
+	 */
+	public static function remove_template_type( $type ) {
+		$key = array_search( $type, self::$_template_types, true );
+		if ( false !== $key ) {
+			unset( self::$_template_types[ $key ] );
+		}
 	}
 
 	/**
@@ -275,13 +290,13 @@ class Source_Local extends Source_Base {
 	 * @since 1.5.0
 	 * @access public
 	*/
-	public function get_data( array $args, $context = 'display' ) {
+	public function get_data( array $args ) {
 		$db = Plugin::$instance->db;
 
 		$template_id = $args['template_id'];
 
 		// TODO: Validate the data (in JS too!).
-		if ( 'display' === $context ) {
+		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
 			$content = $db->get_plain_editor( $template_id );
@@ -513,6 +528,13 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
+	public function remove_elementor_post_state_from_library( $post_states, $post ) {
+		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
+			unset( $post_states['elementor'] );
+		}
+		return $post_states;
+	}
+
 	/**
 	 * @since 1.0.0
 	 * @access private
@@ -662,14 +684,13 @@ class Source_Local extends Source_Base {
 	private function prepare_template_export( $template_id ) {
 		$template_data = $this->get_data( [
 			'template_id' => $template_id,
-		], 'raw' );
+		] );
 
 		if ( empty( $template_data['content'] ) ) {
 			return new \WP_Error( '404', 'The template does not exist' );
 		}
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`.
-		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
+		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
 		$template_type = self::get_template_type( $template_id );
 
@@ -721,6 +742,7 @@ class Source_Local extends Source_Base {
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
+			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
 			// template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );

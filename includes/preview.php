@@ -7,9 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Preview {
 
+	private $post_id;
+
 	/**
 	 * Initialize the preview mode. Fired by `init` action.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -17,6 +20,8 @@ class Preview {
 		if ( is_admin() || ! $this->is_preview_mode() ) {
 			return;
 		}
+
+		$this->post_id = get_the_ID();
 
 		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
 		// TODO: Move this code to `includes/compatibility.php`.
@@ -36,11 +41,18 @@ class Preview {
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
+
+		do_action( 'elementor/preview/init', $this );
+	}
+
+	public function get_post_id() {
+		return $this->post_id;
 	}
 
 	/**
 	 * Method detect if we are in the preview mode (iFrame).
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return bool
 	 */
@@ -60,6 +72,7 @@ class Preview {
 	 * Do not show the content from the page. Just print empty start HTML.
 	 * The Javascript will add the content later.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @return string
@@ -71,6 +84,7 @@ class Preview {
 	/**
 	 * Enqueue preview scripts and styles.
 	 *
+	 * @access private
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -106,12 +120,23 @@ class Preview {
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
 
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-inline-editor',
+			ELEMENTOR_ASSETS_URL . 'lib/inline-editor/js/inline-editor' . $suffix . '.js',
+			[],
+			'',
+			true
+		);
+
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
 	/**
 	 * Preview constructor.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 */
 	public function __construct() {

@@ -10,6 +10,7 @@ class Group_Control_Border extends Group_Control_Base {
 	protected static $fields;
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/

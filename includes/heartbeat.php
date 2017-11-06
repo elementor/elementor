@@ -10,6 +10,7 @@ class Heartbeat {
 	/**
 	 * Handle the post lock in the editor.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @param array $response
@@ -28,17 +29,30 @@ class Heartbeat {
 				$response['locked_user'] = $locked_user->display_name;
 			}
 
-			$response['elementor_nonce'] = wp_create_nonce( 'elementor-editing' );
+			$response['elementorNonce'] = wp_create_nonce( 'elementor-editing' );
 		}
+		return $response;
+	}
+
+	public function refresh_nonces( $response, $data ) {
+		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
+			$response['elementor-refresh-nonces'] = [
+				'elementorNonce' => wp_create_nonce( 'elementor-editing' ),
+				'heartbeatNonce' => wp_create_nonce( 'heartbeat-nonce' ),
+			];
+		}
+
 		return $response;
 	}
 
 	/**
 	 * Heartbeat constructor.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 */
 	public function __construct() {
 		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
+		add_filter( 'wp_refresh_nonces', [ $this, 'refresh_nonces' ], 30, 2 );
 	}
 }

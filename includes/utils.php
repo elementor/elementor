@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Utils {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -16,6 +17,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -24,6 +26,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -34,6 +37,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.7.0
 	 * @access public
 	*/
@@ -61,6 +65,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.4
 	 * @access public
 	*/
@@ -71,6 +76,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -82,6 +88,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -90,17 +97,18 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
-	public static function generate_random_string( $length = 7 ) {
-		$salt = 'abcdefghijklmnopqrstuvwxyz';
-		return substr( str_shuffle( str_repeat( $salt, $length ) ), 0, $length );
+	public static function generate_random_string() {
+		return dechex( rand() );
 	}
 
 	/**
 	 * Tell to WP Cache plugins do not cache this request.
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 * @return void
@@ -131,6 +139,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -153,6 +162,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.10
 	 * @access public
 	*/
@@ -165,6 +175,7 @@ class Utils {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.10
 	 * @access public
 	*/

@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?2.4.2");
-  src: url("../fonts/eicons.eot?2.4.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.4.2") format("woff2"), url("../fonts/eicons.woff?2.4.2") format("woff"), url("../fonts/eicons.ttf?2.4.2") format("truetype"), url("../fonts/eicons.svg?2.4.2#eicon") format("svg");
+  src: url("../fonts/eicons.eot?2.5.0");
+  src: url("../fonts/eicons.eot?2.5.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.5.0") format("woff2"), url("../fonts/eicons.woff?2.5.0") format("woff"), url("../fonts/eicons.ttf?2.5.0") format("truetype"), url("../fonts/eicons.svg?2.5.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -461,6 +461,60 @@
 
 .eicon-twitter-feed:before {
   content: '\e947'; }
+
+.eicon-editor-link:before {
+  content: '\e500'; }
+
+.eicon-editor-unlink:before {
+  content: '\e501'; }
+
+.eicon-editor-external-link:before {
+  content: '\e502'; }
+
+.eicon-editor-close:before {
+  content: '\e503'; }
+
+.eicon-editor-list-ol:before {
+  content: '\e504'; }
+
+.eicon-editor-list-ul:before {
+  content: '\e505'; }
+
+.eicon-editor-bold:before {
+  content: '\e506'; }
+
+.eicon-editor-italic:before {
+  content: '\e507'; }
+
+.eicon-editor-underline:before {
+  content: '\e508'; }
+
+.eicon-editor-paragraph:before {
+  content: '\e509'; }
+
+.eicon-editor-h1:before {
+  content: '\e510'; }
+
+.eicon-editor-h2:before {
+  content: '\e511'; }
+
+.eicon-editor-h3:before {
+  content: '\e512'; }
+
+.eicon-editor-h4:before {
+  content: '\e513'; }
+
+.eicon-editor-h5:before {
+  content: '\e514'; }
+
+.eicon-editor-h6:before {
+  content: '\e515'; }
+
+.eicon-editor-quote:before {
+  content: '\e516'; }
+
+.eicon-editor-code:before {
+  content: '\e517'; }
 
 .eicon-floppy-o:before {
   content: '\e001'; }

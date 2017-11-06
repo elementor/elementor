@@ -14,7 +14,7 @@
 
 		.elementor-tab-desktop-title {
 
-			&.active {
+			&.elementor-active {
 				@include border-end-property(style, none);
 
 				&:before,
@@ -42,7 +42,7 @@
 		.elementor-tab-desktop-title {
 			display: table-cell;
 
-			&.active {
+			&.elementor-active {
 				border-bottom-style: none;
 
 				&:before,
@@ -82,6 +82,7 @@
 
 	.elementor-tab-title {
 		cursor: pointer;
+		outline: none;
 	}
 
 	.elementor-tab-desktop-title {
@@ -91,7 +92,7 @@
 		line-height: 1;
 		border: solid transparent;
 
-		&.active {
+		&.elementor-active {
 			border-color: $gray-light;
 
 			&:before,
