@@ -172,6 +172,38 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
+	 * @since 1.8.0
+	 * @access public
+	 */
+	public function on_import( $settings, $control_data = [] ) {
+		if ( empty( $settings ) || empty( $control_data['fields'] ) ) {
+			return $settings;
+		}
+
+		$method = 'on_import';
+
+		foreach ( $settings as &$item ) {
+			foreach ( $control_data['fields'] as $field ) {
+				if ( empty( $field['name'] ) || empty( $item[ $field['name'] ] ) ) {
+					continue;
+				}
+
+				$control_obj = Plugin::$instance->controls_manager->get_control( $field['type'] );
+
+				if ( ! $control_obj ) {
+					continue;
+				}
+
+				if ( method_exists( $control_obj, $method ) ) {
+					$item[ $field['name'] ] = $control_obj->{$method}( $item[ $field['name'] ], $field );
+				}
+			}
+		}
+
+		return $settings;
+	}
+
+	/**
 	 * Render repeater control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS
