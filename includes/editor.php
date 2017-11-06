@@ -475,6 +475,7 @@ class Editor {
 				'no' => __( 'No', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
+				'type_here' => __( 'Type Here', 'elementor' ),
 			],
 		];
 

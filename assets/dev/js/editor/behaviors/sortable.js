@@ -9,7 +9,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		'sortstart': 'onSortStart',
 		'sortreceive': 'onSortReceive',
 		'sortupdate': 'onSortUpdate',
-		'sortstop': 'onSortStop',
 		'sortover': 'onSortOver',
 		'sortout': 'onSortOut'
 	},
@@ -63,7 +62,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '.elementor-inline-editing, .elementor-tab-title'
+				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );

@@ -8,7 +8,7 @@
 		background-color: #fff;
 		border: solid #fff;
 		border-width: 0 10px 0 5px;
-		padding-top: 10px;
+		padding-top: 9px;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 
 		.wp-color-result {
@@ -36,6 +36,7 @@
 	height: 25px;
 	transition: border .5s;
 	padding: 0;
+	background-color: #fafafa;
 	border-radius: 3px;
 	border: 1px solid $editor-lightest;
 
@@ -102,6 +103,10 @@
 
 		&:not(.wp-picker-active) {
 			float: $end;
+
+			.wp-color-result {
+				margin: 0;
+			}
 		}
 
 		&.wp-picker-active {
