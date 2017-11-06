@@ -113,6 +113,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-jsfiddle',
 							'fa fa-linkedin',
 							'fa fa-medium',
+							'fa fa-meetup',
 							'fa fa-pinterest',
 							'fa fa-product-hunt',
 							'fa fa-reddit',
