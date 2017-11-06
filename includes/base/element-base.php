@@ -620,6 +620,10 @@ abstract class Element_Base extends Controls_Stack {
 		$this->render_edit_tools();
 	}
 
+	/**
+	 * @since 1.8.0
+	 * @access protected
+	 */
 	protected function render_edit_tools() {}
 
 	/**
