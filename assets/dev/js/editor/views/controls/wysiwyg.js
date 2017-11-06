@@ -8,6 +8,10 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
+		addToBasic: {
+			underline: 'italic'
+		},
+		addToAdvanced: {},
 		moveToAdvanced: {
 			blockquote: 'removeformat',
 			alignleft: 'blockquote',
@@ -79,19 +83,28 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 	},
 
 	moveButtons: function( buttonsToMove, from, to ) {
-		_.each( buttonsToMove, function( afterButton, button ) {
-			var buttonIndex = from.indexOf( button ),
-				afterButtonIndex = to.indexOf( afterButton );
+		if ( ! to ) {
+			to = from;
 
-			if ( -1 === buttonIndex ) {
-				throw new ReferenceError( 'Trying to move non-existing button `' + button + '`' );
+			from = null;
+		}
+
+		_.each( buttonsToMove, function( afterButton, button ) {
+			var afterButtonIndex = to.indexOf( afterButton );
+
+			if ( from ) {
+				var buttonIndex = from.indexOf( button );
+
+				if ( -1 === buttonIndex ) {
+					throw new ReferenceError( 'Trying to move non-existing button `' + button + '`' );
+				}
+
+				from.splice( buttonIndex, 1 );
 			}
 
 			if ( -1 === afterButtonIndex ) {
 				throw new ReferenceError( 'Trying to move button after non-existing button `' + afterButton + '`' );
 			}
-
-			from.splice( buttonIndex, 1 );
 
 			to.splice( afterButtonIndex + 1, 0, button );
 		} );
@@ -110,12 +123,21 @@ ControlWysiwygItemView = ControlBaseItemView.extend( {
 
 		this.moveButtons( this.buttons.moveToAdvanced, editorBasicToolbarButtons, editorAdvancedToolbarButtons );
 
+		this.moveButtons( this.buttons.addToBasic, editorBasicToolbarButtons );
+
+		this.moveButtons( this.buttons.addToAdvanced, editorAdvancedToolbarButtons );
+
 		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
 	onAfterExternalChange: function() {
-		tinymce.get( this.editorID ).setContent( this.getControlValue() );
+		var controlValue = this.getControlValue();
+
+		tinymce.get( this.editorID ).setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
 	onBeforeDestroy: function() {

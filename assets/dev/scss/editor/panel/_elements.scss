@@ -84,7 +84,7 @@
 
 	&:focus {
 		background-color: rgba(255,255,255,.7);
-		padding-left: 15px;
+		@include padding-start(15px);
 
 		+ i {
 			@include end(15px);

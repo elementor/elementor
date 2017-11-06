@@ -11,8 +11,10 @@ BaseElementView = BaseContainer.extend( {
 
 	toggleEditTools: true,
 
+	allowRender: true,
+
 	className: function() {
-		return this.getElementUniqueID();
+		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -62,6 +64,10 @@ BaseElementView = BaseContainer.extend( {
 		return this.model.get( 'elType' );
 	},
 
+	getIDInt: function() {
+		return parseInt( this.getID(), 16 );
+	},
+
 	getChildType: function() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
@@ -81,11 +87,13 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
+	// TODO: backward compatibility method since 1.8.0
 	templateHelpers: function() {
-		return {
-			elementModel: this.model,
-			editModel: this.getEditModel()
-		};
+		var templateHelpers = BaseContainer.prototype.templateHelpers.apply( this, arguments );
+
+		return jQuery.extend( templateHelpers, {
+			editModel: this.getEditModel() // @deprecated. Use view.getEditModel() instead.
+		} );
 	},
 
 	getTemplateType: function() {
@@ -214,8 +222,6 @@ BaseElementView = BaseContainer.extend( {
 	renderCustomClasses: function() {
 		var self = this;
 
-		self.$el.addClass( 'elementor-element' );
-
 		var settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
 
@@ -298,6 +304,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderOnChange: function( settings ) {
+		if ( ! this.allowRender ) {
+			return;
+		}
+
 		// Make sure is correct model
 		if ( settings instanceof BaseSettingsModel ) {
 			var hasChanged = settings.hasChanged(),
@@ -307,9 +317,14 @@ BaseElementView = BaseContainer.extend( {
 			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
 				var control = settings.getControl( settingKey );
 
+				if ( '_column_size' === settingKey ) {
+					isRenderRequired = true;
+					return;
+				}
+
 				if ( ! control ) {
 					isRenderRequired = true;
-
+					isContentChanged = true;
 					return;
 				}
 
@@ -370,7 +385,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditSettingsChanged: function( changedModel ) {
-		this.renderOnChange( changedModel );
+		elementor.channels.editor
+			.trigger( 'change:editSettings', changedModel, this );
 	},
 
 	onSettingsChanged: function( changedModel ) {

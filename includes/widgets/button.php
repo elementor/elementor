@@ -437,7 +437,7 @@ class Widget_Button extends Widget_Base {
 						<i class="{{ settings.icon }}"></i>
 					</span>
 					<# } #>
-					<span class="elementor-button-text">{{{ settings.text }}}</span>
+					<span class="elementor-button-text elementor-inline-editing" data-elementor-setting-key="text" data-elementor-inline-editing-toolbar="none">{{{ settings.text }}}</span>
 				</span>
 			</a>
 		</div>
@@ -455,6 +455,10 @@ class Widget_Button extends Widget_Base {
 		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
 		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
+
+		$this->add_render_attribute( 'text', 'class', 'elementor-button-text' );
+
+		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) ) : ?>
@@ -462,7 +466,7 @@ class Widget_Button extends Widget_Base {
 				<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
 			</span>
 			<?php endif; ?>
-			<span class="elementor-button-text"><?php echo $settings['text']; ?></span>
+			<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
 		</span>
 		<?php
 	}

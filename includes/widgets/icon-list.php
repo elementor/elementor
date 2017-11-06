@@ -166,26 +166,20 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'prefix_class' => 'elementor-align-',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a' => 'justify-content: {{VALUE}};',
-				],
-				'selectors_dictionary' => [
-					'left' => 'flex-start',
-					'right' => 'flex-end',
-				],
+				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -397,7 +391,13 @@ class Widget_Icon_List extends Widget_Base {
 		$settings = $this->get_settings();
 		?>
 		<ul class="elementor-icon-list-items">
-			<?php foreach ( $settings['icon_list'] as $index => $item ) : ?>
+			<?php foreach ( $settings['icon_list'] as $index => $item ) :
+				$repeater_setting_key = $this->get_repeater_setting_key( 'text', 'icon_list', $index );
+
+				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
+
+				$this->add_inline_editing_attributes( $repeater_setting_key );
+				?>
 				<li class="elementor-icon-list-item" >
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
@@ -422,7 +422,7 @@ class Widget_Icon_List extends Widget_Base {
 							<i class="<?php echo esc_attr( $item['icon'] ); ?>"></i>
 						</span>
 					<?php endif; ?>
-					<span class="elementor-icon-list-text"><?php echo $item['text']; ?></span>
+					<span <?php echo $this->get_render_attribute_string( $repeater_setting_key ); ?>><?php echo $item['text']; ?></span>
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
 						echo '</a>';
@@ -449,7 +449,7 @@ class Widget_Icon_List extends Widget_Base {
 		<ul class="elementor-icon-list-items">
 			<#
 			if ( settings.icon_list ) {
-				_.each( settings.icon_list, function( item ) { #>
+				_.each( settings.icon_list, function( item, index ) { #>
 					<li class="elementor-icon-list-item">
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
@@ -457,7 +457,7 @@ class Widget_Icon_List extends Widget_Base {
 						<span class="elementor-icon-list-icon">
 							<i class="{{ item.icon }}"></i>
 						</span>
-						<span class="elementor-icon-list-text">{{{ item.text }}}</span>
+						<span class="elementor-icon-list-text elementor-inline-editing" data-elementor-setting-key="icon_list.{{{ index }}}.text">{{{ item.text }}}</span>
 						<# if ( item.link && item.link.url ) { #>
 							</a>
 						<# } #>

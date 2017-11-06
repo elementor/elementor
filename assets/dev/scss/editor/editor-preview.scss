@@ -3,6 +3,7 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "inline-editor";
 @import "animations";
 @import "compatibility";
 
@@ -498,6 +499,10 @@ html.elementor-html {
 			vertical-align: middle;
 			height: 40px;
 		}
+	}
+
+	.elementor-inline-editing {
+		min-height: 15px;
 	}
 }
 

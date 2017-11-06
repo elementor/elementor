@@ -10,6 +10,7 @@ class Element_Column extends Element_Base {
 	protected static $_edit_tools;
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access protected
 	*/
@@ -459,7 +460,7 @@ class Element_Column extends Element_Base {
 				'colors_warning',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Global Colors are enabled.', 'elementor' ),
+					'raw' => __( 'Note: The following colors won\'t work if Default Colors are enabled.', 'elementor' ),
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 				]
 			);
@@ -722,10 +723,10 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access protected
 	*/
-	protected function _render_settings() {
+	protected function render_edit_tools() {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">

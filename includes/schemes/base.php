@@ -12,12 +12,14 @@ abstract class Scheme_Base implements Scheme_Interface {
 	private $_system_schemes;
 
 	/**
+	 * @abstract
 	 * @since 1.0.0
 	 * @access protected
 	*/
 	abstract protected function _init_system_schemes();
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
