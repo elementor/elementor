@@ -6,21 +6,96 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * A Media Chooser control. Based on the WordPress media library
+ * Media control.
  *
- * @param array  $default {
- *      @type string  $url   Default empty
- *      @type integer $id    Default empty
- * }
+ * A base control for creating a media chooser control. Based on the WordPress
+ * media library. Used to select an image from the WordPress media library.
+ *
+ * Creating new control in the editor (inside `Widget_Base::_register_controls()`
+ * method):
+ *
+ *    $this->add_control(
+ *    	'image',
+ *    	[
+ *    		'label' => __( 'Choose Image', 'plugin-domain' ),
+ *    		'type' => Controls_Manager::MEDIA,
+ *    		'default' => [
+ *    			'url' => Utils::get_placeholder_image_src(),
+ *    		]
+ *    	]
+ *    );
+ *
+ * PHP usage (inside `Widget_Base::render()` method):
+ *
+ *    $image = $this->get_settings( 'image' );
+ *    // Get image URL
+ *    echo '<img src="' . $image['url'] . '">';
+ *    // Get image thumbnail by ID
+ *    echo wp_get_attachment_image( $image['id'], 'thumbnail' );
+ *
+ * JS usage (inside `Widget_Base::_content_template()` method):
+ *
+ *    <img src="{{ settings.image.url }}">
  *
  * @since 1.0.0
+ *
+ * @param string $label       Optional. The label that appears above of the
+ *                            field. Default is empty.
+ * @param string $title       Optional. The field title that appears on mouse
+ *                            hover. Default is empty.
+ * @param string $description Optional. The description that appears below the
+ *                            field. Default is empty.
+ * @param array $default      {
+ *     Optional. Defautl media values.
+ *
+ *     @type int    $id  Optional. Media id. Default is empty.
+ *     @type string $url Optional. Media url. Use `Utils::get_placeholder_image_src()`
+ *                       to retrieve Elementor image placeholder. Default is empty.
+ * }
+ * @param string $separator   Optional. Set the position of the control separator.
+ *                            Available values are 'default', 'before', 'after'
+ *                            and 'none'. 'default' will position the separator
+ *                            depending on the control type. 'before' / 'after'
+ *                            will position the separator before/after the
+ *                            control. 'none' will hide the separator. Default
+ *                            is 'default'.
+ * @param bool   $show_label  Optional. Whether to display the label. Default is
+ *                            true.
+ * @param bool   $label_block Optional. Whether to display the label in a
+ *                            separate line. Default is true.
+ *
+ * @return array {
+ *     An array containing the media ID and URL: `[ 'id' => '', 'url' => '' ]`.
+ *
+ *     @type int    $id  Media id.
+ *     @type string $url Media url.
+ * }
  */
 class Control_Media extends Control_Base_Multiple {
 
+	/**
+	 * Retrieve media control type.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Control type.
+	 */
 	public function get_type() {
 		return 'media';
 	}
 
+	/**
+	 * Retrieve media control default values.
+	 *
+	 * Get the default value of the media control. Used to return the default
+	 * values while initializing the media control.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Control default value.
+	 */
 	public function get_default_value() {
 		return [
 			'url' => '',
@@ -29,11 +104,17 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Fetch images and replace to new
+	 * Import media images.
 	 *
-	 * @param $settings
+	 * Used to import media control files from external sites while importing
+	 * Elementor template JSON file, and replacing the old data.
 	 *
-	 * @return array|bool
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array $settings Control settings
+	 *
+	 * @return array Control settings.
 	 */
 	public function on_import( $settings ) {
 		if ( empty( $settings['url'] ) ) {
@@ -52,6 +133,15 @@ class Control_Media extends Control_Base_Multiple {
 		return $settings;
 	}
 
+	/**
+	 * Enqueue media control scripts and styles.
+	 *
+	 * Used to register and enqueue custom scripts and styles used by the media
+	 * control.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_media();
@@ -76,6 +166,16 @@ class Control_Media extends Control_Base_Multiple {
 		wp_enqueue_script( 'image-edit' );
 	}
 
+	/**
+	 * Render media control output in the editor.
+	 *
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
@@ -99,12 +199,36 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
+	/**
+	 * Retrieve media control default settings.
+	 *
+	 * Get the default settings of the media control. Used to return the default
+	 * settings while initializing the media control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
 		];
 	}
 
+	/**
+	 * Retrieve media control image title.
+	 *
+	 * Get the title of the image selected by the media control.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @param array $attachment Media attachment.
+	 *
+	 * @return string Image title.
+	 */
 	public static function get_image_title( $attachment ) {
 		if ( empty( $attachment['id'] ) ) {
 			return '';
@@ -113,6 +237,19 @@ class Control_Media extends Control_Base_Multiple {
 		return get_the_title( $attachment['id'] );
 	}
 
+	/**
+	 * Retrieve media control image alt.
+	 *
+	 * Get the alt value of the image selected by the media control.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @param array $attachment Media attachment.
+	 *
+	 * @return string Image alt.
+	 */
 	public static function get_image_alt( $instance ) {
 		if ( empty( $instance['id'] ) ) {
 			return '';

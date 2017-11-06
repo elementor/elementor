@@ -6,21 +6,95 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * A Font Icon select box.
+ * Icon control.
  *
- * @property array $options A list of font-icon classes. [ 'class-name' => 'nicename', ... ]
- *                          Default Font Awesome icons. @see Control_Icon::get_icons().
- * @property array $include list of classes to include form the $icons property
- * @property array $exclude list of classes to exclude form the $icons property
+ * A base control for creating an icon control. Displays font icon select box.
+ * Available icons are listed in @see Control_Icon::get_icons(). The control
+ * accepts `include` or `exclude` arguments to set a partial list of icons.
+ *
+ * Creating new control in the editor (inside `Widget_Base::_register_controls()`
+ * method):
+ *
+ *    $this->add_control(
+ *    	'icon',
+ *    	[
+ *    		'label' => __( 'Social Icon', 'plugin-domain' ),
+ *    		'type' => Controls_Manager::ICON,
+ *    		'include' => [
+ *    			'fa fa-facebook',
+ *    			'fa fa-flickr',
+ *    			'fa fa-google-plus',
+ *    			'fa fa-instagram',
+ *    			'fa fa-linkedin',
+ *    			'fa fa-pinterest',
+ *    			'fa fa-reddit',
+ *    			'fa fa-twitch',
+ *    			'fa fa-twitter',
+ *    			'fa fa-vimeo',
+ *    			'fa fa-youtube',
+ *    		],
+ *    	]
+ *    );
+ *
+ * PHP usage (inside `Widget_Base::render()` method):
+ *
+ *    echo '<i class="' . esc_attr( $this->get_settings( 'icon' ) ) . '"></i>';
+ *
+ * JS usage (inside `Widget_Base::_content_template()` method):
+ *
+ *    <i class="{{ settings.icon }}"></i>
  *
  * @since 1.0.0
+ *
+ * @param string $label       Optional. The label that appears above of the
+ *                            field. Default is empty.
+ * @param string $description Optional. The description that appears below the
+ *                            field. Default is empty.
+ * @param string $default     Optional. Default icon name. Default is empty.
+ * @param array  $options     Optional. An associative array of available icons.
+ *                            `[ 'class-name' => 'nicename', ... ]`
+ *                            Default is a list of Font Awesome icons @see Control_Icon::get_icons()
+ * @param array  $include     Optional. An array of icon classes to include in
+ *                            the options list. Default is an empty array.
+ * @param array  $exclude     Optional. An array of icon classes to exclude from
+ *                            the options list. Default is an empty array.
+ * @param string $separator   Optional. Set the position of the control separator.
+ *                            Available values are 'default', 'before', 'after'
+ *                            and 'none'. 'default' will position the separator
+ *                            depending on the control type. 'before' / 'after'
+ *                            will position the separator before/after the
+ *                            control. 'none' will hide the separator. Default
+ *                            is 'default'.
+ * @param bool   $show_label  Optional. Whether to display the label. Default is
+ *                            true.
+ * @param bool   $label_block Optional. Whether to display the label in a
+ *                            separate line. Default is false.
  */
 class Control_Icon extends Base_Data_Control {
 
+	/**
+	 * Retrieve icon control type.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Control type.
+	 */
 	public function get_type() {
 		return 'icon';
 	}
 
+	/**
+	 * Retrieve icons.
+	 *
+	 * Get all the available icons.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return array Available icons.
+	 */
 	public static function get_icons() {
 		return [
 			'fa fa-500px' => '500px',
@@ -814,12 +888,33 @@ class Control_Icon extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * Retrieve icons control default settings.
+	 *
+	 * Get the default settings of the icons control. Used to return the default
+	 * settings while initializing the icons control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
 	protected function get_default_settings() {
 		return [
 			'options' => self::get_icons(),
 		];
 	}
 
+	/**
+	 * Render icons control output in the editor.
+	 *
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

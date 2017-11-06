@@ -13,6 +13,7 @@ class Widget_Text_Editor extends Widget_Base {
 	/**
 	 * Retrieve text editor widget name.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -24,6 +25,7 @@ class Widget_Text_Editor extends Widget_Base {
 	/**
 	 * Retrieve text editor widget title.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -35,6 +37,7 @@ class Widget_Text_Editor extends Widget_Base {
 	/**
 	 * Retrieve text editor widget icon.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -48,6 +51,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _register_controls() {
@@ -303,14 +307,19 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {
 		$editor_content = $this->get_settings( 'editor' );
 
 		$editor_content = $this->parse_text_editor( $editor_content );
+
+		$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+
+		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
-		<div class="elementor-text-editor elementor-clearfix"><?php echo $editor_content; ?></div>
+		<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>><?php echo $editor_content; ?></div>
 		<?php
 	}
 
@@ -319,6 +328,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Override the default behavior by printing the content without rendering it.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function render_plain_content() {
@@ -331,11 +341,12 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-text-editor elementor-clearfix">{{{ settings.editor }}}</div>
+		<div class="elementor-text-editor elementor-clearfix elementor-inline-editing" data-elementor-setting-key="editor" data-elementor-inline-editing-toolbar="advanced">{{{ settings.editor }}}</div>
 		<?php
 	}
 }

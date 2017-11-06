@@ -11,10 +11,20 @@ class Group_Control_Background extends Group_Control_Base {
 
 	private static $background_types;
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_type() {
 		return 'background';
 	}
 
+	/**
+	 * @static
+	 * @since 1.2.2
+	 * @access public
+	*/
 	public static function get_background_types() {
 		if ( null === self::$background_types ) {
 			self::$background_types = self::init_background_types();
@@ -23,6 +33,11 @@ class Group_Control_Background extends Group_Control_Base {
 		return self::$background_types;
 	}
 
+	/**
+	 * @static
+	 * @since 1.2.2
+	 * @access private
+	*/
 	private static function init_background_types() {
 		return [
 			'classic' => [
@@ -40,6 +55,10 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access public
+	*/
 	public function init_fields() {
 		$fields = [];
 
@@ -291,12 +310,20 @@ class Group_Control_Background extends Group_Control_Base {
 		return $fields;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function get_child_default_args() {
 		return [
 			'types' => [ 'classic', 'gradient' ],
 		];
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function filter_fields() {
 		$fields = parent::filter_fields();
 
@@ -311,6 +338,10 @@ class Group_Control_Background extends Group_Control_Base {
 		return $fields;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function prepare_fields( $fields ) {
 		$args = $this->get_args();
 

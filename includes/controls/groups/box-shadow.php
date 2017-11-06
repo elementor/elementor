@@ -9,10 +9,19 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 
 	protected static $fields;
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_type() {
 		return 'box-shadow';
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function init_fields() {
 		$controls = [];
 

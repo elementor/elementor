@@ -13,6 +13,7 @@ class Widget_Heading extends Widget_Base {
 	/**
 	 * Retrieve heading widget name.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -24,6 +25,7 @@ class Widget_Heading extends Widget_Base {
 	/**
 	 * Retrieve heading widget title.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -35,6 +37,7 @@ class Widget_Heading extends Widget_Base {
 	/**
 	 * Retrieve heading widget icon.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -48,6 +51,7 @@ class Widget_Heading extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _register_controls() {
@@ -207,6 +211,7 @@ class Widget_Heading extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {
@@ -216,11 +221,13 @@ class Widget_Heading extends Widget_Base {
 			return;
 		}
 
-		$this->add_render_attribute( 'heading', 'class', 'elementor-heading-title' );
+		$this->add_render_attribute( 'title', 'class', 'elementor-heading-title' );
 
 		if ( ! empty( $settings['size'] ) ) {
-			$this->add_render_attribute( 'heading', 'class', 'elementor-size-' . $settings['size'] );
+			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
 		}
+
+		$this->add_inline_editing_attributes( 'title' );
 
 		$title = $settings['title'];
 
@@ -238,7 +245,7 @@ class Widget_Heading extends Widget_Base {
 			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
 		}
 
-		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'heading' ), $title );
+		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'title' ), $title );
 
 		echo $title_html;
 	}
@@ -248,6 +255,7 @@ class Widget_Heading extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _content_template() {
@@ -259,7 +267,7 @@ class Widget_Heading extends Widget_Base {
 				title = '<a href="' + settings.link.url + '">' + title + '</a>';
 			}
 
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-size-' + settings.size + '">' + title + '</' + settings.header_size + '>';
+			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title">' + title + '</' + settings.header_size + '>';
 
 			print( title_html );
 		#>

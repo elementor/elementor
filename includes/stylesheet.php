@@ -23,6 +23,9 @@ class Stylesheet {
 	private $raw = [];
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @param array $rules
 	 *
 	 * @return string
@@ -42,6 +45,9 @@ class Stylesheet {
 	}
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @param array $properties
 	 *
 	 * @return string
@@ -59,6 +65,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param string $device_name
 	 * @param string $device_max_point
 	 *
@@ -73,6 +81,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param string       $selector
 	 * @param array|string $style_rules
 	 * @param array        $query
@@ -128,6 +138,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.0.8
+	 * @access public
 	 * @param string $css
 	 * @param string $device
 	 *
@@ -144,6 +156,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.0.5
+	 * @access public
 	 * @param string $device
 	 * @param string $selector
 	 * @param string $property
@@ -166,6 +180,10 @@ class Stylesheet {
 		return isset( $this->rules[ $device ] ) ? $this->rules[ $device ] : null;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __toString() {
 		$style_text = '';
 
@@ -193,6 +211,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access private
 	 * @param string $device_name
 	 *
 	 * @return int
@@ -212,6 +232,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access private
 	 * @param array $query
 	 *
 	 * @return string
@@ -227,6 +249,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access private
 	 * @param string $hash
 	 *
 	 * @return array
@@ -250,6 +274,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access private
 	 * @param string $query_hash
 	 */
 	private function add_query_hash( $query_hash ) {
@@ -283,6 +309,8 @@ class Stylesheet {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access private
 	 * @param string $query_hash
 	 *
 	 * @return string

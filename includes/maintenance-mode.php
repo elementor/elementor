@@ -11,19 +11,37 @@ class Maintenance_Mode {
 
 	const MODE_COMING_SOON = 'coming_soon';
 
+	/**
+	 * @static
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public static function get( $option, $default = false ) {
 		return get_option( self::OPTION_PREFIX . $option, $default );
 	}
 
+	/**
+	 * @static
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public static function set( $option, $value ) {
 		return update_option( self::OPTION_PREFIX . $option, $value );
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function body_class( $classes ) {
 		$classes[] = 'elementor-maintenance-mode';
 
 		return $classes;
 	}
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function template_redirect() {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return;
@@ -35,6 +53,10 @@ class Maintenance_Mode {
 		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function template_include( $template ) {
 		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
 		query_posts( [
@@ -52,6 +74,10 @@ class Maintenance_Mode {
 		return $template;
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function register_settings_fields( Tools $tools ) {
 		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [ 'type' => 'page' ] );
 
@@ -135,6 +161,10 @@ class Maintenance_Mode {
 		);
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-on',
@@ -150,6 +180,10 @@ class Maintenance_Mode {
 		] );
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function print_style() {
 		?>
 		<style>#wp-admin-bar-elementor-maintenance-on > a { background-color: #dc3232; }
@@ -157,6 +191,10 @@ class Maintenance_Mode {
 		<?php
 	}
 
+	/**
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public function __construct() {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 

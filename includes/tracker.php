@@ -11,6 +11,9 @@ class Tracker {
 
 	/**
 	 * Hook into cron event.
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public static function init() {
 		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
@@ -18,6 +21,11 @@ class Tracker {
 		add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
@@ -33,6 +41,9 @@ class Tracker {
 	/**
 	 * Decide whether to send tracking data or not.
 	 *
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @param bool $override
 	 */
 	public static function send_tracking_data( $override = false ) {
@@ -91,10 +102,20 @@ class Tracker {
 		);
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function is_allow_track() {
 		return 'yes' === get_option( 'elementor_allow_tracking', 'no' );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function handle_tracker_actions() {
 		if ( ! isset( $_GET['elementor_tracker'] ) ) {
 			return;
@@ -118,6 +139,11 @@ class Tracker {
 		exit;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function admin_notices() {
 		// Show tracker notice after 24 hours from installed time.
 		if ( self::_get_installed_time() > strtotime( '-24 hours' ) ) {
@@ -150,6 +176,11 @@ class Tracker {
 		<?php
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _get_installed_time() {
 		$installed_time = get_option( '_elementor_installed_time' );
 		if ( ! $installed_time ) {
@@ -159,6 +190,11 @@ class Tracker {
 		return $installed_time;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _get_system_reports_data() {
 		$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_reports() );
 
@@ -175,12 +211,20 @@ class Tracker {
 	/**
 	 * Get the last time tracking data was sent.
 	 *
+	 * @static
+	 * @since 1.0.0
+	 * @access private
 	 * @return int|bool
 	 */
 	private static function _get_last_send_time() {
 		return apply_filters( 'elementor/tracker/last_send_time', get_option( 'elementor_tracker_last_send', false ) );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _get_posts_usage() {
 		global $wpdb;
 
@@ -205,6 +249,11 @@ class Tracker {
 
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _get_library_usage() {
 		global $wpdb;
 

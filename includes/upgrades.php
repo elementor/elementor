@@ -7,10 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Upgrades {
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function add_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ], 20 );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function init() {
 		$elementor_version = get_option( 'elementor_version' );
 
@@ -26,6 +36,11 @@ class Upgrades {
 		update_option( 'elementor_version', ELEMENTOR_VERSION );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.10
+	 * @access private
+	*/
 	private static function check_upgrades( $elementor_version ) {
 		// It's a new install.
 		if ( ! $elementor_version ) {
@@ -49,6 +64,11 @@ class Upgrades {
 		}
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _upgrade_v032() {
 		global $wpdb;
 
@@ -84,6 +104,11 @@ class Upgrades {
 		}
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _upgrade_v092() {
 		global $wpdb;
 
@@ -128,6 +153,11 @@ class Upgrades {
 		}
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _upgrade_v0110() {
 		global $wpdb;
 

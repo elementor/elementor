@@ -13,6 +13,7 @@ class Widget_Image_Box extends Widget_Base {
 	/**
 	 * Retrieve image box widget name.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -24,6 +25,7 @@ class Widget_Image_Box extends Widget_Base {
 	/**
 	 * Retrieve image box widget title.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -35,6 +37,7 @@ class Widget_Image_Box extends Widget_Base {
 	/**
 	 * Retrieve image box widget icon.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -48,6 +51,7 @@ class Widget_Image_Box extends Widget_Base {
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return array Widget categories.
@@ -61,6 +65,7 @@ class Widget_Image_Box extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _register_controls() {
@@ -408,6 +413,7 @@ class Widget_Image_Box extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {
@@ -449,17 +455,25 @@ class Widget_Image_Box extends Widget_Base {
 			$html .= '<div class="elementor-image-box-content">';
 
 			if ( ! empty( $settings['title_text'] ) ) {
+				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
+
+				$this->add_inline_editing_attributes( 'title_text', 'none' );
+
 				$title_html = $settings['title_text'];
 
 				if ( ! empty( $settings['link']['url'] ) ) {
 					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $title_html . '</a>';
 				}
 
-				$html .= sprintf( '<%1$s class="elementor-image-box-title">%2$s</%1$s>', $settings['title_size'], $title_html );
+				$html .= sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['title_size'], $this->get_render_attribute_string( 'title_text' ), $title_html );
 			}
 
 			if ( ! empty( $settings['description_text'] ) ) {
-				$html .= sprintf( '<p class="elementor-image-box-description">%s</p>', $settings['description_text'] );
+				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
+
+				$this->add_inline_editing_attributes( 'description_text' );
+
+				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $settings['description_text'] );
 			}
 
 			$html .= '</div>';
@@ -475,6 +489,7 @@ class Widget_Image_Box extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _content_template() {
@@ -504,11 +519,11 @@ class Widget_Image_Box extends Widget_Base {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 
-				html += '<' + settings.title_size  + ' class="elementor-image-box-title">' + title_html + '</' + settings.title_size  + '>';
+				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="none">' + title_html + '</' + settings.title_size  + '>';
 			}
 
 			if ( settings.description_text ) {
-				html += '<p class="elementor-image-box-description">' + settings.description_text + '</p>';
+				html += '<p class="elementor-image-box-description elementor-inline-editing" data-elementor-setting-key="description_text">' + settings.description_text + '</p>';
 			}
 
 			html += '</div>';

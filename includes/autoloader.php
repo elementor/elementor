@@ -81,17 +81,30 @@ class Autoloader {
 		'Revisions_Manager' => 'Modules\History\Revisions_Manager',
 	];
 
+	/**
+	 * @static
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public static function run() {
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 	}
 
 	/**
+	 * @static
+	 * @since 1.6.0
+	 * @access public
 	 * @return array
 	 */
 	public static function get_classes_aliases() {
 		return self::$classes_aliases;
 	}
 
+	/**
+	 * @static
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private static function load_class( $relative_class_name ) {
 		if ( isset( self::$classes_map[ $relative_class_name ] ) ) {
 			$filename = ELEMENTOR_PATH . '/' . self::$classes_map[ $relative_class_name ];
@@ -112,6 +125,11 @@ class Autoloader {
 		}
 	}
 
+	/**
+	 * @static
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private static function autoload( $class ) {
 		if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) ) {
 			return;

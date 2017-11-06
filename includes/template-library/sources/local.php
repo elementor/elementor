@@ -27,10 +27,20 @@ class Source_Local extends Source_Base {
 
 	private static $_template_types = [ 'page', 'section' ];
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_template_type( $template_id ) {
 		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function is_base_templates_screen() {
 		global $current_screen;
 
@@ -41,18 +51,47 @@ class Source_Local extends Source_Base {
 		return 'edit' === $current_screen->base && self::CPT === $current_screen->post_type;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.3
+	 * @access public
+	 */
 	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
 	}
 
+	/**
+	 * @static
+	 * @since 1.8.0
+	 * @access public
+	 */
+	public static function remove_template_type( $type ) {
+		$key = array_search( $type, self::$_template_types, true );
+		if ( false !== $key ) {
+			unset( self::$_template_types[ $key ] );
+		}
+	}
+
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_id() {
 		return 'local';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_title() {
 		return __( 'Local', 'elementor' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_data() {
 		$labels = [
 			'name' => _x( 'My Library', 'Template Library', 'elementor' ),
@@ -106,6 +145,10 @@ class Source_Local extends Source_Base {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_admin_menu() {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_submenu_page(
@@ -128,6 +171,10 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_items( $args = [] ) {
 		$templates_query = new \WP_Query(
 			[
@@ -160,6 +207,10 @@ class Source_Local extends Source_Base {
 		return $templates;
 	}
 
+	/**
+	 * @since 1.0.1
+	 * @access public
+	*/
 	public function save_item( $template_data ) {
 		if ( ! in_array( $template_data['type'], self::$_template_types ) ) {
 			return new \WP_Error( 'save_error', 'Invalid template type `' . $template_data['type'] . '`' );
@@ -191,6 +242,10 @@ class Source_Local extends Source_Base {
 		return $template_id;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function update_item( $new_data ) {
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
@@ -200,6 +255,8 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param int $template_id
 	 *
 	 * @return array
@@ -229,13 +286,17 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template-library/get_template', $data );
 	}
 
-	public function get_data( array $args, $context = 'display' ) {
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
+	public function get_data( array $args ) {
 		$db = Plugin::$instance->db;
 
 		$template_id = $args['template_id'];
 
 		// TODO: Validate the data (in JS too!).
-		if ( 'display' === $context ) {
+		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
 			$content = $db->get_plain_editor( $template_id );
@@ -258,10 +319,18 @@ class Source_Local extends Source_Base {
 		return $data;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function delete_template( $template_id ) {
 		wp_delete_post( $template_id, true );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function export_template( $template_id ) {
 		$file_data = $this->prepare_template_export( $template_id );
 
@@ -282,6 +351,10 @@ class Source_Local extends Source_Base {
 		die;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function export_multiple_templates( array $template_ids ) {
 		$files = [];
 
@@ -350,6 +423,10 @@ class Source_Local extends Source_Base {
 		die;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function import_template() {
 		$import_file = $_FILES['file']['tmp_name'];
 
@@ -391,6 +468,10 @@ class Source_Local extends Source_Base {
 		return $items;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
@@ -403,6 +484,10 @@ class Source_Local extends Source_Base {
 		return $actions;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function admin_import_template_form() {
 		if ( ! self::is_base_templates_screen() ) {
 			return;
@@ -424,6 +509,10 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function block_template_frontend() {
 		if ( is_singular( self::CPT ) && ! User::is_current_user_can_edit() ) {
 			wp_redirect( site_url(), 301 );
@@ -431,10 +520,25 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function is_template_supports_export( $template_id ) {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
+	public function remove_elementor_post_state_from_library( $post_states, $post ) {
+		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
+			unset( $post_states['elementor'] );
+		}
+		return $post_states;
+	}
+
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _get_export_link( $template_id ) {
 		return add_query_arg(
 			[
@@ -446,6 +550,10 @@ class Source_Local extends Source_Base {
 		);
 	}
 
+	/**
+	 * @since 1.0.1
+	 * @access public
+	*/
 	public function on_save_post( $post_id, $post ) {
 		if ( self::CPT !== $post->post_type ) {
 			return;
@@ -463,6 +571,10 @@ class Source_Local extends Source_Base {
 		$this->save_item_type( $post_id, 'page' );
 	}
 
+	/**
+	 * @since 1.0.1
+	 * @access private
+	*/
 	private function save_item_type( $post_id, $type ) {
 		update_post_meta( $post_id, self::TYPE_META_KEY, $type );
 
@@ -470,6 +582,8 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @since 1.0.6
+	 * @access public
 	 * @param $query \WP_Query
 	 */
 	public function admin_query_filter_types( $query ) {
@@ -488,12 +602,20 @@ class Source_Local extends Source_Base {
 		$query->query_vars['meta_value'] = self::$_template_types;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function admin_add_bulk_export_action( $actions ) {
 		$actions[ self::BULK_EXPORT_ACTION ] = __( 'Export', 'elementor' );
 
 		return $actions;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	*/
 	public function admin_export_multiple_templates( $redirect_to, $action, $post_ids ) {
 		if ( self::BULK_EXPORT_ACTION === $action ) {
 			$this->export_multiple_templates( $post_ids );
@@ -502,6 +624,10 @@ class Source_Local extends Source_Base {
 		return $redirect_to;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private function import_single_template( $file_name ) {
 		$data = json_decode( file_get_contents( $file_name ), true );
 
@@ -551,17 +677,20 @@ class Source_Local extends Source_Base {
 		return $this->get_item( $template_id );
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private function prepare_template_export( $template_id ) {
 		$template_data = $this->get_data( [
 			'template_id' => $template_id,
-		], 'raw' );
+		] );
 
 		if ( empty( $template_data['content'] ) ) {
 			return new \WP_Error( '404', 'The template does not exist' );
 		}
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`.
-		$template_data['data'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
+		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
 		$template_type = self::get_template_type( $template_id );
 
@@ -589,6 +718,10 @@ class Source_Local extends Source_Base {
 		];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private function send_file_headers( $file_name, $file_size ) {
 		header( 'Content-Type: application/octet-stream' );
 		header( 'Content-Disposition: attachment; filename=' . $file_name );
@@ -598,6 +731,10 @@ class Source_Local extends Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
@@ -605,6 +742,7 @@ class Source_Local extends Source_Base {
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
+			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
 			// template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
@@ -615,6 +753,10 @@ class Source_Local extends Source_Base {
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		parent::__construct();
 

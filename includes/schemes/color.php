@@ -12,18 +12,35 @@ class Scheme_Color extends Scheme_Base {
 	const COLOR_3 = '3';
 	const COLOR_4 = '4';
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_type() {
 		return 'color';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_title() {
 		return __( 'Colors', 'elementor' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_disabled_title() {
 		return __( 'Color Palettes', 'elementor' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_scheme_titles() {
 		return [
 			self::COLOR_1 => __( 'Primary', 'elementor' ),
@@ -33,6 +50,10 @@ class Scheme_Color extends Scheme_Base {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_scheme() {
 		return [
 			self::COLOR_1 => '#6ec1e4',
@@ -42,6 +63,10 @@ class Scheme_Color extends Scheme_Base {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function print_template_content() {
 		?>
 		<div class="elementor-panel-scheme-content elementor-panel-box">
@@ -77,6 +102,10 @@ class Scheme_Color extends Scheme_Base {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _init_system_schemes() {
 		return [
 			'joker' => [
@@ -163,10 +192,18 @@ class Scheme_Color extends Scheme_Base {
 		];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_system_schemes_to_print() {
 		return $this->get_system_schemes();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_current_scheme_title() {
 		return __( 'Color Palette', 'elementor' );
 	}

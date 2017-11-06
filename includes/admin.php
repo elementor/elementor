@@ -10,6 +10,7 @@ class Admin {
 	/**
 	 * Enqueue admin scripts.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -22,7 +23,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.4',
+			'3.2.5',
 			true
 		);
 
@@ -62,6 +63,7 @@ class Admin {
 	/**
 	 * Enqueue admin styles.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -96,6 +98,7 @@ class Admin {
 	/**
 	 * Print switch button in edit post (which has cpt support).
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $post
 	 *
@@ -141,6 +144,7 @@ class Admin {
 	/**
 	 * Fired when the save the post, and flag the post mode.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $post_id
 	 *
@@ -161,6 +165,7 @@ class Admin {
 	/**
 	 * Add edit link in outside edit post.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @param $actions
 	 * @param $post
@@ -179,6 +184,28 @@ class Admin {
 		return $actions;
 	}
 
+	/**
+	 * Adds a "Elementor" post state for post table.
+	 *
+	 * @access public
+	 * @since 1.8.0
+	 *
+	 * @param  array    $post_states An array of post display states.
+	 * @param  \WP_Post $post        The current post object.
+	 *
+	 * @return array                 A filtered array of post display states.
+	 */
+	public function add_elementor_post_state( $post_states, $post ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+			$post_states['elementor'] = __( 'Elementor', 'elementor' );
+		}
+		return $post_states;
+	}
+
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
@@ -193,6 +220,10 @@ class Admin {
 		return $classes;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), __( 'Settings', 'elementor' ) );
 
@@ -203,6 +234,10 @@ class Admin {
 		return $links;
 	}
 
+	/**
+	 * @since 1.1.4
+	 * @access public
+	*/
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
 			$row_meta = [
@@ -216,6 +251,10 @@ class Admin {
 		return $plugin_meta;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function admin_notices() {
 		$upgrade_notice = Api::get_upgrade_notice();
 		if ( empty( $upgrade_notice ) ) {
@@ -285,6 +324,10 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->base, 'elementor' ) );
@@ -300,6 +343,10 @@ class Admin {
 		return $footer_text;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function enqueue_feedback_dialog_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -330,6 +377,10 @@ class Admin {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function print_deactivate_feedback_dialog() {
 		$deactivate_reasons = [
 			'no_longer_needed' => [
@@ -383,6 +434,10 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function ajax_elementor_deactivate_feedback() {
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_elementor_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
@@ -407,6 +462,8 @@ class Admin {
 
 	/**
 	 * Admin constructor.
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
@@ -417,6 +474,8 @@ class Admin {
 
 		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
+
+		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );

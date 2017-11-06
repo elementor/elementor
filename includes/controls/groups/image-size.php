@@ -9,11 +9,19 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 	protected static $fields;
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_type() {
 		return 'image-size';
 	}
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ].
 	 *
 	 * @param string $setting_key
@@ -63,6 +71,11 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return $html;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_all_image_sizes() {
 		global $_wp_additional_image_sizes;
 
@@ -86,6 +99,11 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return apply_filters( 'image_size_names_choose', $image_sizes );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_attachment_image_src( $attachment_id, $group_name, array $settings ) {
 		if ( empty( $attachment_id ) ) {
 			return false;
@@ -132,6 +150,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return ! empty( $image_src[0] ) ? $image_src[0] : '';
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function get_child_default_args() {
 		return [
 			'include' => [],
@@ -139,6 +161,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		];
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function init_fields() {
 		$fields = [];
 
@@ -161,6 +187,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return $fields;
 	}
 
+	/**
+	 * @since 1.2.2
+	 * @access protected
+	*/
 	protected function prepare_fields( $fields ) {
 		$image_sizes = $this->_get_image_sizes();
 
@@ -185,6 +215,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return parent::prepare_fields( $fields );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function _get_image_sizes() {
 		$wp_image_sizes = self::get_all_image_sizes();
 

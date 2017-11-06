@@ -27,18 +27,28 @@ class Main {
 		'mu_plugins' => [],
 	];
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function __construct() {
 		$this->require_files();
 		$this->init_settings();
 		$this->add_actions();
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function require_files() {
 		require __DIR__ . '/classes/abstracts/base-reporter.php';
 		require __DIR__ . '/helpers/model-helper.php';
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param array $properties
 	 *
 	 * @return \WP_Error|false|Base_Reporter
@@ -61,12 +71,20 @@ class Main {
 		return $reporter;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function add_actions() {
 		add_action( 'admin_menu', [ $this, 'register_menu' ], 501 );
 
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function display_page() {
 		$reports_info = self::get_allowed_reports();
 
@@ -104,6 +122,10 @@ class Main {
 		<?php
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function download_file() {
 		if ( ! current_user_can( $this->capability ) ) {
 			wp_die( __( 'You don\'t have a permission to download this file', 'elementor' ) );
@@ -120,10 +142,18 @@ class Main {
 		die;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_reporter_class( $reporter_type ) {
 		return $this->get_settings( 'namespaces.classes_namespace' ) . '\\' . ucfirst( $reporter_type ) . '_Reporter';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function load_reports( $reports ) {
 		$result = [];
 
@@ -163,6 +193,10 @@ class Main {
 		return $result;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function print_report( $reports, $template = 'raw' ) {
 		static $tabs_count = 0;
 
@@ -178,6 +212,10 @@ class Main {
 		require $template_path;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function register_menu() {
 		$system_info_text = __( 'System Info', 'elementor' );
 
@@ -191,6 +229,10 @@ class Main {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function get_default_settings() {
 		$settings = [];
 
@@ -219,11 +261,17 @@ class Main {
 		return $settings;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function init_settings() {
 		$this->settings = $this->get_default_settings();
 	}
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @param string $setting
 	 * @param array  $container
 	 *
@@ -247,10 +295,20 @@ class Main {
 		return $container;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_allowed_reports() {
 		return self::$reports;
 	}
 
+	/**
+	 * @static
+	 * @since 1.4.0
+	 * @access public
+	*/
 	public static function add_report( $report_name, $report_info ) {
 		self::$reports[ $report_name ] = $report_info;
 	}

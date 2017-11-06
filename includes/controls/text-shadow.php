@@ -6,23 +6,75 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * A Text Shadow set of controls
+ * Text shadow control.
  *
- * @param array  $default    {
- *      @type integer $horizontal Default 0
- *      @type integer $vertical   Default 0
- *      @type integer $blur       Default 10
- *      @type string  $color      Shadow color, in rgb|rgba|hex format.
+ * A base control for creating text shadows control. Displays input fields for
+ * horizontal shadow, vertical shadow, shadow blur and shadow color.
+ *
+ * @since 1.6.0
+ *
+ * @param string $label       Optional. The label that appears above of the
+ *                            field. Default is empty.
+ * @param string $description Optional. The description that appears below the
+ *                            field. Default is empty.
+ * @param string $placeholder Optional. The field placeholder that appears when
+ *                            the field has no values. Default is empty.
+ * @param array $default      {
+ *     Optional. Defautl text shadow values.
+ *
+ *     @type int    $horizontal Optional. Horizontal shadow. Default is 0.
+ *     @type int    $vertical   Optional. Vertical shadow. Default is 0.
+ *     @type int    $blur       Optional. Shadow blur. Default is 10.
+ *     @type string $color      Optional. Shadow color. Available values are
+ *                              `rgb`, `rgba`, `hex` or `format`. Default is
+ *                              `rgba(0,0,0,0.3)`.
  * }
+ * @param string $separator   Optional. Set the position of the control separator.
+ *                            Available values are 'default', 'before', 'after'
+ *                            and 'none'. 'default' will position the separator
+ *                            depending on the control type. 'before' / 'after'
+ *                            will position the separator before/after the
+ *                            control. 'none' will hide the separator. Default
+ *                            is 'default'.
+ * @param bool   $show_label  Optional. Whether to display the label. Default is
+ *                            true.
+ * @param bool   $label_block Optional. Whether to display the label in a
+ *                            separate line. Default is false.
  *
- * @since 1.0.0
+ * @return array {
+ *     Text shadow values.
+ *
+ *     @type int    $horizontal Horizontal shadow.
+ *     @type int    $vertical   Vertical shadow.
+ *     @type int    $blur       Shadow blur.
+ *     @type string $color      Shadow color.
+ * }
  */
 class Control_Text_Shadow extends Control_Base_Multiple {
 
+	/**
+	 * Retrieve text shadow control type.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 *
+	 * @return string Control type.
+	 */
 	public function get_type() {
 		return 'text_shadow';
 	}
 
+	/**
+	 * Retrieve text shadow control default values.
+	 *
+	 * Get the default value of the text shadow control. Used to return the
+	 * default values while initializing the text shadow control.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 *
+	 * @return array Control default value.
+	 */
 	public function get_default_value() {
 		return [
 			'horizontal' => 0,
@@ -32,6 +84,17 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * Retrieve text shadow control sliders.
+	 *
+	 * Get the sliders of the text shadow control. Sliders are used while
+	 * rendering the control output in the editor.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 *
+	 * @return array Control sliders.
+	 */
 	public function get_sliders() {
 		return [
 			'blur' => [
@@ -52,6 +115,16 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * Render text shadow control output in the editor.
+	 *
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function content_template() {
 		?>
 		<#

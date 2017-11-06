@@ -136,6 +136,8 @@ class Plugin {
 	public $beta_testers;
 
 	/**
+	 * @since 1.0.0
+	 * @access public
 	 * @deprecated
 	 *
 	 * @return string
@@ -150,6 +152,7 @@ class Plugin {
 	 * The whole idea of the singleton design pattern is that there is a single
 	 * object therefore, we don't want the object to be cloned.
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -161,6 +164,7 @@ class Plugin {
 	/**
 	 * Disable unserializing of the class
 	 *
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -170,6 +174,9 @@ class Plugin {
 	}
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @return Plugin
 	 */
 	public static function instance() {
@@ -183,6 +190,8 @@ class Plugin {
 
 	/**
 	 * Register the CPTs with our Editor support.
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public function init() {
 		$this->add_cpt_support();
@@ -192,6 +201,10 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function init_components() {
 		Compatibility::register_actions();
 		SettingsManager::run();
@@ -230,6 +243,10 @@ class Plugin {
 		}
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private function add_cpt_support() {
 		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
 
@@ -238,6 +255,10 @@ class Plugin {
 		}
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	*/
 	private function register_autoloader() {
 		require ELEMENTOR_PATH . '/includes/autoloader.php';
 
@@ -246,6 +267,8 @@ class Plugin {
 
 	/**
 	 * Plugin constructor.
+	 * @since 1.0.0
+	 * @access private
 	 */
 	private function __construct() {
 		$this->register_autoloader();

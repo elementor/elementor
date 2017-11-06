@@ -21,6 +21,9 @@ class Responsive {
 	];
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public static function get_default_breakpoints() {
@@ -28,6 +31,9 @@ class Responsive {
 	}
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public static function get_editable_breakpoints() {
@@ -35,6 +41,9 @@ class Responsive {
 	}
 
 	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public static function get_breakpoints() {

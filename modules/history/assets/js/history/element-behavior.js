@@ -121,12 +121,21 @@ module.exports = Marionette.Behavior.extend( {
 		// Stop listen to restore actions
 		behavior.stopListening( settings, 'change', this.saveHistory );
 
+		var restoredValues = {};
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				settings.setExternalChange( key, values['new'] );
+				restoredValues[ key ] = values['new'];
 			} else {
-				settings.setExternalChange( key, values.old );
+				restoredValues[ key ] = values.old;
 			}
+		} );
+
+		// Set at once.
+		settings.set( restoredValues );
+
+		// Trigger each field for `baseControl.onSettingsExternalChange`
+		_.each( history.changed, function( values, key ) {
+			settings.trigger( 'change:external:' + key );
 		} );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );

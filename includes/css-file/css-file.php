@@ -42,10 +42,17 @@ abstract class CSS_File {
 	 */
 	protected $stylesheet_obj;
 
+	/**
+	 * @abstract
+	 * @since 1.6.0
+	 * @access public
+	*/
 	abstract public function get_name();
 
 	/**
 	 * CSS_File constructor.
+	 * @since 1.2.0
+	 * @access public
 	 */
 	public function __construct() {
 		$this->set_path_and_url();
@@ -53,6 +60,10 @@ abstract class CSS_File {
 		$this->init_stylesheet();
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function update() {
 		$this->parse_css();
 
@@ -85,12 +96,20 @@ abstract class CSS_File {
 		$this->update_meta( $meta );
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function delete() {
 		if ( file_exists( $this->path ) ) {
 			unlink( $this->path );
 		}
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function enqueue() {
 		$meta = $this->get_meta();
 
@@ -126,6 +145,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access public
 	 * @param array    $control
 	 * @param array    $controls_stack
 	 * @param callable $value_callback
@@ -222,6 +243,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access public
 	 * @return string
 	 */
 	public function get_css() {
@@ -233,12 +256,18 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access public
 	 * @return Stylesheet
 	 */
 	public function get_stylesheet() {
 		return $this->stylesheet_obj;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access public
+	*/
 	public function get_meta( $property = null ) {
 		$defaults = [
 			'status' => '',
@@ -255,6 +284,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access public
 	 * @param Controls_Stack $controls_stack
 	 * @param array          $controls
 	 * @param array          $values
@@ -284,28 +315,47 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @abstract
+	 * @since 1.2.0
+	 * @access protected
 	 * @return array
 	 */
 	abstract protected function load_meta();
 
 	/**
+	 * @abstract
+	 * @since 1.2.0
+	 * @access protected
 	 * @param string $meta
 	 */
 	abstract protected function update_meta( $meta );
 
 	/**
+	 * @abstract
+	 * @since 1.2.0
+	 * @access protected
 	 * @return string
 	 */
 	abstract protected function get_file_handle_id();
 
+	/**
+	 * @abstract
+	 * @since 1.2.0
+	 * @access protected
+	*/
 	abstract protected function render_css();
 
 	/**
+	 * @abstract
+	 * @since 1.2.0
+	 * @access protected
 	 * @return string
 	 */
 	abstract protected function get_file_name();
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return array
 	 */
 	protected function get_enqueue_dependencies() {
@@ -313,6 +363,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return string
 	 */
 	protected function get_inline_dependency() {
@@ -320,6 +372,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.2.0
+	 * @access protected
 	 * @return bool
 	 */
 	protected function is_update_required() {
@@ -327,6 +381,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access private
 	 * @param array $control
 	 * @param array $values
 	 * @param array $controls_stack
@@ -342,6 +398,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access private
 	 * @param array $control
 	 * @param array $values
 	 *
@@ -361,6 +419,10 @@ abstract class CSS_File {
 		return $value;
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access private
+	*/
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
@@ -372,6 +434,10 @@ abstract class CSS_File {
 			->add_device( 'desktop', $breakpoints['lg'] );
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access private
+	*/
 	private function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
 
@@ -382,6 +448,10 @@ abstract class CSS_File {
 		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
 	}
 
+	/**
+	 * @since 1.2.0
+	 * @access private
+	*/
 	private function parse_css() {
 		$this->render_css();
 

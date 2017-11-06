@@ -12,14 +12,28 @@ class Scheme_Color_Picker extends Scheme_Color {
 	const COLOR_7 = '7';
 	const COLOR_8 = '8';
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_type() {
 		return 'color-picker';
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_description() {
 		return __( 'Choose which colors appear in the editor\'s color picker. This makes accessing the colors you chose for the site much easier.', 'elementor' );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_default_scheme() {
 		return array_replace(
 			parent::get_default_scheme(), [
@@ -31,10 +45,18 @@ class Scheme_Color_Picker extends Scheme_Color {
 		);
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_scheme_titles() {
 		return [];
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _init_system_schemes() {
 		$schemes = parent::_init_system_schemes();
 
@@ -107,6 +129,10 @@ class Scheme_Color_Picker extends Scheme_Color {
 		return $schemes;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_system_schemes_to_print() {
 		$schemes = $this->get_system_schemes();
 
@@ -128,6 +154,10 @@ class Scheme_Color_Picker extends Scheme_Color {
 		return $schemes;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	protected function _get_current_scheme_title() {
 		return __( 'Color Picker', 'elementor' );
 	}

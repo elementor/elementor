@@ -9,10 +9,20 @@ class User {
 
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function init() {
 		add_action( 'wp_ajax_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function is_current_user_can_edit( $post_id = 0 ) {
 		if ( empty( $post_id ) ) {
 			$post_id = get_the_ID();
@@ -55,10 +65,20 @@ class User {
 		return true;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access private
+	*/
 	private static function _get_user_notices() {
 		return get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function is_user_notice_viewed( $notice_id ) {
 		$notices = self::_get_user_notices();
 		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) ) {
@@ -68,6 +88,11 @@ class User {
 		return true;
 	}
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function ajax_set_admin_notice_viewed() {
 		if ( empty( $_POST['notice_id'] ) ) {
 			die;

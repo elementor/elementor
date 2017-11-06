@@ -11,12 +11,26 @@ abstract class Scheme_Base implements Scheme_Interface {
 
 	private $_system_schemes;
 
+	/**
+	 * @abstract
+	 * @since 1.0.0
+	 * @access protected
+	*/
 	abstract protected function _init_system_schemes();
 
+	/**
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public static function get_description() {
 		return '';
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	final public function get_system_schemes() {
 		if ( null === $this->_system_schemes ) {
 			$this->_system_schemes = $this->_init_system_schemes();
@@ -25,6 +39,10 @@ abstract class Scheme_Base implements Scheme_Interface {
 		return $this->_system_schemes;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_scheme_value() {
 		$scheme_value = get_option( 'elementor_scheme_' . static::get_type() );
 
@@ -37,6 +55,10 @@ abstract class Scheme_Base implements Scheme_Interface {
 		return $scheme_value;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function save_scheme( array $posted ) {
 		$scheme_value = $this->get_scheme_value();
 
@@ -45,6 +67,10 @@ abstract class Scheme_Base implements Scheme_Interface {
 		update_option( self::LAST_UPDATED_META, time() );
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	public function get_scheme() {
 		$scheme = [];
 
@@ -60,6 +86,10 @@ abstract class Scheme_Base implements Scheme_Interface {
 		return $scheme;
 	}
 
+	/**
+	 * @since 1.0.0
+	 * @access public
+	*/
 	final public function print_template() {
 		?>
 		<script type="text/template" id="tmpl-elementor-panel-schemes-<?php echo static::get_type(); ?>">

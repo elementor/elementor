@@ -10,24 +10,51 @@ abstract class Settings_Page {
 
 	const PAGE_ID = '';
 
+	/**
+	 * @abstract
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	abstract protected function create_tabs();
 
+	/**
+	 * @abstract
+	 * @since 1.5.0
+	 * @access protected
+	*/
 	abstract protected function get_page_title();
 
+	/**
+	 * @static
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final static function get_url() {
 		return admin_url( 'admin.php?page=' . static::PAGE_ID );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final function get_tabs() {
 		$this->ensure_tabs();
 
 		return $this->tabs;
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final function add_tab( $tab_id, array $tab_args = [] ) {
 		$this->ensure_tabs();
 
@@ -43,6 +70,10 @@ abstract class Settings_Page {
 		$this->tabs[ $tab_id ] = $tab_args;
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final function add_section( $tab_id, $section_id, array $section_args = [] ) {
 		$this->ensure_tabs();
 
@@ -63,6 +94,10 @@ abstract class Settings_Page {
 		$this->tabs[ $tab_id ]['sections'][ $section_id ] = $section_args;
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final function add_field( $tab_id, $section_id, $field_id, array $field_args ) {
 		$this->ensure_tabs();
 
@@ -84,12 +119,20 @@ abstract class Settings_Page {
 		$this->tabs[ $tab_id ]['sections'][ $section_id ]['fields'][ $field_id ] = $field_args;
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final function add_fields( $tab_id, $section_id, array $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 			$this->add_field( $tab_id, $section_id, $field_id, $field );
 		}
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public final function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 
@@ -140,6 +183,10 @@ abstract class Settings_Page {
 		}
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access public
+	*/
 	public function display_settings_page() {
 		$tabs = $this->get_tabs();
 		?>
@@ -207,6 +254,10 @@ abstract class Settings_Page {
 		<?php
 	}
 
+	/**
+	 * @since 1.5.0
+	 * @access private
+	*/
 	private function ensure_tabs() {
 		if ( null === $this->tabs ) {
 			$this->tabs = $this->create_tabs();

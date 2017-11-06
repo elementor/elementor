@@ -39,7 +39,7 @@ abstract class Controls_Stack {
 	private $_id;
 
 	/**
-	 * Parrsed Settings.
+	 * Parsed Settings.
 	 *
 	 * Holds the settings, which is the data entered by the user and processed
 	 * by elementor.
@@ -110,6 +110,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve the name.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 * @abstract
 	 *
@@ -123,6 +124,7 @@ abstract class Controls_Stack {
 	 * Some classes need to use unique names, this method allows you to create them.
 	 * By default it returns the regular name.
 	 *
+	 * @since 1.6.0
 	 * @access public
 	 *
 	 * @return string Unique name.
@@ -134,6 +136,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve the generic ID.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return string The ID.
@@ -143,10 +146,22 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Retrieve the generic ID as integer.
+	 *
+	 * @access public
+	 *
+	 * @return string The converted ID.
+	 */
+	public function get_id_int() {
+		return hexdec( $this->_id );
+	}
+
+	/**
 	 * Retrieve the type.
 	 *
-	 * Get the type, i.e. 'stack', 'element', 'widget' etc.
+	 * Get the type, e.g. 'stack', 'element', 'widget' etc.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 * @static
 	 *
@@ -163,6 +178,7 @@ abstract class Controls_Stack {
 	 * items that match the needle. If needle is not defined the entire haystack
 	 * will be returened.
 	 *
+	 * @since 1.4.0
 	 * @access private
 	 * @static
 	 *
@@ -184,6 +200,7 @@ abstract class Controls_Stack {
 	 *
 	 * When inserting new controls, this method will return the current section.
 	 *
+	 * @since 1.7.1
 	 * @access public
 	 *
 	 * @return null|array Current section.
@@ -197,6 +214,7 @@ abstract class Controls_Stack {
 	 *
 	 * When inserting new controls, this method will return the current tab.
 	 *
+	 * @since 1.7.1
 	 * @access public
 	 *
 	 * @return null|array Current tab.
@@ -210,6 +228,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get all the controls or, when requested, a specific control.
  	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $control_id The ID of the requested control. Optional field,
@@ -235,6 +254,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get an array of all the active controls that meet the condition field.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return array Active controls.
@@ -264,6 +284,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the settings for all the controls that represent them.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 *
 	 * @return array Controls settings.
@@ -279,6 +300,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $id      Control ID.
@@ -345,6 +367,7 @@ abstract class Controls_Stack {
 	 *
 	 * Unregister an existing control and remove it from the stack.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
@@ -362,6 +385,7 @@ abstract class Controls_Stack {
 	 * control you set the `$args` parameter, this method allows you to update
 	 * the arguments by passing new data.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
@@ -489,6 +513,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve control index.
 	 *
+	 * @since 1.7.6
 	 * @access public
 	 *
 	 * @param string $control_id
@@ -506,6 +531,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve all controls under a specific section
 	 *
+	 * @since 1.7.6
 	 * @access public
 	 *
 	 * @param string $section_id
@@ -547,6 +573,7 @@ abstract class Controls_Stack {
 	 * control. For example grouping together like typography controls into a
 	 * single, easy-to-use control.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $group_name Group control name.
@@ -576,6 +603,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get all the controls that use schemes.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return array Scheme controls.
@@ -596,6 +624,7 @@ abstract class Controls_Stack {
 	 * Get style controls for all active controls or, when requested, from a
 	 * specific set of controls.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param array $controls Controls list. Default is null.
@@ -627,6 +656,7 @@ abstract class Controls_Stack {
 	 *
 	 * From all the active controls get the controls that use the same prefix class.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return array Class controls.
@@ -644,6 +674,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get all the tabs assigened to the control.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return array Tabs controls.
@@ -660,6 +691,7 @@ abstract class Controls_Stack {
 	 * Register a set of controls to allow editing based on user screen size.
 	 * This method registeres three screen sizes: Desktop, Tablet and Mobile.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $id      Responsive control ID.
@@ -741,6 +773,7 @@ abstract class Controls_Stack {
 	 * add new control you set the `$args` parameter, this method allows you to
 	 * update the arguments by passing new data.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $id   Responsive control ID.
@@ -755,6 +788,7 @@ abstract class Controls_Stack {
 	 *
 	 * Unregister an existing responsive control and remove it from the stack.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $id Responsive control ID.
@@ -778,6 +812,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the name of the current class.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return string Class name.
@@ -791,6 +826,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the config or, if non set, use the initial config.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return array|null The config.
@@ -808,6 +844,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get settings keys for all frontend controls.
 	 *
+	 * @since 1.6.0
 	 * @access public
 	 *
 	 * @return array Settings keys for each control.
@@ -829,6 +866,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get all the items or, when requested, a specific item.
  	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $item The requested item. Default is null.
@@ -844,6 +882,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get all the settings or, when requested, a specific setting.
  	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $setting The requested setting. Default is null.
@@ -859,6 +898,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the settings from all the active controls.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @return array Active settings.
@@ -878,6 +918,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the settings for all frontend controls.
 	 *
+	 * @since 1.6.0
 	 * @access public
 	 *
 	 * @return array Frontend settings.
@@ -900,6 +941,7 @@ abstract class Controls_Stack {
 	 * Recieves controls, settings and a callback function to filter the settings by
 	 * and returns filtered settings.
 	 *
+	 * @since 1.5.0
 	 * @access public
 	 *
 	 * @param callable $callback The callback function.
@@ -937,6 +979,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to determine whether the control is visible or not.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param array $control The control.
@@ -1009,6 +1052,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
@@ -1044,6 +1088,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 */
 	public function end_controls_section() {
@@ -1073,6 +1118,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $tabs_id Tabs ID.
@@ -1106,6 +1152,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 */
 	public function end_controls_tabs() {
@@ -1122,6 +1169,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string $tab_id Tab ID.
@@ -1152,6 +1200,7 @@ abstract class Controls_Stack {
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 */
 	public function end_controls_tab() {
@@ -1167,7 +1216,7 @@ abstract class Controls_Stack {
 	 * be injected to a specific position in the stack, until you stop the
 	 * injection using `end_injection()` method.
 	 *
-	 * @since 1.7.0
+	 * @since 1.7.1
 	 * @access public
 	 *
 	 * @param array $position {
@@ -1197,7 +1246,7 @@ abstract class Controls_Stack {
 	 * it stopps adding new controls to this point and continue to add controls
 	 * to the regular position in the stack.
 	 *
-	 * @since 1.7.0
+	 * @since 1.7.1
 	 * @access public
 	 */
 	final public function end_injection() {
@@ -1209,6 +1258,7 @@ abstract class Controls_Stack {
 	 *
 	 * Change or add new settings to an existing control in the stack.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param string|array $key   Setting name, or an array of key/value.
@@ -1235,6 +1285,7 @@ abstract class Controls_Stack {
 	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
 	 * `start_controls_tab()`.
 	 *
+	 * @since 1.4.0
 	 * @access protected
 	 */
 	protected function _register_controls() {}
@@ -1244,6 +1295,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the default data. Used to reset the data on initialization.
 	 *
+	 * @since 1.4.0
 	 * @access protected
 	 *
 	 * @return array Default data.
@@ -1264,6 +1316,7 @@ abstract class Controls_Stack {
 	 * Classes that extend `Controls_Stack` can add new process to the settings
 	 * parser.
 	 *
+	 * @since 1.4.0
 	 * @access protected
 	 *
 	 * @return array Parsed settings.
@@ -1291,6 +1344,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the element initial configuration.
 	 *
+	 * @since 1.4.0
 	 * @access protected
 	 *
 	 * @return array The initial config.
@@ -1307,6 +1361,7 @@ abstract class Controls_Stack {
 	 *
 	 * Get the section arguments based on section ID.
 	 *
+	 * @since 1.4.0
 	 * @access protected
 	 *
 	 * @param string $section_id Section ID.
@@ -1330,6 +1385,7 @@ abstract class Controls_Stack {
 	 *
 	 * Register the all controls added by `_register_controls()`.
 	 *
+	 * @since 1.4.0
 	 * @access private
 	 */
 	private function _init_controls() {
@@ -1343,6 +1399,7 @@ abstract class Controls_Stack {
 	 *
 	 * Set the raw data, the ID and the parsed settings.
 	 *
+	 * @since 1.4.0
 	 * @access protected
 	 */
 	protected function _init( $data ) {
@@ -1359,6 +1416,7 @@ abstract class Controls_Stack {
 	 * Initializing the control stack class using `$data`. The `$data` is required
 	 * for a normal instance. It is optional only for internal `type instance`.
 	 *
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param array $data The data. Default is an empty array.

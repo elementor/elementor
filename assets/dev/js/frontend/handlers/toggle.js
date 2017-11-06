@@ -1,16 +1,11 @@
-module.exports = function( $scope, $ ) {
-	var $toggleTitles = $scope.find( '.elementor-toggle-title' );
+var TabsModule = require( 'elementor-frontend/handlers/base-tabs' );
 
-	$toggleTitles.on( 'click', function() {
-		var $active = $( this ),
-			$content = $active.next();
-
-		if ( $active.hasClass( 'active' ) ) {
-			$active.removeClass( 'active' );
-			$content.slideUp();
-		} else {
-			$active.addClass( 'active' );
-			$content.slideDown();
-		}
+module.exports = function( $scope ) {
+	new TabsModule( {
+		$element: $scope,
+		showTabFn: 'slideDown',
+		hideTabFn: 'slideUp',
+		hidePrevious: false,
+		autoExpand: 'editor'
 	} );
 };
