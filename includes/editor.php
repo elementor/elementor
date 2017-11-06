@@ -577,6 +577,10 @@ class Editor {
 		remove_all_filters( 'mce_buttons', 10 );
 		remove_all_filters( 'mce_external_plugins', 10 );
 
+		if ( ! class_exists( '_WP_Editors', false ) ) {
+			require( ABSPATH . WPINC . '/class-wp-editor.php' );
+		}
+
 		\_WP_Editors::print_tinymce_scripts();
 
 		ob_start();
