@@ -174,16 +174,7 @@
 						if ( self.toggler.find('span.color-alpha').length == 0 ) {
 							self.toggler.append('<span class="color-alpha" />');
 						}
-						self.toggler.find( 'span.color-alpha' ).css( {
-							'width'                     : '30px',
-							'height'                    : '24px',
-							'position'                  : 'absolute',
-							'top'                       : 0,
-							'left'                      : 0,
-							'border-top-left-radius'    : '2px',
-							'border-bottom-left-radius' : '2px',
-							'background'                : ui.color.toString()
-						} );
+						self.toggler.find( 'span.color-alpha' ).css( { backgroundColor : ui.color.toString() } );
 					} else {
 						self.toggler.css( { backgroundColor : ui.color.toString() } );
 					}
