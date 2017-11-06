@@ -172,8 +172,18 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
+	 * Import repeater media/gallery images.
+	 *
+	 * Used to import repeater media/gallery control files from external sites
+	 * while importing Elementor template JSON file, and replacing the old data.
+	 *
 	 * @since 1.8.0
 	 * @access public
+	 *
+	 * @param array $settings     Control settings.
+	 * @param array $control_data Optional. Control data. Default is an empty array.
+	 *
+	 * @return array Control settings.
 	 */
 	public function on_import( $settings, $control_data = [] ) {
 		if ( empty( $settings ) || empty( $control_data['fields'] ) ) {
