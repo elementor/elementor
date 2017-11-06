@@ -43,6 +43,7 @@ abstract class CSS_File {
 	protected $stylesheet_obj;
 
 	/**
+	 * @abstract
 	 * @since 1.6.0
 	 * @access public
 	*/
@@ -314,6 +315,7 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
 	 * @return array
@@ -321,6 +323,7 @@ abstract class CSS_File {
 	abstract protected function load_meta();
 
 	/**
+	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
 	 * @param array $meta
@@ -328,6 +331,7 @@ abstract class CSS_File {
 	abstract protected function update_meta( $meta );
 
 	/**
+	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
 	 * @return string
@@ -335,12 +339,14 @@ abstract class CSS_File {
 	abstract protected function get_file_handle_id();
 
 	/**
+	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
 	*/
 	abstract protected function render_css();
 
 	/**
+	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
 	 * @return string

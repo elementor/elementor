@@ -71,6 +71,7 @@ class Controls_Manager {
 	private static $tabs;
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access private
 	*/
@@ -88,6 +89,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access public
 	*/
@@ -100,6 +102,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access public
 	*/
@@ -116,6 +119,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access private
 	 * @since 1.0.0
 	 */
 	private function register_controls() {
@@ -188,6 +192,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @param $control_id
@@ -198,6 +203,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @param $control_id
 	 *
 	 * @since 1.0.0
@@ -214,6 +220,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 * @return Base_Control[]
 	 */
@@ -226,6 +233,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 * @param $control_id
 	 *
@@ -238,6 +246,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 * @return array
 	 */
@@ -256,6 +265,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -281,6 +291,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 *
 	 * @param $id
@@ -295,6 +306,7 @@ class Controls_Manager {
 	}
 
 	/**
+	 * @access public
 	 * @since 1.0.0
 	 * @return void
 	 */

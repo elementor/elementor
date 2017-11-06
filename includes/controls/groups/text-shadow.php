@@ -10,6 +10,7 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	protected static $fields;
 
 	/**
+	 * @static
 	 * @since 1.6.0
 	 * @access public
 	*/

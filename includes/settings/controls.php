@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Settings_Controls {
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -36,6 +37,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -57,6 +59,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -77,6 +80,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -100,6 +104,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.4.0
 	 * @access private
 	*/
@@ -123,6 +128,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -150,6 +156,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/
@@ -172,6 +179,7 @@ class Settings_Controls {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access private
 	*/

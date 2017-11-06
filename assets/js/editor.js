@@ -86,7 +86,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		if ( this.editing || 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if (
+			this.editing ||
+			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			this.view.model.isRemoteRequestActive()
+		) {
 			return;
 		}
 
@@ -115,12 +119,17 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = false;
 
+		// Avoid retrieving of old content (e.g. in case of sorting)
+		this.view.model.setHtmlCache( '' );
+
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$currentEditingArea[0],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
+			cleanAttrs: ['id', 'class', 'name'],
+			placeholder: elementor.translate( 'type_here' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
@@ -164,9 +173,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea
-			.focus()
-			.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
+		this.$currentEditingArea.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
 	},
 
 	stopEditing: function() {
@@ -398,7 +405,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		'sortstart': 'onSortStart',
 		'sortreceive': 'onSortReceive',
 		'sortupdate': 'onSortUpdate',
-		'sortstop': 'onSortStop',
 		'sortover': 'onSortOver',
 		'sortout': 'onSortOut'
 	},
@@ -452,7 +458,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					left: 25
 				},
 				helper: _.bind( this._getSortableHelper, this ),
-				cancel: '.elementor-inline-editing, .elementor-tab-title'
+				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title'
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
@@ -6727,7 +6733,7 @@ BaseElementView = BaseContainer.extend( {
 	allowRender: true,
 
 	className: function() {
-		return this.getElementUniqueID();
+		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
 
 	attributes: function() {
@@ -6934,8 +6940,6 @@ BaseElementView = BaseContainer.extend( {
 
 	renderCustomClasses: function() {
 		var self = this;
-
-		self.$el.addClass( 'elementor-element' );
 
 		var settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
@@ -8243,6 +8247,10 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			enableLiveAutocompletion: true
 		} );
 
+		self.editor.getSession().setUseWrapMode( true );
+
+		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
 				getCompletions: function( editor, session, pos, prefix, callback ) {
@@ -8291,6 +8299,14 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 				}
 			} );
 		}
+	},
+
+	onResize: function() {
+		this.editor.resize();
+	},
+
+	onDestroy: function() {
+		elementor.panel.$el.off( 'resize.aceEditor' );
 	}
 } );
 

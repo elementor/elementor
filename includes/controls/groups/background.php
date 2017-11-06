@@ -12,6 +12,7 @@ class Group_Control_Background extends Group_Control_Base {
 	private static $background_types;
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -20,6 +21,7 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.2.2
 	 * @access public
 	*/
@@ -32,6 +34,7 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.2.2
 	 * @access private
 	*/

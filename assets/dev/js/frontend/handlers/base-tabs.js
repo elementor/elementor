@@ -15,7 +15,8 @@ module.exports = HandlerModule.extend( {
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: true,
-			hidePrevious: true
+			hidePrevious: true,
+			autoExpand: true
 		};
 	},
 
@@ -29,9 +30,28 @@ module.exports = HandlerModule.extend( {
 	},
 
 	activateDefaultTab: function() {
-		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1;
+		var settings = this.getSettings();
+
+		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+			return;
+		}
+
+		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
+			originalToggleMethods = {
+				showTabFn: settings.showTabFn,
+				hideTabFn: settings.hideTabFn
+			};
+
+		// Toggle tabs without animation to avoid jumping
+		this.setSettings( {
+			showTabFn: 'show',
+			hideTabFn: 'hide'
+		} );
 
 		this.changeActiveTab( defaultActiveTab );
+
+		// Return back original toggle effects
+		this.setSettings( originalToggleMethods );
 	},
 
 	deactivateActiveTab: function( tabIndex ) {

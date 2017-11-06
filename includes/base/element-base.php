@@ -166,6 +166,8 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Retrieve element type.
 	 *
+	 * Get the element type, in this case `element`.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
@@ -324,7 +326,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->_render_settings(); ?>
+			<?php $this->render_edit_tools(); ?>
 			<?php echo $content_template; ?>
 		</script>
 		<?php
@@ -524,9 +526,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$this->enqueue_scripts();
-		}
+		$this->enqueue_scripts();
 
 		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
 
@@ -609,10 +609,18 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Used to generate the edit tools HTML.
 	 *
+	 * @deprecated: 1.8.0 use render_edit_tools() instead.
+	 *
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _render_settings() {}
+	protected function _render_settings() {
+		_deprecated_function( get_called_class() . '::' . __FUNCTION__, '1.8.0', 'render_edit_tools()' );
+
+		$this->render_edit_tools();
+	}
+
+	protected function render_edit_tools() {}
 
 	/**
 	 * Is type instance.
@@ -667,12 +675,10 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$frontend_settings = $this->get_frontend_settings();
+		$frontend_settings = $this->get_frontend_settings();
 
-			if ( $frontend_settings ) {
-				$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
-			}
+		if ( $frontend_settings ) {
+			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
 	}
 

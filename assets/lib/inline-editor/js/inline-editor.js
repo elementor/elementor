@@ -98,6 +98,8 @@
 		// default settings
 		var defaults = {
 			class: 'pen',
+			placeholderClass: 'pen-placeholder',
+			placeholderAttr: 'data-pen-placeholder',
 			debug: false,
 			toolbar: null, // custom toolbar
 			mode: 'basic',
@@ -469,14 +471,17 @@
 			addListener(ctx, editor, 'mousedown', function() {
 				selecting = true;
 			});
+
 			addListener(ctx, editor, 'mouseleave', function() {
 				if (selecting) updateStatus(800);
 				selecting = false;
 			});
+
 			addListener(ctx, editor, 'mouseup', function() {
 				if (selecting) updateStatus(200);
 				selecting = false;
 			});
+
 			// Hide menu when focusing outside of editor
 			outsideClick = function(e) {
 				if (ctx._menu && !containsNode(editor, e.target) && !containsNode(ctx._menu, e.target)) {
@@ -491,7 +496,22 @@
 		}
 
 		addListener(ctx, editor, 'keyup', function(e) {
-			if (ctx.isEmpty()) return handleEmptyContent(ctx);
+			checkPlaceholder(ctx);
+
+			if (ctx.isEmpty()) {
+				if (ctx.config.mode === 'advanced') {
+					handleEmptyContent(ctx);
+				}
+
+				return;
+			}
+
+			if (isCaretAtEnd(ctx) && !isCaretAtStart(ctx) && ctx.config.mode !== 'advanced') {
+				editor.innerHTML = editor.innerHTML.replace( /\u200b/, '' );
+
+				addEmptyCharAtEnd(ctx);
+			}
+
 			// toggle toolbar on key select
 			if (e.which !== 13 || e.shiftKey) return updateStatus(400);
 			var node = getNode(ctx, true);
@@ -508,7 +528,8 @@
 
 		// check line break
 		addListener(ctx, editor, 'keydown', function(e) {
-			editor.classList.remove('pen-placeholder');
+			editor.classList.remove(ctx.config.placeholderClass);
+
 			if (e.which !== 13 || e.shiftKey) return;
 			var node = getNode(ctx, true);
 
@@ -545,9 +566,8 @@
 			});
 		}
 
-		// listen for placeholder
 		addListener(ctx, editor, 'focus', function() {
-			if (ctx.isEmpty()) handleEmptyContent(ctx);
+			if (ctx.isEmpty() && ctx.config.mode === 'advanced') handleEmptyContent(ctx);
 			addListener(ctx, doc, 'click', outsideClick);
 		});
 
@@ -622,7 +642,7 @@
 	}
 
 	function checkPlaceholder(ctx) {
-		ctx.config.editor.classList[ctx.isEmpty() ? 'add' : 'remove']('pen-placeholder');
+		ctx.config.editor.classList[ctx.isEmpty() ? 'add' : 'remove'](ctx.config.placeholderClass);
 	}
 
 	function trim(str) {
@@ -688,29 +708,44 @@
 
 		ctx.config.editor.innerHTML = '';
 
-		if (ctx.config.mode === 'advanced') {
-			var p = doc.createElement('p');
+		var p = doc.createElement('p');
 
-			p.innerHTML = '<br>';
+		p.innerHTML = '<br>';
 
-			range.insertNode(p);
+		range.insertNode(p);
 
-			focusNode(ctx, p.childNodes[0], range);
-		} else {
-			var textNode = doc.createTextNode('\u200b');
+		focusNode(ctx, p.childNodes[0], range);
+	}
 
-			range.deleteContents();
+	function addEmptyCharAtEnd(ctx) {
+		var range = ctx.getRange(),
+			emptyCharNode = doc.createTextNode('\u200b');
 
-			range.collapse(false);
+		range.selectNodeContents(ctx.config.editor);
+		range.collapse(false);
+		range.insertNode(emptyCharNode);
 
-			range.insertNode(textNode);
+		focusNode(ctx, emptyCharNode, range);
+	}
 
-			range.setStartBefore(textNode);
+	function isCaretAtEnd(ctx) {
+		var range = ctx.getRange(),
+			clonedRange = range.cloneRange();
 
-			range.setEndBefore(textNode);
+		clonedRange.selectNodeContents(ctx.config.editor);
+		clonedRange.setStart(range.endContainer, range.endOffset);
 
-			ctx.setRange();
-		}
+		return clonedRange.toString() === '';
+	}
+
+	function isCaretAtStart(ctx) {
+		var range = ctx.getRange(),
+			clonedRange = range.cloneRange();
+
+		clonedRange.selectNodeContents(ctx.config.editor);
+		clonedRange.setEnd(range.startContainer, range.startOffset);
+
+		return clonedRange.toString() === '';
 	}
 
 	function focusNode(ctx, node, range) {
@@ -777,7 +812,7 @@
 		this.config = defaults;
 
 		// set placeholder
-		if (defaults.placeholder) editor.setAttribute('data-placeholder', defaults.placeholder);
+		if (defaults.placeholder) editor.setAttribute(this.config.placeholderAttr, defaults.placeholder);
 		checkPlaceholder(this);
 
 		// save the selection obj
@@ -803,6 +838,14 @@
 
 		if(this.config.input) {
 			this.addOnSubmitListener(this.config.input);
+		}
+
+		if (this.config.mode === 'advanced') {
+			this.getRange().selectNodeContents(editor);
+
+			this.setRange();
+		} else {
+			addEmptyCharAtEnd(this);
 		}
 	};
 
@@ -854,6 +897,7 @@
 
 	InlineEditor.prototype.setRange = function(range) {
 		range = range || this._range;
+
 		if (!range) {
 			range = this.getRange();
 			range.collapse(false); // set to end
@@ -1112,28 +1156,33 @@
 		}
 	};
 
-	InlineEditor.prototype.destroy = function(isAJoke) {
-		var destroy = isAJoke ? false : true
-			, attr = isAJoke ? 'setAttribute' : 'removeAttribute';
+	InlineEditor.prototype.destroy = function() {
+		var config = this.config;
 
-		if (!isAJoke) {
-			removeAllListeners(this);
-			try {
-				selection.removeAllRanges();
-				if (this._menu) this._menu.parentNode.removeChild(this._menu);
-			} catch (e) {/* IE throws error sometimes*/}
-		} else {
-			initToolbar(this);
-			initEvents(this);
-		}
-		this._isDestroyed = destroy;
-		this.config.editor[attr]('contenteditable', '');
+		removeAllListeners(this);
+
+		config.editor.classList.remove(config.class, config.placeholderClass);
+
+		config.editor.removeAttribute('contenteditable');
+
+		config.editor.removeAttribute(config.placeholderAttr);
+
+		try {
+			selection.removeAllRanges();
+			if (this._menu) this._menu.parentNode.removeChild(this._menu);
+		} catch (e) {/* IE throws error sometimes*/}
+
+		this._isDestroyed = true;
 
 		return this;
 	};
 
 	InlineEditor.prototype.rebuild = function() {
-		return this.destroy('it\'s a joke');
+		initToolbar(this);
+
+		initEvents(this);
+
+		return this;
 	};
 
 	// a fallback for old browers

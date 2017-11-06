@@ -14,6 +14,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
@@ -22,6 +23,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	*/
