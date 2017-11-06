@@ -172,10 +172,10 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
-	 * Import repeater media/gallery images.
+	 * Import repeater.
 	 *
-	 * Used to import repeater media/gallery control files from external sites
-	 * while importing Elementor template JSON file, and replacing the old data.
+	 * Used as a wrapper method for inner controls while importing Elementor
+	 * template JSON file, and replacing the old data.
 	 *
 	 * @since 1.8.0
 	 * @access public
