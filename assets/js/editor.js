@@ -1597,10 +1597,6 @@ App = Marionette.Application.extend( {
 		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
 	},
 
-	checkEnvCompatibility: function() {
-		return this.envData.gecko || this.envData.webkit;
-	},
-
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
 
@@ -1650,10 +1646,6 @@ App = Marionette.Application.extend( {
 
 	getPanelView: function() {
 		return this.getRegion( 'panel' ).currentView;
-	},
-
-	initEnvData: function() {
-		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
@@ -1942,12 +1934,6 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
-		this.initEnvData();
-
-		if ( ! this.checkEnvCompatibility() ) {
-			this.onEnvNotCompatible();
-		}
-
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -2046,22 +2032,6 @@ App = Marionette.Application.extend( {
 		} else {
 			this.enterPreviewMode( 'preview' === activeMode );
 		}
-	},
-
-	onEnvNotCompatible: function() {
-		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'device_incompatible_header' ),
-			message: this.translate( 'device_incompatible_message' ),
-			strings: {
-				confirm: elementor.translate( 'proceed_anyway' )
-			},
-			hide: {
-				onButtonClick: true
-			},
-			onConfirm: function() {
-				this.hide();
-			}
-		} );
 	},
 
 	onPreviewLoadingError: function() {
@@ -2284,7 +2254,7 @@ App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( this.envData.gecko ) {
+		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',

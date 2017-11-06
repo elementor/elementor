@@ -367,6 +367,10 @@ class Editor {
 
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
+		// Remove all TinyMCE plugins.
+		remove_all_filters( 'mce_buttons', 10 );
+		remove_all_filters( 'mce_external_plugins', 10 );
+
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -401,7 +405,7 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
-			'wp_editor' => $this->get_wp_editor_config(),
+			'wp_editor' => $this->_get_wp_editor_config(),
 			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
@@ -445,8 +449,6 @@ class Editor {
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
 				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
-				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
-				'device_incompatible_message' => __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
 				'session_expired_header' => __( 'Timeout', 'elementor' ),
 				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
 				'learn_more' => __( 'Learn More', 'elementor' ),
@@ -474,7 +476,6 @@ class Editor {
 				'yes' => __( 'Yes', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 				'type_here' => __( 'Type Here', 'elementor' ),
-				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
 			],
 		];
 
@@ -570,25 +571,10 @@ class Editor {
 
 	/**
 	 * @since 1.0.0
-	 * @access private
+	 * @access protected
 	*/
-	private function get_wp_editor_config() {
-		// Remove all TinyMCE plugins.
-		remove_all_filters( 'mce_buttons', 10 );
-		remove_all_filters( 'mce_external_plugins', 10 );
-
-		if ( ! class_exists( '\_WP_Editors', false ) ) {
-			require( ABSPATH . WPINC . '/class-wp-editor.php' );
-		}
-
-		// WordPress 4.8 and higher
-		if ( method_exists( '\_WP_Editors', 'print_tinymce_scripts' ) ) {
-			\_WP_Editors::print_default_editor_scripts();
-			\_WP_Editors::print_tinymce_scripts();
-		}
-
+	protected function _get_wp_editor_config() {
 		ob_start();
-
 		wp_editor(
 			'%%EDITORCONTENT%%',
 			'elementorwpeditor',
@@ -598,16 +584,7 @@ class Editor {
 				'drag_drop_upload' => true,
 			]
 		);
-
-		$config = ob_get_clean();
-
-		// Don't call \_WP_Editors methods again
-		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'editor_js' ], 50 );
-		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'print_default_editor_scripts' ], 45 );
-
-		\_WP_Editors::editor_js();
-
-		return $config;
+		return ob_get_clean();
 	}
 
 	/**
