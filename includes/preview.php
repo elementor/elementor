@@ -45,6 +45,9 @@ class Preview {
 		do_action( 'elementor/preview/init', $this );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_post_id() {
 		return $this->post_id;
 	}
