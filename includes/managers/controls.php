@@ -446,14 +446,18 @@ class Controls_Manager {
 	 * @since 1.1.0
 	 * @access public
 	*/
-	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data ) {
+	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data, $recursive = false ) {
 		$old_control_data = $this->get_control_from_stack( $element->get_unique_name(), $control_id );
 
 		if ( is_wp_error( $old_control_data ) ) {
 			return false;
 		}
 
-		$control_data = array_merge( $old_control_data, $control_data );
+		if ( $recursive ) {
+			$control_data = array_replace_recursive( $old_control_data, $control_data );
+		} else {
+			$control_data = array_merge( $old_control_data, $control_data );
+		}
 
 		return $this->add_control_to_stack( $element, $control_id, $control_data, [ 'overwrite' => true ] );
 	}
