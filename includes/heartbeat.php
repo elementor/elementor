@@ -34,6 +34,9 @@ class Heartbeat {
 		return $response;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function refresh_nonces( $response, $data ) {
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
 			$response['elementor-refresh-nonces'] = [

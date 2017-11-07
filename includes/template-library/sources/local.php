@@ -528,6 +528,9 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function remove_elementor_post_state_from_library( $post_states, $post ) {
 		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
 			unset( $post_states['elementor'] );

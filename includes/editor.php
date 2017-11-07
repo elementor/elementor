@@ -493,7 +493,7 @@ class Editor {
 		unset( $config );
 
 		if ( get_option( 'elementor_editor_break_lines' ) ) {
-			// Add new lines to avoid memory limits in some hosting servers that handles th buffer output according to new line characters
+			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
 		}
 

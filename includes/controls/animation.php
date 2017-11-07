@@ -84,6 +84,7 @@ class Control_Animation extends Base_Data_Control {
 	 *
 	 * Get the list of all the available animations.
 	 *
+	 * @static
 	 * @since 1.0.0
 	 * @access public
 	 *
