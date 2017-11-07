@@ -114,6 +114,15 @@
     .pen-external-url-checkbox:checked + i {
       color: #fff; }
 
+.elementor-inline-editing i {
+  font-style: italic; }
+
+.elementor-inline-editing b {
+  font-weight: bold; }
+
+.elementor-inline-editing u {
+  text-decoration: underline; }
+
 @-webkit-keyframes placeholder-section {
   0% {
     height: 0;
