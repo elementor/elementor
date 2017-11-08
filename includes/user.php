@@ -24,6 +24,8 @@ class User {
 	 * @access public
 	*/
 	public static function is_current_user_can_edit( $post_id = 0 ) {
+		$post_id = apply_filters( 'elementor/is_current_user_can_edit/post_id', $post_id );
+
 		if ( empty( $post_id ) ) {
 			$post_id = get_the_ID();
 		}
