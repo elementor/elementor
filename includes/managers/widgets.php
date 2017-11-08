@@ -312,6 +312,7 @@ class Widgets_Manager {
 	 *
 	 * Returns general inline editing configurations like toolbar types etc.
 	 *
+	 * @access public
 	 * @since 1.8.0
 	 *
 	 * @return array {
