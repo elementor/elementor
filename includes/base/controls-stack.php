@@ -148,6 +148,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve the generic ID as integer.
 	 *
+	 * @since 1.8.0
 	 * @access public
 	 *
 	 * @return string The converted ID.
