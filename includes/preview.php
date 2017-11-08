@@ -46,6 +46,7 @@ class Preview {
 	}
 
 	/**
+	 * @since 1.8.0
 	 * @access public
 	 */
 	public function get_post_id() {
