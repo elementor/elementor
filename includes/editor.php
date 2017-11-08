@@ -30,8 +30,6 @@ class Editor {
 			return;
 		}
 
-		$this->init_editor_templates();
-
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
@@ -598,10 +596,20 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	 * @param string $template_path - Can be either a link to template file or template HTML content
+	 *
+	 * @param string $template - Can be either a link to template file or template HTML content
+	 * @param string $type Optional. Whether to handle the template as path or text
 	 */
-	public function add_editor_template( $template_path ) {
-		$this->_editor_templates[] = $template_path;
+	public function add_editor_template( $template, $type = 'path' ) {
+		if ( 'path' === $type ) {
+			ob_start();
+
+			include $template;
+
+			$template = ob_get_clean();
+		}
+
+		$this->_editor_templates[] = $template;
 	}
 
 	/**
@@ -617,16 +625,10 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
-		$abs_path = str_replace( '\\', '/', ABSPATH );
+		$this->init_editor_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			$template_abs_path = str_replace( '\\', '/', substr( $editor_template, 0, strlen( ABSPATH ) ) );
-
-			if ( $template_abs_path === $abs_path ) {
-				include $editor_template;
-			} else {
-				echo $editor_template;
-			}
+			echo $editor_template;
 		}
 
 		do_action( 'elementor/editor/footer' );
@@ -655,13 +657,16 @@ class Editor {
 	 * @access private
 	*/
 	private function init_editor_templates() {
-		// It can be filled from plugins
-		$this->_editor_templates = array_merge( $this->_editor_templates, [
-		 	__DIR__ . '/editor-templates/global.php',
-			__DIR__ . '/editor-templates/panel.php',
-			__DIR__ . '/editor-templates/panel-elements.php',
-			__DIR__ . '/editor-templates/repeater.php',
-			__DIR__ . '/editor-templates/templates.php',
-		] );
+		$template_names = [
+			'global',
+			'panel',
+			'panel-elements',
+			'repeater',
+			'templates',
+		];
+
+		foreach ( $template_names as $template_name ) {
+			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
+		}
 	}
 }
