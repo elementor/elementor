@@ -451,6 +451,8 @@ class Editor {
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
 				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
+				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
+				'device_incompatible_message' => __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
 				'session_expired_header' => __( 'Timeout', 'elementor' ),
 				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
 				'learn_more' => __( 'Learn More', 'elementor' ),
@@ -478,6 +480,7 @@ class Editor {
 				'yes' => __( 'Yes', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 				'type_here' => __( 'Type Here', 'elementor' ),
+				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
 			],
 		];
 
