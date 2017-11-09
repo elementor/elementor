@@ -75,6 +75,8 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	backgroundClickListeners: {},
+
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
@@ -379,6 +381,14 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	addBackgroundClickArea: function( element ) {
+		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), { capture: true } );
+	},
+
+	addBackgroundClickListener: function( key, listener ) {
+		this.backgroundClickListeners[ key ] = listener;
+	},
+
 	showFatalErrorDialog: function( options ) {
 		var defaultOptions = {
 			id: 'elementor-fatal-error-dialog',
@@ -428,6 +438,8 @@ App = Marionette.Application.extend( {
 
 		this.initClearPageDialog();
 
+		this.addBackgroundClickArea( document );
+
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
@@ -472,6 +484,8 @@ App = Marionette.Application.extend( {
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
+
+		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
 
 		var Preview = require( 'elementor-views/preview' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
@@ -537,6 +551,16 @@ App = Marionette.Application.extend( {
 			onConfirm: function() {
 				open( elementor.config.help_the_content_url, '_blank' );
 			}
+		} );
+	},
+
+	onBackgroundClick: function( event ) {
+		jQuery.each( this.backgroundClickListeners, function() {
+			var elementToHide = this.element,
+				$clickedTarget = jQuery( event.target ),
+				$clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+
+			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
 	},
 
